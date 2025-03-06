@@ -64,12 +64,12 @@ import UserLogin from "../pages/User/Login";
 import { useState } from "react";
 import GameInfo from "../pages/Admin/Games/GameInfo";
 import CustomerDetails from "../pages/Admin/Customer/CustomerDetails";
-import VendorList from "../pages/Admin/Inventory/VendorList";
-import VendorDetails from "../pages/Admin/Inventory/VendorDetails";
-import CreateVendorForm from "../pages/Admin/Inventory/CreateVendorForm";
-import PurchaseOrderForm from "../pages/Admin/Inventory/PurchaseOrderForm";
+import VendorList from "../pages/Admin/Inventory/List/VendorList";
+import VendorDetails from "../pages/Admin/Inventory/Details/VendorDetails";
+// import CreateVendorForm from "../pages/Admin/Inventory/Create/CreateVendorForm";
+import PurchaseOrderForm from "../pages/Admin/Inventory/Create/PurchaseOrderForm";
 import UserDetails from "../pages/Admin/User/UserDetails";
-import PurchaseOrderDetailes from "../pages/Admin/Inventory/PurchaseOrderDetailes";
+import PurchaseOrderDetailes from "../pages/Admin/Inventory/Details/PurchaseOrderDetailes";
 
 const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
   const [locations, setLocations] = useState([]);
@@ -159,7 +159,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
 
           <Route path="/admin/inventory/vendor-list" element={<VendorList />} />
           <Route path="/admin/inventory/vendor-details" element={<VendorDetails />} />
-          <Route path="/admin/inventory/create-vendor" element={<CreateVendorForm />} />
+          {/* <Route path="/admin/inventory/create-vendor" element={<CreateVendorForm />} /> */}
           <Route path="/admin/inventory/purchase-order" element={<PurchaseOrderForm />} />
           <Route path="/admin/inventory/purchase-order-details" element={<PurchaseOrderDetailes />} />
         </Route>
