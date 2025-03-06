@@ -3,6 +3,7 @@ import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Modal } fro
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import { FaRupeeSign, FaTrash, FaUpload } from "react-icons/fa";
 import { BiArrowToLeft, BiPlus } from "react-icons/bi";
+import OffcanvesItems from "../Offcanvas/OffcanvesItems";
 
 const PurchaseOrderForm = () => {
   const [show, setShow] = useState(false);
@@ -877,7 +878,7 @@ const PurchaseOrderForm = () => {
         </Card>
         
         {modalContent}
-        {showProductList && <ItemOffcanvas show={showProductList} handleClose={() => setShowProductList(false)} />}
+        {showProductList && <OffcanvesItems show={showProductList} handleClose={() => setShowProductList(false)} />}
         {paymentTermsModal}
         {taxModal}
       </Container>

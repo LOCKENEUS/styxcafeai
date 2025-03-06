@@ -3,8 +3,6 @@ import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Modal } fro
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import { FaRupeeSign, FaTrash, FaUpload } from "react-icons/fa";
 import { BiArrowToLeft, BiPlus } from "react-icons/bi";
-import ItemOffcanvas from "../Offcanvas/ItemOffcanvas";
-
 
 export const CreateVendorForm = () => {
     const [show, setShow] = useState(false);
@@ -19,6 +17,7 @@ export const CreateVendorForm = () => {
         city: "",
         zipCode: ""
     });
+    
     const [showPaymentTerms, setShowPaymentTerms] = useState(false);
     const [paymentTermsList, setPaymentTermsList] = useState([]);
     const [newPaymentTerm, setNewPaymentTerm] = useState({
@@ -879,7 +878,7 @@ export const CreateVendorForm = () => {
           </Card>
           
           {modalContent}
-          {showProductList && <ItemOffcanvas show={showProductList} handleClose={() => setShowProductList(false)} />}
+          {showProductList &&  <CreateItemOffcanvas show={showProductList} handleClose={() => setShowProductList(false)}/>}
           {paymentTermsModal}
           {taxModal}
         </Container>

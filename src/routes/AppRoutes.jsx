@@ -70,6 +70,7 @@ import VendorDetails from "../pages/Admin/Inventory/Details/VendorDetails";
 import PurchaseOrderForm from "../pages/Admin/Inventory/Create/PurchaseOrderForm";
 import UserDetails from "../pages/Admin/User/UserDetails";
 import PurchaseOrderDetailes from "../pages/Admin/Inventory/Details/PurchaseOrderDetailes";
+import BookingDetails from "../pages/Admin/Booking/BookingDetails";
 
 const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
   const [locations, setLocations] = useState([]);
@@ -140,6 +141,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/games/edit-game/:id" element={<CreateNewGameForm />} />
 
           <Route path="/admin/bookings/create-slots" element={<CreateSlotsForm />} />
+          <Route path="/admin/bookings/booking-details" element={<BookingDetails />} />
 
           <Route path="/admin/users/customer-list" element={<CustomerList />} />
           <Route path="/admin/users/create-customer" element={<CreateCustomerForm />} />
