@@ -12,6 +12,8 @@ import { useRef } from 'react';
 const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
   const navigate = useNavigate();//+
 
+  const user = JSON.parse(sessionStorage.getItem("user"));
+
   const handleLogout = () => {
     // Clear the authentication token from local storage//+
     localStorage.removeItem('authToken');//+
@@ -67,7 +69,6 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                         &quot;toggleIconOnFocus&quot;: true,
                         &quot;activeClass&quot;: &quot;focus&quot;
                       }"/>
-
                 </div>
                 {/* <button className="js-form-search js-form-search-mobile-toggle btn btn-ghost-secondary btn-icon rounded-circle " type="button" data-hs-form-search-options="{
                         &quot;clearIcon&quot;: &quot;#clearSearchResultsIcon&quot;,
@@ -79,8 +80,6 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
              <BiSearch/>
             </button> */}
               </div>
-
-
 
               <div id="searchDropdownMenu" className="hs-form-search-menu-content dropdown-menu dropdown-menu-form-search navbar-dropdown-menu-borderless animated hs-form-search-menu-hidden hs-form-search-menu-initialized">
                 <div className="card">
@@ -100,12 +99,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                     </div>
 
                     <span className="dropdown-header">Recent searches</span>
-
-
-
                     <div className="dropdown-divider"></div>
-
-
                   </div>
 
                   <a className="card-footer text-center" >
@@ -229,7 +223,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                         <img className="avatar-img" src="https://htmlstream.com/preview/front-dashboard-v2.1.1/assets/img/160x160/img6.jpg" alt="Image Description" />
                       </div>
                       <div className="flex-grow-1 ms-3">
-                        <h5 className="mb-0">Mark Williams</h5>
+                        <h5 className="mb-0">{user?.name}</h5>
                         <p className="card-text text-body">mark@site.com</p>
                       </div>
                     </div>
@@ -371,7 +365,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
 
               <div className="dropdown">
                 <a className="navbar-dropdown-account-wrapper justify-content-center align-items-center gap-4" id="accountNavbarDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" data-bs-dropdown-animation="">
-                  <p style={{ color: "#677788", fontWeight: "bold" }} className='m-0'>Mark Williams</p>
+                  <p style={{ color: "#677788", fontWeight: "bold" }} className='m-0'>{user?.name}</p>
                   <div className="avatar avatar-sm avatar-circle">
                     <img className="avatar-img" src="https://htmlstream.com/preview/front-dashboard-v2.1.1/assets/img/160x160/img6.jpg" alt="Image Description" />
                     <span className="avatar-status avatar-sm-status avatar-status-success"></span>
@@ -387,7 +381,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
 
                       </div>
                       <div className="flex-grow-1 ms-3">
-                        <h5 className="mb-0">Mark Williams</h5>
+                        <h5 className="mb-0">{user?.name}</h5>
                         <p className="card-text text-body">mark@site.com</p>
                       </div>
                     </div>

@@ -37,7 +37,8 @@ const navItems = [
       // { title: "Game Bookings List", path: "/admin/bookings/list" },
       // { title: "Event Bookings List", path: "/admin/bookings/event" },
       // { title: "Booking History", path: "/admin/bookings/history" },
-      { title: "Create Slots", path: "/admin/bookings/create-slots" }
+      // { title: "Create Slots", path: "/admin/bookings/create-slots" }
+      { title: "Bookings", path: "/admin/bookings" },
     ]
   },
 
@@ -56,9 +57,9 @@ const navItems = [
     subItems: [
       // { title: "Game Library", path: "/admin/games/library" },
       { title: "Recommended Games", path: "/admin/games/recommended" },
-      { title: "Bookings", path: "/admin/games/bookings" },
       // { title: "Maintenance", path: "/admin/games/maintenance" },
-      { title: "Create New Game", path: "/admin/games/create-new-game" }
+      { title: "Create New Game", path: "/admin/games/create-new-game" },
+      { title: "Create Slots", path: "/admin/bookings/create-slots" }
     ]
   },
   {

@@ -18,43 +18,9 @@ AOS.init({
 });
 
 function App() {
-  // const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(
     !!sessionStorage.getItem('authToken')
   );
-
-  // useEffect(() => {
-  //   const script1 = document.createElement("script");
-  //   script1.src = "../assets/Front/theme.min.js";
-  //   script1.async = true;
-  //   document.body.appendChild(script1);
-
-  //   const script2 = document.createElement("script");
-  //   script2.src = "../assets/Front/vendor.min.js";
-  //   script2.async = true;
-  //   document.body.appendChild(script2);
-
-  //   return () => {
-  //     document.body.removeChild(script1);
-  //     document.body.removeChild(script2);
-  //   };
-  // }, []);
-  useEffect(() => {
-    const script1 = document.createElement("script");
-    script1.src = "../assets/Front/theme.min.js";
-    script1.async = true;
-    document.body.appendChild(script1);
-
-    const script2 = document.createElement("script");
-    script2.src = "../assets/Front/vendor.min.js";
-    script2.async = true;
-    document.body.appendChild(script2);
-
-    return () => {
-      document.body.removeChild(script1);
-      document.body.removeChild(script2);
-    };
-  }, []);
 
   return (
     <Fragment>

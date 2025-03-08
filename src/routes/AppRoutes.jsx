@@ -71,14 +71,16 @@ import PurchaseOrderForm from "../pages/Admin/Inventory/Create/PurchaseOrderForm
 import UserDetails from "../pages/Admin/User/UserDetails";
 import PurchaseOrderDetailes from "../pages/Admin/Inventory/Details/PurchaseOrderDetailes";
 import BookingDetails from "../pages/Admin/Booking/BookingDetails";
+import GameDetails from "../pages/Admin/Games/GameDetails";
+import BookingList from "../pages/Admin/Booking/BookingList";
 import { CreateVendorForm } from "../pages/Admin/Inventory/Create/CreateVendorForm";
 import PurchaseOrderList from "../pages/Admin/Inventory/List/PurchaseOrderList";
-import ItemsList from "../pages/Admin/Inventory/List/ItemsList";
-import CreateItemsForm from "../pages/Admin/Inventory/Create/CreateItemsForm";
 import ItemGroupList from "../pages/Admin/Inventory/List/ItemGroupList";
 import ItemGroupForm from "../pages/Admin/Inventory/Create/ItemGroupForm";
 import ItemDetails from "../pages/Admin/Inventory/Details/ItemDetails";
 import ItemGroupsDetails from "../pages/Admin/Inventory/Details/ItemGroupsDetails";
+import CreateItemsForm from "../pages/Admin/Inventory/Create/CreateItemsForm";
+import ItemsList from "../pages/Admin/Inventory/List/ItemsList";
 
 const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
   const [locations, setLocations] = useState([]);
@@ -147,9 +149,11 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/games" element={<GameInfo />} />
           <Route path="/admin/games/create-new-game" element={<CreateNewGameForm />} />
           <Route path="/admin/games/edit-game/:id" element={<CreateNewGameForm />} />
+          <Route path="/admin/games/game-details/:id" element={<GameDetails />} />
 
           <Route path="/admin/bookings/create-slots" element={<CreateSlotsForm />} />
-          <Route path="/admin/bookings/booking-details" element={<BookingDetails />} />
+          <Route path="/admin/bookings/booking-details/:gameId/:slotId/:date" element={<BookingDetails />} />
+          <Route path="/admin/bookings" element={<BookingList />} />
 
           <Route path="/admin/users/customer-list" element={<CustomerList />} />
           <Route path="/admin/users/create-customer" element={<CreateCustomerForm />} />

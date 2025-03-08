@@ -20,6 +20,10 @@ const RecommendedGames = () => {
   const indoorGames = games.filter(game => game.zone === 'Indoor');
   const outdoorGames = games.filter(game => game.zone === 'Outdoor');
 
+  const handleCardClick = (gameId) => {
+    navigate(`/admin/games/game-details/${gameId}`);
+  };
+
   return (
     <Container fluid className="p-4">
       <style>
@@ -60,7 +64,7 @@ const RecommendedGames = () => {
         <Row className="flex-nowrap" style={{ margin: '0 -0.5rem' }}>
           {indoorGames.map((game, index) => (
             <Col key={game._id} lg={2.4} xs={8} md={3} style={{ padding: '0 0.5rem' }}>
-              <Card className="shadow-sm">
+              <Card className="shadow-sm" style={{ cursor: 'pointer' }}>
                 <Card.Img
                   variant="top"
                   src={`${import.meta.env.VITE_API_URL}/${game.gameImage}`}
@@ -69,6 +73,7 @@ const RecommendedGames = () => {
                     height: '120px',
                     objectFit: 'cover'
                   }}
+                  onClick={() => handleCardClick(game._id)}
                 />
                 <Card.Body>
                   <Card.Title>{game.name}</Card.Title>

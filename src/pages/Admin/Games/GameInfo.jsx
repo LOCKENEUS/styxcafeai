@@ -134,14 +134,6 @@ const GameInfo = () => {
     setShowCalendar(true); // Show the Calendar when the button is clicked
   };
 
-  const handleClose = () => {
-    setShowClientModal(false); // Hide the Calendar when the close button is clicked
-  };
-
-  const handleOpenClientModal = () => {
-    setShowClientModal(true); // Open the client modal
-  };
-
   return (
     <div className="container mt-4">
       {/* Header Section */}
@@ -229,7 +221,7 @@ const GameInfo = () => {
       </Card>
       {/* Bookings Table */}
       {showCalendar ? (
-        <Calendar openClientModal={handleOpenClientModal} />
+        <Calendar selectedGame={selectedGame} />
       ) : (
         <Card className="p-3" style={{ backgroundColor: "transparent" }}>
           {/* Today's Bookings Header and Search Bar */}
@@ -519,10 +511,6 @@ const GameInfo = () => {
           </div>
         </Card>
       )}
-      <CreateClientModal
-        show={showClientModal}
-        handleClose={handleClose}
-      />
     </div>
   );
 };
