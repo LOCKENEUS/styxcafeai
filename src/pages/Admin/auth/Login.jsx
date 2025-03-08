@@ -6,6 +6,8 @@ import { useDispatch } from 'react-redux';
 import { Adminlogin } from "../../../store/slices/authSlice";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
+
+
 const Login = ({ setIsAuthenticated }) => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
@@ -13,6 +15,8 @@ const Login = ({ setIsAuthenticated }) => {
     password: "",
     rememberMe: false
   });
+
+
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,7 +48,7 @@ const Login = ({ setIsAuthenticated }) => {
     <Container className="d-flex justify-content-center align-items-center min-vh-100 py-4">
       <Row className="shadow-lg justify-content-between align-items-center rounded overflow-hidden w-100" style={{ maxWidth: "1200px", minHeight: "600px" }}>
         {/* Left Section */}
-        <Col style={{ height: "40rem" }} lg={5} className="p-0 shadow-lg">
+        <Col data-aos="fade-down" data-aos-duration="1500" style={{ height: "40rem" }} lg={5} className="p-0 shadow-lg">
           <div style={{ justifyContent: "stretch" }} className="d-flex flex-column  align-items-center h-100">
             <img
               src={LoginImg}
@@ -64,7 +68,7 @@ const Login = ({ setIsAuthenticated }) => {
         </Col>
 
         {/* Right Section */}
-        <Col lg={6} className="bg-white p-3 p-md-5">
+        <Col data-aos="fade-up" data-aos-duration="1000" lg={6} className=" p-3 p-md-5">
           <Card className="border">
             <Card.Body>
               <h1 className="text-center mb-3">Login</h1>

@@ -71,6 +71,14 @@ import PurchaseOrderForm from "../pages/Admin/Inventory/Create/PurchaseOrderForm
 import UserDetails from "../pages/Admin/User/UserDetails";
 import PurchaseOrderDetailes from "../pages/Admin/Inventory/Details/PurchaseOrderDetailes";
 import BookingDetails from "../pages/Admin/Booking/BookingDetails";
+import { CreateVendorForm } from "../pages/Admin/Inventory/Create/CreateVendorForm";
+import PurchaseOrderList from "../pages/Admin/Inventory/List/PurchaseOrderList";
+import ItemsList from "../pages/Admin/Inventory/List/ItemsList";
+import CreateItemsForm from "../pages/Admin/Inventory/Create/CreateItemsForm";
+import ItemGroupList from "../pages/Admin/Inventory/List/ItemGroupList";
+import ItemGroupForm from "../pages/Admin/Inventory/Create/ItemGroupForm";
+import ItemDetails from "../pages/Admin/Inventory/Details/ItemDetails";
+import ItemGroupsDetails from "../pages/Admin/Inventory/Details/ItemGroupsDetails";
 
 const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
   const [locations, setLocations] = useState([]);
@@ -161,9 +169,16 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
 
           <Route path="/admin/inventory/vendor-list" element={<VendorList />} />
           <Route path="/admin/inventory/vendor-details" element={<VendorDetails />} />
-          {/* <Route path="/admin/inventory/create-vendor" element={<CreateVendorForm />} /> */}
+          <Route path="/admin/inventory/create-vendor" element={<CreateVendorForm />} />
           <Route path="/admin/inventory/purchase-order" element={<PurchaseOrderForm />} />
           <Route path="/admin/inventory/purchase-order-details" element={<PurchaseOrderDetailes />} />
+          <Route path="/admin/inventory/purchase-order-list" element={<PurchaseOrderList />} />
+          <Route path="/admin/inventory/items-list" element={<ItemsList />} />
+          <Route path="/admin/inventory/create-items" element={<CreateItemsForm />} />
+          <Route path="/admin/inventory/item-group-list" element={<ItemGroupList />} />
+          <Route path="/admin/inventory/item-group-form" element={<ItemGroupForm />} />
+          <Route path="/admin/inventory/item-details" element={<ItemDetails />} />
+          <Route path="/admin/inventory/item-groups-details" element={<ItemGroupsDetails />} />
         </Route>
       </Route>
 

@@ -6,6 +6,7 @@
     "@react-google-maps/api": "^2.20.5",
     "@reduxjs/toolkit": "^2.5.1",
     "@types/chart.js": "^2.9.41",
+    "aos": "^3.0.0-beta.6",
     "axios": "^1.7.9",
     "chart.js": "^4.4.7",
     "cra-template": "1.2.0",
@@ -23,6 +24,7 @@
     "styled-components": "^6.1.15",
     "web-vitals": "^4.2.4"
   },
+  "proxy": "http://styxnode.lockene.co:5001",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

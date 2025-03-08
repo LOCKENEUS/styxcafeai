@@ -74,11 +74,10 @@ const navItems = [
     icon: MdOutlineInventory,
     subItems: [
      
-      { title: "Inventory Vendor List", path: "/admin/inventory/vendor-list" },
-      { title: "Inventory Vendor Details", path: "/admin/inventory/vendor-details" },
-      { title: "Create Vendor", path: "/admin/inventory/create-vendor" },
-      { title: "Purchase Order", path: "/admin/inventory/purchase-order" },
-      { title: "Purchase Order Details", path: "/admin/inventory/purchase-order-details" },
+      { title: "Vendor List", path: "/admin/inventory/vendor-list" },
+      { title: "Purchase Order List", path: "/admin/inventory/purchase-order-list" },
+      { title: "Items List", path: "/admin/inventory/items-list" },
+      { title: "Item Group List", path: "/admin/inventory/item-group-list" },
       // { title: "Inventory Management", path: "/admin/inventory/manage" }
     ]
   },

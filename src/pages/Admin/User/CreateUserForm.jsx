@@ -123,18 +123,29 @@ const CreateUser = () => {
 
   const handleSelect = (place) => {
     const placeId = place.value.place_id;
-    const apiKey = import.meta.env.REACT_APP_GOOGLE_API_KEY;
-
+    const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+  
     axios
       .get(
         `https://maps.googleapis.com/maps/api/geocode/json?place_id=${placeId}&key=${apiKey}`
       )
       .then((res) => {
-        const addressComponents = res.data.results[0].address_components;
+        // Check if we have valid results
+        if (!res.data.results || res.data.results.length === 0) {
+          throw new Error('No address details found for this location');
+        }
+  
+        const result = res.data.results[0];
+        const addressComponents = result.address_components;
+  
+        // Initialize address parts
         let city = "";
         let state = "";
         let country = "";
-
+        let street = "";
+        let zipCode = "";
+  
+        // Parse address components
         addressComponents.forEach((component) => {
           if (component.types.includes("locality")) {
             city = component.long_name;
@@ -145,17 +156,29 @@ const CreateUser = () => {
           if (component.types.includes("country")) {
             country = component.long_name;
           }
+          if (component.types.includes("postal_code")) {
+            zipCode = component.long_name;
+          }
+          if (component.types.includes("route")) {
+            street = component.long_name;
+          }
         });
-
+  
+        // Build formatted address if needed
+        const formattedAddress = result.formatted_address || place.label;
+  
         setFormData(prev => ({
           ...prev,
-          address: res.data.results[0].formatted_address,
-          city,
-          state,
-          country,
+          address: formattedAddress,
+          city: city || prev.city,  // Fallback to previous value if not found
+          state: state || prev.state,
+          country: country || prev.country,
         }));
       })
-      .catch((err) => console.error("Error fetching place details:", err));
+      .catch((err) => {
+        console.error("Error fetching place details:", err);
+        // Optionally set error state or show user feedback
+      });
   };
 
   const handleChange = (e) => {
@@ -346,23 +369,37 @@ const CreateUser = () => {
                   Address
                 </Form.Label>
                 <GooglePlacesAutocomplete
-                  apiKey={import.meta.env.REACT_APP_GOOGLE_API_KEY}
-                  selectProps={{
-                    value: formData.address
-                      ? { label: formData.address, value: formData.address }
-                      : null,
-                    onChange: handleSelect,
-                    placeholder: "Enter Address",
-                    styles: {
-                      control: (provided) => ({
-                        ...provided,
-                        padding: '5px',
-                        fontSize: '0.9rem',
-                        borderColor: '#ced4da'
-                      })
-                    }
-                  }}
-                />
+  apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
+  selectProps={{
+    value: formData.address 
+      ? { label: formData.address, value: formData.address }
+      : null,
+    onChange: (place) => {
+      if (place) {
+        handleSelect(place);
+      } else {
+        // Handle clear action
+        setFormData(prev => ({
+          ...prev,
+          address: '',
+          city: '',
+          state: '',
+          country: ''
+        }));
+      }
+    },
+    placeholder: "Enter Address",
+    styles: {
+      control: (provided) => ({
+        ...provided,
+        padding: '5px',
+        fontSize: '0.9rem',
+        borderColor: '#ced4da',
+        borderRadius: '8px'
+      })
+    }
+  }}
+/>
               </Form.Group>
             </Col>
           </Row>
@@ -378,7 +415,7 @@ const CreateUser = () => {
                   type="text"
                   name="city"
                   value={formData.city}
-                  readOnly
+                  onChange={handleChange}
                   className="rounded-2"
                   style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
                 />
@@ -393,7 +430,7 @@ const CreateUser = () => {
                   type="text"
                   name="state"
                   value={formData.state}
-                  readOnly
+                  onChange={handleChange}
                   className="rounded-2"
                   style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
                 />
@@ -408,7 +445,7 @@ const CreateUser = () => {
                   type="text"
                   name="country"
                   value={formData.country}
-                  readOnly
+                  onChange={handleChange}
                   className="rounded-2"
                   style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
                 />

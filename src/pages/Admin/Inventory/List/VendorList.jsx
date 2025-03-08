@@ -1,10 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Table, Button, Form, InputGroup, Pagination, Container, Row, Col } from "react-bootstrap";
+import { Table, Button, Form, InputGroup, Pagination, Container, Row,  Col, Breadcrumb, FormControl } from "react-bootstrap";
 import { FaFileExport, FaSearch } from "react-icons/fa";
 import { BsPlusLg } from "react-icons/bs";
 import { IoAdd } from "react-icons/io5";
 import { FaEdit } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import gm1 from '/assets/inventory/mynaui_search.svg'
+import solar_export from "/assets/inventory/solar_export-linear.png";
+
+
 
 const avatarColors = ['#0062FF', '#FF6B6B', '#4CAF50', '#9C27B0', '#FF9800', '#795548', '#607D8B', '#E91E63'];
 
@@ -27,31 +31,64 @@ const VendorList = () => {
   const getRandomColor = (index) => {
     return avatarColors[index % avatarColors.length];
   };
+  const handleExport = () => {
+    const csvHeader = "S/N,Vendor Name,Email,Company,Billing Address,Shipping Address\n";
+    const csvRows = dummyVendors.map((vendor, index) =>
+      `${index + 1},${vendor.name},${vendor.email},${vendor.company},${vendor.billing},${vendor.shipping}`
+    );
+  
+    const csvContent = csvHeader + csvRows.join("\n");
+  
+    // Create a Blob with CSV content
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+  
+    // Create a temporary download link
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "vendor_list.csv";
+    document.body.appendChild(a);
+    a.click();
+  
+    // Cleanup
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+  
 
   return (
-    <Container className="mt-4">
-      <h5 className="text-muted ">
-        Home / Purchase / <span className="text-primary">Vendor List</span>
-      </h5>
+    <Container fluid className="mt-4 min-vh-100">
+    <Breadcrumb>
+        <Breadcrumb.Item href="/admin">Home</Breadcrumb.Item>
+        <Breadcrumb.Item href="/admin/inventory">Inventory</Breadcrumb.Item>
+        <Breadcrumb.Item href="/admin/inventory/vendor-list">Vendor List</Breadcrumb.Item>
+      </Breadcrumb>
       <div className="d-flex justify-content-between my-4">
         <h2>Vendor</h2>
-        <InputGroup className="d-flex align-items-center" style={{ maxWidth: "300px" 
-            
-         }}>
-        <FaSearch className="me-2 text-muted" />
-          <Form.Control
-            placeholder="Search for Vendors"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </InputGroup>
+        <div sm={4} className="d-flex">
+                            <InputGroup className="mx-1 my-3">
+                                <InputGroup.Text className="border-0" style={{ background: "#FAFAFA" }}>
+                                    <img src={gm1} alt="Search Icon" />
+                                </InputGroup.Text>
+                                <FormControl
+                                    type="search"
+                                    size="sm"
+                                    placeholder="Search for vendors"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    style={{ backgroundColor: "#FAFAFA", border: "none" }}
+                                />
+                            </InputGroup>
+                        </div>
         <div>
-          <Button variant="light" className="me-2 border-1 text-danger border-danger">
-            <FaFileExport className="me-2 text-danger" /> Export
+          <Button variant="light" className="me-2 border-1 text-danger border-danger" onClick={handleExport}>
+            <img src={solar_export} alt="Export Icon" /> Export
           </Button>
-          <Button variant="primary">
+          <Link to={'/admin/inventory/create-vendor'}>
+          <Button  variant="primary">
             <BsPlusLg className="me-2" style={{fontSize:"1.2rem"}} /> New Vendor
           </Button>
+          </Link>
         </div>
       </div>
       <Table striped bordered hover style={{ minWidth: '600px', marginTop:"2rem" }}>
@@ -60,32 +97,26 @@ const VendorList = () => {
               <th style={{
                 padding: 'clamp(10px, 2vw, 15px)',
                 border: 'none',
-                fontSize: 'clamp(14px, 3vw, 16px)',
               }}>S/N</th>
               <th style={{
                 padding: 'clamp(10px, 2vw, 15px)',
                 border: 'none',
-                fontSize: 'clamp(14px, 3vw, 16px)',
               }}>Vendor Name</th>
               <th style={{
                 padding: 'clamp(10px, 2vw, 15px)',
                 border: 'none',
-                fontSize: 'clamp(14px, 3vw, 16px)',
               }}>Company</th>
               <th style={{
                 padding: 'clamp(10px, 2vw, 15px)',
                 border: 'none',
-                fontSize: 'clamp(14px, 3vw, 16px)',
               }}>Billing Address</th>
               <th style={{
                 padding: 'clamp(10px, 2vw, 15px)',
                 border: 'none',
-                fontSize: 'clamp(14px, 3vw, 16px)',
               }}>Shipping Address</th>
               <th style={{
                 padding: 'clamp(10px, 2vw, 15px)',
                 border: 'none',
-                fontSize: 'clamp(14px, 3vw, 16px)',
               }}>Actions</th>
             </tr>
           </thead>
@@ -95,12 +126,10 @@ const VendorList = () => {
                 <td style={{
                   padding: 'clamp(10px, 2vw, 15px)',
                   border: 'none',
-                  fontSize: 'clamp(14px, 3vw, 16px)',
                 }}>{index + 1}</td>
                 <td style={{
                   padding: 'clamp(10px, 2vw, 15px)',
                   border: 'none',
-                  fontSize: 'clamp(14px, 3vw, 16px)',
                 }}>
                   <div className="d-flex gap-2 align-items-center">
                     <div style={{
@@ -113,7 +142,6 @@ const VendorList = () => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       marginRight: '10px',
-                      fontSize: '16px',
                     }}>
                       {vendor.avatar}
                     </div>
@@ -126,22 +154,18 @@ const VendorList = () => {
                 <td style={{
                   padding: 'clamp(10px, 2vw, 15px)',
                   border: 'none',
-                  fontSize: 'clamp(14px, 3vw, 16px)',
                 }}>{vendor.company}</td>
                 <td style={{
                   padding: 'clamp(10px, 2vw, 15px)',
                   border: 'none',
-                  fontSize: 'clamp(14px, 3vw, 16px)',
                 }}>{vendor.billing}</td>
                 <td style={{
                   padding: 'clamp(10px, 2vw, 15px)',
                   border: 'none',
-                  fontSize: 'clamp(14px, 3vw, 16px)',
                 }}>{vendor.shipping}</td>
                 <td style={{
                   padding: 'clamp(10px, 2vw, 15px)',
                   border: 'none',
-                  fontSize: 'clamp(14px, 3vw, 16px)',
                   position: 'relative',
                 }}>
                   <Button

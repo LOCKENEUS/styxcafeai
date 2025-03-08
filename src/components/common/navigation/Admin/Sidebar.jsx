@@ -83,7 +83,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
         height: "calc(100vh - 4rem)",
         transition: "all 0.3s ease-in-out",
         borderRight: "1px solid #e5e7eb",
-        zIndex: 1030
+        zIndex: 99
       }}
     >
       

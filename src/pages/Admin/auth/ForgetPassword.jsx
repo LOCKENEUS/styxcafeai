@@ -28,14 +28,14 @@ const ForgetPassword = () => {
 
   return (
     <Container fluid className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
-      <Row className="w-100">
+      <Row  className="w-100">
         {/* Left Side: Illustration */}
-        <Col md={6} className="d-flex justify-content-center align-items-center">
+        <Col  data-aos-debounce-delay="400" data-aos="fade-right" data-aos-duration="1500" md={6} className="d-flex justify-content-center align-items-center">
           <img src={forgetPasswordIllustration} alt="Forget Password Illustration" className="img-fluid" style={{ maxWidth: "80%" }} />
         </Col>
 
         {/* Right Side: Forget Password Form */}
-        <Col md={5} className="d-flex justify-content-center align-items-center">
+        <Col data-aos="fade-right"  data-aos-duration="1000" md={5} className="d-flex justify-content-center align-items-center">
           <Card className="shadow-none border-0 p-5 w-100">
             <Card.Title className="text-center mb-3">
               <h2 className="text-primary">Reset Password</h2>

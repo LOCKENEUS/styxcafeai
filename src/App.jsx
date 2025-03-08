@@ -10,6 +10,12 @@ import AppRoutes from "./routes/AppRoutes";
 // import ".../assets/Front/css2.css";
 // import ".../assets/Front/theme(1).min.css";
 import './App.css'
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+
+AOS.init({
+  duration: 1500,
+});
 
 function App() {
   // const [isAuthenticated, setIsAuthenticated] = useState(false);
