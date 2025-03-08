@@ -83,7 +83,8 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
         height: "calc(100vh - 4rem)",
         transition: "all 0.3s ease-in-out",
         borderRight: "1px solid #e5e7eb",
-        zIndex: 99
+        zIndex: 99,
+        overflowY: "auto"
       }}
     >
       
@@ -96,7 +97,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
           paddingTop: "1rem"
         }}
       >
-        <div className="navbar-vertical-content px-2">
+        <div className="navbar-vertical-content px-2" style={{ overflowY: 'auto', height: 'calc(100% - 100px)' }}>
           <div style={{marginBottom: window.innerWidth <= 768 ? "5rem" : "2rem"}} className="nav nav-pills nav-flush flex-column">
             {navItems.map((item, index) => {
               const collapseId = `collapse-${index}`;
@@ -153,30 +154,39 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
                     >
                       <div className="nav-collapse-items justify-content-end pt-1 pb-2 ">
                         {item.subItems.map((subItem, subIndex) => (
-                          <Link
-                            key={subIndex}
-                            to={subItem.path}
-                            className="nav-link nav-collapse-item py-2 px-3 ms-4"
-                            onClick={() => isMobile && toggleSidebar()}
-                            style={{
-                              color: "#4b5563",
-                              fontSize: "0.9rem",
-                              transition: "all 0.2s",
-                               zIndex:"200"
-                            }}
-                          >
-                            <span className="d-flex position-relative align-items-center gap-2">
-                            {subIndex === 0 ? (
-                                <LuCornerDownRight className="position-absolute" style={{ fontSize: "1rem", left:"-20px", color: "#4b5563", transform: "rotate(0deg)" }} />
-                              ) : null}
-                              {subItem.title}
-                            </span>
-                            {subItem.badge && (
-                              <span className="badge rounded-pill bg-danger ms-auto">
-                                {subItem.badge}
-                              </span>
+                          <div key={subIndex}>
+                            {subItem.label && (
+                              <div className="nav-sub-label py-1 px-3" style={{ fontWeight: 'bold', color: '#4b5563' }}>
+                                {subItem.label}
+                              </div>
                             )}
-                          </Link>
+                            {subItem.sub && subItem.sub.map((furtherSubItem, furtherSubIndex) => (
+                              <Link
+                                key={furtherSubIndex}
+                                to={furtherSubItem.path}
+                                className="nav-link nav-collapse-item py-2 px-3 ms-4"
+                                onClick={() => isMobile && toggleSidebar()}
+                                style={{
+                                  color: "#4b5563",
+                                  fontSize: "0.9rem",
+                                  transition: "all 0.2s",
+                                  zIndex: "200"
+                                }}
+                              >
+                                <span className="d-flex position-relative align-items-center gap-2">
+                                  {furtherSubIndex === 0 ? (
+                                    <LuCornerDownRight className="position-absolute" style={{ fontSize: "1rem", left: "-20px", color: "#4b5563", transform: "rotate(0deg)" }} />
+                                  ) : null}
+                                  {furtherSubItem.title}
+                                </span>
+                                {furtherSubItem.badge && (
+                                  <span className="badge rounded-pill bg-danger ms-auto">
+                                    {furtherSubItem.badge}
+                                  </span>
+                                )}
+                              </Link>
+                            ))}
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -187,7 +197,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
           </div>
         </div>
 
-        <div style={{marginTop: window.innerWidth <= 768 ? "-5rem" : "-2rem", backgroundColor:"white", zIndex:"1000", display:"flex", flexDirection:"column", gap:"1rem" ,justifyContent:"center", alignItems:"center"}}  className="navbar-vertical-footer p-1 border-top">
+        <div style={{marginTop: "auto", backgroundColor:"white", zIndex:"1000", display:"flex", flexDirection:"column", gap:"1rem", justifyContent:"center", alignItems:"center"}} className="navbar-vertical-footer p-1 border-top">
 <div className="justify-content-center align-items-center g-3" 
              onClick={handleLogout}
              style={{

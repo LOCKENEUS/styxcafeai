@@ -14,7 +14,12 @@ const navItems = [
     title: "Dashboard",
     icon: BiHomeAlt,
     subItems: [
-      { title: "Overview", path: "/admin/dashboard" },
+      {
+        label: "",
+        sub: [
+          { title: "Overview", path: "/admin/dashboard" }
+        ]
+      },
       // { title: "Analytics", path: "/admin/dashboard/analytics" }
     ]
   },
@@ -22,23 +27,32 @@ const navItems = [
     title: "Users",
     icon: MdOutlinePeople,
     subItems: [
-      { title: "Create Customer", path: "/admin/users/create-customer" },
-      { title: "Customer List", path: "/admin/users/customer-list" },
-      { title: "Create User", path: "/admin/users/create-user" },
-      { title: "User List", path: "/admin/users/user-list" },
-      { title: "Customer Details", path: "/admin/users/customer-details" },
-      // { title: "Staff Members", path: "/admin/users/staff" },
+      {
+        label: "",
+        sub: [
+          { title: "Create Customer", path: "/admin/users/create-customer" },
+          { title: "Customer List", path: "/admin/users/customer-list" },
+          { title: "Create User", path: "/admin/users/create-user" },
+          { title: "User List", path: "/admin/users/user-list" },
+          { title: "Customer Details", path: "/admin/users/customer-details" },
+          // { title: "Staff Members", path: "/admin/users/staff" },
+        ]
+      },
     ]
   },
   {
     title: "Bookings",
     icon: BiUser,
     subItems: [
+      {
+        label: "",
+        sub: [
+          { title: "Create Slots", path: "/admin/bookings/create-slots" }
+        ]
+      },
       // { title: "Game Bookings List", path: "/admin/bookings/list" },
       // { title: "Event Bookings List", path: "/admin/bookings/event" },
       // { title: "Booking History", path: "/admin/bookings/history" },
-      // { title: "Create Slots", path: "/admin/bookings/create-slots" }
-      { title: "Bookings", path: "/admin/bookings" },
     ]
   },
 
@@ -46,28 +60,43 @@ const navItems = [
     title: "Cafe",
     icon: SlCup,
     subItems: [
-      // { title: "Menu Items", path: "/admin/cafe/menu" },
-      // { title: "Orders", path: "/admin/cafe/orders" },
-      // { title: "Inventory", path: "/admin/cafe/inventory" }
+      {
+        label: "",
+        sub: [
+          // { title: "Menu Items", path: "/admin/cafe/menu" },
+          // { title: "Orders", path: "/admin/cafe/orders" },
+          // { title: "Inventory", path: "/admin/cafe/inventory" }
+        ]
+      },
     ]
   },
   {
     title: "Games",
     icon: IoGameControllerOutline,
     subItems: [
+      {
+        label: "",
+        sub: [
+          { title: "Recommended Games", path: "/admin/games/recommended" },
+          { title: "Bookings", path: "/admin/games/bookings" },
+          // { title: "Maintenance", path: "/admin/games/maintenance" },
+          { title: "Create New Game", path: "/admin/games/create-new-game" }
+        ]
+      },
       // { title: "Game Library", path: "/admin/games/library" },
-      { title: "Recommended Games", path: "/admin/games/recommended" },
-      // { title: "Maintenance", path: "/admin/games/maintenance" },
-      { title: "Create New Game", path: "/admin/games/create-new-game" },
-      { title: "Create Slots", path: "/admin/bookings/create-slots" }
     ]
   },
   {
     title: "Memberships",
     icon: MdOutlineSubscriptions,
     subItems: [
-      // { title: "Active Plans", path: "/admin/memberships/active" },
-      // { title: "Plan Management", path: "/admin/memberships/manage" }
+      {
+        label: "",
+        sub: [
+          // { title: "Active Plans", path: "/admin/memberships/active" },
+          // { title: "Plan Management", path: "/admin/memberships/manage" }
+        ]
+      },
     ]
   },
   {
@@ -75,29 +104,51 @@ const navItems = [
     icon: MdOutlineInventory,
     subItems: [
      
-      { title: "Vendor List", path: "/admin/inventory/vendor-list" },
-      { title: "Purchase Order List", path: "/admin/inventory/purchase-order-list" },
+      {
+        label: "Inventory",
+        sub :[
       { title: "Items List", path: "/admin/inventory/items-list" },
       { title: "Item Group List", path: "/admin/inventory/item-group-list" },
-      // { title: "Inventory Management", path: "/admin/inventory/manage" }
+        ]
+      
+      },
+      {
+        label: "Vendor",
+        sub :[
+          {title: "Vendor List", path: "/admin/inventory/vendor-list"},
+          { title: "Purchase Order List", path: "/admin/inventory/purchase-order-list" },
+        ]
+      
+      },
+     
     ]
   },
   {
     title: "Reports",
     icon: MdOutlineAnalytics,
     subItems: [
-      // { title: "Sales Report", path: "/admin/reports/sales" },
-      // { title: "Usage Analytics", path: "/admin/reports/analytics" }
+      {
+        label: "",
+        sub: [
+        // { title: "Sales Report", path: "/admin/reports/sales" },
+        // { title: "Usage Analytics", path: "/admin/reports/analytics" }
+        ]
+      },
     ]
   },
   {
     title: "Tables",
     icon: MdTableBar,
     subItems: [
-      { title: "Snooker Table List", path: "/admin/tables/snooker-table-list" },
-      { title: "Pickle Ball Table List", path: "/admin/tables/pickle-ball-table-list" },
-      { title: "Turf List", path: "/admin/tables/turf-list" },
-      { title: "Cafe Table List", path: "/admin/tables/cafe-table-list" },
+      {
+        label: "",
+        sub: [
+        { title: "Snooker Table List", path: "/admin/tables/snooker-table-list" },
+        { title: "Pickle Ball Table List", path: "/admin/tables/pickle-ball-table-list" },
+        { title: "Turf List", path: "/admin/tables/turf-list" },
+        { title: "Cafe Table List", path: "/admin/tables/cafe-table-list" },
+        ]
+      },
     ]
   },
 
@@ -122,3 +173,5 @@ const navItems = [
 // };
 
 export default navItems
+
+
