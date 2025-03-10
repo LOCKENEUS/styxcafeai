@@ -103,38 +103,57 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
       {/*-------------------- Super Admin Routes-------------------------------- */}
       <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
         <Route element={<DashboardLayout setIsAuthenticated={setIsAuthenticated} />}>
+          {/* Dashboard Routes */}
           <Route path="/superadmin/dashboard" element={<Dashboard />} />
           <Route path="/superadmin/dashboard/alternative" element={<Alternative />} />
+
+          {/* Location Management */}
           <Route path="/superadmin/create-location" element={<CreateLocation locations={locations} setLocations={setLocations} />} />
           <Route path="/superadmin/location-details" element={<LocationDetails locations={locations} />} />
+
+          {/* Cafe Management */}
           <Route path="/superadmin/create-cafe" element={<CreateCefe />} />
           <Route path="/superadmin/cafe-details" element={<CafeDetails />} />
+          <Route path="/superadmin/cafe/viewdetails/:cafeId" element={<ViewDetails />} />
+
+          {/* Games & Tables Management */}
           <Route path="/superadmin/create-games" element={<CreateGames />} />
           <Route path="/superadmin/games/create" element={<GameManager />} />
-          <Route path="/superadmin/cafe/viewdetails/:cafeId" element={<ViewDetails />} />
-          <Route path="/superadmin/subscription" element={<CreatesubScription />} />
           <Route path="/superadmin/create-table" element={<CreateTable />} />
 
+          {/* Subscription Management */}
+          <Route path="/superadmin/subscription" element={<CreatesubScription />} />
+
+          {/* Inventory Dashboard */}
           <Route path="/Inventory/Dashboard" element={<Dashboards />} />
+
+          {/* Inventory Items Management */}
           <Route path="/Inventory/Items" element={<Items />} />
           <Route path="/Inventory/ItemsGroup" element={<ItemsGroup />} />
-          <Route path="/Inventory/vendor" element={<Vendor />} />
           <Route path="/Inventory/itemCreate" element={<ItemCreate />} />
           <Route path="/Inventory/ItemGroupCreate" element={<IitemGroupCreate />} />
+          <Route path="/Inventory/ItemDetails" element={<ItemsDetails />} />
+
+          {/* Vendor Management */}
+          <Route path="/Inventory/vendor" element={<Vendor />} />
           <Route path="/Inventory/vendorCreate" element={<VendorCreate />} />
+          <Route path="/Inventory/VendorDetails" element={<VendoreDetails />} />
+
+          {/* Purchase Management */}
           <Route path="/Inventory/PurchaseOrder" element={<PurchaseOrder />} />
           <Route path="/Inventory/PurchaseReceived" element={<PurchaseReceived />} />
           <Route path="/Inventory/PurchaseOrderCreate" element={<PurchaseOrderCreate />} />
           <Route path="/Inventory/PurchaseBill" element={<PurchaseBill />} />
+          <Route path="/Inventory/PurchaseOrderDetails" element={<PODetails />} />
           <Route path="/Inventory/BillPayments" element={<BillPayments />} />
+
+          {/* Sales Management */}
           <Route path="/Inventory/SaleOrder" element={<SaleOrder />} />
           <Route path="/Inventory/SaleInvoice" element={<SaleInvoice />} />
           <Route path="/Inventory/InvoicePayments" element={<InvoicePayments />} />
-          <Route path="/Inventory/InventorySetting" element={<InventorySetting />} />
 
-          <Route path="/Inventory/VendorDetails" element={<VendoreDetails />} />
-          <Route path="/Inventory/ItemDetails" element={<ItemsDetails />} />
-          <Route path="/Inventory/PurchaseOrderDetails" element={<PODetails />} />
+          {/* Settings */}
+          <Route path="/Inventory/InventorySetting" element={<InventorySetting />} />
         </Route>
       </Route>
 
