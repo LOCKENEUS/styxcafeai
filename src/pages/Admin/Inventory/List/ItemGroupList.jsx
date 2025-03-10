@@ -36,7 +36,7 @@ const ItemGroupList = () => {
 
   return (
     <div>
-      <Container fluid className="mt-4 min-vh-100">
+      <Container data-aos="fade-right" data-aos-duration="500" fluid className="mt-4 min-vh-100">
     <Breadcrumb>
         <Breadcrumb.Item href="/admin">Home</Breadcrumb.Item>
       <Breadcrumb.Item href="/admin/inventory">Inventory</Breadcrumb.Item>

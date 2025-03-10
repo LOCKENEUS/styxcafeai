@@ -103,7 +103,7 @@ const PurchaseOrderForm = () => {
 
   // Updated Modal component
   const modalContent = (
-      <Modal show={show} onHide={handleClose} size="lg">
+      <Modal data-aos="fade-up" data-aos-duration="700" show={show} onHide={handleClose} size="lg">
           <Modal.Header className="bg-info bg-opacity-10">
               <Modal.Title>
                   <b>{showClientList ? "Choose a client" : "Create New Client"}</b>

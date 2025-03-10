@@ -13,6 +13,9 @@ import membershipReducer from './slices/MembershipSlice';
 import inventoryReducer from './adminslices/inventory';
 import customerReducer from './AdminSlice/CustomerSlice';
 import userReducer from './AdminSlice/UserSlice';
+import customFieldReducer from './AdminSlice/CustomField';
+import taxFieldReducer from './AdminSlice/TextFieldSlice';
+import itemsReducer from './AdminSlice/Inventory/ItemsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -30,5 +33,8 @@ export const store = configureStore({
     inventory: inventoryReducer,
     customers: customerReducer,
     users: userReducer,
+    customFields: customFieldReducer,
+    taxFieldSlice: taxFieldReducer,
+    items: itemsReducer,
   },
 });

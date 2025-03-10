@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, Col, Container, FormControl, InputGroup, Button, Breadcrumb, BreadcrumbItem, Row, Image, Pagination, Table } from "react-bootstrap";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { useNavigate } from "react-router-dom";
@@ -6,14 +6,24 @@ import gm1 from '/assets/inventory/mynaui_search.svg'
 import solar_export from '/assets/inventory/solar_export-linear.png'
 import add from '/assets/inventory/material-symbols_add-rounded.png'
 import { BsCurrencyRupee } from "react-icons/bs";
+import { useSelector, useDispatch } from "react-redux";
+import { getItems } from "../../../../store/AdminSlice/Inventory/ItemsSlice"; // Adjust the path as necessary
 
 const ItemsList = () => {
     const [searchText, setSearchText] = useState("");
     const navigator = useNavigate();
-    const [searchQuery, setSearchQuery] = useState("");
     const [activePage, setActivePage] = useState(1);
     const itemsPerPage = 5;
-    const totalPages = Math.ceil(3 / itemsPerPage);
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    const cafeId = user?._id;
+
+
+    const dispatch = useDispatch();
+    const { items, loading, error } = useSelector((state) => state.items);
+
+    useEffect(() => {
+        dispatch(getItems(cafeId));
+    }, [dispatch]);
 
     const getRandomColor = (name) => {
         const colors = ["#FAED39", "#FF5733", "#33FF57", "#339FFF", "#FF33F6", "#FFAA33", "#39DDFA", "#3DFF16"];
@@ -21,15 +31,11 @@ const ItemsList = () => {
         return colors[index];
     };
 
-    const itemsData = [
-        { sn: 1, name: "Alice", price: "231", stock: "231", sku: "231", hsn: "231", unit: "231", dimension: "231" },
-        { sn: 2, name: "Bob", price: "231", stock: "231", sku: "231", hsn: "231", unit: "231", dimension: "231" },
-        { sn: 3, name: "Charlie", price: "231", stock: "231", sku: "231", hsn: "231", unit: "231", dimension: "231" }
-    ];
-
-    const filteredItems = itemsData.filter((item) =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredItems = items.filter((item) =>
+        item.name.toLowerCase().includes(searchText.toLowerCase())
     );
+
+    const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
 
     const handlePageChange = (page) => {
         if (page >= 1 && page <= totalPages) {
@@ -43,7 +49,7 @@ const ItemsList = () => {
 
     const generateCSV = () => {
         const headers = ["SN", "Item Name", "Price", "Stock", "SKU", "HSN", "Unit", "Dimension"];
-        const rows = itemsData.map(item => [
+        const rows = items.map(item => [
             item.sn, item.name, item.price, item.stock, item.sku, item.hsn, item.unit, item.dimension
         ]);
         
@@ -59,7 +65,7 @@ const ItemsList = () => {
     };
 
     return (
-        <Container fluid className="mt-4 min-vh-100">
+        <Container data-aos="fade-right" data-aos-duration="500" fluid className="mt-4 min-vh-100">
             
             <Row>
                 <Col sm={12}>
@@ -104,36 +110,42 @@ const ItemsList = () => {
                         </Col>
 
                         <Col sm={12}>
-                            <Table striped style={{ minWidth: '600px', marginTop: "2rem" }}>
-                                <thead style={{ backgroundColor: '#0062FF0D' }}>
-                                    <tr>
-                                        {['S/N', 'Item Name', 'Price', 'Stock', 'SKU', 'HSN', 'Unit', 'Dimension'].map((header, index) => (
-                                            <th key={index} style={{ fontWeight: "bold", fontSize: "0.9rem" }}>{header}</th>
-                                        ))}
-                                    </tr>
-                                </thead>
-                                <tbody style={{ backgroundColor: "#F5F5F5" }}>
-                                    {filteredItems.map((item, index) => (
-                                        <tr key={index}>
-                                            <td>{index + 1}</td>
-                                            <td>
-                                                <div className="d-flex gap-2 align-items-center" onClick={() => navigator("/admin/inventory/item-details")}>
-                                                    <div style={{ width: '30px', height: '30px', borderRadius: '50%', backgroundColor: getRandomColor(item.name), color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                        {item.name.charAt(0).toUpperCase()}
-                                                    </div>
-                                                    <span style={{ fontWeight: "bold", cursor: "pointer", color: "#0062FF" }}>{item.name}</span>
-                                                </div>
-                                            </td>
-                                            <td><BsCurrencyRupee /> {item.price}</td>
-                                            <td>{item.stock}</td>
-                                            <td>{item.sku}</td>
-                                            <td>{item.hsn}</td>
-                                            <td>{item.unit}</td>
-                                            <td>{item.dimension}</td>
+                            {loading ? (
+                                <p>Loading...</p>
+                            ) : error ? (
+                                <p>Error: {error}</p>
+                            ) : (
+                                <Table striped style={{ minWidth: '600px', marginTop: "2rem" }}>
+                                    <thead style={{ backgroundColor: '#0062FF0D' }}>
+                                        <tr>
+                                            {['S/N', 'Item Name', 'Price', 'Stock', 'SKU', 'HSN', 'Unit', 'Dimension'].map((header, index) => (
+                                                <th key={index} style={{ fontWeight: "bold", fontSize: "0.9rem" }}>{header}</th>
+                                            ))}
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </Table>
+                                    </thead>
+                                    <tbody style={{ backgroundColor: "#F5F5F5" }}>
+                                        {filteredItems.map((item, index) => (
+                                            <tr key={index}>
+                                                <td>{index + 1}</td>
+                                                <td>
+                                                    <div className="d-flex gap-2 align-items-center" onClick={() => navigator("/admin/inventory/item-details")}>
+                                                        <div style={{ width: '30px', height: '30px', borderRadius: '50%', backgroundColor: getRandomColor(item.name), color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                            {item.name.charAt(0).toUpperCase()}
+                                                        </div>
+                                                        <span style={{ fontWeight: "bold", cursor: "pointer", color: "#0062FF" }}>{item.name}</span>
+                                                    </div>
+                                                </td>
+                                                <td><BsCurrencyRupee /> {item.price}</td>
+                                                <td>{item.stock}</td>
+                                                <td>{item.sku}</td>
+                                                <td>{item.hsn}</td>
+                                                <td>{item.unit}</td>
+                                                <td>{item.dimension}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </Table>
+                            )}
                         </Col>
                     </Row>
                

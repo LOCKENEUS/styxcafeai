@@ -1,0 +1,128 @@
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+
+const BASE_URL = import.meta.env.VITE_API_URL;
+
+// Fetch all items
+export const getItems = createAsyncThunk(
+  'items/getItems',
+  async (id, thunkAPI) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/admin/inventory/item/list/${id}`);
+      return response.data.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+    }
+  }
+);
+
+// Fetch a single item by ID
+export const getItemById = createAsyncThunk(
+  'items/getItemById',
+  async (id, thunkAPI) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/admin/inventory/item/${id}`);
+      return response.data.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+    }
+  }
+);
+
+// Add a new item
+export const addItem = createAsyncThunk(
+  'items/addItem',
+  async (itemData, thunkAPI) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/admin/inventory/item`, itemData);
+      toast.success('Item added successfully!');
+      return response.data.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+    }
+  }
+);
+
+// Delete an item
+export const deleteItem = createAsyncThunk(
+  'items/deleteItem',
+  async (id, thunkAPI) => {
+    try {
+      await axios.delete(`${BASE_URL}/admin/inventory/item/${id}`);
+      toast.success('Item deleted successfully!');
+      return id;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+    }
+  }
+);
+
+const itemsSlice = createSlice({
+  name: 'items',
+  initialState: {
+    items: [],
+    selectedItem: null,
+    loading: false,
+    error: null,
+  },
+  reducers: {
+    setSelectedItem: (state, action) => {
+      state.selectedItem = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // Get all items
+      .addCase(getItems.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getItems.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = action.payload;
+      })
+      .addCase(getItems.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Get item by ID
+      .addCase(getItemById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getItemById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedItem = action.payload;
+      })
+      // Add item
+      .addCase(addItem.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addItem.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items.push(action.payload);
+      })
+      .addCase(addItem.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Delete item
+      .addCase(deleteItem.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteItem.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = state.items.filter((item) => item._id !== action.payload);
+      })
+      .addCase(deleteItem.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  },
+});
+
+export const { setSelectedItem } = itemsSlice.actions;
+export default itemsSlice.reducer;

@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { Form, Button, Row, Col, Card, InputGroup, Modal, Container } from "react-bootstrap";
 import { BiPlus, BiTrash } from "react-icons/bi";
-import { BrandModal, CreateCustomTaxModal, ManufacturerModal, Units } from "../modal/units";
+// import {  CreateCustomTaxModal, ManufacturerModal, Units } from "../modal/Units";
 import { FaPlus } from "react-icons/fa";
+import Units from "../modal/Units";
+import Tax from "../modal/Tax";
+import Manufacturer from "../modal/Manufacturer";
+import Brand from "../modal/Brand";
+
 
 const AttributeOptions = ({ attributes, setAttributes }) => {
   const addAttribute = () => {
@@ -21,7 +26,7 @@ const AttributeOptions = ({ attributes, setAttributes }) => {
   };
 
   return (
-    <div>
+    <div data-aos="fade-up" data-aos-duration="700">
       <label className="fw-bold mb-2">Multiple Items? Create Attributes and Options</label>
       {attributes.map((attribute, index) => (
         <div key={index} className="mb-2 row">
@@ -119,7 +124,7 @@ const ItemGroupForm = () => {
                 <FaPlus className="text-primary" size={30} />
               </Button>
             </Form.Group>
-            <CreateCustomTaxModal show={showTaxModal} handleClose={() => setShowTaxModal(false)} />
+            <Tax show={showTaxModal} handleClose={() => setShowTaxModal(false)} />
           </div>
         )}
         <div className="my-2 col-md-6">
@@ -135,7 +140,7 @@ const ItemGroupForm = () => {
               <FaPlus className="text-primary" size={30} />
             </Button>
           </Form.Group>
-          <ManufacturerModal show={showManufacturerModal} handleClose={() => setShowManufacturerModal(false)} />
+          <Manufacturer show={showManufacturerModal} handleClose={() => setShowManufacturerModal(false)} />
         </div>
         <div className="my-2 col-md-6">
             <Form.Label className="fw-bold my-2">Brand</Form.Label>
@@ -152,7 +157,7 @@ const ItemGroupForm = () => {
             </Button>
           </Form.Group>
 
-            <BrandModal show={showBrandModal} handleClose={() => setShowBrandModal(false)} />
+            <Brand show={showBrandModal} handleClose={() => setShowBrandModal(false)} />
         </div>
         <div className="my-2 col-md-6">
           <Form.Group>

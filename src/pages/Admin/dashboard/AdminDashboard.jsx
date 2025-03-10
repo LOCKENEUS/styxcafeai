@@ -111,7 +111,7 @@ const AdminDashboard = () => {
   }, [dispatch, cafeId]);
 
   return (
-    <Container fluid className="p-2" >
+    <Container data-aos="fade-up" data-aos-duration="500" fluid className="p-2" >
       <h3 className="mb-4">Hello, Styx Cafe</h3>
 
       {/* Search Bar for Mobile */}
