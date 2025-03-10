@@ -111,7 +111,7 @@ const UsersTable = () => {
               </td>
               <td>{user.role}</td>
               <td>
-                <button className="btn   btn-white btn-sm">
+                <button className="btn btn-white btn-sm">
                   <i className="bi-pencil-fill me-1" /> Edit
                 </button>
               </td>

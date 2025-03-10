@@ -90,8 +90,6 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
       
       <div 
         className="navbar-vertical-container"
-        
-        
         style={{
           height: "100%",
           // overflowY: "auto",
