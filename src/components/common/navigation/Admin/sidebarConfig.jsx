@@ -47,7 +47,7 @@ const navItems = [
       {
         label: "",
         sub: [
-          { title: "Create Slots", path: "/admin/bookings/create-slots" }
+          { title: "Booking List", path: "/admin/bookings" }
         ]
       },
       // { title: "Game Bookings List", path: "/admin/bookings/list" },
@@ -78,9 +78,10 @@ const navItems = [
         label: "",
         sub: [
           { title: "Recommended Games", path: "/admin/games/recommended" },
-          { title: "Bookings", path: "/admin/games/bookings" },
           // { title: "Maintenance", path: "/admin/games/maintenance" },
-          { title: "Create New Game", path: "/admin/games/create-new-game" }
+          { title: "Create New Game", path: "/admin/games/create-new-game" },
+          { title: "Create Slots", path: "/admin/bookings/create-slots" }
+           
         ]
       },
       // { title: "Game Library", path: "/admin/games/library" },

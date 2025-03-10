@@ -8,25 +8,36 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { HiChevronDoubleLeft } from 'react-icons/hi';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
+  const [profilePic, setProfilePic] = useState("/assets/profile/user_avatar.jpg");
   const navigate = useNavigate();//+
 
   const user = JSON.parse(sessionStorage.getItem("user"));
+  const backend_url = import.meta.env.VITE_API_URL
+
+  console.log("backend_url", backend_url);
+
+  useEffect(() => {
+    if(user){
+      if(user.role === "superadmin"){
+        setProfilePic(`assets/profile/user_avatar.jpg`);
+      }else{
+        setProfilePic(`${backend_url}/${user.cafeImage[0]}`);
+      }
+    }
+  }, [user]);
 
   const handleLogout = () => {
-    // Clear the authentication token from local storage//+
-    localStorage.removeItem('authToken');//+
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('userRole');
+    sessionStorage.removeItem('user');
 
-    // Update the authentication state//+
     setIsAuthenticated(false);//+
-    //+
-    // Show a success message//+
-    toast.success('Logged out successfully');//+
-    //+
-    // Redirect to the login page//+
+    toast.success('Logged out successfully');
     navigate('/login');//+
   };
+
   return (
     <header id="header" className="navbar navbar-expand-lg  navbar-fixed navbar-height navbar-container navbar-bordered bg-white">
       <div style={{ width: "100%" }} className=" d-flex justify-content-between align-items-center">
@@ -210,7 +221,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
               <div className="dropdown">
                 <a className="navbar-dropdown-account-wrapper justify-content-center align-items-center gap-4" id="accountNavbarDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" data-bs-dropdown-animation="">
                   <div className="avatar avatar-sm avatar-circle">
-                    <img className="avatar-img" src="https://htmlstream.com/preview/front-dashboard-v2.1.1/assets/svg/logos/logo.svg" alt="Image Description" />
+                    <img className="avatar-img" src={profilePic} alt="Image Description" />
                     <span className="avatar-status avatar-sm-status avatar-status-success"></span>
                   </div>
                 </a>
@@ -220,11 +231,11 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                   <div className="dropdown-item-text">
                     <div className="d-flex align-items-center">
                       <div className="avatar avatar-sm avatar-circle">
-                        <img className="avatar-img" src="https://htmlstream.com/preview/front-dashboard-v2.1.1/assets/img/160x160/img6.jpg" alt="Image Description" />
+                        <img className="avatar-img" src={profilePic} alt="Image Description" />
                       </div>
                       <div className="flex-grow-1 ms-3">
                         <h5 className="mb-0">{user?.name}</h5>
-                        <p className="card-text text-body">mark@site.com</p>
+                        <p className="card-text text-body">{user?.email}</p>
                       </div>
                     </div>
                   </div>
@@ -367,7 +378,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                 <a className="navbar-dropdown-account-wrapper justify-content-center align-items-center gap-4" id="accountNavbarDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" data-bs-dropdown-animation="">
                   <p style={{ color: "#677788", fontWeight: "bold" }} className='m-0'>{user?.name}</p>
                   <div className="avatar avatar-sm avatar-circle">
-                    <img className="avatar-img" src="https://htmlstream.com/preview/front-dashboard-v2.1.1/assets/img/160x160/img6.jpg" alt="Image Description" />
+                    <img className="avatar-img" src={profilePic} alt="Image Description" />
                     <span className="avatar-status avatar-sm-status avatar-status-success"></span>
                   </div>
                 </a>
@@ -377,12 +388,12 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                     <div className="d-flex align-items-center">
                       <div className="avatar avatar-sm avatar-circle">
 
-                        <img className="avatar-img" src="https://htmlstream.com/preview/front-dashboard-v2.1.1/assets/img/160x160/img6.jpg" alt="Image Description" />
+                        <img className="avatar-img" src={profilePic} alt="Image Description" />
 
                       </div>
                       <div className="flex-grow-1 ms-3">
                         <h5 className="mb-0">{user?.name}</h5>
-                        <p className="card-text text-body">mark@site.com</p>
+                        <p className="card-text text-body">{user?.email}</p>
                       </div>
                     </div>
                   </div>
@@ -422,7 +433,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
 
                   <div className="dropdown-divider"></div>
 
-                  <a onClick={handleLogout} className="dropdown-item">Sign out</a>
+                  <a onClick={handleLogout} style={{ cursor: "pointer" }} className="dropdown-item">Sign out</a>
                 </div>
               </div>
 

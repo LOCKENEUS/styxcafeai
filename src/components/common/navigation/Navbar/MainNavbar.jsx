@@ -1,12 +1,16 @@
 // components/Navbar.jsx
+import { useState } from 'react';
 import { Navbar, Container, Button } from 'react-bootstrap';
 import { BiBell, BiChevronRight, BiDotsVertical, BiLeftArrow, BiRightArrow, BiSearch } from 'react-icons/bi';
 import { MdOutlineFitbit } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+// import { styxLogo } from '/assets/profile/Styx-logo.svg';
 
 
 const MainNavbar = ({ setIsAuthenticated }) => {
+  const [profilePic, setProfilePic] = useState("/assets/profile/user_avatar.jpg");
+  const user = JSON.parse(sessionStorage.getItem("user"));
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -29,7 +33,7 @@ const MainNavbar = ({ setIsAuthenticated }) => {
     <header id="header" className="navbar navbar-expand-lg navbar-fixed navbar-height navbar-container navbar-bordered bg-white">
       <div className="navbar-nav-wrap">
         <a className="navbar-brand" aria-label="Front">
-          <img className="navbar-brand-logo" src="https://htmlstream.com/preview/front-dashboard-v2.1.1../assets/svg/logos/logo.svg" alt="Logo" data-hs-theme-appearance="default" />
+          <img className="navbar-brand-logo" src="/assets/profile/Styx-logo.svg" style={{ height: "30px", background: "none" }} alt="Logo" data-hs-theme-appearance="default" />
         </a>
         <div className="navbar-nav-wrap-content-start">
           <button type="button" className="js-navbar-vertical-aside-toggle-invoker navbar-aside-toggler">
@@ -232,7 +236,7 @@ const MainNavbar = ({ setIsAuthenticated }) => {
               <div className="dropdown">
                 <a className="navbar-dropdown-account-wrapper" href="#" id="accountNavbarDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" data-bs-dropdown-animation="">
                   <div className="avatar avatar-sm avatar-circle">
-                    <img className="avatar-img" src="https://htmlstream.com/preview/front-dashboard-v2.1.1../assets/img/160x160/img6.jpg" alt="Image Description" />
+                    <img className="avatar-img" src={profilePic} alt="Image Description" />
                     <span className="avatar-status avatar-sm-status avatar-status-success"></span>
                   </div>
                 </a>
@@ -241,11 +245,11 @@ const MainNavbar = ({ setIsAuthenticated }) => {
                   <div className="dropdown-item-text">
                     <div className="d-flex align-items-center">
                       <div className="avatar avatar-sm avatar-circle">
-                        <img className="avatar-img" src="https://htmlstream.com/preview/front-dashboard-v2.1.1../assets/img/160x160/img6.jpg" alt="Image Description" />
+                        <img className="avatar-img" src={profilePic} alt="Image Description" />
                       </div>
                       <div className="flex-grow-1 ms-3">
-                        <h5 className="mb-0">Mark Williams</h5>
-                        <p className="card-text text-body">mark@site.com</p>
+                        <h5 className="mb-0">{user?.name}</h5>
+                        <p className="card-text text-body">{user?.email}</p>
                       </div>
                     </div>
                   </div>

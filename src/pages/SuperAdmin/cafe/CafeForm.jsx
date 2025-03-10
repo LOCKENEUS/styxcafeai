@@ -509,7 +509,6 @@ const CafeForm = ({
                   value={formDataState.officeContactNo || ''}
                   onChange={handleChange}
                   pattern="[0-9]{10}"
-                  required
                   className="py-2 border-2"
                 />
                 <Form.Text className="text-muted">
@@ -742,7 +741,6 @@ const CafeForm = ({
                   name="gstNo"
                   value={formDataState.gstNo || ''}
                   onChange={handleChange}
-                  required
                   className="py-2 border-2"
                 />
               </Form.Group>
@@ -758,7 +756,6 @@ const CafeForm = ({
                   name="panNo"
                   value={formDataState.panNo || ''}
                   onChange={handleChange}
-                  required
                   className="py-2 border-2"
                 />
               </Form.Group>
@@ -796,7 +793,6 @@ const CafeForm = ({
                   name="depositAmount"
                   value={formDataState.depositAmount || ''}
                   onChange={handleChange}
-                  required
                   className="py-2 border-2"
                 />
               </Form.Group>
