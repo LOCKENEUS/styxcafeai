@@ -81,6 +81,21 @@ import ItemDetails from "../pages/Admin/Inventory/Details/ItemDetails";
 import ItemGroupsDetails from "../pages/Admin/Inventory/Details/ItemGroupsDetails";
 import CreateItemsForm from "../pages/Admin/Inventory/Create/CreateItemsForm";
 import ItemsList from "../pages/Admin/Inventory/List/ItemsList";
+import DashboardInventory from "../pages/Admin/Inventory/List/dashboard";
+import { ItemInventory } from "../pages/Admin/Inventory/List/item";
+import { SalesOrder } from "../pages/Admin/Inventory/List/salesOrder";
+import { SaleInvoiceInventory } from "../pages/Admin/Inventory/List/salesInvoice";
+import { InvoicePaymentInventory } from "../pages/Admin/Inventory/List/saleReturns";
+import { InventorySettingAdmin } from "../pages/Admin/Inventory/List/inventorySetting";
+import { SODetails } from "../pages/Admin/Inventory/Details/SODetails";
+import { SIDetails } from "../pages/Admin/Inventory/Details/SIDetails";
+import { IPDetails } from "../pages/Admin/Inventory/Details/IPDetails";
+import { SOCreate } from "../pages/Admin/Inventory/Create/SOCreate";
+import { InvoiceCreate } from "../pages/Admin/Inventory/Create/invoiceCreate";
+
+
+
+
 
 const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
   const [locations, setLocations] = useState([]);
@@ -135,6 +150,10 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/Inventory/VendorDetails" element={<VendoreDetails />} />
           <Route path="/Inventory/ItemDetails" element={<ItemsDetails />} />
           <Route path="/Inventory/PurchaseOrderDetails" element={<PODetails />} />
+
+
+
+
         </Route>
       </Route>
 
@@ -183,6 +202,21 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/inventory/item-group-form" element={<ItemGroupForm />} />
           <Route path="/admin/inventory/item-details" element={<ItemDetails />} />
           <Route path="/admin/inventory/item-groups-details" element={<ItemGroupsDetails />} />
+
+
+
+          {/* -------------------- Inventory Routes new -------------------------------- */}
+          <Route path="/admin/Inventory/dashboard" element={<DashboardInventory />} />
+          <Route path="/admin/Inventory/Items" element={<ItemInventory />} />
+          <Route path="/admin/Inventory/SalesOrder" element={<SalesOrder />} />
+          <Route path="/admin/Inventory/SaleInvoice" element={<SaleInvoiceInventory />} />
+          <Route path="/admin/Inventory/InvoicePayment" element={<InvoicePaymentInventory />} />
+          <Route path="/admin/Inventory/InventorySetting" element={<InventorySettingAdmin />} />
+          <Route path="/admin/Inventory/SaleOrderDetails" element={<SODetails />} />
+          <Route path="/admin/Inventory/SaleInvoiceDetails" element={<SIDetails />} />
+          <Route path="/admin/Inventory/InvoicePaymentDetails" element={<IPDetails />} />
+          <Route path="/admin/Inventory/SaleOrderCreate" element={<SOCreate />} />
+          <Route path="/admin/Inventory/InvoiceCreate" element={<InvoiceCreate />} />
         </Route>
       </Route>
 

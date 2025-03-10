@@ -122,6 +122,17 @@ const navItems = [
       
       },
      
+      { title: "Inventory Vendor List", path: "/admin/inventory/vendor-list" },
+      { title: "Inventory Vendor Details", path: "/admin/inventory/vendor-details" },
+      { title: "Create Vendor", path: "/admin/inventory/create-vendor" },
+      { title: "Purchase Order", path: "/admin/inventory/purchase-order" },
+      { title: "Purchase Order Details", path: "/admin/inventory/purchase-order-details" },
+      { title: "Dashboard Inventory", path: "/admin/Inventory/dashboard" },
+      { title: " Items", path: "/admin/Inventory/Items" },
+      { title: "Sales Order", path: "/admin/Inventory/SalesOrder"},
+      { title: "Sales Invoice", path: "/admin/Inventory/SaleInvoice"},
+      { title: "Incoice Payment", path: "/admin/Inventory/InvoicePayment"},
+      { title: "Inventory Setting", path: "/admin/Inventory/InventorySetting"},
     ]
   },
   {

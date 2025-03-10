@@ -76,6 +76,7 @@ import { SlCup } from 'react-icons/sl';
     {title: "Invoice Payments", path: "/Inventory/InvoicePayments"},
     {title: "Inventory Setting", path: "/Inventory/InventorySetting"},
     
+    
   ]
 
     
