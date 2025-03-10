@@ -45,7 +45,7 @@ export const CreateVendorForm = () => {
         console.log(formData);
     }
     return (
-        <Container>
+        <Container data-aos="fade-up" data-aos-duration="700"> 
             <Row 
             style={{ marginTop: "50px", 
                 // backgroundColor:"#F2F2F2",height:"100vh" 

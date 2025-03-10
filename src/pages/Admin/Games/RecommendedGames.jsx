@@ -25,7 +25,7 @@ const RecommendedGames = () => {
   };
 
   return (
-    <Container fluid className="p-4">
+    <Container data-aos="fade-down" data-aos-duration="700" fluid className="p-4">
       <style>
         {`
           .horizontal-scroll {

@@ -7,7 +7,7 @@ import profileImg from "/assets/Admin/profileDetails/ProfileImg.png";
 
 const VendorDetails = () => {
   return (
-    <Container className="mt-4">
+    <Container data-aos="fade-down" data-aos-duration="700" className="mt-4">
       <Row>
         {/* Sidebar with Profile */}
         <Col md={4}>

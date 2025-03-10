@@ -9,7 +9,7 @@ const ItemDetails = () => {
   const navigate = useNavigate();
 
   return (
-    <Container  className="mt-4 min-vh-100">
+    <Container data-aos="fade-down" data-aos-duration="700" className="mt-4 min-vh-100">
     <Breadcrumb>
       <Breadcrumb.Item href="/admin">Home</Breadcrumb.Item>
       <Breadcrumb.Item active>Booking Details</Breadcrumb.Item>

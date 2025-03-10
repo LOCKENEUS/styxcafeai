@@ -18,7 +18,7 @@ import { CiMail } from "react-icons/ci";
 
 const PurchaseOrderDetails = () => {
   return (
-    <Container
+    <Container data-aos="fade-down" data-aos-duration="700"
       className="p-4"
       style={{ background: "#f8f9fa", borderRadius: "8px" }}
     >
