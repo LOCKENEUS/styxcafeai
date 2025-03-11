@@ -119,6 +119,7 @@ const navItems = [
         sub :[
           {title: "Vendor List", path: "/admin/inventory/vendor-list"},
           { title: "Purchase Order ", path: "/admin/inventory/purchase-order-list" },
+          { title: "Purchase Received", path: "/admin/inventory/purchaseReceived" },
           { title: "Purchase Bill", path: "/admin/inventory/purchase-bill-list" },
           { title: "Bill Payments", path: "/admin/inventory/bill-payments" },
         ]

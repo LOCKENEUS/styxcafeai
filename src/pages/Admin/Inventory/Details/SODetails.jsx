@@ -24,14 +24,14 @@ export const SODetails = () => {
         </div>
     </Col>
 
-    {/* Purchase Order & Action Buttons */}
+    
     <Col sm={12} className="my-2">
         <Card className="p-3">
             <Row>
                 <Col sm={6} xs={12}>
                     <h5 className="text-dark p-2" style={{ fontSize:'18px' }}>
-                        <span>Purchase Order: </span>
-                        <span>PO - 014</span>
+                        <span>Sales Order: </span>
+                        <span>SO - 014</span>
                     </h5>
                 </Col>
                 <Col sm={6} xs={12} className="d-flex flex-wrap justify-content-center justify-content-sm-end align-items-center gap-2 text-center">

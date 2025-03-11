@@ -94,6 +94,11 @@ import { SOCreate } from "../pages/Admin/Inventory/Create/SOCreate";
 import { InvoiceCreate } from "../pages/Admin/Inventory/Create/invoiceCreate";
 import BillPaymentList from "../pages/Admin/Inventory/List/BillPaymentList";
 import PurchaseBillList from "../pages/Admin/Inventory/List/PurchaseBillList";
+import { PurchaseReceivedAdmin } from "../pages/Admin/Inventory/List/purchasereceive";
+import { PRCreate } from "../pages/Admin/Inventory/Create/prCreate";
+import { PurchaseReceivedDetails } from "../pages/Admin/Inventory/Details/purchaseReceived ";
+import { PurchaseBillDetailsAdmin } from "../pages/Admin/Inventory/Details/purchaseBill";
+
 
 
 
@@ -205,6 +210,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/inventory/item-details" element={<ItemDetails />} />
           <Route path="/admin/inventory/item-groups-details" element={<ItemGroupsDetails />} />
           <Route path="/admin/inventory/bill-payments" element={<BillPaymentList />} />
+         
 
 
 
@@ -222,6 +228,10 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/Inventory/SaleOrderCreate" element={<SOCreate />} />
           <Route path="/admin/Inventory/InvoiceCreate" element={<InvoiceCreate />} />
           <Route path="/admin/inventory/purchase-bill-list" element={<PurchaseBillList />} />
+          <Route path="/admin/inventory/purchaseReceived" element={<PurchaseReceivedAdmin />} />
+          <Route path="/admin/inventory/purchaseReceivedCreate" element={<PRCreate />} />
+          <Route path="/admin/inventory/PurchaseReceivedDetails" element={<PurchaseReceivedDetails />} />
+          <Route path="/admin/inventory/PurchaseBillDetails" element={<PurchaseBillDetailsAdmin />} />
         </Route>
       </Route>
 

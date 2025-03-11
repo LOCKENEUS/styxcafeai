@@ -96,11 +96,6 @@ export const SalesOrder = () => {
 
   ];
 
-
-
-
-
-
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
       setActivePage(page);
