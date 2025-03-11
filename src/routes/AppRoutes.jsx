@@ -92,6 +92,8 @@ import { SIDetails } from "../pages/Admin/Inventory/Details/SIDetails";
 import { IPDetails } from "../pages/Admin/Inventory/Details/IPDetails";
 import { SOCreate } from "../pages/Admin/Inventory/Create/SOCreate";
 import { InvoiceCreate } from "../pages/Admin/Inventory/Create/invoiceCreate";
+import BillPaymentList from "../pages/Admin/Inventory/List/BillPaymentList";
+import PurchaseBillList from "../pages/Admin/Inventory/List/PurchaseBillList";
 
 
 
@@ -202,6 +204,8 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/inventory/item-group-form" element={<ItemGroupForm />} />
           <Route path="/admin/inventory/item-details" element={<ItemDetails />} />
           <Route path="/admin/inventory/item-groups-details" element={<ItemGroupsDetails />} />
+          <Route path="/admin/inventory/bill-payments" element={<BillPaymentList />} />
+
 
 
 
@@ -217,6 +221,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/Inventory/InvoicePaymentDetails" element={<IPDetails />} />
           <Route path="/admin/Inventory/SaleOrderCreate" element={<SOCreate />} />
           <Route path="/admin/Inventory/InvoiceCreate" element={<InvoiceCreate />} />
+          <Route path="/admin/inventory/purchase-bill-list" element={<PurchaseBillList />} />
         </Route>
       </Route>
 

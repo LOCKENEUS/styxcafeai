@@ -60,7 +60,7 @@ const Login = ({ setIsAuthenticated }) => {
               }}
               className="img-fluid"
             />
-            <div className="p-4 d-flex gap-2 flex-column justify-content-center align-items-center">
+            <div className="p-4 h-100 d-flex gap-2 flex-column justify-content-center align-items-center">
               <h2 className="text-center " style={{ fontWeight: "lighter" }}>STYX SPORTS CAFE</h2>
               <p className="text-center px-3">Lorem ipsum dolor sit amet consectetur. Lorem massa lobortis quam amet urna in eget eu.</p>
             </div>

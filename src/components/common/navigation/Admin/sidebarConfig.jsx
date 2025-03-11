@@ -108,31 +108,50 @@ const navItems = [
       {
         label: "Inventory",
         sub :[
+          { title: "Dashboard Inventory", path: "/admin/Inventory/dashboard" },
       { title: "Items List", path: "/admin/inventory/items-list" },
       { title: "Item Group List", path: "/admin/inventory/item-group-list" },
         ]
       
       },
       {
-        label: "Vendor",
+        label: "Purchase",
         sub :[
           {title: "Vendor List", path: "/admin/inventory/vendor-list"},
-          { title: "Purchase Order List", path: "/admin/inventory/purchase-order-list" },
+          { title: "Purchase Order ", path: "/admin/inventory/purchase-order-list" },
+          { title: "Purchase Bill", path: "/admin/inventory/purchase-bill-list" },
+          { title: "Bill Payments", path: "/admin/inventory/bill-payments" },
+        ]
+      
+      },
+      {
+        label: "Sales",
+        sub :[
+          { title: "Sales Order", path: "/admin/Inventory/SalesOrder"},
+          { title: "Sales Invoice", path: "/admin/Inventory/SaleInvoice"},
+          { title: "Invoice Payment", path: "/admin/Inventory/InvoicePayment"},
+
+        ]
+      
+      },
+      {
+        label: "Settings",
+        sub :[
+          { title: "Inventory Setting", path: "/admin/Inventory/InventorySetting"},
         ]
       
       },
      
-      { title: "Inventory Vendor List", path: "/admin/inventory/vendor-list" },
-      { title: "Inventory Vendor Details", path: "/admin/inventory/vendor-details" },
+      // { title: "Inventory Vendor List", path: "/admin/inventory/vendor-list" },
+      // { title: "Inventory Vendor Details", path: "/admin/inventory/vendor-details" },
       { title: "Create Vendor", path: "/admin/inventory/create-vendor" },
       { title: "Purchase Order", path: "/admin/inventory/purchase-order" },
       { title: "Purchase Order Details", path: "/admin/inventory/purchase-order-details" },
-      { title: "Dashboard Inventory", path: "/admin/Inventory/dashboard" },
       { title: " Items", path: "/admin/Inventory/Items" },
-      { title: "Sales Order", path: "/admin/Inventory/SalesOrder"},
-      { title: "Sales Invoice", path: "/admin/Inventory/SaleInvoice"},
-      { title: "Incoice Payment", path: "/admin/Inventory/InvoicePayment"},
-      { title: "Inventory Setting", path: "/admin/Inventory/InventorySetting"},
+      // { title: "Sales Order", path: "/admin/Inventory/SalesOrder"},
+      // { title: "Sales Invoice", path: "/admin/Inventory/SaleInvoice"},
+      // { title: "Incoice Payment", path: "/admin/Inventory/InvoicePayment"},
+      // { title: "Inventory Setting", path: "/admin/Inventory/InventorySetting"},
     ]
   },
   {
