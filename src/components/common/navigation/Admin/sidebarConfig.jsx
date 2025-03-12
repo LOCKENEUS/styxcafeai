@@ -30,12 +30,8 @@ const navItems = [
       {
         label: "",
         sub: [
-          { title: "Create Customer", path: "/admin/users/create-customer" },
           { title: "Customer List", path: "/admin/users/customer-list" },
-          { title: "Create User", path: "/admin/users/create-user" },
           { title: "User List", path: "/admin/users/user-list" },
-          { title: "Customer Details", path: "/admin/users/customer-details" },
-          // { title: "Staff Members", path: "/admin/users/staff" },
         ]
       },
     ]
@@ -47,25 +43,8 @@ const navItems = [
       {
         label: "",
         sub: [
+          { title: "Book Games", path: "/admin/booking/games" },
           { title: "Booking List", path: "/admin/bookings" }
-        ]
-      },
-      // { title: "Game Bookings List", path: "/admin/bookings/list" },
-      // { title: "Event Bookings List", path: "/admin/bookings/event" },
-      // { title: "Booking History", path: "/admin/bookings/history" },
-    ]
-  },
-
-  {
-    title: "Cafe",
-    icon: SlCup,
-    subItems: [
-      {
-        label: "",
-        sub: [
-          // { title: "Menu Items", path: "/admin/cafe/menu" },
-          // { title: "Orders", path: "/admin/cafe/orders" },
-          // { title: "Inventory", path: "/admin/cafe/inventory" }
         ]
       },
     ]
@@ -78,8 +57,6 @@ const navItems = [
         label: "",
         sub: [
           { title: "Recommended Games", path: "/admin/games/recommended" },
-          // { title: "Maintenance", path: "/admin/games/maintenance" },
-          { title: "Create New Game", path: "/admin/games/create-new-game" },
           { title: "Create Slots", path: "/admin/bookings/create-slots" }
            
         ]

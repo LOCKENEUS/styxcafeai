@@ -31,9 +31,10 @@ const CreateCustomerForm = () => {
     customerProfile: null,
     existingImage: "",
     cafe: cafeId,
+    creditEligibility : "",
+    creditLimit : 0,
+    creditAmount : 0
   });
-
-  console.log(cafeId);
 
   // Add new state for preview
   const [imagePreview, setImagePreview] = useState(null);
@@ -309,6 +310,42 @@ const CreateCustomerForm = () => {
                 })
               }
             }}
+          />
+        </Form.Group>
+      </Col>
+    </Row>
+
+    <Row className="mb-3">
+      <Col md={6}>
+        <Form.Group className="mb-3">
+           <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
+            Eligible for Credit
+          </Form.Label>
+          <Form.Select
+            name="creditEligibility"
+            value={formData.creditEligibility}
+            onChange={handleChange}
+            className="rounded-2"
+            style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
+          >
+            <option value="">Select Options</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </Form.Select>
+        </Form.Group>
+      </Col>
+      <Col md={6}>
+        <Form.Group className="mb-3">
+           <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
+            Credit Limit
+          </Form.Label>
+          <Form.Control
+            type="Number"
+            name="creditLimit"
+            value={formData.creditLimit}
+            onChange={handleChange}
+            className="rounded-2"
+            style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
           />
         </Form.Group>
       </Col>

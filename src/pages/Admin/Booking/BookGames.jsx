@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getGames } from '../../../store/slices/gameSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoAdd } from 'react-icons/io5';
-const RecommendedGames = () => {
+const BookGames = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { games, status } = useSelector((state) => state.games);
@@ -94,7 +94,8 @@ const RecommendedGames = () => {
         <Row className="flex-nowrap" style={{ margin: '0 -0.5rem' }}>
           {indoorGames.map((game, index) => (
             <Col key={game._id} lg={2.4} xs={8} md={3} style={{ padding: '0 0.5rem' }}>
-              <Card className="shadow-sm" style={{ cursor: 'pointer' }}>
+              <Card className="shadow-sm" style={{ cursor: 'pointer' }} onClick={() => navigate(`/admin/games/${game._id}`)}
+              >
                 <Card.Img
                   variant="top"
                   src={`${import.meta.env.VITE_API_URL}/${game.gameImage}`}
@@ -103,7 +104,7 @@ const RecommendedGames = () => {
                     height: '120px',
                     objectFit: 'cover'
                   }}
-                  onClick={() => handleCardClick(game._id)}
+                // onClick={() => handleCardClick(game._id)}
                 />
                 <Card.Body>
                   <Card.Title>{game.name}</Card.Title>
@@ -177,4 +178,4 @@ const RecommendedGames = () => {
   );
 };
 
-export default RecommendedGames;
+export default BookGames;

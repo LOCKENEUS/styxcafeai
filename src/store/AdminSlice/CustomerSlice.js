@@ -20,6 +20,20 @@ export const getCustomers = createAsyncThunk(
   }
 );
 
+export const searchCustomers = createAsyncThunk(
+  'customers/searchCustomers',
+  async ({cafeId, searchTerm}, thunkAPI) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/admin/customer/search/${cafeId}?search=${searchTerm}`);
+      console.log('API response:', response.data);
+      return response.data.data;
+    } catch (error) {
+      console.error('API error:', error);
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+    }
+  }
+);
+
 // Fetch a single customer by ID
 export const getCustomerById = createAsyncThunk(
   'customers/getCustomerById',

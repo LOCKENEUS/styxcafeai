@@ -98,10 +98,7 @@ import { PurchaseReceivedAdmin } from "../pages/Admin/Inventory/List/purchaserec
 import { PRCreate } from "../pages/Admin/Inventory/Create/prCreate";
 import { PurchaseReceivedDetails } from "../pages/Admin/Inventory/Details/purchaseReceived ";
 import { PurchaseBillDetailsAdmin } from "../pages/Admin/Inventory/Details/purchaseBill";
-
-
-
-
+import BookGames from "../pages/Admin/Booking/BookGames";
 
 
 const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
@@ -180,6 +177,8 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/bookings/create-slots" element={<CreateSlotsForm />} />
           <Route path="/admin/bookings/booking-details/:gameId/:slotId/:date" element={<BookingDetails />} />
           <Route path="/admin/bookings" element={<BookingList />} />
+          <Route path="/admin/booking/games" element={<BookGames />} />
+
 
           <Route path="/admin/users/customer-list" element={<CustomerList />} />
           <Route path="/admin/users/create-customer" element={<CreateCustomerForm />} />

@@ -16,46 +16,18 @@ import {
 import { FiFilter } from "react-icons/fi";
 import { IoAdd } from "react-icons/io5";
 import { Link, useParams } from "react-router-dom";
-import gm2 from "/assets/Admin/Dashboard/GamesImage/gm2.png";
-import gm1 from "/assets/Admin/Dashboard/GamesImage/gm1.png";
 import { useDispatch, useSelector } from "react-redux";
 import { getGameById } from "../../../store/slices/gameSlice";
+import { getBookings } from "../../../store/AdminSlice/BookingSlice";
+import profile from "/assets/profile/user_avatar.jpg";
 
 const BookingList = () => {
     const { gameId } = useParams();
     const dispatch = useDispatch();
 
-    // Sample booking data
-    const [bookings, setBookings] = useState([
-        {
-            id: "#201456",
-            image: gm2,
-            name: "Shardul Thakur",
-            sports: "Snooker & Pool",
-            persons: "2 Persons",
-            mode: "Online",
-            time: "04:00 PM | Sun, 6 March, 25",
-        },
-        {
-            id: "#201457",
-            image: gm1,
-            name: "Rajat Saxena",
-            sports: "Pickle Ball",
-            persons: "8 Persons",
-            mode: "Offline",
-            time: "04:00 PM | Sun, 6 March, 25",
-        },
-        {
-            id: "#201458",
-            image: gm2,
-            name: "Shreya Mahajan",
-            sports: "Play Stations",
-            persons: "1 Person",
-            mode: "Online",
-            time: "04:00 PM | Sun, 6 March, 25",
-        },
-        // ... add more bookings as needed
-    ]);
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    const cafeId = user?._id;
+    const { bookings } = useSelector((state) => state.bookings);
 
     const [searchTerm, setSearchTerm] = useState("");
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -64,6 +36,13 @@ const BookingList = () => {
     const bookingDropdownRef = useRef(null);
     const [activeDropdownId, setActiveDropdownId] = useState(null);
     const editDropdownRef = useRef(null);
+
+
+    useEffect(() => {
+        if (cafeId) {
+            dispatch(getBookings(cafeId));
+        }
+    }, [dispatch, cafeId]);
 
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
@@ -117,8 +96,8 @@ const BookingList = () => {
         "Thursday",
     ];
 
-    const filteredBookings = bookings.filter((booking) =>
-        booking.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredBookings = bookings?.filter((booking) =>
+        booking?.customerName?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -273,16 +252,16 @@ const BookingList = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredBookings.map((booking, index) => (
+                        {filteredBookings?.map((booking, index) => (
                             <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
                                 <td style={{ border: "none", minWidth: "100px" }}>
-                                    {booking.id}
+                                    {booking.booking_id}
                                 </td>
                                 <td style={{ border: "none", minWidth: "150px" }}>
                                     <div className="d-flex align-items-center">
                                         <img
-                                            src={booking.image}
-                                            alt={booking.name}
+                                            src={profile}
+                                            alt={booking?.customerName}
                                             style={{
                                                 width: "40px",
                                                 height: "40px",
@@ -290,20 +269,20 @@ const BookingList = () => {
                                                 marginRight: "10px",
                                             }}
                                         />
-                                        <span>{booking.name}</span>
+                                        <span>{booking?.customerName}</span>
                                     </div>
                                 </td>
                                 <td
                                     className="align-middle"
                                     style={{ border: "none", minWidth: "120px" }}
                                 >
-                                    {booking.sports}
+                                    {booking?.gameTitle}
                                 </td>
                                 <td
                                     className="align-middle"
                                     style={{ border: "none", minWidth: "80px" }}
                                 >
-                                    {booking.persons}
+                                    {booking.players.length + 1}
                                 </td>
                                 <td
                                     className="align-middle"
@@ -343,7 +322,7 @@ const BookingList = () => {
                                     className="align-middle"
                                     style={{ border: "none", minWidth: "120px" }}
                                 >
-                                    {booking.time}
+                                    {booking.createdAt}
                                 </td>
                                 <td
                                     className="align-middle"
