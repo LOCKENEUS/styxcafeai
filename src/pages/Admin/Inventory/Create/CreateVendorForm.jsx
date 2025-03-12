@@ -39,6 +39,9 @@ export const CreateVendorForm = () => {
     const [imagePreview, setImagePreview] = useState('https://fsm.lockene.net/assets/Web-Fsm/images/avtar/3.jpg');
     const user = JSON.parse(sessionStorage.getItem("user"));
     const cafeId = user?._id;
+    const [countries, setCountries] = useState([]);
+    const [states, setStates] = useState([]);
+    const [cities, setCities] = useState([]);
 
     useEffect(() => {
         if (id) {
@@ -79,7 +82,7 @@ export const CreateVendorForm = () => {
                 },
             });
             if(selectedVendor.image){
-                setImagePreview(selectedVendor.image);
+                setImagePreview(`${import.meta.env.VITE_API_URL}/${selectedVendor.image}`);
             }
         }
         
@@ -112,9 +115,39 @@ export const CreateVendorForm = () => {
                 billingCoordinates: { latitude: '', longitude: '' },
                 shippingCoordinates: { latitude: '', longitude: '' },
             });
-            setImagePreview('https://fsm.lockene.net/assets/Web-Fsm/images/avtar/3.jpg');
+            setImagePreview(`${import.meta.env.VITE_API_URL}/${imagePreview}`);
         }
     }, [id]);
+
+    useEffect(() => {
+        axios
+            .get("https://countriesnow.space/api/v0.1/countries")
+            .then((res) => setCountries(res.data.data))
+            .catch((err) => console.error("Error fetching countries:", err));
+    }, []);
+
+    useEffect(() => {
+        if (formData.country) {
+            axios
+                .post("https://countriesnow.space/api/v0.1/countries/states", {
+                    country: formData.country,
+                })
+                .then((res) => setStates(res.data.data.states))
+                .catch((err) => console.error("Error fetching states:", err));
+        }
+    }, [formData.country]);
+
+    useEffect(() => {
+        if (formData.state) {
+            axios
+                .post("https://countriesnow.space/api/v0.1/countries/state/cities", {
+                    country: formData.country,
+                    state: formData.state,
+                })
+                .then((res) => setCities(res.data.data))
+                .catch((err) => console.error("Error fetching cities:", err));
+        }
+    }, [formData.state]);
 
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -132,6 +165,9 @@ export const CreateVendorForm = () => {
                 setFormData((prev) => ({ ...prev, image: file }));
             };
             reader.readAsDataURL(file);
+        } else {
+            setImagePreview(`${import.meta.env.VITE_API_URL}/${imagePreview}`);
+            setFormData((prev) => ({ ...prev, image: null }));
         }
     };
 
@@ -479,12 +515,24 @@ export const CreateVendorForm = () => {
                         {/* select country */}
                         <Col sm={6} className="my-2">
                         <FormGroup>
-                            <label className="fw-bold my-2"> Country </label>
-                            <FormSelect aria-label="select country" id="country" value={formData.country} onChange={handleChange}>
-                                <option>Select</option>
-                                <option value="India">India</option>
-                                <option value="Oman">Oman</option>
-                                <option value="Yemen">Yemen</option>
+                            <label className="fw-bold my-2">Country</label>
+                            <FormSelect
+                                aria-label="select country"
+                                id="country"
+                                value={formData.country}
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    country: e.target.value,
+                                    state: '',
+                                    city: ''
+                                })}
+                            >
+                                <option>Select Country</option>
+                                {countries.map((c, idx) => (
+                                    <option key={idx} value={c.country}>
+                                        {c.country}
+                                    </option>
+                                ))}
                             </FormSelect>
                         </FormGroup>
                         
@@ -492,12 +540,24 @@ export const CreateVendorForm = () => {
 
                         <Col sm={6} className="my-2">
                         <FormGroup>
-                            <label className="fw-bold my-2"> State </label>
-                            <FormSelect aria-label="select country" id="state" value={formData.state} onChange={handleChange}>
-                                <option>Select</option>
-                                <option value="Maharashtra">Maharashtra    </option>
-                                <option value="Punjab">Punjab</option>
-                                <option value="Chhattisgarh">Chhattisgarh</option>
+                            <label className="fw-bold my-2">State</label>
+                            <FormSelect
+                                aria-label="select state"
+                                id="state"
+                                value={formData.state}
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    state: e.target.value,
+                                    city: ''
+                                })}
+                                disabled={!formData.country}
+                            >
+                                <option>Select State</option>
+                                {states.map((s, idx) => (
+                                    <option key={idx} value={s.name}>
+                                        {s.name}
+                                    </option>
+                                ))}
                             </FormSelect>
                         </FormGroup>
                         
@@ -505,13 +565,23 @@ export const CreateVendorForm = () => {
 
                         <Col sm={6} className="my-2">
                         <FormGroup>
-                            <label className="fw-bold my-2"> City </label>
-                            <FormSelect aria-label="select city" id="city" value={formData.city} onChange={handleChange}>
-                                <option>Select</option>
-                                <option value="Pune">Pune    </option>
-                                <option value="Nashik">Nashik</option>
-                                <option value="Mumbai">Mumbai</option>
-                                <option value="Nagpur">Nagpur</option>
+                            <label className="fw-bold my-2">City</label>
+                            <FormSelect
+                                aria-label="select city"
+                                id="city"
+                                value={formData.city}
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    city: e.target.value
+                                })}
+                                disabled={!formData.state}
+                            >
+                                <option>Select City</option>
+                                {cities.map((c, idx) => (
+                                    <option key={idx} value={c}>
+                                        {c}
+                                    </option>
+                                ))}
                             </FormSelect>
                         </FormGroup>
                         
@@ -602,14 +672,24 @@ export const CreateVendorForm = () => {
                         <Col sm={6} className="my-2">
                         <FormGroup>
                             <label className="fw-bold my-2">Country</label>
-                            <input
-                                type="text"
-                                className="form-control"
+                            <FormSelect
+                                aria-label="select shipping country"
                                 id="shippingcountry"
-                                placeholder="Country"
                                 value={formData.shippingcountry}
-                                onChange={handleChange}
-                            />
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    shippingcountry: e.target.value,
+                                    shippingstate: '',
+                                    shippingcity: ''
+                                })}
+                            >
+                                <option>Select Country</option>
+                                {countries.map((c, idx) => (
+                                    <option key={idx} value={c.country}>
+                                        {c.country}
+                                    </option>
+                                ))}
+                            </FormSelect>
                         </FormGroup>
                         
                         </Col>
@@ -617,14 +697,24 @@ export const CreateVendorForm = () => {
                         <Col sm={6} className="my-2">
                         <FormGroup>
                             <label className="fw-bold my-2">State</label>
-                            <input
-                                type="text"
-                                className="form-control"
+                            <FormSelect
+                                aria-label="select shipping state"
                                 id="shippingstate"
-                                placeholder="State"
                                 value={formData.shippingstate}
-                                onChange={handleChange}
-                            />
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    shippingstate: e.target.value,
+                                    shippingcity: ''
+                                })}
+                                disabled={!formData.shippingcountry}
+                            >
+                                <option>Select State</option>
+                                {states.map((s, idx) => (
+                                    <option key={idx} value={s.name}>
+                                        {s.name}
+                                    </option>
+                                ))}
+                            </FormSelect>
                         </FormGroup>
                         
                         </Col>
@@ -632,14 +722,23 @@ export const CreateVendorForm = () => {
                         <Col sm={6} className="my-2">
                         <FormGroup>
                             <label className="fw-bold my-2">City</label>
-                            <input
-                                type="text"
-                                className="form-control"
+                            <FormSelect
+                                aria-label="select shipping city"
                                 id="shippingcity"
-                                placeholder="City"
                                 value={formData.shippingcity}
-                                onChange={handleChange}
-                            />
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    shippingcity: e.target.value
+                                })}
+                                disabled={!formData.shippingstate}
+                            >
+                                <option>Select City</option>
+                                {cities.map((c, idx) => (
+                                    <option key={idx} value={c}>
+                                        {c}
+                                    </option>
+                                ))}
+                            </FormSelect>
                         </FormGroup>
                         
                         </Col>
@@ -701,7 +800,7 @@ export const CreateVendorForm = () => {
                         </Col>
                         <Col sm={12} className="p-2 mb-2 text-end">
                             <Image
-                           src={`${import.meta.env.VITE_API_URL}/${imagePreview}`} 
+                           src={imagePreview}
                                 alt="product image"
                                 fluid
                                 style={{ width: '100px', aspectRatio: '1', objectFit: 'cover' }}

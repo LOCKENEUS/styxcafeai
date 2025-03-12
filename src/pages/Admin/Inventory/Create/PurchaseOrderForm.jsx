@@ -147,11 +147,7 @@ const PurchaseOrderForm = () => {
               style={{border:"1px solid black", height:"44px", borderStyle:"dashed"}}
           >
               <option>Select Payment Terms</option>
-              {paymentTermsList.map((term, index) => (
-                  <option key={index} value={term.days}>
-                      {term.name} ({term.days} days)
-                  </option>
-              ))}
+              
           </Form.Select>
           <Button 
               style={{width:"50px", border:"1px solid black", height:"30px", borderStyle:"dashed"}} 

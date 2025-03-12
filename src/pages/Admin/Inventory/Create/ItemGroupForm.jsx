@@ -68,6 +68,7 @@ const ItemGroupForm = () => {
   const [taxable, setTaxable] = useState("Y");
   const [attributes, setAttributes] = useState([{ color: "", options: "" }]);
   const [taxPreference, setTaxPreference] = useState("Taxable");
+  const [itemGroupName, setItemGroupName] = useState("");
 
   return (
     <Container className="p-4">
@@ -79,7 +80,7 @@ const ItemGroupForm = () => {
         <div className="my-4 col-sm-6">
           <Form.Group>
             <Form.Label className="fw-bold my-2">Item Group Name<span className="text-danger ms-1">*</span></Form.Label>
-            <Form.Control type="text" id="itemGroupName" placeholder="Enter item group name" />
+            <Form.Control type="text" id="itemGroupName" placeholder="Enter item group name" value={itemGroupName} onChange={(e) => setItemGroupName(e.target.value)} />
           </Form.Group>
         </div>
         <div className="my-4 col-sm-6">
@@ -168,6 +169,51 @@ const ItemGroupForm = () => {
         <div className="my-4 col-sm-12">
           <AttributeOptions attributes={attributes} setAttributes={setAttributes} />
         </div>
+
+        {/* Conditionally render the table if there are attributes */}
+        {attributes.some(attr => attr.color || attr.options) && (
+          <div className="col-sm-12 mb-3" id="tableDiv" style={{ zoom: 0.9, overflowX: 'auto' }}>
+            <table className="table table-sm table-border table-border-vertical table-hover">
+              <thead className="bg-light">
+                <tr>
+                  <th>SN</th>
+                  <th nowrap="">Item name</th>
+                  <th nowrap="" className="px-1">HSN<br /><span type="button" className="text-primary" onClick={() => document.querySelectorAll('.hsn').forEach(el => el.value = document.querySelector('.hsn').value)}>(Copy to All)</span></th>
+                  <th nowrap="" className="px-1">SKU<br /><span type="button" className="text-primary">(Generate SKU)</span></th>
+                  <th nowrap="" className="px-1">Cost Price<br /><span type="button" className="text-primary" onClick={() => document.querySelectorAll('.cost-price').forEach(el => el.value = document.querySelector('.cost-price').value)}>(Copy to All)</span></th>
+                  <th nowrap="" className="px-1">Selling Price<br /><span type="button" className="text-primary" onClick={() => document.querySelectorAll('.selling-price').forEach(el => el.value = document.querySelector('.selling-price').value)}>(Copy to All)</span></th>
+                  <th>UPC</th>
+                  <th>EAN</th>
+                  <th>ISBN</th>
+                  <th nowrap="" className="px-1">Opening Stock<br /><span type="button" className="text-primary" onClick={() => document.querySelectorAll('.stock').forEach(el => el.value = document.querySelector('.stock').value)}>(Copy to All)</span></th>
+                </tr>
+              </thead>
+              <tbody id="table-body">
+                {attributes.map((attribute, index) => {
+                  const options = attribute.options.split(',').map(option => option.trim());
+                  return options.map((option, optionIndex) => (
+                    <tr key={`${index}-${optionIndex}`}>
+                      <td>{index + 1}</td>
+                      <td>
+                        <b>{itemGroupName} {attribute.color} {option}</b>
+                        <input type="hidden" name="item_name[]" value={`${itemGroupName} ${attribute.color} ${option}`} />
+                      </td>
+                      <td className="px-1"><input type="text" name="item_hsn[]" className="form-control hsn" placeholder="HSN" style={{ width: '120px' }} /></td>
+                      <td className="px-1"><input type="text" name="item_sku[]" className="form-control sku" placeholder="SKU" required style={{ width: '120px' }} /></td>
+                      <td className="px-1"><input type="text" name="item_cost[]" className="form-control cost-price" required placeholder="Cost Price" style={{ width: '120px' }} /></td>
+                      <td className="px-1"><input type="text" name="item_price[]" className="form-control selling-price" placeholder="Selling Price" required style={{ width: '120px' }} /></td>
+                      <td className="px-1"><input type="text" name="item_upc[]" className="form-control" placeholder="UPC" style={{ width: '120px' }} /></td>
+                      <td className="px-1"><input type="text" name="item_ean[]" className="form-control" placeholder="EAN" style={{ width: '120px' }} /></td>
+                      <td className="px-1"><input type="text" name="item_isbn[]" className="form-control" placeholder="ISBN" style={{ width: '120px' }} /></td>
+                      <td className="px-1"><input type="text" name="item_stock[]" className="form-control stock" placeholder="Opening Stock" style={{ width: '120px' }} /></td>
+                    </tr>
+                  ));
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
         <div className="col-md-12">
           <Button type="submit" className="mt-4 btn btn-primary">Save</Button>
         </div>

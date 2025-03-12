@@ -103,7 +103,7 @@ const CreateItemsForm = () => {
                     });
                     
                     if (itemData.image) {
-                        setImagePreview(itemData.image);
+                        setImagePreview(`${import.meta.env.VITE_API_URL}/${itemData.image}`);
                     }
                 })
                 .catch((error) => {
@@ -121,6 +121,9 @@ const CreateItemsForm = () => {
                 setFormData((prev) => ({ ...prev, image: file }));
             };
             reader.readAsDataURL(file);
+        } else {
+            setImagePreview('https://fsm.lockene.net/assets/Web-Fsm/images/avtar/3.jpg');
+            setFormData((prev) => ({ ...prev, image: null }));
         }
     };
 
@@ -757,9 +760,9 @@ const CreateItemsForm = () => {
                         />
                     </Col>
 
-                    <Col sm={5} className=" my-2">
+                    <Col sm={5} className="my-2">
                         <Image
-                            src={`${import.meta.env.VITE_API_URL}/${imagePreview}`} 
+                            src={imagePreview}
                             alt="product image"
                             fluid
                             style={{ width: '100px', aspectRatio: '1', objectFit: 'cover' }}
