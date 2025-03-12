@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Button, Card, Form, Row, Col, Table } from "react-bootstrap";
+import { Modal, Button, Card, Form, Row, Col, Table, ModalHeader, ModalTitle, ModalBody, CardHeader, CardBody, FormGroup, FormLabel } from "react-bootstrap";
 import { BiPlus, BiArrowToLeft } from "react-icons/bi";
 
 const AddClint = ({ show, handleClose }) => {
@@ -48,39 +48,51 @@ const AddClint = ({ show, handleClose }) => {
 
   return (
     <Modal data-aos="fade-up" data-aos-duration="700" show={show} onHide={handleClose} size="lg">
-      <Modal.Header className="bg-info bg-opacity-10">
-        <Modal.Title>
-          <b>{showClientList ? "Choose a client" : "Create New Client"}</b>
-        </Modal.Title>
+      <ModalHeader className="bg-info bg-opacity-10 py-2">
+        {/* <ModalTitle> */}
+          <span style={{fontSize:"20px" , fontWeight:"500"}}>{showClientList ? "Choose a client" : "Create New Client"}</span>
+        {/* </ModalTitle> */}
         <div className="d-flex pb-2 gap-2">
-          <Button 
+          {/* <Button 
             variant="info" 
             size="sm" 
             onClick={toggleView}
           >
             {showClientList ? <BiPlus size={20}/> : <BiArrowToLeft size={20}/>}
-          </Button>
+          </Button> */}
           <Button 
             variant="close" 
             onClick={handleClose}
           />
         </div>
-      </Modal.Header>
-      <Modal.Body>
+      </ModalHeader>
+      <ModalBody>
         {showClientList ? (
           <div>
-            <h6>Choose a client for create quote?</h6>
+            <h4 style={{fontSize:"15px"}}>Choose a client for create quote?</h4>
             <Card className="shadow">
-              <Card.Header className="p-2 bg-info bg-opacity-10">
-                <Form.Control
-                  size="sm"
-                  type="search"
-                  placeholder="Search by name..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </Card.Header>
-              <Card.Body className="p-2">
+              <CardHeader className="p-2 bg-info bg-opacity-10">
+              <Row className="mb-2">
+  <Col xs={8} sm={6} md={4}>
+    <Form.Control 
+      type="text" 
+      placeholder="Search..." 
+      // onChange={handleSearch} 
+    />
+  </Col>
+  <Col xs={4} sm={6} md={8} className="text-end">
+    <Button 
+      variant="info" 
+      size="sm" 
+      onClick={toggleView}
+    >
+      {showClientList ? <BiPlus size={20}/> : <BiArrowToLeft size={20}/>}
+    </Button>
+  </Col>
+</Row>
+
+              </CardHeader>
+              <CardBody className="p-2">
                 <Table responsive size="sm">
                   <thead>
                     <tr>
@@ -111,18 +123,18 @@ const AddClint = ({ show, handleClose }) => {
                     ))}
                   </tbody>
                 </Table>
-              </Card.Body>
+              </CardBody>
             </Card>
           </div>
         ) : (
           <Form onSubmit={handleSubmit}>
             <Row className="mb-3">
               <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
+                <FormGroup className="mb-3">
+                  <FormLabel className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
                     Full Name
-                  </Form.Label>
-                  <Form.Control
+                  </FormLabel>
+                  <FormControl
                     type="text"
                     name="name"
                     placeholder="Enter Full Name"
@@ -132,14 +144,14 @@ const AddClint = ({ show, handleClose }) => {
                     style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
                     required
                   />
-                </Form.Group>
+                </FormGroup>
               </Col>
               <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
+                <FormGroup className="mb-3">
+                  <FormLabel className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
                     Contact Number
-                  </Form.Label>
-                  <Form.Control
+                  </FormLabel>
+                  <FormControl
                     type="tel"
                     name="phone"
                     placeholder="Enter Contact Number"
@@ -149,17 +161,17 @@ const AddClint = ({ show, handleClose }) => {
                     style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
                     required
                   />
-                </Form.Group>
+                </FormGroup>
               </Col>
             </Row>
 
             <Row className="mb-3">
               <Col md={4}>
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
+                <FormGroup className="mb-3">
+                  <FormLabel className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
                     Email
-                  </Form.Label>
-                  <Form.Control
+                  </FormLabel>
+                  <FormControl
                     type="email"
                     name="email"
                     placeholder="Enter Email Address"
@@ -169,14 +181,14 @@ const AddClint = ({ show, handleClose }) => {
                     style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
                     required
                   />
-                </Form.Group>
+                </FormGroup>
               </Col>
               <Col md={4}>
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
+                <FormGroup className="mb-3">
+                  <FormLabel className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
                     Address
-                  </Form.Label>
-                  <Form.Control
+                  </FormLabel>
+                  <FormControl
                     type="text"
                     name="address"
                     placeholder="Enter Address"
@@ -186,14 +198,14 @@ const AddClint = ({ show, handleClose }) => {
                     style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
                     required
                   />
-                </Form.Group>
+                </FormGroup>
               </Col>
               <Col md={4}>
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
+                <FormGroup className="mb-3">
+                  <FormLabel className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
                     Gender
-                  </Form.Label>
-                  <Form.Select
+                  </FormLabel>
+                  <FormSelect
                     name="gender"
                     value={newClient.gender}
                     onChange={handleChange}
@@ -205,18 +217,18 @@ const AddClint = ({ show, handleClose }) => {
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="other">Other</option>
-                  </Form.Select>
-                </Form.Group>
+                  </FormSelect>
+                </FormGroup>
               </Col>
             </Row>
 
             <Row className="mb-3">
               <Col md={4}>
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
+                <FormGroup className="mb-3">
+                  <FormLabel className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
                     Country
-                  </Form.Label>
-                  <Form.Control
+                  </FormLabel>
+                  <FormControl
                     type="text"
                     name="country"
                     placeholder="Enter Country"
@@ -226,13 +238,13 @@ const AddClint = ({ show, handleClose }) => {
                     style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
                     required
                   />
-                </Form.Group>
+                </FormGroup>
               </Col>
               <Col md={4}>
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
+                <FormGroup className="mb-3">
+                  <FormLabel className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
                     State
-                  </Form.Label>
+                  </FormLabel>
                   <Form.Control
                     type="text"
                     name="state"
@@ -243,14 +255,14 @@ const AddClint = ({ show, handleClose }) => {
                     style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
                     required
                   />
-                </Form.Group>
+                </FormGroup>
               </Col>
               <Col md={4}>
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
+                <FormGroup className="mb-3">
+                  <FormLabel className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
                     City
-                  </Form.Label>
-                  <Form.Control
+                  </FormLabel>
+                  <FormControl
                     type="text"
                     name="city"
                     placeholder="Enter City"
@@ -260,7 +272,7 @@ const AddClint = ({ show, handleClose }) => {
                     style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
                     required
                   />
-                </Form.Group>
+                </FormGroup>
               </Col>
             </Row>
 
@@ -284,7 +296,7 @@ const AddClint = ({ show, handleClose }) => {
             </div>
           </Form>
         )}
-      </Modal.Body>
+      </ModalBody>
     </Modal>
   );
 };

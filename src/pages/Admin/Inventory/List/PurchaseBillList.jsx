@@ -31,7 +31,7 @@ const PurchaseBillList = () => {
   // Function to handle modal (replace with actual logic)
   const handleShowCreate = () => {
     console.log("Show create item modal");
-    navigate("/admin/inventory/purchaseReceivedCreate");
+    navigate("/admin/inventory/PurchaseBillCreate");
   };
 
 

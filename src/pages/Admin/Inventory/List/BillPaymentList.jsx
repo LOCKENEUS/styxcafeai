@@ -16,7 +16,7 @@ import gm1 from "/assets/inventory/mynaui_search.svg";
 import solar_export from "/assets/inventory/solar_export-linear.png";
 import add from "/assets/inventory/material-symbols_add-rounded.png";
 import DataTable from "react-data-table-component";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const BillPaymentList = () => {
     const [searchText, setSearchText] = useState("");
@@ -52,7 +52,7 @@ const BillPaymentList = () => {
       
           },
           {
-            name: "Order No",
+            name: "Bill No",
             selector: (row) => row.name,
             sortable: true,
             cell: (row) => (
@@ -80,18 +80,20 @@ const BillPaymentList = () => {
             ),
           },
           { name: "vendor", selector: (row) => row.vendor, sortable: true },
-          { name: " Status", selector: (row) => row.status, sortable: true },
-          { name: "Delivered Date", selector: (row) => row.deliveredDate, sortable: true },
+          { name: " mode", selector: (row) => row.mode, sortable: true },
+          { name: "Amount", selector: (row) => row.amount, sortable: true },
+          { name: "Transaction ID", selector: (row) => row.transactionID, sortable: true },
+          { name: " Time", selector: (row) => row.time, sortable: true },
       
         ];
       
       
         const itemsData = [
-          { sn: 1, name: "PR-190", vendor: "31", status: "Packed", deliveredDate: "21/10/2022" },
-          { sn: 2, name: "PR-191", vendor: "6", status: "Shipped", deliveredDate: "21/2/2022" },
-          { sn: 3, name: "PR-192", vendor: "21", status: "Packed", deliveredDate: "21/2/2022" },
-          { sn: 4, name: "PR-193", vendor: "1", status: "Shipped", deliveredDate: "21/12/2022" },
-          { sn: 5, name: "PR-198", vendor: "2", status: "Packed", deliveredDate: "21/12/2022" },
+          { sn: 1, name: "PB-190", vendor: "31", mode: "Packed", amount: "21" ,transactionID:"112",time:"5:59"},
+          { sn: 2, name: "PB-191", vendor: "6", mode: "Shipped", amount: "8" ,transactionID:"12",time:"5:59"},
+          { sn: 3, name: "PB-192", vendor: "21", mode: "Packed", amount: "18" ,transactionID:"17",time:"5:59"},
+          { sn: 4, name: "PB-193", vendor: "1", mode: "Shipped", amount: "89" ,transactionID:"11",time:"5:59"},
+          { sn: 5, name: "PB-198", vendor: "2", mode: "Packed", amount: "0" ,transactionID:"12",time:"5:59"},
       
         ];
       
@@ -102,13 +104,15 @@ const BillPaymentList = () => {
         };
       
           const handleShowDetails = () => {
-            navigate("/admin/inventory/PurchaseReceivedDetails");
+            navigate("/admin/inventory/PurchaseBillDetails");
           }
         const filteredItems = itemsData.filter((item) =>
           item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.vendor.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.deliveredDate.toLowerCase().includes(searchQuery.toLowerCase())
+          item.mode.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.amount.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.transactionID.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.time.toLowerCase().includes(searchQuery.toLowerCase())
         );
       
         return (
@@ -118,8 +122,9 @@ const BillPaymentList = () => {
                 <div style={{ top: "186px", fontSize: "18px" }}>
                   <Breadcrumb>
                     <BreadcrumbItem href="#">Home</BreadcrumbItem>
-                    <BreadcrumbItem href="#">Purchase </BreadcrumbItem>
-                    <BreadcrumbItem active>Purchase Received List</BreadcrumbItem>
+                    {/* <BreadcrumbItem href="#"><Link to="/admin/inventory/BillPaymentDetails">Purchase </Link> </BreadcrumbItem> */}
+                    <BreadcrumbItem href="#"><Link to="#">Purchase </Link> </BreadcrumbItem> 
+                    <BreadcrumbItem active>Bill Payment List</BreadcrumbItem>
                   </Breadcrumb>
                 </div>
               </Col>
@@ -139,7 +144,7 @@ const BillPaymentList = () => {
                         }}
                         className="m-0"
                       >
-                        Purchase Received List
+                        Bill Payment List
                       </h1>
                     </Col>
       
@@ -156,7 +161,7 @@ const BillPaymentList = () => {
                         <FormControl
                           type="search"
                           size="sm"
-                          placeholder="Search for Purchase Received " 
+                          placeholder="Search for Bill Payment " 
                           aria-label="Search in docs"
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)} 
@@ -168,7 +173,7 @@ const BillPaymentList = () => {
                           <InputGroupText
                             as="button"
                             className="border-0 bg-transparent"
-                            onClick={() => setSearchQuery("")}  // Clear searchQuery instead of searchText
+                            onClick={() => setSearchQuery("")} 
                           >
                             ✖
                           </InputGroupText>
@@ -184,14 +189,14 @@ const BillPaymentList = () => {
                         Export
                       </Button>
       
-                      <Button variant="primary" className="px-4 mx-2" size="sm" onClick={handleShowCreate}>
+                      {/* <Button variant="primary" className="px-4 mx-2" size="sm" onClick={handleShowCreate}>
                         <Image
                           className="me-2"
                           style={{ width: "22px", height: "22px" }}
                           src={add}
                         />
                         New PR
-                      </Button>
+                      </Button> */}
                     </Col>
       
       

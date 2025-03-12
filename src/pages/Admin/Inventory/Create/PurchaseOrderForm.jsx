@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Modal } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Modal, Breadcrumb, BreadcrumbItem } from "react-bootstrap";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import { FaRupeeSign, FaTrash, FaUpload } from "react-icons/fa";
 import { BiArrowToLeft, BiPlus } from "react-icons/bi";
@@ -7,6 +7,7 @@ import OffcanvesItems from "../Offcanvas/OffcanvesItems";
 import Tax from "../modal/Tax";
 import AddClint from "../modal/AddClint";
 import PaymentTermsModal from "../modal/PaymentTermsModal";
+import { Link } from "react-router-dom";
 
 const PurchaseOrderForm = () => {
   const [show, setShow] = useState(false);
@@ -59,6 +60,16 @@ const PurchaseOrderForm = () => {
 
   return (
       <Container fluid className="p-4">
+
+<Col sm={12} className="my-3">
+                <div style={{ top: "186px", fontSize: "18px" }}>
+                    <Breadcrumb>
+                        <BreadcrumbItem >Home</BreadcrumbItem>
+                        <BreadcrumbItem><Link to="/admin/inventory/purchase-order-list">Purchase Order List</Link></BreadcrumbItem>
+                        <BreadcrumbItem active>Purchase Order Create</BreadcrumbItem>
+                    </Breadcrumb>
+                </div>
+            </Col> 
         {/* Header Card */}
         <Card className="p-3 mb-3 shadow-sm">
           <Row className="align-items-center">

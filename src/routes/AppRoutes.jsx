@@ -99,6 +99,12 @@ import { PRCreate } from "../pages/Admin/Inventory/Create/prCreate";
 import { PurchaseReceivedDetails } from "../pages/Admin/Inventory/Details/purchaseReceived ";
 import { PurchaseBillDetailsAdmin } from "../pages/Admin/Inventory/Details/purchaseBill";
 import BookGames from "../pages/Admin/Booking/BookGames";
+import { PurchaseBillCreate } from "../pages/Admin/Inventory/Create/PBCreate";
+import { BillPaymentDetails } from "../pages/Admin/Inventory/Details/billPayment";
+
+
+
+
 
 
 const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
@@ -234,6 +240,8 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/inventory/purchaseReceivedCreate" element={<PRCreate />} />
           <Route path="/admin/inventory/PurchaseReceivedDetails" element={<PurchaseReceivedDetails />} />
           <Route path="/admin/inventory/PurchaseBillDetails" element={<PurchaseBillDetailsAdmin />} />
+          <Route path="/admin/inventory/PurchaseBillCreate" element={<PurchaseBillCreate />} />
+          <Route path="/admin/inventory/BillPaymentDetails" element={<BillPaymentDetails />} />
         </Route>
       </Route>
 

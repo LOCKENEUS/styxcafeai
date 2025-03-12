@@ -19,7 +19,7 @@ export const PurchaseBillDetailsAdmin =()=>{
                 <Col sm={12} className="my-3">
                     <div style={{ top: "186px", fontSize: "18px" }}>
                         <Breadcrumb>
-                            <BreadcrumbItem href="#">Home</BreadcrumbItem>
+                            <BreadcrumbItem >Home</BreadcrumbItem>
                             <BreadcrumbItem><Link to="/admin/inventory/purchase-bill-list">Purchase Bill  List</Link></BreadcrumbItem>
                             <BreadcrumbItem active>Purchase Bill Details</BreadcrumbItem>
                         </Breadcrumb>
@@ -43,9 +43,9 @@ export const PurchaseBillDetailsAdmin =()=>{
                                 <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                                     <Image src={sendMail} className="me-2" /> Send Email
                                 </Button>
-                                <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                                {/* <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                                     <Image src={editlogo} className="me-2" /> Edit
-                                </Button>
+                                </Button> */}
 
                             </Col>
                         </Row>
@@ -210,18 +210,18 @@ export const PurchaseBillDetailsAdmin =()=>{
                 
     <Col sm={12} className="my-2">
         <Card className=" p-3 shadow-sm">
-            <h5 className=" mb-3" style={{ fontSize:'20px' }}>Receive & Payment Details</h5>
+            <h5 className=" mb-3" style={{ fontSize:'20px' }}>Paid Payment Details</h5>
             <div className="table-responsive">
 
             <Table className="text-center align-middle">
             <thead >
               <tr  style={{ borderBottom: "2px solid #dee2e6",borderTop: "2px solid #dee2e6" }}>
                 <th className="fw-bold">#</th>
-                <th className="fw-bold">Receive  No</th>
-                <th className="fw-bold">Bill No</th>
-                <th className="fw-bold">Bill Date</th>
+                <th className="fw-bold">Date</th>
                 <th className="fw-bold">Amount</th>
-                <th className="fw-bold">Status</th>
+                <th className="fw-bold">Mode</th>
+                <th className="fw-bold">Transaction</th>
+               
                 
               </tr>
             </thead>
@@ -230,11 +230,13 @@ export const PurchaseBillDetailsAdmin =()=>{
                 <td>
                 1
                 </td>
-                <td>
-                PACK-005
-                </td>
+                
                 <td>Feb 13, 2025</td>
-                <td>Draft</td>
+                <td>5610</td>
+                <td>
+                online
+                </td>
+                <td>UPI</td>
                 
               </tr>
             </tbody>
@@ -243,6 +245,7 @@ export const PurchaseBillDetailsAdmin =()=>{
             </div>
         </Card>
     </Col>
+   
             </Row>
 
         </Container>
