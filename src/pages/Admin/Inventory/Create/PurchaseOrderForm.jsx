@@ -4,35 +4,21 @@ import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import { FaRupeeSign, FaTrash, FaUpload } from "react-icons/fa";
 import { BiArrowToLeft, BiPlus } from "react-icons/bi";
 import OffcanvesItems from "../Offcanvas/OffcanvesItems";
+import Tax from "../modal/Tax";
+import AddClint from "../modal/AddClint";
+import PaymentTermsModal from "../modal/PaymentTermsModal";
 
 const PurchaseOrderForm = () => {
   const [show, setShow] = useState(false);
   const [showClientList, setShowClientList] = useState(true);
-  const [newClient, setNewClient] = useState({
-      name: "",
-      email: "",
-      phone: "",
-      address: "",
-      country: "",
-      state: "",
-      city: "",
-      zipCode: ""
-  });
+ 
   const [showPaymentTerms, setShowPaymentTerms] = useState(false);
-  const [paymentTermsList, setPaymentTermsList] = useState([]);
-  const [newPaymentTerm, setNewPaymentTerm] = useState({
-      name: '',
-      days: ''
-  });
-  const [clients] = useState([
-      { id: '84', name: 'Praful Patel', email: 'yashl+2@lockene.us', phone: '019876543', city: 'Jalandhar Division' },
-      { id: '49', name: 'Amit', email: 'amit@gmail.com', phone: '4512789635', city: 'Calmar' },
-      // Add more sample clients as needed
-  ]);
-  const [searchTerm, setSearchTerm] = useState("");
+ 
+  
+  
   const [products, setProducts] = useState([
       {
-          id: 1,
+          id: 1,   
           item: '',
           quantity: '',
           price: '',
@@ -43,11 +29,7 @@ const PurchaseOrderForm = () => {
   const [showProductList, setShowProductList] = useState(false);
   const [showTaxModal, setShowTaxModal] = useState(false);
   const [taxList, setTaxList] = useState([]);
-  const [newTax, setNewTax] = useState({
-      name: '',
-      value: '',
-      description: ''
-  });
+ 
 
   const handleShow = () => setShow(true);
   const handleClose = () => {
@@ -55,31 +37,6 @@ const PurchaseOrderForm = () => {
       setShowClientList(true);
   };
 
-
-  const handleChange = (e) => {
-      setNewClient({ ...newClient, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-      e.preventDefault();
-      // Handle client creation logic here
-      handleClose();
-  };
-
-  const toggleView = () => {
-      setShowClientList(!showClientList);
-  };
-
-  const selectClient = (clientId) => {
-      // Handle client selection logic here
-      console.log("Selected client:", clientId);
-      handleClose();
-  };
-
-  // Filter clients based on search term
-  const filteredClients = clients.filter(client =>
-      client.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   // Add this new function to handle adding products
   const addProduct = () => {
@@ -93,458 +50,12 @@ const PurchaseOrderForm = () => {
       }]);
   };
 
-  // Add this new function to handle tax creation
-  const handleTaxSubmit = (e) => {
-      e.preventDefault();
-      setTaxList([...taxList, newTax]);
-      setNewTax({ name: '', value: '', description: '' });
-      setShowTaxModal(false);
-  };
 
-  // Updated Modal component
-  const modalContent = (
-      <Modal data-aos="fade-up" data-aos-duration="700" show={show} onHide={handleClose} size="lg">
-          <Modal.Header className="bg-info bg-opacity-10">
-              <Modal.Title>
-                  <b>{showClientList ? "Choose a client" : "Create New Client"}</b>
-              </Modal.Title>
-              <div className="d-flex pb-2 gap-2">
-                  <Button 
-                      variant="info" 
-                      size="sm" 
-                      onClick={toggleView}
-                  >
-                      {showClientList ? <BiPlus size={20}/> : <BiArrowToLeft size={20}/>}
-                  </Button>
-                  <Button 
-                      variant="close" 
-                      onClick={handleClose}
-                  />
-              </div>
-          </Modal.Header>
-          <Modal.Body>
-              {showClientList ? (
-                  <div>
-                      <h6>Choose a client for create quote?</h6>
-                      <Card className="shadow">
-                          <Card.Header className="p-2 bg-info bg-opacity-10">
-                              <Form.Control
-                                  size="sm"
-                                  type="search"
-                                  placeholder="Search by name..."
-                                  value={searchTerm}
-                                  onChange={(e) => setSearchTerm(e.target.value)}
-                              />
-                          </Card.Header>
-                          <Card.Body className="p-2">
-                              <Table responsive size="sm">
-                                  <thead>
-                                      <tr>
-                                          <th>Name</th>
-                                          <th>Email</th>
-                                          <th>Contact</th>
-                                          <th>City</th>
-                                          <th>Select</th>
-                                      </tr>
-                                  </thead>
-                                  <tbody>
-                                      {filteredClients.map(client => (
-                                          <tr key={client.id} style={{ cursor: 'pointer' }}>
-                                              <td>{client.name}</td>
-                                              <td>{client.email}</td>
-                                              <td>{client.phone}</td>
-                                              <td>{client.city}</td>
-                                              <td>
-                                                  <Button
-                                                      variant="info"
-                                                      size="sm"
-                                                      onClick={() => selectClient(client.id)}
-                                                  >
-                                                      <BiPlus size={20}/>
-                                                  </Button>
-                                              </td>
-                                          </tr>
-                                      ))}
-                                  </tbody>
-                              </Table>
-                          </Card.Body>
-                      </Card>
-                  </div>
-              ) : (
-                  <Form onSubmit={handleSubmit}>
-                      <Row className="mb-3">
-                          <Col md={6}>
-                              <Form.Group className="mb-3">
-                                  <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-                                      Full Name
-                                  </Form.Label>
-                                  <Form.Control
-                                      type="text"
-                                      name="name"
-                                      placeholder="Enter Full Name"
-                                      value={newClient.name}
-                                      onChange={handleChange}
-                                      className="rounded-2"
-                                      style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
-                                      required
-                                  />
-                              </Form.Group>
-                          </Col>
-                          <Col md={6}>
-                              <Form.Group className="mb-3">
-                                  <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-                                      Contact Number
-                                  </Form.Label>
-                                  <Form.Control
-                                      type="tel"
-                                      name="phone"
-                                      placeholder="Enter Contact Number"
-                                      value={newClient.phone}
-                                      onChange={handleChange}
-                                      className="rounded-2"
-                                      style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
-                                      required
-                                  />
-                              </Form.Group>
-                          </Col>
-                      </Row>
-
-                      <Row className="mb-3">
-                          <Col md={4}>
-                              <Form.Group className="mb-3">
-                                  <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-                                      Email
-                                  </Form.Label>
-                                  <Form.Control
-                                      type="email"
-                                      name="email"
-                                      placeholder="Enter Email Address"
-                                      value={newClient.email}
-                                      onChange={handleChange}
-                                      className="rounded-2"
-                                      style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
-                                      required
-                                  />
-                              </Form.Group>
-                          </Col>
-                          <Col md={4}>
-                              <Form.Group className="mb-3">
-                                  <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-                                      Address
-                                  </Form.Label>
-                                  <Form.Control
-                                      type="text"
-                                      name="address"
-                                      placeholder="Enter Address"
-                                      value={newClient.address}
-                                      onChange={handleChange}
-                                      className="rounded-2"
-                                      style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
-                                      required
-                                  />
-                              </Form.Group>
-                          </Col>
-                          <Col md={4}>
-                          <Form.Group className="mb-3">
-                              <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-                                  Gender
-                              </Form.Label>
-                              <Form.Select
-                                  name="gender"
-                                  value={newClient.gender}
-                                  onChange={handleChange}
-                                  className="rounded-2"
-                                  style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
-                                  required
-                              >
-                                  <option value="">Select Gender</option>
-                                  <option value="male">Male</option>
-                                  <option value="female">Female</option>
-                                  <option value="other">Other</option>
-                              </Form.Select>
-                          </Form.Group>
-                          </Col>
-                      </Row>
-
-                      <Row className="mb-3">
-                          <Col md={4}>
-                              <Form.Group className="mb-3">
-                                  <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-                                      Country
-                                  </Form.Label>
-                                  <Form.Control
-                                      type="text"
-                                      name="country"
-                                      placeholder="Enter Country"
-                                      value={newClient.country}
-                                      onChange={handleChange}
-                                      className="rounded-2"
-                                      style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
-                                      required
-                                  />
-                              </Form.Group>
-                          </Col>
-                          <Col md={4}>
-                              <Form.Group className="mb-3">
-                                  <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-                                      State
-                                  </Form.Label>
-                                  <Form.Control
-                                      type="text"
-                                      name="state"
-                                      placeholder="Enter State"
-                                      value={newClient.state}
-                                      onChange={handleChange}
-                                      className="rounded-2"
-                                      style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
-                                      required
-                                  />
-                              </Form.Group>
-                          </Col>
-                          <Col md={4}>
-                              <Form.Group className="mb-3">
-                                  <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-                                      City
-                                  </Form.Label>
-                                  <Form.Control
-                                      type="text"
-                                      name="city"
-                                      placeholder="Enter City"
-                                      value={newClient.city}
-                                      onChange={handleChange}
-                                      className="rounded-2"
-                                      style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
-                                      required
-                                  />
-                              </Form.Group>
-                          </Col>
-                      </Row>
-
-                      {/* <Row className="mb-3">
-                          <Col md={12}>
-                              <Form.Group className="mb-3">
-                                  <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-                                      Zip Code
-                                  </Form.Label>
-                                  <Form.Control
-                                      type="text"
-                                      name="zipCode"
-                                      placeholder="Enter Zip Code"
-                                      value={newClient.zipCode}
-                                      onChange={handleChange}
-                                      className="rounded-2"
-                                      style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
-                                      required
-                                  />
-                              </Form.Group>
-                          </Col>
-                      </Row> */}
-
-                      <div className="d-flex justify-content-end gap-2">
-                          <Button
-                              variant="outline-secondary"
-                              className="rounded-2"
-                              onClick={handleClose}
-                              style={{ padding: '8px 16px', fontSize: '0.9rem' }}
-                          >
-                              Cancel
-                          </Button>
-                          <Button
-                              variant="primary"
-                              type="submit"
-                              className="rounded-2"
-                              style={{ padding: '8px 16px', fontSize: '0.9rem' }}
-                          >
-                              Create Client
-                          </Button>
-                      </div>
-                  </Form>
-              )}
-          </Modal.Body>
-      </Modal>
-  );
 
   // Update the payment terms section in your existing JSX
-  const paymentTermsSection = (
-      <div className="d-flex flex-row align-items-center gap-2">
-          <Form.Select 
-              style={{border:"1px solid black", height:"44px", borderStyle:"dashed"}}
-          >
-              <option>Select Payment Terms</option>
-              {paymentTermsList.map((term, index) => (
-                  <option key={index} value={term.days}>
-                      {term.name} ({term.days} days)
-                  </option>
-              ))}
-          </Form.Select>
-          <Button 
-              style={{width:"50px", border:"1px solid black", height:"30px", borderStyle:"dashed"}} 
-              variant="outline-secondary" 
-              onClick={() => setShowPaymentTerms(true)}
-              className="end-0 top-0 h-100 px-2"
-          >
-              +
-          </Button>
-      </div>
-  );
 
   // Add the payment terms modal
-  const paymentTermsModal = (
-      <Modal show={showPaymentTerms} onHide={() => setShowPaymentTerms(false)}>
-          <Modal.Header className="bg-light">
-              <Modal.Title>Payment Terms</Modal.Title>
-              <Button 
-                  variant="link" 
-                  className="btn-close" 
-                  onClick={() => setShowPaymentTerms(false)}
-              />
-          </Modal.Header>
-          <Modal.Body>
-              <Form onSubmit={(e) => {
-                  e.preventDefault();
-                  setPaymentTermsList([...paymentTermsList, newPaymentTerm]);
-                  setNewPaymentTerm({ name: '', days: '' });
-                  setShowPaymentTerms(false);
-              }}>
-                  <Row>
-                      <Col md={6} className="mb-3">
-                          <Form.Group>
-                              <Form.Label htmlFor="term_name">Term name</Form.Label>
-                              <Form.Control
-                                  id="term_name"
-                                  name="name" 
-                                  type="text"
-                                  placeholder="Net 15"
-                                  value={newPaymentTerm.name}
-                                  onChange={(e) => setNewPaymentTerm({
-                                      ...newPaymentTerm,
-                                      name: e.target.value
-                                  })}
-                                  required
-                              />
-                          </Form.Group>
-                      </Col>
-                      <Col md={6} className="mb-3">
-                          <Form.Group>
-                              <Form.Label htmlFor="term_days">No of days</Form.Label>
-                              <Form.Control
-                                  id="term_days"
-                                  name="days"
-                                  type="number" 
-                                  placeholder="15"
-                                  value={newPaymentTerm.days}
-                                  onChange={(e) => {
-                                      const value = e.target.value.replace(/[^0-9]/g, '');
-                                      setNewPaymentTerm({
-                                          ...newPaymentTerm,
-                                          days: value
-                                      });
-                                  }}
-                                  required
-                              />
-                          </Form.Group>
-                      </Col>
-                      <Col xs={12}>
-                          <Button 
-                              variant="info"
-                              className="text-white"
-                              type="submit"
-                          >
-                              Submit
-                          </Button>
-                      </Col>
-                  </Row>
-              </Form>
-          </Modal.Body>
-      </Modal>
-  );
 
-  // Add the tax modal component
-  const taxModal = (
-      <Modal show={showTaxModal} onHide={() => setShowTaxModal(false)}>
-          <Modal.Header className="bg-light">
-              <Modal.Title>Create Custom Tax</Modal.Title>
-              <Button 
-                  variant="link" 
-                  className="btn-close" 
-                  onClick={() => setShowTaxModal(false)}
-              />
-          </Modal.Header>
-          <Modal.Body>
-              <Form onSubmit={handleTaxSubmit}>
-                  <Row>
-                      <Col sm={6} className="mb-3">
-                          <Form.Group>
-                              <Form.Label htmlFor="tax_name">Tax name</Form.Label>
-                              <Form.Control
-                                  id="tax_name"
-                                  size="sm"
-                                  type="text"
-                                  placeholder="Tax name"
-                                  value={newTax.name}
-                                  onChange={(e) => setNewTax({
-                                      ...newTax,
-                                      name: e.target.value
-                                  })}
-                                  required
-                              />
-                          </Form.Group>
-                      </Col>
-                      <Col sm={6} className="mb-3">
-                          <Form.Group>
-                              <Form.Label htmlFor="tax_value">Tax Value</Form.Label>
-                              <InputGroup size="sm">
-                                  <Form.Control
-                                      id="tax_value"
-                                      type="tel"
-                                      placeholder="0.00"
-                                      value={newTax.value}
-                                      onChange={(e) => {
-                                          const value = e.target.value.replace(/[^0-9]/g, '');
-                                          setNewTax({
-                                              ...newTax,
-                                              value: value
-                                          });
-                                      }}
-                                      maxLength={2}
-                                      required
-                                  />
-                                  <InputGroup.Text>%</InputGroup.Text>
-                              </InputGroup>
-                          </Form.Group>
-                      </Col>
-                      <Col sm={12} className="mb-3">
-                          <Form.Group>
-                              <Form.Label htmlFor="tax_description">Tax Description</Form.Label>
-                              <Form.Control
-                                  id="tax_description"
-                                  size="sm"
-                                  type="text"
-                                  placeholder="Custom tax description"
-                                  value={newTax.description}
-                                  onChange={(e) => setNewTax({
-                                      ...newTax,
-                                      description: e.target.value
-                                  })}
-                                  required
-                              />
-                          </Form.Group>
-                      </Col>
-                      <Col xs={12}>
-                          <Button 
-                              variant="info"
-                              size="sm"
-                              className="text-white"
-                              type="submit"
-                          >
-                              Create Tax
-                          </Button>
-                      </Col>
-                  </Row>
-              </Form>
-          </Modal.Body>
-      </Modal>
-  );
 
   return (
       <Container fluid className="p-4">
@@ -631,8 +142,26 @@ const PurchaseOrderForm = () => {
                   <Form.Control style={{  border:"1px solid black", height:"44px" , borderStyle:"dashed"}} placeholder="Expected Delivery" />
                   <Button style={{width:"50px" , border:"1px solid black", height:"30px" , borderStyle:"dashed"}} variant="outline-secondary" className=" end-0 top-0 h-100 px-2">+</Button>
                 </div>
-                
-                {paymentTermsSection}
+                <div className="d-flex flex-row align-items-center gap-2">
+          <Form.Select 
+              style={{border:"1px solid black", height:"44px", borderStyle:"dashed"}}
+          >
+              <option>Select Payment Terms</option>
+              {paymentTermsList.map((term, index) => (
+                  <option key={index} value={term.days}>
+                      {term.name} ({term.days} days)
+                  </option>
+              ))}
+          </Form.Select>
+          <Button 
+              style={{width:"50px", border:"1px solid black", height:"30px", borderStyle:"dashed"}} 
+              variant="outline-secondary" 
+              onClick={() => setShowPaymentTerms(true)}
+              className="end-0 top-0 h-100 px-2"
+          >
+              +
+          </Button>
+      </div>
                 <Form.Control  style={{  border:"1px solid black", height:"44px" }}  placeholder="Enter Reference" />
                 <Form.Control style={{  border:"1px solid black", height:"44px" }}  placeholder="Enter Shipment Preference" />
   
@@ -877,10 +406,17 @@ const PurchaseOrderForm = () => {
           </Row>
         </Card>
         
-        {modalContent}
+        <AddClint
+          show={show}
+          handleClose={handleClose}
+        />
         {showProductList && <OffcanvesItems show={showProductList} handleClose={() => setShowProductList(false)} />}
-        {paymentTermsModal}
-        {taxModal}
+        <PaymentTermsModal
+          show={showPaymentTerms}
+          handleClose={() => setShowPaymentTerms(false)}
+        
+        />
+        <Tax show={showTaxModal} handleClose={() => setShowTaxModal(false)} />
       </Container>
     );
 };

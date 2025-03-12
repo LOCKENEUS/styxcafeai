@@ -44,6 +44,20 @@ export const addItem = createAsyncThunk(
   }
 );
 
+// Update an item
+export const updateItem = createAsyncThunk(
+  'items/updateItem',
+  async ({ id, itemData }, thunkAPI) => {
+    try {
+      const response = await axios.put(`${BASE_URL}/admin/inventory/item/${id}`, itemData);
+      toast.success('Item updated successfully!');
+      return response.data.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+    }
+  }
+);
+
 // Delete an item
 export const deleteItem = createAsyncThunk(
   'items/deleteItem',
@@ -118,6 +132,28 @@ const itemsSlice = createSlice({
         state.items = state.items.filter((item) => item._id !== action.payload);
       })
       .addCase(deleteItem.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Update item
+      .addCase(updateItem.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateItem.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedItem = action.payload;
+        // Find the item in the array and update it
+        const index = state.items.findIndex(item => item._id === updatedItem._id);
+        if (index !== -1) {
+          state.items[index] = updatedItem;
+        }
+        // Also update selectedItem if it's the same item
+        if (state.selectedItem && state.selectedItem._id === updatedItem._id) {
+          state.selectedItem = updatedItem;
+        }
+      })
+      .addCase(updateItem.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

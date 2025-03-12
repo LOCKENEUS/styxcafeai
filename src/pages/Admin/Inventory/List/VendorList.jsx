@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Table, Button, Form, InputGroup, Pagination, Container, Row,  Col, Breadcrumb, FormControl } from "react-bootstrap";
+import { Table, Button, Form, InputGroup, Pagination, Container, Row, Col, Breadcrumb, FormControl, Spinner } from "react-bootstrap";
 import { FaFileExport, FaSearch } from "react-icons/fa";
 import { BsPlusLg } from "react-icons/bs";
 import { IoAdd } from "react-icons/io5";
@@ -7,34 +7,63 @@ import { FaEdit } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import gm1 from '/assets/inventory/mynaui_search.svg'
 import solar_export from "/assets/inventory/solar_export-linear.png";
-
-
+import { useDispatch, useSelector } from "react-redux";
+import { getVendors, deleteVendor } from "../../../../store/AdminSlice/Inventory/VendorSlice";
+import { toast } from "react-toastify";
 
 const avatarColors = ['#0062FF', '#FF6B6B', '#4CAF50', '#9C27B0', '#FF9800', '#795548', '#607D8B', '#E91E63'];
-
-const dummyVendors = [
-  { id: 1, name: "Shardul Thakur", email: "shardulthakur12@gmail.com", company: "Appearance Pvt Ltd", billing: "Mahal Nagpur, Maharashtra", shipping: "Andheri West Mumbai, (MH)", avatar: "S" },
-  { id: 2, name: "Pravin Reddy", email: "pravinreddy12@gmail.com", company: "Regular Mineral Pvt Ltd", billing: "Mahal Nagpur, Maharashtra", shipping: "Andheri West Mumbai, (MH)", avatar: "P" },
-  { id: 3, name: "Zein Malik", email: "zeinmalik12@gmail.com", company: "Stroke Frame Pvt Ltd", billing: "Mahal Nagpur, Maharashtra", shipping: "Andheri West Mumbai, (MH)", avatar: "Z" },
-  { id: 4, name: "Elivish Rathore", email: "elivishrathore12@gmail.com", company: "Snacks Food Pvt Ltd", billing: "Mahal Nagpur, Maharashtra", shipping: "Andheri West Mumbai, (MH)", avatar: "E" },
-  { id: 5, name: "Ashok Bhatia", email: "ahokbhatia12@gmail.com", company: "Pool Pvt Ltd", billing: "Mahal Nagpur, Maharashtra", shipping: "Andheri West Mumbai, (MH)", avatar: "A" },
-  { id: 6, name: "Shardul Thakur", email: "shardulthakur12@gmail.com", company: "Appearance Pvt Ltd", billing: "Mahal Nagpur, Maharashtra", shipping: "Andheri West Mumbai, (MH)", avatar: "K" },
-  { id: 7, name: "Shardul Thakur", email: "shardulthakur12@gmail.com", company: "Appearance Pvt Ltd", billing: "Mahal Nagpur, Maharashtra", shipping: "Andheri West Mumbai, (MH)", avatar: "R" },
-  { id: 8, name: "Shardul Thakur", email: "shardulthakur12@gmail.com", company: "Appearance Pvt Ltd", billing: "Mahal Nagpur, Maharashtra", shipping: "Andheri West Mumbai, (MH)", avatar: "M" },
-];
 
 const VendorList = () => {
   const [search, setSearch] = useState("");
   const [activeDropdownId, setActiveDropdownId] = useState(null);
   const editDropdownRef = useRef(null);
+  const dispatch = useDispatch();
+  const { vendors, loading, error } = useSelector(state => state.vendors);
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const cafeId = user?._id;  
+  useEffect(() => {
+    dispatch(getVendors(cafeId));
+  }, [dispatch, cafeId]);
+  
+  useEffect(() => {
+    // Close dropdown when clicking outside
+    const handleClickOutside = (event) => {
+      if (editDropdownRef.current && !editDropdownRef.current.contains(event.target)) {
+        setActiveDropdownId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const getRandomColor = (index) => {
     return avatarColors[index % avatarColors.length];
   };
+  
+  const getInitials = (name) => {
+    return name ? name.charAt(0).toUpperCase() : "?";
+  };
+  
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this vendor?")) {
+      dispatch(deleteVendor(id))
+        .unwrap()
+        .then(() => {
+          setActiveDropdownId(null);
+        })
+        .catch(error => {
+          toast.error(error || "Failed to delete vendor");
+        });
+    }
+  };
+  
   const handleExport = () => {
     const csvHeader = "S/N,Vendor Name,Email,Company,Billing Address,Shipping Address\n";
-    const csvRows = dummyVendors.map((vendor, index) =>
-      `${index + 1},${vendor.name},${vendor.email},${vendor.company},${vendor.billing},${vendor.shipping}`
+    const csvRows = filteredVendors.map((vendor, index) =>
+      `${index + 1},${vendor.name},${vendor.email},${vendor.company},${vendor.billingAddress},${vendor.shippingAddress}`
     );
   
     const csvContent = csvHeader + csvRows.join("\n");
@@ -55,6 +84,12 @@ const VendorList = () => {
     URL.revokeObjectURL(url);
   };
   
+  // Filter vendors based on search
+  const filteredVendors = vendors?.filter(vendor => 
+    vendor.name?.toLowerCase().includes(search.toLowerCase()) ||
+    vendor.email?.toLowerCase().includes(search.toLowerCase()) ||
+    vendor.company?.toLowerCase().includes(search.toLowerCase())
+  ) || [];
 
   return (
     <Container data-aos="fade-right" data-aos-duration="500" fluid className="mt-4 min-vh-100">
@@ -121,104 +156,124 @@ const VendorList = () => {
             </tr>
           </thead>
           <tbody style={{backgroundColor:"#F5F5F5"}}>
-            {dummyVendors.map((vendor, index) => (
-              <tr key={vendor.id}>
-                <td style={{
-                  padding: 'clamp(10px, 2vw, 15px)',
-                  border: 'none',
-                }}>{index + 1}</td>
-                <td style={{
-                  padding: 'clamp(10px, 2vw, 15px)',
-                  border: 'none',
-                }}>
-                  <div className="d-flex gap-2 align-items-center">
-                    <div style={{
-                      width: '40px',
-                      height: '40px',
-                      borderRadius: '50%',
-                      backgroundColor: getRandomColor(index),
-                      color: 'white',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      marginRight: '10px',
-                    }}>
-                      {vendor.avatar}
-                    </div>
-                    <div>
-                     <Link to={'/admin/inventory/vendor-details'} className="fw-bold text-primary">{vendor.name}</Link><br />
-                      <small>{vendor.email}</small>
-                    </div>
-                  </div>
+            {loading ? (
+              <tr>
+                <td colSpan="6" className="text-center py-4">
+                  <Spinner animation="border" variant="primary" />
                 </td>
-                <td style={{
-                  padding: 'clamp(10px, 2vw, 15px)',
-                  border: 'none',
-                }}>{vendor.company}</td>
-                <td style={{
-                  padding: 'clamp(10px, 2vw, 15px)',
-                  border: 'none',
-                }}>{vendor.billing}</td>
-                <td style={{
-                  padding: 'clamp(10px, 2vw, 15px)',
-                  border: 'none',
-                }}>{vendor.shipping}</td>
-                <td style={{
-                  padding: 'clamp(10px, 2vw, 15px)',
-                  border: 'none',
-                  position: 'relative',
-                }}>
-                  <Button
-                    variant="link"
-                    className="text-primary"
-                    onClick={() => setActiveDropdownId(
-                      activeDropdownId === vendor.id ? null : vendor.id
-                    )}
-                  >
-                    <FaEdit style={{ color: '#0062FF', fontSize: '1.2rem' }} />
-                  </Button>
-
-                  {activeDropdownId === vendor.id && (
-                    <div
-                      ref={editDropdownRef}
-                      style={{
-                        position: 'absolute',
-                        right: '0',
-                        top: '100%',
-                        backgroundColor: 'white',
-                        boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-                        borderRadius: '4px',
-                        zIndex: 1000,
-                        minWidth: 'clamp(120px, 30vw, 150px)',
-                      }}
+              </tr>
+            ) : error ? (
+              <tr>
+                <td colSpan="6" className="text-center py-4 text-danger">
+                  {error}
+                </td>
+              </tr>
+            ) : filteredVendors.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="text-center py-4">
+                  No vendors found
+                </td>
+              </tr>
+            ) : (
+              filteredVendors.map((vendor, index) => (
+                <tr key={vendor._id}>
+                  <td style={{
+                    padding: 'clamp(10px, 2vw, 15px)',
+                    border: 'none',
+                  }}>{index + 1}</td>
+                  <td style={{
+                    padding: 'clamp(10px, 2vw, 15px)',
+                    border: 'none',
+                  }}>
+                    <div className="d-flex gap-2 align-items-center">
+                      <div style={{
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '50%',
+                        backgroundColor: getRandomColor(index),
+                        color: 'white',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginRight: '10px',
+                      }}>
+                        {getInitials(vendor.name)}
+                      </div>
+                      <div>
+                        <Link to={`/admin/inventory/vendor-details/${vendor._id}`} className="fw-bold text-primary">{vendor.name}</Link><br />
+                        <small>{vendor.email}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td style={{
+                    padding: 'clamp(10px, 2vw, 15px)',
+                    border: 'none',
+                  }}>{vendor.company}</td>
+                  <td style={{
+                    padding: 'clamp(10px, 2vw, 15px)',
+                    border: 'none',
+                  }}>{vendor.billingAddress}</td>
+                  <td style={{
+                    padding: 'clamp(10px, 2vw, 15px)',
+                    border: 'none',
+                  }}>{vendor.shippingAddress}</td>
+                  <td style={{
+                    padding: 'clamp(10px, 2vw, 15px)',
+                    border: 'none',
+                    position: 'relative',
+                  }}>
+                    <Button
+                      variant="link"
+                      className="text-primary"
+                      onClick={() => setActiveDropdownId(
+                        activeDropdownId === vendor._id ? null : vendor._id
+                      )}
                     >
-                      <Link 
-                        to={`/admin/inventory/edit-vendor/${vendor.id}`}
-                        style={{ textDecoration: 'none' }}
+                      <FaEdit style={{ color: '#0062FF', fontSize: '1.2rem' }} />
+                    </Button>
+
+                    {activeDropdownId === vendor._id && (
+                      <div
+                        ref={editDropdownRef}
+                        style={{
+                          position: 'absolute',
+                          right: '0',
+                          top: '100%',
+                          backgroundColor: 'white',
+                          boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                          borderRadius: '4px',
+                          zIndex: 1000,
+                          minWidth: 'clamp(120px, 30vw, 150px)',
+                        }}
                       >
+                        <Link 
+                          to={`/admin/inventory/vendors/edit/${vendor._id}`}
+                          style={{ textDecoration: 'none' }}
+                        >
+                          <div style={{
+                            padding: 'clamp(8px, 2vw, 10px)',
+                            cursor: 'pointer',
+                            color: '#0062FF',
+                            borderBottom: '1px solid #eee',
+                          }}>
+                            Edit Vendor
+                          </div>
+                        </Link>
                         <div style={{
                           padding: 'clamp(8px, 2vw, 10px)',
                           cursor: 'pointer',
-                          color: '#0062FF',
-                          borderBottom: '1px solid #eee',
-                        }}>
-                          Edit Vendor
+                          color: '#FF0000',
+                        }}
+                          onClick={() => handleDelete(vendor._id)}
+                        >
+                          Delete Vendor
                         </div>
-                      </Link>
-                      <div style={{
-                        padding: 'clamp(8px, 2vw, 10px)',
-                        cursor: 'pointer',
-                        color: '#FF0000',
-                      }}
-                        onClick={() => {/* handle delete */}}
-                      >
-                        Delete Vendor
                       </div>
-                    </div>
-                  )}
-                </td>
-              </tr>
-            ))}
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </Table>
       <Row className="justify-content-end mt-3">

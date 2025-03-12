@@ -1,11 +1,30 @@
-import React from "react";
-import { Container, Row, Col, Card, Image } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Container, Row, Col, Card, Image, Nav } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams, useNavigate } from "react-router-dom";
+import { getVendorById } from "../../../../store/AdminSlice/Inventory/VendorSlice";
 import profileBg from "/assets/Admin/profileDetails/profileBg.png";
 import { LuPencil } from "react-icons/lu";
 import pdflogo from "/assets/Admin/profileDetails/pdflogo.svg";
 import profileImg from "/assets/Admin/profileDetails/ProfileImg.png";
 
 const VendorDetails = () => {
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("billing");
+  const dispatch = useDispatch();
+  const { id } = useParams();
+  const { selectedVendor, loading, error } = useSelector((state) => state.vendors);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(getVendorById(id));
+    }
+  }, [dispatch, id]);
+
+  if (loading) return <div className="text-center my-5">Loading...</div>;
+  if (error) return <div className="text-center my-5 text-danger">{error}</div>;
+  if (!selectedVendor) return <div className="text-center my-5">No vendor data found</div>;
+
   return (
     <Container data-aos="fade-down" data-aos-duration="700" className="mt-4">
       <Row>
@@ -44,50 +63,83 @@ const VendorDetails = () => {
                       width: '40px', height: '40px', padding: 0,
                       right: "0px"
                     }}
+                    onClick={() => navigate(`/admin/inventory/vendors/edit/${id}`)}
                   >
                     <LuPencil />
                   </button>
                 </div>
                 <div style={{ position: "relative", bottom: "2rem" }}>
-                  <h5>Shardul Thakur</h5>
-                  <p>shardulthakur12@gmail.com</p>
+                  <h5>{selectedVendor.name}</h5>
+                  <p>{selectedVendor.email}</p>
                 </div>
               </div>
             </div>
 
             {/* Profile Info */}
             <div className="d-flex flex-column text-start gap-2 mt-3">
-              <p><strong>Email Id:</strong> rohanstyxcafe@gmail.com</p>
-              <p><strong>Phone Number:</strong> 9874563210</p>
-              <p><strong>Location:</strong> Nagpur</p>
-              <p><strong>Company:</strong> Appearance Pvt Ltd</p>
-              <p><strong>Bank:</strong> SBI India</p>
-              <p><strong>Account No.:</strong> 24578965230</p>
+              <p><strong>Email Id:</strong> {selectedVendor.email}</p>
+              <p><strong>Phone Number:</strong> {selectedVendor.phone}</p>
+              <p><strong>Location:</strong> {selectedVendor.city1}</p>
+              <p><strong>Company:</strong> {selectedVendor.company}</p>
+              <p><strong>Bank:</strong> {selectedVendor.bank || "Not specified"}</p>
+              <p><strong>Account No.:</strong> {selectedVendor.accountNo}</p>
             </div>
           </Card>
         </Col>
 
-        {/* Billing Details */}
+        {/* Address Details with Tabs */}
         <Col md={8}>
           <Card className="p-3 mb-3">
-            <h5>Billing Details</h5>
-            <div className="d-flex flex-column gap-2">
-              <p><strong>Address:</strong> 2 Smithtown Rd, Morgantown, West Virginia, 26508, United States</p>
-              <p><strong>City:</strong> Morgantown</p>
-              <p><strong>State:</strong> West Virginia</p>
-              <p><strong>Country:</strong> United States</p>
-              <p><strong>Pincode:</strong> 47811054</p>
-              <p><strong>Latitude:</strong> 21.1475</p>
-              <p><strong>Longitude:</strong> 79.1199</p>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <Nav variant="tabs">
+                <Nav.Item>
+                  <Nav.Link 
+                    className={activeTab === "billing" ? "active" : ""} 
+                    onClick={() => setActiveTab("billing")}
+                  >
+                    Billing Address
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link 
+                    className={activeTab === "shipping" ? "active" : ""} 
+                    onClick={() => setActiveTab("shipping")}
+                  >
+                    Shipping Address
+                  </Nav.Link>
+                </Nav.Item>
+              </Nav>
             </div>
+
+            {activeTab === "billing" ? (
+              <div className="d-flex flex-column gap-2">
+                <p><strong>Address:</strong> {selectedVendor.billingAddress}</p>
+                <p><strong>City:</strong> {selectedVendor.city1}</p>
+                <p><strong>State:</strong> {selectedVendor.state1}</p>
+                <p><strong>Country:</strong> {selectedVendor.country1}</p>
+                <p><strong>Pincode:</strong> {selectedVendor.pincode1}</p>
+                <p><strong>Latitude:</strong> {selectedVendor.latitude1}</p>
+                <p><strong>Longitude:</strong> {selectedVendor.longitude1}</p>
+              </div>
+            ) : (
+              <div className="d-flex flex-column gap-2">
+                <p><strong>Address:</strong> {selectedVendor.shippingAddress}</p>
+                <p><strong>City:</strong> {selectedVendor.city2}</p>
+                <p><strong>State:</strong> {selectedVendor.state2}</p>
+                <p><strong>Country:</strong> {selectedVendor.country2}</p>
+                <p><strong>Pincode:</strong> {selectedVendor.pincode2}</p>
+                <p><strong>Latitude:</strong> {selectedVendor.latitude2}</p>
+                <p><strong>Longitude:</strong> {selectedVendor.longitude2}</p>
+              </div>
+            )}
           </Card>
 
           {/* Other Documents */}
           <Card className="p-3 mb-3">
             <h5>Other Documents</h5>
             <div className="d-flex flex-wrap align-items-center justify-content-around gap-2">
-              <p><strong>Government Id:</strong> 5768RT86T084PZ</p>
-              <p><strong>Document:</strong> <img src={pdflogo} alt="pdflogo" /> <a href="#">Documents.pdf</a></p>
+              <p><strong>Government Id:</strong> {selectedVendor.govtId}</p>
+              <p><strong>Document:</strong> <img src={pdflogo} alt="pdflogo" /> <a href="#">{selectedVendor.documents}</a></p>
             </div>
           </Card>
 
@@ -95,12 +147,11 @@ const VendorDetails = () => {
           <Card className="p-3">
             <h5>Bank Details</h5>
             <div className="d-flex flex-wrap justify-content-around gap-2">
-              <p><strong>Bank Name:</strong> State Bank of India</p>
-              <p><strong>Account Number:</strong> 24578965230</p>
-              <p><strong>IFSC/SWIFT/BIC:</strong> SBI0145720124</p>
-              <p><strong>Account Type:</strong> Savings</p>
-              <p><strong>Created At:</strong> 2025-02-07 10:54:16</p>
-              <p><strong>Modified At:</strong> 2025-02-07</p>
+              <p><strong>Account Number:</strong> {selectedVendor.accountNo}</p>
+              <p><strong>IFSC/SWIFT/BIC:</strong> {selectedVendor.ifsc}</p>
+              <p><strong>Account Type:</strong> {selectedVendor.accountType}</p>
+              <p><strong>Created At:</strong> {new Date(selectedVendor.createdAt).toLocaleString()}</p>
+              <p><strong>Modified At:</strong> {new Date(selectedVendor.updatedAt).toLocaleDateString()}</p>
             </div>
           </Card>
         </Col>

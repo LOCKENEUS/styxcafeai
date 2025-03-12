@@ -1,8 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormControl, FormGroup, FormSelect, Image, Row } from "react-bootstrap"
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addVendor, getVendorById, updateVendor } from "../../../../store/AdminSlice/Inventory/VendorSlice";
+import GooglePlacesAutocomplete from "react-google-places-autocomplete";
+import axios from "axios";
+import { FaCopy } from "react-icons/fa";
 
 export const CreateVendorForm = () => {
+    const { id } = useParams();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { loading, selectedVendor } = useSelector(state => state.vendors);
     const [formData, setFormData] = useState({
         vendorName: '',
         companyName: '',
@@ -19,14 +28,94 @@ export const CreateVendorForm = () => {
         shippingcity: '',
         shippingzipcode: '',
         governmentid: '',
-        documentimage: '',
+        image: null,
         accounttype: '',
         bankname: '',
         accountnumber: '',
         ifsccode: '',
-        
+        billingCoordinates: { latitude: '', longitude: '' },
+        shippingCoordinates: { latitude: '', longitude: '' },
     })
     const [imagePreview, setImagePreview] = useState('https://fsm.lockene.net/assets/Web-Fsm/images/avtar/3.jpg');
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    const cafeId = user?._id;
+
+    useEffect(() => {
+        if (id) {
+            dispatch(getVendorById(id));
+        }
+    }, [id, dispatch]);
+
+    useEffect(() => {
+        if (selectedVendor) {
+            setFormData({
+                vendorName: selectedVendor.name,
+                companyName: selectedVendor.company,
+                vendorEmail: selectedVendor.email,
+                vendorPhone: selectedVendor.phone,
+                address: selectedVendor.billingAddress,
+                country: selectedVendor.country1,
+                state: selectedVendor.state1,
+                city: selectedVendor.city1,
+                zipcode: selectedVendor.pincode1,
+                shippingAddress: selectedVendor.shippingAddress,
+                shippingcountry: selectedVendor.country2,
+                shippingstate: selectedVendor.state2,
+                shippingcity: selectedVendor.city2,
+                shippingzipcode: selectedVendor.pincode2,
+                governmentid: selectedVendor.govtId,
+                image: null,
+                accounttype: selectedVendor.accountType,
+                bankname: selectedVendor.bankName,
+                accountnumber: selectedVendor.accountNo,
+                ifsccode: selectedVendor.ifsc,
+                billingCoordinates: {
+                    latitude: selectedVendor.latitude1,
+                    longitude: selectedVendor.longitude1
+                },
+                shippingCoordinates: {
+                    latitude: selectedVendor.latitude2,
+                    longitude: selectedVendor.longitude2
+                },
+            });
+            if(selectedVendor.image){
+                setImagePreview(selectedVendor.image);
+            }
+        }
+        
+    }, [selectedVendor]);
+
+    useEffect(() => {
+        if (!id) {
+            // Reset form data when creating a new vendor
+            setFormData({
+                vendorName: '',
+                companyName: '',
+                vendorEmail: '',
+                vendorPhone: '',
+                address: '',
+                country: '',
+                state: '',
+                city: '',
+                zipcode: '',
+                shippingAddress: '',
+                shippingcountry: '',
+                shippingstate: '',
+                shippingcity: '',
+                shippingzipcode: '',
+                governmentid: '',
+                image: null,
+                accounttype: '',
+                bankname: '',
+                accountnumber: '',
+                ifsccode: '',
+                billingCoordinates: { latitude: '', longitude: '' },
+                shippingCoordinates: { latitude: '', longitude: '' },
+            });
+            setImagePreview('https://fsm.lockene.net/assets/Web-Fsm/images/avtar/3.jpg');
+        }
+    }, [id]);
+
     const handleChange = (e) => {
         const { id, value } = e.target;
         setFormData((prev) => ({
@@ -35,14 +124,193 @@ export const CreateVendorForm = () => {
         }));
     };
     const handleImageChange = (event) => {
-        if (event.target.files.length) {
-            setImagePreview(URL.createObjectURL(event.target.files[0]));
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+                setFormData((prev) => ({ ...prev, image: file }));
+            };
+            reader.readAsDataURL(file);
         }
+    };
+
+    const copyBillingToShipping = () => {
+        setFormData(prev => ({
+            ...prev,
+            shippingAddress: prev.address,
+            shippingcountry: prev.country,
+            shippingstate: prev.state,
+            shippingcity: prev.city,
+            shippingzipcode: prev.zipcode
+        }));
+    };
+
+    const handleBillingAddressSelect = (place) => {
+        const placeId = place.value.place_id;
+        const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+        
+        axios
+            .get(
+                `https://maps.googleapis.com/maps/api/geocode/json?place_id=${placeId}&key=${apiKey}`
+            )
+            .then((res) => {
+                if (!res.data.results || res.data.results.length === 0) {
+                    throw new Error('No address details found for this location');
+                }
+                
+                const result = res.data.results[0];
+                const addressComponents = result.address_components;
+                const location = result.geometry.location;
+                
+                let city = "";
+                let state = "";
+                let country = "";
+                let zipCode = "";
+                
+                addressComponents.forEach((component) => {
+                    const types = component.types;
+                    
+                    if (types.includes("locality")) {
+                        city = component.long_name;
+                    } else if (types.includes("administrative_area_level_1")) {
+                        state = component.long_name;
+                    } else if (types.includes("country")) {
+                        country = component.long_name;
+                    } else if (types.includes("postal_code")) {
+                        zipCode = component.long_name;
+                    }
+                });
+                
+                const formattedAddress = result.formatted_address || place.label;
+                
+                setFormData(prev => ({
+                    ...prev,
+                    address: formattedAddress,
+                    city: city || prev.city,
+                    state: state || prev.state,
+                    country: country || prev.country,
+                    zipcode: zipCode || prev.zipcode,
+                    billingCoordinates: { latitude: location.lat, longitude: location.lng }
+                }));
+            })
+            .catch((err) => {
+                console.error("Error fetching place details:", err);
+            });
+    };
+
+    const handleShippingAddressSelect = (place) => {
+        const placeId = place.value.place_id;
+        const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+        
+        axios
+            .get(
+                `https://maps.googleapis.com/maps/api/geocode/json?place_id=${placeId}&key=${apiKey}`
+            )
+            .then((res) => {
+                if (!res.data.results || res.data.results.length === 0) {
+                    throw new Error('No address details found for this location');
+                }
+                
+                const result = res.data.results[0];
+                const addressComponents = result.address_components;
+                const location = result.geometry.location;
+                
+                let city = "";
+                let state = "";
+                let country = "";
+                let zipCode = "";
+                
+                addressComponents.forEach((component) => {
+                    const types = component.types;
+                    
+                    if (types.includes("locality")) {
+                        city = component.long_name;
+                    } else if (types.includes("administrative_area_level_1")) {
+                        state = component.long_name;
+                    } else if (types.includes("country")) {
+                        country = component.long_name;
+                    } else if (types.includes("postal_code")) {
+                        zipCode = component.long_name;
+                    }
+                });
+                
+                const formattedAddress = result.formatted_address || place.label;
+                
+                setFormData(prev => ({
+                    ...prev,
+                    shippingAddress: formattedAddress,
+                    shippingcity: city || prev.shippingcity,
+                    shippingstate: state || prev.shippingstate,
+                    shippingcountry: country || prev.shippingcountry,
+                    shippingzipcode: zipCode || prev.shippingzipcode,
+                    shippingCoordinates: { latitude: location.lat, longitude: location.lng }
+                }));
+            })
+            .catch((err) => {
+                console.error("Error fetching place details:", err);
+            });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(formData);
+        
+        // Create FormData object for file upload
+        const formDataToSend = new FormData();
+        
+        // Add all the text fields
+        formDataToSend.append('name', formData.vendorName);
+        formDataToSend.append('email', formData.vendorEmail);
+        formDataToSend.append('company', formData.companyName);
+        formDataToSend.append('phone', formData.vendorPhone);
+        formDataToSend.append('billingAddress', formData.address);
+        formDataToSend.append('shippingAddress', formData.shippingAddress);
+        formDataToSend.append('country1', formData.country);
+        formDataToSend.append('country2', formData.shippingcountry);
+        formDataToSend.append('state1', formData.state);
+        formDataToSend.append('state2', formData.shippingstate);
+        formDataToSend.append('city1', formData.city);
+        formDataToSend.append('city2', formData.shippingcity);
+        formDataToSend.append('pincode1', formData.zipcode || 0);
+        formDataToSend.append('pincode2', formData.shippingzipcode || 0);
+        formDataToSend.append('govtId', formData.governmentid);
+        formDataToSend.append('accountNo', formData.accountnumber || 0);
+        formDataToSend.append('ifsc', formData.ifsccode);
+        formDataToSend.append('accountType', formData.accounttype);
+        formDataToSend.append('cafe', cafeId);
+        
+        // Add the image file if it exists
+        if (formData.image) {
+            formDataToSend.append('image', formData.image);
+        }
+        
+        // Add latitude and longitude
+        formDataToSend.append('latitude1', formData.billingCoordinates.latitude);
+        formDataToSend.append('longitude1', formData.billingCoordinates.longitude);
+        formDataToSend.append('latitude2', formData.shippingCoordinates.latitude);
+        formDataToSend.append('longitude2', formData.shippingCoordinates.longitude);
+        
+        if (id) {
+            dispatch(updateVendor({ id, vendorData: formDataToSend }))
+                .unwrap()
+                .then(() => {
+                    // Navigate to vendor list on success
+                    navigate(-1);
+                })
+                .catch((error) => {
+                    console.error('Failed to update vendor:', error);
+                });
+        } else {
+            dispatch(addVendor(formDataToSend))
+                .unwrap()
+                .then(() => {
+                    // Navigate to vendor list on success
+                    navigate(-1);
+                })
+                .catch((error) => {
+                    console.error('Failed to create vendor:', error);
+                });
+        }
     }
     return (
         <Container data-aos="fade-up" data-aos-duration="700"> 
@@ -72,7 +340,7 @@ export const CreateVendorForm = () => {
 
 
 
-                <Form onClick={handleSubmit}>
+                <Form onSubmit={handleSubmit}>
                 
 
                     {/* <Row> */}
@@ -109,7 +377,7 @@ export const CreateVendorForm = () => {
                                 <input
                                     type="text"
                                     className="form-control"
-                                    id="vendorName"
+                                    id="companyName"
                                     placeholder="Company Name"
                                     value={formData.companyName}
                                     onChange={handleChange}
@@ -124,9 +392,9 @@ export const CreateVendorForm = () => {
                                     <span className="text-danger ms-1 ">*</span>
                                 </label>
                                 <input
-                                    type="text"
+                                    type="email"
                                     className="form-control"
-                                    id="vendorName"
+                                    id="vendorEmail"
                                     placeholder="Vendor Email"
                                     value={formData.vendorEmail}
                                     onChange={handleChange}
@@ -143,7 +411,7 @@ export const CreateVendorForm = () => {
                                 <input
                                     type="text"
                                     className="form-control"
-                                    id="vendorName"
+                                    id="vendorPhone"
                                     placeholder="0 0 0 - 0 0 0 - 0 0 0 0"
                                     value={formData.vendorPhone}
                                     onChange={handleChange}
@@ -165,19 +433,45 @@ export const CreateVendorForm = () => {
 
                        
 
-                        <Col sm={6} className="my-2">
+                        <Col sm={12} className="my-2">
                             <FormGroup>
                                 <label className="fw-bold my-2">
                                     
                                     Address
                                 </label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="vendorName"
-                                    placeholder="address"
-                                    value={formData.address}
-                                    onChange={handleChange}
+                                <GooglePlacesAutocomplete
+                                    apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
+                                    selectProps={{
+                                        value: formData.address 
+                                            ? { label: formData.address, value: formData.address }
+                                            : null,
+                                        onChange: (place) => {
+                                            if (place) {
+                                                handleBillingAddressSelect(place);
+                                            } else {
+                                                const updatedFormData = {
+                                                    ...formData,
+                                                    address: '',
+                                                    city: '',
+                                                    state: '',
+                                                    country: '',
+                                                    zipcode: ''
+                                                };
+                                                
+                                                setFormData(updatedFormData);
+                                            }
+                                        },
+                                        placeholder: "Enter Address",
+                                        styles: {
+                                            control: (provided) => ({
+                                                ...provided,
+                                                padding: '5px',
+                                                fontSize: '0.9rem',
+                                                borderColor: '#ced4da',
+                                                borderRadius: '8px'
+                                            })
+                                        }
+                                    }}
                                 />
                             </FormGroup>
                         </Col>
@@ -250,27 +544,56 @@ export const CreateVendorForm = () => {
 
                             <Card className="shadow p-4 my-4">
                         <Row>
-                        <div className="d-flex justify-content-start align-items-start">
-                        <h1>Shipping Address
-                         <span className="text-success ms-1 size-12"> (Copy Biling Address)</span>
-                         </h1>
+                        <div className="d-flex justify-content-between align-items-center mb-3">
+                        <h1>Shipping Address</h1>
+                        <Button 
+                            variant="outline-primary" 
+                            className="d-flex align-items-center gap-2"
+                            onClick={copyBillingToShipping}
+                        >
+                            <FaCopy /> Copy from Billing
+                        </Button>
                     </div>
 
                         
 
-                        <Col sm={6} className="my-2">
+                        <Col sm={12} className="my-2">
                             <FormGroup>
                                 <label className="fw-bold my-2">
                                     
                                     Address
                                 </label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="vendorName2"
-                                    placeholder="address"
-                                    value={formData.shippingAddress}
-                                    onChange={handleChange}
+                                <GooglePlacesAutocomplete
+                                    apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
+                                    selectProps={{
+                                        value: formData.shippingAddress 
+                                            ? { label: formData.shippingAddress, value: formData.shippingAddress }
+                                            : null,
+                                        onChange: (place) => {
+                                            if (place) {
+                                                handleShippingAddressSelect(place);
+                                            } else {
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    shippingAddress: '',
+                                                    shippingcity: '',
+                                                    shippingstate: '',
+                                                    shippingcountry: '',
+                                                    shippingzipcode: ''
+                                                }));
+                                            }
+                                        },
+                                        placeholder: "Enter Shipping Address",
+                                        styles: {
+                                            control: (provided) => ({
+                                                ...provided,
+                                                padding: '5px',
+                                                fontSize: '0.9rem',
+                                                borderColor: '#ced4da',
+                                                borderRadius: '8px'
+                                            })
+                                        }
+                                    }}
                                 />
                             </FormGroup>
                         </Col>
@@ -278,40 +601,45 @@ export const CreateVendorForm = () => {
                         {/* select country */}
                         <Col sm={6} className="my-2">
                         <FormGroup>
-                            <label className="fw-bold my-2"> Country </label>
-                            <FormSelect aria-label="select country" id="country2" value={formData.shippingcountry} onChange={handleChange}>
-                                <option>Select</option>
-                                <option value="India">India</option>
-                                <option value="Oman">Oman</option>
-                                <option value="Yemen">Yemen</option>
-                            </FormSelect>
+                            <label className="fw-bold my-2">Country</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="shippingcountry"
+                                placeholder="Country"
+                                value={formData.shippingcountry}
+                                onChange={handleChange}
+                            />
                         </FormGroup>
                         
                         </Col>
 
                         <Col sm={6} className="my-2">
                         <FormGroup>
-                            <label className="fw-bold my-2"> State </label>
-                            <FormSelect aria-label="select country" id="state2" value={formData.shippingstate} onChange={handleChange}>
-                                <option>Select</option>
-                                <option value="Maharashtra">Maharashtra    </option>
-                                <option value="Punjab">Punjab</option>
-                                <option value="Chhattisgarh">Chhattisgarh</option>
-                            </FormSelect>
+                            <label className="fw-bold my-2">State</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="shippingstate"
+                                placeholder="State"
+                                value={formData.shippingstate}
+                                onChange={handleChange}
+                            />
                         </FormGroup>
                         
                         </Col>
 
                         <Col sm={6} className="my-2">
                         <FormGroup>
-                            <label className="fw-bold my-2"> City </label>
-                            <FormSelect aria-label="select city" id="city2" value={formData.shippingcity} onChange={handleChange}>
-                                <option>Select</option>
-                                <option value="Pune">Pune    </option>
-                                <option value="Nashik">Nashik</option>
-                                <option value="Mumbai">Mumbai</option>
-                                <option value="Nagpur">Nagpur</option>
-                            </FormSelect>
+                            <label className="fw-bold my-2">City</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="shippingcity"
+                                placeholder="City"
+                                value={formData.shippingcity}
+                                onChange={handleChange}
+                            />
                         </FormGroup>
                         
                         </Col>
@@ -324,7 +652,7 @@ export const CreateVendorForm = () => {
                                 <input
                                     type="text"
                                     className="form-control"
-                                    id="zipcode2"
+                                    id="shippingzipcode"
                                     placeholder="Enter Zipcode"
                                     value={formData.shippingzipcode}
                                     onChange={handleChange}
@@ -365,15 +693,15 @@ export const CreateVendorForm = () => {
                         <label className="fw-bold my-2">Document </label>
                             <FormControl
                                 type="file"
-                                name="documentimage"
+                                name="image"
                                 accept=".jpg, .jpeg, .png"
-                                id="documentimage"
+                                id="image"
                                 onChange={handleImageChange}
                             />
                         </Col>
                         <Col sm={12} className="p-2 mb-2 text-end">
                             <Image
-                                src={imagePreview}
+                           src={`${import.meta.env.VITE_API_URL}/${imagePreview}`} 
                                 alt="product image"
                                 fluid
                                 style={{ width: '100px', aspectRatio: '1', objectFit: 'cover' }}
@@ -460,7 +788,14 @@ export const CreateVendorForm = () => {
                         </Col>
 
                         <Col sm={12} className="d-flex justify-content-center">
-                            <Button variant="primary" type="submit" className="mt-4" >Submit</Button>
+                            <Button 
+                                variant="primary" 
+                                type="submit" 
+                                className="mt-4" 
+                                disabled={loading}
+                            >
+                                {loading ? 'Submitting...' : 'Submit'}
+                            </Button>
                         </Col>
 
                     </Row>

@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect, Image, InputGroup, Row } from "react-bootstrap";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { FaPlus, FaStarOfLife, FaTrash } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { fetchItems } from "../../../../store/adminslices/inventory";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import {  getItemById, addItem, updateItem } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import Tax from "../modal/Tax";
 import Manufacturer from "../modal/Manufacturer";
@@ -11,10 +11,12 @@ import Brand from "../modal/Brand";
 import Units from "../modal/Units";
 import { getCustomFields, deleteCustomField } from "../../../../store/AdminSlice/CustomField";
 import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
-import { addItem } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
+import { getVendors } from "../../../../store/AdminSlice/Inventory/VendorSlice";
 
 const CreateItemsForm = () => {
-
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const isEditMode = Boolean(id);
 
     const [imagePreview, setImagePreview] = useState('https://fsm.lockene.net/assets/Web-Fsm/images/avtar/3.jpg');
     const [showUnitModal, setShowUnitModal] = useState(false);
@@ -46,6 +48,7 @@ const CreateItemsForm = () => {
         stock: '',
         stock_rate: '',
         reorder_point: '',
+        linking: 'N',
         image: null,
     })
     const [showBrandModal, setShowBrandModal] = useState(false);
@@ -53,6 +56,7 @@ const CreateItemsForm = () => {
     const customFields = useSelector(state => state.customFields.customFields);
     const taxFields = useSelector(state => state.taxFieldSlice.taxFields);
     const cafeId = JSON.parse(sessionStorage.getItem("user"))?._id;
+    const vendors = useSelector(state => state.vendors.vendors);
     
     // Organize custom fields by type
     const unitOptions = customFields.filter(field => field.type === "Unit");
@@ -60,10 +64,53 @@ const CreateItemsForm = () => {
     const brandOptions = customFields.filter(field => field.type === "Brand");
 
     useEffect(() => {
-    
         dispatch(getCustomFields(cafeId));
         dispatch(getTaxFields(cafeId));
-    }, [dispatch, cafeId]);
+        dispatch(getVendors(cafeId));
+        
+        // Fetch item data when in edit mode
+        if (isEditMode) {
+            dispatch(getItemById(id))
+                .unwrap()
+                .then((itemData) => {
+                    setFormData({
+                        name: itemData.name || '',
+                        sku: itemData.sku || '',
+                        unit: itemData.unit || '',
+                        hsnCode: itemData.hsn || '',
+                        taxPreference: itemData.taxable ? 'Taxable' : 'Non-Taxable',
+                        selectedTax: itemData.tax || '',
+                        length: itemData.length || '',
+                        width: itemData.width || '',
+                        height: itemData.height || '',
+                        dimension_unit: itemData.dimensionUnit || 'cm',
+                        weight: itemData.weight || '',
+                        weight_unit: itemData.weightUnit || 'kg',
+                        manufacturer: itemData.manufacturer || '',
+                        brand: itemData.brand || '',
+                        mpn: itemData.mpn || '',
+                        upc: itemData.upc || '',
+                        ean: itemData.ean || '',
+                        isbn: itemData.isbn || '',
+                        costPrice: itemData.costPrice || '',
+                        sellingPrice: itemData.sellingPrice || '',
+                        preferredVendor: itemData.preferredVendor || '',
+                        stock: itemData.stock || '',
+                        stock_rate: itemData.stockRate || '',
+                        reorder_point: itemData.reorderPoint || '',
+                        linking: itemData.linking || 'N',
+                        image: itemData.image || null,
+                    });
+                    
+                    if (itemData.image) {
+                        setImagePreview(itemData.image);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching item:", error);
+                });
+        }
+    }, [dispatch, cafeId, id, isEditMode]);
 
     const handleImageChange = (event) => {
         const file = event.target.files[0];
@@ -122,17 +169,29 @@ const CreateItemsForm = () => {
         formDataToSend.append('stock', parseInt(formData.stock, 10));
         formDataToSend.append('stockRate', parseFloat(formData.stock_rate));
         formDataToSend.append('reorderPoint', parseInt(formData.reorder_point, 10));
-        formDataToSend.append('image', formData.image);
+        formDataToSend.append('linking', formData.linking);
+        if (formData.image) {
+            formDataToSend.append('image', formData.image);
+        }
         formDataToSend.append('is_active', true);
         formDataToSend.append('is_deleted', false);
 
         try {
-            await dispatch(addItem(formDataToSend));
-            // Handle success response
+            if (isEditMode) {
+                // Update existing item
+                await dispatch(updateItem({ id, itemData: formDataToSend })).then(() => {
+                    navigate(-1);
+                });
+            } else {
+                // Create new item
+                await dispatch(addItem(formDataToSend)).then(() => {
+                    navigate(-1);
+                });
+            }
+            // navigate('/Inventory/Items');
         } catch (error) {
-            // Handle error response
-            console.error('Error adding item:', error);
-            alert('Failed to add item. Please try again.');
+            console.error(`Error ${isEditMode ? 'updating' : 'adding'} item:`, error);
+            // alert(`Failed to ${isEditMode ? 'update' : 'add'} item. Please try again.`);
         }
     };
 
@@ -167,7 +226,7 @@ const CreateItemsForm = () => {
                         Inventory
                     </BreadcrumbItem>
                     <BreadcrumbItem ><Link to="/Inventory/Items">Item List</Link></BreadcrumbItem>
-                    <BreadcrumbItem active>Item Create</BreadcrumbItem>
+                    <BreadcrumbItem active>{isEditMode ? 'Edit Item' : 'Create Item'}</BreadcrumbItem>
                 </Breadcrumb>
             </div>
 
@@ -177,7 +236,7 @@ const CreateItemsForm = () => {
             <Card className="shadow p-4 my-4">
                 <Row>
                     <div className="d-flex justify-content-start align-items-start">
-                        <h1> Create New Item</h1>
+                        <h1>{isEditMode ? 'Edit Item' : 'Create New Item'}</h1>
                     </div>
                     <Col sm={6} className="my-2">
                         <FormGroup>
@@ -585,7 +644,7 @@ const CreateItemsForm = () => {
                                     onChange={handleSelectChange}
                                 >
                                     <option value="">Select Vendor</option>
-                                    {manufacturerOptions.map(vendor => (
+                                    {vendors.map(vendor => (
                                         <option key={vendor._id} value={vendor._id}>
                                             {vendor.name}
                                         </option>
@@ -661,7 +720,7 @@ const CreateItemsForm = () => {
 
             <Card className="shadow my-4 p-4">
                 <Row>
-                    <Col sm={3} className="my-2">
+                    {/* <Col sm={3} className="my-2">
                         <FormLabel htmlFor="linking">Link with Website</FormLabel>
                         <div className="form-group m-t-15 m-checkbox-inline mb-3 custom-radio-ml">
                             <FormCheck
@@ -685,7 +744,7 @@ const CreateItemsForm = () => {
                                 onChange={handleChange}
                             />
                         </div>
-                    </Col>
+                    </Col> */}
 
                     <Col sm={4} className="my-2">
                         <FormLabel htmlFor="imageLabel">Product Image</FormLabel>
@@ -700,8 +759,7 @@ const CreateItemsForm = () => {
 
                     <Col sm={5} className=" my-2">
                         <Image
-                        
-                            src={imagePreview}
+                            src={`${import.meta.env.VITE_API_URL}/${imagePreview}`} 
                             alt="product image"
                             fluid
                             style={{ width: '100px', aspectRatio: '1', objectFit: 'cover' }}
@@ -710,7 +768,16 @@ const CreateItemsForm = () => {
                     </Col>
 
                     <Col sm={12} className="my-2 btn-lg">
-                        <Button variant="primary" type="submit" className=" my-2">Submit</Button>
+                        <Button variant="primary" type="submit" className="my-2">
+                            {isEditMode ? 'Update' : 'Submit'}
+                        </Button>
+                        <Button 
+                            variant="secondary" 
+                            className="my-2 ms-2" 
+                            onClick={() => navigate(-1)}
+                        >
+                            Cancel
+                        </Button>
                     </Col>
                 </Row>
             </Card>

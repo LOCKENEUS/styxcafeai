@@ -1,15 +1,98 @@
-import React from 'react'
-import { Container, Row, Col, Tab, Nav, Table, Card, Breadcrumb } from 'react-bootstrap'
+import React, { useEffect } from 'react'
+import { Container, Row, Col, Tab, Nav, Table, Card, Breadcrumb, Spinner, Modal, Button } from 'react-bootstrap'
 import { BiArrowBack, BiCloudUpload } from 'react-icons/bi'
 import user_check from '/assets/Admin/Dashboard/solar_user-check-bold.svg';
 import { HiOutlineTrash } from 'react-icons/hi';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getItemById, deleteItem } from '../../../../store/AdminSlice/Inventory/ItemsSlice';
+import { getCustomFieldById } from '../../../../store/AdminSlice/CustomField';
 
 const ItemDetails = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { id } = useParams();
+  const { selectedItem, loading, error } = useSelector((state) => state.items);
+  const { selectedCustomField } = useSelector((state) => state.customFields);
+  const [manufacturer, setManufacturer] = React.useState(null);
+  const [brand, setBrand] = React.useState(null);
+  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(getItemById(id));
+    }
+  }, [dispatch, id]);
+
+  useEffect(() => {
+    // Fetch manufacturer data when selectedItem changes and has manufacturer ID
+    if (selectedItem?.manufacturer) {
+      dispatch(getCustomFieldById(selectedItem.manufacturer))
+        .then((action) => {
+          if (action.payload) {
+            setManufacturer(action.payload);
+          }
+        });
+    }
+  }, [dispatch, selectedItem?.manufacturer]);
+
+  useEffect(() => {
+    // Fetch brand data when selectedItem changes and has brand ID
+    if (selectedItem?.brand) {
+      dispatch(getCustomFieldById(selectedItem.brand))
+        .then((action) => {
+          if (action.payload) {
+            setBrand(action.payload);
+          }
+        });
+    }
+  }, [dispatch, selectedItem?.brand]);
+
+  const handleDelete = () => {
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = () => {
+    dispatch(deleteItem(id)).then(() => {
+      setShowDeleteModal(false);
+      navigate(-1);
+    });
+  };
+
+  if (loading) {
+    return (
+      <Container className="d-flex justify-content-center align-items-center min-vh-100">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container className="mt-4 min-vh-100">
+        <div className="alert alert-danger">{error}</div>
+        <button className="btn btn-secondary" onClick={() => navigate(-1)}>
+          <BiArrowBack /> Back
+        </button>
+      </Container>
+    );
+  }
+
+  if (!selectedItem) {
+    return (
+      <Container className="mt-4 min-vh-100">
+        <div className="alert alert-info">Item not found</div>
+        <button className="btn btn-secondary" onClick={() => navigate(-1)}>
+          <BiArrowBack /> Back
+        </button>
+      </Container>
+    );
+  }
 
   return (
-    <Container data-aos="fade-down" data-aos-duration="700" className="mt-4 min-vh-100">
+    <Container  className="mt-4 min-vh-100">
     <Breadcrumb>
       <Breadcrumb.Item href="/admin">Home</Breadcrumb.Item>
       <Breadcrumb.Item active>Booking Details</Breadcrumb.Item>
@@ -31,10 +114,12 @@ const ItemDetails = () => {
         </Col>
         <Col sm={6}>
           <div className="d-flex justify-content-end mt-3">
-            <button className="btn btn-primary me-2">
+            <button
+            onClick={() => navigate(`/admin/inventory/edit/${id}`)}
+            className="btn btn-primary me-2">
               <BiCloudUpload /> Edit
             </button>
-            <button className="btn btn-danger me-2">
+            <button className="btn btn-danger me-2" onClick={handleDelete}>
               <HiOutlineTrash /> Delete
             </button>
             <button className="btn btn-secondary" onClick={() => navigate(-1)}>
@@ -51,27 +136,27 @@ const ItemDetails = () => {
                 <tbody>
                   <tr>
                     <td className='fw-bold'>SKU</td>
-                    <td>YYU</td>
+                    <td>{selectedItem.sku}</td>
                   </tr>
                   <tr>
                     <td className='fw-bold'>Unit</td>
-                    <td>PCS</td>
+                    <td>{selectedItem.unit}</td>
                   </tr>
                   <tr>
                     <td className='fw-bold'>Dimension</td>
-                    <td>0 × 0 × 0 mm</td>
+                    <td>{selectedItem.length} × {selectedItem.width} × {selectedItem.height} {selectedItem.dimensionUnit}</td>
                   </tr>
                   <tr>
                     <td className='fw-bold'>Weight</td>
-                    <td>0 g</td>
+                    <td>{selectedItem.weight} {selectedItem.weightUnit}</td>
                   </tr>
                   <tr>
                     <td className='fw-bold'>Manufacturer</td>
-                    <td>MI</td>
+                    <td>{manufacturer ? manufacturer.name : 'Loading...'}</td>
                   </tr>
                   <tr>
                     <td className='fw-bold'>Brand</td>
-                    <td>Xiaomi</td>
+                    <td>{brand ? brand.name : 'Loading...'}</td>
                   </tr>
                 </tbody>
               </Table>
@@ -81,11 +166,11 @@ const ItemDetails = () => {
                 <tbody>
                   <tr>
                     <td className='fw-bold'>Cost Price</td>
-                    <td>₹ 0</td>
+                    <td>₹ {selectedItem.costPrice}</td>
                   </tr>
                   <tr>
                     <td className='fw-bold'>Selling Price</td>
-                    <td>₹ 77</td>
+                    <td>₹ {selectedItem.sellingPrice}</td>
                   </tr>
                 </tbody>
               </Table>
@@ -95,11 +180,11 @@ const ItemDetails = () => {
                 <tbody>
                   <tr>
                     <td className='fw-bold'>Cost Price</td>
-                    <td>₹ 0</td>
+                    <td>₹ {selectedItem.costPrice}</td>
                   </tr>
                   <tr>
                     <td className='fw-bold'>Selling Price</td>
-                    <td>₹ 77</td>
+                    <td>₹ {selectedItem.sellingPrice}</td>
                   </tr>
                 </tbody>
               </Table>
@@ -154,10 +239,12 @@ const ItemDetails = () => {
         <Container className="mt-4">
       <Card className="p-4">
         <div className="d-flex justify-content-center mb-4">
-          <Card className="p-5 d-flex justify-content-center align-items-center" style={{ width: "250px", height: "250px", border: "1px dashed #ccc" }}>
+        {selectedItem.image ? <Card className="p-5 d-flex justify-content-center align-items-center" style={{ width: "250px", height: "250px", border: "1px dashed #ccc" }}>
+            <img src={`${import.meta.env.VITE_API_URL}/${selectedItem.image}`} alt="Item" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          </Card> : <Card className="p-5 d-flex justify-content-center align-items-center" style={{ width: "250px", height: "250px", border: "1px dashed #ccc" }}>
             <BiCloudUpload size={40} className="mb-2" />
             <p>Upload Image (250 × 250)</p>
-          </Card>
+          </Card>}
         </div>
         
         <h5>Accounting Stock</h5>
@@ -165,7 +252,7 @@ const ItemDetails = () => {
           <tbody>
             <tr>
               <td>Stock in hand</td>
-              <td><b>0</b></td>
+              <td><b>{selectedItem.stock}</b></td>
             </tr>
             <tr>
               <td>Committed Stock</td>
@@ -173,7 +260,7 @@ const ItemDetails = () => {
             </tr>
             <tr>
               <td>Available Stock</td>
-              <td><b>0</b></td>
+              <td><b>{selectedItem.stock}</b></td>
             </tr>
           </tbody>
         </Table>
@@ -183,15 +270,15 @@ const ItemDetails = () => {
           <tbody>
             <tr>
               <td>Stock in hand</td>
-              <td><b>0</b></td>
+              <td><b>{selectedItem.stock}</b></td>
             </tr>
             <tr>
-              <td>Committed Stock</td>
-              <td><b>0</b></td>
+              <td>Stock Rate</td>
+              <td><b>{selectedItem.stockRate || selectedItem.costPrice}</b></td>
             </tr>
             <tr>
               <td>Available Stock</td>
-              <td><b>0</b></td>
+              <td><b>{selectedItem.stock}</b></td>
             </tr>
           </tbody>
         </Table>
@@ -220,7 +307,27 @@ const ItemDetails = () => {
         </Col>
       </Row>
     </Tab.Container>
-  </Container>  
+ 
+
+  {/* Delete Confirmation Modal */}
+  <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+    <Modal.Header closeButton>
+      <Modal.Title>Confirm Deletion</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <p>Are you sure you want to delete this item?</p>
+      <p className="text-danger">This action cannot be undone.</p>
+    </Modal.Body>
+    <Modal.Footer>
+      <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+        Cancel
+      </Button>
+      <Button variant="danger" onClick={confirmDelete}>
+        Delete Item
+      </Button>
+    </Modal.Footer>
+  </Modal>
+  </Container> 
   )
 }
 

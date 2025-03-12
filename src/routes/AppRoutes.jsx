@@ -210,7 +210,10 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/inventory/item-details" element={<ItemDetails />} />
           <Route path="/admin/inventory/item-groups-details" element={<ItemGroupsDetails />} />
           <Route path="/admin/inventory/bill-payments" element={<BillPaymentList />} />
-         
+          <Route path="/admin/inventory/item-details/:id" element={<ItemDetails />} />
+          <Route path="/admin/inventory/edit/:id" element={<CreateItemsForm />} />
+         <Route path="/admin/inventory/vendors/edit/:id" element={<CreateVendorForm />} />
+       <Route path="/admin/inventory/vendor-details/:id" element={<VendorDetails />} />
 
 
 

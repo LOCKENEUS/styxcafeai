@@ -16,7 +16,7 @@ import userReducer from './AdminSlice/UserSlice';
 import customFieldReducer from './AdminSlice/CustomField';
 import taxFieldReducer from './AdminSlice/TextFieldSlice';
 import itemsReducer from './AdminSlice/Inventory/ItemsSlice';
-
+import vendorReducer from './AdminSlice/Inventory/VendorSlice';
 export const store = configureStore({
   reducer: {
     subscriptions: subscriptionReducer,
@@ -36,5 +36,6 @@ export const store = configureStore({
     customFields: customFieldReducer,
     taxFieldSlice: taxFieldReducer,
     items: itemsReducer,
+    vendors: vendorReducer,
   },
 });

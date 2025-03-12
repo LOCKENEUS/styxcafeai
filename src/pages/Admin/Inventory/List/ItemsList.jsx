@@ -128,7 +128,7 @@ const ItemsList = () => {
                                             <tr key={index}>
                                                 <td>{index + 1}</td>
                                                 <td>
-                                                    <div className="d-flex gap-2 align-items-center" onClick={() => navigator("/admin/inventory/item-details")}>
+                                                    <div className="d-flex gap-2 align-items-center" onClick={() => navigator(`/admin/inventory/item-details/${item._id}`)}>
                                                         <div style={{ width: '30px', height: '30px', borderRadius: '50%', backgroundColor: getRandomColor(item.name), color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                             {item.name.charAt(0).toUpperCase()}
                                                         </div>
