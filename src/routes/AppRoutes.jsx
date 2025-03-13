@@ -146,6 +146,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/Inventory/vendor" element={<Vendor />} />
           <Route path="/Inventory/itemCreate" element={<ItemCreate />} />
           <Route path="/Inventory/ItemGroupCreate" element={<IitemGroupCreate />} />
+          <Route path="/Inventory/ItemGroupCreate/:id" element={<IitemGroupCreate />} />
           <Route path="/Inventory/vendorCreate" element={<VendorCreate />} />
           <Route path="/Inventory/PurchaseOrder" element={<PurchaseOrder />} />
           <Route path="/Inventory/PurchaseReceived" element={<PurchaseReceived />} />
@@ -212,14 +213,15 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/inventory/create-items" element={<CreateItemsForm />} />
           <Route path="/admin/inventory/item-group-list" element={<ItemGroupList />} />
           <Route path="/admin/inventory/item-group-form" element={<ItemGroupForm />} />
+          <Route path="/admin/inventory/item-group-form/:id" element={<ItemGroupForm />} />
           <Route path="/admin/inventory/item-details" element={<ItemDetails />} />
-          <Route path="/admin/inventory/item-groups-details" element={<ItemGroupsDetails />} />
+          <Route path="/admin/inventory/item-groups-details/:id" element={<ItemGroupsDetails />} />
           <Route path="/admin/inventory/bill-payments" element={<BillPaymentList />} />
           <Route path="/admin/inventory/item-details/:id" element={<ItemDetails />} />
           <Route path="/admin/inventory/edit/:id" element={<CreateItemsForm />} />
          <Route path="/admin/inventory/vendors/edit/:id" element={<CreateVendorForm />} />
        <Route path="/admin/inventory/vendor-details/:id" element={<VendorDetails />} />
-
+       <Route path="/admin/inventory/item-groups-details" element={<ItemGroupsDetails />} />
 
 
 

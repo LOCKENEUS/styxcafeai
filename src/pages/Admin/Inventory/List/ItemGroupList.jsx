@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Table, Button, InputGroup, FormControl, Image, Breadcrumb, Card } from 'react-bootstrap';
 import solar_export from '/assets/inventory/solar_export-linear.png'
 import { Link, useNavigate } from 'react-router-dom';
 import gm1 from '/assets/inventory/mynaui_search.svg'
+import { useDispatch, useSelector } from 'react-redux';
+import { getItemGroups } from '../../../../store/AdminSlice/Inventory/ItemGroupSlice'; // Adjust the path as necessary
 
 const ItemGroupList = () => {
     const getRandomColor = (name) => {
@@ -11,16 +13,15 @@ const ItemGroupList = () => {
         return colors[index];
       };
   const [searchText, setSearchText] = useState("");
-  const itemsData = [
-    { sn: 1, name: "Item A", unit: "kg", manufacturer: "Manufacturer A", brand: "Brand A", items: 10 },
-    { sn: 2, name: "Item B", unit: "liters", manufacturer: "Manufacturer B", brand: "Brand B", items: 20 },
-    { sn: 3, name: "Item C", unit: "pcs", manufacturer: "Manufacturer C", brand: "Brand C", items: 30 }
-  ];
+  const dispatch = useDispatch();
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const cafeId = user?._id;
+  const { itemGroups, loading, error } = useSelector((state) => state.itemGroups);
   const navigate = useNavigate();
   const generateCSV = () => {
     const headers = ["SN", "NAME", "UNIT", "MANUFACTURER", "BRAND", "ITEMS"];
-    const rows = itemsData.map(item => [
-      item.sn, item.name, item.unit, item.manufacturer, item.brand, item.items
+    const rows = itemGroups.map(item => [
+      item.sn, item.group_name, item.unit, item.manufacturer, item.brand, item.items.length
     ]);
     
     const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
@@ -34,6 +35,12 @@ const ItemGroupList = () => {
     document.body.removeChild(a);
   };
 
+  useEffect(() => {
+    dispatch(getItemGroups(cafeId)).then((res) => {
+      console.log("res.payload", res.payload);
+    });
+  }, [dispatch, cafeId]);
+
   return (
     <div>
       <Container data-aos="fade-right" data-aos-duration="500" fluid className="mt-4 min-vh-100">
@@ -45,7 +52,6 @@ const ItemGroupList = () => {
 
         <Row>
           <Col sm={4} className="d-flex">
-            
             <h1 className="mx-1 my-4" style={{ fontSize: "18px", fontWeight: "500" }}>Item Group List</h1>
           </Col>
 
@@ -80,36 +86,40 @@ const ItemGroupList = () => {
           </Col>
 
           <Col sm={12}>
-            <Table striped style={{ minWidth: '600px', marginTop: "2rem" }}>
-              <thead style={{ backgroundColor: '#0062FF0D' }}>
-                <tr>
-                  {['SN', 'NAME', 'UNIT', 'MANUFACTURER', 'BRAND', 'ITEMS'].map((header, index) => (
-                    <th key={index} style={{ fontWeight: "bold", fontSize: "0.9rem" }}>{header}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody style={{ backgroundColor: "#F5F5F5" }}>
-                {itemsData.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.sn}</td>
-                    <td>
-
-                        <div className='d-flex gap-2 align-items-center cursor-pointer' onClick={() => navigate(`/admin/inventory/item-groups-details`)}>
-                            <div style={{ width: '30px', height: '30px', borderRadius: '50%', backgroundColor: getRandomColor(item.name), color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                {item.name.charAt(0).toUpperCase()}
-                            </div>
-                            <span style={{ fontWeight: "bold", cursor: "pointer", color: "#0062FF" }}>{item.name}</span>
-                        </div>
-                        
-                    </td>
-                    <td>{item.unit}</td>
-                    <td>{item.manufacturer}</td>
-                    <td>{item.brand}</td>
-                    <td>{item.items}</td>
+            {loading ? (
+              <p>Loading...</p>
+            ) : error ? (
+              <p>Error: {error}</p>
+            ) : (
+              <Table striped style={{ minWidth: '600px', marginTop: "2rem" }}>
+                <thead style={{ backgroundColor: '#0062FF0D' }}>
+                  <tr>
+                    {['SN', 'NAME', 'UNIT', 'MANUFACTURER', 'BRAND', 'ITEMS'].map((header, index) => (
+                      <th key={index} style={{ fontWeight: "bold", fontSize: "0.9rem" }}>{header}</th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </Table>
+                </thead>
+                <tbody style={{ backgroundColor: "#F5F5F5" }}>
+                  {itemGroups.map((item, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>
+                        <div className='d-flex gap-2 align-items-center cursor-pointer' onClick={() => navigate(`/admin/inventory/item-groups-details/${item._id}`)}>
+                          <div style={{ width: '30px', height: '30px', borderRadius: '50%', backgroundColor: getRandomColor(item.group_name), color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            {item.group_name.charAt(0).toUpperCase()}
+                          </div>
+                          <span style={{ fontWeight: "bold", cursor: "pointer", color: "#0062FF" }}>{item.group_name}</span>
+                        </div>
+                      </td>
+                      <td>{item.unit?.name || 'N/A'}</td>
+                      <td>{item.manufacturer?.name || 'N/A'}</td>
+                      <td>{item.brand?.name || 'N/A'}</td>
+                      <td>{item.items.length}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            )}
           </Col>
         </Row>
    

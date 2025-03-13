@@ -1,40 +1,39 @@
-#outline {
-  stroke-dasharray: 2.42777px, 242.77666px;
-  stroke-dashoffset: 0;
-  -webkit-animation: anim 1.6s linear infinite;
-  animation: anim 1.6s linear infinite;
-}
-
-@-webkit-keyframes anim {
-  12.5% {
-    stroke-dasharray: 33.98873px, 242.77666px;
-    stroke-dashoffset: -26.70543px;
+/* From Uiverse.io by gagan-gv */ 
+.loader {
+  border: 0 solid blue;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+ }
+ 
+ .loader::before,
+ .loader::after {
+  content: '';
+  border: 7px solid blue;
+  border-radius: 50%;
+  width: inherit;
+  height: inherit;
+  position: absolute;
+  animation: loader 2s linear infinite;
+  opacity: 0;
+ }
+ 
+ .loader::before {
+  animation-delay: 1s;
+ }
+ 
+ @keyframes loader {
+  0% {
+   transform: scale(1);
+   opacity: 0;
   }
-
-  43.75% {
-    stroke-dasharray: 84.97183px, 242.77666px;
-    stroke-dashoffset: -84.97183px;
+ 
+  50% {
+   opacity: 1;
   }
-
+ 
   100% {
-    stroke-dasharray: 2.42777px, 242.77666px;
-    stroke-dashoffset: -240.34889px;
+   transform: scale(0);
+   opacity: 0;
   }
-}
-
-@keyframes anim {
-  12.5% {
-    stroke-dasharray: 33.98873px, 242.77666px;
-    stroke-dashoffset: -26.70543px;
-  }
-
-  43.75% {
-    stroke-dasharray: 84.97183px, 242.77666px;
-    stroke-dashoffset: -84.97183px;
-  }
-
-  100% {
-    stroke-dasharray: 2.42777px, 242.77666px;
-    stroke-dashoffset: -240.34889px;
-  }
-}
+ }
