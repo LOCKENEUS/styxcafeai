@@ -5,6 +5,7 @@ import { TbMoodSad } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router-dom";
 import { getslots } from "../../../store/slices/slotsSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { convertTo24HourFormat } from "../../../components/utils/utils";
 
 const Calendar = ({ selectedGame }) => {
 
@@ -239,16 +240,12 @@ const Calendar = ({ selectedGame }) => {
   );
 };
 
-const BookingSlots = ({ date, selectedGame, gameId }) => {
-
-  console.log("gameId",gameId);
-  
+const BookingSlots = ({ date, selectedGame, gameId }) => {  
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const slots = useSelector((state) => state.slots?.slots || []);
 
-  console.log("game id from calendar...", gameId);
   useEffect(() => {
     if (gameId) {
       dispatch(getslots(gameId));
@@ -256,13 +253,54 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
   }, [gameId, dispatch]);
 
   const handleBookSlot = async (gameId, slotId, date) => {
-    // setShowClientModal(true);
     navigate(`/admin/bookings/booking-details/${gameId}/${slotId}/${date}`);
   };
 
   return (
+    // <div className="booking-slots mt-5">
+    //   {slots.map((slot, index) => (
+    //     <div key={index} className="slot-row mb-2 border border-2 p-2">
+    //       <div className="d-flex flex-column flex-md-row justify-content-between align-items-center">
+    //         <span className="mb-2 mb-md-0">
+    //           {slot.start_time} - {slot.end_time}
+    //         </span>
+    //         <div className="d-flex flex-column flex-md-row align-items-center gap-3">
+    //           <span className={slot.is_active ? "text-success" : "text-danger"}>
+    //             {slot.is_active ? "Available" : "Booked"}
+    //           </span>
+    //           <span>₹{slot.slot_price ? slot.slot_price : selectedGame?.data.price}</span>
+    //           <Button
+    //             variant="primary"
+    //             disabled={slot.status === "Booked"}
+    //             className="w-100 w-md-auto"
+    //             style={{
+    //               backgroundColor: "white",
+    //               border: "2px solid blue",
+    //               color: "blue",
+    //               minWidth: "120px",
+    //             }}
+    //             onClick={() => handleBookSlot(gameId, slot._id, date)}
+    //           >
+    //             Book Slot
+    //           </Button>
+    //         </div>
+    //       </div>
+    //     </div>
+    //   ))}
+    // </div> 
+
     <div className="booking-slots mt-5">
-      {slots.map((slot, index) => (
+    {slots.map((slot, index) => {
+      const currentTime = new Date();
+      const slotDateTime = new Date(date); // Set selected date
+
+      // Convert 12-hour format to 24-hour format
+      const { hours: slotHours, minutes: slotMinutes } = convertTo24HourFormat(slot.start_time);
+      slotDateTime.setHours(slotHours, slotMinutes, 0, 0); // Set slot time
+
+      const isPast = slotDateTime < currentTime; // Check if the slot time has passed
+
+      return (
         <div key={index} className="slot-row mb-2 border border-2 p-2">
           <div className="d-flex flex-column flex-md-row justify-content-between align-items-center">
             <span className="mb-2 mb-md-0">
@@ -275,23 +313,24 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
               <span>₹{slot.slot_price ? slot.slot_price : selectedGame?.data.price}</span>
               <Button
                 variant="primary"
-                disabled={slot.status === "Booked"}
+                disabled={slot.status === "Booked" || isPast} // Disable if booked or time passed
                 className="w-100 w-md-auto"
                 style={{
-                  backgroundColor: "white",
-                  border: "2px solid blue",
-                  color: "blue",
+                  backgroundColor: isPast ? "#ccc" : "white",
+                  border: isPast ? "2px solid gray" : "2px solid blue",
+                  color: isPast ? "gray" : "blue",
                   minWidth: "120px",
                 }}
                 onClick={() => handleBookSlot(gameId, slot._id, date)}
               >
-                Book Slot
+                {isPast ? "Time Passed" : "Book Slot"}
               </Button>
             </div>
           </div>
         </div>
-      ))}
-    </div>
+      );
+    })}
+  </div>
   );
 };
 

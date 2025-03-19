@@ -18,6 +18,7 @@ import taxFieldReducer from './AdminSlice/TextFieldSlice';
 import itemsReducer from './AdminSlice/Inventory/ItemsSlice';
 import vendorReducer from './AdminSlice/Inventory/VendorSlice';
 import bookingsReducer from './AdminSlice/BookingSlice';
+import timerReducer from './AdminSlice/TimerSlice';
 import itemGroupReducer from './AdminSlice/Inventory/ItemGroupSlice';
 
 export const store = configureStore({
@@ -43,6 +44,7 @@ export const store = configureStore({
     itemGroups: itemGroupReducer,
 
         // bookings
-        bookings: bookingsReducer
+        bookings: bookingsReducer,
+        timer: timerReducer
   },
 });

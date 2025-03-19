@@ -217,6 +217,11 @@ const BookingList = () => {
                             <th
                                 style={{ border: "none", fontSize: "1rem", color: "black" }}
                             >
+                                <small>Sr. No</small>
+                            </th>
+                            <th
+                                style={{ border: "none", fontSize: "1rem", color: "black" }}
+                            >
                                 <small>Booking Id</small>
                             </th>
                             <th
@@ -254,6 +259,9 @@ const BookingList = () => {
                     <tbody>
                         {filteredBookings?.map((booking, index) => (
                             <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
+                                <td style={{ border: "none", minWidth: "100px" }}>
+                                    {index+1}
+                                </td>
                                 <td style={{ border: "none", minWidth: "100px" }}>
                                     {booking.booking_id}
                                 </td>

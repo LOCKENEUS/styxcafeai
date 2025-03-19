@@ -101,6 +101,7 @@ import { PurchaseBillDetailsAdmin } from "../pages/Admin/Inventory/Details/purch
 import BookGames from "../pages/Admin/Booking/BookGames";
 import { PurchaseBillCreate } from "../pages/Admin/Inventory/Create/PBCreate";
 import { BillPaymentDetails } from "../pages/Admin/Inventory/Details/billPayment";
+import BookingCheckout from "../pages/Admin/Booking/BookingCheckout";
 
 
 
@@ -185,6 +186,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/bookings/booking-details/:gameId/:slotId/:date" element={<BookingDetails />} />
           <Route path="/admin/bookings" element={<BookingList />} />
           <Route path="/admin/booking/games" element={<BookGames />} />
+          <Route path="/admin/booking/checkout/:clientId/:gameId/:slotId" element={<BookingCheckout />} />
 
 
           <Route path="/admin/users/customer-list" element={<CustomerList />} />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Container,
   Row,
@@ -8,6 +8,8 @@ import {
   Tab,
   Nav,
   Button,
+  Overlay,
+  Popover,
 } from "react-bootstrap";
 import { getCustomers, searchCustomers } from "../../../store/AdminSlice/CustomerSlice";
 import profile_pic from "/assets/profile/user_avatar.jpg";
@@ -18,29 +20,29 @@ import paytmicon from '/assets/Admin/PaymentIcon/paytm.svg'
 import cashicon from '/assets/Admin/PaymentIcon/money.svg'
 import qrcode from '/assets/Admin/PaymentIcon/QrCodeIcon.svg'
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { getGameById } from "../../../store/slices/gameSlice";
 import { getSlotDetails } from "../../../store/slices/slotsSlice";
-import StripeCheckout from "react-stripe-checkout";
 import { addBooking } from "../../../store/AdminSlice/BookingSlice";
 
-
 const BookingDetails = () => {
-
   const { customers, loading, error } = useSelector((state) => state.customers);
   const { selectedGame, status: gameStatus, error: gameError } = useSelector((state) => state.games);
   const { slot, loading: slotLoading, error: slotError } = useSelector((state) => state.slots);
 
   const [searchedCustomers, setSearchedCustomers] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCustTerm, setSearchCustTerm] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
   const [showInput, setShowInput] = useState(false);
   const [newPlayer, setNewPlayer] = useState({ name: "", contact_no: "" });
   const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const backend_url = import.meta.env.VITE_API_URL
+  const [showPopup, setShowPopup] = useState(false);
+  const [activeTab, setActiveTab] = useState("checkout"); // State to control active tab
+  const target = useRef(null);
+
+  const backend_url = import.meta.env.VITE_API_URL;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -49,7 +51,9 @@ const BookingDetails = () => {
 
   const { gameId, slotId, date } = useParams();
 
-  const dateString = date
+  console.log("date", date);
+
+  const dateString = date;
   const newdate = new Date(dateString);
 
   const formattedDate = newdate.toLocaleDateString("en-US", {
@@ -74,13 +78,12 @@ const BookingDetails = () => {
     }
   }, [dispatch, gameId, slotId]);
 
-
   const handleAddPlayer = () => {
     if (newPlayer.name.trim() && newPlayer.contact_no.trim()) {
       setTeamMembers([...teamMembers, newPlayer]);
-      setNewPlayer({ name: "", contact_no: "" }); // Clear inputs
-      setShowInput(false); // Hide form after submission
-      setSearchTerm("");
+      setNewPlayer({ name: "", contact_no: "" });
+      setShowInput(false);
+      setSearchCustTerm("");
     }
   };
 
@@ -91,7 +94,7 @@ const BookingDetails = () => {
   function convertTo12Hour(time) {
     const [hour, minute] = time.split(":");
     const ampm = hour >= 12 ? "PM" : "AM";
-    const formattedHour = hour % 12 || 12; // Convert 0 -> 12 for 12 AM
+    const formattedHour = hour % 12 || 12;
     return `${formattedHour}:${minute} ${ampm}`;
   }
 
@@ -104,7 +107,7 @@ const BookingDetails = () => {
           Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
         },
         body: JSON.stringify({
-          amount: selectedGame?.data?.price * 100, // Amount in cents
+          amount: selectedGame?.data?.price * 100,
           currency: "INR",
           token: token.id,
           customerId: selectedCustomer._id,
@@ -117,7 +120,7 @@ const BookingDetails = () => {
 
       if (response.ok) {
         const transactionDetails = await response.json();
-        dispatch(saveTransactionDetails(transactionDetails)); // Save transaction details to Redux store
+        dispatch(saveTransactionDetails(transactionDetails));
         alert("Payment successful!");
       } else {
         console.error('Payment failed:', response.statusText);
@@ -139,12 +142,34 @@ const BookingDetails = () => {
         mode: "Offline",
         status: "Pending",
         total: selectedGame?.data?.price,
+        slot_date: newdate,
         players: teamMembers
       };
       await dispatch(addBooking(bookingData)).unwrap()
       navigate("/admin/bookings")
     } catch (error) { }
   };
+
+  const handlePayLater = async () => {
+    try {
+      const bookingData = {
+        cafe: cafeId,
+        customer_id: selectedCustomer?._id,
+        game_id: selectedGame?.data?._id,
+        slot_id: slot?._id,
+        mode: "Offline",
+        status: "Pending",
+        total: selectedGame?.data?.price,
+        slot_date: newdate,
+        players: teamMembers
+      };
+      // if((selectedCustomer?.creditAmount + selectedGame?.data?.price) > selectedCustomer?.creditLimit){
+      //   alert("Credit limit exceeded");
+      // }
+      await dispatch(addBooking(bookingData)).unwrap()
+      navigate(`/admin/booking/checkout/${selectedCustomer._id}/${selectedGame?.data?._id}/${slot._id}`)
+    } catch (error) { }
+  }
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -163,13 +188,15 @@ const BookingDetails = () => {
     return () => clearTimeout(delayDebounceFn);
   }, [searchCustTerm, dispatch, cafeId]);
 
-  console.log("searchedCustomers", searchedCustomers);
-
   const handleSelectCustomer = (customer) => {
-    // setSelectedCustomer(customer);
-    setSearchCustTerm(""); // Clear search term
-    setSearchedCustomers([]); // Clear the result list
+    setSearchCustTerm("");
+    setSearchedCustomers([]);
     setTeamMembers([...teamMembers, { name: customer.name, contact_no: customer.contact_no }]);
+  };
+
+  const handleOnlinePayment = () => {
+    setShowPopup(false);
+    setActiveTab("payment"); // Switch to the "Payment Methods" tab
   };
 
   return (
@@ -312,7 +339,6 @@ const BookingDetails = () => {
                       ))}
                     </div>
                   )}
-
                 </>
               )}
             </div>
@@ -325,7 +351,15 @@ const BookingDetails = () => {
             className="bg-white rounded-3 p-4 mb-4 position-relative"
           >
             <div className=" p-4">
-              <h5>Customer Details</h5>
+              <div className="d-flex justify-content-between align-items-center">
+                <div>              
+                  <h3>Customer Details</h3>
+                </div>
+                <div>
+                  <div className="text-success"><span className="fw-bold float-end">Credit Limit: {selectedCustomer?.creditLimit}</span></div>
+                  <div className="text-danger"><span className="fw-bold float-end">Remaining: {selectedCustomer?.creditLimit - selectedCustomer?.creditAmount}</span></div>
+                </div>
+              </div>
               {selectedCustomer ? (
                 <div className="d-flex justify-content-between align-items-center">
                   <div className="mt-4">
@@ -361,8 +395,8 @@ const BookingDetails = () => {
             </div>
           </div>
 
-          <div style={{}} className="bg-white rounded-3">
-            <Tab.Container defaultActiveKey="checkout">
+          <div className="bg-white rounded-3">
+            <Tab.Container activeKey={activeTab} onSelect={(key) => setActiveTab(key)}>
               <Nav variant="tabs" className="border-0">
                 <Nav.Item>
                   <Nav.Link eventKey="checkout" className="border-0">
@@ -393,12 +427,34 @@ const BookingDetails = () => {
                         <p className="text-black">₹ 00.00</p>
                       </div>
                       <div className="mb-4">
-                        <h5 className="text-muted">SGST</h5>
-                        <p className="text-black">₹ 00.00</p>
-                      </div>
-                      <div className="mb-4">
                         <h5 className="text-muted">TOTAL</h5>
                         <p className="text-primary" style={{ fontWeight: "bold" }}>₹ {slot.slot_price ? slot.slot_price : selectedGame?.data.price}</p>
+                      </div>
+                      <div className="mb-4">
+                        <Button ref={target} onClick={() => setShowPopup(!showPopup)}>
+                          Proceed
+                        </Button>
+                        <Overlay
+                          show={showPopup}
+                          target={target.current}
+                          placement="right"
+                          container={target}
+                          containerPadding={20}
+                        >
+                          <Popover id="popover-contained">
+                            <Popover.Body>
+                              <Button variant="light" block onClick={handleOnlinePayment}>
+                                Online
+                              </Button>
+                              <Button variant="light" block onClick={handleCollectOffline}>
+                                Offline
+                              </Button>
+                              <Button variant="light" block onClick={handlePayLater}>
+                                Pay Later
+                              </Button>
+                            </Popover.Body>
+                          </Popover>
+                        </Overlay>
                       </div>
                     </div>
                   ) : (
@@ -410,7 +466,6 @@ const BookingDetails = () => {
                 <Tab.Pane eventKey="payment">
                   {selectedCustomer ? (
                     <div className="p-4">
-
                       <div className="d-flex justify-content-around align-items-center">
                         <div>
                           <h5>Total Amount to be</h5>
@@ -420,23 +475,17 @@ const BookingDetails = () => {
                       </div>
                       <div className="d-flex mt-4 justify-content-around">
 
-                        <StripeCheckout
-                          stripeKey={import.meta.env.VITE_STRIPE_KEY}
-                          token={handlePayment}
-                          amount={selectedGame?.data?.price * 100} // Amount in cents
-                          name="Your Company Name"
-                          description="Payment for Booking"
-                          image="https://your-logo-url.com/logo.png"
-                          currency="INR"
-                          email={selectedCustomer.email}
-                        >
                           <img src={googleicon} alt="Google Pay" style={{ cursor: "pointer" }} />
-                        </StripeCheckout>
                         <img src={phonepeicon} alt="PhonePe" />
                         <img src={paytmicon} alt="Paytm" />
                         <img src={cashicon} alt="Cash" />
                       </div>
-                      <Button className="mt-4" onClick={handleCollectOffline}>Collect Offline</Button>
+                      {/* <div className="mt-4 d-flex justify-content-around">
+                        <Button className="mt-4" onClick={handleCollectOffline}>Collect Offline</Button>
+                        <Link to="/admin/booking/checkout" className="mt-4">
+                          <Button className="mt-4">Proceed to Book </Button>
+                        </Link>
+                      </div> */}
                     </div>
                   ) : (
                     <p className="text-muted d-flex justify-content-center align-items-center h-100 w-100 mb-0">
