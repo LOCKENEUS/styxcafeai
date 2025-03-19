@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Row, Col, Card, Table, Image } from "react-bootstrap";
 import { Doughnut, Line } from "react-chartjs-2";
-import dashboardBarIcon from "/assets/Admin/Dashboard/dashboardBarIcon.svg"
+// import dashboardBarIcon from "/assets/Admin/Dashboard/dashboardBarIcon.svg"
 import {
   Chart as ChartJS,
   ArcElement,

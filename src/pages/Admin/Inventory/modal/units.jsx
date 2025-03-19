@@ -49,7 +49,7 @@ const Units = ({ show, handleClose }) => {
     };
 
     return (
-        <Modal show={show} onHide={handleClose} centered backdrop="static">
+        <Modal show={show} onHide={handleClose} centered animation={false} >
       <ModalHeader closeButton >
         <ModalTitle>Inventory Units</ModalTitle>
       </ModalHeader>

@@ -17,6 +17,7 @@ import solar_export from "/assets/inventory/solar_export-linear.png";
 import add from "/assets/inventory/material-symbols_add-rounded.png";
 import DataTable from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
+import { CreateVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 
 
 const PurchaseOrderList = () => {
@@ -213,7 +214,9 @@ const PurchaseOrderList = () => {
                   Export
                 </Button>
 
-                <Button variant="primary" className="px-4 mx-2" size="sm" onClick={handleShowCreate}>
+                <Button variant="primary" className="px-4 mx-2" size="sm" 
+                onClick={handleShowCreate}
+                >
                   <Image
                     className="me-2"
                     style={{ width: "22px", height: "22px" }}
