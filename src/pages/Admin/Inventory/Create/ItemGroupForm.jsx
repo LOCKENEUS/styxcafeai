@@ -162,8 +162,17 @@ const ItemGroupForm = () => {
     }));
   };
 
+  const generateSKU = (groupName, itemName, attribute, index) => {
+    if (!groupName) return '';
+    const groupInitial = groupName.charAt(0).toUpperCase();
+    const attributeInitial = attribute.charAt(0).toUpperCase();
+    return `${groupInitial}${attributeInitial}-${String(index + 1).padStart(3, '0')}`;
+  };
+
   const generateItems = () => {
     const items = [];
+    let globalIndex = 0;
+    
     attributes.forEach((attribute, attrIndex) => {
       const options = attribute.options.split(',').map(option => option.trim());
       options.forEach((option, optIndex) => {
@@ -173,9 +182,13 @@ const ItemGroupForm = () => {
         ) + optIndex;
 
         const itemName = `${formData.group_name} ${attribute.color} ${option}`;
+        // Generate a unique SKU for each item
+        const generatedSKU = generateSKU(formData.group_name, itemName, attribute.color, globalIndex);
+        globalIndex++;
+
         const item = {
           name: itemName,
-          sku: formData.items[itemIndex]?.sku || '',
+          sku: formData.items[itemIndex]?.sku || generatedSKU, // Use existing SKU if available, otherwise use generated
           hsn: formData.items[itemIndex]?.hsn || '',
           unit: formData.unit,
           taxable: formData.taxable,
@@ -193,13 +206,6 @@ const ItemGroupForm = () => {
       });
     });
     return items;
-  };
-
-  const generateSKU = (groupName, itemName, attribute, index) => {
-    const groupInitial = groupName.charAt(0).toUpperCase();
-    const itemInitial = itemName.charAt(0).toUpperCase();
-    const attributeInitial = attribute.charAt(0).toUpperCase();
-    return `${groupInitial}${itemInitial}-${attributeInitial}-00${index + 1}`;
   };
 
   const handleSubmit = async (e) => {
@@ -491,7 +497,7 @@ const ItemGroupForm = () => {
                             placeholder="SKU"
                             required
                             style={{ width: '120px' }}
-                            value={sku}
+                            value={formData.items[itemIndex]?.sku || generateSKU(formData.group_name, itemName, attribute.color, itemIndex)}
                             onChange={(e) => handleItemChange(itemIndex, 'sku', e.target.value)}
                           />
                         </td>

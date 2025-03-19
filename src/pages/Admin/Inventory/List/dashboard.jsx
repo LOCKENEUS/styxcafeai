@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Row, Col, Card, Table, Image } from "react-bootstrap";
 import { Doughnut, Line } from "react-chartjs-2";
-import dashboardBarIcon from "../../../../../public/assets/Admin/Dashboard/dashboardBarIcon.svg"
+import dashboardBarIcon from "/assets/Admin/Dashboard/dashboardBarIcon.svg"
 import {
   Chart as ChartJS,
   ArcElement,
@@ -158,7 +158,7 @@ const DashboardInventory = () => {
         <Col md={6}>
         <Row className="g-3">
         {statsCards.map((card, index) => (
-          <Col key={index} xs={4} sm={6} lg={6}>
+          <Col key={index} xs={6} lg={6}>
             <Card className="border-0">
               <Card.Body className="d-flex justify-content-start gap-3 align-items-center">
                 <div style={{  backgroundColor: card.bgColor, height: "100px", width: "70px", borderRadius: "10px"  }} className="d-flex justify-content-center align-items-center mb-2">
