@@ -65,7 +65,7 @@ const Manufacturer = ({ show, handleClose }) => {
                 <Modal.Title>Manufacturer</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form onSubmit={handleSubmit} id="manufacturerForm" method="post" action="" autoComplete="off">
+                <Form  id="manufacturerForm" method="post" action="" autoComplete="off">
                     <div className="row">
                         <div className="col-sm-12 mb-3">
                             <Form.Group controlId="mrf_name">
@@ -81,7 +81,7 @@ const Manufacturer = ({ show, handleClose }) => {
                             </Form.Group>
                         </div>
                         <div className="col-12">
-                            <Button type="submit" className="btn btn-primary" id="manufacturerSubmitBtn">
+                            <Button type="button" onClick={handleSubmit} className="btn btn-primary" id="manufacturerSubmitBtn">
                                 Submit
                             </Button>
                         </div>

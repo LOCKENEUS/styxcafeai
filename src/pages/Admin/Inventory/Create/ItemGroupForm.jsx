@@ -70,9 +70,9 @@ const ItemGroupForm = () => {
         group_name: selectedItemGroup.group_name || '',
         unit: selectedItemGroup.unit || '',
         taxable: selectedItemGroup.taxable || false,
-        tax: selectedItemGroup.tax || null,
-        manufacturer: selectedItemGroup.manufacturer || '',
-        brand: selectedItemGroup.brand || '',
+        tax: selectedItemGroup.tax ? selectedItemGroup.tax._id : null,
+        manufacturer: selectedItemGroup.manufacturer ? selectedItemGroup.manufacturer._id : '',
+        brand: selectedItemGroup.brand ? selectedItemGroup.brand._id : '',
         description: selectedItemGroup.description || '',
         items: selectedItemGroup.items || [],
         cafe: cafeId
@@ -81,35 +81,22 @@ const ItemGroupForm = () => {
       // Set tax preference based on taxable value
       setTaxPreference(selectedItemGroup.taxable ? 'Taxable' : 'Non-Taxable');
       
-      // If there are items with attributes, reconstruct the attributes array
+      // Reconstruct attributes from items
       if (selectedItemGroup.items && selectedItemGroup.items.length > 0) {
-        // This is a simplified approach - you might need to adjust based on your data structure
-        const attributeMap = new Map();
-        
-        selectedItemGroup.items.forEach(item => {
-          const nameParts = item.name.split(' ');
-          if (nameParts.length >= 3) {
-            const color = nameParts[1];
-            const option = nameParts[2];
-            
-            if (!attributeMap.has(color)) {
-              attributeMap.set(color, new Set());
-            }
-            attributeMap.get(color).add(option);
+        const reconstructedAttributes = selectedItemGroup.items.reduce((acc, item) => {
+          const [groupName, color, ...options] = item.name.split(' ');
+          const optionString = options.join(' ');
+          const existingAttribute = acc.find(attr => attr.color === color);
+
+          if (existingAttribute) {
+            existingAttribute.options = `${existingAttribute.options}, ${optionString}`.trim();
+          } else {
+            acc.push({ color, options: optionString });
           }
-        });
-        
-        const reconstructedAttributes = [];
-        attributeMap.forEach((options, color) => {
-          reconstructedAttributes.push({
-            color,
-            options: Array.from(options).join(', ')
-          });
-        });
-        
-        if (reconstructedAttributes.length > 0) {
-          setAttributes(reconstructedAttributes);
-        }
+
+          return acc;
+        }, []);
+        setAttributes(reconstructedAttributes);
       }
     }
   }, [selectedItemGroup, isEditMode, cafeId]);
@@ -149,26 +136,57 @@ const ItemGroupForm = () => {
     }));
   };
 
+  const handleItemChange = (index, field, value) => {
+    const updatedItems = [...formData.items];
+    // Create the item if it doesn't exist
+    if (!updatedItems[index]) {
+      updatedItems[index] = {};
+    }
+    updatedItems[index] = {
+      ...updatedItems[index],
+      [field]: value
+    };
+    setFormData(prev => ({
+      ...prev,
+      items: updatedItems
+    }));
+  };
+
+  const handleCopyToAll = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      items: prev.items.map(item => ({
+        ...item,
+        [field]: value
+      }))
+    }));
+  };
+
   const generateItems = () => {
     const items = [];
-    attributes.forEach((attribute) => {
+    attributes.forEach((attribute, attrIndex) => {
       const options = attribute.options.split(',').map(option => option.trim());
-      options.forEach((option) => {
+      options.forEach((option, optIndex) => {
+        const itemIndex = attributes.slice(0, attrIndex).reduce(
+          (acc, attr) => acc + attr.options.split(',').length,
+          0
+        ) + optIndex;
+
         const itemName = `${formData.group_name} ${attribute.color} ${option}`;
         const item = {
           name: itemName,
-          sku: document.querySelector('.sku')?.value || '',
-          hsn: document.querySelector('.hsn')?.value || '',
+          sku: formData.items[itemIndex]?.sku || '',
+          hsn: formData.items[itemIndex]?.hsn || '',
           unit: formData.unit,
           taxable: formData.taxable,
           manufacturer: formData.manufacturer,
           brand: formData.brand,
-          costPrice: parseFloat(document.querySelector('.cost-price')?.value || 0),
-          sellingPrice: parseFloat(document.querySelector('.selling-price')?.value || 0),
-          stock: parseInt(document.querySelector('.stock')?.value || 0),
-          upc: document.querySelector('input[name="item_upc[]"]')?.value || '',
-          ean: document.querySelector('input[name="item_ean[]"]')?.value || '',
-          isbn: document.querySelector('input[name="item_isbn[]"]')?.value || '',
+          costPrice: formData.items[itemIndex]?.costPrice || 0,
+          sellingPrice: formData.items[itemIndex]?.sellingPrice || 0,
+          stock: formData.items[itemIndex]?.stock || 0,
+          upc: formData.items[itemIndex]?.upc || '',
+          ean: formData.items[itemIndex]?.ean || '',
+          isbn: formData.items[itemIndex]?.isbn || '',
           cafe: cafeId
         };
         items.push(item);
@@ -177,9 +195,25 @@ const ItemGroupForm = () => {
     return items;
   };
 
+  const generateSKU = (groupName, itemName, attribute, index) => {
+    const groupInitial = groupName.charAt(0).toUpperCase();
+    const itemInitial = itemName.charAt(0).toUpperCase();
+    const attributeInitial = attribute.charAt(0).toUpperCase();
+    return `${groupInitial}${itemInitial}-${attributeInitial}-00${index + 1}`;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const items = generateItems();
+    let items = generateItems();
+
+    // If in edit mode, add item IDs from selectedItemGroup to each item
+    if (isEditMode && selectedItemGroup) {
+      items = items.map((item, index) => ({
+        ...item,
+        _id: selectedItemGroup.items[index]?._id || item._id, // Use existing ID if available
+      }));
+    }
+
     const submitData = {
       ...formData,
       items
@@ -227,7 +261,7 @@ const ItemGroupForm = () => {
             >
               <option value="">Select Unit</option>
               {units.map((unit) => (
-                <option key={unit._id} value={unit._id}>
+                <option key={unit._id} value={unit.name}>
                   {unit.name}
                   <FaTrash 
                     className="text-danger ms-2" 
@@ -373,6 +407,8 @@ const ItemGroupForm = () => {
               type="text"
               value={attribute.color}
               onChange={(e) => handleAttributeChange(index, "color", e.target.value)}
+              disabled={isEditMode}
+
             />
           </div>
           <div className="col-md-4">
@@ -381,18 +417,24 @@ const ItemGroupForm = () => {
               type="text"
               value={attribute.options}
               onChange={(e) => handleAttributeChange(index, "options", e.target.value)}
+              disabled={isEditMode}
             />
           </div>
           <div className="col-sm-4">
+          {!isEditMode && (
             <Button type="button" variant="danger" onClick={() => removeAttribute(index)}>
+  
               <BiTrash /> 
             </Button>
+            )}
           </div>
         </div>
       ))}
-      <Button type="button" className="ms-4 mt-3" onClick={addAttribute}>
-        <BiPlus /> Add Attribute
-      </Button>
+      {!isEditMode && (
+        <Button type="button" className="ms-4 mt-3" onClick={addAttribute}>
+          <BiPlus /> Add Attribute
+        </Button>
+      )}
     </div>        </div>
 
         {/* Conditionally render the table if there are attributes */}
@@ -414,25 +456,83 @@ const ItemGroupForm = () => {
                 </tr>
               </thead>
               <tbody id="table-body">
-                {attributes.map((attribute, index) => {
+                {attributes.map((attribute, attrIndex) => {
                   const options = attribute.options.split(',').map(option => option.trim());
-                  return options.map((option, optionIndex) => (
-                    <tr key={`${index}-${optionIndex}`}>
-                      <td>{rowIndex++}</td>
-                      <td>
-                        <b>{formData.group_name} {attribute.color} {option}</b>
-                        <input type="hidden" name="item_name[]" value={`${itemGroupName} ${attribute.color} ${option}`} />
-                      </td>
-                      <td className="px-1"><input type="text" name="item_hsn[]" className="form-control hsn" placeholder="HSN" style={{ width: '120px' }} /></td>
-                      <td className="px-1"><input type="text" name="item_sku[]" className="form-control sku" placeholder="SKU" required style={{ width: '120px' }} /></td>
-                      <td className="px-1"><input type="text" name="item_cost[]" className="form-control cost-price" required placeholder="Cost Price" style={{ width: '120px' }} /></td>
-                      <td className="px-1"><input type="text" name="item_price[]" className="form-control selling-price" placeholder="Selling Price" required style={{ width: '120px' }} /></td>
-                      <td className="px-1"><input type="text" name="item_upc[]" className="form-control" placeholder="UPC" style={{ width: '120px' }} /></td>
-                      <td className="px-1"><input type="text" name="item_ean[]" className="form-control" placeholder="EAN" style={{ width: '120px' }} /></td>
-                      <td className="px-1"><input type="text" name="item_isbn[]" className="form-control" placeholder="ISBN" style={{ width: '120px' }} /></td>
-                      <td className="px-1"><input type="text" name="item_stock[]" className="form-control stock" placeholder="Opening Stock" style={{ width: '120px' }} /></td>
-                    </tr>
-                  ));
+                  return options.map((option, optIndex) => {
+                    const itemIndex = attributes.slice(0, attrIndex).reduce(
+                      (acc, attr) => acc + attr.options.split(',').length,
+                      0
+                    ) + optIndex;
+
+                    const itemName = `${formData.group_name} ${attribute.color} ${option}`;
+                    const sku = generateSKU(formData.group_name, itemName, attribute.color, itemIndex);
+
+                    return (
+                      <tr key={`${attrIndex}-${optIndex}`}>
+                        <td>{rowIndex++}</td>
+                        <td>
+                          <b>{itemName}</b>
+                          <input type="hidden" name="item_name[]" value={itemName} />
+                        </td>
+                        <td className="px-1">
+                          <input
+                            type="text"
+                            name="item_hsn[]"
+                            className="hsn"
+                            value={formData.items[itemIndex]?.hsn || ''}
+                            onChange={(e) => handleItemChange(itemIndex, 'hsn', e.target.value)}
+                          />
+                        </td>
+                        <td className="px-1">
+                          <input
+                            type="text"
+                            name="item_sku[]"
+                            className="form-control sku"
+                            placeholder="SKU"
+                            required
+                            style={{ width: '120px' }}
+                            value={sku}
+                            onChange={(e) => handleItemChange(itemIndex, 'sku', e.target.value)}
+                          />
+                        </td>
+                        <td 
+                        className="px-1"><input
+                        value={formData?.items?.[itemIndex]?.costPrice}
+                        type="text" name="item_cost[]" className="form-control cost-price" required placeholder="Cost Price" style={{ width: '120px' }} 
+                        onChange={(e) => handleItemChange(itemIndex, 'costPrice', e.target.value)}
+                        /></td>
+                        <td 
+                        className="px-1"><input type="text" 
+                        value={formData?.items?.[itemIndex]?.sellingPrice}
+                        name="item_price[]" className="form-control selling-price" placeholder="Selling Price" required style={{ width: '120px' }} 
+                        onChange={(e) => handleItemChange(itemIndex, 'sellingPrice', e.target.value)}
+                        /></td>
+                        <td 
+                      className="px-1"><input type="text"
+                        value={formData?.items?.[itemIndex]?.upc}
+                        name="item_upc[]" className="form-control" placeholder="UPC" style={{ width: '120px' }} 
+                        onChange={(e) => handleItemChange(itemIndex, 'upc', e.target.value)}
+                        /></td>
+                        <td
+             className="px-1"><input 
+                        value={formData?.items?.[itemIndex]?.ean}
+                        type="text" name="item_ean[]" className="form-control" placeholder="EAN" style={{ width: '120px' }} 
+                        onChange={(e) => handleItemChange(itemIndex, 'ean', e.target.value)}
+                        /></td>
+                        <td
+                    className="px-1"><input type="text"
+                        value={formData?.items?.[itemIndex]?.isbn}
+                        name="item_isbn[]" className="form-control" placeholder="ISBN" style={{ width: '120px' }} 
+                        onChange={(e) => handleItemChange(itemIndex, 'isbn', e.target.value)}
+                        /></td>
+                        <td className="px-1"><input
+                        value={formData?.items?.[itemIndex]?.stock}
+                        type="text" name="item_stock[]" className="form-control stock" placeholder="Opening Stock" style={{ width: '120px' }} 
+                        onChange={(e) => handleItemChange(itemIndex, 'stock', e.target.value)}
+                        /></td>
+                      </tr>
+                    );
+                  });
                 })}
               </tbody>
             </table>

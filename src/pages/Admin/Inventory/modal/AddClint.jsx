@@ -49,21 +49,15 @@ const AddClint = ({ show, handleClose }) => {
   return (
     <Modal data-aos="fade-up" data-aos-duration="700" show={show} onHide={handleClose} size="lg">
       <ModalHeader className="bg-info bg-opacity-10 py-2">
-        {/* <ModalTitle> */}
-          <span style={{fontSize:"20px" , fontWeight:"500"}}>{showClientList ? "Choose a client" : "Create New Client"}</span>
-        {/* </ModalTitle> */}
+        <span style={{fontSize:"20px" , fontWeight:"500"}}>{showClientList ? "Choose a client" : "Create New Client"}</span>
         <div className="d-flex pb-2 gap-2">
-          {/* <Button 
+          <Button 
             variant="info" 
             size="sm" 
             onClick={toggleView}
           >
-            {showClientList ? <BiPlus size={20}/> : <BiArrowToLeft size={20}/>}
-          </Button> */}
-          <Button 
-            variant="close" 
-            onClick={handleClose}
-          />
+            <BiArrowToLeft size={20}/>
+          </Button>
         </div>
       </ModalHeader>
       <ModalBody>
@@ -134,7 +128,7 @@ const AddClint = ({ show, handleClose }) => {
                   <FormLabel className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
                     Full Name
                   </FormLabel>
-                  <FormControl
+                  <Form.Control
                     type="text"
                     name="name"
                     placeholder="Enter Full Name"
@@ -151,7 +145,7 @@ const AddClint = ({ show, handleClose }) => {
                   <FormLabel className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
                     Contact Number
                   </FormLabel>
-                  <FormControl
+                  <Form.Control
                     type="tel"
                     name="phone"
                     placeholder="Enter Contact Number"
@@ -171,7 +165,7 @@ const AddClint = ({ show, handleClose }) => {
                   <FormLabel className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
                     Email
                   </FormLabel>
-                  <FormControl
+                  <Form.Control
                     type="email"
                     name="email"
                     placeholder="Enter Email Address"
@@ -188,7 +182,7 @@ const AddClint = ({ show, handleClose }) => {
                   <FormLabel className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
                     Address
                   </FormLabel>
-                  <FormControl
+                  <Form.Control
                     type="text"
                     name="address"
                     placeholder="Enter Address"
@@ -205,7 +199,7 @@ const AddClint = ({ show, handleClose }) => {
                   <FormLabel className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
                     Gender
                   </FormLabel>
-                  <FormSelect
+                  <Form.Select
                     name="gender"
                     value={newClient.gender}
                     onChange={handleChange}
@@ -217,7 +211,7 @@ const AddClint = ({ show, handleClose }) => {
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="other">Other</option>
-                  </FormSelect>
+                  </Form.Select>
                 </FormGroup>
               </Col>
             </Row>
@@ -228,7 +222,7 @@ const AddClint = ({ show, handleClose }) => {
                   <FormLabel className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
                     Country
                   </FormLabel>
-                  <FormControl
+                  <Form.Control
                     type="text"
                     name="country"
                     placeholder="Enter Country"
@@ -262,7 +256,7 @@ const AddClint = ({ show, handleClose }) => {
                   <FormLabel className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
                     City
                   </FormLabel>
-                  <FormControl
+                  <Form.Control
                     type="text"
                     name="city"
                     placeholder="Enter City"

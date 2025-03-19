@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Table, Button, InputGroup, FormControl, Image, Breadcrumb, Card } from 'react-bootstrap';
+import { Container, Row, Col, Table, Button, InputGroup, FormControl, Image, Breadcrumb, Card, Pagination } from 'react-bootstrap';
 import solar_export from '/assets/inventory/solar_export-linear.png'
 import { Link, useNavigate } from 'react-router-dom';
 import gm1 from '/assets/inventory/mynaui_search.svg'
@@ -18,6 +18,21 @@ const ItemGroupList = () => {
   const cafeId = user?._id;
   const { itemGroups, loading, error } = useSelector((state) => state.itemGroups);
   const navigate = useNavigate();
+  const [activePage, setActivePage] = useState(1);
+  const itemsPerPage = 5;
+
+  const filteredGroups = itemGroups.filter((group) =>
+    group.group_name.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredGroups.length / itemsPerPage);
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setActivePage(page);
+    }
+  };
+
   const generateCSV = () => {
     const headers = ["SN", "NAME", "UNIT", "MANUFACTURER", "BRAND", "ITEMS"];
     const rows = itemGroups.map(item => [
@@ -42,89 +57,169 @@ const ItemGroupList = () => {
   }, [dispatch, cafeId]);
 
   return (
-    <div>
-      <Container data-aos="fade-right" data-aos-duration="500" fluid className="mt-4 min-vh-100">
-    <Breadcrumb>
-        <Breadcrumb.Item href="/admin">Home</Breadcrumb.Item>
-      <Breadcrumb.Item href="/admin/inventory">Inventory</Breadcrumb.Item>
-      <Breadcrumb.Item href="/admin/inventory/item-group-list">Item Group List</Breadcrumb.Item>
-    </Breadcrumb>
+    <Container>
+      <Row>
+        <Col sm={12} className="mx-4 my-3">
+          <div style={{ top: "186px", fontSize: "18px" }}>
+            <Breadcrumb>
+              <Breadcrumb.Item href="/admin">Home</Breadcrumb.Item>
+              <Breadcrumb.Item href="/admin/inventory">Inventory</Breadcrumb.Item>
+              <Breadcrumb.Item active>Item Group List</Breadcrumb.Item>
+            </Breadcrumb>
+          </div>
+        </Col>
 
-        <Row>
-          <Col sm={4} className="d-flex">
-            <h1 className="mx-1 my-4" style={{ fontSize: "18px", fontWeight: "500" }}>Item Group List</h1>
-          </Col>
+        <Col sm={12}>
+          <Card className="mx-4 p-3">
+            <Row className="align-items-center">
+              <Col sm={4} className="d-flex my-2">
+                <h1
+                  style={{
+                    fontSize: "20px",
+                    fontWeight: "500",
+                    lineHeight: "18px",
+                  }}
+                  className="m-0"
+                >
+                  Item Group List
+                </h1>
+              </Col>
 
-          <Col sm={4} className="d-flex">
-        
-                            <InputGroup className="mx-1 my-3">
-                                <InputGroup.Text className="border-0" style={{ background: "#FAFAFA" }}>
-                                    <img src={gm1} alt="Search Icon" />
-                                </InputGroup.Text>
-                                <FormControl
-                                    type="search"
-                                    size="sm"
-                                    placeholder="Search for vendors"
-                                    value={searchText}
-                                    onChange={(e) => setSearchText(e.target.value)}
-                                    style={{ backgroundColor: "#FAFAFA", border: "none" }}
-                                />
-                            </InputGroup>
-                     
-          </Col>
+              <Col sm={3} className="d-flex my-2">
+                <InputGroup className="navbar-input-group">
+                  <InputGroup.Text
+                    className="border-0"
+                    style={{ backgroundColor: "#FAFAFA" }}
+                  >
+                    <img src={gm1} alt="Search Icon" />
+                  </InputGroup.Text>
 
-          <Col sm={4} className="d-flex align-items-center justify-content-end" style={{ height: '50px' }}>
-            <Button variant="light" className="me-2 border-1 text-danger border-danger" onClick={generateCSV} style={{ height: '100%' }}>
-              <Image className="me-2" style={{ width: "22px", height: "22px" }} src={solar_export} />
-              Export
-            </Button>
-            <Button variant="primary" className="mx-2" size="sm" style={{ height: '100%' }}>
-                <Link to="/admin/inventory/item-group-form" className="text-white"> 
-              + Create Item Group
-              </Link>
-            </Button>
-          </Col>
+                  <FormControl
+                    type="search"
+                    size="sm"
+                    placeholder="Search for item groups"
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    style={{ backgroundColor: "#FAFAFA", border: "none" }}
+                  />
 
-          <Col sm={12}>
-            {loading ? (
-              <p>Loading...</p>
-            ) : error ? (
-              <p>Error: {error}</p>
-            ) : (
-              <Table striped style={{ minWidth: '600px', marginTop: "2rem" }}>
-                <thead style={{ backgroundColor: '#0062FF0D' }}>
-                  <tr>
-                    {['SN', 'NAME', 'UNIT', 'MANUFACTURER', 'BRAND', 'ITEMS'].map((header, index) => (
-                      <th key={index} style={{ fontWeight: "bold", fontSize: "0.9rem" }}>{header}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody style={{ backgroundColor: "#F5F5F5" }}>
-                  {itemGroups.map((item, index) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>
-                        <div className='d-flex gap-2 align-items-center cursor-pointer' onClick={() => navigate(`/admin/inventory/item-groups-details/${item._id}`)}>
-                          <div style={{ width: '30px', height: '30px', borderRadius: '50%', backgroundColor: getRandomColor(item.group_name), color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            {item.group_name.charAt(0).toUpperCase()}
-                          </div>
-                          <span style={{ fontWeight: "bold", cursor: "pointer", color: "#0062FF" }}>{item.group_name}</span>
-                        </div>
-                      </td>
-                      <td>{item.unit?.name || 'N/A'}</td>
-                      <td>{item.manufacturer?.name || 'N/A'}</td>
-                      <td>{item.brand?.name || 'N/A'}</td>
-                      <td>{item.items.length}</td>
+                  {searchText && (
+                    <InputGroup.Text
+                      as="button"
+                      className="border-0 bg-transparent"
+                      onClick={() => setSearchText("")}
+                    >
+                      ✖
+                    </InputGroup.Text>
+                  )}
+                </InputGroup>
+              </Col>
+
+              <Col sm={5} className="d-flex justify-content-end text-end my-2">
+                <Button variant="white" className="btn px-4 mx-2" size="sm" onClick={generateCSV} style={{ borderColor: "#FF3636", color: "#FF3636" }}>
+                  <Image className="me-2" style={{ width: "22px", height: "22px" }} src={solar_export} />
+                  Export
+                </Button>
+
+                <Link to="/admin/inventory/item-group-form">
+                  <Button variant="primary" className="px-4 mx-2" size="sm">
+                    + Create Item Group
+                  </Button>
+                </Link>
+              </Col>
+
+              <Col sm={12} style={{ marginTop: "30px" }}>
+                <Table striped style={{ minWidth: '600px', marginTop: "2rem" }}>
+                  <thead  style={{ backgroundColor: '#0062FF0D' }}>
+                    <tr className="no-uppercase">
+                      {['S/N', 'Name', 'Unit', 'Manufacturer', 'Brand', 'Items'].map((header, index) => (
+                        <th key={index} style={{ fontWeight: "bold", fontSize: "0.9rem", color:'black' }}> <h4> {header} </h4></th>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </Table>
-            )}
-          </Col>
-        </Row>
-   
-      </Container>
-    </div>
+                  </thead>
+                  <tbody style={{ backgroundColor: "#F5F5F5" }}>
+                    {loading ? (
+                      <tr>
+                        <td colSpan="6" className="text-center py-4">
+                          Loading...
+                        </td>
+                      </tr>
+                    ) : error ? (
+                      <tr>
+                        <td colSpan="6" className="text-center py-4 text-danger">
+                          {error}
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredGroups
+                        .slice((activePage - 1) * itemsPerPage, activePage * itemsPerPage)
+                        .map((item, index) => (
+                          <tr key={index}>
+                            <td>{(activePage - 1) * itemsPerPage + index + 1}</td>
+                            <td>
+                              <div className='d-flex gap-2 align-items-center cursor-pointer' onClick={() => navigate(`/admin/inventory/item-groups-details/${item._id}`)}>
+                                <div style={{ width: '30px', height: '30px', borderRadius: '50%', backgroundColor: getRandomColor(item.group_name), color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                  {item.group_name.charAt(0).toUpperCase()}
+                                </div>
+                                <span style={{ fontWeight: "bold", cursor: "pointer", color: "#0062FF" }}>{item.group_name}</span>
+                              </div>
+                            </td>
+                            <td>{item.unit || 'N/A'}</td>
+                            <td>{item.manufacturer?.name || 'N/A'}</td>
+                            <td>{item.brand?.name || 'N/A'}</td>
+                            <td>{item.items.length}</td>
+                          </tr>
+                        ))
+                    )}
+                  </tbody>
+                </Table>
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+      </Row>
+      <div className="d-flex justify-content-center mt-3">
+        <Pagination>
+          <Pagination.Prev 
+            onClick={() => handlePageChange(activePage - 1)}
+            disabled={activePage === 1}
+          />
+          {[...Array(totalPages)].map((_, index) => (
+            <Pagination.Item
+              key={index + 1}
+              active={index + 1 === activePage}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next
+            onClick={() => handlePageChange(activePage + 1)}
+            disabled={activePage === totalPages}
+          />
+        </Pagination>
+      </div>
+      <style jsx>{`
+  .no-uppercase th {
+    text-transform: none !important;
+  }
+  
+  @media (max-width: 768px) {
+    .table-responsive {
+      overflow-x: auto;
+    }
+    
+    th h4 {
+      font-size: 0.8rem;
+    }
+    
+    td {
+      font-size: 0.8rem;
+    }
+  }
+`}</style>
+
+    </Container>
   );
 }
 

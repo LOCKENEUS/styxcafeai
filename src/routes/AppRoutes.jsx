@@ -90,7 +90,7 @@ import { InventorySettingAdmin } from "../pages/Admin/Inventory/List/inventorySe
 import { SODetails } from "../pages/Admin/Inventory/Details/SODetails";
 import { SIDetails } from "../pages/Admin/Inventory/Details/SIDetails";
 import { IPDetails } from "../pages/Admin/Inventory/Details/IPDetails";
-import { SOCreate } from "../pages/Admin/Inventory/Create/SOCreate";
+import  SOCreate  from "../pages/Admin/Inventory/Create/SOCreate";
 import { InvoiceCreate } from "../pages/Admin/Inventory/Create/invoiceCreate";
 import BillPaymentList from "../pages/Admin/Inventory/List/BillPaymentList";
 import PurchaseBillList from "../pages/Admin/Inventory/List/PurchaseBillList";

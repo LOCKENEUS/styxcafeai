@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Table, Button, Form, InputGroup, Pagination, Container, Row, Col, Breadcrumb, FormControl, Spinner } from "react-bootstrap";
+import { Table, Button, Form, InputGroup, Pagination, Container, Row, Col, Breadcrumb, FormControl, Spinner, Card } from "react-bootstrap";
 import { FaFileExport, FaSearch } from "react-icons/fa";
 import { BsPlusLg } from "react-icons/bs";
 import { IoAdd } from "react-icons/io5";
@@ -16,6 +16,8 @@ const avatarColors = ['#0062FF', '#FF6B6B', '#4CAF50', '#9C27B0', '#FF9800', '#7
 const VendorList = () => {
   const [search, setSearch] = useState("");
   const [activeDropdownId, setActiveDropdownId] = useState(null);
+  const [activePage, setActivePage] = useState(1);
+  const itemsPerPage = 5;
   const editDropdownRef = useRef(null);
   const dispatch = useDispatch();
   const { vendors, loading, error } = useSelector(state => state.vendors);
@@ -91,202 +93,234 @@ const VendorList = () => {
     vendor.company?.toLowerCase().includes(search.toLowerCase())
   ) || [];
 
-  return (
-    <Container data-aos="fade-right" data-aos-duration="500" fluid className="mt-4 min-vh-100">
-    <Breadcrumb>
-        <Breadcrumb.Item href="/admin">Home</Breadcrumb.Item>
-        <Breadcrumb.Item href="/admin/inventory">Inventory</Breadcrumb.Item>
-        <Breadcrumb.Item href="/admin/inventory/vendor-list">Vendor List</Breadcrumb.Item>
-      </Breadcrumb>
-      <div className="d-flex justify-content-between my-4">
-        <h2>Vendor</h2>
-        <div sm={4} className="d-flex">
-                            <InputGroup className="mx-1 my-3">
-                                <InputGroup.Text className="border-0" style={{ background: "#FAFAFA" }}>
-                                    <img src={gm1} alt="Search Icon" />
-                                </InputGroup.Text>
-                                <FormControl
-                                    type="search"
-                                    size="sm"
-                                    placeholder="Search for vendors"
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    style={{ backgroundColor: "#FAFAFA", border: "none" }}
-                                />
-                            </InputGroup>
-                        </div>
-        <div>
-          <Button variant="light" className="me-2 border-1 text-danger border-danger" onClick={handleExport}>
-            <img src={solar_export} alt="Export Icon" /> Export
-          </Button>
-          <Link to={'/admin/inventory/create-vendor'}>
-          <Button  variant="primary">
-            <BsPlusLg className="me-2" style={{fontSize:"1.2rem"}} /> New Vendor
-          </Button>
-          </Link>
-        </div>
-      </div>
-      <Table striped bordered hover style={{ minWidth: '600px', marginTop:"2rem" }}>
-          <thead style={{ backgroundColor: '#0062FF0D' }}>
-            <tr>
-              <th style={{
-                padding: 'clamp(10px, 2vw, 15px)',
-                border: 'none',
-              }}>S/N</th>
-              <th style={{
-                padding: 'clamp(10px, 2vw, 15px)',
-                border: 'none',
-              }}>Vendor Name</th>
-              <th style={{
-                padding: 'clamp(10px, 2vw, 15px)',
-                border: 'none',
-              }}>Company</th>
-              <th style={{
-                padding: 'clamp(10px, 2vw, 15px)',
-                border: 'none',
-              }}>Billing Address</th>
-              <th style={{
-                padding: 'clamp(10px, 2vw, 15px)',
-                border: 'none',
-              }}>Shipping Address</th>
-              <th style={{
-                padding: 'clamp(10px, 2vw, 15px)',
-                border: 'none',
-              }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody style={{backgroundColor:"#F5F5F5"}}>
-            {loading ? (
-              <tr>
-                <td colSpan="6" className="text-center py-4">
-                  <Spinner animation="border" variant="primary" />
-                </td>
-              </tr>
-            ) : error ? (
-              <tr>
-                <td colSpan="6" className="text-center py-4 text-danger">
-                  {error}
-                </td>
-              </tr>
-            ) : filteredVendors.length === 0 ? (
-              <tr>
-                <td colSpan="6" className="text-center py-4">
-                  No vendors found
-                </td>
-              </tr>
-            ) : (
-              filteredVendors.map((vendor, index) => (
-                <tr key={vendor._id}>
-                  <td style={{
-                    padding: 'clamp(10px, 2vw, 15px)',
-                    border: 'none',
-                  }}>{index + 1}</td>
-                  <td style={{
-                    padding: 'clamp(10px, 2vw, 15px)',
-                    border: 'none',
-                  }}>
-                    <div className="d-flex gap-2 align-items-center">
-                      <div style={{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '50%',
-                        backgroundColor: getRandomColor(index),
-                        color: 'white',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginRight: '10px',
-                      }}>
-                        {getInitials(vendor.name)}
-                      </div>
-                      <div>
-                        <Link to={`/admin/inventory/vendor-details/${vendor._id}`} className="fw-bold text-primary">{vendor.name}</Link><br />
-                        <small>{vendor.email}</small>
-                      </div>
-                    </div>
-                  </td>
-                  <td style={{
-                    padding: 'clamp(10px, 2vw, 15px)',
-                    border: 'none',
-                  }}>{vendor.company}</td>
-                  <td style={{
-                    padding: 'clamp(10px, 2vw, 15px)',
-                    border: 'none',
-                  }}>{vendor.billingAddress}</td>
-                  <td style={{
-                    padding: 'clamp(10px, 2vw, 15px)',
-                    border: 'none',
-                  }}>{vendor.shippingAddress}</td>
-                  <td style={{
-                    padding: 'clamp(10px, 2vw, 15px)',
-                    border: 'none',
-                    position: 'relative',
-                  }}>
-                    <Button
-                      variant="link"
-                      className="text-primary"
-                      onClick={() => setActiveDropdownId(
-                        activeDropdownId === vendor._id ? null : vendor._id
-                      )}
-                    >
-                      <FaEdit style={{ color: '#0062FF', fontSize: '1.2rem' }} />
-                    </Button>
+  // Add handlePageChange function
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setActivePage(page);
+    }
+  };
 
-                    {activeDropdownId === vendor._id && (
-                      <div
-                        ref={editDropdownRef}
-                        style={{
-                          position: 'absolute',
-                          right: '0',
-                          top: '100%',
-                          backgroundColor: 'white',
-                          boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-                          borderRadius: '4px',
-                          zIndex: 1000,
-                          minWidth: 'clamp(120px, 30vw, 150px)',
-                        }}
-                      >
-                        <Link 
-                          to={`/admin/inventory/vendors/edit/${vendor._id}`}
-                          style={{ textDecoration: 'none' }}
-                        >
-                          <div style={{
-                            padding: 'clamp(8px, 2vw, 10px)',
-                            cursor: 'pointer',
-                            color: '#0062FF',
-                            borderBottom: '1px solid #eee',
-                          }}>
-                            Edit Vendor
-                          </div>
-                        </Link>
-                        <div style={{
-                          padding: 'clamp(8px, 2vw, 10px)',
-                          cursor: 'pointer',
-                          color: '#FF0000',
-                        }}
-                          onClick={() => handleDelete(vendor._id)}
-                        >
-                          Delete Vendor
-                        </div>
-                      </div>
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredVendors.length / itemsPerPage);
+
+  return (
+    <Container>
+      <Row>
+        <Col sm={12} className="mx-4 my-3">
+          <div style={{ top: "186px", fontSize: "18px" }}>
+            <Breadcrumb>
+              <Breadcrumb.Item href="/admin">Home</Breadcrumb.Item>
+              <Breadcrumb.Item href="/admin/inventory">Inventory</Breadcrumb.Item>
+              <Breadcrumb.Item active>Vendor List</Breadcrumb.Item>
+            </Breadcrumb>
+          </div>
+        </Col>
+
+        <Col sm={12}>
+          <Card className="mx-4 p-3">
+            <Row className="align-items-center">
+              <Col sm={4} className="d-flex my-2">
+                <h1
+                  style={{
+                    fontSize: "20px",
+                    fontWeight: "500",
+                    lineHeight: "18px",
+                  }}
+                  className="m-0"
+                >
+                  Vendor List
+                </h1>
+              </Col>
+
+              <Col sm={3} className="d-flex my-2">
+                <InputGroup className="navbar-input-group">
+                  <InputGroup.Text
+                    className="border-0"
+                    style={{ backgroundColor: "#FAFAFA" }}
+                  >
+                    <img src={gm1} alt="Search Icon" />
+                  </InputGroup.Text>
+
+                  <FormControl
+                    type="search"
+                    size="sm"
+                    placeholder="Search for vendors"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    style={{ backgroundColor: "#FAFAFA", border: "none" }}
+                  />
+
+                  {search && (
+                    <InputGroup.Text
+                      as="button"
+                      className="border-0 bg-transparent"
+                      onClick={() => setSearch("")}
+                    >
+                      ✖
+                    </InputGroup.Text>
+                  )}
+                </InputGroup>
+              </Col>
+
+              <Col sm={5} className="d-flex justify-content-end text-end my-2">
+                <Button variant="white" className="btn px-4 mx-2" size="sm" onClick={handleExport} style={{ borderColor: "#FF3636", color: "#FF3636" }}>
+                  <img src={solar_export} alt="Export Icon" style={{ width: "22px", height: "22px" }} className="me-2" />
+                  Export
+                </Button>
+
+                <Link to={'/admin/inventory/create-vendor'}>
+                  <Button variant="primary" className="px-4 mx-2" size="sm">
+                    <BsPlusLg className="me-2" style={{ fontSize: "1.2rem" }} />
+                    New Vendor
+                  </Button>
+                </Link>
+              </Col>
+
+              <Col sm={12} style={{ marginTop: "30px" }}>
+                <Table striped  hover style={{ minWidth: '600px', marginTop: "2rem" }}>
+                  <thead className="no-uppercase" style={{ backgroundColor: '#0062FF0D' }}>
+                    <tr >
+                      {['S/N', 'Vendor Name', 'Company', 'Billing Address', 'Shipping Address', 'Actions'].map((header, index) => (
+                        <th key={index} style={{  fontSize: "0.9rem" ,color:'black', textAlign:"center" }}>  <h4> {header} </h4> </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody style={{ backgroundColor: "#F5F5F5" }}>
+                    {loading ? (
+                      <tr>
+                        <td colSpan="6" className="text-center py-4">
+                          <Spinner animation="border" variant="primary" />
+                        </td>
+                      </tr>
+                    ) : error ? (
+                      <tr>
+                        <td colSpan="6" className="text-center py-4 text-danger">
+                          {error}
+                        </td>
+                      </tr>
+                    ) : filteredVendors.length === 0 ? (
+                      <tr>
+                        <td colSpan="6" className="text-center py-4">
+                          No vendors found
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredVendors
+                        .slice((activePage - 1) * itemsPerPage, activePage * itemsPerPage)
+                        .map((vendor, index) => (
+                          <tr key={vendor._id}>
+                            <td>{(activePage - 1) * itemsPerPage + index + 1}</td>
+                            <td>
+                              <div className="d-flex gap-2 align-items-center">
+                                <div style={{
+                                  width: '40px',
+                                  height: '40px',
+                                  borderRadius: '50%',
+                                  backgroundColor: getRandomColor(index),
+                                  color: 'white',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  marginRight: '10px',
+                                }}>
+                                  {getInitials(vendor.name)}
+                                </div>
+                                <div>
+                                  <Link to={`/admin/inventory/vendor-details/${vendor._id}`} className="fw-bold text-primary">{vendor.name}</Link><br />
+                                  <small>{vendor.email}</small>
+                                </div>
+                              </div>
+                            </td>
+                            <td>{vendor.company}</td>
+                            <td>{vendor.billingAddress}</td>
+                            <td>{vendor.shippingAddress}</td>
+                            <td>
+                              <Button
+                                variant="link"
+                                className="text-primary"
+                                onClick={() => setActiveDropdownId(
+                                  activeDropdownId === vendor._id ? null : vendor._id
+                                )}
+                              >
+                                <FaEdit style={{ color: '#0062FF', fontSize: '1.2rem' }} />
+                              </Button>
+
+                              {activeDropdownId === vendor._id && (
+                                <div
+                                  ref={editDropdownRef}
+                                  style={{
+                                    position: 'absolute',
+                                    right: '0',
+                                    top: '100%',
+                                    backgroundColor: 'white',
+                                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                                    borderRadius: '4px',
+                                    zIndex: 1000,
+                                    minWidth: 'clamp(120px, 30vw, 150px)',
+                                  }}
+                                >
+                                  <Link
+                                    to={`/admin/inventory/vendors/edit/${vendor._id}`}
+                                    style={{ textDecoration: 'none' }}
+                                  >
+                                    <div style={{
+                                      padding: 'clamp(8px, 2vw, 10px)',
+                                      cursor: 'pointer',
+                                      color: '#0062FF',
+                                      borderBottom: '1px solid #eee',
+                                    }}>
+                                      Edit Vendor
+                                    </div>
+                                  </Link>
+                                  <div style={{
+                                    padding: 'clamp(8px, 2vw, 10px)',
+                                    cursor: 'pointer',
+                                    color: '#FF0000',
+                                  }}
+                                    onClick={() => handleDelete(vendor._id)}
+                                  >
+                                    Delete Vendor
+                                  </div>
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        ))
                     )}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </Table>
-      <Row className="justify-content-end mt-3">
-        <Col xs="auto">
-          <Pagination>
-            <Pagination.Prev />
-            <Pagination.Item active>{1}</Pagination.Item>
-            <Pagination.Item>{2}</Pagination.Item>
-            <Pagination.Ellipsis />
-            <Pagination.Next />
-          </Pagination>
+                  </tbody>
+                </Table>
+              </Col>
+            </Row>
+          </Card>
         </Col>
       </Row>
+      <div className="d-flex justify-content-center mt-3">
+        <Pagination>
+          <Pagination.Prev 
+            onClick={() => handlePageChange(activePage - 1)}
+            disabled={activePage === 1}
+          />
+          {[...Array(totalPages)].map((_, index) => (
+            <Pagination.Item
+              key={index + 1}
+              active={index + 1 === activePage}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next
+            onClick={() => handlePageChange(activePage + 1)}
+            disabled={activePage === totalPages}
+          />
+        </Pagination>
+      </div>
+      <style jsx>{`
+  .no-uppercase th {
+    text-transform: none !important;
+  }
+`}</style>
+
     </Container>
   );
 };

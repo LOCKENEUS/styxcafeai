@@ -793,19 +793,30 @@ export const CreateVendorForm = () => {
                             <FormControl
                                 type="file"
                                 name="image"
-                                accept=".jpg, .jpeg, .png"
+                                accept=".jpg, .jpeg, .png, .pdf"
                                 id="image"
                                 onChange={handleImageChange}
                             />
                         </Col>
                         <Col sm={12} className="p-2 mb-2 text-end">
-                            <Image
-                           src={imagePreview}
-                                alt="product image"
-                                fluid
-                                style={{ width: '100px', aspectRatio: '1', objectFit: 'cover' }}
-                                onError={(e) => e.target.src = 'https://fsm.lockene.net/assets/Web-Fsm/images/avtar/3.jpg'}
-                            />
+                            {formData.image?.type === 'application/pdf' ? (
+                                <div className="pdf-preview">
+                                    <embed 
+                                        src={imagePreview} 
+                                        type="application/pdf" 
+                                        width="100px" 
+                                        height="100px"
+                                    />
+                                </div>
+                            ) : (
+                                <Image
+                                    src={imagePreview}
+                                    alt="product image"
+                                    fluid
+                                    style={{ width: '100px', aspectRatio: '1', objectFit: 'cover' }}
+                                    onError={(e) => e.target.src = 'https://fsm.lockene.net/assets/Web-Fsm/images/avtar/3.jpg'}
+                                />
+                            )}
                         </Col>
 
                         </Row>

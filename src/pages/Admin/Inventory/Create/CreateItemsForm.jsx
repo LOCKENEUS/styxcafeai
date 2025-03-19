@@ -143,7 +143,7 @@ const CreateItemsForm = () => {
         }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmitData = async (e) => {
         e.preventDefault();
         
         const formDataToSend = new FormData();
@@ -153,7 +153,7 @@ const CreateItemsForm = () => {
         formDataToSend.append('unit', formData.unit);
         formDataToSend.append('hsn', parseFloat(formData.hsnCode));
         formDataToSend.append('taxable', formData.taxPreference === 'Taxable');
-        formDataToSend.append('tax', parseFloat(formData.selectedTax));
+        formDataToSend.append('tax', formData.selectedTax);
         formDataToSend.append('length', parseFloat(formData.length));
         formDataToSend.append('width', parseFloat(formData.width));
         formDataToSend.append('height', parseFloat(formData.height));
@@ -234,7 +234,7 @@ const CreateItemsForm = () => {
             </div>
 
         </Col>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmitData}>
             {/* <Row> */}
             <Card className="shadow p-4 my-4">
                 <Row>
@@ -389,13 +389,14 @@ const CreateItemsForm = () => {
                                         const selectedTax = taxFields.find(tax => tax._id === e.target.value);
                                         setFormData(prev => ({
                                             ...prev,
-                                            selectedTax: e.target.value
+                                            selectedTax: e.target.value,
+                                            tax_id: e.target.value // Add tax_id to form data
                                         }));
                                     }}
                                 >
                                     <option value="">Select Tax</option>
                                     {taxFields.map(tax => (
-                                        <option key={tax._id} value={tax.tax_rate}>
+                                        <option key={tax._id} value={tax._id}>
                                             {tax.tax_name} ({tax.tax_rate}%)
                                         </option>
                                     ))}

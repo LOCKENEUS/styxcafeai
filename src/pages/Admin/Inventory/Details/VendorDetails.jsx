@@ -139,7 +139,35 @@ const VendorDetails = () => {
             <h5>Other Documents</h5>
             <div className="d-flex flex-wrap align-items-center justify-content-around gap-2">
               <p><strong>Government Id:</strong> {selectedVendor.govtId}</p>
-              <p><strong>Document:</strong> <img src={pdflogo} alt="pdflogo" /> <a href="#">{selectedVendor.documents}</a></p>
+              <p><strong>Document:</strong> 
+                <img src={pdflogo} alt="pdflogo" /> 
+                {selectedVendor.image && (
+                  <a 
+                    href={`${import.meta.env.VITE_API_URL}/${selectedVendor.image}`}
+                    download
+                    onClick={(e) => {
+                      e.preventDefault();
+                      fetch(`${import.meta.env.VITE_API_URL}/${selectedVendor.image}`)
+                        .then(response => response.blob())
+                        .then(blob => {
+                          const url = window.URL.createObjectURL(blob);
+                          const link = document.createElement('a');
+                          link.href = url;
+                          // Extract the original filename from the path
+                          const fileName = selectedVendor.image.split('-').pop();
+                          link.download = fileName;
+                          document.body.appendChild(link);
+                          link.click();
+                          link.remove();
+                          window.URL.revokeObjectURL(url);
+                        });
+                    }}
+                    className="text-primary"
+                  > 
+                    Download PDF
+                  </a>
+                )}
+              </p>
             </div>
           </Card>
 

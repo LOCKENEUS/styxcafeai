@@ -41,7 +41,7 @@ const Tax = ({ show, handleClose }) => {
                 <Modal.Title>Create Custom Tax</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form id="CreateTax" onSubmit={handleSubmit} autoComplete="off">
+                <Form id="CreateTax" autoComplete="off">
                     <div className="row">
                         <div className="col-sm-6 mb-3">
                             <Form.Group controlId="tax_name">
@@ -85,7 +85,7 @@ const Tax = ({ show, handleClose }) => {
                             </Form.Group>
                         </div>
                         <div className="col-12">
-                            <Button className="btn btn-sm btn-primary" type="submit" id="TaxSubmitBtn">
+                            <Button className="btn btn-sm btn-primary" type="button" onClick={handleSubmit} id="TaxSubmitBtn">
                                 Create Tax
                             </Button>
                         </div>

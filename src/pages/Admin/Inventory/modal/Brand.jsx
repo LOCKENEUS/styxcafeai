@@ -36,7 +36,7 @@ const Brand = ({ show, handleClose }) => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmitBrand = (e) => {
         e.preventDefault(); // Prevent form submission
         
         // Validate if cafe ID exists
@@ -68,7 +68,7 @@ const Brand = ({ show, handleClose }) => {
                 <Modal.Title>Brand</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form onSubmit={handleSubmit} autoComplete="off">
+                <Form  autoComplete="off">
                     <div className="row">
                         <div className="col-sm-12 mb-3">
                             <Form.Group controlId="brand_name">
@@ -85,9 +85,10 @@ const Brand = ({ show, handleClose }) => {
                         </div>
                         <div className="col-12">
                             <Button 
-                                type="submit" 
+                                type="button" 
                                 className="btn btn-primary" 
                                 id="brandSubmitBtn"
+                                onClick={handleSubmitBrand}
                                 disabled={loading}
                             >
                                 {loading ? 'Saving...' : 'Submit'}

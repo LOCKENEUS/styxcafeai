@@ -4,7 +4,7 @@ import { BiArrowBack, BiCloudUpload } from 'react-icons/bi';
 import { HiOutlineTrash } from 'react-icons/hi';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getItemGroupById } from '../../../../store/AdminSlice/Inventory/ItemGroupSlice';
+import { getItemGroupById, deleteItemGroup } from '../../../../store/AdminSlice/Inventory/ItemGroupSlice';
 
 const ItemGroupsDetails = () => {
   const navigate = useNavigate();
@@ -17,6 +17,14 @@ const ItemGroupsDetails = () => {
       console.log("res.payload", res.payload);
     });
   }, [dispatch, id]);
+
+
+  const handleDelete = () => {
+    
+    // if (window.confirm("Are you sure you want to delete this item group?")) {
+    //   dispatch(deleteItemGroup(id));
+    // }
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -39,7 +47,7 @@ const ItemGroupsDetails = () => {
                     <button onClick={() => navigate(`/admin/inventory/item-group-form/${id}`)} className="btn btn-primary me-2">
                       <BiCloudUpload /> Edit
                     </button>
-                    <button className="btn btn-danger me-2">
+                    <button className="btn btn-danger me-2" onClick={handleDelete}>
                       <HiOutlineTrash /> Delete
                     </button>
                     <button className="btn btn-secondary" onClick={() => navigate(-1)}>
@@ -54,7 +62,7 @@ const ItemGroupsDetails = () => {
                       </tr>
                       <tr>
                         <td>Tax</td>
-                        <td><b>{selectedItemGroup?.tax || 'N/A'}%</b></td>
+                        <td><b>{selectedItemGroup?.tax?.tax_rate || 'N/A'}%</b></td>
                       </tr> 
                       <tr>
                         <td>Manufacturer</td>

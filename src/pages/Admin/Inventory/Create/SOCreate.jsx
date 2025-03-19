@@ -1,80 +1,103 @@
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, FormCheck, FormControl, FormGroup, FormSelect, Row, Table } from "react-bootstrap";
+import React, { useState } from "react";
+import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Modal, Breadcrumb, BreadcrumbItem } from "react-bootstrap";
+import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
+import { FaRupeeSign, FaTrash, FaUpload } from "react-icons/fa";
+import { BiArrowToLeft, BiPlus } from "react-icons/bi";
+import OffcanvesItems from "../Offcanvas/OffcanvesItems";
+import Tax from "../modal/Tax";
+import AddClint from "../modal/AddClint";
+import PaymentTermsModal from "../modal/PaymentTermsModal";
 import { Link } from "react-router-dom";
-import companylog from "/assets/inventory/companylogo.png";
-import { useState } from "react";
-import { FaRupeeSign, FaUpload } from "react-icons/fa";
+
+const SOCreate = () => {
+  const [show, setShow] = useState(false);
+  const [showClientList, setShowClientList] = useState(true);
+ 
+  const [showPaymentTerms, setShowPaymentTerms] = useState(false);
+ 
+  
+  
+  const [products, setProducts] = useState([
+      {
+          id: 1,   
+          item: '',
+          quantity: '',
+          price: '',
+          tax: '',
+          total: ''
+      }
+  ]);
+  const [showProductList, setShowProductList] = useState(false);
+  const [showTaxModal, setShowTaxModal] = useState(false);
+  const [taxList, setTaxList] = useState([]);
+ 
+
+  const handleShow = () => setShow(true);
+  const handleClose = () => {
+      setShow(false);
+      setShowClientList(true);
+  };
 
 
-export const SOCreate = () => {
-    const [selectedDate, setSelectedDate] = useState("");
-    const [selectedDateShipment,setSelectedDateShipment] = useState("");
-    const [products, setProducts] = useState([
-          {
-              id: 1,
-              item: '',
-              quantity: '',
-              price: '',
-              tax: '',
-              total: ''
-          }
-      ]);
-        const [taxList, setTaxList] = useState([]);
+  // Add this new function to handle adding products
+  const addProduct = () => {
+      setProducts([...products, {
+          id: products.length + 1,
+          item: '',
+          quantity: '',
+          price: '',
+          tax: '',
+          total: ''
+      }]);
+  };
 
-    const addProduct = () => {
-        setProducts([...products, {
-            id: products.length + 1,
-            item: '',
-            quantity: '',
-            price: '',
-            tax: '',
-            total: ''
-        }]);
-    };
-    const handleTaxSubmit = (e) => {
-        e.preventDefault();
-        setTaxList([...taxList, newTax]);
-        setNewTax({ name: '', value: '', description: '' });
-        setShowTaxModal(false);
-    };
 
-    return (
-        <Container >
-           <Row className="mx-2">
-    {/* Breadcrumb Section */}
-    <Col sm={12} className="my-3">
-    <div style={{ top: "186px", fontSize: "18px" }}>
-        <Breadcrumb>
-            <BreadcrumbItem href="#">Home</BreadcrumbItem>
-            <BreadcrumbItem> <Link to="/admin/Inventory/SalesOrder">Sales Order List</Link></BreadcrumbItem>
-            <BreadcrumbItem active>Sales Order Create</BreadcrumbItem>
-        </Breadcrumb>
-        </div>
-    </Col>
-    <Col sm={12} className="my-2">
-    <Card className="p-3">
-            <Row className="align-items-center">
-                <Col  sm={2}>
-                    <img src={companylog} alt="Logo" className="img-fluid" />
-                </Col>
-                <Col  sm={8}>
-                    <h5>Linganwar</h5>
-                    <p className="mb-1">yash123linganwar@gmail.com / 91562173745</p>
-                    <p className="mb-1">
-                        Karve Statue, DP Road, Mayur Colony, Kothrud, Pune, Maharashtra, India
-                    </p>
-                    <strong>PAN: ADNP5467B</strong>
-                </Col>
-                <Col  sm={2} className=" d-flex  ">
-                    {/* <span className="p-2 float-right">PO:<b className="text-primary">Draft</b></span> */}
-                    {/* <strong className="text-primary"> Draft</strong> */}
-                </Col>
-            </Row>
+
+  // Update the payment terms section in your existing JSX
+
+  // Add the payment terms modal
+
+
+  return (
+      <Container fluid className="p-4">
+
+<Col sm={12} className="my-3">
+                <div style={{ top: "186px", fontSize: "18px" }}>
+                    <Breadcrumb>
+                        <BreadcrumbItem >Home</BreadcrumbItem>
+                        <BreadcrumbItem><Link to="/admin/inventory/purchase-order-list">Purchase Order List</Link></BreadcrumbItem>
+                        <BreadcrumbItem active>Purchase Order Create</BreadcrumbItem>
+                    </Breadcrumb>
+                </div>
+            </Col> 
+        {/* Header Card */}
+        <Card className="p-3 mb-3 shadow-sm">
+          <Row className="align-items-center">
+            <Col xs={2}>
+              <img
+                src={Lockenelogo}
+                alt="Logo"
+                className="img-fluid"
+              />
+            </Col>
+            <Col>
+              <h5>Linganwar</h5>
+              <p className="mb-1">yash123linganwar@gmail.com / 91562173745</p>
+              <p className="mb-1">
+                Karve Statue, DP Road, Mayur Colony, Kothrud, Pune, Maharashtra,
+                India
+              </p>
+              <strong>PAN: ADNP5467B</strong>
+            </Col>
+            <Col xs={2} className="text-end">
+              <span className="text-muted">PO:</span>
+              <strong className="text-primary"> Draft</strong>
+            </Col>
+          </Row>
         </Card>
-    
-    </Col>
-
-    <Col sm={12} className="my-2">
-    <Card className="p-3 shadow-sm">
+  
+        {/* Client & Delivery Details */}
+        <Card className="p-3 shadow-sm">
           <Row>
             <Col md={4} className="d-flex border-end flex-column gap-2">
             <div className="border-bottom ">
@@ -84,7 +107,7 @@ export const SOCreate = () => {
                   style={{width: "144px", height:"44px", borderStyle: "dashed"}} 
                   variant="outline-primary" 
                   className="d-flex align-items-center justify-content-center gap-2"
-                //   onClick={handleShow}
+                  onClick={handleShow}
               >
                   <span>+</span> Add Client 
               </Button>
@@ -113,8 +136,8 @@ export const SOCreate = () => {
   
               </div>
               <div  className="d-flex  gap-4 mb-2">
-                <FormCheck  className="" style={{  fontWeight:"bold", color: "black"}} type="radio" name="delivery" label="Organization" defaultChecked />
-                <FormCheck  className="" style={{  fontWeight:"bold", color: "black"}} type="radio" name="delivery" label="Customer" />
+                <Form.Check  className="" style={{  fontWeight:"bold", color: "black"}} type="radio" name="delivery" label="Organization" defaultChecked />
+                <Form.Check  className="" style={{  fontWeight:"bold", color: "black"}} type="radio" name="delivery" label="Customer" />
               </div>
               <p style={{  fontWeight:"bold", marginTop:"30px",  color: "black"}} className="mb-1">Linganwar</p>
               <div style={{marginTop:"15px"}} className="d-flex flex-column   gap-2">
@@ -127,23 +150,45 @@ export const SOCreate = () => {
             <Col md={4} style={{marginTop:"2rem"}}>
               <div className="d-flex flex-column gap-2">
                 <div  className=" d-flex flex-row align-items-center gap-2">
-                  <FormControl style={{  border:"1px solid black", height:"44px" , borderStyle:"dashed"}} placeholder="Expected Delivery" />
-                  <Button style={{width:"50px" , border:"1px solid black", height:"30px" , borderStyle:"dashed"}} variant="outline-secondary" className=" end-0 top-0 h-100 px-2">+</Button>
+                  <Form.Control 
+                    type="date"
+                    style={{
+                      border: "1px solid black",
+                      height: "44px",
+                      borderStyle: "dashed",
+                      width: "100%",
+                      cursor: "pointer"
+                    }}
+                    placeholder="Expected Delivery"
+                  />
                 </div>
-                
-                {/* {paymentTermsSection} */}
-                <FormControl  style={{  border:"1px solid black", height:"44px" }}  placeholder="Enter Reference" />
-                <FormControl style={{  border:"1px solid black", height:"44px" }}  placeholder="Enter Shipment Preference" />
+                <div className="d-flex flex-row align-items-center gap-2">
+          <Form.Select 
+              style={{border:"1px solid black", height:"44px", borderStyle:"dashed"}}
+          >
+              <option>Select Payment Terms</option>
+              
+          </Form.Select>
+          <Button 
+              style={{width:"50px", border:"1px solid black", height:"30px", borderStyle:"dashed"}} 
+              variant="outline-secondary" 
+              onClick={() => setShowPaymentTerms(true)}
+              className="end-0 top-0 h-100 px-2"
+          >
+              +
+          </Button>
+      </div>
+                <Form.Control  style={{  border:"1px solid black", height:"44px" }}  placeholder="Enter Reference" />
+                <Form.Control style={{  border:"1px solid black", height:"44px" }}  placeholder="Enter Shipment Preference" />
   
               </div>
             </Col>
           </Row>
 
         </Card>
-</Col >
-
-<Col sm={12} className="my-2">
-<Card className="p-3  shadow-sm">
+  
+        {/* Product Details Card */}
+        <Card className="p-3 mt-3 shadow-sm">
           <Table responsive>
             <thead>
               <tr>
@@ -159,7 +204,7 @@ export const SOCreate = () => {
                   <tr key={product.id}>
                       <td>
                           <div className="d-flex gap-2">
-                              <FormSelect 
+                              <Form.Select 
                                   className="flex-grow-1" 
                                   style={{ border: "1px solid black", borderStyle: "dashed" }}
                                   value={product.item}
@@ -171,7 +216,7 @@ export const SOCreate = () => {
                                   }}
                               >
                                   <option>Select Item</option>
-                              </FormSelect>
+                              </Form.Select>
                               <Button 
                               onClick={() => setShowProductList(true)}
                               className="flex-shrink-0" 
@@ -184,7 +229,7 @@ export const SOCreate = () => {
                           </div>
                       </td>
                       <td>
-                          <FormControl 
+                          <Form.Control 
                               type="text" 
                               placeholder="QTY : 1" 
                               style={{ border: "1px solid black", width: "100%" }}
@@ -202,7 +247,7 @@ export const SOCreate = () => {
                               <span className="position-absolute" style={{ left: "10px", top: "50%", transform: "translateY(-50%)" }}>
                                   <FaRupeeSign />
                               </span>
-                              <FormControl
+                              <Form.Control
                                   type="text"
                                   placeholder="0.00"
                                   className="w-100"
@@ -219,7 +264,7 @@ export const SOCreate = () => {
                       </td>
                       <td>
                           <div className="d-flex gap-2">
-                              <FormSelect 
+                              <Form.Select 
                                   className="flex-grow-1" 
                                   style={{ border: "1px solid black" }}
                                   value={product.tax}
@@ -236,7 +281,7 @@ export const SOCreate = () => {
                                           {tax.name} ({tax.value}%)
                                       </option>
                                   ))}
-                              </FormSelect>
+                              </Form.Select>
                               <Button 
                                   className="flex-shrink-0" 
                                   style={{ width: "40px", border: "1px solid black", borderStyle: "dashed" }} 
@@ -252,7 +297,7 @@ export const SOCreate = () => {
                               <span className="position-absolute" style={{ left: "10px", top: "50%", transform: "translateY(-50%)" }}>
                                   <FaRupeeSign />
                               </span>
-                              <FormControl 
+                              <Form.Control 
                                   type="text" 
                                   placeholder="PRICE : 0.00" 
                                   className="w-100" 
@@ -286,21 +331,21 @@ export const SOCreate = () => {
               variant="outline-primary" 
               className="mb-4 w-100 w-sm-50 w-md-25" 
               style={{ borderStyle: "dashed" }}
-            //   onClick={addProduct}
+              onClick={addProduct}
           >
               <span className="me-2">+</span> Add Product
           </Button>
   
-          <Row className="border-top border-3 ">
-            <Col xs={12} md={6} className="my-3 mb-md-0  ">
-              <FormControl
+          <Row>
+            <Col xs={12} md={6} className="mb-3 mb-md-0">
+              <Form.Control
                 as="textarea"
                 rows={7}
-                placeholder="Client description / instruction...."
+                placeholder="Vendor Description & Instruction"
                 style={{ border: "1px solid gray" }}
               />
             </Col>
-            <Col xs={12} md={6} className="my-3 mb-md-0  ">
+            <Col xs={12} md={6}>
               <div className="d-flex flex-column gap-3">
                 <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
                   <span>Subtotal</span>
@@ -308,7 +353,7 @@ export const SOCreate = () => {
                     <span style={{ position: "absolute", left: "10px", top: "45%", transform: "translateY(-50%)" }}>
                       <FaRupeeSign />
                     </span>
-                    <FormControl type="text" placeholder="Sub - Total" style={{ paddingLeft: "25px", border: "1px solid black" }} readOnly />
+                    <Form.Control type="text" placeholder="Sub - Total" style={{ paddingLeft: "25px", border: "1px solid black" }} readOnly />
                   </div>
                 </div>
                 <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
@@ -329,7 +374,7 @@ export const SOCreate = () => {
                     <span style={{ position: "absolute", left: "10px", top: "45%", transform: "translateY(-50%)" }}>
                       <FaRupeeSign />
                     </span>
-                    <FormControl type="text" placeholder="Total" style={{ paddingLeft: "25px", border: "1px solid black" }} readOnly />
+                    <Form.Control type="text" placeholder="Total" style={{ paddingLeft: "25px", border: "1px solid black" }} readOnly />
                   </div>
                 </div>
                 <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
@@ -337,28 +382,26 @@ export const SOCreate = () => {
                     <span style={{ position: "absolute", left: "10px", top: "45%", transform: "translateY(-50%)" }}>
                       <FaRupeeSign />
                     </span>
-                    <FormControl type="text" placeholder="Adjust Note" style={{ paddingLeft: "25px", border: "1px solid black" }} />
+                    <Form.Control type="text" placeholder="Adjust Note" style={{ paddingLeft: "25px", border: "1px solid black" }} />
                   </div>
                   <div style={{ position: "relative", display: "inline-block", width: "100%", maxWidth: "200px" }}>
                     <span style={{ position: "absolute", left: "10px", top: "45%", transform: "translateY(-50%)" }}>
                       <FaRupeeSign />
                     </span>
-                    <FormControl type="text" placeholder="Adjust Amount" style={{ paddingLeft: "25px", border: "1px solid black" }} />
+                    <Form.Control type="text" placeholder="Adjust Amount" style={{ paddingLeft: "25px", border: "1px solid black" }} />
                   </div>
                 </div>
               </div>
             </Col>
           </Row>
         </Card>
-
-</Col>
-
-<Col sm={12} className="my-2">
-<Card className="p-3  shadow-sm">
-          <h6 style={{fontSize:'17px'}}>Terms And Condition & Attachments</h6>
-          <Row className="mt-3 my-2">
+  
+        {/* Terms and Conditions Card */}
+        <Card className="p-3 mt-3  shadow-sm">
+          <h6>Terms And Condition & Attachments</h6>
+          <Row className="mt-3">
             <Col md={6}>
-              <FormControl
+              <Form.Control
                 as="textarea"
                 rows={9}
                 placeholder="Terms & Condition Notes"
@@ -366,7 +409,7 @@ export const SOCreate = () => {
               />
             </Col>
   
-            <Col className="my-2" md={6}>
+            <Col className="" md={6}>
               <div  className="rounded d-flex flex-column align-items-center justify-content-center p-4" style={{ minHeight: "200px", border: "1px solid black" , borderStyle:"dashed" }}>
                 <div className="text-center">
                   <div className="mb-2">
@@ -378,10 +421,20 @@ export const SOCreate = () => {
             </Col>
           </Row>
         </Card>
-
-</Col>
-
-    </Row>
-    </Container>
-    )
+        
+        <AddClint
+          show={show}
+          handleClose={handleClose}
+        />
+        {showProductList && <OffcanvesItems show={showProductList} handleClose={() => setShowProductList(false)} />}
+        <PaymentTermsModal
+          show={showPaymentTerms}
+          handleClose={() => setShowPaymentTerms(false)}
+        
+        />
+        <Tax show={showTaxModal} handleClose={() => setShowTaxModal(false)} />
+      </Container>
+    );
 };
+
+export default SOCreate;
