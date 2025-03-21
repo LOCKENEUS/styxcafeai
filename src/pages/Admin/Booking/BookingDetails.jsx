@@ -32,6 +32,7 @@ const BookingDetails = () => {
 
   const [searchedCustomers, setSearchedCustomers] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [offlineMode, setOfflineMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCustTerm, setSearchCustTerm] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
@@ -132,6 +133,7 @@ const BookingDetails = () => {
 
   const handleCollectOffline = async () => {
     try {
+      setOfflineMode(true);
       const bookingData = {
         cafe: cafeId,
         customer_id: selectedCustomer?._id,
@@ -150,7 +152,7 @@ const BookingDetails = () => {
 
   const handlePayLater = async () => {
     const limit = selectedCustomer?.creditLimit - selectedCustomer?.creditAmount
-    if(limit < selectedGame?.data?.price){
+    if (limit < selectedGame?.data?.price) {
       alert("Credit limit exceeded");
       return
     }
@@ -166,7 +168,7 @@ const BookingDetails = () => {
         slot_date: newdate,
         players: teamMembers
       };
-      const response =await dispatch(addBooking(bookingData)).unwrap()
+      const response = await dispatch(addBooking(bookingData)).unwrap()
 
       navigate(`/admin/booking/checkout/${response?.data?._id}`)
     } catch (error) { }
@@ -200,25 +202,25 @@ const BookingDetails = () => {
       setShowPopup(false);
 
       const limit = selectedCustomer?.creditLimit - selectedCustomer?.creditAmount
-      if(limit < selectedGame?.data?.price){
+      if (limit < selectedGame?.data?.price) {
         alert("Credit limit exceeded");
         return
       }
 
-        const bookingData = {
-          cafe: cafeId,
-          customer_id: selectedCustomer?._id,
-          game_id: selectedGame?.data?._id,
-          slot_id: slot?._id,
-          mode: "Online",
-          status: "Pending",
-          total: selectedGame?.data?.price,
-          slot_date: newdate,
-          players: teamMembers
-        };
+      const bookingData = {
+        cafe: cafeId,
+        customer_id: selectedCustomer?._id,
+        game_id: selectedGame?.data?._id,
+        slot_id: slot?._id,
+        mode: "Online",
+        status: "Pending",
+        total: selectedGame?.data?.price,
+        slot_date: newdate,
+        players: teamMembers
+      };
 
-        const result =await dispatch(addBooking(bookingData)).unwrap()
-  
+      const result = await dispatch(addBooking(bookingData)).unwrap()
+
       const response = await fetch(`${backend_url}/admin/booking/payment`, {
         method: "POST",
         headers: {
@@ -442,7 +444,7 @@ const BookingDetails = () => {
           >
             <div className=" p-4">
               <div className="d-flex justify-content-between align-items-center">
-                <div>              
+                <div>
                   <h3>Customer Details</h3>
                 </div>
                 <div>
@@ -521,30 +523,38 @@ const BookingDetails = () => {
                         <p className="text-primary" style={{ fontWeight: "bold" }}>₹ {slot.slot_price ? slot.slot_price : selectedGame?.data.price}</p>
                       </div>
                       <div className="mb-4">
-                        <Button ref={target} onClick={() => setShowPopup(!showPopup)}>
-                          Proceed
-                        </Button>
-                        <Overlay
-                          show={showPopup}
-                          target={target.current}
-                          placement="right"
-                          container={target}
-                          containerPadding={20}
-                        >
-                          <Popover id="popover-contained">
-                            <Popover.Body>
-                              <Button variant="light" block onClick={handleOnlinePayment}>
-                                Online
-                              </Button>
-                              <Button variant="light" block onClick={handleCollectOffline}>
-                                Offline
-                              </Button>
-                              <Button variant="light" block onClick={handlePayLater}>
-                                Pay Later
-                              </Button>
-                            </Popover.Body>
-                          </Popover>
-                        </Overlay>
+                        {offlineMode ? (
+                          <Button variant="primary" block onClick={handleCollectOffline}>
+                            Collect Offline
+                          </Button>
+                        ) : (
+                          <>
+                            <Button ref={target} onClick={() => setShowPopup(!showPopup)}>
+                              Proceed
+                            </Button>
+                            <Overlay
+                              show={showPopup}
+                              target={target.current}
+                              placement="right"
+                              container={target}
+                              containerPadding={20}
+                            >
+                              <Popover id="popover-contained">
+                                <Popover.Body>
+                                  <Button variant="light" block onClick={handleOnlinePayment}>
+                                    Online
+                                  </Button>
+                                  <Button variant="light" block onClick={() => setOfflineMode(true)}>
+                                    Offline
+                                  </Button>
+                                  <Button variant="light" block onClick={handlePayLater}>
+                                    Pay Later
+                                  </Button>
+                                </Popover.Body>
+                              </Popover>
+                            </Overlay>
+                          </>
+                        )}
                       </div>
                     </div>
                   ) : (
@@ -564,7 +574,7 @@ const BookingDetails = () => {
                         <img src={qrcode} alt="QR Code" />
                       </div>
                       <div className="d-flex mt-4 justify-content-around">
-                          <img src={googleicon} alt="Google Pay" style={{ cursor: "pointer" }} />
+                        <img src={googleicon} alt="Google Pay" style={{ cursor: "pointer" }} />
                         <img src={phonepeicon} alt="PhonePe" />
                         <img src={paytmicon} alt="Paytm" />
                         <img src={cashicon} alt="Cash" />
