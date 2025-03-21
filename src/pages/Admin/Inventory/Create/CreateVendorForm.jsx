@@ -394,6 +394,7 @@ export const CreateVendorForm = () => {
                                     <span className="text-danger ms-1 ">*</span>
                                 </label>
                                 <input
+                                    required
                                     type="text"
                                     className="form-control"
                                     id="vendorName"
@@ -411,6 +412,7 @@ export const CreateVendorForm = () => {
                                     
                                 </label>
                                 <input
+                                    required
                                     type="text"
                                     className="form-control"
                                     id="companyName"
@@ -428,6 +430,7 @@ export const CreateVendorForm = () => {
                                     <span className="text-danger ms-1 ">*</span>
                                 </label>
                                 <input
+                                    required
                                     type="email"
                                     className="form-control"
                                     id="vendorEmail"
@@ -445,13 +448,26 @@ export const CreateVendorForm = () => {
                                     
                                 </label>
                                 <input
+                                    required
                                     type="text"
                                     className="form-control"
                                     id="vendorPhone"
-                                    placeholder="0 0 0 - 0 0 0 - 0 0 0 0"
+                                    placeholder="Enter 10 digit phone number"
                                     value={formData.vendorPhone}
-                                    onChange={handleChange}
+                                    onChange={(e) => {
+                                        // Only allow numbers and limit to 10 digits
+                                        const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            vendorPhone: value
+                                        }));
+                                    }}
+                                    pattern="[0-9]{10}"
+                                    title="Please enter exactly 10 digits"
                                 />
+                                {formData.vendorPhone && formData.vendorPhone.length !== 10 && (
+                                    <small className="text-danger">Phone number must be 10 digits</small>
+                                )}
                             </FormGroup>
                         </Col>
                         </Row>

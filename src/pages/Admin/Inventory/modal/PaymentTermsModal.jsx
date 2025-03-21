@@ -1,17 +1,48 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import { addCustomField } from '../../../../store/AdminSlice/CustomField';
 
-const PaymentTermsModal = ({ show, handleClose}) => {
-  const [formData,setFormData]=useState({
-    term_name: '',
-    term_days: '',
+const PaymentTermsModal = ({ show, handleClose }) => {
+  const dispatch = useDispatch();
+  const loading = useSelector(state => state.customFields.loading);
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const cafeId = user?._id;
+
+  const [formData, setFormData] = useState({
+    name: '',
+    code: '',
+    cafe: cafeId,
+    type: 'Payment Terms',
+    description: 'Custom field for product'
   });
-  const handleSubmit =()=>{
-    console.log("Submit ",formData);
-  }
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  const handleSubmit = () => {
+    // Map term_name to name and term_days to code
+    const submitData = {
+      ...formData,
+      name: formData.term_name,
+      code: formData.term_days
+    };
+
+    dispatch(addCustomField(submitData))
+      .unwrap()
+      .then(() => {
+        handleClose();
+        setFormData({
+          name: '',
+          code: '',
+          cafe: cafeId,
+          type: 'Payment Terms',
+          description: 'Custom field for product'
+        });
+      });
+  };
+
   return (  
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header  className="bg-info bg-opacity-25 ">

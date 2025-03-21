@@ -80,11 +80,11 @@ const CreateItemsForm = () => {
                         hsnCode: itemData.hsn || '',
                         taxPreference: itemData.taxable ? 'Taxable' : 'Non-Taxable',
                         selectedTax: itemData.tax || '',
-                        length: itemData.length || '',
-                        width: itemData.width || '',
-                        height: itemData.height || '',
+                        length: itemData.length || 0,
+                        width: itemData.width || 0,
+                        height: itemData.height || 0,
                         dimension_unit: itemData.dimensionUnit || 'cm',
-                        weight: itemData.weight || '',
+                        weight: itemData.weight || 0,
                         weight_unit: itemData.weightUnit || 'kg',
                         manufacturer: itemData.manufacturer || '',
                         brand: itemData.brand || '',
@@ -95,9 +95,9 @@ const CreateItemsForm = () => {
                         costPrice: itemData.costPrice || '',
                         sellingPrice: itemData.sellingPrice || '',
                         preferredVendor: itemData.preferredVendor || '',
-                        stock: itemData.stock || '',
-                        stock_rate: itemData.stockRate || '',
-                        reorder_point: itemData.reorderPoint || '',
+                        stock: itemData.stock || 0,
+                        stock_rate: itemData.stockRate || 0,
+                        reorder_point: itemData.reorderPoint || 0,
                         linking: itemData.linking || 'N',
                         image: itemData.image || null,
                     });
@@ -151,14 +151,14 @@ const CreateItemsForm = () => {
         formDataToSend.append('name', formData.name);
         formDataToSend.append('sku', formData.sku);
         formDataToSend.append('unit', formData.unit);
-        formDataToSend.append('hsn', parseFloat(formData.hsnCode));
+        formDataToSend.append('hsn', parseFloat(formData.hsnCode) || 0);
         formDataToSend.append('taxable', formData.taxPreference === 'Taxable');
         formDataToSend.append('tax', formData.selectedTax);
-        formDataToSend.append('length', parseFloat(formData.length));
-        formDataToSend.append('width', parseFloat(formData.width));
-        formDataToSend.append('height', parseFloat(formData.height));
+        formDataToSend.append('length', isNaN(parseFloat(formData.length)) ? 0 : parseFloat(formData.length));
+        formDataToSend.append('width', isNaN(parseFloat(formData.width)) ? 0 : parseFloat(formData.width));
+        formDataToSend.append('height', isNaN(parseFloat(formData.height)) ? 0 : parseFloat(formData.height));
         formDataToSend.append('dimensionUnit', formData.dimension_unit);
-        formDataToSend.append('weight', parseFloat(formData.weight));
+        formDataToSend.append('weight', isNaN(parseFloat(formData.weight)) ? 0 : parseFloat(formData.weight));
         formDataToSend.append('weightUnit', formData.weight_unit);
         formDataToSend.append('manufacturer', formData.manufacturer);
         formDataToSend.append('brand', formData.brand);
@@ -166,12 +166,12 @@ const CreateItemsForm = () => {
         formDataToSend.append('upc', formData.upc);
         formDataToSend.append('ean', formData.ean);
         formDataToSend.append('isbn', formData.isbn);
-        formDataToSend.append('costPrice', parseFloat(formData.costPrice));
-        formDataToSend.append('sellingPrice', parseFloat(formData.sellingPrice));
+        formDataToSend.append('costPrice', isNaN(parseFloat(formData.costPrice)) ? 0 : parseFloat(formData.costPrice));
+        formDataToSend.append('sellingPrice', isNaN(parseFloat(formData.sellingPrice)) ? 0 : parseFloat(formData.sellingPrice));
         formDataToSend.append('preferredVendor', formData.preferredVendor);
-        formDataToSend.append('stock', parseInt(formData.stock, 10));
-        formDataToSend.append('stockRate', parseFloat(formData.stock_rate));
-        formDataToSend.append('reorderPoint', parseInt(formData.reorder_point, 10));
+        formDataToSend.append('stock', isNaN(parseInt(formData.stock)) ? 0 : parseInt(formData.stock, 10));
+        formDataToSend.append('stockRate', isNaN(parseFloat(formData.stock_rate)) ? 0 : parseFloat(formData.stock_rate));
+        formDataToSend.append('reorderPoint', isNaN(parseInt(formData.reorder_point)) ? 0 : parseInt(formData.reorder_point, 10));
         formDataToSend.append('linking', formData.linking);
         if (formData.image) {
             formDataToSend.append('image', formData.image);
@@ -182,12 +182,12 @@ const CreateItemsForm = () => {
         try {
             if (isEditMode) {
                 // Update existing item
-                await dispatch(updateItem({ id, itemData: formDataToSend })).then(() => {
+                await dispatch(updateItem({ id, itemData: formDataToSend })).unwrap().then(() => {
                     navigate(-1);
                 });
             } else {
                 // Create new item
-                await dispatch(addItem(formDataToSend)).then(() => {
+                await dispatch(addItem(formDataToSend)).unwrap().then(() => {
                     navigate(-1);
                 });
             }
@@ -255,6 +255,7 @@ const CreateItemsForm = () => {
                                 placeholder="Enter item name"
                                 value={formData.name}
                                 onChange={handleChange}
+                                required
                             />
                         </FormGroup>
                     </Col>
@@ -273,7 +274,9 @@ const CreateItemsForm = () => {
                                 placeholder="SKU"
                                 value={formData.sku}
                                 onChange={handleChange}
+                                required
                             />
+
                         </FormGroup>
                     </Col>
 
@@ -291,6 +294,7 @@ const CreateItemsForm = () => {
                                     aria-label="Select unit"
                                     value={formData.unit}
                                     onChange={handleSelectChange}
+                                    required
                                 >
                                     <option value="">Select Unit</option>
                                     {unitOptions.map(unit => (
@@ -345,6 +349,7 @@ const CreateItemsForm = () => {
                                 placeholder="HSN Code"
                                 value={formData.hsnCode}
                                 onChange={handleChange}
+                                required
                             />
                         </FormGroup>
                     </Col>
@@ -353,7 +358,6 @@ const CreateItemsForm = () => {
                         <FormGroup>
                             <label className="fw-bold my-2">
                                 Tax Preference
-                                <span className="text-danger ms-1 ">*</span>
                             </label>
                             <FormSelect
                                 aria-label="Select Tax Preference"
@@ -421,21 +425,21 @@ const CreateItemsForm = () => {
                             <label className="fw-bold my-2">Dimensions</label>
                             <InputGroup>
                                 <FormControl
-                                    type="tel"
+                                    type="number"
                                     id="length"
                                     placeholder="Length"
                                     value={formData.length}
                                     onChange={handleChange}
                                 />
                                 <FormControl
-                                    type="tel"
+                                    type="number"
                                     id="width"
                                     placeholder="Width"
                                     value={formData.width}
                                     onChange={handleChange}
                                 />
                                 <FormControl
-                                    type="tel"
+                                    type="number"
                                     id="height"
                                     placeholder="Height"
                                     value={formData.height}
@@ -460,7 +464,7 @@ const CreateItemsForm = () => {
                             <label className="fw-bold my-2" htmlFor="weight">Weight</label>
                             <InputGroup>
                                 <FormControl
-                                    type="tel"
+                                    type="number"
                                     name="weight"
                                     id="weight"
                                     placeholder="Enter weight"
@@ -565,7 +569,6 @@ const CreateItemsForm = () => {
                             <label className="fw-bold my-2">
                                 {/* <FaStarOfLife className="text-danger size-sm" />  */}
                                 MPN
-                                {/* <span className="text-danger ms-1 ">*</span> */}
                             </label>
                             <input
                                 type="text"
@@ -582,7 +585,6 @@ const CreateItemsForm = () => {
                             <label  className="fw-bold my-2">
                                 {/* <FaStarOfLife className="text-danger size-sm" />  */}
                                 UPC
-                                {/* <span className="text-danger ms-1 ">*</span> */}
                             </label>
                             <input
                                 type="text"
@@ -608,11 +610,12 @@ const CreateItemsForm = () => {
                             <InputGroup>
                                 <InputGroupText>₹</InputGroupText>
                                 <FormControl
-                                    type="tel"
+                                    type="number"
                                     id="costPrice"
                                     placeholder="00.00"
                                     value={formData.costPrice}
                                     onChange={handleChange}
+                                    required
                                 />
                             </InputGroup>
                         </FormGroup>
@@ -625,11 +628,12 @@ const CreateItemsForm = () => {
                             <InputGroup>
                                 <InputGroupText>₹</InputGroupText>
                                 <FormControl
-                                    type="tel"
+                                    type="number"
                                     id="sellingPrice"
                                     placeholder="00.00"
                                     value={formData.sellingPrice}
                                     onChange={handleChange}
+                                    required
                                 />
                             </InputGroup>
                         </FormGroup>
@@ -638,7 +642,7 @@ const CreateItemsForm = () => {
                     <Col md={6} className="my-2">
                         <FormGroup>
                             <label className="fw-bold my-2">
-                                Preferred Vendor <span className="text-danger ms-1">*</span>
+                                Preferred Vendor
                             </label>
                             <InputGroup>
                                 <FormSelect
@@ -678,7 +682,7 @@ const CreateItemsForm = () => {
                         <FormGroup controlId="stock">
                             <FormLabel>Opening Stock</FormLabel>
                             <FormControl
-                                type="tel"
+                                type="number"
                                 name="stock"
                                 placeholder="100"
                                 value={formData.stock}
@@ -693,7 +697,7 @@ const CreateItemsForm = () => {
                             <InputGroup>
                                 <InputGroupText>₹</InputGroupText>
                                 <FormControl
-                                    type="tel"
+                                    type="number"
                                     name="stock_rate"
                                     placeholder="00.00"
                                     value={formData.stock_rate}
@@ -707,7 +711,7 @@ const CreateItemsForm = () => {
                         <FormGroup controlId="reorder_point">
                             <FormLabel>Reorder Point</FormLabel>
                             <FormControl
-                                type="tel"
+                                type="number"
                                 name="reorder_point"
                                 placeholder="000"
                                 value={formData.reorder_point}

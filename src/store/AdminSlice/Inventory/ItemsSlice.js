@@ -38,7 +38,8 @@ export const addItem = createAsyncThunk(
       const response = await axios.post(`${BASE_URL}/admin/inventory/item`, itemData);
       toast.success('Item added successfully!');
       return response.data.data;
-    } catch (error) {
+    } catch (error) { 
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }

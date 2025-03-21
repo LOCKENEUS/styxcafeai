@@ -249,6 +249,7 @@ const ItemGroupForm = () => {
           <Form.Group>
             <Form.Label className="fw-bold my-2">Item Group Name<span className="text-danger ms-1">*</span></Form.Label>
             <Form.Control
+            required
               type="text"
               name="group_name"
               placeholder="Enter item group name"
@@ -264,6 +265,7 @@ const ItemGroupForm = () => {
               name="unit"
               value={formData.unit}
               onChange={handleInputChange}
+              required
             >
               <option value="">Select Unit</option>
               {units.map((unit) => (
@@ -288,7 +290,7 @@ const ItemGroupForm = () => {
         </div>
         <div className="my-4 col-md-6">
           <Form.Group>
-            <Form.Label className="fw-bold my-2">Tax Preference<span className="text-danger ms-1">*</span></Form.Label>
+            <Form.Label className="fw-bold my-2">Tax Preference </Form.Label>
             <Form.Select 
               name="taxPreference"
               value={taxPreference} 
@@ -397,6 +399,7 @@ const ItemGroupForm = () => {
           <Form.Group>
             <Form.Label className="fw-bold my-2">Description</Form.Label>
             <Form.Control 
+              required
               value={formData.description}
               onChange={handleInputChange}
               as="textarea" placeholder="Description" name="description" rows={3} />
@@ -404,7 +407,7 @@ const ItemGroupForm = () => {
         </div>
         <div className="my-4 col-sm-12">
         <div>
-      <label className="fw-bold mb-2">Multiple Items? Create Attributes and Options</label>
+      <label className="fw-bold mb-2">Multiple Items? Create Attributes and Options <span className="text-danger ms-1">*</span></label>
       {attributes.map((attribute, index) => (
         <div key={index} className="mb-2 row">
           <div className="col-md-4">
@@ -414,7 +417,7 @@ const ItemGroupForm = () => {
               value={attribute.color}
               onChange={(e) => handleAttributeChange(index, "color", e.target.value)}
               disabled={isEditMode}
-
+              required
             />
           </div>
           <div className="col-md-4">
@@ -424,6 +427,7 @@ const ItemGroupForm = () => {
               value={attribute.options}
               onChange={(e) => handleAttributeChange(index, "options", e.target.value)}
               disabled={isEditMode}
+              required
             />
           </div>
           <div className="col-sm-4">
@@ -482,9 +486,10 @@ const ItemGroupForm = () => {
                         </td>
                         <td className="px-1">
                           <input
-                            type="text"
+                            type="number"
                             name="item_hsn[]"
-                            className="hsn"
+                            className="form-control hsn"
+                            required
                             value={formData.items[itemIndex]?.hsn || ''}
                             onChange={(e) => handleItemChange(itemIndex, 'hsn', e.target.value)}
                           />
@@ -504,36 +509,43 @@ const ItemGroupForm = () => {
                         <td 
                         className="px-1"><input
                         value={formData?.items?.[itemIndex]?.costPrice}
-                        type="text" name="item_cost[]" className="form-control cost-price" required placeholder="Cost Price" style={{ width: '120px' }} 
+                        type="number" name="item_cost[]" className="form-control cost-price" required placeholder="Cost Price" style={{ width: '120px' }} 
                         onChange={(e) => handleItemChange(itemIndex, 'costPrice', e.target.value)}
                         /></td>
                         <td 
-                        className="px-1"><input type="text" 
+                        className="px-1"><input 
+                        required
+                        type="number" 
                         value={formData?.items?.[itemIndex]?.sellingPrice}
-                        name="item_price[]" className="form-control selling-price" placeholder="Selling Price" required style={{ width: '120px' }} 
+                        name="item_price[]" className="form-control selling-price" placeholder="Selling Price" style={{ width: '120px' }} 
                         onChange={(e) => handleItemChange(itemIndex, 'sellingPrice', e.target.value)}
                         /></td>
                         <td 
-                      className="px-1"><input type="text"
+                      className="px-1"><input
+                        required
+                        type="number"
                         value={formData?.items?.[itemIndex]?.upc}
                         name="item_upc[]" className="form-control" placeholder="UPC" style={{ width: '120px' }} 
                         onChange={(e) => handleItemChange(itemIndex, 'upc', e.target.value)}
                         /></td>
                         <td
              className="px-1"><input 
+                        required
                         value={formData?.items?.[itemIndex]?.ean}
-                        type="text" name="item_ean[]" className="form-control" placeholder="EAN" style={{ width: '120px' }} 
+                        type="number" name="item_ean[]" className="form-control" placeholder="EAN" style={{ width: '120px' }} 
                         onChange={(e) => handleItemChange(itemIndex, 'ean', e.target.value)}
                         /></td>
                         <td
-                    className="px-1"><input type="text"
+                    className="px-1"><input type="number"
+                        required
                         value={formData?.items?.[itemIndex]?.isbn}
                         name="item_isbn[]" className="form-control" placeholder="ISBN" style={{ width: '120px' }} 
                         onChange={(e) => handleItemChange(itemIndex, 'isbn', e.target.value)}
                         /></td>
                         <td className="px-1"><input
+                        required
                         value={formData?.items?.[itemIndex]?.stock}
-                        type="text" name="item_stock[]" className="form-control stock" placeholder="Opening Stock" style={{ width: '120px' }} 
+                        type="number" name="item_stock[]" className="form-control stock" placeholder="Opening Stock" style={{ width: '120px' }} 
                         onChange={(e) => handleItemChange(itemIndex, 'stock', e.target.value)}
                         /></td>
                       </tr>

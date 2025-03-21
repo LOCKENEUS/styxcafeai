@@ -83,48 +83,79 @@ export const SODetails = () => {
         <Card className="p-3 shadow-sm">
             <Row>
                 {/* Customer Info */}
-                <Col  sm={4}  >
-                    <h5 className="text-primary mb-3" style={{ fontSize:'20px' }}>Rupesh Suryvanshi</h5>
-                   <Row>
-                   <Col sm={6} >
-                    <span   style={{ fontSize:'16px',fontWeight:'500'}}>Billing Address</span>
-                    <p className="my-3">Nagpur Division, Maharashtra, India</p>
-                    </Col>
-
-                    <Col sm={6} className="border-end border-3" >
-                    <span style={{ fontSize:'16px',fontWeight:'500'}}>Shipping Address</span>
-                    <p className="my-3">Nagpur Division, Maharashtra, India</p>
-                    </Col>
-                   </Row>
+                <Col sm={6}>
+                    <div className="mb-4">
+                        <h5 className="text-primary" style={{fontSize: '22px', fontWeight: '600'}}>
+                            Rupesh Suryvanshi
+                        </h5>
+                    </div>
+                    <Row>
+                        <Col sm={6}>
+                            <div className="mb-4">
+                                <h6 className="text-dark mb-3" style={{fontSize: '16px', fontWeight: '600'}}>
+                                    Billing Address
+                                </h6>
+                                <p className="text-muted mb-0" style={{fontSize: '14px', lineHeight: '1.6'}}>
+                                    Nagpur Division,<br/>
+                                    Maharashtra, India
+                                </p>
+                            </div>
+                        </Col>
+                        <Col sm={6}>
+                            <div className="mb-4 ps-4 border-start">
+                                <h6 className="text-dark mb-3" style={{fontSize: '16px', fontWeight: '600'}}>
+                                    Shipping Address
+                                </h6>
+                                <p className="text-muted mb-0" style={{fontSize: '14px', lineHeight: '1.6'}}>
+                                    Nagpur Division,<br/>
+                                    Maharashtra, India
+                                </p>
+                            </div>
+                        </Col>
+                    </Row>
                 </Col>
 
+                <Col sm={6}>
+                    <div className="text-end mb-4">
+                        <h6 className="text-dark" style={{fontSize: '16px'}}>
+                            Order No: <span className="text-primary fw-bold">PO-009</span>
+                        </h6>
+                    </div>
 
-
-                <Col  sm={8} >
-                <Row>
-                    {/* Delivery Details */}
-                <Col sm={6}  >
-                    <span className="mb-3" style={{ fontSize:'16px',fontWeight:'500'}}>Delivery Address</span>
-                    <p className="my-3">
-                        <span style={{ fontSize:'16px'}}>Linganwar</span><br />
-                        <span>yash123linganwar@gmail.com / 91562173745</span>
-                       <span>Karve Statue, DP Road, Mayur Colony, Kothrud, Pune, Maharashtra, India</span>
-                        <span>PAN:</span> ADNP5467B
-                    </p>
-                </Col>
-
-                {/* Order Info */}
-                <Col sm={6} >
-                <span className="mb-3 float-end" style={{ fontSize:'16px',fontWeight:'500'}}>Order No:<b className="text-primary">PO-009</b></span>
-                    <p className="my-5 mx-2 border-start border-3 p-2">
-                        
-                        <p><span className="my-1 fw-bold">Payment Terms:</span> Cheaque</p>
-                        <p><span className="my-1 fw-bold">Reference:</span> Nagpur</p>
-                        <p><span className="my-1 fw-bold">Shipment Preference:</span> Amaravati</p>
-                    </p>
-                    
-                </Col>
-                </Row>
+                    <div className="order-details ms-auto" style={{maxWidth: '400px'}}>
+                        <table className="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <td className="text-muted" style={{width: '50%'}}>Sales Order No:</td>
+                                    <td className="fw-medium">SO-007</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-muted">Order Date:</td>
+                                    <td className="fw-medium">Mar 19, 2025</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-muted">Shipment Date:</td>
+                                    <td className="fw-medium">Mar 19, 2025</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-muted">Payment Terms:</td>
+                                    <td className="fw-medium">Cash</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-muted">Reference:</td>
+                                    <td className="fw-medium">Kreet</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-muted">Delivery Preference:</td>
+                                    <td className="fw-medium">Cash</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-muted">Sales Person:</td>
+                                    <td className="fw-medium">Yash (Admin)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </Col>
             </Row>
         </Card>
