@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import moment from 'moment';
 import {
     Row,
     Col,
@@ -20,6 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getGameById } from "../../../store/slices/gameSlice";
 import { getBookings } from "../../../store/AdminSlice/BookingSlice";
 import profile from "/assets/profile/user_avatar.jpg";
+import { convertTo12Hour, formatDate } from "../../../components/utils/utils";
 
 const BookingList = () => {
     const { gameId } = useParams();
@@ -32,11 +34,46 @@ const BookingList = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
+    const [collection, setCollection] = useState(0);
     const filterDropdownRef = useRef(null);
     const bookingDropdownRef = useRef(null);
     const [activeDropdownId, setActiveDropdownId] = useState(null);
+    const [selectedFilter, setSelectedFilter] = useState("");
     const editDropdownRef = useRef(null);
 
+    const filterBookingsByDate = (filter) => {
+        const today = moment().startOf("day");
+
+        switch (filter) {
+            case "Tomorrow Booking":
+                return bookings?.filter((booking) =>
+                    moment(booking.slot_date).isSame(today.clone().add(1, "days"), "day")
+                );
+            case "Yesterday":
+                return bookings?.filter((booking) =>
+                    moment(booking.slot_date).isSame(today.clone().subtract(1, "days"), "day")
+                );
+            case "Monday":
+            case "Tuesday":
+            case "Wednesday":
+            case "Thursday":
+                return bookings?.filter((booking) =>
+                    moment(booking.slot_date).format("dddd") === filter
+                );
+            default:
+                return bookings?.filter((booking) =>
+                    moment(booking.slot_date).isSame(today, "day")
+                );
+        }
+    };
+
+    const filteredBookings = filterBookingsByDate(selectedFilter).filter((booking) =>
+        booking?.customerName?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const toggleDropdown = () => {
+        setDropdownOpen(!dropdownOpen);
+    };
 
     useEffect(() => {
         if (cafeId) {
@@ -44,9 +81,15 @@ const BookingList = () => {
         }
     }, [dispatch, cafeId]);
 
-    const toggleDropdown = () => {
-        setDropdownOpen(!dropdownOpen);
-    };
+    useEffect(() => {
+        setCollection(0);
+        if (filteredBookings.length > 0) {
+            filteredBookings.map((booking) => {
+                setCollection(collection + booking?.total);
+            });
+        }
+    }, [dispatch, dropdownOpen]);
+
 
     const toggleFilterDropdown = () => {
         setFilterDropdownOpen(!filterDropdownOpen);
@@ -89,6 +132,7 @@ const BookingList = () => {
 
     const bookingOptions = [
         "Tomorrow Booking",
+        "Today",
         "Yesterday",
         "Monday",
         "Tuesday",
@@ -96,13 +140,14 @@ const BookingList = () => {
         "Thursday",
     ];
 
-    const filteredBookings = bookings?.filter((booking) =>
-        booking?.customerName?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const handleFilterChange = (option, e) => {
+        e.stopPropagation();
+        setSelectedFilter(option);
+        setDropdownOpen(false);
+    };
 
     return (
         <div className="container-fluid min-vh-100">
-
             <Row>
                 <Col>
                     <p>
@@ -116,7 +161,10 @@ const BookingList = () => {
             >
                 <Col xs={12} md={6}>
                     <div
-                        onClick={toggleDropdown}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            toggleDropdown();
+                        }}
                         style={{
                             cursor: "pointer",
                             width: "fit-content",
@@ -132,19 +180,26 @@ const BookingList = () => {
                             <p>17 Bookings</p>
                         </div>
                         <div>{dropdownOpen ? <FaChevronUp /> : <FaChevronDown />}</div>
+
+                        {dropdownOpen && (
+                            <ul className="dropdown-menu" style={{ display: "block" }}>
+                                {bookingOptions.map((option, index) => (
+                                    <li
+                                        key={index}
+                                        value={option}
+                                        style={{ cursor: "pointer", padding: "10px" }}
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // Stop propagation for the item click
+                                            handleFilterChange(option, e); // Call the handler
+                                        }}
+                                    >
+                                        {option}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
                     </div>
-                    {dropdownOpen && (
-                        <ul className="dropdown-menu" style={{ display: "block" }}>
-                            {bookingOptions.map((option, index) => (
-                                <li
-                                    key={index}
-                                    style={{ cursor: "pointer", padding: "10px" }}
-                                >
-                                    {option}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
+
                 </Col>
                 <Col
                     xs={12}
@@ -208,6 +263,7 @@ const BookingList = () => {
             </Row>
 
             <div className="table-responsive">
+                <div>Collection: Rs. {collection}</div>
                 <Table striped bordered hover>
                     <thead
                         className="text-lowercase"
@@ -259,11 +315,13 @@ const BookingList = () => {
                     <tbody>
                         {filteredBookings?.map((booking, index) => (
                             <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
-                                <td style={{ border: "none", minWidth: "100px" }}>
-                                    {index+1}
+                                <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
+                                    {index + 1}
                                 </td>
-                                <td style={{ border: "none", minWidth: "100px" }}>
-                                    {booking.booking_id}
+                                <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
+                                    <Link to={`/admin/booking/checkout/${booking._id}`}>
+                                        {booking.booking_id}
+                                    </Link>
                                 </td>
                                 <td style={{ border: "none", minWidth: "150px" }}>
                                     <div className="d-flex align-items-center">
@@ -330,7 +388,8 @@ const BookingList = () => {
                                     className="align-middle"
                                     style={{ border: "none", minWidth: "120px" }}
                                 >
-                                    {booking.createdAt}
+                                    {formatDate(booking.slot_date)}<br />
+                                    {convertTo12Hour(booking?.slot_id?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time)}
                                 </td>
                                 <td
                                     className="align-middle"
@@ -388,7 +447,6 @@ const BookingList = () => {
                                                     color: "#FF0000",
                                                 }}
                                                 onClick={() => {
-                                                    console.log("Cancel Booking");
                                                     setActiveDropdownId(null);
                                                 }}
                                             >

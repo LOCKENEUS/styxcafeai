@@ -1,11 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Button,
-
-  Table,
-
-} from "react-bootstrap";
-import { TiDeleteOutline } from "react-icons/ti";
+import { Button,  Table } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addLocation,

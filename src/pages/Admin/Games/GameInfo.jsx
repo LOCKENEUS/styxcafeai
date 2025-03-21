@@ -12,67 +12,40 @@ import {
 import {
   FaEdit,
   FaSearch,
-  FaFilter,
-  FaPlus,
   FaChevronDown,
   FaChevronUp,
 } from "react-icons/fa";
 import { FiFilter } from "react-icons/fi";
 import { IoAdd } from "react-icons/io5";
 import { Link, useParams } from "react-router-dom";
-import Calendar from "./Calendar"; // Import the Calendar component
+import Calendar from "./Calendar";
 import gm2 from "/assets/Admin/Dashboard/GamesImage/gm2.png";
 import gm1 from "/assets/Admin/Dashboard/GamesImage/gm1.png";
 import { useDispatch, useSelector } from "react-redux";
 import { getGameById } from "../../../store/slices/gameSlice";
-import CreateClientModal from "../Customer/Modal/ClientList";
+import { getBookingsByGame } from "../../../store/AdminSlice/BookingSlice";
+import { convertTo12Hour, convertTo24HourFormat } from "../../../components/utils/utils";
 
 const GameInfo = () => {
   const { gameId } = useParams();
   const dispatch = useDispatch();
-  const [showClientModal, setShowClientModal] = useState(false);
   const { selectedGame, status, error } = useSelector((state) => state.games);
-
-  // Sample booking data
-  const [bookings, setBookings] = useState([
-    {
-      id: "#201456",
-      image: gm2,
-      name: "Shardul Thakur",
-      sports: "Snooker & Pool",
-      persons: "2 Persons",
-      mode: "Online",
-      time: "04:00 PM | Sun, 6 March, 25",
-    },
-    {
-      id: "#201457",
-      image: gm1,
-      name: "Rajat Saxena",
-      sports: "Pickle Ball",
-      persons: "8 Persons",
-      mode: "Offline",
-      time: "04:00 PM | Sun, 6 March, 25",
-    },
-    {
-      id: "#201458",
-      image: gm2,
-      name: "Shreya Mahajan",
-      sports: "Play Stations",
-      persons: "1 Person",
-      mode: "Online",
-      time: "04:00 PM | Sun, 6 March, 25",
-    },
-    // ... add more bookings as needed
-  ]);
+  const { bookings } = useSelector((state) => state.bookings);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
   const filterDropdownRef = useRef(null);
   const bookingDropdownRef = useRef(null);
-  const [showCalendar, setShowCalendar] = useState(false); // State to manage Calendar visibility
+  const [showCalendar, setShowCalendar] = useState(false);
   const [activeDropdownId, setActiveDropdownId] = useState(null);
   const editDropdownRef = useRef(null);
+
+  useEffect(() => {
+    if (gameId) {
+      dispatch(getBookingsByGame(gameId));
+    }
+  }, [dispatch, gameId]);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -127,11 +100,11 @@ const GameInfo = () => {
   ];
 
   const filteredBookings = bookings.filter((booking) =>
-    booking.name.toLowerCase().includes(searchTerm.toLowerCase())
+    booking?.customer_id?.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleBookSlotClick = () => {
-    setShowCalendar(true); // Show the Calendar when the button is clicked
+    setShowCalendar(true);
   };
 
   return (
@@ -172,12 +145,11 @@ const GameInfo = () => {
             className="d-flex flex-column justify-content-around"
             style={{ backgroundColor: "transparent" }}
           >
-            <h5>{selectedGame?.data?.name}</h5>
-            <p className="text-muted">{selectedGame?.data?.details}</p>
-            <div className="d-flex">
+            <h5>{selectedGame?.data?.name}
+
               <Button
                 variant="success"
-                className="me-2 rounded-pill"
+                className="mx-2 rounded-pill"
                 style={{
                   backgroundColor: "#03D41414",
                   color: "#00AF0F",
@@ -197,6 +169,18 @@ const GameInfo = () => {
               >
                 Zone: {selectedGame?.data?.zone}
               </Button>
+            </h5>
+            <p className="text-muted">{selectedGame?.data?.details}</p>
+            <div >
+              <p>
+                <b>Cancellation:</b> <span>{selectedGame?.data?.cancellation ? "Yes" : "No"}</span>
+              </p>
+              <p>
+                <b>Created At:</b> <span>{new Date(selectedGame?.data?.createdAt).toLocaleString()}</span>
+              </p>
+              <p>
+                <b>Updated At:</b> <span>{new Date(selectedGame?.data?.updatedAt).toLocaleString()}</span>
+              </p>
             </div>
           </Col>
           <Col
@@ -370,7 +354,7 @@ const GameInfo = () => {
                 {filteredBookings.map((booking, index) => (
                   <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
                     <td style={{ border: "none", minWidth: "100px" }}>
-                      {booking.id}
+                      {booking?.booking_id}
                     </td>
                     <td style={{ border: "none", minWidth: "150px" }}>
                       <div className="d-flex align-items-center">
@@ -384,20 +368,20 @@ const GameInfo = () => {
                             marginRight: "10px",
                           }}
                         />
-                        <span>{booking.name}</span>
+                        <span>{booking?.customer_id?.name}</span>
                       </div>
                     </td>
                     <td
                       className="align-middle"
                       style={{ border: "none", minWidth: "120px" }}
                     >
-                      {booking.sports}
+                      {booking?.game_id?.name}
                     </td>
                     <td
                       className="align-middle"
                       style={{ border: "none", minWidth: "80px" }}
                     >
-                      {booking.persons}
+                      {booking?.players?.length + 1}
                     </td>
                     <td
                       className="align-middle"
@@ -437,7 +421,7 @@ const GameInfo = () => {
                       className="align-middle"
                       style={{ border: "none", minWidth: "120px" }}
                     >
-                      {booking.time}
+                      {booking?.slot_date}
                     </td>
                     <td
                       className="align-middle"
@@ -495,7 +479,6 @@ const GameInfo = () => {
                               color: "#FF0000",
                             }}
                             onClick={() => {
-                              console.log("Cancel Booking");
                               setActiveDropdownId(null);
                             }}
                           >

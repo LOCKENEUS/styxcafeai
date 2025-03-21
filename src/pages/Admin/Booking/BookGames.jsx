@@ -142,7 +142,7 @@ const BookGames = () => {
         <Row className="flex-nowrap" style={{ margin: '0 -0.5rem' }}>
           {outdoorGames.map((game, index) => (
             <Col key={game._id} lg={2.4} xs={8} md={3} style={{ padding: '0 0.5rem' }}>
-              <Card className="shadow-sm">
+              <Card className="shadow-sm" style={{ cursor: 'pointer' }} onClick={() => navigate(`/admin/games/${game._id}`)}>
                 <Card.Img
                   variant="top"
                   src={`${import.meta.env.VITE_API_URL}/${game.gameImage}`}

@@ -186,7 +186,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/bookings/booking-details/:gameId/:slotId/:date" element={<BookingDetails />} />
           <Route path="/admin/bookings" element={<BookingList />} />
           <Route path="/admin/booking/games" element={<BookGames />} />
-          <Route path="/admin/booking/checkout/:clientId/:gameId/:slotId" element={<BookingCheckout />} />
+          <Route path="/admin/booking/checkout/:id" element={<BookingCheckout />} />
 
 
           <Route path="/admin/users/customer-list" element={<CustomerList />} />

@@ -11,7 +11,20 @@ export const getBookings = createAsyncThunk(
       const response = await axios.get(
         `${BASE_URL}/admin/booking/list/${cafeId}`
       );
-      console.log(response.data.data);
+      return response.data.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Something went wrong"
+      );
+    }
+  }
+);
+
+export const getBookingsByGame = createAsyncThunk(
+  "bookings/getbookingsByGame",
+  async (id, thunkAPI) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/admin/booking/game/${id}`);
       return response.data.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -59,9 +72,9 @@ export const updateBooking = createAsyncThunk(
 
 export const getBookingDetails = createAsyncThunk(
   "bookings/bookingDetails",
-  async ({ id }, thunkAPI) => {
+  async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/superadmin/booking/${id}`);
+      const response = await axios.get(`${BASE_URL}/admin/booking/${id}`);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -107,6 +120,20 @@ const bookingslice = createSlice({
         state.bookings = action.payload;
       })
       .addCase(getBookings.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Fetch bookings by Game
+      .addCase(getBookingsByGame.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getBookingsByGame.fulfilled, (state, action) => {
+        state.loading = false;
+        state.bookings = action.payload;
+      })
+      .addCase(getBookingsByGame.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -166,7 +193,9 @@ const bookingslice = createSlice({
       })
       .addCase(deleteBooking.fulfilled, (state, action) => {
         state.loading = false;
-        state.bookings = state.bookings.filter((loc) => loc._id !== action.payload); // Use _id instead of id
+        state.bookings = state.bookings.filter(
+          (loc) => loc._id !== action.payload
+        ); // Use _id instead of id
       })
       .addCase(deleteBooking.rejected, (state, action) => {
         state.loading = false;

@@ -211,14 +211,11 @@ const CafeForm = ({
     formDataToSend.append("yearsOfContract", formDataState.yearsOfContract);
     formDataToSend.append("officeContactNo", formDataState.officeContactNo);
 
-    console.log("images", formDataState.cafeImage);
-
     if (Array.isArray(formDataState.cafeImage)) {
       formDataState.cafeImage.forEach((file) => {
         formDataToSend.append("cafeImage", file);
       });
     }
-
 
     if (Array.isArray(formDataState.document)) { // Changed from documents to document
       formDataState.document.forEach((file) => {
@@ -378,6 +375,7 @@ const CafeForm = ({
                   id="name"
                   type="text"
                   name="name"
+                  placeholder="Enter Name"
                   value={formDataState.name}
                   onChange={handleChange}
                   required
@@ -402,6 +400,7 @@ const CafeForm = ({
                   id="cafeName"
                   type="text"
                   name="cafe_name"
+                  placeholder="Enter Cafe Name"
                   value={formDataState.cafe_name}
                   onChange={handleChange}
                   required
@@ -486,6 +485,7 @@ const CafeForm = ({
                   id="contact"
                   type="tel"
                   name="contact_no"
+                  placeholder="Enter Contact Number"
                   value={formDataState.contact_no}
                   onChange={handleChange}
                   pattern="[0-9]{10}"
@@ -506,6 +506,7 @@ const CafeForm = ({
                   id="officeContact"
                   type="tel"
                   name="officeContactNo"
+                  placeholder="Enter Office Contact Number"
                   value={formDataState.officeContactNo || ''}
                   onChange={handleChange}
                   pattern="[0-9]{10}"
@@ -528,9 +529,10 @@ const CafeForm = ({
                   id="email"
                   type="email"
                   name="email"
+                  required
+                  placeholder="Enter Email Address"
                   value={formDataState.email}
                   onChange={handleChange}
-                  required
                   className="py-2 border-2"
                 />
               </Form.Group>
@@ -575,10 +577,10 @@ const CafeForm = ({
                   id="website"
                   type="url"
                   name="website_url"
+                  placeholder="Enter Website URL"
                   value={formDataState.website_url}
                   onChange={handleChange}
                   pattern="https?://.+"
-                  required
                   className="py-2 border-2"
                 />
               </Form.Group>
@@ -597,6 +599,7 @@ const CafeForm = ({
               as="textarea"
               rows={3}
               name="description"
+              placeholder="Enter Description"
               value={formDataState.description}
               onChange={handleChange}
               className="py-2 border-2"
@@ -670,6 +673,7 @@ const CafeForm = ({
                     id="password"
                     type={showPassword ? "text" : "password"}
                     name="password"
+                    placeholder="Enter Password"
                     onChange={handleChange}
                     required
                     className={`py-2 border-2 ${errors.password ? 'is-invalid' : ''}`}
@@ -703,6 +707,7 @@ const CafeForm = ({
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     name="confirm_password"
+                    placeholder="Confirm Password"
                     value={formDataState.confirm_password || ''}
                     onChange={handleChange}
                     required
@@ -739,6 +744,7 @@ const CafeForm = ({
                   id="gstNo"
                   type="text"
                   name="gstNo"
+                  placeholder="Enter GST Number"
                   value={formDataState.gstNo || ''}
                   onChange={handleChange}
                   className="py-2 border-2"
@@ -754,6 +760,7 @@ const CafeForm = ({
                   id="panNo"
                   type="text"
                   name="panNo"
+                  placeholder="Enter PAN Number"
                   value={formDataState.panNo || ''}
                   onChange={handleChange}
                   className="py-2 border-2"
@@ -791,6 +798,7 @@ const CafeForm = ({
                   id="depositAmount"
                   type="number"
                   name="depositAmount"
+                  placeholder="Enter Deposit Amount"
                   value={formDataState.depositAmount || ''}
                   onChange={handleChange}
                   className="py-2 border-2"
@@ -809,9 +817,9 @@ const CafeForm = ({
                   id="yearsOfContract"
                   type="number"
                   name="yearsOfContract"
+                  placeholder="Enter Years of Contract"
                   value={formDataState.yearsOfContract || ''}
                   onChange={handleChange}
-                  required
                   className="py-2 border-2"
                 />
               </Form.Group>

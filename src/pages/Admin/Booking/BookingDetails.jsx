@@ -39,7 +39,7 @@ const BookingDetails = () => {
   const [newPlayer, setNewPlayer] = useState({ name: "", contact_no: "" });
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
-  const [activeTab, setActiveTab] = useState("checkout"); // State to control active tab
+  const [activeTab, setActiveTab] = useState("checkout");
   const target = useRef(null);
 
   const backend_url = import.meta.env.VITE_API_URL;
@@ -50,8 +50,6 @@ const BookingDetails = () => {
   const cafeId = user?._id;
 
   const { gameId, slotId, date } = useParams();
-
-  console.log("date", date);
 
   const dateString = date;
   const newdate = new Date(dateString);
@@ -151,6 +149,11 @@ const BookingDetails = () => {
   };
 
   const handlePayLater = async () => {
+    const limit = selectedCustomer?.creditLimit - selectedCustomer?.creditAmount
+    if(limit < selectedGame?.data?.price){
+      alert("Credit limit exceeded");
+      return
+    }
     try {
       const bookingData = {
         cafe: cafeId,
@@ -163,11 +166,9 @@ const BookingDetails = () => {
         slot_date: newdate,
         players: teamMembers
       };
-      // if((selectedCustomer?.creditAmount + selectedGame?.data?.price) > selectedCustomer?.creditLimit){
-      //   alert("Credit limit exceeded");
-      // }
-      await dispatch(addBooking(bookingData)).unwrap()
-      navigate(`/admin/booking/checkout/${selectedCustomer._id}/${selectedGame?.data?._id}/${slot._id}`)
+      const response =await dispatch(addBooking(bookingData)).unwrap()
+
+      navigate(`/admin/booking/checkout/${response?.data?._id}`)
     } catch (error) { }
   }
 
@@ -194,9 +195,98 @@ const BookingDetails = () => {
     setTeamMembers([...teamMembers, { name: customer.name, contact_no: customer.contact_no }]);
   };
 
-  const handleOnlinePayment = () => {
-    setShowPopup(false);
-    setActiveTab("payment"); // Switch to the "Payment Methods" tab
+  const handleOnlinePayment = async () => {
+    try {
+      setShowPopup(false);
+
+      const limit = selectedCustomer?.creditLimit - selectedCustomer?.creditAmount
+      if(limit < selectedGame?.data?.price){
+        alert("Credit limit exceeded");
+        return
+      }
+
+        const bookingData = {
+          cafe: cafeId,
+          customer_id: selectedCustomer?._id,
+          game_id: selectedGame?.data?._id,
+          slot_id: slot?._id,
+          mode: "Online",
+          status: "Pending",
+          total: selectedGame?.data?.price,
+          slot_date: newdate,
+          players: teamMembers
+        };
+
+        const result =await dispatch(addBooking(bookingData)).unwrap()
+  
+      const response = await fetch(`${backend_url}/admin/booking/payment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+        },
+        body: JSON.stringify({
+          amount: slot?.slot_price * 100 || selectedGame?.price * 100,
+          currency: "INR",
+          customerId: selectedCustomer?._id,
+          gameId: selectedGame?._id,
+          slotId: slot?._id,
+          date: new Date().toISOString(),
+          teamMembers: [],
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success && data.order) {
+        const options = {
+          key: import.meta.env.VITE_RAZOR_LIVE_KEY,
+          amount: data.order.amount,
+          currency: data.order.currency,
+          name: "Lockene Inc",
+          description: "Game Booking",
+          order_id: data.order.id,
+          handler: async function (response) {
+            // Send transaction details to backend
+            const verifyResponse = await fetch(`${backend_url}/admin/booking/verify-payment`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+              },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                booking_id: result?.data?._id, // Pass the booking ID
+                amount: data.order.amount,
+              }),
+            });
+
+            const verifyData = await verifyResponse.json();
+            if (verifyData.success) {
+              alert("Payment Successful and Saved!");
+            } else {
+              alert("Payment Verification Failed");
+            }
+          },
+          prefill: {
+            name: selectedCustomer?.name,
+            email: selectedCustomer?.email,
+            contact: selectedCustomer?.contact_no,
+          },
+          theme: {
+            color: "#3399cc",
+          },
+        };
+
+        const razorpay = new window.Razorpay(options);
+        razorpay.open();
+      } else {
+        console.error("Failed to create Razorpay order");
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+    }
   };
 
   return (
@@ -356,8 +446,8 @@ const BookingDetails = () => {
                   <h3>Customer Details</h3>
                 </div>
                 <div>
-                  <div className="text-success"><span className="fw-bold float-end">Credit Limit: {selectedCustomer?.creditLimit}</span></div>
-                  <div className="text-danger"><span className="fw-bold float-end">Remaining: {selectedCustomer?.creditLimit - selectedCustomer?.creditAmount}</span></div>
+                  <div className="text-success"><span className="fw-bold float-end">Credit Limit: {selectedCustomer?.creditLimit || 0}</span></div>
+                  <div className="text-danger"><span className="fw-bold float-end">Remaining: {selectedCustomer?.creditLimit - selectedCustomer?.creditAmount || 0}</span></div>
                 </div>
               </div>
               {selectedCustomer ? (
@@ -474,18 +564,11 @@ const BookingDetails = () => {
                         <img src={qrcode} alt="QR Code" />
                       </div>
                       <div className="d-flex mt-4 justify-content-around">
-
                           <img src={googleicon} alt="Google Pay" style={{ cursor: "pointer" }} />
                         <img src={phonepeicon} alt="PhonePe" />
                         <img src={paytmicon} alt="Paytm" />
                         <img src={cashicon} alt="Cash" />
                       </div>
-                      {/* <div className="mt-4 d-flex justify-content-around">
-                        <Button className="mt-4" onClick={handleCollectOffline}>Collect Offline</Button>
-                        <Link to="/admin/booking/checkout" className="mt-4">
-                          <Button className="mt-4">Proceed to Book </Button>
-                        </Link>
-                      </div> */}
                     </div>
                   ) : (
                     <p className="text-muted d-flex justify-content-center align-items-center h-100 w-100 mb-0">
