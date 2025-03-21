@@ -16,6 +16,7 @@ export const CreateVendor = createAsyncThunk(
       return response.data.data;
     } catch (error) {
       let errorMessage = error.response?.data?.message || 'Something went wrong';
+      toast.error(errorMessage); // Show error toast for CreateVendor
 
       // Check if the error is a duplicate email
       if (errorMessage.includes('E11000 duplicate key error') && errorMessage.includes('email')) {
@@ -34,6 +35,7 @@ export const GetVendorsList = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/admin/inventory/vendor/list/${id}`);
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong'); // Show error toast for GetVendorsList
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }

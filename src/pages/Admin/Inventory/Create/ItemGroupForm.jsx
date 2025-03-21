@@ -19,6 +19,9 @@ const ItemGroupForm = () => {
   const { id } = useParams(); // Get the ID from URL params for editing
   const isEditMode = Boolean(id);
   
+  // Add loading state
+  const [loading, setLoading] = useState(false);
+
   const customFields = useSelector((state) => state.customFields.customFields);
   const taxFields = useSelector(state => state.taxFieldSlice.taxFields);
   const selectedItemGroup = useSelector(state => state.itemGroups.selectedItemGroup);
@@ -212,11 +215,10 @@ const ItemGroupForm = () => {
     e.preventDefault();
     let items = generateItems();
 
-    // If in edit mode, add item IDs from selectedItemGroup to each item
     if (isEditMode && selectedItemGroup) {
       items = items.map((item, index) => ({
         ...item,
-        _id: selectedItemGroup.items[index]?._id || item._id, // Use existing ID if available
+        _id: selectedItemGroup.items[index]?._id || item._id,
       }));
     }
 
@@ -226,6 +228,7 @@ const ItemGroupForm = () => {
     };
     
     try {
+      setLoading(true); // Set loading to true before submission
       if (isEditMode) {
         await dispatch(updateItemGroup({ id, itemGroupData: submitData })).unwrap();
       } else {
@@ -234,6 +237,8 @@ const ItemGroupForm = () => {
       navigate('/admin/inventory/item-group-list');
     } catch (error) {
       console.error('Failed to save item group:', error);
+    } finally {
+      setLoading(false); // Set loading to false after submission (success or error)
     }
   };
 
@@ -558,7 +563,9 @@ const ItemGroupForm = () => {
         )}
 
         <div className="col-md-12">
-          <Button type="submit" className="mt-4 btn btn-primary">Save</Button>
+          <Button type="submit" className="mt-4 btn btn-primary" disabled={loading}>
+            {loading ? 'Submitting...' : 'Save'}
+          </Button>
         </div>
       </div>
       </Form>

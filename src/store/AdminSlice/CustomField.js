@@ -12,6 +12,7 @@ export const getCustomFields = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/admin/inventory/custom-field/list/${id}`);
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -25,6 +26,7 @@ export const getCustomFieldById = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/admin/inventory/custom-field/${id}`);
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -39,6 +41,7 @@ export const addCustomField = createAsyncThunk(
       toast.success('Custom field added successfully!');
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -53,6 +56,7 @@ export const updateCustomField = createAsyncThunk(
       toast.success('Custom field updated successfully!');
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -67,6 +71,7 @@ export const deleteCustomField = createAsyncThunk(
       toast.success('Custom field deleted successfully!');
       return id;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }

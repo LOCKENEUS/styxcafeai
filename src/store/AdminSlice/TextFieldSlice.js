@@ -12,6 +12,7 @@ export const getTaxFields = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/admin/inventory/tax/list/${id}`);
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -25,6 +26,7 @@ export const getTaxFieldById = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/admin/inventory/tax/${id}`);
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -39,6 +41,7 @@ export const addTaxField = createAsyncThunk(
       toast.success('Tax field added successfully!');
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -53,6 +56,7 @@ export const updateTaxField = createAsyncThunk(
       toast.success('Tax field updated successfully!');
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -67,6 +71,7 @@ export const deleteTaxField = createAsyncThunk(
       toast.success('Tax field deleted successfully!');
       return id;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }

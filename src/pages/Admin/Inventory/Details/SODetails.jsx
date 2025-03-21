@@ -1,4 +1,8 @@
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Table } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getSOById } from "../../../../store/AdminSlice/Inventory/SoSlice";
+import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Table, Spinner } from "react-bootstrap";
 import { LuPencil } from "react-icons/lu";
 import pdflogo from "/assets/Admin/profileDetails/pdflogo.svg";
 import deleteplogo from "/assets/inventory/Vector (1).png";
@@ -7,8 +11,51 @@ import print from "/assets/inventory/Vector.png";
 import sendMail from "/assets/inventory/Group.png";
 import editlogo from "/assets/inventory/mage_edit.png";
 import companylog from "/assets/inventory/companylogo.png";
+import { useNavigate } from "react-router-dom";
 
 export const SODetails = () => {
+    const navigate = useNavigate();
+    const { id } = useParams();
+    const dispatch = useDispatch();
+    const { selectedSO, loading, error } = useSelector((state) => state.so);
+
+    useEffect(() => {
+        if (id) {
+            dispatch(getSOById(id));
+        }
+    }, [dispatch, id]);
+
+    if (loading) {
+        return (
+            <div className="d-flex justify-content-center align-items-center" style={{ height: "70vh" }}>
+                <Spinner animation="border" variant="primary" />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="d-flex justify-content-center align-items-center" style={{ height: "70vh" }}>
+                <h4 className="text-danger">Error: {error}</h4>
+            </div>
+        );
+    }
+
+    if (!selectedSO) {
+        return (
+            <div className="d-flex justify-content-center align-items-center" style={{ height: "70vh" }}>
+                <h4>No sales order found</h4>
+            </div>
+        );
+    }
+
+    // Format date function
+    const formatDate = (dateString) => {
+        if (!dateString) return "N/A";
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    };
+
     return (
         <Container >
            <Row className="mx-2">
@@ -31,7 +78,7 @@ export const SODetails = () => {
                 <Col sm={6} xs={12}>
                     <h5 className="text-dark p-2" style={{ fontSize:'18px' }}>
                         <span>Sales Order: </span>
-                        <span>SO - 014</span>
+                        <span>{selectedSO.so_no}</span>
                     </h5>
                 </Col>
                 <Col sm={6} xs={12} className="d-flex flex-wrap justify-content-center justify-content-sm-end align-items-center gap-2 text-center">
@@ -44,7 +91,9 @@ export const SODetails = () => {
                     <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                         <Image src={receive} className="me-2" /> Receive
                     </Button>
-                    <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                    <Button
+                    onClick={() => navigate(`/admin/Inventory/SaleOrderCreate/${id}`)}
+                    className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                         <Image src={editlogo} className="me-2" /> Edit
                     </Button>
                     <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
@@ -86,7 +135,7 @@ export const SODetails = () => {
                 <Col sm={6}>
                     <div className="mb-4">
                         <h5 className="text-primary" style={{fontSize: '22px', fontWeight: '600'}}>
-                            Rupesh Suryvanshi
+                            {selectedSO.customer_id ? selectedSO.customer_id.name : "Rupesh Suryvanshi"}
                         </h5>
                     </div>
                     <Row>
@@ -118,7 +167,7 @@ export const SODetails = () => {
                 <Col sm={6}>
                     <div className="text-end mb-4">
                         <h6 className="text-dark" style={{fontSize: '16px'}}>
-                            Order No: <span className="text-primary fw-bold">PO-009</span>
+                            Order No: <span className="text-primary fw-bold">{selectedSO.so_no}</span>
                         </h6>
                     </div>
 
@@ -127,31 +176,31 @@ export const SODetails = () => {
                             <tbody>
                                 <tr>
                                     <td className="text-muted" style={{width: '50%'}}>Sales Order No:</td>
-                                    <td className="fw-medium">SO-007</td>
+                                    <td className="fw-medium">{selectedSO.so_no}</td>
                                 </tr>
                                 <tr>
                                     <td className="text-muted">Order Date:</td>
-                                    <td className="fw-medium">Mar 19, 2025</td>
+                                    <td className="fw-medium">{formatDate(selectedSO.date)}</td>
                                 </tr>
                                 <tr>
                                     <td className="text-muted">Shipment Date:</td>
-                                    <td className="fw-medium">Mar 19, 2025</td>
+                                    <td className="fw-medium">{formatDate(selectedSO.shipment_date)}</td>
                                 </tr>
                                 <tr>
                                     <td className="text-muted">Payment Terms:</td>
-                                    <td className="fw-medium">Cash</td>
+                                    <td className="fw-medium">{selectedSO.payment_terms || "Cash"}</td>
                                 </tr>
                                 <tr>
                                     <td className="text-muted">Reference:</td>
-                                    <td className="fw-medium">Kreet</td>
+                                    <td className="fw-medium">{selectedSO.reference || "N/A"}</td>
                                 </tr>
                                 <tr>
                                     <td className="text-muted">Delivery Preference:</td>
-                                    <td className="fw-medium">Cash</td>
+                                    <td className="fw-medium">{selectedSO.delivery_preference || "Standard"}</td>
                                 </tr>
                                 <tr>
                                     <td className="text-muted">Sales Person:</td>
-                                    <td className="fw-medium">Yash (Admin)</td>
+                                    <td className="fw-medium">{selectedSO.sales_person || "N/A"}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -164,36 +213,35 @@ export const SODetails = () => {
     <Col sm={12} className="my-2">
     <Card className="p-3 shadow-sm">
         <Row>
-
-        
         <Col sm={12}>
          <div className="table-responsive">
-
-         <Table  className="text-center align-middle">
+         <Table className="text-center align-middle">
             <thead className="text-start" >
               <tr style={{ borderBottom: "2px solid #dee2e6" }}>
-                <th className="fw-bold"  >PRODUCT</th>
-                <th className="fw-bold" >QUANTITY</th>
-                <th className="fw-bold" >PRICE</th>
-                <th className="fw-bold" >TAX</th>
-                <th className="fw-bold" >TOTAL</th>
+                <th className="fw-bold">PRODUCT</th>
+                <th className="fw-bold">QUANTITY</th>
+                <th className="fw-bold">PRICE</th>
+                <th className="fw-bold">TAX</th>
+                <th className="fw-bold">TOTAL</th>
               </tr>
             </thead>
-            <tbody className="text-start" >
-              <tr>
-                <td>
-                  <b>Television</b>
-                  <br />
-                  HSN : 54654
-                </td>
-                <td>
-                  SKU : 646546 <br />
-                  Qty : 50 Nos
-                </td>
-                <td>Price : ₹7000</td>
-                <td>GST (10%)</td>
-                <td>Total : ₹385000</td>
-              </tr>
+            <tbody className="text-start">
+              {selectedSO.items && selectedSO.items.map((item, index) => (
+                <tr key={item._id || index}>
+                  <td>
+                    <b>{item.item_id ? item.item_id.name : "Product Item"}</b>
+                    <br />
+                    HSN : {item.hsn || "N/A"}
+                  </td>
+                  <td>
+                    SKU : {item.item_id ? item.item_id.sku : "N/A"} <br />
+                    Qty : {item.quantity} Nos
+                  </td>
+                  <td>Price : ₹{item.price}</td>
+                  <td>{item.tax_amt}%</td>
+                  <td>Total : ₹{item.total}</td>
+                </tr>
+              ))}
             </tbody>
           </Table>
          </div>
@@ -202,27 +250,30 @@ export const SODetails = () => {
       <Row className="mt-4 border-top border-3 p-2">
         <Col sm={6} className="border-end border-3">
           <p>
-            <b>Description:</b> CCC
+            <b>Description:</b> {selectedSO.description || "N/A"}
           </p>
         </Col>
         <Col sm={6} className="text-end">
           <p className="border-bottom border-3 p-3">
-            <b>Subtotal:</b> ₹385000
+            <b>Subtotal:</b> ₹{selectedSO.subtotal}
           </p>
           <p className="border-bottom border-3 p-3">
             <b>Discount:</b>{" "}
             <span className="text-primary" style={{ cursor: "pointer" }}>
-              5%
+              {selectedSO.discount_value}%
             </span>{" "}
-            ₹19250
+            ₹{(selectedSO.subtotal * selectedSO.discount_value / 100).toFixed(2)}
           </p>
           <p className="border-bottom border-3 p-3">
-            <b>Tax:</b> GST (10%)
+            <b>Tax:</b> {selectedSO.tax && selectedSO.tax.length > 0 ? 
+                `${selectedSO.tax[0].tax_name} (${selectedSO.tax[0].tax_rate}%)` : 
+                "N/A"}
+          </p>
+          <p className="border-bottom border-3 p-3">
+            <b>Total:</b> ₹{selectedSO.total}
           </p>
         </Col>
-
         </Row>
-
     </Card>
     </Col>
 
@@ -230,37 +281,28 @@ export const SODetails = () => {
         <Card className=" p-3 shadow-sm">
             <h5 className=" mb-3" style={{ fontSize:'20px' }}>Package Details</h5>
             <div className="table-responsive">
-
             <Table className="text-center align-middle">
             <thead >
-              <tr  style={{ borderBottom: "2px solid #dee2e6",borderTop: "2px solid #dee2e6" }}>
+              <tr style={{ borderBottom: "2px solid #dee2e6",borderTop: "2px solid #dee2e6" }}>
                 <th className="fw-bold">#</th>
                 <th className="fw-bold">Package No</th>
                 <th className="fw-bold">Packing Date</th>
                 <th className="fw-bold">Status</th>
-                
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>
-                1
-                </td>
-                <td>
-                PACK-005
-                </td>
+                <td>1</td>
+                <td>PACK-005</td>
                 <td>Feb 13, 2025</td>
                 <td>Draft</td>
-                
               </tr>
             </tbody>
           </Table>
-
             </div>
         </Card>
     </Col>
 </Row>
-
         </Container>
     )
 };

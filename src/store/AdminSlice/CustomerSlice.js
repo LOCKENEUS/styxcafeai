@@ -15,6 +15,7 @@ export const getCustomers = createAsyncThunk(
       return response.data.data;
     } catch (error) {
       console.error('API error:', error);
+      toast.error('Error fetching customers: ' + (error.response?.data?.message || 'Something went wrong'));
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -29,6 +30,7 @@ export const searchCustomers = createAsyncThunk(
       return response.data.data;
     } catch (error) {
       console.error('API error:', error);
+      toast.error('Error fetching customers: ' + (error.response?.data?.message || 'Something went wrong'));
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -42,6 +44,7 @@ export const getCustomerById = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/admin/customer/${id}`);
       return response.data.data;
     } catch (error) {
+      toast.error('Error fetching customer by ID: ' + (error.response?.data?.message || 'Something went wrong'));
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -56,6 +59,7 @@ export const addCustomer = createAsyncThunk(
       toast.success('Customer added successfully!');
       return response.data.data;
     } catch (error) {
+      toast.error('Error adding customer: ' + (error.response?.data?.message || 'Something went wrong'));
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -70,6 +74,7 @@ export const updateCustomer = createAsyncThunk(
       toast.success('Customer updated successfully!');
       return response.data.data;
     } catch (error) {
+      toast.error('Error updating customer: ' + (error.response?.data?.message || 'Something went wrong'));
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -84,6 +89,7 @@ export const deleteCustomer = createAsyncThunk(
       toast.success('Customer deleted successfully!');
       return id;
     } catch (error) {
+      toast.error('Error deleting customer: ' + (error.response?.data?.message || 'Something went wrong'));
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }

@@ -12,6 +12,7 @@ export const getUsers = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/admin/staff-member/list/${id}`);
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -25,6 +26,7 @@ export const getUserById = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/admin/staff-member/${id}`);
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -39,6 +41,7 @@ export const addUser = createAsyncThunk(
       toast.success('User added successfully!');
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -53,6 +56,7 @@ export const updateUser = createAsyncThunk(
       toast.success('User updated successfully!');
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -67,6 +71,7 @@ export const deleteUser = createAsyncThunk(
       toast.success('User deleted successfully!');
       return id;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }

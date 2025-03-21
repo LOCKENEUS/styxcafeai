@@ -12,6 +12,7 @@ export const getSOs = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/admin/inventory/so/list/${id}`);
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -25,6 +26,7 @@ export const getSOById = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/admin/inventory/so/${id}`);
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -39,6 +41,7 @@ export const addSO = createAsyncThunk(
       toast.success('Sales Order added successfully!');
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -53,6 +56,7 @@ export const updateSO = createAsyncThunk(
       toast.success('Sales Order updated successfully!');
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -67,6 +71,7 @@ export const deleteSO = createAsyncThunk(
       toast.success('Sales Order deleted successfully!');
       return id;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }

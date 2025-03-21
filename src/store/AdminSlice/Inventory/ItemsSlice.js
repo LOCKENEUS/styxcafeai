@@ -12,6 +12,7 @@ export const getItems = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/admin/inventory/item/list/${id}`);
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -25,6 +26,7 @@ export const getItemById = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/admin/inventory/item/${id}`);
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -54,6 +56,7 @@ export const updateItem = createAsyncThunk(
       toast.success('Item updated successfully!');
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -68,6 +71,7 @@ export const deleteItem = createAsyncThunk(
       toast.success('Item deleted successfully!');
       return id;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -109,6 +113,10 @@ const itemsSlice = createSlice({
       .addCase(getItemById.fulfilled, (state, action) => {
         state.loading = false;
         state.selectedItem = action.payload;
+      })
+      .addCase(getItemById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       })
       // Add item
       .addCase(addItem.pending, (state) => {

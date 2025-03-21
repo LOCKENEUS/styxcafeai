@@ -234,10 +234,11 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/Inventory/SaleInvoice" element={<SaleInvoiceInventory />} />
           <Route path="/admin/Inventory/InvoicePayment" element={<InvoicePaymentInventory />} />
           <Route path="/admin/Inventory/InventorySetting" element={<InventorySettingAdmin />} />
-          <Route path="/admin/Inventory/SaleOrderDetails" element={<SODetails />} />
+          <Route path="/admin/Inventory/SaleOrderDetails/:id" element={<SODetails />} />
           <Route path="/admin/Inventory/SaleInvoiceDetails" element={<SIDetails />} />
           <Route path="/admin/Inventory/InvoicePaymentDetails" element={<IPDetails />} />
           <Route path="/admin/Inventory/SaleOrderCreate" element={<SOCreate />} />
+          <Route path="/admin/Inventory/SaleOrderCreate/:id" element={<SOCreate />} />
           <Route path="/admin/Inventory/InvoiceCreate" element={<InvoiceCreate />} />
           <Route path="/admin/inventory/purchase-bill-list" element={<PurchaseBillList />} />
           <Route path="/admin/inventory/purchaseReceived" element={<PurchaseReceivedAdmin />} />

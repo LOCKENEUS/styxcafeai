@@ -20,23 +20,25 @@ import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems"
 import Tax from "../modal/Tax";
 import AddClint from "../modal/AddClint";
 import PaymentTermsModal from "../modal/PaymentTermsModal";
-import { Link } from "react-router-dom";
-import AddressModal from "../modal/AddressModal";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { getCustomFields } from '../../../../store/AdminSlice/CustomField';
 import { getTaxFields } from '../../../../store/AdminSlice/TextFieldSlice';
 import { getItems } from '../../../../store/AdminSlice/Inventory/ItemsSlice';
 import { MdOutlineRemoveCircleOutline } from "react-icons/md";
-import { addSO } from '../../../../store/AdminSlice/Inventory/SoSlice';
+import { addSO, getSOById, updateSO } from '../../../../store/AdminSlice/Inventory/SoSlice';
+import { toast } from 'react-toastify';
 
 const SOCreate = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const isEditMode = !!id;
   const [show, setShow] = useState(false);
   const [showClientList, setShowClientList] = useState(true);
   const [showOffCanvasCreateItem, setShowOffCanvasCreateItem] = useState(false);
   const handleShowCreateItem = () => setShowOffCanvasCreateItem(true);
   const handleCloseCreateItem = () => setShowOffCanvasCreateItem(false);
   const [showPaymentTerms, setShowPaymentTerms] = useState(false);
-  const [showAddressModal, setShowAddressModal] = useState(false);
 
   const [products, setProducts] = useState([
     { id: 1, item: "", quantity: 1, price: 0, tax: 0, total: 0, totalTax: 0 },
@@ -60,6 +62,72 @@ const SOCreate = () => {
     dispatch(getTaxFields(cafeId));
     dispatch(getItems(cafeId));
   }, [dispatch]);
+
+  useEffect(() => {
+    if (isEditMode) {
+      dispatch(getSOById(id))
+        .unwrap()
+        .then((soData) => {
+          console.log("SO Data received:", soData); // Add this for debugging
+          
+          setFormData({
+            date: soData.date ? new Date(soData.date).toISOString().split('T')[0] : '',
+            shipment_date: soData.shipment_date ? new Date(soData.shipment_date).toISOString().split('T')[0] : '',
+            payment_terms: soData.payment_terms || '',
+            reference: soData.reference || '',
+            delivery_preference: soData.delivery_preference || '',
+            sales_person: soData.sales_person || '',
+            description: soData.description || '',
+            internal_team_notes: soData.internal_team_notes || ''
+          });
+          
+          if (soData.customer_id) {
+            setSelectedClient(soData.customer_id);
+          }
+          
+          if (soData.items && soData.items.length > 0) {
+            const formattedProducts = soData.items.map((item, index) => {
+              // Find the tax rate from the tax array
+              const taxRate = soData.tax?.find(t => t._id === item.tax)?.tax_rate || 0;
+              
+              return {
+                id: index + 1,
+                item: item.item_id?._id || '', 
+                itemName: item.item_id?.name || '',
+                quantity: item.quantity || 1,
+                price: item.price || 0,
+                tax: item.tax || '', // This is the tax ID
+                taxRate: taxRate,
+                total: item.total || 0,
+                totalTax: item.tax_amt || 0,
+                hsn: item.hsn || ''
+              };
+            });
+            setProducts(formattedProducts);
+          }
+          
+          // Set tax totals
+          setTotals({
+            subtotal: soData.subtotal || 0,
+            discount: soData.discount_value || 0,
+            discountType: soData.discount_type === 'flat' ? 'flat' : 'Percentage',
+            taxAmount: soData.tax?.reduce((sum, tax) => sum + (soData.subtotal * (tax.tax_rate / 100)), 0) || 0,
+            selectedTaxes: soData.tax?.map(tax => ({ id: tax._id, rate: tax.tax_rate })) || [],
+            total: soData.total || 0,
+            adjustmentNote: soData.adjustment_note || '',
+            adjustmentAmount: soData.adjustment_amount || 0
+          });
+          
+          if (soData.internal_team_file && soData.internal_team_file.length > 0) {
+            // Handle existing files if needed
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching SO data:', error);
+          toast.error('Failed to load Sales Order data');
+        });
+    }
+  }, [dispatch, id, isEditMode]);
 
   const handleShow = () => setShow(true);
   const handleClose = () => {
@@ -274,14 +342,23 @@ const SOCreate = () => {
     });
 
     try {
-      await dispatch(addSO(submitData)).unwrap();
-      // Handle success (e.g., redirect to SO list)
+      if (isEditMode) {
+        await dispatch(updateSO({ id, soData: submitData })).unwrap();
+        toast.success('Sales Order updated successfully!');
+      } else {
+        await dispatch(addSO(submitData)).unwrap();
+        toast.success('Sales Order created successfully!');
+      }
+      navigate('/admin/Inventory/SalesOrder');
     } catch (error) {
-      // Handle error
-      console.error('Error creating SO:', error);
+      console.error('Error with Sales Order:', error);
+      toast.error('Failed to save Sales Order');
     }
   };
 
+  // Update the page title based on mode
+  const pageTitle = isEditMode ? "Edit Sales Order" : "Create Sales Order";
+  
   return (
     <Container fluid className="p-4">
       <Col sm={12} className="my-3">
@@ -289,11 +366,11 @@ const SOCreate = () => {
           <Breadcrumb>
             <BreadcrumbItem>Home</BreadcrumbItem>
             <BreadcrumbItem>
-              <Link  to="/admin/Inventory/SalesOrder">
-               Sales Order List
+              <Link to="/admin/Inventory/SalesOrder">
+                Sales Order List
               </Link>
             </BreadcrumbItem>
-            <BreadcrumbItem active>Sales Order Create</BreadcrumbItem>
+            <BreadcrumbItem active>{pageTitle}</BreadcrumbItem>
           </Breadcrumb>
         </div>
       </Col>
@@ -362,19 +439,7 @@ const SOCreate = () => {
                   <span style={{ marginRight: "10px" }}>
                     Billing Address
                   </span>{" "}
-                  <Button
-                    onClick={() => setShowAddressModal(true)}
-                    style={{ borderStyle: "dashed" }}
-                    variant="outline-primary"
-                    className="d-flex align-items-center justify-content-center gap-2"
-                  >
-                    +
-                  </Button>{" "}
                 </h6>
-                <AddressModal 
-                  show={showAddressModal} 
-                  handleClose={() => setShowAddressModal(false)} 
-                />
                 <p style={{ fontSize: "0.9rem" }} className="mb-1">
                   {selectedClient ? selectedClient.address : "Address"}
                 </p>
@@ -404,7 +469,7 @@ const SOCreate = () => {
                 />
               </div>
 
-              <div className="d-flex flex-row align-items-center gap-2">
+              {/* <div className="d-flex flex-row align-items-center gap-2">
                 <Form.Control
                   type="text"
                   name="shipment_date"
@@ -416,7 +481,7 @@ const SOCreate = () => {
                     if (!e.target.value) e.target.type = 'text'
                   }}
                 />
-              </div>
+              </div> */}
 
               <div className="d-flex flex-row align-items-center gap-2">
                 <Form.Select
@@ -458,12 +523,12 @@ const SOCreate = () => {
                 placeholder="Enter Reference"
               />
 
-              <Form.Control
+              {/* <Form.Control
                 name="delivery_preference"
                 value={formData.delivery_preference}
                 onChange={handleInputChange}
                 placeholder="Enter Shipment Preference"
-              />
+              /> */}
 
               <Form.Select
                 name="sales_person"
@@ -498,7 +563,7 @@ const SOCreate = () => {
                     <Form.Select
                       className="flex-grow-1"
                       style={{ border: "1px solid black", borderStyle: "dashed" }}
-                      value={product.item}
+                      value={product.item || ""}
                       onChange={(e) => updateProduct(product.id, "item", e.target.value)}
                     >
                       <option value="">Select Item</option>
@@ -507,6 +572,9 @@ const SOCreate = () => {
                           {item.name} (₹{item.sellingPrice})
                         </option>
                       ))}
+                      {product.item && !items.some(item => item._id === product.item) && product.itemName && (
+                        <option value={product.item}>{product.itemName}</option>
+                      )}
                     </Form.Select>
                     <Button
                       onClick={handleShowCreateItem}
@@ -750,7 +818,7 @@ const SOCreate = () => {
       <Card className="p-3 mt-3  shadow-sm">
         <h6>Terms And Condition & Attachments</h6>
         <Row className="mt-3">
-          <Col md={6}>
+          <Col md={12}>
             <Form.Control
               as="textarea"
               rows={9}
@@ -761,8 +829,8 @@ const SOCreate = () => {
               style={{ border: "1px solid gray" }}
             />
           </Col>
-
-          <Col className="" md={6}>
+              {/* Add a Attachment */}
+          {/* <Col className="" md={6}>
             <div
               className="rounded d-flex flex-column align-items-center justify-content-center p-4"
               style={{
@@ -816,7 +884,7 @@ const SOCreate = () => {
                 ))}
               </div>
             </div>
-          </Col>
+          </Col> */}
         </Row>
       </Card>
 
@@ -846,9 +914,8 @@ const SOCreate = () => {
         <Button
           variant="primary"
           onClick={handleSubmit}
-          // disabled={!selectedClient || products.length === 0}
         >
-          Create Sales Order
+          {isEditMode ? "Update Sales Order" : "Create Sales Order"}
         </Button>
       </div>
 

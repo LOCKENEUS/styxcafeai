@@ -39,6 +39,7 @@ export const addVendor = createAsyncThunk(
       toast.success('Vendor added successfully!');
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }

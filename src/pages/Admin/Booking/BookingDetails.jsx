@@ -24,6 +24,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { getGameById } from "../../../store/slices/gameSlice";
 import { getSlotDetails } from "../../../store/slices/slotsSlice";
 import { addBooking } from "../../../store/AdminSlice/BookingSlice";
+import ClientModel from "./Model/ClientModel";
 
 const BookingDetails = () => {
   const { customers, loading, error } = useSelector((state) => state.customers);
@@ -42,6 +43,7 @@ const BookingDetails = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [activeTab, setActiveTab] = useState("checkout");
   const target = useRef(null);
+  const [showClientModal, setShowClientModal] = useState(false);
 
   const backend_url = import.meta.env.VITE_API_URL;
   const dispatch = useDispatch();
@@ -314,10 +316,16 @@ const BookingDetails = () => {
             <Button
               variant="white"
               className="mb-3 rounded border d-flex align-items-center gap-2"
+              onClick={() => setShowClientModal(true)}
             >
               <BsPlus size={20} />
             </Button>
           </div>
+
+          <ClientModel 
+            show={showClientModal} 
+            handleClose={() => setShowClientModal(false)} 
+          />
 
           <div className="bg-white rounded-3 p-3">
             <div className="customer-list">

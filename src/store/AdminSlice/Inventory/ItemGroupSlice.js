@@ -12,6 +12,7 @@ export const getItemGroups = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/admin/inventory/item-group/list/${id}`);
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -25,6 +26,7 @@ export const getItemGroupById = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/admin/inventory/item-group/${id}`);
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -39,6 +41,7 @@ export const addItemGroup = createAsyncThunk(
       toast.success('Item group added successfully!');
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -53,6 +56,7 @@ export const updateItemGroup = createAsyncThunk(
       toast.success('Item group updated successfully!');
       return response.data.data;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }
@@ -67,6 +71,7 @@ export const deleteItemGroup = createAsyncThunk(
       toast.success('Item group deleted successfully!');
       return id;
     } catch (error) {
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
     }
   }

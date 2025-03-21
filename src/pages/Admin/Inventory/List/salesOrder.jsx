@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,6 +17,9 @@ import solar_export from "/assets/inventory/solar_export-linear.png";
 import add from "/assets/inventory/material-symbols_add-rounded.png";
 import DataTable from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getSOs } from "../../../../store/AdminSlice/Inventory/SoSlice";
+// import { format } from "date-fns";
 
 export const SalesOrder = () => {
   // State for search input
@@ -25,9 +28,16 @@ export const SalesOrder = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activePage, setActivePage] = useState(1);
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(3 / itemsPerPage);
-   
+  const dispatch = useDispatch();
+  const { salesOrders, loading, error } = useSelector((state) => state.so);
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const cafeId = user?._id;
 
+  useEffect(() => {
+    if (cafeId) {
+      dispatch(getSOs(cafeId));
+    }
+  }, [dispatch, cafeId]);
 
   // Function to handle modal (replace with actual logic)
   const handleShowCreate = () => {
@@ -35,26 +45,26 @@ export const SalesOrder = () => {
     navigate("/admin/Inventory/SaleOrderCreate");
   };
 
-
   const getRandomColor = (name) => {
     const colors = ["#FAED39", "#FF5733", "#33FF57", "#339FFF", "#FF33F6", "#FFAA33", "#39DDFA", "#3DFF16"];
     let index = name.charCodeAt(0) % colors.length; // Generate a consistent index
     return colors[index];
   };
 
+  const handleShowDetails = (id) => {
+    navigate(`/admin/Inventory/SaleOrderDetails/${id}`);
+  };
 
   const columns = [
     {
       name: "SN",
-      selector: (row) => row.sn,
-
+      selector: (row, index) => index + 1,
       minWidth: "70px",
       maxWidth: "70px",
-
     },
     {
       name: "Order No",
-      selector: (row) => row.name,
+      selector: (row) => row.so_no,
       sortable: true,
       cell: (row) => (
         <div className="d-flex align-items-center">
@@ -63,38 +73,56 @@ export const SalesOrder = () => {
             style={{
               width: "35px",
               height: "35px",
-              backgroundColor: getRandomColor(row.name),
+              backgroundColor: getRandomColor(row.so_no),
               color: "white",
               fontWeight: "bold",
               padding: "8px 12px",
               gap: "10px",
             }}
           >
-
-            {row.name.charAt(0).toUpperCase()}
+            {row.so_no.charAt(0).toUpperCase()}
           </span>
           <div>
-            <div style={{ color: "#0062FF",cursor:"pointer" }} onClick={handleShowDetails}>{row.name}</div>
-            {/* <div style={{ fontSize: "12px", color: "gray" }}>{row.email}</div> */}
+            <div 
+              style={{ color: "#0062FF", cursor: "pointer" }} 
+              onClick={() => handleShowDetails(row._id)}
+            >
+              {row.so_no}
+            </div>
           </div>
         </div>
       ),
     },
-    { name: "Client", selector: (row) => row.client, sortable: true },
-    { name: " Status", selector: (row) => row.status, sortable: true },
-    { name: "Shipment Date", selector: (row) => row.shipmentDate, sortable: true },
-
+    { 
+      name: "Client", 
+      selector: (row) => row.customer_id?.name || "N/A", 
+      sortable: true 
+    },
+    { 
+      name: "Status", 
+      selector: (row) => "Pending", // You may need to adjust this based on your API response
+      sortable: true,
+      cell: (row) => (
+        <span className={`badge ${row.pending_qty > 0 ? "bg-warning" : "bg-success"}`}>
+          {row.pending_qty > 0 ? "Pending" : "Completed"}
+        </span>
+      )
+    },
+    { 
+      name: "Shipment Date", 
+      selector: (row) => row.shipment_date, 
+      sortable: true,
+      cell: (row) => {
+        // Extract only the date part from the ISO string
+        if (!row.shipment_date) return "N/A";
+        const date = new Date(row.shipment_date);
+        if (isNaN(date)) return "Invalid Date";
+        return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+      }
+    },
   ];
 
-
-  const itemsData = [
-    { sn: 1, name: "Alice", client: "31", status: "Packed", shipmentDate: "21/10/2022" },
-    { sn: 2, name: "Bob", client: "6", status: "Shipped", shipmentDate: "21/2/2022" },
-    { sn: 3, name: "Charlie", client: "21", status: "Packed", shipmentDate: "21/2/2022" },
-    { sn: 4, name: "David", client: "1", status: "Shipped", shipmentDate: "21/12/2022" },
-    { sn: 5, name: "Eve", client: "2", status: "Packed", shipmentDate: "21/12/2022" },
-
-  ];
+  const totalPages = Math.ceil((salesOrders?.length || 0) / itemsPerPage);
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -102,15 +130,10 @@ export const SalesOrder = () => {
     }
   };
 
-    const handleShowDetails = () => {
-      navigate("/admin/Inventory/SaleOrderDetails");
-    }
-  const filteredItems = itemsData.filter((item) =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.client.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.shipmentDate.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredItems = salesOrders?.filter((item) =>
+    item.so_no?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.customer_id?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
 
   return (
     <Container >
@@ -197,31 +220,49 @@ export const SalesOrder = () => {
 
 
               <Col sm={12} style={{ marginTop: "30px" }}>
-                <DataTable
-                  columns={columns}
-                  data={filteredItems}
-                  // pagination
-                  highlightOnHover
-                  responsive
-                  persistTableHead
-                  customStyles={{
-                    rows: {
-                      style: {
-                        backgroundColor: "#ffffff", padding: 'clamp(10px, 2vw, 15px)',
-                        border: 'none',
-                        fontSize: '14px',
-                      }
-                    },
-                    headCells: {
-                      style: {
-                        backgroundColor: "#e9f5f8", padding: 'clamp(10px, 2vw, 15px)',
-                        border: 'none',
-                        fontSize: 'clamp(14px, 3vw, 16px)',
+                {loading ? (
+                  <div className="text-center py-4">
+                    <div className="spinner-border text-primary" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                  </div>
+                ) : error ? (
+                  <div className="alert alert-danger" role="alert">
+                    {error}
+                  </div>
+                ) : (
+                  <DataTable
+                    columns={columns}
+                    data={filteredItems}
+                    pagination
+                    paginationPerPage={itemsPerPage}
+                    highlightOnHover
+                    responsive
+                    persistTableHead
+                    noDataComponent={
+                      <div className="p-4 text-center">No sales orders found</div>
+                    }
+                    customStyles={{
+                      rows: {
+                        style: {
+                          backgroundColor: "#ffffff", 
+                          padding: 'clamp(10px, 2vw, 15px)',
+                          border: 'none',
+                          fontSize: '14px',
+                        }
                       },
-                    },
-                    table: { style: { borderRadius: "5px", overflow: "hidden" } },
-                  }}
-                />
+                      headCells: {
+                        style: {
+                          backgroundColor: "#e9f5f8", 
+                          padding: 'clamp(10px, 2vw, 15px)',
+                          border: 'none',
+                          fontSize: 'clamp(14px, 3vw, 16px)',
+                        },
+                      },
+                      table: { style: { borderRadius: "5px", overflow: "hidden" } },
+                    }}
+                  />
+                )}
               </Col>
             </Row>
           </Card></Col>

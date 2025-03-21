@@ -57,6 +57,7 @@ const CreateItemsForm = () => {
     const taxFields = useSelector(state => state.taxFieldSlice.taxFields);
     const cafeId = JSON.parse(sessionStorage.getItem("user"))?._id;
     const vendors = useSelector(state => state.vendors.vendors);
+    const [loading, setLoading] = useState(false);
     
     // Organize custom fields by type
     const unitOptions = customFields.filter(field => field.type === "Unit");
@@ -180,21 +181,19 @@ const CreateItemsForm = () => {
         formDataToSend.append('is_deleted', false);
 
         try {
+            setLoading(true);
             if (isEditMode) {
                 // Update existing item
-                await dispatch(updateItem({ id, itemData: formDataToSend })).unwrap().then(() => {
-                    navigate(-1);
-                });
+                await dispatch(updateItem({ id, itemData: formDataToSend })).unwrap();
             } else {
                 // Create new item
-                await dispatch(addItem(formDataToSend)).unwrap().then(() => {
-                    navigate(-1);
-                });
+                await dispatch(addItem(formDataToSend)).unwrap();
             }
-            // navigate('/Inventory/Items');
+            navigate(-1);
         } catch (error) {
             console.error(`Error ${isEditMode ? 'updating' : 'adding'} item:`, error);
-            // alert(`Failed to ${isEditMode ? 'update' : 'add'} item. Please try again.`);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -776,8 +775,8 @@ const CreateItemsForm = () => {
                     </Col>
 
                     <Col sm={12} className="my-2 btn-lg">
-                        <Button variant="primary" type="submit" className="my-2">
-                            {isEditMode ? 'Update' : 'Submit'}
+                        <Button variant="primary" type="submit" className="my-2" disabled={loading}>
+                            {loading ? 'Submitting...' : (isEditMode ? 'Update' : 'Submit')}
                         </Button>
                         <Button 
                             variant="secondary" 
