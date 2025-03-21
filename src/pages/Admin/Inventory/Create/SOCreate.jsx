@@ -496,7 +496,7 @@ const SOCreate = () => {
                 >
                   <option value="">Select Payment Term</option>
                   {paymentTerms.map((term) => (
-                    <option key={term._id} value={term._id}>
+                    <option key={term._id} value={term.name}>
                       {term.name}
                     </option>
                   ))}

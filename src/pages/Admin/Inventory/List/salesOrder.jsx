@@ -109,13 +109,13 @@ export const SalesOrder = () => {
       )
     },
     { 
-      name: "Shipment Date", 
-      selector: (row) => row.shipment_date, 
+      name: "Date", 
+      selector: (row) => row.date, 
       sortable: true,
       cell: (row) => {
         // Extract only the date part from the ISO string
-        if (!row.shipment_date) return "N/A";
-        const date = new Date(row.shipment_date);
+        if (!row.date) return "N/A";
+        const date = new Date(row.date);
         if (isNaN(date)) return "Invalid Date";
         return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
       }
