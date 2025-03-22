@@ -3,7 +3,7 @@ import { Container, Row, Col, Tab, Nav, Table, Card, Breadcrumb, Spinner, Modal,
 import { BiArrowBack, BiCloudUpload } from 'react-icons/bi'
 import user_check from '/assets/Admin/Dashboard/solar_user-check-bold.svg';
 import { HiOutlineTrash } from 'react-icons/hi';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getItemById, deleteItem } from '../../../../store/AdminSlice/Inventory/ItemsSlice';
 import { getCustomFieldById } from '../../../../store/AdminSlice/CustomField';
@@ -94,8 +94,10 @@ const ItemDetails = () => {
   return (
     <Container  className="mt-4 min-vh-100">
     <Breadcrumb>
-      <Breadcrumb.Item href="/admin">Home</Breadcrumb.Item>
-      <Breadcrumb.Item active>Booking Details</Breadcrumb.Item>
+      <Breadcrumb.Item ><Link to="/admin/dashboard">Home</Link></Breadcrumb.Item>
+      <Breadcrumb.Item ><Link to="/admin/inventory/dashboard">Inventory</Link></Breadcrumb.Item>
+      <Breadcrumb.Item ><Link to="/admin/inventory/items-list">Item List</Link></Breadcrumb.Item>
+      <Breadcrumb.Item active>Item Details</Breadcrumb.Item>
     </Breadcrumb>
     <Tab.Container defaultActiveKey="checkout">
       <Row>

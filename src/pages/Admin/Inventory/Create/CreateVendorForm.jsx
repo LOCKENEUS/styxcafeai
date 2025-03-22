@@ -43,6 +43,18 @@ export const CreateVendorForm = () => {
     const [states, setStates] = useState([]);
     const [cities, setCities] = useState([]);
 
+    // Add validation state
+    const [errors, setErrors] = useState({
+        vendorName: '',
+        vendorEmail: '',
+        vendorPhone: '',
+        companyName: '',
+        bankname: '',
+        accountnumber: '',
+        ifsccode: '',
+        accounttype: ''
+    });
+
     useEffect(() => {
         if (id) {
             dispatch(getVendorById(id));
@@ -288,9 +300,86 @@ export const CreateVendorForm = () => {
             });
     };
 
+    // Add validation function
+    const validateForm = () => {
+        let isValid = true;
+        const newErrors = {
+            vendorName: '',
+            vendorEmail: '',
+            vendorPhone: '',
+            companyName: '',
+            bankname: '',
+            accountnumber: '',
+            ifsccode: '',
+            accounttype: ''
+        };
+
+        // Vendor Name validation
+        if (!formData.vendorName.trim()) {
+            newErrors.vendorName = 'Vendor name is required';
+            isValid = false;
+        } else if (formData.vendorName.length < 3) {
+            newErrors.vendorName = 'Vendor name must be at least 3 characters';
+            isValid = false;
+        }
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!formData.vendorEmail.trim()) {
+            newErrors.vendorEmail = 'Email is required';
+            isValid = false;
+        } else if (!emailRegex.test(formData.vendorEmail)) {
+            newErrors.vendorEmail = 'Please enter a valid email address';
+            isValid = false;
+        }
+
+        // Phone validation
+        const phoneRegex = /^\d{10}$/;
+        if (!formData.vendorPhone.trim()) {
+            newErrors.vendorPhone = 'Phone number is required';
+            isValid = false;
+        } else if (!phoneRegex.test(formData.vendorPhone)) {
+            newErrors.vendorPhone = 'Please enter a valid 10-digit phone number';
+            isValid = false;
+        }
+
+        // Company Name validation
+        if (!formData.companyName.trim()) {
+            newErrors.companyName = 'Company name is required';
+            isValid = false;
+        }
+
+        // Bank details validation (if any bank field is filled, all become required)
+        if (formData.bankname || formData.accountnumber || formData.ifsccode || formData.accounttype) {
+            if (!formData.bankname.trim()) {
+                newErrors.bankname = 'Bank name is required';
+                isValid = false;
+            }
+            if (!formData.accountnumber.trim()) {
+                newErrors.accountnumber = 'Account number is required';
+                isValid = false;
+            }
+            if (!formData.ifsccode.trim()) {
+                newErrors.ifsccode = 'IFSC/SWIFT/BIC code is required';
+                isValid = false;
+            }
+            if (!formData.accounttype) {
+                newErrors.accounttype = 'Account type is required';
+                isValid = false;
+            }
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         
+        if (!validateForm()) {
+            return;
+        }
+
         // Create FormData object for file upload
         const formDataToSend = new FormData();
         
@@ -363,11 +452,9 @@ export const CreateVendorForm = () => {
 
           <div style={{ top: "186px" }}>
             <Breadcrumb  >
-              <BreadcrumbItem href="#">Home</BreadcrumbItem>
-              <BreadcrumbItem href="#">
-                Purchase
-              </BreadcrumbItem>
-              <BreadcrumbItem ><Link to="/Inventory/vendor">Vendor List</Link></BreadcrumbItem>
+              <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
+              <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
+              <BreadcrumbItem ><Link to="/admin/inventory/vendor-list">Vendor List</Link></BreadcrumbItem>
               <BreadcrumbItem active>Vendor Create</BreadcrumbItem>
             </Breadcrumb>
           </div>
@@ -394,14 +481,17 @@ export const CreateVendorForm = () => {
                                     <span className="text-danger ms-1 ">*</span>
                                 </label>
                                 <input
-                                    required
+                                    
                                     type="text"
-                                    className="form-control"
+                                    className={`form-control ${errors.vendorName ? 'is-invalid' : ''}`}
                                     id="vendorName"
                                     placeholder="Enter item group name"
                                     value={formData.vendorName}
                                     onChange={handleChange}
                                 />
+                                {errors.vendorName && (
+                                    <div className="invalid-feedback">{errors.vendorName}</div>
+                                )}
                             </FormGroup>
                         </Col>
                         <Col sm={6} className="my-2">
@@ -412,14 +502,17 @@ export const CreateVendorForm = () => {
                                     
                                 </label>
                                 <input
-                                    required
+                                    
                                     type="text"
-                                    className="form-control"
+                                    className={`form-control ${errors.companyName ? 'is-invalid' : ''}`}
                                     id="companyName"
                                     placeholder="Company Name"
                                     value={formData.companyName}
                                     onChange={handleChange}
                                 />
+                                {errors.companyName && (
+                                    <div className="invalid-feedback">{errors.companyName}</div>
+                                )}
                             </FormGroup>
                         </Col>
                         <Col sm={6} className="my-2">
@@ -430,14 +523,17 @@ export const CreateVendorForm = () => {
                                     <span className="text-danger ms-1 ">*</span>
                                 </label>
                                 <input
-                                    required
+                                    
                                     type="email"
-                                    className="form-control"
+                                    className={`form-control ${errors.vendorEmail ? 'is-invalid' : ''}`}
                                     id="vendorEmail"
                                     placeholder="Vendor Email"
                                     value={formData.vendorEmail}
                                     onChange={handleChange}
                                 />
+                                {errors.vendorEmail && (
+                                    <div className="invalid-feedback">{errors.vendorEmail}</div>
+                                )}
                             </FormGroup>
                         </Col>
                         <Col sm={6} className="my-2">
@@ -448,9 +544,9 @@ export const CreateVendorForm = () => {
                                     
                                 </label>
                                 <input
-                                    required
+                                    
                                     type="text"
-                                    className="form-control"
+                                    className={`form-control ${errors.vendorPhone ? 'is-invalid' : ''}`}
                                     id="vendorPhone"
                                     placeholder="Enter 10 digit phone number"
                                     value={formData.vendorPhone}
@@ -465,8 +561,8 @@ export const CreateVendorForm = () => {
                                     pattern="[0-9]{10}"
                                     title="Please enter exactly 10 digits"
                                 />
-                                {formData.vendorPhone && formData.vendorPhone.length !== 10 && (
-                                    <small className="text-danger">Phone number must be 10 digits</small>
+                                {errors.vendorPhone && (
+                                    <div className="invalid-feedback">{errors.vendorPhone}</div>
                                 )}
                             </FormGroup>
                         </Col>
@@ -610,12 +706,15 @@ export const CreateVendorForm = () => {
                                 </label>
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className={`form-control ${errors.zipcode ? 'is-invalid' : ''}`}
                                     id="zipcode"
                                     placeholder="Enter Zipcode"
                                     value={formData.zipcode}
                                     onChange={handleChange}
                                 />
+                                {errors.zipcode && (
+                                    <div className="invalid-feedback">{errors.zipcode}</div>
+                                )}
                             </FormGroup>
                         </Col>
                         </Row>
@@ -766,12 +865,15 @@ export const CreateVendorForm = () => {
                                 </label>
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className={`form-control ${errors.shippingzipcode ? 'is-invalid' : ''}`}
                                     id="shippingzipcode"
                                     placeholder="Enter Zipcode"
                                     value={formData.shippingzipcode}
                                     onChange={handleChange}
                                 />
+                                {errors.shippingzipcode && (
+                                    <div className="invalid-feedback">{errors.shippingzipcode}</div>
+                                )}
                             </FormGroup>
                         </Col>
                         </Row>
@@ -795,12 +897,15 @@ export const CreateVendorForm = () => {
                                 </label>
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className={`form-control ${errors.governmentid ? 'is-invalid' : ''}`}
                                     id="governmentid"
                                     placeholder="Enter Zipcode"
                                     value={formData.governmentid}
                                     onChange={handleChange}
                                 />
+                                {errors.governmentid && (
+                                    <div className="invalid-feedback">{errors.governmentid}</div>
+                                )}
                             </FormGroup>
                         </Col>
 
@@ -858,12 +963,15 @@ export const CreateVendorForm = () => {
                                 </label>
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className={`form-control ${errors.bankname ? 'is-invalid' : ''}`}
                                     id="bankname"
                                     placeholder="Enter Bank Name"
                                     value={formData.bankname}
                                     onChange={handleChange}
                                 />
+                                {errors.bankname && (
+                                    <div className="invalid-feedback">{errors.bankname}</div>
+                                )}
                             </FormGroup>
                         </Col>
 
@@ -875,12 +983,15 @@ export const CreateVendorForm = () => {
                                 </label>
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className={`form-control ${errors.accountnumber ? 'is-invalid' : ''}`}
                                     id="accountnumber"
                                     placeholder="Enter Account Number"                                   
                                     value={formData.accountnumber}
                                     onChange={handleChange}
                                 />
+                                {errors.accountnumber && (
+                                    <div className="invalid-feedback">{errors.accountnumber}</div>
+                                )}
                             </FormGroup>
                         </Col>
                         <Col sm={6} className="my-2" >
@@ -891,24 +1002,30 @@ export const CreateVendorForm = () => {
                                 </label>
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className={`form-control ${errors.ifsccode ? 'is-invalid' : ''}`}
                                     id="ifsccode"
                                     placeholder="Enter IFSC/SWIFT/BIC"                                   
                                     value={formData.ifsccode}
                                     onChange={handleChange}
                                 />
+                                {errors.ifsccode && (
+                                    <div className="invalid-feedback">{errors.ifsccode}</div>
+                                )}
                             </FormGroup>
                         </Col>
 
                         <Col sm={6} className="my-2">
                         <FormGroup>
                             <label className="fw-bold my-2"> Type Of Account </label>
-                            <FormSelect aria-label="Select Account Type" id="accounttype" value={formData.accounttype} onChange={handleChange}>
+                            <FormSelect aria-label="Select Account Type" id="accounttype" value={formData.accounttype} onChange={handleChange} className={`form-control ${errors.accounttype ? 'is-invalid' : ''}`}>
                                 <option>Select</option>
                                 <option value="Saving">Saving    </option>
                                 <option value="current">Current</option>
                                 <option value="Checking">Checking</option>
                             </FormSelect>
+                            {errors.accounttype && (
+                                <div className="invalid-feedback">{errors.accounttype}</div>
+                            )}
                         </FormGroup>
                         
                         </Col>

@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { Container, Row, Col, Tab, Table, Card, Breadcrumb } from 'react-bootstrap';
+import { Container, Row, Col, Tab, Table, Card, Breadcrumb, BreadcrumbItem } from 'react-bootstrap';
 import { BiArrowBack, BiCloudUpload } from 'react-icons/bi';
 import { HiOutlineTrash } from 'react-icons/hi';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getItemGroupById, deleteItemGroup } from '../../../../store/AdminSlice/Inventory/ItemGroupSlice';
 
@@ -32,9 +32,10 @@ const ItemGroupsDetails = () => {
   return (
     <Container data-aos="fade-down" data-aos-duration="700" fluid className="mt-4 min-vh-100">
       <Breadcrumb>
-        <Breadcrumb.Item href="/admin">Home</Breadcrumb.Item>
-        <Breadcrumb.Item href="/admin/inventory">Inventory</Breadcrumb.Item>
-        <Breadcrumb.Item href="/admin/inventory/item-groups-details">Item Groups Details</Breadcrumb.Item>
+        <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
+        <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
+        <BreadcrumbItem ><Link to="/admin/inventory/item-group-list">Item Group List</Link></BreadcrumbItem>
+        <BreadcrumbItem active>Item Groups Details</BreadcrumbItem>
       </Breadcrumb>
       <Tab.Container defaultActiveKey="checkout">
         <Row>

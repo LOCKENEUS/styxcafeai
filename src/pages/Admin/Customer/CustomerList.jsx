@@ -160,104 +160,120 @@ const CustomerList = () => {
                 </tr>
               </thead>
               <tbody>
-                {customers.map((customer, index) => (
-                  <tr key={customer._id}>
-                    <td
+                {customers.length === 0 ? (
+                  <tr>
+                    <td 
+                      colSpan="8" 
                       style={{
-                        padding: 'clamp(10px, 2vw, 15px)',
-                        border: 'none',
+                        textAlign: 'center',
+                        padding: '20px',
                         fontSize: 'clamp(14px, 3vw, 16px)',
                       }}
                     >
-                      {index + 1}
-                    </td>
-                    <td
-                      style={{
-                        padding: 'clamp(10px, 2vw, 15px)',
-                        border: 'none',
-                        fontSize: 'clamp(14px, 3vw, 16px)', 
-                        color: 'blue',
-                        cursor: 'pointer',
-                      }}
-                    onClick={() => navigate(`/admin/users/customer-details/${customer._id}`)}
-                    >
-                      {customer.name}
-                    </td>
-                    <td
-                      style={{
-                        padding: 'clamp(10px, 2vw, 15px)',
-                        border: 'none',
-                        fontSize: 'clamp(14px, 3vw, 16px)',
-                      }}
-                    >
-                      {customer.contact_no}
-                    </td>
-                    <td
-                      style={{
-                        padding: 'clamp(10px, 2vw, 15px)',
-                        border: 'none',
-                        fontSize: 'clamp(14px, 3vw, 16px)',
-                      }}
-                    >
-                      {customer.email}
-                    </td>
-                    <td
-                      style={{
-                        padding: 'clamp(10px, 2vw, 15px)',
-                        border: 'none',
-                        fontSize: 'clamp(14px, 3vw, 16px)',
-                      }}
-                    >
-                      {customer.gender}
-                    </td>
-                    <td
-                      style={{
-                        padding: 'clamp(10px, 2vw, 15px)',
-                        border: 'none',
-                        fontSize: 'clamp(14px, 3vw, 16px)',
-                      }}
-                    >
-                      {customer.address}
-                    </td>
-                    <td
-                      style={{
-                        padding: 'clamp(10px, 2vw, 15px)',
-                        border: 'none',
-                        fontSize: 'clamp(14px, 3vw, 16px)',
-                      }}
-                    >
-                      {customer.age}
-                    </td>
-                    <td
-                      style={{
-                        padding: 'clamp(10px, 2vw, 15px)',
-                        border: 'none',
-                        fontSize: 'clamp(14px, 3vw, 16px)',
-                        gap: '10px'
-                        
-                      }}
-                    >
-                      <Link 
-                        to={`/admin/users/create-customer/${customer._id}`}
-                        style={{ textDecoration: 'none' }}
-                      >
-                        <Button
-                          variant="link"
-                          className="text-primary p-0 mx-2"
-                        >
-                          <FaEdit style={{ color: '#0062FF', fontSize: '1.2rem' }} />
-                        </Button>
-                      </Link>
-                      <Button
-                        variant="link"
-                        className="text-danger p-0"
-                        onClick={() => handleDeleteCustomer(customer._id)}
-                      >
-                        <FaTrash style={{ color: '#FF0000', fontSize: '1.2rem' }} />
-                      </Button>
+                   empty customer list
+
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  customers.map((customer, index) => (
+                    <tr key={customer._id}>
+                      <td
+                        style={{
+                          padding: 'clamp(10px, 2vw, 15px)',
+                          border: 'none',
+                          fontSize: 'clamp(14px, 3vw, 16px)',
+                        }}
+                      >
+                        {index + 1}
+                      </td>
+                      <td
+                        style={{
+                          padding: 'clamp(10px, 2vw, 15px)',
+                          border: 'none',
+                          fontSize: 'clamp(14px, 3vw, 16px)', 
+                          color: 'blue',
+                          cursor: 'pointer',
+                        }}
+                      onClick={() => navigate(`/admin/users/customer-details/${customer._id}`)}
+                      >
+                        {customer.name}
+                      </td>
+                      <td
+                        style={{
+                          padding: 'clamp(10px, 2vw, 15px)',
+                          border: 'none',
+                          fontSize: 'clamp(14px, 3vw, 16px)',
+                        }}
+                      >
+                        {customer.contact_no}
+                      </td>
+                      <td
+                        style={{
+                          padding: 'clamp(10px, 2vw, 15px)',
+                          border: 'none',
+                          fontSize: 'clamp(14px, 3vw, 16px)',
+                        }}
+                      >
+                        {customer.email}
+                      </td>
+                      <td
+                        style={{
+                          padding: 'clamp(10px, 2vw, 15px)',
+                          border: 'none',
+                          fontSize: 'clamp(14px, 3vw, 16px)',
+                        }}
+                      >
+                        {customer.gender}
+                      </td>
+                      <td
+                        style={{
+                          padding: 'clamp(10px, 2vw, 15px)',
+                          border: 'none',
+                          fontSize: 'clamp(14px, 3vw, 16px)',
+                        }}
+                      >
+                        {customer.address}
+                      </td>
+                      <td
+                        style={{
+                          padding: 'clamp(10px, 2vw, 15px)',
+                          border: 'none',
+                          fontSize: 'clamp(14px, 3vw, 16px)',
+                        }}
+                      >
+                        {customer.age}
+                      </td>
+                      <td
+                        style={{
+                          padding: 'clamp(10px, 2vw, 15px)',
+                          border: 'none',
+                          fontSize: 'clamp(14px, 3vw, 16px)',
+                          gap: '10px'
+                          
+                        }}
+                      >
+                        <Link 
+                          to={`/admin/users/create-customer/${customer._id}`}
+                          style={{ textDecoration: 'none' }}
+                        >
+                          <Button
+                            variant="link"
+                            className="text-primary p-0 mx-2"
+                          >
+                            <FaEdit style={{ color: '#0062FF', fontSize: '1.2rem' }} />
+                          </Button>
+                        </Link>
+                        <Button
+                          variant="link"
+                          className="text-danger p-0"
+                          onClick={() => handleDeleteCustomer(customer._id)}
+                        >
+                          <FaTrash style={{ color: '#FF0000', fontSize: '1.2rem' }} />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </Table>
           </div>

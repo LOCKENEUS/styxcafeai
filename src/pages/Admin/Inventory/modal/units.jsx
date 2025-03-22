@@ -12,7 +12,7 @@ import { Button,
     ModalFooter, 
     ModalTitle } from "react-bootstrap";
 
-const Units = ({ show, handleClose }) => {
+const Units = ({ show, handleClose, onCreated }) => {
     const dispatch = useDispatch();
     const loading = useSelector(state => state.customFields.loading);
     const user = JSON.parse(sessionStorage.getItem("user"));
@@ -36,7 +36,12 @@ const Units = ({ show, handleClose }) => {
     const handleSubmit = () => {
         dispatch(addCustomField(formData))
             .unwrap()
-            .then(() => {
+            .then((response) => {
+                onCreated && onCreated({
+                    id: response._id,
+                    name: formData.name,
+                    code: formData.code
+                });
                 handleClose();
                 setFormData({
                     name: '',

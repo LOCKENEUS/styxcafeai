@@ -58,11 +58,86 @@ const CreateItemsForm = () => {
     const cafeId = JSON.parse(sessionStorage.getItem("user"))?._id;
     const vendors = useSelector(state => state.vendors.vendors);
     const [loading, setLoading] = useState(false);
+    const [latestCreatedUnit, setLatestCreatedUnit] = useState(null);
+    const [latestCreatedManufacturer, setLatestCreatedManufacturer] = useState(null);
+    const [latestCreatedBrand, setLatestCreatedBrand] = useState(null);
+    const [latestCreatedTax, setLatestCreatedTax] = useState(null);
     
     // Organize custom fields by type
     const unitOptions = customFields.filter(field => field.type === "Unit");
     const manufacturerOptions = customFields.filter(field => field.type === "Manufacturer");
     const brandOptions = customFields.filter(field => field.type === "Brand");
+
+    // Add validation state
+    const [errors, setErrors] = useState({
+        name: '',
+        sku: '',
+        hsnCode: '',
+        unit: '',
+        costPrice: '',
+        sellingPrice: ''
+    });
+
+    // Add validation function
+    const validateForm = () => {
+        let isValid = true;
+        const newErrors = {
+            name: '',
+            sku: '',
+            hsnCode: '',
+            unit: '',
+            costPrice: '',
+            sellingPrice: ''
+        };
+
+        // Name validation
+        if (!formData.name.trim()) {
+            newErrors.name = 'Name is required';
+            isValid = false;
+        } else if (formData.name.length < 3) {
+            newErrors.name = 'Name must be at least 3 characters';
+            isValid = false;
+        }
+
+        // SKU validation
+        if (!formData.sku.trim()) {
+            newErrors.sku = 'SKU is required';
+            isValid = false;
+        }
+
+        // HSN Code validation
+        if (!formData.hsnCode) {
+            newErrors.hsnCode = 'HSN Code is required';
+            isValid = false;
+        }
+
+        // Unit validation
+        if (!formData.unit) {
+            newErrors.unit = 'Unit is required';
+            isValid = false;
+        }
+
+        // Cost Price validation
+        if (!formData.costPrice) {
+            newErrors.costPrice = 'Cost Price is required';
+            isValid = false;
+        } else if (isNaN(formData.costPrice) || Number(formData.costPrice) <= 0) {
+            newErrors.costPrice = 'Please enter a valid cost price';
+            isValid = false;
+        }
+
+        // Selling Price validation
+        if (!formData.sellingPrice) {
+            newErrors.sellingPrice = 'Selling Price is required';
+            isValid = false;
+        } else if (isNaN(formData.sellingPrice) || Number(formData.sellingPrice) <= 0) {
+            newErrors.sellingPrice = 'Please enter a valid selling price';
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
 
     useEffect(() => {
         dispatch(getCustomFields(cafeId));
@@ -113,6 +188,42 @@ const CreateItemsForm = () => {
         }
     }, [dispatch, cafeId, id, isEditMode]);
 
+    useEffect(() => {
+        if (customFields.length > 0 && latestCreatedUnit && latestCreatedUnit.type === 'Unit') {
+            const latestUnit = customFields.find(field => field._id === latestCreatedUnit.id);
+            if (latestUnit) {
+                setFormData(prev => ({ ...prev, unit: latestUnit.name }));
+            }
+        }
+    }, [customFields, latestCreatedUnit]);
+
+    useEffect(() => {
+        if (customFields.length > 0 && latestCreatedManufacturer && latestCreatedManufacturer.type === 'Manufacturer') {
+            const latestManufacturer = customFields.find(field => field._id === latestCreatedManufacturer.id);
+            if (latestManufacturer) {
+                setFormData(prev => ({ ...prev, manufacturer: latestManufacturer._id }));
+            }
+        }
+    }, [customFields, latestCreatedManufacturer]);
+
+    useEffect(() => {
+        if (customFields.length > 0 && latestCreatedBrand && latestCreatedBrand.type === 'Brand') {
+            const latestBrand = customFields.find(field => field._id === latestCreatedBrand.id);
+            if (latestBrand) {
+                setFormData(prev => ({ ...prev, brand: latestBrand._id }));
+            }
+        }
+    }, [customFields, latestCreatedBrand]);
+
+    useEffect(() => {
+        if (taxFields.length > 0 && latestCreatedTax) {
+            const latestTax = taxFields.find(tax => tax._id === latestCreatedTax.id);
+            if (latestTax) {
+                setFormData(prev => ({ ...prev, selectedTax: latestTax._id }));
+            }
+        }
+    }, [taxFields, latestCreatedTax]);
+
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -147,6 +258,10 @@ const CreateItemsForm = () => {
     const handleSubmitData = async (e) => {
         e.preventDefault();
         
+        if (!validateForm()) {
+            return;
+        }
+
         const formDataToSend = new FormData();
         formDataToSend.append('cafe', cafeId);
         formDataToSend.append('name', formData.name);
@@ -223,11 +338,9 @@ const CreateItemsForm = () => {
 
             <div style={{ top: "186px" }}>
                 <Breadcrumb  >
-                    <BreadcrumbItem href="#">Home</BreadcrumbItem>
-                    <BreadcrumbItem href="#">
-                        Inventory
-                    </BreadcrumbItem>
-                    <BreadcrumbItem ><Link to="/Inventory/Items">Item List</Link></BreadcrumbItem>
+                    <BreadcrumbItem  ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
+                    <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
+                    <BreadcrumbItem ><Link to="/admin/inventory/items-list">Item List</Link></BreadcrumbItem>
                     <BreadcrumbItem active>{isEditMode ? 'Edit Item' : 'Create Item'}</BreadcrumbItem>
                 </Breadcrumb>
             </div>
@@ -249,13 +362,13 @@ const CreateItemsForm = () => {
                             </label>
                             <input
                                 type="text"
-                                className="form-control"
+                                className={`form-control ${errors.name ? 'is-invalid' : ''}`}
                                 id="name"
                                 placeholder="Enter item name"
                                 value={formData.name}
                                 onChange={handleChange}
-                                required
                             />
+                            {errors.name && <div className="invalid-feedback">{errors.name}</div>}
                         </FormGroup>
                     </Col>
 
@@ -268,14 +381,14 @@ const CreateItemsForm = () => {
                             </label>
                             <input
                                 type="text"
-                                className="form-control"
+                                className={`form-control ${errors.sku ? 'is-invalid' : ''}`}
                                 id="sku"
                                 placeholder="SKU"
                                 value={formData.sku}
                                 onChange={handleChange}
-                                required
+                            
                             />
-
+                            {errors.sku && <div className="invalid-feedback">{errors.sku}</div>}
                         </FormGroup>
                     </Col>
 
@@ -293,8 +406,9 @@ const CreateItemsForm = () => {
                                     aria-label="Select unit"
                                     value={formData.unit}
                                     onChange={handleSelectChange}
-                                    required
+                                    className={`form-control ${errors.unit ? 'is-invalid' : ''}`}
                                 >
+                                    {errors.unit && <div className="invalid-feedback">{errors.unit}</div>}
                                     <option value="">Select Unit</option>
                                     {unitOptions.map(unit => (
                                         <option key={unit._id} value={unit.name}>
@@ -322,7 +436,11 @@ const CreateItemsForm = () => {
                            
 
                             {/* Modal Component */}
-                            <Units show={showUnitModal} handleClose={() => setShowUnitModal(false)} />
+                            <Units 
+                                show={showUnitModal} 
+                                handleClose={() => setShowUnitModal(false)} 
+                                onCreated={(unitData) => setLatestCreatedUnit({ ...unitData, type: 'Unit' })} 
+                            />
                         </FormGroup>
                     </Col>
                 </Row>
@@ -343,13 +461,15 @@ const CreateItemsForm = () => {
                             </label>
                             <input
                                 type="number"
-                                className="form-control"
+                                className={`form-control ${errors.hsnCode ? 'is-invalid' : ''}`}
                                 id="hsnCode"
                                 placeholder="HSN Code"
                                 value={formData.hsnCode}
                                 onChange={handleChange}
-                                required
+                                
+                                
                             />
+                            {errors.hsnCode && <div className="invalid-feedback">{errors.hsnCode}</div>}
                         </FormGroup>
                     </Col>
 
@@ -380,7 +500,7 @@ const CreateItemsForm = () => {
                     <label className="fw-bold my-2">
                                 {/* <FaStarOfLife className="text-danger size-sm" />  */}
                                 Tax
-                                <span className="text-danger ms-1 ">*</span>
+                               
                             </label>
                    
                         <FormGroup className="d-flex justify-content-between gap-3 align-items-center">
@@ -414,7 +534,7 @@ const CreateItemsForm = () => {
                             >
                                 <FaPlus className="text-primary" size={30} />
                             </Button>
-                            <Tax show={showTaxModal} handleClose={() => setShowTaxModal(false)} />
+                            <Tax show={showTaxModal} handleClose={() => setShowTaxModal(false)} onCreated={(taxData) => setLatestCreatedTax(taxData)} />
                         </FormGroup>
                     </Col>
                     )}
@@ -523,7 +643,7 @@ const CreateItemsForm = () => {
                                 <FaPlus className="text-primary" size={30} />
                             </Button>
                         </FormGroup>
-                        <Manufacturer show={showManufacturerModal} handleClose={() => setShowManufacturerModal(false)} />
+                        <Manufacturer show={showManufacturerModal} handleClose={() => setShowManufacturerModal(false)} onCreated={(manufacturerData) => setLatestCreatedManufacturer({ ...manufacturerData, type: 'Manufacturer' })} />
                     </Col>
 
 
@@ -561,7 +681,7 @@ const CreateItemsForm = () => {
                                 <FaPlus className="text-primary" size={30} />
                             </Button>
                         </FormGroup>
-                        <Brand show={showBrandModal} handleClose={() => setShowBrandModal(false)} />
+                        <Brand show={showBrandModal} handleClose={() => setShowBrandModal(false)} onCreated={(brandData) => setLatestCreatedBrand({ ...brandData, type: 'Brand' })} />
                     </Col>
                     <Col md={6} className="my-2">
                         <FormGroup>
@@ -614,8 +734,11 @@ const CreateItemsForm = () => {
                                     placeholder="00.00"
                                     value={formData.costPrice}
                                     onChange={handleChange}
-                                    required
+                                    className={`form-control ${errors.costPrice ? 'is-invalid' : ''}`}
+                                    
                                 />
+                            {errors.costPrice && <div className="invalid-feedback">{errors.costPrice}</div>}
+
                             </InputGroup>
                         </FormGroup>
                     </Col>
@@ -632,8 +755,9 @@ const CreateItemsForm = () => {
                                     placeholder="00.00"
                                     value={formData.sellingPrice}
                                     onChange={handleChange}
-                                    required
+                                    className={`form-control ${errors.sellingPrice ? 'is-invalid' : ''}`}
                                 />
+                            {errors.sellingPrice && <div className="invalid-feedback">{errors.sellingPrice}</div>}
                             </InputGroup>
                         </FormGroup>
                     </Col>

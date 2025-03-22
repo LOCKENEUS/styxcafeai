@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Form, Button, Row, Col, Card, InputGroup, Modal, Container } from "react-bootstrap";
+import { Form, Button, Row, Col, Card, InputGroup, Modal, Container, BreadcrumbItem, Breadcrumb } from "react-bootstrap";
 import { BiPlus, BiTrash } from "react-icons/bi";
 // import {  CreateCustomTaxModal, ManufacturerModal, Units } from "../modal/Units";
 import { FaPlus, FaTrash } from "react-icons/fa";
@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addItemGroup, getItemGroupById, updateItemGroup } from '../../../../store/AdminSlice/Inventory/ItemGroupSlice';
 import { getCustomFields, deleteCustomField } from '../../../../store/AdminSlice/CustomField';
 import { getTaxFields } from '../../../../store/AdminSlice/TextFieldSlice';
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const ItemGroupForm = () => {
   const navigate = useNavigate();
@@ -54,6 +54,12 @@ const ItemGroupForm = () => {
   const units = customFields.filter(field => field.type === "Unit");
   const manufacturers = customFields.filter(field => field.type === "Manufacturer");
   const brands = customFields.filter(field => field.type === "Brand");
+
+  // Add new state for latest created items
+  const [latestCreatedUnit, setLatestCreatedUnit] = useState(null);
+  const [latestCreatedManufacturer, setLatestCreatedManufacturer] = useState(null);
+  const [latestCreatedBrand, setLatestCreatedBrand] = useState(null);
+  const [latestCreatedTax, setLatestCreatedTax] = useState(null);
 
   useEffect(() => {
     const cafeId = JSON.parse(sessionStorage.getItem("user"))?._id;
@@ -103,6 +109,47 @@ const ItemGroupForm = () => {
       }
     }
   }, [selectedItemGroup, isEditMode, cafeId]);
+
+  // Add new useEffect hooks to handle latest created items
+  useEffect(() => {
+    if (customFields.length > 0 && latestCreatedUnit && latestCreatedUnit.type === 'Unit') {
+      const latestUnit = customFields.find(field => field._id === latestCreatedUnit.id);
+      if (latestUnit) {
+        setFormData(prev => ({ ...prev, unit: latestUnit.name }));
+      }
+    }
+  }, [customFields, latestCreatedUnit]);
+
+  useEffect(() => {
+    if (customFields.length > 0 && latestCreatedManufacturer && latestCreatedManufacturer.type === 'Manufacturer') {
+      const latestManufacturer = customFields.find(field => field._id === latestCreatedManufacturer.id);
+      if (latestManufacturer) {
+        setFormData(prev => ({ ...prev, manufacturer: latestManufacturer._id }));
+      }
+    }
+  }, [customFields, latestCreatedManufacturer]);
+
+  useEffect(() => {
+    if (customFields.length > 0 && latestCreatedBrand && latestCreatedBrand.type === 'Brand') {
+      const latestBrand = customFields.find(field => field._id === latestCreatedBrand.id);
+      if (latestBrand) {
+        setFormData(prev => ({ ...prev, brand: latestBrand._id }));
+      }
+    }
+  }, [customFields, latestCreatedBrand]);
+
+
+  useEffect(() => {
+    if (taxFields.length > 0 && latestCreatedTax) {
+      const latestTax = taxFields.find(tax => tax._id === latestCreatedTax.id);
+      if (latestTax) {
+        setFormData(prev => ({
+          ...prev,
+          tax: latestTax._id
+        }));
+      }
+    }
+  }, [taxFields, latestCreatedTax]);
 
   const handleDeleteUnit = (unitId) => {
     dispatch(deleteCustomField(unitId));
@@ -244,6 +291,12 @@ const ItemGroupForm = () => {
 
   return (
     <Container className="p-4">
+      <Breadcrumb>
+        <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
+        <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
+        <BreadcrumbItem ><Link to="/admin/inventory/item-group-list">Item Group List</Link></BreadcrumbItem>
+        <BreadcrumbItem active>{isEditMode ? 'Edit Item Group' : 'Create New Item Group'}</BreadcrumbItem>
+      </Breadcrumb>
       <Card className="shadow p-3">
       <div className="d-flex justify-content-start align-items-start">
         <h1>{isEditMode ? 'Edit Item Group' : 'Create New Item'}</h1>
@@ -291,7 +344,11 @@ const ItemGroupForm = () => {
               <FaPlus className="text-primary" size={30} />
             </Button>
           </Form.Group>
-          <Units show={showUnitModal} handleClose={() => setShowUnitModal(false)} />
+          <Units 
+            show={showUnitModal} 
+            handleClose={() => setShowUnitModal(false)} 
+            onCreated={(unitData) => setLatestCreatedUnit({ ...unitData, type: 'Unit' })}
+          />
         </div>
         <div className="my-4 col-md-6">
           <Form.Group>
@@ -314,12 +371,12 @@ const ItemGroupForm = () => {
         </div>
         {formData.taxable && (
           <div className="my-2 col-md-6">
-            <Form.Label className="fw-bold my-2">Tax<span className="text-danger ms-1">*</span></Form.Label>
+            <Form.Label className="fw-bold my-2">Tax</Form.Label>
             <Form.Group className="d-flex justify-content-between gap-3 align-items-center">
               <Form.Select 
                 aria-label="Select Tax"
                 name="tax"
-                value={  formData.tax_rate}
+                value={formData.tax || ''}
                 onChange={handleInputChange}
               >
                 <option value="">Select Tax</option>
@@ -338,7 +395,11 @@ const ItemGroupForm = () => {
                 <FaPlus className="text-primary" size={30} />
               </Button>
             </Form.Group>
-            <Tax show={showTaxModal} handleClose={() => setShowTaxModal(false)} />
+            <Tax 
+              show={showTaxModal} 
+              handleClose={() => setShowTaxModal(false)} 
+              onCreated={(taxData) => setLatestCreatedTax(taxData)}
+            />
           </div>
         )}
         <div className="my-2 col-md-6">
@@ -367,7 +428,11 @@ const ItemGroupForm = () => {
               <FaPlus className="text-primary" size={30} />
             </Button>
           </Form.Group>
-          <Manufacturer show={showManufacturerModal} handleClose={() => setShowManufacturerModal(false)} />
+          <Manufacturer 
+            show={showManufacturerModal} 
+            handleClose={() => setShowManufacturerModal(false)} 
+            onCreated={(manufacturerData) => setLatestCreatedManufacturer({ ...manufacturerData, type: 'Manufacturer' })}
+          />
         </div>
         <div className="my-2 col-md-6">
             <Form.Label className="fw-bold my-2">Brand</Form.Label>
@@ -398,7 +463,11 @@ const ItemGroupForm = () => {
             </Button>
           </Form.Group>
 
-            <Brand show={showBrandModal} handleClose={() => setShowBrandModal(false)} />
+            <Brand 
+              show={showBrandModal} 
+              handleClose={() => setShowBrandModal(false)} 
+              onCreated={(brandData) => setLatestCreatedBrand({ ...brandData, type: 'Brand' })}
+            />
         </div>
         <div className="my-2 col-md-6">
           <Form.Group>
@@ -494,7 +563,7 @@ const ItemGroupForm = () => {
                             type="number"
                             name="item_hsn[]"
                             className="form-control hsn"
-                            required
+                            
                             value={formData.items[itemIndex]?.hsn || ''}
                             onChange={(e) => handleItemChange(itemIndex, 'hsn', e.target.value)}
                           />
@@ -527,7 +596,7 @@ const ItemGroupForm = () => {
                         /></td>
                         <td 
                       className="px-1"><input
-                        required
+                        
                         type="number"
                         value={formData?.items?.[itemIndex]?.upc}
                         name="item_upc[]" className="form-control" placeholder="UPC" style={{ width: '120px' }} 
@@ -535,20 +604,20 @@ const ItemGroupForm = () => {
                         /></td>
                         <td
              className="px-1"><input 
-                        required
+                        
                         value={formData?.items?.[itemIndex]?.ean}
                         type="number" name="item_ean[]" className="form-control" placeholder="EAN" style={{ width: '120px' }} 
                         onChange={(e) => handleItemChange(itemIndex, 'ean', e.target.value)}
                         /></td>
                         <td
                     className="px-1"><input type="number"
-                        required
+                        
                         value={formData?.items?.[itemIndex]?.isbn}
                         name="item_isbn[]" className="form-control" placeholder="ISBN" style={{ width: '120px' }} 
                         onChange={(e) => handleItemChange(itemIndex, 'isbn', e.target.value)}
                         /></td>
                         <td className="px-1"><input
-                        required
+                        
                         value={formData?.items?.[itemIndex]?.stock}
                         type="number" name="item_stock[]" className="form-control stock" placeholder="Opening Stock" style={{ width: '120px' }} 
                         onChange={(e) => handleItemChange(itemIndex, 'stock', e.target.value)}

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Table, Button, Form, InputGroup, Pagination, Container, Row, Col, Breadcrumb, FormControl, Spinner, Card } from "react-bootstrap";
+import { Table, Button, Form, InputGroup, Pagination, Container, Row, Col, Breadcrumb, FormControl, Spinner, Card, BreadcrumbItem } from "react-bootstrap";
 import { FaFileExport, FaSearch } from "react-icons/fa";
 import { BsPlusLg } from "react-icons/bs";
 import { IoAdd } from "react-icons/io5";
@@ -17,7 +17,7 @@ const VendorList = () => {
   const [search, setSearch] = useState("");
   const [activeDropdownId, setActiveDropdownId] = useState(null);
   const [activePage, setActivePage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const editDropdownRef = useRef(null);
   const dispatch = useDispatch();
   const { vendors, loading, error } = useSelector(state => state.vendors);
@@ -107,11 +107,11 @@ const VendorList = () => {
     <Container>
       <Row>
         <Col sm={12} className="mx-4 my-3">
-          <div style={{ top: "186px", fontSize: "18px" }}>
+          <div style={{ top: "186px"}}>
             <Breadcrumb>
-              <Breadcrumb.Item href="/admin">Home</Breadcrumb.Item>
-              <Breadcrumb.Item href="/admin/inventory">Inventory</Breadcrumb.Item>
-              <Breadcrumb.Item active>Vendor List</Breadcrumb.Item>
+              <BreadcrumbItem  ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
+              <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
+              <BreadcrumbItem active>Vendor List</BreadcrumbItem>
             </Breadcrumb>
           </div>
         </Col>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Image, Nav } from "react-bootstrap";
+import { Container, Row, Col, Card, Image, Nav, Breadcrumb, BreadcrumbItem } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { getVendorById } from "../../../../store/AdminSlice/Inventory/VendorSlice";
 import profileBg from "/assets/Admin/profileDetails/profileBg.png";
 import { LuPencil } from "react-icons/lu";
@@ -27,6 +27,13 @@ const VendorDetails = () => {
 
   return (
     <Container data-aos="fade-down" data-aos-duration="700" className="mt-4">
+
+      <Breadcrumb>
+        <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
+        <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
+        <BreadcrumbItem ><Link to="/admin/inventory/vendors-list">Vendors List</Link></BreadcrumbItem>
+        <BreadcrumbItem active>Vendor Details</BreadcrumbItem>
+      </Breadcrumb>
       <Row>
         {/* Sidebar with Profile */}
         <Col md={4}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Table, Button, InputGroup, FormControl, Image, Breadcrumb, Card, Pagination } from 'react-bootstrap';
+import { Container, Row, Col, Table, Button, InputGroup, FormControl, Image, Breadcrumb, Card, Pagination, BreadcrumbItem } from 'react-bootstrap';
 import solar_export from '/assets/inventory/solar_export-linear.png'
 import { Link, useNavigate } from 'react-router-dom';
 import gm1 from '/assets/inventory/mynaui_search.svg'
@@ -19,7 +19,7 @@ const ItemGroupList = () => {
   const { itemGroups, loading, error } = useSelector((state) => state.itemGroups);
   const navigate = useNavigate();
   const [activePage, setActivePage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
   const filteredGroups = itemGroups.filter((group) =>
     group.group_name.toLowerCase().includes(searchText.toLowerCase())
@@ -60,11 +60,11 @@ const ItemGroupList = () => {
     <Container>
       <Row>
         <Col sm={12} className="mx-4 my-3">
-          <div style={{ top: "186px", fontSize: "18px" }}>
+          <div style={{ top: "186px" }}>
             <Breadcrumb>
-              <Breadcrumb.Item href="/admin">Home</Breadcrumb.Item>
-              <Breadcrumb.Item href="/admin/inventory">Inventory</Breadcrumb.Item>
-              <Breadcrumb.Item active>Item Group List</Breadcrumb.Item>
+              <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
+              <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
+              <BreadcrumbItem active>Item Group List</BreadcrumbItem>
             </Breadcrumb>
           </div>
         </Col>

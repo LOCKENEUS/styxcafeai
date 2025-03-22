@@ -39,6 +39,71 @@ const CreateCustomerForm = () => {
   // Add new state for preview
   const [imagePreview, setImagePreview] = useState(null);
 
+  // Add validation state
+  const [errors, setErrors] = useState({
+    fullName: '',
+    email: '',
+    contactNumber: '',
+    gender: '',
+    creditEligibility: ''
+  });
+
+  // Add validation function
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {
+      fullName: '',
+      email: '',
+      contactNumber: '',
+      gender: '',
+      creditEligibility: ''
+    };
+
+    // Name validation
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = 'Name is required';
+      isValid = false;
+    } else if (formData.fullName.length < 3) {
+      newErrors.fullName = 'Name must be at least 3 characters';
+      isValid = false;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+      isValid = false;
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+      isValid = false;
+    }
+
+    // Contact number validation
+    const phoneRegex = /^\d{10}$/;
+    if (!formData.contactNumber.trim()) {
+      newErrors.contactNumber = 'Contact number is required';
+      isValid = false;
+    } else if (!phoneRegex.test(formData.contactNumber)) {
+      newErrors.contactNumber = 'Please enter a valid 10-digit phone number';
+      isValid = false;
+    }
+
+    // Gender validation
+    if (!formData.gender) {
+      newErrors.gender = 'Gender is required';
+      isValid = false;
+    }
+
+    // Credit Eligibility validation
+    if (!formData.creditEligibility) {
+      newErrors.creditEligibility = 'Credit eligibility is required';
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleSelect = (place) => {
     const placeId = place.value.place_id;
     const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
@@ -149,6 +214,11 @@ const CreateCustomerForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
     setIsSubmitting(true);
 
     const user = JSON.parse(sessionStorage.getItem('user'));
@@ -206,33 +276,37 @@ const CreateCustomerForm = () => {
       <Col md={6}>
         <Form.Group className="mb-3">
           <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-            Full Name
+            Full Name <span className="text-danger">*</span>
           </Form.Label>
           <Form.Control
+            
             type="text"
             name="fullName"
             placeholder="Enter Full Name"
             value={formData.fullName}
             onChange={handleChange}
-            className="rounded-2"
-            style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
+            className={`rounded-2 ${errors.fullName ? 'is-invalid' : ''}`}
+            style={{ padding: '10px', fontSize: '0.9rem', borderColor: errors.fullName ? '#dc3545' : '#ced4da' }}
           />
+          {errors.fullName && <div className="invalid-feedback">{errors.fullName}</div>}
         </Form.Group>
       </Col>
       <Col md={6}>
         <Form.Group className="mb-3">
            <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-            Contact Number
+            Contact Number <span className="text-danger">*</span>
           </Form.Label>
           <Form.Control
+            
             type="tel"
             name="contactNumber"
             placeholder="Enter Contact Number"
             value={formData.contactNumber}
             onChange={handleChange}
-            className="rounded-2"
-            style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
+            className={`rounded-2 ${errors.contactNumber ? 'is-invalid' : ''}`}
+            style={{ padding: '10px', fontSize: '0.9rem', borderColor: errors.contactNumber ? '#dc3545' : '#ced4da' }}
           />
+          {errors.contactNumber && <div className="invalid-feedback">{errors.contactNumber}</div>}
         </Form.Group>
       </Col>
     </Row>
@@ -241,17 +315,19 @@ const CreateCustomerForm = () => {
       <Col md={6}>
         <Form.Group className="mb-3">
            <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-            Email
+            Email <span className="text-danger">*</span>
           </Form.Label>
           <Form.Control
+            
             type="email"
             name="email"
             placeholder="Enter Email Address"
             value={formData.email}
             onChange={handleChange}
-            className="rounded-2"
-            style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
+            className={`rounded-2 ${errors.email ? 'is-invalid' : ''}`}
+            style={{ padding: '10px', fontSize: '0.9rem', borderColor: errors.email ? '#dc3545' : '#ced4da' }}
           />
+          {errors.email && <div className="invalid-feedback">{errors.email}</div>}
         </Form.Group>
       </Col>
       <Col md={6}>
@@ -275,20 +351,22 @@ const CreateCustomerForm = () => {
       <Col md={6}>
         <Form.Group className="mb-3">
            <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-            Gender
+            Gender <span className="text-danger">*</span>
           </Form.Label>
           <Form.Select
+            
             name="gender"
             value={formData.gender}
             onChange={handleChange}
-            className="rounded-2"
-            style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
+            className={`rounded-2 ${errors.gender ? 'is-invalid' : ''}`}
+            style={{ padding: '10px', fontSize: '0.9rem', borderColor: errors.gender ? '#dc3545' : '#ced4da' }}
           >
             <option value="">Select Gender</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
             <option value="Other">Other</option>
           </Form.Select>
+          {errors.gender && <div className="invalid-feedback">{errors.gender}</div>}
         </Form.Group>
       </Col>
       <Col md={6}>
@@ -322,19 +400,21 @@ const CreateCustomerForm = () => {
       <Col md={6}>
         <Form.Group className="mb-3">
            <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-            Eligible for Credit
+            Eligible for Credit <span className="text-danger">*</span>
           </Form.Label>
           <Form.Select
+            
             name="creditEligibility"
             value={formData.creditEligibility}
             onChange={handleChange}
-            className="rounded-2"
-            style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
+            className={`rounded-2 ${errors.creditEligibility ? 'is-invalid' : ''}`}
+            style={{ padding: '10px', fontSize: '0.9rem', borderColor: errors.creditEligibility ? '#dc3545' : '#ced4da' }}
           >
             <option value="">Select Options</option>
             <option value="Yes">Yes</option>
             <option value="No">No</option>
           </Form.Select>
+          {errors.creditEligibility && <div className="invalid-feedback">{errors.creditEligibility}</div>}
         </Form.Group>
       </Col>
       <Col md={6}>

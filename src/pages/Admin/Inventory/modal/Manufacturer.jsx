@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { addCustomField } from "../../../../store/AdminSlice/CustomField";
 import { toast } from "react-toastify";
 
-const Manufacturer = ({ show, handleClose }) => {
+const Manufacturer = ({ show, handleClose , onCreated }) => {
     const dispatch = useDispatch();
     const loading = useSelector(state => state.customFields.loading);
     const user = JSON.parse(sessionStorage.getItem("user"));
@@ -43,7 +43,12 @@ const Manufacturer = ({ show, handleClose }) => {
 
         dispatch(addCustomField(formData))
             .unwrap()
-            .then(() => {
+            .then((response) => {
+                onCreated && onCreated({
+                    id: response._id,
+                    name: formData.name,
+                    code: formData.code
+                });
                 handleClose();
                 setFormData({
                     name: '',

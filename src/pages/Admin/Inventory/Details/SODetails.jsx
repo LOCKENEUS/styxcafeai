@@ -294,7 +294,7 @@ export const SODetails = () => {
                       <td>
                         <b>{item.item_id ? item.item_id.name : "Product Item"}</b>
                         <br />
-                        HSN : {item.hsn || "N/A"}
+                        HSN : {item.item_id ? item.item_id.hsn : "N/A"}
                       </td>
                       <td>
                         SKU : {item.item_id ? item.item_id.sku : "N/A"} <br />

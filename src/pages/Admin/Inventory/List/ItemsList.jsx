@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, Col, Container, FormControl, InputGroup, Button, Breadcrumb, BreadcrumbItem, Row, Image, Pagination, Table } from "react-bootstrap";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import gm1 from '/assets/inventory/mynaui_search.svg'
 import solar_export from '/assets/inventory/solar_export-linear.png'
 import add from '/assets/inventory/material-symbols_add-rounded.png'
@@ -13,7 +13,7 @@ const ItemsList = () => {
     const [searchText, setSearchText] = useState("");
     const navigator = useNavigate();
     const [activePage, setActivePage] = useState(1);
-    const itemsPerPage = 5;
+    const itemsPerPage = 10;
     const user = JSON.parse(sessionStorage.getItem("user"));
     const cafeId = user?._id;
 
@@ -70,8 +70,8 @@ const ItemsList = () => {
                 <Col xs={12} className="mx-2 mx-md-4 my-3">
                     <div style={{ fontSize: "16px" }}>
                         <Breadcrumb>
-                            <BreadcrumbItem href="#">Home</BreadcrumbItem>
-                            <BreadcrumbItem href="#">Purchase</BreadcrumbItem>
+                            <BreadcrumbItem  ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
+                            <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
                             <BreadcrumbItem active>Items List</BreadcrumbItem>
                         </Breadcrumb>
                     </div>

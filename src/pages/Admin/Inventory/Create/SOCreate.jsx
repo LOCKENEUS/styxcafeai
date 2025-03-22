@@ -27,7 +27,6 @@ import { getTaxFields } from '../../../../store/AdminSlice/TextFieldSlice';
 import { getItems } from '../../../../store/AdminSlice/Inventory/ItemsSlice';
 import { MdOutlineRemoveCircleOutline } from "react-icons/md";
 import { addSO, getSOById, updateSO } from '../../../../store/AdminSlice/Inventory/SoSlice';
-import { toast } from 'react-toastify';
 
 const SOCreate = () => {
   const { id } = useParams();
@@ -87,8 +86,11 @@ const SOCreate = () => {
           
           if (soData.items && soData.items.length > 0) {
             const formattedProducts = soData.items.map((item, index) => {
-              // Find the tax rate from the tax array
-              const taxRate = soData.tax?.find(t => t._id === item.tax)?.tax_rate || 0;
+              // Handle tax object or tax ID
+              const taxId = typeof item.tax === 'object' ? item.tax._id : item.tax;
+              const taxRate = typeof item.tax === 'object' ? 
+                item.tax.tax_rate : 
+                taxFields.find(t => t._id === item.tax)?.tax_rate || 0;
               
               return {
                 id: index + 1,
@@ -96,7 +98,7 @@ const SOCreate = () => {
                 itemName: item.item_id?.name || '',
                 quantity: item.quantity || 1,
                 price: item.price || 0,
-                tax: item.tax || '', // This is the tax ID
+                tax: taxId, // Store just the tax ID
                 taxRate: taxRate,
                 total: item.total || 0,
                 totalTax: item.tax_amt || 0,
@@ -124,10 +126,9 @@ const SOCreate = () => {
         })
         .catch((error) => {
           console.error('Error fetching SO data:', error);
-          toast.error('Failed to load Sales Order data');
         });
     }
-  }, [dispatch, id, isEditMode]);
+  }, [dispatch, id, isEditMode, taxFields]);
 
   const handleShow = () => setShow(true);
   const handleClose = () => {
@@ -145,7 +146,7 @@ const SOCreate = () => {
 
   const calculateTotal = (price, quantity, tax) => {
     const subtotal = price * quantity;
-    const totalTax = (subtotal * tax) / 100;
+    const totalTax = Math.round((subtotal * tax) / 100);
     return { total: subtotal + totalTax, totalTax };
   };
 
@@ -174,7 +175,7 @@ const SOCreate = () => {
         const taxRate = parseFloat(updatedProduct.taxRate) || 0;
 
         const subtotal = price * quantity;
-        const totalTax = (subtotal * taxRate) / 100;
+        const totalTax = Math.round((subtotal * taxRate) / 100);
         updatedProduct.total = subtotal + totalTax;
         updatedProduct.totalTax = totalTax;
 
@@ -222,19 +223,19 @@ const SOCreate = () => {
     // Calculate discount
     let discountAmount = 0;
     if (totals.discountType === 'Percentage') {
-      discountAmount = (subtotal * totals.discount) / 100;
+      discountAmount = Math.round((subtotal * totals.discount) / 100);
     } else {
-      discountAmount = parseFloat(totals.discount) || 0;
+      discountAmount = Math.round(parseFloat(totals.discount) || 0);
     }
 
     // Calculate tax amount
     const taxableAmount = subtotal - discountAmount;
-    const taxAmount = totals.selectedTaxes.reduce((sum, tax) => {
+    const taxAmount = Math.round(totals.selectedTaxes.reduce((sum, tax) => {
       return sum + (taxableAmount * (tax.rate / 100));
-    }, 0);
+    }, 0));
 
     // Calculate final total
-    const total = subtotal - discountAmount + taxAmount + (parseFloat(totals.adjustmentAmount) || 0);
+    const total = subtotal - discountAmount + taxAmount + Math.round(parseFloat(totals.adjustmentAmount) || 0);
 
     setTotals(prev => ({
       ...prev,
@@ -344,15 +345,12 @@ const SOCreate = () => {
     try {
       if (isEditMode) {
         await dispatch(updateSO({ id, soData: submitData })).unwrap();
-        toast.success('Sales Order updated successfully!');
       } else {
         await dispatch(addSO(submitData)).unwrap();
-        toast.success('Sales Order created successfully!');
       }
       navigate('/admin/Inventory/SalesOrder');
     } catch (error) {
       console.error('Error with Sales Order:', error);
-      toast.error('Failed to save Sales Order');
     }
   };
 

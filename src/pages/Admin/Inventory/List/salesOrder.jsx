@@ -16,7 +16,7 @@ import gm1 from "/assets/inventory/mynaui_search.svg";
 import solar_export from "/assets/inventory/solar_export-linear.png";
 import add from "/assets/inventory/material-symbols_add-rounded.png";
 import DataTable from "react-data-table-component";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getSOs } from "../../../../store/AdminSlice/Inventory/SoSlice";
 // import { format } from "date-fns";
@@ -27,7 +27,7 @@ export const SalesOrder = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [activePage, setActivePage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const dispatch = useDispatch();
   const { salesOrders, loading, error } = useSelector((state) => state.so);
   const user = JSON.parse(sessionStorage.getItem("user"));
@@ -141,8 +141,8 @@ export const SalesOrder = () => {
         <Col sm={12} className="mx-4 my-3">
           <div style={{ top: "186px", fontSize: "18px" }}>
             <Breadcrumb>
-              <BreadcrumbItem href="#">Home</BreadcrumbItem>
-              <BreadcrumbItem href="#">Sales </BreadcrumbItem>
+              <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
+              <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
               <BreadcrumbItem active>Sales Order List</BreadcrumbItem>
             </Breadcrumb>
           </div>
