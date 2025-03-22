@@ -9,18 +9,18 @@ const Brand = ({ show, handleClose, onCreated }) => {
     const loading = useSelector(state => state.customFields.loading);
     const user = JSON.parse(sessionStorage.getItem("user"));
     
-    // Ensure cafeId is set with a default empty string if user is null
+    
     const cafeId = user?._id || '';
     
     const [formData, setFormData] = useState({
         name: '',
         code: '',
-        cafe: cafeId, // Initialize with cafeId
+        cafe: cafeId, 
         type: 'Brand',
         description: 'Brand measurement for inventory'
     });
 
-    // Update formData when cafeId changes
+  
     useEffect(() => {
         setFormData(prev => ({
             ...prev,
@@ -37,9 +37,9 @@ const Brand = ({ show, handleClose, onCreated }) => {
     };
 
     const handleSubmitBrand = (e) => {
-        e.preventDefault(); // Prevent form submission
+        e.preventDefault(); 
         
-        // Validate if cafe ID exists
+        
         if (!formData.cafe) {
             toast.error('Cafe ID is missing. Please try logging in again.');
             return;
@@ -69,8 +69,8 @@ const Brand = ({ show, handleClose, onCreated }) => {
     };
 
     return (
-        <Modal show={show} onHide={handleClose} centered>
-            <Modal.Header className="bg-light text-dark" closeButton>
+        <Modal show={show} onHide={handleClose} centered style={{ zIndex: 2000 }}>
+            <Modal.Header className="bg-info text-dark  bg-opacity-25 py-3" closeButton>
                 <Modal.Title>Brand</Modal.Title>
             </Modal.Header>
             <Modal.Body>

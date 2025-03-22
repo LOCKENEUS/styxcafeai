@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addCustomField } from '../../../../store/AdminSlice/CustomField';
-import { Button,
+import {
+    Button,
     Row,
     Col,
-    Form,
     FormGroup,
-    Modal, 
-    ModalHeader, 
-    ModalBody, 
-    ModalFooter, 
-    ModalTitle } from "react-bootstrap";
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    ModalTitle
+} from "react-bootstrap";
 
 const Units = ({ show, handleClose, onCreated }) => {
     const dispatch = useDispatch();
@@ -20,7 +21,7 @@ const Units = ({ show, handleClose, onCreated }) => {
     const [formData, setFormData] = useState({
         name: '',
         code: '',
-        cafe:cafeId,
+        cafe: cafeId,
         type: 'Unit', // Fixed type for Units
         description: 'Unit measurement for inventory'
     });
@@ -46,7 +47,7 @@ const Units = ({ show, handleClose, onCreated }) => {
                 setFormData({
                     name: '',
                     code: '',
-                    cafe:cafeId,
+                    cafe: cafeId,
                     type: 'Unit',
                     description: 'Unit measurement for inventory'
                 });
@@ -54,56 +55,55 @@ const Units = ({ show, handleClose, onCreated }) => {
     };
 
     return (
-        <Modal style={{zIndex: 10000}} show={show} onHide={handleClose} centered animation={false} >
-      <ModalHeader closeButton >
-        <ModalTitle>Inventory Units</ModalTitle>
-      </ModalHeader>
-      <ModalBody>
-        <Row>
-            <Col md={6}>
-            <FormGroup>
-                <label className="my-2">Unit Name</label>
-                <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className="form-control"
-                    placeholder="Enter unit name"
-                />
-            </FormGroup>
-            </Col>
+        <Modal show={show} onHide={handleClose} centered animation={false} style={{ zIndex: 2000 }} >
+            <ModalHeader closeButton className='bg-info bg-opacity-25 py-3' >
+                <ModalTitle>Inventory Units</ModalTitle>
+            </ModalHeader>
+            <ModalBody>
+                <Row>
+                    <Col md={6}>
+                        <FormGroup>
+                            <label className="my-2">Unit Name</label>
+                            <input
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleInputChange}
+                                className="form-control"
+                                placeholder="Enter unit name"
+                            />
+                        </FormGroup>
+                    </Col>
 
-            <Col md={6}>
-            <FormGroup>
-                <label className="my-2">Unit Code</label>
-                <input
-                    type="text"
-                    name="code"
-                    value={formData.code}
-                    onChange={handleInputChange}
-                    className="form-control"
-                    placeholder="Enter unit code"
-                />
-            </FormGroup>
-            </Col>
-        </Row>
-      </ModalBody>
-      <ModalFooter>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
-        </Button>
-        <Button 
-            variant="primary" 
-            onClick={handleSubmit}
-            disabled={loading}
-        >
-            {loading ? 'Saving...' : 'Save'}
-        </Button>
-      </ModalFooter>
-    </Modal>
+                    <Col md={6}>
+                        <FormGroup>
+                            <label className="my-2">Unit Code</label>
+                            <input
+                                type="text"
+                                name="code"
+                                value={formData.code}
+                                onChange={handleInputChange}
+                                className="form-control"
+                                placeholder="Enter unit code"
+                            />
+                        </FormGroup>
+                    </Col>
+                </Row>
+            </ModalBody>
+            <ModalFooter>
+                <Button variant="secondary" onClick={handleClose}>
+                    Close
+                </Button>
+                <Button
+                    variant="primary"
+                    onClick={handleSubmit}
+                    disabled={loading}
+                >
+                    {loading ? 'Saving...' : 'Save'}
+                </Button>
+            </ModalFooter>
+        </Modal>
     );
-  
-}
+};
 
 export default Units

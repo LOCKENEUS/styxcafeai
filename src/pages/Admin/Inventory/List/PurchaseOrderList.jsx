@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,7 +17,8 @@ import solar_export from "/assets/inventory/solar_export-linear.png";
 import add from "/assets/inventory/material-symbols_add-rounded.png";
 import DataTable from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
-import { CreateVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { CreateVendor, GetPOList } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { useDispatch, useSelector } from "react-redux";
 
 
 const PurchaseOrderList = () => {
@@ -42,78 +43,120 @@ const PurchaseOrderList = () => {
    
     const colors = ["#FAED39", "#FF5733", "#33FF57", "#339FFF", "#FF33F6", "#FFAA33", "#39DDFA", "#3DFF16"];
     let index = (name.charCodeAt(0) + name.charCodeAt(name.length - 1)) % colors.length;
+
+    // const  POList= useSelector((state) => state.selectedItem);
+
+    const selectedItem = useSelector((state) => state.purchaseOrder);
+    // listPOAll =selectedItem?.selectedItem;
+    // const listOfPO = selectedItem?.selectedItem;
+    // console.log("POList",listOfPO);
+    
+    const listOfPO = Array.isArray(selectedItem?.selectedItem)
+  ? selectedItem.selectedItem
+  : []; 
+  console.log("listOfPO",listOfPO);
+
+  const formattedPOList = listOfPO.map((po, index) => ({
+    sn: index + 1,
+    name: po.po_no,
+    vendor: po.vendor_id?.name || "-",
+    amount: po.total?.toFixed(2) || "0.00",
+    status: po.pending_qty > 0 ? "Pending" : "Completed",
+    deliveryDate: new Date(po.delivery_date).toLocaleDateString(),
+    listOfPO: po
+  }));
+console.log("formattedPOList",formattedPOList);
+
+    
+
+
+
     return colors[index];
   };
+  const user = JSON.parse(sessionStorage.getItem('user'));
+      const cafeId = user?._id;
+
+  const dispatch = useDispatch();
+  useEffect(() => { 
+      
+        dispatch(GetPOList(cafeId));
+    
+    }, [dispatch]);
+
+   
 
 
-  const columns = [
-    {
-      name: "SN",
-      selector: (row) => row.sn,
-
-      minWidth: "70px",
-      maxWidth: "70px",
-
-    },
-    {
-      name: "Order No",
-      selector: (row) => row.name,
-      sortable: true,
-      cell: (row) => (
-        <div className="d-flex align-items-center">
-          <span
-            className="d-flex justify-content-center align-items-center rounded-circle me-2"
+    const columns = [
+      {
+        name: "SN",
+        selector: (row) => row.sn,
+        minWidth: "70px",
+        maxWidth: "70px",
+      },
+      {
+        name: "Order No",
+        selector: (row) => row.name,
+        sortable: true,
+        cell: (row) => (
+          <div className="d-flex align-items-center">
+            <span
+              className="d-flex justify-content-center align-items-center rounded-circle me-2"
+              style={{
+                width: "35px",
+                height: "35px",
+                backgroundColor: getRandomColor(row.name),
+                color: "white",
+                fontWeight: "bold",
+                padding: "8px 12px",
+                gap: "10px",
+              }}
+            >
+              {row.name.charAt(0)}
+            </span>
+            <div>
+              <div
+                style={{ color: "#0062FF", cursor: "pointer" }}
+                onClick={() => handleShowDetails(row.listOfPO)} // Pass the full PO if needed
+              >
+                {row.name}
+              </div>
+            </div>
+          </div>
+        ),
+      },
+      { name: "Vendor", selector: (row) => row.vendor, sortable: true },
+      { name: "Amount", selector: (row) => row.amount, sortable: true },
+      {
+        name: "Status",
+        selector: (row) => row.status,
+        sortable: true,
+        cell: (row) => (
+          <div
             style={{
-              width: "35px",
-              height: "35px",
-              backgroundColor: getRandomColor(row.name),
-              color: "white",
-              fontWeight: "bold",
-              padding: "8px 12px",
-              gap: "10px",
+              backgroundColor:
+                row.status === "Pending"
+                  ? "#fdffcc"
+                  : row.status === "Completed"
+                  ? "#D1FFC8"
+                  : "#FFD9DA",
+              textAlign: "center",
+              borderRadius: "8px",
+              padding: "5px",
+              width: "50%",
+              display: "inline-block",
             }}
           >
-
-            {row.name.charAt(0).toUpperCase()}
-          </span>
-          <div>
-            <div style={{ color: "#0062FF",cursor:"pointer" }} onClick={handleShowDetails}>{row.name}</div>
-            {/* <div style={{ fontSize: "12px", color: "gray" }}>{row.email}</div> */}
+            {row.status}
           </div>
-        </div>
-      ),
-    },
-    {name: "Vendor", selector: (row) => row.vendor, sortable: true},
-    { name: "Amount", selector: (row) => row.amount, sortable: true },
-    {
-      name: "Status",
-      selector: (row) => row.status,
-      sortable: true,
-      cell: (row) => (
-        <div
-          style={{
-            backgroundColor:
-              row.status === "Pending"
-                ? "#fdffcc"
-                : row.status === "Completed"
-                ? "#D1FFC8"
-                : "#FFD9DA",
-            textAlign: "center",
-            borderRadius: "8px",
-            padding: "5px",
-            width: "50%", // Ensure full width
-            display: "inline-block", // Adjust size correctly
-          }}
-        >
-          {row.status}
-        </div>
-      ),
-    }
+        ),
+      },
+      {
+        name: "Delivery Date",
+        selector: (row) => row.deliveryDate,
+        sortable: true,
+      },
+    ];
     
-    ,    
-    { name: "Delivery Date", selector: (row) => row.deliveryDate, sortable: true },
-
-  ];
 
 
   const itemsData = [

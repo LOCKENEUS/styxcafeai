@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Modal, Breadcrumb, BreadcrumbItem } from "react-bootstrap";
+import React, { useEffect, useRef, useState } from "react";
+import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Modal, Breadcrumb, BreadcrumbItem, Dropdown } from "react-bootstrap";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
-import { FaRupeeSign, FaTrash, FaUpload } from "react-icons/fa";
+import { FaFilePdf, FaRupeeSign, FaTrash, FaUpload } from "react-icons/fa";
 import { BiArrowToLeft, BiPlus } from "react-icons/bi";
 // import  { OffcanvesItemsCreate } from "../Offcanvas/OffcanvesItems";
 import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems"
@@ -9,103 +9,94 @@ import Tax from "../modal/Tax";
 // import AddClint from "../modal/vendorListModal";
 import PaymentTermsModal from "../modal/PaymentTermsModal";
 import { Link } from "react-router-dom";
-import { GetVendorsList } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { CreatePurchaseOrder, GetVendorsList, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch, useSelector } from "react-redux";
 import AddClint from "../modal/AddClint";
 import VendorsList from "../modal/vendoreListModal";
+import { getItems } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
+import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
+import { getCustomers } from "../../../../store/AdminSlice/CustomerSlice";
+import AddressModal from "../modal/AddressModal";
+import { getCustomFields } from "../../../../store/AdminSlice/CustomField";
+import { MdOutlineRemoveCircleOutline } from "react-icons/md";
 
 const PurchaseOrderForm = () => {
   const [show, setShow] = useState(false);
   const [showClientList, setShowClientList] = useState(true);
-  const [showVendorList, setShowVendorList] = useState(false);
-  const handleShowVendorList = () => setShowVendorList(true);
-  const handleCloseVendorList = () => setShowVendorList(false);
-  const [currentDate, setCurrentDate] = useState("");
-
-  const [showPaymentTerms, setShowPaymentTerms] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("Organization");
   const [showOffCanvasCreateItem, setShowOffCanvasCreateItem] = useState(false);
   const handleShowCreateItem = () => setShowOffCanvasCreateItem(true);
   const handleCloseCreateItem = () => setShowOffCanvasCreateItem(false);
-  const [vendorSelected, setVendorSelected] = useState("");
+  const [showPaymentTerms, setShowPaymentTerms] = useState(false);
+  const [showAddressModal, setShowAddressModal] = useState(false);
 
-  
-
-  // const [products, setProducts] = useState([
-  //   {
-  //     id: 1,
-  //     item: '',
-  //     quantity: '',
-  //     price: '',
-  //     tax: '',
-  //     total: ''
-  //   }
-  // ]);
+  const [products, setProducts] = useState([
+    { id: 1, item: "", quantity: 1, price: 0, tax: 0, total: 0, totalTax: 0 },
+  ]);
   const [showProductList, setShowProductList] = useState(false);
   const [showTaxModal, setShowTaxModal] = useState(false);
-  // const [taxList, setTaxList] = useState([]);
+  const [taxList, setTaxList] = useState([]);
+  const [selectedClient, setSelectedClient] = useState(null);
+  const dispatch = useDispatch();
+  const { customFields } = useSelector((state) => state.customFields);
+  const { taxFields } = useSelector((state) => state.taxFieldSlice);
+  const { items, loading } = useSelector((state) => state.items);
+  const [showVendorList, setShowVendorList] = useState(false);
+  const handleShowVendorList = () => setShowVendorList(true);
+  const handleCloseVendorList = () => setShowVendorList(false);
+  const [vendorSelected, setVendorSelected] = useState([]);
+  const [selectedOption, setSelectedOption] = useState("Organization");
+  const [vendorId, setVendorId] = useState("");
+  const user = JSON.parse(sessionStorage.getItem("user"));
+ 
+  const cafeId = user?._id;
+
+  console.log("user ----", user);
+  const userName= user?.name;
+  const userEmail= user?.email;
+  const UserContactN = user?.contact_no;
+  const UserAddress = user?.address;
+  const UesrPAN = user?.panNo;
+  console.log("userName ----", userName);
 
 
+  // Filter payment terms from custom fields
+  const paymentTerms = customFields.filter(field => field.type === 'Payment Terms');
+
+  useEffect(() => {
+    dispatch(GetVendorsList(cafeId));
+    dispatch(getTaxFields(cafeId));
+    dispatch(getItems(cafeId));
+  }, [dispatch]);
+  const vendorsList = useSelector((state) => state.purchaseOrder?.vendors);
+  // const lisgetCustomers = useSelector((state) => state.customers?.customers);
+  const  lisgetCustomers= useSelector((state) => state.customers);
+  const customersList = lisgetCustomers?.customers;
+  console.log("lisgetCustomers ========", customersList);
+useEffect(() => {
+    const user = JSON.parse(sessionStorage.getItem('user'));
+    const cafeId = user?._id;
+    
+    if (cafeId) {
+      dispatch(getCustomers(cafeId));
+    }
+  }, [dispatch]);
   const handleShow = () => setShow(true);
   const handleClose = () => {
     setShow(false);
     setShowClientList(true);
   };
 
-
-  // Add this new function to handle adding products
-  // const addProduct = () => {
-  //   setProducts([...products, {
-  //     id: products.length + 1,
-  //     item: '',
-  //     quantity: '',
-  //     price: '',
-  //     tax: '',
-  //     total: ''
-  //   }]);
-  // };
-  useEffect(() => {
-    // Get today's date in YYYY-MM-DD format
-    const today = new Date().toISOString().split("T")[0];
-    setCurrentDate(today);
-  }, []);
-
-
-  // Update the payment terms section in your existing JSX
-
-  //-------------------------------------------
-
-  const dispatch = useDispatch();
-  const user = JSON.parse(sessionStorage.getItem("user"));
-  const cafeId = user?._id;
-    // Fetch Vendors List
-    useEffect(() => {
-      if (cafeId) {
-        dispatch(GetVendorsList(cafeId));
-      }
-    }, [dispatch, cafeId]);
-    const vendors = useSelector((state) => state.purchaseOrder);
- 
-    const vendorsList = vendors?.vendors || [];
-    console.log("vendors 00",vendorsList);
-    
-
-  const [products, setProducts] = useState([
-    { id: 1, item: "", quantity: 1, price: 0, tax: 0, total: 0 },
-  ]);
-
-  const taxList = [
-    { name: "GST 5%", value: 5 },
-    { name: "GST 12%", value: 12 },
-    { name: "GST 18%", value: 18 },
-  ];
-
+  // Add these new state and calculation functions
   const priceList = {
-    "34": 34, // Example prices
+    "34": 34,
     "3": 3,
     "4": 4,
     "1800": 1800,
   };
+
+
+  const TaxList = useSelector((state) => state.taxFieldSlice?.taxFields);
+  console.log("unit Tax 101", TaxList);
 
   const calculateTotal = (price, quantity, tax) => {
     const subtotal = price * quantity;
@@ -119,15 +110,27 @@ const PurchaseOrderForm = () => {
         const updatedProduct = { ...product, [field]: value };
 
         if (field === "item") {
-          updatedProduct.price = priceList[value] || 0;
+          const selectedItem = items.find(item => item._id === value);
+          if (selectedItem) {
+            updatedProduct.price = selectedItem.sellingPrice;
+            updatedProduct.tax = selectedItem.tax;
+            const itemTax = taxFields.find(tax => tax._id === selectedItem.tax);
+            updatedProduct.taxRate = itemTax ? itemTax.tax_rate : 0;
+          }
+        }
+
+        if (field === "tax") {
+          const selectedTax = taxFields.find(tax => tax._id === value);
+          updatedProduct.taxRate = selectedTax ? selectedTax.tax_rate : 0;
         }
 
         const price = parseFloat(updatedProduct.price) || 0;
         const quantity = parseInt(updatedProduct.quantity) || 1;
-        const tax = parseFloat(updatedProduct.tax) || 0;
+        const taxRate = parseFloat(updatedProduct.taxRate) || 0;
 
-        const { total, totalTax } = calculateTotal(price, quantity, tax);
-        updatedProduct.total = total;
+        const subtotal = price * quantity;
+        const totalTax = (subtotal * taxRate) / 100;
+        updatedProduct.total = subtotal + totalTax;
         updatedProduct.totalTax = totalTax;
 
         return updatedProduct;
@@ -138,38 +141,234 @@ const PurchaseOrderForm = () => {
     setProducts(updatedProducts);
   };
 
+  // Update the addProduct function
   const addProduct = () => {
     setProducts([
       ...products,
-      { id: products.length + 1, item: "", quantity: 1, price: 0, tax: 0, total: 0 },
+      { id: products.length + 1, item: "", quantity: 1, price: 0, tax: 0, total: 0, totalTax: 0 },
     ]);
   };
 
-  const removeProduct = (id) => {
-    if (products.length > 1) {
-      setProducts(products.filter((product) => product.id !== id));
+  // Add this function to handle client selection
+  const handleClientSelect = (client) => {
+    setSelectedClient(client);
+  };
+
+  // Update the payment terms section in your existing JSX
+
+  // Add the payment terms modal
+
+  const [totals, setTotals] = useState({
+    subtotal: 0,
+    discount: 0,
+    discountType: 'Percentage',
+    taxAmount: 0,
+    selectedTaxes: [],
+    total: 0,
+    adjustmentNote: '',
+    adjustmentAmount: 0
+  });
+
+  // Add this calculation function
+  const calculateTotals = () => {
+    // Calculate subtotal from products
+    const subtotal = products.reduce((sum, product) => sum + (product.total), 0);
+
+    // Calculate discount
+    let discountAmount = 0;
+    if (totals.discountType === 'Percentage') {
+      discountAmount = (subtotal * totals.discount) / 100;
+    } else {
+      discountAmount = parseFloat(totals.discount) || 0;
+    }
+
+    // Calculate tax amount
+    const taxableAmount = subtotal - discountAmount;
+    const taxAmount = totals.selectedTaxes.reduce((sum, tax) => {
+      return sum + (taxableAmount * (tax.rate / 100));
+    }, 0);
+
+    // Calculate final total
+    const total = subtotal - discountAmount + taxAmount + (parseFloat(totals.adjustmentAmount) || 0);
+
+    setTotals(prev => ({
+      ...prev,
+      subtotal,
+      taxAmount,
+      total
+    }));
+  };
+
+  // Add useEffect to recalculate when products or totals change
+  useEffect(() => {
+    calculateTotals();
+  }, [products, totals.discount, totals.discountType, totals.selectedTaxes, totals.adjustmentAmount]);
+
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [files, setFiles] = useState([]);
+
+  const handleFileChange = (event) => {
+    const newFiles = Array.from(event.target.files);
+    setFiles(prev => [...prev, ...newFiles]);
+  };
+
+  const handleRemoveFile = (index, event) => {
+    // Stop event from bubbling up to parent
+    event.stopPropagation();
+    setFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleFileChange2 = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+  };
+
+  const handleRemoveFile2 = (index, e) => {
+    e.stopPropagation();
+    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  };
+
+  // Add new state for form data
+  const [formData, setFormData] = useState({
+    vendorId: '',
+    delivery_type: "organization",
+    date: '',
+    shipment_date: '',
+    payment_terms: '',
+    reference: '',
+    shipment_preference: '',
+    description: '',
+    internal_team_notes: ''
+  });
+
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  
+  // Update the handleSubmit function
+  const handleSubmit = async () => {
+
+
+    const submitData = new FormData();
+
+    for (let i = 0; i < files.length; i++) {
+      submitData.append("images", files[i]);
+    }
+
+    // Add basic form fields
+    submitData.append('cafe', cafeId);
+    submitData.append('vendor_id', vendorId);
+    submitData.append('delivery_date', formData.date);
+    submitData.append('payment_terms', formData.payment_terms);
+    submitData.append('reference', formData.reference);
+    submitData.append('shipment_preference', formData.shipment_preference);
+    submitData.append('description', formData.description);
+    submitData.append('internal_team_notes', formData.internal_team_notes);
+    submitData.append('delivery_type', formData.delivery_type);
+
+    // Add financial details
+    submitData.append('subtotal', totals.subtotal.toString());
+    submitData.append('discount_value', totals.discount.toString());
+    // submitData.append('discount_type', totals.discountType.toLowerCase());
+
+    // Format tax data - just send array of tax IDs
+    const taxIds = totals.selectedTaxes.map(tax => tax.id);
+    submitData.append('tax', JSON.stringify(taxIds));
+
+    submitData.append('total', totals.total.toString());
+    submitData.append('adjustment_note', totals.adjustmentNote);
+    submitData.append('adjustment_amount', totals.adjustmentAmount.toString());
+    // submitData.append('type', 'PO');
+
+
+
+    // Format items data - updated to send tax ID
+    const formattedItems = products.map(product => ({
+      id: product.item,
+      qty: product.quantity,
+      hsn: product.hsn || '',
+      price: product.price,
+      tax: product.tax || '',
+      tax_amt: product.totalTax || 0,
+      total: product.total
+    }));
+    submitData.append('items', JSON.stringify(formattedItems));
+
+    // Append files
+    files.forEach((file, index) => {
+      submitData.append('internal_team_file', file);
+    });
+
+    try {
+      await dispatch(CreatePurchaseOrder(submitData)).unwrap();
+      // Handle success (e.g., redirect to SO list)
+
+      setFormData({
+        cafeId: '',
+        vendorId: '',
+        date: '',
+        payment_terms: '',
+        reference: '',
+        shipment_preference: '',
+        description: '',
+        internal_team_notes: '',
+        delivery_type: "organization",
+        subtotal: '',
+        total: '',
+        taxIds: [],
+        adjustmentNote: '',
+        adjustmentAmount: '',
+
+      });
+    } catch (error) {
+      // Handle error
+      console.error('Error creating SO:', error);
     }
   };
 
 
+  // const handleVendorSelect = (newVendor) => {
+  //   const selectedVendorId = newVendor;
+  //   const selectedVendor = vendorsList.find(
+  //     (vendor) => vendor?._id == selectedVendorId
+  //   );
+  //   if (selectedVendor) {
+  //     setVendorSelected(selectedVendor);
+  //     setFormData({
+  //       ...formData,
+  //       vendor_id: selectedVendor?._id,
+  //     });
+  //     setVendorId(selectedVendor?._id);
+  //   }
+  //   handleClose();
+  //   setVendorId(newVendor._id);
+  //   console.log("Selected vendor ID:---", vendorId);
+  // };
+
+
   const handleVendorSelect = (newVendorId) => {
-    console.log("selectedVendorId", newVendorId);
-
-  const selectedVendor = vendorsList.find((vendor) => vendor?._id === newVendorId);
-
-  if (selectedVendor) {
-    setVendorSelected(selectedVendor);
-    setFormData({
-      ...formData,
-      vendor_id: selectedVendor._id,
-    });
-  }
+    const selectedVendor = vendorsList.find((vendor) => vendor?._id == newVendorId);
+    if (selectedVendor) {
+      setVendorSelected(selectedVendor);
+      setFormData({
+        ...formData,
+        vendor_id: selectedVendor?._id, // Update formData with selected vendor ID
+      });
+      setVendorId(selectedVendor?._id); // Update vendorId state
+    }
     handleClose();
+    console.log("Selected vendor ID:---", newVendorId);
   };
- 
+
   return (
     <Container fluid className="p-4">
-
       <Col sm={12} className="my-3">
         <div style={{ top: "186px", fontSize: "18px" }}>
           <Breadcrumb>
@@ -183,20 +382,15 @@ const PurchaseOrderForm = () => {
       <Card className="p-3 mb-3 shadow-sm">
         <Row className="align-items-center">
           <Col xs={2}>
-            <img
-              src={Lockenelogo}
-              alt="Logo"
-              className="img-fluid"
-            />
+            <img src={Lockenelogo} alt="Logo" className="img-fluid" />
           </Col>
           <Col>
-            <h5>Linganwar</h5>
-            <p className="mb-1">yash123linganwar@gmail.com / 91562173745</p>
+            <h5>{userName}</h5>
+            <p className="mb-1">{userEmail} / {UserContactN}</p>
             <p className="mb-1">
-              Karve Statue, DP Road, Mayur Colony, Kothrud, Pune, Maharashtra,
-              India
+              {UserAddress}
             </p>
-            <strong>PAN: ADNP5467B</strong>
+            <strong>PAN: {UesrPAN}</strong>
           </Col>
           <Col xs={2} className="text-end">
             <span className="text-muted">PO:</span>
@@ -211,31 +405,37 @@ const PurchaseOrderForm = () => {
           <Col md={4} className="d-flex border-end flex-column gap-2">
             <div className="border-bottom ">
               <div className="d-flex flex-row align-items-center justify-content-around mb-3 gap-2">
-                <h5 className="text-muted">Client Name Here</h5>
+                <h5 className="text-muted">Vendor :  </h5>
                 <Button
                   style={{ width: "144px", height: "44px", borderStyle: "dashed" }}
                   variant="outline-primary"
                   className="d-flex align-items-center justify-content-center gap-2"
                   onClick={handleShowVendorList}
                 >
-                  <span>+</span> Add Client
+                  <span>+</span> Add Vendor
                 </Button>
               </div>
             </div>
-            <Row className="mt-3 ">
-              <Col className="" md={5}>
-                <h6 style={{ fontSize: "1rem" }} >Billing Address</h6>
-                <p style={{ fontSize: "0.9rem" }} className="mb-1">Nagpur Division</p>
-                <p style={{ fontSize: "0.9rem" }} className="mb-1">Maharashtra</p>
-                <p style={{ fontSize: "0.9rem" }} className="mb-0">India</p>
+            <Row className="mt-3">
+              <p>{vendorSelected?.name || "Vendor Name"}</p>
+
+              <Col md={5}>
+                <h6 style={{ fontSize: "1rem" }}>Billing Address</h6>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.city1 || "Billing City"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state1 || "Billing State"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.pincode1 || "Billing Pincode"}</p>
+                <p className="mb-0" style={{ fontSize: "0.9rem" }}>{vendorSelected?.country1 || "Billing Country"}</p>
               </Col>
-              <Col md={5} className="">
-                <h6 style={{ fontSize: "1rem" }} >Shipping Address</h6>
-                <p style={{ fontSize: "0.9rem" }} className="mb-1">Nagpur Division</p>
-                <p style={{ fontSize: "0.9rem" }} className="mb-1">Maharashtra</p>
-                <p style={{ fontSize: "0.9rem" }} className="mb-0">India</p>
+
+              <Col md={5}>
+                <h6 style={{ fontSize: "1rem" }}>Shipping Address</h6>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.city2 || "Shipping City"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state2 || "Shipping State"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.pincode2 || "Shipping Pincode"}</p>
+                <p className="mb-0" style={{ fontSize: "0.9rem" }}>{vendorSelected?.country2 || "Shipping Country"}</p>
               </Col>
             </Row>
+
 
           </Col>
 
@@ -244,91 +444,114 @@ const PurchaseOrderForm = () => {
               <h5 className="text-muted">Delivery Address <span className="text-danger">*</span></h5>
 
             </div>
-            {/* <div  className="d-flex  gap-4 mb-2">
-                <Form.Check  className="" style={{  fontWeight:"bold", color: "black"}} type="radio" name="delivery" label="Organization" defaultChecked />
-                <Form.Check  className="" style={{  fontWeight:"bold", color: "black"}} type="radio" name="delivery" label="Customer" />
-              </div>
-              <p style={{  fontWeight:"bold", marginTop:"30px",  color: "black"}} className="mb-1">Linganwar</p>
-              <div style={{marginTop:"15px"}} className="d-flex flex-column   gap-2">
-              <p className="mb-1">yash123linganwar@gmail.com / 91562173745</p>
-              <p className="mb-1">Karve Statue, DP Road, Pune Maharashtra</p>
-              <p className="mb-0">PAN: ADNP5467B</p>
-              </div> */}
+
 
             <div>
               {/* Radio Buttons */}
-              <div className="d-flex gap-4 mb-2">
-                <Form.Check
-                  type="radio"
-                  name="delivery"
-                  label="Organization"
-                  value="Organization"
-                  checked={selectedOption === "Organization"}
-                  onChange={() => setSelectedOption("Organization")}
-                  style={{ fontWeight: "bold", color: "black" }}
-                />
-                <Form.Check
-                  type="radio"
-                  name="delivery"
-                  label="Customer"
-                  value="Customer"
-                  checked={selectedOption === "Customer"}
-                  onChange={() => setSelectedOption("Customer")}
-                  style={{ fontWeight: "bold", color: "black" }}
-                />
-              </div>
+              <Form.Check
+                type="radio"
+                name="delivery_type"
+                
+                label="Organization"
+                value="Organization"
+                checked={formData.delivery_type === "Organization"}
+                onChange={(e) =>
+                  setFormData({ ...formData, delivery_type: e.target.value })
+                }
+                style={{ fontWeight: "bold", color: "black" }}
 
-              {/* Organization Details */}
-              {selectedOption === "Organization" && (
+              />
+              <Form.Check
+                type="radio"
+                name="delivery_type"
+                label="Customer"
+                value="Customer"
+                checked={formData.delivery_type === "Customer"}
+                onChange={(e) =>
+                  setFormData({ ...formData, delivery_type: e.target.value })
+                }
+                style={{ fontWeight: "bold", color: "black" }}
+              />
+
+
+              {formData.delivery_type === "Organization" && (
                 <>
                   <p style={{ fontWeight: "bold", marginTop: "30px", color: "black" }} className="mb-1">
-                    Linganwar
+                    {userName}
                   </p>
                   <div style={{ marginTop: "15px" }} className="d-flex flex-column gap-2">
-                    <p className="mb-1">yash123linganwar@gmail.com / 91562173745</p>
-                    <p className="mb-1">Karve Statue, DP Road, Pune Maharashtra</p>
-                    <p className="mb-0">PAN: ADNP5467B</p>
+                    <p className="mb-1"> {userEmail} / {UserContactN}</p>
+                    <p className="mb-1">{UserAddress}</p>
+                    <p className="mb-0">PAN: {UesrPAN}</p>
                   </div>
                 </>
               )}
 
-              {/* Customer Selection Dropdown */}
-              {selectedOption === "Customer" && (
+              {formData.delivery_type === "Customer" && (
                 <>
-                  <Form.Select className="my-0">
+                  <Form.Select className="my-0" >
                     <option>Select Customer</option>
-                    <option value="1">Customer 1</option>
-                    <option value="2">Customer 2</option>
-                    <option value="3">Customer 3</option>
+                    {customersList.map((customer, index) => (
+                      <option key={index} value={customer.customer_id}>
+                        {customer.name}
+                      </option>
+                    ))}
                   </Form.Select>
                   <div className="my-3">
-                    <p className="my-0 mx-2">Customer Address</p>
+                    <p className="my-0 mx-2">{customersList?.address}</p>
                     <p className="my-0 mx-2">Customer City,</p>
                     <p className="my-0 mx-2">Customer State,</p>
                     <p className="my-0 mx-2">Customer Country-123456</p>
                   </div>
                 </>
               )}
+
             </div>
           </Col>
 
           <Col md={4} style={{ marginTop: "2rem" }}>
             <div className="d-flex flex-column gap-2">
-              <div className=" d-flex flex-row align-items-center gap-2">
+              <div className="d-flex flex-row align-items-center gap-2">
                 <Form.Control
-                  type="date"
-                  value={currentDate}
-                  onChange={(e) => setCurrentDate(e.target.value)}
-                /> </div>
+                  type="text"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleInputChange}
+                  placeholder="Delivery Date"
+                  onFocus={(e) => e.target.type = 'date'}
+                  onBlur={(e) => {
+                    if (!e.target.value) e.target.type = 'text'
+                  }}
+                />
+              </div>
+
+
+
               <div className="d-flex flex-row align-items-center gap-2">
                 <Form.Select
-                  style={{ border: "1px solid black", height: "44px", borderStyle: "dashed" }}
+                  name="payment_terms"
+                  value={formData.payment_terms}
+                  onChange={handleInputChange}
+                  style={{
+                    border: "1px solid black",
+                    height: "44px",
+                    borderStyle: "dashed",
+                  }}
                 >
-                  <option>Select Payment Terms</option>
-
+                  <option value="">Select Payment Term</option>
+                  {paymentTerms.map((term) => (
+                    <option key={term._id} value={term._id}>
+                      {term.name}
+                    </option>
+                  ))}
                 </Form.Select>
                 <Button
-                  style={{ width: "50px", border: "1px solid black", height: "30px", borderStyle: "dashed" }}
+                  style={{
+                    width: "50px",
+                    border: "1px solid black",
+                    height: "30px",
+                    borderStyle: "dashed",
+                  }}
                   variant="outline-secondary"
                   onClick={() => setShowPaymentTerms(true)}
                   className="end-0 top-0 h-100 px-2"
@@ -336,44 +559,58 @@ const PurchaseOrderForm = () => {
                   +
                 </Button>
               </div>
-              <Form.Control style={{ border: "1px solid black", height: "44px" }} placeholder="Enter Reference" />
-              <Form.Control style={{ border: "1px solid black", height: "44px" }} placeholder="Enter Shipment Preference" />
+
+              <Form.Control
+                name="reference"
+                value={formData.reference}
+                onChange={handleInputChange}
+                placeholder="Enter Reference"
+              />
+
+              <Form.Control
+                name="shipment_preference"
+                value={formData.shipment_preference}
+                onChange={handleInputChange}
+                placeholder="Enter Shipment Preference"
+              />
+
 
             </div>
           </Col>
         </Row>
-
       </Card>
 
       {/* Product Details Card */}
       <Card className="p-3 mt-3 shadow-sm">
-      <Table responsive>
-        <thead>
-          <tr>
-            <th>PRODUCT</th>
-            <th>QUANTITY</th>
-            <th>PRICE</th>
-            <th>TAX</th>
-            {/* <th>TOTAL TAX</th> */}
-            <th>TOTAL</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product) => (
-            <tr key={product.id}>
-              <td>
-              <div className="d-flex gap-2">
-                <Form.Select
-                  value={product.item}
-                  onChange={(e) => updateProduct(product.id, "item", e.target.value)}
-                >
-                  <option value="">Select Item</option>
-                  <option value="34">Item 34</option>
-                  <option value="3">Item 3</option>
-                  <option value="4">Item 4</option>
-                  <option value="1800">Item 1800</option>
-                </Form.Select>
-                <Button
+        <Table responsive>
+          <thead>
+            <tr>
+              <th className="w-25">PRODUCT</th>
+              <th className="w-15">QUANTITY</th>
+              <th className="w-15">PRICE</th>
+              <th className="w-15">TAX</th>
+              <th className="w-30">TOTAL</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product, index) => (
+              <tr key={product.id}>
+                <td>
+                  <div className="d-flex gap-2">
+                    <Form.Select
+                      className="flex-grow-1"
+                      style={{ border: "1px solid black", borderStyle: "dashed" }}
+                      value={product.item}
+                      onChange={(e) => updateProduct(product.id, "item", e.target.value)}
+                    >
+                      <option value="">Select Item</option>
+                      {items.map((item) => (
+                        <option key={item._id} value={item._id}>
+                          {item.name} (₹{item.sellingPrice})
+                        </option>
+                      ))}
+                    </Form.Select>
+                    <Button
                       onClick={handleShowCreateItem}
                       className="flex-shrink-0"
                       style={{ width: "40px", border: "1px solid black", borderStyle: "dashed" }}
@@ -381,41 +618,49 @@ const PurchaseOrderForm = () => {
                     >
                       +
                     </Button>
-                    </div>
-              </td>
-              <td>
-                <Form.Control
-                  type="number"
-                  min="1"
-                  value={product.quantity}
-                  onChange={(e) => updateProduct(product.id, "quantity", e.target.value)}
-                />
-              </td>
-              <td>
-              <div className="position-relative w-100">
-                    <span className="position-absolute " style={{ left: "10px", top: "50%", transform: "translateY(-50%)", color: "black", }}>
+                  </div>
+                </td>
+                <td>
+                  <Form.Control
+                    type="number"
+                    min="1"
+                    placeholder="QTY : 1"
+                    style={{ border: "1px solid black", width: "100%" }}
+                    value={product.quantity}
+                    onChange={(e) => updateProduct(product.id, "quantity", e.target.value)}
+                  />
+                </td>
+                <td>
+                  <div className="position-relative w-100">
+                    <span className="position-absolute" style={{ left: "10px", top: "50%", transform: "translateY(-50%)" }}>
                       <FaRupeeSign />
                     </span>
-                <Form.Control type="text" value={product.price} placeholder="0.00"
-                      className="text-end w-100"
-                      style={{ paddingLeft: "25px" }}
-                       readOnly />
-                       </div>
-              </td>
-              <td>
-              <div className="d-flex gap-2">
-                <Form.Select
-                  value={product.tax}
-                  onChange={(e) => updateProduct(product.id, "tax", e.target.value)}
-                >
-                  <option value="0">0% TAX</option>
-                  {taxList.map((tax, index) => (
-                    <option key={index} value={tax.value}>
-                      {tax.name}
-                    </option>
-                  ))}
-                </Form.Select>
-                <Button
+                    <Form.Control
+                      type="number"
+                      placeholder="0.00"
+                      className="w-100"
+                      style={{ paddingLeft: "25px", border: "1px solid black" }}
+                      value={product.price}
+                      onChange={(e) => updateProduct(product.id, "price", e.target.value)}
+                    />
+                  </div>
+                </td>
+                <td>
+                  <div className="d-flex gap-2">
+                    <Form.Select
+                      className="flex-grow-1"
+                      style={{ border: "1px solid black" }}
+                      value={product.tax || ""}
+                      onChange={(e) => updateProduct(product.id, "tax", e.target.value)}
+                    >
+                      <option value="">Select Tax</option>
+                      {taxFields.map(tax => (
+                        <option key={tax._id} value={tax._id}>
+                          {tax.tax_name} ({tax.tax_rate}%)
+                        </option>
+                      ))}
+                    </Form.Select>
+                    <Button
                       className="flex-shrink-0"
                       style={{ width: "40px", border: "1px solid black", borderStyle: "dashed" }}
                       variant="outline-secondary"
@@ -423,44 +668,56 @@ const PurchaseOrderForm = () => {
                     >
                       +
                     </Button>
-                </div>
-                <div className="position-relative w-100 my-3">
-                <span className="position-absolute " style={{ left: "10px", top: "50%", transform: "translateY(-50%)", color: "black", }}>
+                  </div>
+                  <div className="position-relative w-100 my-3">
+                    <span className="position-absolute" style={{ left: "10px", top: "50%", transform: "translateY(-50%)" }}>
                       <FaRupeeSign />
                     </span>
-                <Form.Control className="text-end" type="text" value={product.totalTax} readOnly />
-                </div>
-              </td>
-              {/* <td>
-                <Form.Control type="text" value={product.totalTax} readOnly />
-              </td> */}
-              <td>
-              
-              <div className="position-relative w-100 ">
-                <span className="position-absolute " style={{ left: "10px", top: "50%", transform: "translateY(-50%)", color: "black", }}>
+                    <Form.Control
+                      type="text"
+                      className="text-end"
+                      value={product.totalTax?.toFixed(2) || "0.00"}
+                      readOnly
+                      style={{ paddingLeft: "25px", border: "1px solid black" }}
+                    />
+                  </div>
+                </td>
+                <td>
+                  <div className="position-relative w-100">
+                    <span className="position-absolute" style={{ left: "10px", top: "50%", transform: "translateY(-50%)" }}>
                       <FaRupeeSign />
                     </span>
-                <Form.Control type="text" className="text-end" value={product.total} readOnly />
-                </div>
-              </td>
-
-              <td className="d-flex justify-content-end">
-                {products.length > 1 && (
-                  <Button
-                    onClick={() => removeProduct(product.id)}
-                    className="d-flex justify-content-center align-items-center"
-                    style={{ width: "40px", padding: "0px", height: "40px" }}
-                    variant="outline-danger"
-                  >
-                    <FaTrash style={{ fontSize: "15px" }} />
-                  </Button>
+                    <Form.Control
+                      type="text"
+                      placeholder="PRICE : 0.00"
+                      className="text-end w-100"
+                      style={{ paddingLeft: "25px", border: "1px solid black" }}
+                      value={product.total}
+                      readOnly
+                    />
+                  </div>
+                </td>
+                {index > 0 && (
+                  <td>
+                    <Button
+                      onClick={() => {
+                        const updatedProducts = products.filter((_, i) => i !== index);
+                        setProducts(updatedProducts);
+                      }}
+                      className="flex-shrink-0 d-flex justify-content-center align-items-center"
+                      style={{ width: "40px", padding: "0px", height: "40px", border: "1px solid black", borderStyle: "dashed" }}
+                      variant="outline-danger"
+                    >
+                      <FaTrash style={{ fontSize: "15px" }} />
+                    </Button>
+                  </td>
                 )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-      <Button
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+
+        <Button
           variant="outline-primary"
           className="mb-4 w-100 w-sm-50 w-md-25"
           style={{ borderStyle: "dashed" }}
@@ -468,7 +725,128 @@ const PurchaseOrderForm = () => {
         >
           <span className="me-2">+</span> Add Product
         </Button>
-    </Card>
+
+        <Row>
+          <Col xs={12} md={6} className="mb-3 mb-md-0">
+            <Form.Control
+              as="textarea"
+              rows={7}
+              placeholder="Vendor Description & Instruction"
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              style={{ border: "1px solid gray" }}
+            />
+          </Col>
+          <Col xs={12} md={6}>
+            <div className="d-flex flex-column gap-3">
+              {/* Subtotal */}
+              <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
+                <span>Subtotal</span>
+                <InputGroup style={{ maxWidth: "200px" }}>
+                  <InputGroup.Text><FaRupeeSign /></InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    value={totals.subtotal.toFixed(2)}
+                    readOnly
+                  />
+                </InputGroup>
+              </div>
+
+              {/* Discount */}
+              <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
+                <span>Discount</span>
+                <div className="d-flex gap-2" style={{ maxWidth: "200px" }}>
+                  <Form.Control
+                    type="number"
+                    value={totals.discount}
+                    onChange={(e) => setTotals(prev => ({ ...prev, discount: e.target.value }))}
+                    placeholder="0.00"
+                  />
+                  <Form.Select
+                    value={totals.discountType}
+                    onChange={(e) => setTotals(prev => ({ ...prev, discountType: e.target.value }))}
+                    style={{ width: "70px" }}
+                  >
+                    <option value="Percentage">%</option>
+                    <option value="flat">₹</option>
+                  </Form.Select>
+                </div>
+              </div>
+
+              {/* Tax */}
+              <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
+                <span>Tax ₹{totals.taxAmount.toFixed(2)}</span>
+                <Dropdown style={{ maxWidth: "200px" }}>
+                  <Dropdown.Toggle variant="outline-primary" style={{ width: "100%" }}>
+                    {totals.selectedTaxes.length ?
+                      totals.selectedTaxes.map(tax => `${tax.rate}%`).join(', ') :
+                      '0.00% Tax'}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {taxFields.map(tax => (
+                      <Dropdown.Item key={tax._id} as="div">
+                        <Form.Check
+                          type="checkbox"
+                          id={`tax-${tax._id}`}
+                          label={`${tax.tax_name} (${tax.tax_rate}%)`}
+                          checked={totals.selectedTaxes.some(t => t.id === tax._id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setTotals(prev => ({
+                                ...prev,
+                                selectedTaxes: [...prev.selectedTaxes, { id: tax._id, rate: tax.tax_rate }]
+                              }));
+                            } else {
+                              setTotals(prev => ({
+                                ...prev,
+                                selectedTaxes: prev.selectedTaxes.filter(t => t.id !== tax._id)
+                              }));
+                            }
+                          }}
+                        />
+                      </Dropdown.Item>
+                    ))}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+
+              {/* Total */}
+              <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
+                <span>Total</span>
+                <InputGroup style={{ maxWidth: "200px" }}>
+                  <InputGroup.Text><FaRupeeSign /></InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    value={totals.total.toFixed(2)}
+                    readOnly
+                  />
+                </InputGroup>
+              </div>
+
+              {/* Adjustment */}
+              <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
+                <Form.Control
+                  type="text"
+                  placeholder="Adjustment Note"
+                  value={totals.adjustmentNote}
+                  onChange={(e) => setTotals(prev => ({ ...prev, adjustmentNote: e.target.value }))}
+                  style={{ maxWidth: "200px" }}
+                />
+                <InputGroup style={{ maxWidth: "200px" }}>
+                  <InputGroup.Text><FaRupeeSign /></InputGroup.Text>
+                  <Form.Control
+                    type="number"
+                    placeholder="Adjustment Amount"
+                    value={totals.adjustmentAmount}
+                    onChange={(e) => setTotals(prev => ({ ...prev, adjustmentAmount: e.target.value }))}
+                  />
+                </InputGroup>
+              </div>
+            </div>
+          </Col>
+        </Row>
+      </Card>
 
       {/* Terms and Conditions Card */}
       <Card className="p-3 mt-3  shadow-sm">
@@ -478,37 +856,124 @@ const PurchaseOrderForm = () => {
             <Form.Control
               as="textarea"
               rows={9}
+              name="internal_team_notes"
+              value={formData.internal_team_notes}
+              onChange={handleInputChange}
               placeholder="Terms & Condition Notes"
               style={{ border: "1px solid gray" }}
             />
           </Col>
 
-          <Col className="" md={6}>
-            <div className="rounded d-flex flex-column align-items-center justify-content-center p-4" style={{ minHeight: "200px", border: "1px solid black", borderStyle: "dashed" }}>
+          <Col md={6}>
+            <div
+              className="rounded d-flex flex-column align-items-center justify-content-center p-4"
+              style={{
+                minHeight: "200px",
+                border: "1px solid black",
+                borderStyle: "dashed",
+                cursor: "pointer",
+              }}
+              onClick={() => document.getElementById("fileInput").click()}
+            >
+              <input
+                type="file"
+                id="fileInput"
+                multiple
+                accept=".pdf,.jpg,.jpeg,.png"
+                style={{ display: "none" }}
+                onChange={handleFileChange2}
+              />
+
               <div className="text-center">
                 <div className="mb-2">
                   <FaUpload />
                 </div>
-                <p className="mb-0">Click to upload, only accept .pdf, .jpg, .jpeg, .png</p>
+                <p className="mb-0">Click to upload multiple files (.pdf, .jpg, .jpeg, .png)</p>
+              </div>
+
+              <div
+                style={{ height: "100px" }}
+                className="mt-3 d-flex align-items-end w-100 flex-wrap gap-2"
+              >
+                {files.map((file, index) => (
+                  <div key={index} className="position-relative">
+                    {file.type.includes("image") ? (
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={`Preview ${index}`}
+                        style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                        onLoad={(e) => {
+                          // Cleanup the object URL after the image has loaded
+                          const objectUrl = URL.createObjectURL(file);
+                          e.target.src = objectUrl;
+                          URL.revokeObjectURL(objectUrl);
+                        }}
+                      />
+                    ) : (
+                      <div
+                        className="d-flex align-items-center justify-content-center bg-light"
+                        style={{ width: "50px", height: "50px" }}
+                      >
+                        <FaFilePdf size={40} />
+                      </div>
+                    )}
+                    <div
+                      className="position-absolute end-0"
+                      onClick={(e) => handleRemoveFile2(index, e)}
+                      style={{ cursor: "pointer", top: "-20px" }}
+                    >
+                      <MdOutlineRemoveCircleOutline
+                        style={{ color: "red", fontWeight: "bold", fontSize: "20px" }}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </Col>
         </Row>
       </Card>
 
+      <AddClint
+        show={show}
+        handleClose={handleClose}
+        onClientSelect={handleClientSelect}
+      />
+      {showProductList && (
+        <OffcanvesItemsNewCreate
+          show={showProductList}
+          handleClose={() => setShowProductList(false)}
+        />
+      )}
+      <PaymentTermsModal
+        show={showPaymentTerms}
+        handleClose={() => setShowPaymentTerms(false)}
+      />
+      <Tax show={showTaxModal} handleClose={() => setShowTaxModal(false)} />
+      <OffcanvesItemsNewCreate
+        showOffCanvasCreateItem={showOffCanvasCreateItem}
+        handleCloseCreateItem={handleCloseCreateItem}
+      />
+
       <VendorsList
         showVendorList={showVendorList}
         handleCloseVendorList={handleCloseVendorList}
         onVendorSelect={handleVendorSelect}
       />
-      {/* {showProductList && <OffcanvesItems show={showProductList} handleClose={() => setShowProductList(false)} />} */}
-      <PaymentTermsModal
-        show={showPaymentTerms}
-        handleClose={() => setShowPaymentTerms(false)}
 
-      />
-      <Tax show={showTaxModal} handleClose={() => setShowTaxModal(false)} />
-      <OffcanvesItemsNewCreate showOffCanvasCreateItem={showOffCanvasCreateItem} handleCloseCreateItem={handleCloseCreateItem} />
+      {/* Add a submit button */}
+      <div className="d-flex justify-content-end mt-3">
+        <Button
+          variant="primary"
+          onClick={handleSubmit}
+        // disabled={!selectedClient || products.length === 0}
+        >
+          Submit
+        </Button>
+      </div>
+
+      
+
     </Container>
   );
 };

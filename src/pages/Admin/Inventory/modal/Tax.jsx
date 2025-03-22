@@ -44,8 +44,8 @@ const Tax = ({ show, handleClose, onCreated }) => {
     };
 
     return (
-        <Modal show={show} onHide={handleClose} centered>
-            <Modal.Header className="bg-light text-dark" closeButton>
+        <Modal show={show} onHide={handleClose} centered style={{ zIndex: 2000 }} >
+            <Modal.Header  className='bg-info bg-opacity-25 py-3'closeButton >
                 <Modal.Title>Create Custom Tax</Modal.Title>
             </Modal.Header>
             <Modal.Body>

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { CreateVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder"; 
 import { useDispatch } from "react-redux";
 
-export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor }) => {
+export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }) => {
 
 
   const dispatch = useDispatch();

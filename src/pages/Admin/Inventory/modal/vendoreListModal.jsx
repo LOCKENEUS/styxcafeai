@@ -54,7 +54,7 @@ const VendorsList = ({ showVendorList, handleCloseVendorList,onVendorSelect }) =
   );
 
   const handleVendorSelected = ( vendor_id) => {
-    console.log("Selected vendor: 9999", vendor_id);
+    console.log("Selected vendor: ", vendor_id);
     if (onVendorSelect) {
       onVendorSelect(vendor_id);
     }

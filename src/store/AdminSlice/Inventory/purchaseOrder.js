@@ -40,6 +40,37 @@ export const GetVendorsList = createAsyncThunk(
     }
   }
 );
+export const CreatePurchaseOrder = createAsyncThunk(
+  'purchaseOrder/CreatePurchaseOrder', 
+  async (POData, thunkAPI) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/admin/inventory/po`, POData);
+      toast.success('Purchase Order added successfully!');
+      return response.data.data;
+    } catch (error) {
+      let errorMessage = error.response?.data?.message || 'Something went wrong';
+
+      
+
+      toast.error(errorMessage); // Show error toast
+      return thunkAPI.rejectWithValue(errorMessage); 
+    }
+  }
+);
+// /admin/inventory/po/list/:id
+export const GetPOList = createAsyncThunk(
+  'purchaseOrder/GetPOList',
+  async (id, thunkAPI) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/admin/inventory/po/list/${id}`);
+      return response.data.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+    }
+  }
+);
+
+// /admin/inventory/item
 const OPSlice = createSlice({
   name: 'purchaseOrder',
   initialState: {
@@ -80,7 +111,33 @@ const OPSlice = createSlice({
       .addCase(CreateVendor.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      });
+      })
+    // Create perchase order
+      .addCase(CreatePurchaseOrder.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(CreatePurchaseOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedItem = action.payload; 
+      })
+      .addCase(CreatePurchaseOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // getOPList
+      .addCase(GetPOList.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(GetPOList.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedItem = action.payload; 
+      })
+      .addCase(GetPOList.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
   },
 });
 

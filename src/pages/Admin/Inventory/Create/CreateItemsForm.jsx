@@ -8,10 +8,10 @@ import { useDispatch, useSelector } from "react-redux";
 import Tax from "../modal/Tax";
 import Manufacturer from "../modal/Manufacturer";
 import Brand from "../modal/Brand";
-import Units from "../modal/Units";
 import { getCustomFields, deleteCustomField } from "../../../../store/AdminSlice/CustomField";
 import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
 import { getVendors } from "../../../../store/AdminSlice/Inventory/VendorSlice";
+import Units from "../modal/units";
 
 const CreateItemsForm = () => {
     const { id } = useParams();
