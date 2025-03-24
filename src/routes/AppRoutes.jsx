@@ -108,6 +108,7 @@ import BookingCheckout from "../pages/Admin/Booking/BookingCheckout";
 
 
 
+
 const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
   const [locations, setLocations] = useState([]);
 
@@ -235,11 +236,12 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/Inventory/InvoicePayment" element={<InvoicePaymentInventory />} />
           <Route path="/admin/Inventory/InventorySetting" element={<InventorySettingAdmin />} />
           <Route path="/admin/Inventory/SaleOrderDetails/:id" element={<SODetails />} />
-          <Route path="/admin/Inventory/SaleInvoiceDetails" element={<SIDetails />} />
+          <Route path="/admin/Inventory/SaleInvoiceDetails/:id" element={<SIDetails />} />
           <Route path="/admin/Inventory/InvoicePaymentDetails" element={<IPDetails />} />
           <Route path="/admin/Inventory/SaleOrderCreate" element={<SOCreate />} />
           <Route path="/admin/Inventory/SaleOrderCreate/:id" element={<SOCreate />} />
           <Route path="/admin/Inventory/InvoiceCreate" element={<InvoiceCreate />} />
+          <Route path="/admin/Inventory/InvoiceCreate/:id" element={<InvoiceCreate />} />
           <Route path="/admin/inventory/purchase-bill-list" element={<PurchaseBillList />} />
           <Route path="/admin/inventory/purchaseReceived" element={<PurchaseReceivedAdmin />} />
           <Route path="/admin/inventory/purchaseReceivedCreate" element={<PRCreate />} />

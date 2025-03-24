@@ -22,6 +22,7 @@ import timerReducer from './AdminSlice/TimerSlice';
 import itemGroupReducer from './AdminSlice/Inventory/ItemGroupSlice';
 import purchaseOrderReducer from './AdminSlice/Inventory/purchaseOrder';
 import soReducer from './AdminSlice/Inventory/SoSlice';
+import soInvoiceRouter from './AdminSlice/Inventory/SoInvoiceSlice';
 
 export const store = configureStore({
   reducer: {
@@ -46,6 +47,7 @@ export const store = configureStore({
     itemGroups: itemGroupReducer,
     purchaseOrder: purchaseOrderReducer,
     so: soReducer,
+     soInvoice: soInvoiceRouter,
 
         // bookings
         bookings: bookingsReducer,

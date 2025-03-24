@@ -1,525 +1,618 @@
-import { useState } from "react";
-import { Breadcrumb, BreadcrumbItem, Button, Card, Container, Form, FormControl, FormGroup, FormLabel, Image, NavItem, NavLink, TabContainer, TabContent, Table, TabPane } from "react-bootstrap"
+import { useState, useEffect } from "react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  Button,
+  Card,
+  Container,
+  Form,
+  FormControl,
+  FormGroup,
+  FormLabel,
+  Image,
+  NavItem,
+  NavLink,
+  TabContainer,
+  TabContent,
+  Table,
+  TabPane,
+} from "react-bootstrap";
 import { Nav, Tab, Col, Row } from "react-bootstrap";
 import deleteplogo from "/assets/inventory/Vector (1).png";
-import check from "/assets/inventory/Check.png"
-
+import check from "/assets/inventory/Check.png";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getCustomFields,
+  addCustomField,
+  updateCustomField,
+  deleteCustomField,
+} from "../../../../store/AdminSlice/CustomField";
+import { BiCheck, BiTrash } from "react-icons/bi";
 
 export const InventorySettingAdmin = () => {
-    const [activeKey, setActiveKey] = useState("unit");
-    const [newUnit, setNewUnit] = useState({ name: "", code: "" });
-    const [newBrand, setNewBrand] = useState({ name: "" });
-    const [newManufacturer, setNewManufacturer] = useState({ name: "" });
-    const [newpaymentTerm, setNewPaymentTerm] = useState({ name: "", noofDays: "" });
+  const dispatch = useDispatch();
+  const { customFields, loading } = useSelector((state) => state.customFields);
+  const [activeKey, setActiveKey] = useState("unit");
+  const [newUnit, setNewUnit] = useState({ name: "", code: "" });
+  const [newBrand, setNewBrand] = useState({ name: "" });
+  const [newManufacturer, setNewManufacturer] = useState({ name: "" });
+  const [newpaymentTerm, setNewPaymentTerm] = useState({ name: "", code: "" });
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const cafeId = user?._id;
 
+  useEffect(() => {
+    dispatch(getCustomFields(cafeId));
+  }, [dispatch, cafeId]);
 
-    const [units, setUnits] = useState([
-        { id: 1, name: "pcs", code: "646" },
-        { id: 2, name: "abs", code: "909099" },
-    ]);
+  // Filter custom fields by type
+  const units = customFields.filter((field) => field.type === "Unit");
+  const brands = customFields.filter((field) => field.type === "Brand");
+  const manufacturers = customFields.filter(
+    (field) => field.type === "Manufacturer"
+  );
+  const paymentTerms = customFields.filter(
+    (field) => field.type === "Payment Terms"
+  );
 
-    const [brands, setBrands] = useState([
-        { id: 1, name: "Brand1" },
-        { id: 2, name: "Brand2" },
-        { id: 3, name: "Brand3" },
-    ]);
+  const handleUnitChange = (e) => {
+    const { name, value } = e.target;
+    setNewUnit({ ...newUnit, [name]: value });
+  };
 
-    const [manufacturers, setManufacturers] = useState([
-        { id: 1, name: "Manufacturer1" },
-        { id: 2, name: "Manufacturer2" },
-        { id: 3, name: "Manufacturer3" },
-    ])
-    const [paymentTerm, setPaymentTerm] = useState(
-        [
-            { id: 1, name: "checque", noofDays: "5" },
-            { id: 2, name: "cash3", noofDays: "0" },
-            { id: 3, name: "bank transfer", noofDays: "3" },
-        ]
-    );
+  const handleBrandChange = (e) => {
+    setNewBrand({ name: e.target.value });
+  };
 
-
-
-    const handleUnitChange = (e) => {
-        const { name, value } = e.target;
-        setNewUnit({ ...newUnit, [name]: value });
-    };
-
-    const handleBrandChange = (e) => {
-        setNewBrand({ name: e.target.value });
-    };
-
-    const handleUnitSubmit = (e) => {
-        e.preventDefault();
-        if (newUnit.name && newUnit.code) {
-            setUnits([...units, { id: units.length + 1, ...newUnit }]);
-            setNewUnit({ name: "", code: "" });
-            console.log(units);
-        }
-    };
-
-    const handleBrandSubmit = (e) => {
-        e.preventDefault();
-        if (newBrand.name) {
-            setBrands([...brands, { id: brands.length + 1, ...newBrand }]);
-            setNewBrand({ name: "" });
-            console.log("brands -------", brands);
-        }
-    };
-
-    const handalePaymentTermSubmit = (e) => {
-        e.preventDefault();
-        if (newpaymentTerm.name && newpaymentTerm.noofDays) {
-            setPaymentTerm([...paymentTerm, { id: paymentTerm.length + 1, ...newpaymentTerm }]);
-            setNewPaymentTerm({ name: "", noofDays: "" });
-            console.log("brands -------", paymentTerm);
-        }
+  const handleUnitSubmit = (e) => {
+    e.preventDefault();
+    if (newUnit.name && newUnit.code) {
+      dispatch(
+        addCustomField({
+          name: newUnit.name,
+          code: newUnit.code,
+          type: "Unit",
+          cafe: cafeId,
+          description: "Custom field for product",
+        })
+      );
+      setNewUnit({ name: "", code: "" });
     }
+  };
 
-    const handleManufacturerSubmit = (e) => {
-        e.preventDefault();
-        if (newManufacturer.name) {
-            setManufacturers([...manufacturers, { id: manufacturers.length + 1, ...newManufacturer }]);
-            setNewBrand({ name: "" });
-            console.log("brands -------", manufacturers);
-        }
+  const handleBrandSubmit = (e) => {
+    e.preventDefault();
+    if (newBrand.name) {
+      dispatch(
+        addCustomField({
+          name: newBrand.name,
+          type: "Brand",
+          cafe: cafeId,
+          description: "Custom field for product",
+        })
+      );
+      setNewBrand({ name: "" });
     }
+  };
 
-    const handleUpdate = (id, name, code, noofDays) => {
-        setUnits(
-            units.map((unit1) =>
-                unit1.id === id ? { ...unit1, name, code } : unit1
-            )
-        );
-        setManufacturers(
-            manufacturers.map((manufacturer) =>
-                manufacturer.id === id ? { ...manufacturer, name } : manufacturer
-            )
-        )
-        setBrands(
-            brands.map((brand) =>
-                brand.id === id ? { ...brand, name } : brand
-            )
-        )
-        setPaymentTerm(
-            paymentTerm.map((paymentTerm) =>
-                paymentTerm.id === id ? { ...paymentTerm, name, noofDays } : paymentTerm
-            )
-        )
-    };
-
-    const handleDelete = (id) => {
-        setUnits(units.filter((unit) => unit.id !== id));
-    };
-    const handleDeleteBrand = (id) => {
-        setBrands(brands.filter((brand) => brand.id !== id));
+  const handleManufacturerSubmit = (e) => {
+    e.preventDefault();
+    if (newManufacturer.name) {
+      dispatch(
+        addCustomField({
+          name: newManufacturer.name,
+          type: "Manufacturer",
+          cafe: cafeId,
+          description: "Custom field for product",
+        })
+      );
+      setNewManufacturer({ name: "" });
     }
-    const handleDeletePaymentTerm = (id) => {
-        setPaymentTerm(paymentTerm.filter((paymentTerm) => paymentTerm.id !== id));
+  };
+
+  const handalePaymentTermSubmit = (e) => {
+    e.preventDefault();
+    if (newpaymentTerm.name && newpaymentTerm.code) {
+      dispatch(
+        addCustomField({
+          name: newpaymentTerm.name,
+          code: newpaymentTerm.code,
+          type: "Payment Terms",
+          cafe: cafeId,
+          description: "Custom field for product",
+        })
+      );
+      setNewPaymentTerm({ name: "", code: "" });
     }
+  };
 
-    const handleDeleteManufacturer = (id) => {
-        setManufacturers(manufacturers.filter((manufacturer) => manufacturer.id !== id));
+  const handleUpdate = (id, data) => {
+    dispatch(updateCustomField({ id, data }));
+  };
+
+  const handleDelete = (id) => {
+    dispatch(deleteCustomField(id));
+  };
+
+  // Add new state for edited items
+  const [editedFields, setEditedFields] = useState({});
+
+  // New function to handle temporary changes
+  const handleFieldChange = (id, field, value) => {
+    setEditedFields(prev => ({
+      ...prev,
+      [id]: { ...prev[id], [field]: value }
+    }));
+  };
+
+  // New function to submit changes
+  const handleSubmitChanges = (id) => {
+    if (editedFields[id]) {
+      handleUpdate(id, editedFields[id]);
+      setEditedFields(prev => {
+        const newState = { ...prev };
+        delete newState[id];
+        return newState;
+      });
     }
+  };
 
+  return (
+    <Container>
+      <Row className="px-2">
+        <Col sm={12} className="mx-4 my-3">
+          <div style={{ top: "186px", fontSize: "18px" }}>
+            <Breadcrumb>
+              <BreadcrumbItem href="#">Home</BreadcrumbItem>
+              <BreadcrumbItem href="#">Inventory</BreadcrumbItem>
+              <BreadcrumbItem active> Inventory Settings</BreadcrumbItem>
+            </Breadcrumb>
+          </div>
+        </Col>
 
-    return (
-        <Container>
-            <Row className="px-2">
-                <Col sm={12} className="mx-4 my-3">
-                    <div style={{ top: "186px", fontSize: "18px" }}>
-                        <Breadcrumb>
-                            <BreadcrumbItem href="#">Home</BreadcrumbItem>
-                            <BreadcrumbItem href="#">Inventory</BreadcrumbItem>
-                            <BreadcrumbItem active> Inventory Settings</BreadcrumbItem>
-                        </Breadcrumb>
-                    </div>
-                </Col>
+        <TabContainer
+          id="inventory-tabs"
+          activeKey={activeKey}
+          onSelect={(k) => setActiveKey(k)}
+        >
+          <Row>
+            <Col sm={5} className="tabs-responsive-side my-4 ">
+              <Card className="rounded-4 p-1 border">
+                <Nav
+                  variant="pills"
+                  className="nav-material justify-content-center "
+                >
+                  <NavItem>
+                    <NavLink
+                      eventKey="unit"
+                      className={
+                        activeKey === "unit" ? "bg-primary text-white" : ""
+                      }
+                    >
+                      Unit
+                    </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink
+                      eventKey="brand"
+                      className={
+                        activeKey === "brand" ? "bg-primary text-white" : ""
+                      }
+                    >
+                      Brand
+                    </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink
+                      eventKey="manufacturer"
+                      className={
+                        activeKey === "manufacturer"
+                          ? "bg-primary text-white"
+                          : ""
+                      }
+                    >
+                      Manufacturer
+                    </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink
+                      eventKey="paymentterms"
+                      className={
+                        activeKey === "paymentterms"
+                          ? "bg-primary text-white"
+                          : ""
+                      }
+                    >
+                      Payment Terms
+                    </NavLink>
+                  </NavItem>
+                </Nav>
+              </Card>
+            </Col>
+            <Col sm={6}></Col>
+            <Col sm={12}>
+              <TabContent>
+                <TabPane eventKey="unit">
+                  <Row>
+                    <Col sm={3} className="mb-2">
+                      <Card className="rounded-4 p-1 border h-100">
+                        <div className="my-3 mx-3">
+                          <h4 className="mb-4">Create New Unit</h4>
+                          <Form autoComplete="off" onSubmit={handleUnitSubmit}>
+                            <FormGroup className="mb-3">
+                              <FormLabel>Unit Name</FormLabel>
+                              <FormControl
+                                type="text"
+                                name="name"
+                                placeholder="Unit"
+                                value={newUnit.name}
+                                onChange={handleUnitChange}
+                                required
+                              />
+                            </FormGroup>
+                            <FormGroup className="mb-3">
+                              <FormLabel>Unique Quantity Code</FormLabel>
+                              <FormControl
+                                type="text"
+                                name="code"
+                                placeholder="000-000"
+                                value={newUnit.code}
+                                onChange={handleUnitChange}
+                                required
+                              />
+                            </FormGroup>
+                            <Button
+                              className="my-3 float-end"
+                              type="submit"
+                              variant="primary"
+                            >
+                              Submit
+                            </Button>
+                          </Form>
+                        </div>
+                      </Card>
+                    </Col>
+                    <Col sm={9} className="mb-2" style={{ overflowX: "auto" }}>
+                      <Card className="rounded-4 p-2 border h-100">
+                        <div className="my-3 mx-3">
+                          <h4 className="mb-4">Unit List</h4>
+                          <Table className="border-none" hover size="sm">
+                            <thead>
+                              <tr>
+                                <th></th>
+                                <th>Name</th>
+                                <th>Unit Code</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {units.map((unit) => (
+                                <tr key={unit._id}>
+                                  <td>{unit._id}</td>
+                                  <td>
+                                    <FormControl
+                                      type="text"
+                                      value={editedFields[unit._id]?.name ?? unit.name}
+                                      onChange={(e) => handleFieldChange(unit._id, 'name', e.target.value)}
+                                      style={{ minWidth: "200px" }}
+                                      className="border-0 bg-transparent"
+                                    />
+                                  </td>
+                                  <td>
+                                    <FormControl
+                                      type="text"
+                                      value={editedFields[unit._id]?.code ?? unit.code}
+                                      onChange={(e) => handleFieldChange(unit._id, 'code', e.target.value)}
+                                      style={{ minWidth: "200px" }}
+                                      className="border-0 bg-transparent"
+                                    />
+                                  </td>
+                                  <td className="d-flex gap-2">
+                                    <Button
+                                      variant="light"
+                                      size="sm"
+                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                      onClick={() => handleDelete(unit._id)}
+                                      style={{ backgroundColor: "#FFE5E5" }}
+                                    >
+                                      <BiTrash size={20} color="#FF4242" />
+                                    </Button>
+                                    <Button
+                                      variant="light"
+                                      size="sm"
+                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                      onClick={() => handleSubmitChanges(unit._id)}
+                                      style={{ backgroundColor: "#E8FFE5" }}
+                                      disabled={!editedFields[unit._id]}
+                                    >
+                                      <BiCheck size={20} color="#28A745" />
+                                    </Button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </Table>
+                        </div>
+                      </Card>
+                    </Col>
+                  </Row>
+                </TabPane>
 
-                <TabContainer id="inventory-tabs" activeKey={activeKey} onSelect={(k) => setActiveKey(k)} >
-                    <Row>
-                        <Col sm={6} className="tabs-responsive-side my-4 ">
-                            <Card className="rounded-4 p-1 border">
-                                <Nav variant="pills" className="nav-material justify-content-center ">
-                                    <NavItem>
-                                        <NavLink eventKey="unit" className={activeKey === "unit" ? "bg-primary text-white" : ""}
-                                     
-                                        >Unit</NavLink>
-                                    </NavItem>
-                                    <NavItem>
-                                        <NavLink eventKey="brand" className={activeKey === "brand" ? "bg-primary text-white" : ""}
-                                        >Brand</NavLink>
-                                    </NavItem>
-                                    <NavItem>
-                                        <NavLink eventKey="manufacturer" className={activeKey === "manufacturer" ? "bg-primary text-white" : ""}
-                                        >Manufacturer</NavLink>
-                                    </NavItem>
-                                    <NavItem>
-                                        <NavLink eventKey="paymentterms" className={activeKey === "paymentterms" ? "bg-primary text-white" : ""    }>Payment Terms</NavLink>
-                                    </NavItem>
-                                </Nav>
-                            </Card>
-                        </Col>
-                        <Col sm={6}></Col>
-                        <Col sm={12}>
-                            <TabContent>
-                                <TabPane eventKey="unit">
+                <TabPane eventKey="brand">
+                  <Row>
+                    <Col sm={3} className="mb-2">
+                      <Card className="rounded-4 p-1 border h-100">
+                        <div className="my-3 mx-3">
+                          <h4 className="mb-4">Create New Brand</h4>
+                          <Form autoComplete="off" onSubmit={handleBrandSubmit}>
+                            <FormGroup className="mb-3">
+                              <FormLabel>Brand Name</FormLabel>
+                              <FormControl
+                                type="text"
+                                placeholder="Brand Name"
+                                value={newBrand.name}
+                                onChange={handleBrandChange}
+                                required
+                              />
+                            </FormGroup>
+                            <Button
+                              className="my-3 float-end"
+                              type="submit"
+                              variant="primary"
+                            >
+                              Submit
+                            </Button>
+                          </Form>
+                        </div>
+                      </Card>
+                    </Col>
+                    <Col sm={9} className="mb-2" style={{ overflowX: "auto" }}>
+                      <Card className="rounded-4 p-2 border h-100">
+                        <div className="my-3 mx-3">
+                          <h4 className="mb-4">Brand List</h4>
+                          <Table className="border-none" hover size="sm">
+                            <thead>
+                              <tr>
+                                <th></th>
+                                <th>Name</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {brands.map((brand) => (
+                                <tr key={brand._id}>
+                                  <td>{brand._id}</td>
+                                  <td>
+                                    <FormControl
+                                      type="text"
+                                      value={editedFields[brand._id]?.name ?? brand.name}
+                                      onChange={(e) => handleFieldChange(brand._id, 'name', e.target.value)}
+                                      style={{ minWidth: "200px" }}
+                                      className="border-0 bg-transparent"
+                                    />
+                                  </td>
+                                  <td className="d-flex gap-2">
+                                    <Button
+                                      variant="light"
+                                      size="sm"
+                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                      onClick={() => handleDelete(brand._id)}
+                                      style={{ backgroundColor: "#FFE5E5" }}
+                                    >
+                                      <BiTrash size={20} color="#FF4242" />
+                                    </Button>
+                                    <Button
+                                      variant="light"
+                                      size="sm"
+                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                      onClick={() => handleSubmitChanges(brand._id)}
+                                      style={{ backgroundColor: "#E8FFE5" }}
+                                      disabled={!editedFields[brand._id]}
+                                    >
+                                      <BiCheck size={20} color="#28A745" />
+                                    </Button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </Table>
+                        </div>
+                      </Card>
+                    </Col>
+                  </Row>
+                </TabPane>
 
-                                    <Row>
-                                        <Col sm={4} className="mb-2">
-                                            <Card className="rounded-4 p-1 border h-100">
-                                                <div className="my-3 mx-3">
-                                                    <h4 className="mb-4">Create New Unit</h4>
-                                                    <Form autoComplete="off" onSubmit={handleUnitSubmit}>
-                                                        <FormGroup className="mb-3">
-                                                            <FormLabel>Unit Name</FormLabel>
-                                                            <FormControl
-                                                                type="text"
-                                                                name="name"
-                                                                placeholder="Unit"
-                                                                value={newUnit.name}
-                                                                onChange={handleUnitChange}
-                                                                required
-                                                            />
-                                                        </FormGroup>
-                                                        <FormGroup className="mb-3">
-                                                            <FormLabel>Unique Quantity Code</FormLabel>
-                                                            <FormControl
-                                                                type="text"
-                                                                name="code"
-                                                                placeholder="000-000"
-                                                                value={newUnit.code}
-                                                                onChange={handleUnitChange}
-                                                                required
-                                                            />
-                                                        </FormGroup>
-                                                        <Button className="my-3 float-end" type="submit" variant="primary">
-                                                            Submit
-                                                        </Button>
-                                                    </Form>
-                                                </div>
-                                            </Card>
-                                        </Col>
-                                        <Col sm={8} className="mb-2" style={{ overflowX: "auto" }}>
-                                            <Card className="rounded-4 p-2 border h-100">
-                                                <div className="my-3 mx-3">
+                <TabPane eventKey="manufacturer">
+                  <Row>
+                    <Col sm={3} className="mb-2">
+                      <Card className="rounded-4 p-1 border h-100">
+                        <div className="my-3 mx-3">
+                          <h4 className="mb-4">Create New Manufacturer</h4>
+                          <Form autoComplete="off" onSubmit={handleManufacturerSubmit}>
+                            <FormGroup className="mb-3">
+                              <FormLabel>Manufacturer Name</FormLabel>
+                              <FormControl
+                                type="text"
+                                placeholder="Manufacturer Name"
+                                value={newManufacturer.name}
+                                onChange={(e) => setNewManufacturer({ ...newManufacturer, name: e.target.value })}
+                                required
+                              />
+                            </FormGroup>
+                            <Button
+                              className="my-3 float-end"
+                              type="submit"
+                              variant="primary"
+                            >
+                              Submit
+                            </Button>
+                          </Form>
+                        </div>
+                      </Card>
+                    </Col>
+                    <Col sm={9} className="mb-2" style={{ overflowX: "auto" }}>
+                      <Card className="rounded-4 p-2 border h-100">
+                        <div className="my-3 mx-3">
+                          <h4 className="mb-4">Manufacturer List</h4>
+                          <Table className="border-none" hover size="sm">
+                            <thead>
+                              <tr>
+                                <th></th>
+                                <th>Name</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {manufacturers.map((manufacturer) => (
+                                <tr key={manufacturer._id}>
+                                  <td>{manufacturer._id}</td>
+                                  <td>
+                                    <FormControl
+                                      type="text"
+                                      value={editedFields[manufacturer._id]?.name ?? manufacturer.name}
+                                      onChange={(e) => handleFieldChange(manufacturer._id, 'name', e.target.value)}
+                                      style={{ minWidth: "200px" }}
+                                      className="border-0 bg-transparent"
+                                    />
+                                  </td>
+                                  <td className="d-flex gap-2">
+                                    <Button
+                                      variant="light"
+                                      size="sm"
+                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                      onClick={() => handleDelete(manufacturer._id)}
+                                      style={{ backgroundColor: "#FFE5E5" }}
+                                    >
+                                      <BiTrash size={20} color="#FF4242" />
+                                    </Button>
+                                    <Button
+                                      variant="light"
+                                      size="sm"
+                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                      onClick={() => handleSubmitChanges(manufacturer._id)}
+                                      style={{ backgroundColor: "#E8FFE5" }}
+                                      disabled={!editedFields[manufacturer._id]}
+                                    >
+                                      <BiCheck size={20} color="#28A745" />
+                                    </Button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </Table>
+                        </div>
+                      </Card>
+                    </Col>
+                  </Row>
+                </TabPane>
 
-                                                    <h4 className="mb-4">Unit List</h4>
-                                                    <Table className="border-none" hover size="sm">
-                                                        <thead>
-                                                            <tr>
-                                                                <th></th>
-                                                                <th>Name</th>
-                                                                <th>Unit Code</th>
-                                                                <th>Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {units.map((unit) => (
-                                                                <tr key={unit.id}>
-                                                                    <td>{unit.id}</td>
-                                                                    <td>
-                                                                        <FormControl
-                                                                            type="text"
-                                                                            value={unit.name}
-                                                                            onChange={(e) => handleUpdate(unit.id, e.target.value)}
-                                                                            style={{ minWidth: "200px" }}
-                                                                        />
-                                                                    </td>
-                                                                    <td>
-                                                                        <FormControl
-                                                                            type="text"
-                                                                            value={unit.code}
-                                                                            onChange={(e) => handleUpdate(unit.id, e.target.value)}
-                                                                            style={{ minWidth: "200px" }}
-                                                                        />
-                                                                    </td>
-                                                                    <td>
-                                                                        <Button
-                                                                            variant=""
-                                                                            size="sm"
-                                                                            className="px-2 rounded-3"
-                                                                            onClick={() => handleDelete(unit.id)}
-                                                                      style={{backgroundColor:"#FFD9DA"}}
-                                                                        
-                                                                        >
-                                                                            <Image src={deleteplogo} className="mx-2" />
-                                                                        </Button>
-                                                                        <Button
-                                                                            variant=""
-                                                                            size="sm"
-                                                                            className="px-2 mx-2 rounded-3"
-                                                                            style={{backgroundColor:"#D1FFC8"}}
-                                                                        // onClick={() => handleUpdate(unit.id, unit.name, unit.code)}
-                                                                        >
-
-                                                                            <Image src={check} className="mx-2"/>
-                                                                        </Button>
-                                                                    </td>
-                                                                </tr>
-                                                            ))}
-                                                        </tbody>
-                                                    </Table>
-
-
-                                                </div>
-                                            </Card>
-                                        </Col>
-                                    </Row>
-
-                                </TabPane>
-
-                                <TabPane eventKey="brand">
-
-                                    <Row>
-                                        <Col sm={4} className="mb-2">
-                                            <Card className="rounded-4 p-1 border h-100">
-                                                <div className="my-3 mx-3">
-                                                    <h4 className="mb-4">Create New Brand</h4>
-                                                    <Form autoComplete="off" onSubmit={handleBrandSubmit}>
-                                                        <FormGroup className="mb-3">
-                                                            <FormLabel>Brand Name</FormLabel>
-                                                            <FormControl
-                                                                type="text"
-                                                                placeholder="Brand Name"
-                                                                value={newBrand.name}
-                                                                onChange={handleBrandChange}
-                                                                required
-                                                            />
-                                                        </FormGroup>
-                                                        <Button className="my-3 float-end" type="submit" variant="primary">
-                                                            Submit
-                                                        </Button>
-                                                    </Form>
-                                                </div>
-                                            </Card>
-                                        </Col>
-                                        <Col sm={8} className="mb-2" style={{ overflowX: "auto" }}>
-                                            <Card className="rounded-4 p-2 border h-100">
-                                                <div className="my-3 mx-3">
-                                                    <h4 className="mb-4">Brand List</h4>
-                                                    <Table className="border-none" hover size="sm">
-                                                        <thead>
-                                                            <tr>
-                                                                <th></th>
-                                                                <th>Name</th>
-                                                                <th>Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {brands.map((brand) => (
-                                                                <tr key={brand.id}>
-                                                                    <td>{brand.id}</td>
-                                                                    <td><FormControl type="text" value={brand.name} /></td>
-                                                                    <td>
-                                                                        <Button
-                                                                            variant=""
-                                                                            size="sm"
-                                                                            className="px-2 mx-2 rounded-3"
-                                                                            // onClick={() =>
-                                                                            //     setBrands(brands.filter((b) => b.id !== brand.id))
-                                                                            // }
-                                                                            onClick={() => handleDeleteBrand(brand.id)}
-                                                                            style={{backgroundColor:"#FFD9DA"}}
-
-                                                                        >
-                                                                            <Image src={deleteplogo} className="mx-2" />
-                                                                        </Button>
-                                                                        <Button
-                                                                            variant=""
-                                                                            size="sm"
-                                                                            className="px-2 rounded-3"
-                                                                            style={{backgroundColor:"#D1FFC8"}}
-                                                                        // onClick={() => handleUpdate(unit.id, unit.name, unit.code)}
-                                                                        >
-
-                                                                            <Image src={check} className="mx-2" />
-                                                                        </Button>
-                                                                    </td>
-                                                                </tr>
-                                                            ))}
-                                                        </tbody>
-                                                    </Table>
-                                                </div>
-                                            </Card>
-                                        </Col>
-                                    </Row>
-
-                                </TabPane>
-
-                                <TabPane eventKey="manufacturer">
-
-                                    <Row>
-                                        <Col sm={4} className="mb-2">
-                                            <Card className="rounded-4 p-1 border h-100">
-                                                <div className="my-3 mx-3">
-                                                    <h4 className="mb-4">Create New Manufacturer </h4>
-                                                    <Form autoComplete="off" onSubmit={handleManufacturerSubmit}>
-                                                        <FormGroup className="mb-3">
-                                                            <FormLabel>Manufacturer Name</FormLabel>
-                                                            <FormControl
-                                                                type="text"
-                                                                placeholder="Manufacturer Name"
-                                                                value={newManufacturer.name}
-                                                                onChange={(e) => setNewManufacturer({ ...newManufacturer, name: e.target.value })}
-                                                                required
-                                                            />
-                                                        </FormGroup>
-                                                        <Button className="my-3 float-end" type="submit" variant="primary">
-                                                            Submit
-                                                        </Button>
-                                                    </Form>
-                                                </div>
-                                            </Card>
-                                        </Col>
-                                        <Col sm={8} className="mb-2" style={{ overflowX: "auto" }}>
-                                            <Card className="rounded-4 p-2 border h-100">
-                                                <div className="my-3 mx-3">
-                                                    <h4 className="mb-4">Manufacturer List</h4>
-                                                    <Table className="border-none" hover size="sm">
-                                                        <thead>
-                                                            <tr>
-                                                                <th></th>
-                                                                <th>Name</th>
-                                                                <th>Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {manufacturers.map((brand) => (
-                                                                <tr key={brand.id}>
-                                                                    <td>{brand.id}</td>
-                                                                    <td><FormControl type="text" value={brand.name}
-                                                                        onChange={(e) => handleUpdate(brand.id, e.target.value)}
-                                                                    />
-                                                                    </td>
-                                                                    <td>
-                                                                        <Button
-                                                                            variant=""
-                                                                            size="sm"
-                                                                            className="px-2 mx-2 rounded-3"
-                                                                            onClick={() => handleDeleteManufacturer(brand.id)}
-                                                                            style={{backgroundColor:"#FFD9DA"}}
-                                                                        >
-                                                                            <Image src={deleteplogo} className="mx-2"/>
-                                                                        </Button>
-                                                                        <Button
-                                                                            variant=""
-                                                                            size="sm"
-                                                                            className="px-2 rounded-3"
-                                                                            style={{backgroundColor:"#D1FFC8"}}
-                                                                        // onClick={() => handleUpdate(unit.id, unit.name, unit.code)}
-                                                                        >
-
-                                                                            <Image src={check} className="mx-2"/>
-                                                                        </Button>
-                                                                    </td>
-                                                                </tr>
-                                                            ))}
-                                                        </tbody>
-                                                    </Table>
-                                                </div>
-                                            </Card>
-                                        </Col>
-                                    </Row>
-
-                                </TabPane>
-
-                                <TabPane eventKey="paymentterms">
-                                    {/* <Card className="rounded-2 p-2 border"> */}
-                                    <Row >
-
-                                        <Col sm={4} className="mb-2 ">
-                                            <Card className="rounded-2 p-2 border ">
-                                                <div className="mx-4 my-4">
-
-                                                    <h4 className="mb-4">Create New Payment Terms </h4>
-                                                    <Form autoComplete="off" onSubmit={handalePaymentTermSubmit}>
-                                                        <FormGroup className="mb-3">
-                                                            <FormLabel>Term name</FormLabel>
-                                                            <FormControl
-                                                                type="text"
-                                                                placeholder="Manufacturer Name"
-                                                                value={newpaymentTerm.name}
-                                                                onChange={(e) => setNewPaymentTerm({ ...newpaymentTerm, name: e.target.value })}
-                                                                required
-                                                            />
-                                                        </FormGroup>
-                                                        <FormGroup className="mb-3">
-                                                            <FormLabel>No of days</FormLabel>
-                                                            <FormControl
-                                                                type="text"
-                                                                placeholder="No of days"
-                                                                value={newpaymentTerm.noofDays}
-                                                                onChange={(e) => setNewPaymentTerm({ ...newpaymentTerm, noofDays: e.target.value })}
-                                                                required
-                                                            />
-                                                        </FormGroup>
-                                                        <Button className="my-3 float-end" type="submit" variant="primary">
-                                                            Submit
-                                                        </Button>
-                                                    </Form>
-
-                                                </div>
-                                            </Card>
-                                        </Col>
-
-
-                                        <Col sm={8} className="mb-2" style={{ overflowX: "auto" }}>
-                                            <Card className="rounded-2 p-2 border h-100">
-                                                <div className="mx-4 my-4">
-                                                    <h4 className="mb-4">Payment Terms List</h4>
-                                                    <Table className="border-none" hover size="sm">
-                                                        <thead>
-                                                            <tr>
-                                                                <th></th>
-                                                                <th>Name</th>
-                                                                <th> Days</th>
-                                                                <th>Action</th>
-
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {paymentTerm.map((brand) => (
-                                                                <tr key={brand.id}>
-                                                                    <td>{brand.id}</td>
-                                                                    <td><FormControl type="text" value={brand.name} onChange={(e) => handleUpdate(brand.id, e.target.value)} /></td>
-                                                                    <td><FormControl type="text" value={brand.noofDays} onChange={(e) => handleUpdate(brand.id, e.target.value)} /></td>
-                                                                    <td>
-                                                                        <Button
-                                                                            variant=""
-                                                                            size="sm"
-                                                                            className="px-2 mx-1 rounded-3"
-                                                                            onClick={() => handleDeletePaymentTerm(brand.id)}
-                                                                            style={{backgroundColor:"#FFD9DA"}}
-                                                                        >
-                                                                            <Image src={deleteplogo} className="mx-2"/>
-                                                                        </Button>
-                                                                        <Button
-                                                                            variant=""
-                                                                            size="sm"
-                                                                            className="px-2 mx-1 rounded-3"
-                                                                        // onClick={() => handleUpdate(unit.id, unit.name, unit.code)}
-                                                                        style={{backgroundColor:"#D1FFC8"}}
-                                                                        >
-
-                                                                            <Image src={check} className="mx-2" />
-                                                                        </Button>
-                                                                    </td>
-                                                                </tr>
-                                                            ))}
-                                                        </tbody>
-                                                    </Table>
-                                                </div>
-                                            </Card>
-                                        </Col>
-
-                                    </Row>
-                                    {/* </Card> */}
-                                </TabPane>
-                            </TabContent>
-                        </Col>
-                    </Row>
-                </TabContainer>
-            </Row>
-        </Container>
-    );
+                <TabPane eventKey="paymentterms">
+                  <Row>
+                    <Col sm={3} className="mb-2">
+                      <Card className="rounded-4 p-1 border h-100">
+                        <div className="my-3 mx-3">
+                          <h4 className="mb-4">Create New Payment Terms</h4>
+                          <Form autoComplete="off" onSubmit={handalePaymentTermSubmit}>
+                            <FormGroup className="mb-3">
+                              <FormLabel>Term Name</FormLabel>
+                              <FormControl
+                                type="text"
+                                placeholder="Term Name"
+                                value={newpaymentTerm.name}
+                                onChange={(e) => setNewPaymentTerm({ ...newpaymentTerm, name: e.target.value })}
+                                required
+                              />
+                            </FormGroup>
+                            <FormGroup className="mb-3">
+                              <FormLabel>No of Days</FormLabel>
+                              <FormControl
+                                type="text"
+                                placeholder="No of Days"
+                                value={newpaymentTerm.code}
+                                onChange={(e) => setNewPaymentTerm({ ...newpaymentTerm, code: e.target.value })}
+                                required
+                              />
+                            </FormGroup>
+                            <Button
+                              className="my-3 float-end"
+                              type="submit"
+                              variant="primary"
+                            >
+                              Submit
+                            </Button>
+                          </Form>
+                        </div>
+                      </Card>
+                    </Col>
+                    <Col sm={9} className="mb-2" style={{ overflowX: "auto" }}>
+                      <Card className="rounded-4 p-2 border h-100">
+                        <div className="my-3 mx-3">
+                          <h4 className="mb-4">Payment Terms List</h4>
+                          <Table className="border-none" hover size="sm">
+                            <thead>
+                              <tr>
+                                <th></th>
+                                <th>Name</th>
+                                <th>Days</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {paymentTerms.map((term) => (
+                                <tr key={term._id}>
+                                  <td>{term._id}</td>
+                                  <td>
+                                    <FormControl
+                                      type="text"
+                                      value={editedFields[term._id]?.name ?? term.name}
+                                      onChange={(e) => handleFieldChange(term._id, 'name', e.target.value)}
+                                      style={{ minWidth: "200px" }}
+                                      className="border-0 bg-transparent"
+                                    />
+                                  </td>
+                                  <td>
+                                    <FormControl
+                                      type="text"
+                                      value={editedFields[term._id]?.code ?? term.code}
+                                      onChange={(e) => handleFieldChange(term._id, 'code', e.target.value)}
+                                      style={{ minWidth: "200px" }}
+                                      className="border-0 bg-transparent"
+                                    />
+                                  </td>
+                                  <td className="d-flex gap-2">
+                                    <Button
+                                      variant="light"
+                                      size="sm"
+                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                      onClick={() => handleDelete(term._id)}
+                                      style={{ backgroundColor: "#FFE5E5" }}
+                                    >
+                                      <BiTrash size={20} color="#FF4242" />
+                                    </Button>
+                                    <Button
+                                      variant="light"
+                                      size="sm"
+                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                      onClick={() => handleSubmitChanges(term._id)}
+                                      style={{ backgroundColor: "#E8FFE5" }}
+                                      disabled={!editedFields[term._id]}
+                                    >
+                                      <BiCheck size={20} color="#28A745" />
+                                    </Button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </Table>
+                        </div>
+                      </Card>
+                    </Col>
+                  </Row>
+                </TabPane>
+              </TabContent>
+            </Col>
+          </Row>
+        </TabContainer>
+      </Row>
+    </Container>
+  );
 };

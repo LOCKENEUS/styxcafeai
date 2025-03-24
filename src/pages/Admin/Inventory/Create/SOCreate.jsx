@@ -144,11 +144,7 @@ const SOCreate = () => {
     "1800": 1800,
   };
 
-  const calculateTotal = (price, quantity, tax) => {
-    const subtotal = price * quantity;
-    const totalTax = Math.round((subtotal * tax) / 100);
-    return { total: subtotal + totalTax, totalTax };
-  };
+
 
   const updateProduct = (id, field, value) => {
     const updatedProducts = products.map((product) => {
@@ -250,8 +246,7 @@ const SOCreate = () => {
     calculateTotals();
   }, [products, totals.discount, totals.discountType, totals.selectedTaxes, totals.adjustmentAmount]);
 
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
+
   const [files, setFiles] = useState([]);
 
   const handleFileChange = (event) => {

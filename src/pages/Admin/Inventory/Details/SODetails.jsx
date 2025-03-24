@@ -343,7 +343,19 @@ export const SODetails = () => {
             </Row>
         </Card>
         </Col>
-
+        <Col sm={12} className="my-2">
+                    <Card className="p-3 shadow-sm">
+                        <h5 className="mb-3" style={{ fontSize: '20px' }}>Terms and Condition </h5>
+                        <div className="table-responsive">
+                          { 
+                            !selectedSO.internal_team_notes === "" ?                            
+                            <b>{selectedSO.internal_team_notes}</b> :
+                            <b className="mx-auto">Terms and Condition not applied</b>
+                        
+                        }
+                        </div>
+                    </Card>
+                </Col>
         <Col sm={12} className="my-2">
             <Card className=" p-3 shadow-sm">
                 <h5 className=" mb-3" style={{ fontSize:'20px' }}>Package Details</h5>
