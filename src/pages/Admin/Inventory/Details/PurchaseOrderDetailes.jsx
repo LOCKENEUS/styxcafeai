@@ -7,11 +7,57 @@ import print from "/assets/inventory/Vector.png";
 import sendMail from "/assets/inventory/Group.png";
 import editlogo from "/assets/inventory/mage_edit.png";
 import companylog from "/assets/inventory/companylogo.png";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+// import { GetPurchaseOrder } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 
-
+import { useDispatch, useSelector } from "react-redux";
+import { GetPurchaseOrder } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 
 const PurchaseOrderDetails = () => {
+    const dispatch = useDispatch();
+    const location = useLocation();
+    const purchaseOrder = location.state;
+  
+    console.log("Purchase Order 101:", purchaseOrder);
+    const ShippingAd = purchaseOrder?.vendor_id?.shippingAddress;
+    const BillingAddress = purchaseOrder?.vendor_id?.billingAddress;
+    const payment_terms = purchaseOrder?.payment_terms;
+    const reference = purchaseOrder?.reference;
+    const shipment_preference = purchaseOrder?.shipment_preference;
+    console.log("payment_terms", shipment_preference);
+    const delivery_datedelivery_date = purchaseOrder?.delivery_date;
+    console.log("delivery_datedelivery_date", new Date(delivery_datedelivery_date).toLocaleDateString());
+    
+
+    const user = JSON.parse(sessionStorage.getItem("user"));
+ 
+  const cafeId = user?._id;
+
+  console.log("user ----", user);
+  const userName= user?.name;
+  const userEmail= user?.email;
+  const UserContactN = user?.contact_no;
+  const UserAddress = user?.address;
+  const UesrPAN = user?.panNo;
+  console.log("userName call ----", userName);
+ 
+ 
+  useEffect(() => {
+    dispatch(GetPurchaseOrder(user?._id));
+    
+    
+  }, [dispatch]);
+  const PurchaseOrderList = useSelector((state) => state.purchaseOrder);
+  console.log("Purchase Order filter data PurchaseOrderList :", PurchaseOrderList);
+  console.log("Purchase Order filter data selectedItem:", PurchaseOrderList?.selectedItem);
+
+
+
+
+
+
+  
   return (
     <Container >
         <Row className="mx-2">
@@ -33,7 +79,7 @@ const PurchaseOrderDetails = () => {
                         <Col sm={6} xs={12}>
                             <h5 className="text-dark p-2" style={{ fontSize: '18px' }}>
                                 <span>Purchase Order  :  </span>
-                                <span> PB-005</span>
+                                <span> {purchaseOrder?.po_no}</span>
                             </h5>
                         </Col>
                         <Col sm={6} xs={12} className="d-flex flex-wrap justify-content-center justify-content-sm-end align-items-center gap-2 text-center">
@@ -60,12 +106,12 @@ const PurchaseOrderDetails = () => {
                             <img src={companylog} alt="Logo" className="img-fluid" />
                         </Col>
                         <Col sm={8}>
-                            <h5>Linganwar</h5>
-                            <p className="mb-1">yash123linganwar@gmail.com / 91562173745</p>
+                            <h5>{userName}</h5>
+                            <p className="mb-1">{userEmail} / {UserContactN}</p>
                             <p className="mb-1">
-                                Karve Statue, DP Road, Mayur Colony, Kothrud, Pune, Maharashtra, India
+                               {UserAddress}
                             </p>
-                            <strong>PAN: ADNP5467B</strong>
+                            <strong>PAN: {UesrPAN}</strong>
                         </Col>
                         <Col sm={2} className=" d-flex  ">
                             <span className="p-2 float-right">PO :<b className="text-primary">Received</b></span>
@@ -81,16 +127,16 @@ const PurchaseOrderDetails = () => {
                     <Row>
                         {/* Customer Info */}
                         <Col sm={4}  >
-                            <h5 className="text-primary mb-3" style={{ fontSize: '20px' }}>Rupesh Suryvanshi</h5>
+                            <h5 className="text-primary mb-3" style={{ fontSize: '20px' }}>{purchaseOrder?.reference}</h5>
                             <Row>
                                 <Col sm={6} >
                                     <span style={{ fontSize: '16px', fontWeight: '500' }}>Billing Address</span>
-                                    <p className="my-3">Nagpur Division, Maharashtra, India</p>
+                                    <p className="my-3">{BillingAddress} ||Nagpur Division, Maharashtra, India</p>
                                 </Col>
 
                                 <Col sm={6} className="border-end border-3" >
                                     <span style={{ fontSize: '16px', fontWeight: '500' }}>Shipping Address</span>
-                                    <p className="my-3">Nagpur Division, Maharashtra, India</p>
+                                    <p className="my-3">{ShippingAd} || Nagpur Division, Maharashtra, India</p>
                                 </Col>
                             </Row>
                         </Col>
@@ -103,21 +149,23 @@ const PurchaseOrderDetails = () => {
                                 <Col sm={6}  >
                                     <span className="mb-3" style={{ fontSize: '16px', fontWeight: '500' }}>Delivery Address</span>
                                     <p className="my-3">
-                                        <span style={{ fontSize: '16px' }}>Linganwar</span><br />
-                                        <span>yash123linganwar@gmail.com / 91562173745</span>
-                                        <span>Karve Statue, DP Road, Mayur Colony, Kothrud, Pune, Maharashtra, India</span>
-                                        <span>PAN:</span> ADNP5467B
+                                        <span style={{ fontSize: '16px' }}>{userName}</span><br />
+                                        <span>{userEmail} / {UserContactN}</span>
+                                        <br />
+                                        <span>{UserAddress}</span>
+                                        <br />
+                                        <span>PAN:</span> {UesrPAN}
                                     </p>
                                 </Col>
 
                                 {/* Order Info */}
                                 <Col sm={6} >
-                                    <span className="mb-3 float-end" style={{ fontSize: '16px', fontWeight: '500' }}>Order No:<b className="text-primary">PO-009</b></span>
+                                    <span className="mb-3 float-end" style={{ fontSize: '16px', fontWeight: '500' }}>Order No:<b className="text-primary"> {purchaseOrder?.po_no}</b></span>
                                     <p className="my-5 mx-2 border-start border-3 p-2">
-                                        <p><span className="my-1 fw-bold">Expected Delivery:</span> Oct 14, 1985</p>
-                                        <p><span className="my-1 fw-bold">Payment Terms:</span> Cheaque</p>
-                                        <p><span className="my-1 fw-bold">Reference:</span> Non aut autem volupt</p>
-                                        <p><span className="my-1 fw-bold">Shipment Preference:</span> Minus autem dolor ad</p>
+                                        <p><span className="my-1 fw-bold">Expected Delivery:</span> {new Date(delivery_datedelivery_date).toLocaleDateString()}</p>
+                                        <p><span className="my-1 fw-bold">Payment Terms:</span> {payment_terms}</p>
+                                        <p><span className="my-1 fw-bold">Reference:</span> {reference}</p>
+                                        <p><span className="my-1 fw-bold">Shipment Preference:</span> {shipment_preference}</p>
                                     </p>
 
                                 </Col>
@@ -148,17 +196,17 @@ const PurchaseOrderDetails = () => {
                                     <tbody className="text-start" >
                                         <tr>
                                             <td>
-                                                <b>Shaeleigh Shaffer</b>
+                                                <b>{purchaseOrder?.items?.[0]?.item_id?.name} </b>
                                                 <br />
-                                                HSN : 1
+                                                HSN : {purchaseOrder?.items?.[0]?.item_id?.hsn}
                                             </td>
                                             <td>
-                                                SKU : 646546 <br />
-                                                Qty : 50 Nos
+                                                SKU : {purchaseOrder?.items?.[0]?.item_id?.sku} <br />
+                                                Qty : {purchaseOrder?.items?.[0]?.quantity}
                                             </td>
-                                            <td>Price : ₹7000</td>
-                                            <td>GST (10%)</td>
-                                            <td>Total : ₹385000</td>
+                                            <td>Price : {purchaseOrder?.items?.[0]?.price}</td>
+                                            <td>{purchaseOrder?.tax?.[0]?.tax_name}:{purchaseOrder?.tax?.[0]?.tax_rate }</td>
+                                            <td>Total : {purchaseOrder?.items?.[0]?.total}</td>
                                         </tr>
                                     </tbody>
                                 </Table>
@@ -176,28 +224,32 @@ const PurchaseOrderDetails = () => {
 <tbody>
 <tr>
   <td className="fw-bold text-start">Subtotal:</td>
-  <td>₹385000</td>
+  <td>{purchaseOrder?.subtotal}</td>
 </tr>
 <tr>
   <td className="fw-bold text-start">Discount:</td>
   <td>
     <span className="text-primary" style={{ cursor: "pointer" }}>
-      5%
+    {purchaseOrder?.discount_value}{purchaseOrder?.discount_type === 'percentage' ? '%' : ' Rs'}
+
     </span>{" "}
-    ₹19250
+   
   </td>
 </tr>
 <tr>
   <td className="fw-bold text-start">Tax:</td>
-  <td>GST (10%)</td>
+  <td>{purchaseOrder?.tax?.[0]?.tax_name}: ({purchaseOrder?.tax?.[0]?.tax_rate })</td>
 </tr>
 <tr>
   <td className="fw-bold text-start">Total:</td>
-  <td>₹ 251</td>
+  <td>{purchaseOrder?.total}</td>
 </tr>
 <tr>
-  <td className="fw-bold text-start">Occaecat qui eaque u:</td>
-  <td>₹ 1</td>
+  <td className="fw-bold text-start">{purchaseOrder?.adjustment_note === 0 ? "No Adjustment" : "Adjustment:"}
+  {/* {purchaseOrder?.discount_value}{purchaseOrder?.discount_type === 'percentage' ? '%' : ' Rs'}  adjustment_note */}
+
+  </td>
+  <td>{purchaseOrder?.adjustment_amount }</td>
 </tr>
 </tbody>
 </Table>
@@ -208,7 +260,7 @@ const PurchaseOrderDetails = () => {
                 </Card>
             </Col>
             
-<Col sm={12} className="my-2">
+{/* <Col sm={12} className="my-2">
     <Card className=" p-3 shadow-sm">
         <h5 className=" mb-3" style={{ fontSize:'20px' }}>Receive & Payment Details</h5>
         <div className="table-responsive">
@@ -231,7 +283,7 @@ const PurchaseOrderDetails = () => {
             1
             </td>
             
-            <td>Feb 13, 2025</td>
+            <td>{delivery_datedelivery_date}</td>
             <td>5610</td>
             <td>
             online
@@ -244,7 +296,7 @@ const PurchaseOrderDetails = () => {
 
         </div>
     </Card>
-</Col>
+</Col> */}
 
         </Row>
 

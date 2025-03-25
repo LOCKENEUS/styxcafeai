@@ -162,7 +162,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
 
           <Route path="/Inventory/VendorDetails" element={<VendoreDetails />} />
           <Route path="/Inventory/ItemDetails" element={<ItemsDetails />} />
-          <Route path="/Inventory/PurchaseOrderDetails" element={<PODetails />} />
+          <Route path="/Inventory/PurchaseOrderDetails/:id" element={<PODetails />} />
 
 
 

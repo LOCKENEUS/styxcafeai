@@ -4,9 +4,6 @@ import { toast } from 'react-toastify';
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
-
-
-
 export const CreateVendor = createAsyncThunk(
   'purchaseOrder/createVendor', 
   async (vendorData, thunkAPI) => {
@@ -69,7 +66,18 @@ export const GetPOList = createAsyncThunk(
     }
   }
 );
-
+// /admin/inventory/po/:id
+export const GetPurchaseOrder = createAsyncThunk(
+  'purchaseOrder/GetPurchaseOrder',
+  async (id, thunkAPI) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/admin/inventory/po/${id}`);
+      return response.data.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+    }
+  }
+);
 // /admin/inventory/item
 const OPSlice = createSlice({
   name: 'purchaseOrder',
@@ -135,6 +143,19 @@ const OPSlice = createSlice({
         state.selectedItem = action.payload; 
       })
       .addCase(GetPOList.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // getPO
+      .addCase(GetPurchaseOrder.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(GetPurchaseOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedItem = action.payload; 
+      })
+      .addCase(GetPurchaseOrder.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

@@ -402,7 +402,7 @@ useEffect(() => {
       {/* Client & Delivery Details */}
       <Card className="p-3 shadow-sm">
         <Row>
-          <Col md={4} className="d-flex border-end flex-column gap-2">
+          <Col sm={4} className="d-flex border-end flex-column gap-2">
             <div className="border-bottom ">
               <div className="d-flex flex-row align-items-center justify-content-around mb-3 gap-2">
                 <h5 className="text-muted">Vendor :  </h5>
@@ -439,7 +439,7 @@ useEffect(() => {
 
           </Col>
 
-          <Col md={4}>
+          <Col sm={4}>
             <div className="d-flex my-3 flex-row align-items-center gap-2">
               <h5 className="text-muted">Delivery Address <span className="text-danger">*</span></h5>
 
@@ -450,8 +450,7 @@ useEffect(() => {
               {/* Radio Buttons */}
               <Form.Check
                 type="radio"
-                name="delivery_type"
-                
+                name="delivery_type" 
                 label="Organization"
                 value="Organization"
                 checked={formData.delivery_type === "Organization"}
@@ -459,6 +458,8 @@ useEffect(() => {
                   setFormData({ ...formData, delivery_type: e.target.value })
                 }
                 style={{ fontWeight: "bold", color: "black" }}
+                // check by default
+                defaultChecked
 
               />
               <Form.Check
@@ -509,7 +510,7 @@ useEffect(() => {
             </div>
           </Col>
 
-          <Col md={4} style={{ marginTop: "2rem" }}>
+          <Col sm={4} style={{ marginTop: "2rem" }}>
             <div className="d-flex flex-column gap-2">
               <div className="d-flex flex-row align-items-center gap-2">
                 <Form.Control
