@@ -30,7 +30,7 @@ export const CreateVendorForm = () => {
         governmentid: '',
         image: null,
         accounttype: '',
-        bankname: '',
+        bank_name: '',
         accountnumber: '',
         ifsccode: '',
         billingCoordinates: { latitude: '', longitude: '' },
@@ -49,7 +49,7 @@ export const CreateVendorForm = () => {
         vendorEmail: '',
         vendorPhone: '',
         companyName: '',
-        bankname: '',
+        bank_name: '',
         accountnumber: '',
         ifsccode: '',
         accounttype: ''
@@ -81,7 +81,7 @@ export const CreateVendorForm = () => {
                 governmentid: selectedVendor.govtId,
                 image: null,
                 accounttype: selectedVendor.accountType,
-                bankname: selectedVendor.bankName,
+                bank_name: selectedVendor.bank_name,
                 accountnumber: selectedVendor.accountNo,
                 ifsccode: selectedVendor.ifsc,
                 billingCoordinates: {
@@ -121,7 +121,7 @@ export const CreateVendorForm = () => {
                 governmentid: '',
                 image: null,
                 accounttype: '',
-                bankname: '',
+                bank_name: '',
                 accountnumber: '',
                 ifsccode: '',
                 billingCoordinates: { latitude: '', longitude: '' },
@@ -308,7 +308,7 @@ export const CreateVendorForm = () => {
             vendorEmail: '',
             vendorPhone: '',
             companyName: '',
-            bankname: '',
+            bank_name: '',
             accountnumber: '',
             ifsccode: '',
             accounttype: ''
@@ -349,25 +349,7 @@ export const CreateVendorForm = () => {
             isValid = false;
         }
 
-        // Bank details validation (if any bank field is filled, all become required)
-        if (formData.bankname || formData.accountnumber || formData.ifsccode || formData.accounttype) {
-            if (!formData.bankname.trim()) {
-                newErrors.bankname = 'Bank name is required';
-                isValid = false;
-            }
-            if (!formData.accountnumber.trim()) {
-                newErrors.accountnumber = 'Account number is required';
-                isValid = false;
-            }
-            if (!formData.ifsccode.trim()) {
-                newErrors.ifsccode = 'IFSC/SWIFT/BIC code is required';
-                isValid = false;
-            }
-            if (!formData.accounttype) {
-                newErrors.accounttype = 'Account type is required';
-                isValid = false;
-            }
-        }
+        // Bank details validation - removed required validation since it's optional
 
         setErrors(newErrors);
         return isValid;
@@ -400,20 +382,30 @@ export const CreateVendorForm = () => {
         formDataToSend.append('pincode2', formData.shippingzipcode || 0);
         formDataToSend.append('govtId', formData.governmentid);
         formDataToSend.append('accountNo', formData.accountnumber || 0);
+        formDataToSend.append('bank_name', formData.bank_name || "Not Applicable");
         formDataToSend.append('ifsc', formData.ifsccode);
         formDataToSend.append('accountType', formData.accounttype);
         formDataToSend.append('cafe', cafeId);
+        
         
         // Add the image file if it exists
         if (formData.image) {
             formDataToSend.append('image', formData.image);
         }
         
-        // Add latitude and longitude
-        formDataToSend.append('latitude1', formData.billingCoordinates.latitude);
-        formDataToSend.append('longitude1', formData.billingCoordinates.longitude);
-        formDataToSend.append('latitude2', formData.shippingCoordinates.latitude);
-        formDataToSend.append('longitude2', formData.shippingCoordinates.longitude);
+        // Add latitude and longitude only if they exist
+        if (formData.billingCoordinates.latitude) {
+            formDataToSend.append('latitude1', formData.billingCoordinates.latitude);
+        }
+        if (formData.billingCoordinates.longitude) {
+            formDataToSend.append('longitude1', formData.billingCoordinates.longitude);
+        }
+        if (formData.shippingCoordinates.latitude) {
+            formDataToSend.append('latitude2', formData.shippingCoordinates.latitude);
+        }
+        if (formData.shippingCoordinates.longitude) {
+            formDataToSend.append('longitude2', formData.shippingCoordinates.longitude);
+        }
         
         if (id) {
             dispatch(updateVendor({ id, vendorData: formDataToSend }))
@@ -963,14 +955,14 @@ export const CreateVendorForm = () => {
                                 </label>
                                 <input
                                     type="text"
-                                    className={`form-control ${errors.bankname ? 'is-invalid' : ''}`}
-                                    id="bankname"
+                                    className={`form-control ${errors.bank_name ? 'is-invalid' : ''}`}
+                                    id="bank_name"
                                     placeholder="Enter Bank Name"
-                                    value={formData.bankname}
+                                    value={formData.bank_name}
                                     onChange={handleChange}
                                 />
-                                {errors.bankname && (
-                                    <div className="invalid-feedback">{errors.bankname}</div>
+                                {errors.bank_name && (
+                                    <div className="invalid-feedback">{errors.bank_name}</div>
                                 )}
                             </FormGroup>
                         </Col>

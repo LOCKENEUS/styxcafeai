@@ -78,7 +78,7 @@ const ItemsList = () => {
                 </Col>
 
                 <Col xs={12}>
-                    <Card className="mx-2 mx-md-4 p-2 p-md-3">
+                    <Card data-aos="fade-right" data-aos-duration="1000" className="mx-2 mx-md-4 p-2 p-md-3">
                         <Row className="align-items-center">
                             <Col xs={12} md={4} className="d-flex my-2">
                                 <h1

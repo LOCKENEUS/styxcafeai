@@ -104,7 +104,7 @@ const VendorList = () => {
   const totalPages = Math.ceil(filteredVendors.length / itemsPerPage);
 
   return (
-    <Container>
+    <Container >
       <Row>
         <Col sm={12} className="mx-4 my-3">
           <div style={{ top: "186px"}}>
@@ -116,7 +116,7 @@ const VendorList = () => {
           </div>
         </Col>
 
-        <Col sm={12}>
+        <Col data-aos="fade-right" data-aos-duration="1000" sm={12}>
           <Card className="mx-4 p-3">
             <Row className="align-items-center">
               <Col sm={4} className="d-flex my-2">
@@ -177,7 +177,7 @@ const VendorList = () => {
               </Col>
 
               <Col sm={12} style={{ marginTop: "30px" }}>
-                <Table striped  hover style={{ minWidth: '600px', marginTop: "2rem" }}>
+                <Table    striped  hover style={{ minWidth: '600px', marginTop: "2rem" }}>
                   <thead className="no-uppercase" style={{ backgroundColor: '#0062FF0D' }}>
                     <tr >
                       {['S/N', 'Vendor Name', 'Company', 'Billing Address', 'Shipping Address', 'Actions'].map((header, index) => (
@@ -186,19 +186,7 @@ const VendorList = () => {
                     </tr>
                   </thead>
                   <tbody style={{ backgroundColor: "#F5F5F5" }}>
-                    {loading ? (
-                      <tr>
-                        <td colSpan="6" className="text-center py-4">
-                          <Spinner animation="border" variant="primary" />
-                        </td>
-                      </tr>
-                    ) : error ? (
-                      <tr>
-                        <td colSpan="6" className="text-center py-4 text-danger">
-                          {error}
-                        </td>
-                      </tr>
-                    ) : filteredVendors.length === 0 ? (
+                    {filteredVendors.length === 0 ? (
                       <tr>
                         <td colSpan="6" className="text-center py-4">
                           No vendors found

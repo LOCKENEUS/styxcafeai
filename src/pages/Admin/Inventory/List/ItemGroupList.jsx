@@ -70,7 +70,7 @@ const ItemGroupList = () => {
         </Col>
 
         <Col sm={12}>
-          <Card className="mx-4 p-3">
+          <Card data-aos="fade-right" data-aos-duration="1000" className="mx-4 p-3">
             <Row className="align-items-center">
               <Col sm={4} className="d-flex my-2">
                 <h1

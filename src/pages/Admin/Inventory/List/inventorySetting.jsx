@@ -173,6 +173,7 @@ export const InventorySettingAdmin = () => {
           id="inventory-tabs"
           activeKey={activeKey}
           onSelect={(k) => setActiveKey(k)}
+        
         >
           <Row>
             <Col sm={5} className="tabs-responsive-side my-4 ">
@@ -229,9 +230,9 @@ export const InventorySettingAdmin = () => {
               </Card>
             </Col>
             <Col sm={6}></Col>
-            <Col sm={12}>
+            <Col   data-aos="fade-right" data-aos-duration="800"  sm={12}>
               <TabContent>
-                <TabPane eventKey="unit">
+                <TabPane  eventKey="unit">
                   <Row>
                     <Col sm={3} className="mb-2">
                       <Card className="rounded-4 p-1 border h-100">
@@ -337,7 +338,7 @@ export const InventorySettingAdmin = () => {
                   </Row>
                 </TabPane>
 
-                <TabPane eventKey="brand">
+                <TabPane  eventKey="brand">
                   <Row>
                     <Col sm={3} className="mb-2">
                       <Card className="rounded-4 p-1 border h-100">
@@ -421,7 +422,7 @@ export const InventorySettingAdmin = () => {
                   </Row>
                 </TabPane>
 
-                <TabPane eventKey="manufacturer">
+                <TabPane  eventKey="manufacturer">
                   <Row>
                     <Col sm={3} className="mb-2">
                       <Card className="rounded-4 p-1 border h-100">
@@ -505,7 +506,7 @@ export const InventorySettingAdmin = () => {
                   </Row>
                 </TabPane>
 
-                <TabPane eventKey="paymentterms">
+                <TabPane  eventKey="paymentterms">
                   <Row>
                     <Col sm={3} className="mb-2">
                       <Card className="rounded-4 p-1 border h-100">

@@ -67,7 +67,7 @@ const SOCreate = () => {
       dispatch(getSOById(id))
         .unwrap()
         .then((soData) => {
-          console.log("SO Data received:", soData); // Add this for debugging
+          console.log("SO Data received:", soData);
           
           setFormData({
             date: soData.date ? new Date(soData.date).toISOString().split('T')[0] : '',
@@ -86,11 +86,16 @@ const SOCreate = () => {
           
           if (soData.items && soData.items.length > 0) {
             const formattedProducts = soData.items.map((item, index) => {
-              // Handle tax object or tax ID
-              const taxId = typeof item.tax === 'object' ? item.tax._id : item.tax;
-              const taxRate = typeof item.tax === 'object' ? 
-                item.tax.tax_rate : 
-                taxFields.find(t => t._id === item.tax)?.tax_rate || 0;
+              // Handle tax object, tax ID, or null tax
+              const taxId = item.tax ? 
+                (typeof item.tax === 'object' ? item.tax._id : item.tax) : 
+                '';
+              
+              const taxRate = item.tax ? 
+                (typeof item.tax === 'object' ? 
+                  item.tax.tax_rate : 
+                  taxFields.find(t => t._id === item.tax)?.tax_rate || 0) :
+                0;
               
               return {
                 id: index + 1,
@@ -98,7 +103,7 @@ const SOCreate = () => {
                 itemName: item.item_id?.name || '',
                 quantity: item.quantity || 1,
                 price: item.price || 0,
-                tax: taxId, // Store just the tax ID
+                tax: taxId, // Will be empty string if tax is null
                 taxRate: taxRate,
                 total: item.total || 0,
                 totalTax: item.tax_amt || 0,
@@ -155,14 +160,15 @@ const SOCreate = () => {
           const selectedItem = items.find(item => item._id === value);
           if (selectedItem) {
             updatedProduct.price = selectedItem.sellingPrice;
-            updatedProduct.tax = selectedItem.tax;
-            const itemTax = taxFields.find(tax => tax._id === selectedItem.tax);
+            // Handle null tax case
+            updatedProduct.tax = selectedItem.tax || ''; // Set empty string if tax is null
+            const itemTax = selectedItem.tax ? taxFields.find(tax => tax._id === selectedItem.tax) : null;
             updatedProduct.taxRate = itemTax ? itemTax.tax_rate : 0;
           }
         }
 
         if (field === "tax") {
-          const selectedTax = taxFields.find(tax => tax._id === value);
+          const selectedTax = value ? taxFields.find(tax => tax._id === value) : null;
           updatedProduct.taxRate = selectedTax ? selectedTax.tax_rate : 0;
         }
 

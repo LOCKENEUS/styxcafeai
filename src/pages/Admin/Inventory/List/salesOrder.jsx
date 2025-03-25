@@ -151,7 +151,7 @@ export const SalesOrder = () => {
         {/* Items List Card */}
         <Col sm={12}>
 
-          <Card className="mx-4 p-3">
+          <Card data-aos="fade-right" data-aos-duration="800" className="mx-4 p-3">
             <Row className="align-items-center">
               {/* Title */}
               <Col sm={4} className="d-flex my-2">

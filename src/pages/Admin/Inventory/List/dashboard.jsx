@@ -155,7 +155,7 @@ const DashboardInventory = () => {
       
       {/* Stats Cards */}
       <Row className="g-3 mb-4">
-        <Col md={6}>
+        <Col data-aos="fade-right" data-aos-duration="800" md={6}>
         <Row className="g-3">
         {statsCards.map((card, index) => (
           <Col key={index} xs={6} lg={6}>
@@ -185,7 +185,7 @@ const DashboardInventory = () => {
         ))}
         </Row>
         </Col>
-        <Col md={6}>
+        <Col data-aos="fade-left" data-aos-duration="1000" md={6}>
           <Card className="h-100">
             <Card.Body>
               <h6 className="text-muted mb-4">Inventory Summary</h6>
@@ -232,7 +232,7 @@ const DashboardInventory = () => {
       </Row>
 
       {/* Charts Row */}
-      <Row className="g-3 mb-4">
+      <Row data-aos="fade-down" data-aos-duration="1500" className="g-3 mb-4">
         <Col md={4}>
           <Card className="h-100 bg-transparent border-0 shadow-none">
             <Card.Body  className="p-0 ">

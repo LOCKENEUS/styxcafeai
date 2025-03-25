@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getSOById, deleteSO } from "../../../../store/AdminSlice/Inventory/SoSlice";
+import { addSOInvoice } from "../../../../store/AdminSlice/Inventory/SoInvoiceSlice";
 import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Table, Spinner, Modal } from "react-bootstrap";
 import { LuPencil } from "react-icons/lu";
 import pdflogo from "/assets/Admin/profileDetails/pdflogo.svg";
@@ -12,6 +13,7 @@ import sendMail from "/assets/inventory/Group.png";
 import editlogo from "/assets/inventory/mage_edit.png";
 import companylog from "/assets/inventory/companylogo.png";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export const SODetails = () => {
     const navigate = useNavigate();
@@ -75,6 +77,53 @@ export const SODetails = () => {
                 navigate('/admin/Inventory/SaleOrderList');
             }
             setShowDeleteModal(false);
+        });
+    };
+
+    const handleCreateInvoice = () => {
+        // Prepare the invoice data from selectedSO
+        const invoiceData = {
+            cafe: selectedSO.cafe?._id,
+            customer_id: selectedSO.customer_id?._id,
+            date: new Date().toISOString(),
+            shipment_date: "",
+            payment_terms: selectedSO.payment_terms || "",
+            reference: selectedSO.reference || "",
+            delivery_preference: "",
+            sales_person: selectedSO.sales_person || "",
+            description: selectedSO.description || "",
+            internal_team_notes: selectedSO.internal_team_notes || "",
+            subtotal: selectedSO.subtotal || 0,
+            discount_value: selectedSO.discount_value || 0,
+            discount_type: selectedSO.discount_type || "percentage",
+            tax: selectedSO.tax || [],
+            total: selectedSO.total || 0,
+            adjustment_note: selectedSO.adjustment_note || "",
+            adjustment_amount: selectedSO.adjustment_amount || 0,
+            type: "SI",
+            items: selectedSO.items?.map(item => ({
+                id: item.item_id?._id,
+                qty: item.quantity || 0,
+                hsn: item.item_id?.hsn || "",
+                price: item.price || 0,
+                tax: item.tax?._id || null,
+                tax_amt: item.tax_amt || 0,
+                total: item.total || 0
+            })) || []
+        };
+
+        // Add validation before dispatch
+        if (!invoiceData.cafe || !invoiceData.customer_id) {
+            toast.error("Missing required data: Cafe or Customer information");
+            return;
+        }
+
+        dispatch(addSOInvoice(invoiceData)).then((result) => {
+            if (!result.error) {
+                toast.success("Invoice created successfully");
+                // Optionally navigate to the invoice list or details page
+                // navigate(`/admin/Inventory/InvoiceDetails/${result.payload._id}`);
+            }
         });
     };
 
@@ -145,8 +194,12 @@ export const SODetails = () => {
                     <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                         <Image src={sendMail} className="me-2" /> Send Email
                     </Button>
-                    <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
-                        <Image src={receive} className="me-2" /> Receive
+                    <Button 
+                        className="d-flex align-items-center" 
+                        style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}
+                        onClick={handleCreateInvoice}
+                    >
+                        <Image src={receive} className="me-2" /> Create Invoice
                     </Button>
                     <Button
                     onClick={() => navigate(`/admin/Inventory/SaleOrderCreate/${id}`)}
@@ -347,16 +400,17 @@ export const SODetails = () => {
                     <Card className="p-3 shadow-sm">
                         <h5 className="mb-3" style={{ fontSize: '20px' }}>Terms and Condition </h5>
                         <div className="table-responsive">
-                          { 
+                        <b>{selectedSO.internal_team_notes || "Terms and Condition not applied" }</b>
+                          {/* { 
                             !selectedSO.internal_team_notes === "" ?                            
                             <b>{selectedSO.internal_team_notes}</b> :
                             <b className="mx-auto">Terms and Condition not applied</b>
                         
-                        }
+                        } */}
                         </div>
                     </Card>
                 </Col>
-        <Col sm={12} className="my-2">
+        {/* <Col sm={12} className="my-2">
             <Card className=" p-3 shadow-sm">
                 <h5 className=" mb-3" style={{ fontSize:'20px' }}>Package Details</h5>
                 <div className="table-responsive">
@@ -380,7 +434,7 @@ export const SODetails = () => {
               </Table>
                 </div>
             </Card>
-        </Col>
+        </Col> */} 
     </div>
     {/* Printable area ends here */}
     

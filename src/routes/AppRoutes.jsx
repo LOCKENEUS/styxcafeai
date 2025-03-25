@@ -82,7 +82,7 @@ import ItemGroupsDetails from "../pages/Admin/Inventory/Details/ItemGroupsDetail
 import CreateItemsForm from "../pages/Admin/Inventory/Create/CreateItemsForm";
 import ItemsList from "../pages/Admin/Inventory/List/ItemsList";
 import DashboardInventory from "../pages/Admin/Inventory/List/dashboard";
-import { ItemInventory } from "../pages/Admin/Inventory/List/item";
+// import { ItemInventory } from "../pages/Admin/Inventory/List/item";
 import { SalesOrder } from "../pages/Admin/Inventory/List/salesOrder";
 import { SaleInvoiceInventory } from "../pages/Admin/Inventory/List/salesInvoice";
 import { InvoicePaymentInventory } from "../pages/Admin/Inventory/List/saleReturns";
@@ -230,7 +230,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
 
           {/* -------------------- Inventory Routes new -------------------------------- */}
           <Route path="/admin/Inventory/dashboard" element={<DashboardInventory />} />
-          <Route path="/admin/Inventory/Items" element={<ItemInventory />} />
+          {/* <Route path="/admin/Inventory/Items" element={<ItemInventory />} /> */}
           <Route path="/admin/Inventory/SalesOrder" element={<SalesOrder />} />
           <Route path="/admin/Inventory/SaleInvoice" element={<SaleInvoiceInventory />} />
           <Route path="/admin/Inventory/InvoicePayment" element={<InvoicePaymentInventory />} />

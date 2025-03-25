@@ -88,7 +88,7 @@ const VendorDetails = () => {
               <p><strong>Phone Number:</strong> {selectedVendor.phone}</p>
               <p><strong>Location:</strong> {selectedVendor.city1}</p>
               <p><strong>Company:</strong> {selectedVendor.company}</p>
-              <p><strong>Bank:</strong> {selectedVendor.bank || "Not specified"}</p>
+              <p><strong>Bank:</strong> {selectedVendor.bank_name || "Not specified"}</p>
               <p><strong>Account No.:</strong> {selectedVendor.accountNo}</p>
             </div>
           </Card>
@@ -182,6 +182,7 @@ const VendorDetails = () => {
           <Card className="p-3">
             <h5>Bank Details</h5>
             <div className="d-flex flex-wrap justify-content-around gap-2">
+              <p><strong>Bank Name:</strong> {selectedVendor.bank_name}</p>
               <p><strong>Account Number:</strong> {selectedVendor.accountNo}</p>
               <p><strong>IFSC/SWIFT/BIC:</strong> {selectedVendor.ifsc}</p>
               <p><strong>Account Type:</strong> {selectedVendor.accountType}</p>
