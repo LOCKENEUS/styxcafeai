@@ -49,7 +49,7 @@ export const formatDate = (isoString) => {
   const dayOfWeek = date.toLocaleDateString("en-US", options);
 
   // Get the date in DD/MM/YYYY format
-  const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "/"); // Ensure format is consistent
+  const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-"); // Ensure format is consistent
 
-  return `${formattedDate} ${dayOfWeek}`;
+  return `${formattedDate},  ${dayOfWeek}`;
 };

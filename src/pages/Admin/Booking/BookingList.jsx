@@ -18,7 +18,7 @@ import { FiFilter } from "react-icons/fi";
 import { IoAdd } from "react-icons/io5";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getGameById } from "../../../store/slices/gameSlice";
+import { getGameById, getGames } from "../../../store/slices/gameSlice";
 import { getBookings } from "../../../store/AdminSlice/BookingSlice";
 import profile from "/assets/profile/user_avatar.jpg";
 import { convertTo12Hour, formatDate } from "../../../components/utils/utils";
@@ -30,22 +30,31 @@ const BookingList = () => {
     const user = JSON.parse(sessionStorage.getItem("user"));
     const cafeId = user?._id;
     const { bookings } = useSelector((state) => state.bookings);
+    const { games, status } = useSelector((state) => state.games);
 
     const [searchTerm, setSearchTerm] = useState("");
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [gameFilter, setGameFilter] = useState("All");
     const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
     const [collection, setCollection] = useState(0);
     const filterDropdownRef = useRef(null);
     const bookingDropdownRef = useRef(null);
     const [activeDropdownId, setActiveDropdownId] = useState(null);
-    const [selectedFilter, setSelectedFilter] = useState("");
+    const [selectedFilter, setSelectedFilter] = useState("All");
     const editDropdownRef = useRef(null);
+
+    useEffect(() => {
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        if (user?._id) {
+          dispatch(getGames(user._id));
+        }
+      }, [dispatch]);
 
     const filterBookingsByDate = (filter) => {
         const today = moment().startOf("day");
 
         switch (filter) {
-            case "Tomorrow Booking":
+            case "Tomorrow":
                 return bookings?.filter((booking) =>
                     moment(booking.slot_date).isSame(today.clone().add(1, "days"), "day")
                 );
@@ -61,15 +70,17 @@ const BookingList = () => {
                     moment(booking.slot_date).format("dddd") === filter
                 );
             default:
-                return bookings?.filter((booking) =>
-                    moment(booking.slot_date).isSame(today, "day")
-                );
+                return bookings
         }
     };
 
-    const filteredBookings = filterBookingsByDate(selectedFilter).filter((booking) =>
-        booking?.customerName?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // const filteredBookings = filterBookingsByDate(selectedFilter).filter((booking) =>
+    //     booking?.customerName?.toLowerCase().includes(searchTerm.toLowerCase())
+    // );
+
+    const filteredBookings = filterBookingsByDate(selectedFilter)
+    .filter((booking) => booking?.customerName?.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter((booking) => gameFilter === "All" || booking?.gameTitle === gameFilter);
 
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
@@ -131,7 +142,7 @@ const BookingList = () => {
     }, [dispatch, gameId]);
 
     const bookingOptions = [
-        "Tomorrow Booking",
+        "Tomorrow",
         "Today",
         "Yesterday",
         "Monday",
@@ -176,8 +187,8 @@ const BookingList = () => {
                         ref={bookingDropdownRef}
                     >
                         <div>
-                            <h4>Today's Bookings</h4>
-                            <p>17 Bookings</p>
+                            <h4>{selectedFilter}'s Bookings</h4>
+                            <p>{filteredBookings.length} Bookings</p>
                         </div>
                         <div>{dropdownOpen ? <FaChevronUp /> : <FaChevronDown />}</div>
 
@@ -228,7 +239,7 @@ const BookingList = () => {
                             onClick={toggleFilterDropdown}
                             style={{ fontSize: "20px", color: "#0062FF" }}
                         />
-                        <IoAdd style={{ fontSize: "20px", color: "#0062FF" }} />
+                        {/* <IoAdd style={{ fontSize: "20px", color: "#0062FF" }} /> */}
                     </div>
                     {filterDropdownOpen && (
                         <ul
@@ -242,19 +253,17 @@ const BookingList = () => {
                                 zIndex: 1000,
                             }}
                         >
-                            {[
-                                "Snooker & Pool",
-                                "Pickle Ball",
-                                "Paddle Tennis",
-                                "Play Station",
-                                "Turf Cricket",
-                                "Cafe",
-                            ].map((sport, index) => (
+                            {games.length > 0 && games.map((sport, index) => (
                                 <li
                                     key={index}
                                     style={{ cursor: "pointer", padding: "10px" }}
+                                    onClick={(e) => {
+                                        e.stopPropagation(); // Stop propagation for the item click
+                                        setGameFilter(sport?.name); // Call the handler
+                                        setFilterDropdownOpen(false)
+                                    }}
                                 >
-                                    {sport}
+                                    {sport?.name}
                                 </li>
                             ))}
                         </ul>

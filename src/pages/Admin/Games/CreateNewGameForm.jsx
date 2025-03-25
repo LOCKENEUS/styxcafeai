@@ -23,6 +23,7 @@ const CreateNewGameForm = () => {
     size: "",
     players: "1",
     cancellation: true,
+    payLater: false,
     details: "",
     gameImage: null,
     existingImage: "",
@@ -100,6 +101,7 @@ const CreateNewGameForm = () => {
     formDataToSend.append('cancellation', formData.cancellation);
     formDataToSend.append('details', formData.details);
     formDataToSend.append('cafe', formData.cafe);
+    formDataToSend.append('payLater', formData.payLater)
 
     if (formData.gameImage) {
       formDataToSend.append('gameImage', formData.gameImage);
@@ -271,6 +273,20 @@ const CreateNewGameForm = () => {
           </Row>
 
           <Row className="">
+            <Col md={6}>
+              <Form.Group className="mb-3">
+                <Form.Label>Pay Later</Form.Label>
+                <Form.Select
+                  name="payLater"
+                  value={formData.payLater}
+                  onChange={handleInputChange}
+                >
+                  <option value={true}>Yes</option>
+                  <option value={false}>No</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+
             <Col md={6}>
               <Form.Group className="">
                 <Form.Label>Admin Note</Form.Label>

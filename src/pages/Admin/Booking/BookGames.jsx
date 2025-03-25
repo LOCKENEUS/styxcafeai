@@ -77,19 +77,6 @@ const BookGames = () => {
         >
           Indoor Games
         </h5>
-        <Link to="/admin/games/create-new-game">
-          <IoAdd
-            style={{
-              fontSize: 'clamp(30px, 8vw, 40px)',
-              cursor: 'pointer',
-              backgroundColor: 'white',
-              color: 'blue',
-              border: '2px solid blue',
-              borderRadius: '50%',
-              padding: '0.2rem',
-            }}
-          />
-        </Link>
       </div>
       <div className="horizontal-scroll mb-5">
         <Row className="flex-nowrap" style={{ margin: '0 -0.5rem' }}>

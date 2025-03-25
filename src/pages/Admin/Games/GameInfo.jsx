@@ -21,10 +21,11 @@ import { Link, useParams } from "react-router-dom";
 import Calendar from "./Calendar";
 import gm2 from "/assets/Admin/Dashboard/GamesImage/gm2.png";
 import gm1 from "/assets/Admin/Dashboard/GamesImage/gm1.png";
+import profile from "/assets/profile/user_avatar.jpg";
 import { useDispatch, useSelector } from "react-redux";
 import { getGameById } from "../../../store/slices/gameSlice";
 import { getBookingsByGame } from "../../../store/AdminSlice/BookingSlice";
-import { convertTo12Hour, convertTo24HourFormat } from "../../../components/utils/utils";
+import { convertTo12Hour, convertTo24HourFormat, formatDate } from "../../../components/utils/utils";
 
 const GameInfo = () => {
   const { gameId } = useParams();
@@ -35,6 +36,9 @@ const GameInfo = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
+  const [gameFilter, setGameFilter] = useState("All");
+  const [selectedFilter, setSelectedFilter] = useState("All");
+  const [collection, setCollection] = useState(0);
   const filterDropdownRef = useRef(null);
   const bookingDropdownRef = useRef(null);
   const [showCalendar, setShowCalendar] = useState(false);
@@ -47,6 +51,15 @@ const GameInfo = () => {
     }
   }, [dispatch, gameId]);
 
+      useEffect(() => {
+          setCollection(0);
+          if (filteredBookings.length > 0) {
+              filteredBookings.map((booking) => {
+                  setCollection(collection + booking?.total);
+              });
+          }
+      }, [dispatch, dropdownOpen]);
+
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
@@ -54,6 +67,12 @@ const GameInfo = () => {
   const toggleFilterDropdown = () => {
     setFilterDropdownOpen(!filterDropdownOpen);
   };
+
+  const handleFilterChange = (option, e) => {
+    e.stopPropagation();
+    setSelectedFilter(option);
+    setDropdownOpen(false);
+};
 
   // Effect to close dropdowns on outside click
   useEffect(() => {
@@ -91,7 +110,7 @@ const GameInfo = () => {
   }, [dispatch, gameId]);
 
   const bookingOptions = [
-    "Tomorrow Booking",
+    "Tomorrow",
     "Yesterday",
     "Monday",
     "Tuesday",
@@ -99,9 +118,37 @@ const GameInfo = () => {
     "Thursday",
   ];
 
-  const filteredBookings = bookings.filter((booking) =>
-    booking?.customer_id?.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredBookings = bookings.filter((booking) =>
+  //   booking?.customer_id?.name.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
+
+      const filterBookingsByDate = (filter) => {
+          const today = moment().startOf("day");
+  
+          switch (filter) {
+              case "Tomorrow":
+                  return bookings?.filter((booking) =>
+                      moment(booking.slot_date).isSame(today.clone().add(1, "days"), "day")
+                  );
+              case "Yesterday":
+                  return bookings?.filter((booking) =>
+                      moment(booking.slot_date).isSame(today.clone().subtract(1, "days"), "day")
+                  );
+              case "Monday":
+              case "Tuesday":
+              case "Wednesday":
+              case "Thursday":
+                  return bookings?.filter((booking) =>
+                      moment(booking.slot_date).format("dddd") === filter
+                  );
+              default:
+                  return bookings
+          }
+      };
+
+  const filteredBookings = filterBookingsByDate(selectedFilter)
+  .filter((booking) => booking?.customerName?.toLowerCase().includes(searchTerm.toLowerCase()))
+  .filter((booking) => gameFilter === "All" || booking?.gameTitle === gameFilter);
 
   const handleBookSlotClick = () => {
     setShowCalendar(true);
@@ -209,7 +256,7 @@ const GameInfo = () => {
       ) : (
         <Card className="p-3" style={{ backgroundColor: "transparent" }}>
           {/* Today's Bookings Header and Search Bar */}
-          <Row
+          {/* <Row
             className="mb-3 d-flex justify-content-between"
             style={{ backgroundColor: "transparent" }}
           >
@@ -238,6 +285,10 @@ const GameInfo = () => {
                     <li
                       key={index}
                       style={{ cursor: "pointer", padding: "10px" }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        console.log("Selected option:", option);
+                      }}
                     >
                       {option}
                     </li>
@@ -316,6 +367,11 @@ const GameInfo = () => {
                   <th
                     style={{ border: "none", fontSize: "1rem", color: "black" }}
                   >
+                    <small>Sr. No</small>
+                  </th>
+                  <th
+                    style={{ border: "none", fontSize: "1rem", color: "black" }}
+                  >
                     <small>Booking Id</small>
                   </th>
                   <th
@@ -354,7 +410,12 @@ const GameInfo = () => {
                 {filteredBookings.map((booking, index) => (
                   <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
                     <td style={{ border: "none", minWidth: "100px" }}>
+                      {index + 1}
+                    </td>
+                    <td style={{ border: "none", minWidth: "100px" }}>
+                    <Link to={`/admin/booking/checkout/${booking._id}`}>
                       {booking?.booking_id}
+                    </Link>   
                     </td>
                     <td style={{ border: "none", minWidth: "150px" }}>
                       <div className="d-flex align-items-center">
@@ -491,7 +552,305 @@ const GameInfo = () => {
                 ))}
               </tbody>
             </Table>
-          </div>
+          </div> */}
+
+           <Row
+                          className="mb-3 d-flex justify-content-between"
+                          style={{ backgroundColor: "transparent" }}
+                      >
+                          <Col xs={12} md={6}>
+                              <div
+                                  onClick={(e) => {
+                                      e.stopPropagation();
+                                      toggleDropdown();
+                                  }}
+                                  style={{
+                                      cursor: "pointer",
+                                      width: "fit-content",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "10px",
+                                      marginBottom: "15px",
+                                  }}
+                                  ref={bookingDropdownRef}
+                              >
+                                  <div>
+                                      <h4>{selectedFilter}'s Bookings</h4>
+                                      <p>{filteredBookings.length} Bookings</p>
+                                  </div>
+                                  <div>{dropdownOpen ? <FaChevronUp /> : <FaChevronDown />}</div>
+          
+                                  {dropdownOpen && (
+                                      <ul className="dropdown-menu" style={{ display: "block" }}>
+                                          {bookingOptions.map((option, index) => (
+                                              <li
+                                                  key={index}
+                                                  value={option}
+                                                  style={{ cursor: "pointer", padding: "10px" }}
+                                                  onClick={(e) => {
+                                                      e.stopPropagation(); // Stop propagation for the item click
+                                                      handleFilterChange(option, e); // Call the handler
+                                                  }}
+                                              >
+                                                  {option}
+                                              </li>
+                                          ))}
+                                      </ul>
+                                  )}
+                              </div>
+          
+                          </Col>
+                          <Col
+                              xs={12}
+                              md={6}
+                              className="text-md-end d-flex flex-md-row justify-content-between align-items-center gap-3"
+                              style={{ backgroundColor: "transparent" }}
+                          >
+                              <InputGroup className="mb-2 mb-md-0">
+                                  <Button variant="outline-secondary">
+                                      <FaSearch
+                                          style={{
+                                              fontSize: "20px",
+                                              color: "#0062FF",
+                                              marginRight: "10px",
+                                          }}
+                                      />
+                                  </Button>
+                                  <FormControl
+                                      placeholder="Search for Booking"
+                                      value={searchTerm}
+                                      onChange={(e) => setSearchTerm(e.target.value)}
+                                  />
+                              </InputGroup>
+                              {filterDropdownOpen && (
+                                  <ul
+                                      ref={filterDropdownRef}
+                                      className="dropdown-menu"
+                                      style={{
+                                          top: "5rem",
+                                          right: "5rem",
+                                          display: "block",
+                                          position: "absolute",
+                                          zIndex: 1000,
+                                      }}
+                                  >
+                                      {games.length > 0 && games.map((sport, index) => (
+                                          <li
+                                              key={index}
+                                              style={{ cursor: "pointer", padding: "10px" }}
+                                              onClick={(e) => {
+                                                  e.stopPropagation(); // Stop propagation for the item click
+                                                  console.log("selected sport",sport);
+                                                  setGameFilter(sport?.name); // Call the handler
+                                                  setFilterDropdownOpen(false)
+                                              }}
+                                          >
+                                              {sport?.name}
+                                          </li>
+                                      ))}
+                                  </ul>
+                              )}
+                          </Col>
+                      </Row>
+          
+                      <div className="table-responsive">
+                          <div>Collection: Rs. {collection}</div>
+                          <Table striped bordered hover>
+                              <thead
+                                  className="text-lowercase"
+                                  style={{ backgroundColor: "#0062FF0D" }}
+                              >
+                                  <tr>
+                                      <th
+                                          style={{ border: "none", fontSize: "1rem", color: "black" }}
+                                      >
+                                          <small>Sr. No</small>
+                                      </th>
+                                      <th
+                                          style={{ border: "none", fontSize: "1rem", color: "black" }}
+                                      >
+                                          <small>Booking Id</small>
+                                      </th>
+                                      <th
+                                          style={{ border: "none", fontSize: "1rem", color: "black" }}
+                                      >
+                                          Name
+                                      </th>
+                                      <th
+                                          style={{ border: "none", fontSize: "1rem", color: "black" }}
+                                      >
+                                          Sports
+                                      </th>
+                                      <th
+                                          style={{ border: "none", fontSize: "1rem", color: "black" }}
+                                      >
+                                          Persons
+                                      </th>
+                                      <th
+                                          style={{ border: "none", fontSize: "1rem", color: "black" }}
+                                      >
+                                          Mode
+                                      </th>
+                                      <th
+                                          style={{ border: "none", fontSize: "1rem", color: "black" }}
+                                      >
+                                          Time / Date
+                                      </th>
+                                      <th
+                                          style={{ border: "none", fontSize: "1rem", color: "black" }}
+                                      >
+                                          Actions
+                                      </th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  {filteredBookings?.map((booking, index) => (
+                                      <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
+                                          <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
+                                              {index + 1}
+                                          </td>
+                                          <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
+                                              <Link to={`/admin/booking/checkout/${booking._id}`}>
+                                                  {booking.booking_id}
+                                              </Link>
+                                          </td>
+                                          <td style={{ border: "none", minWidth: "150px" }}>
+                                              <div className="d-flex align-items-center">
+                                                  <img
+                                                      src={profile}
+                                                      alt={booking?.customerName}
+                                                      style={{
+                                                          width: "40px",
+                                                          height: "40px",
+                                                          borderRadius: "100%",
+                                                          marginRight: "10px",
+                                                      }}
+                                                  />
+                                                  <span>{booking?.customerName}</span>
+                                              </div>
+                                          </td>
+                                          <td
+                                              className="align-middle"
+                                              style={{ border: "none", minWidth: "120px" }}
+                                          >
+                                              {booking?.gameTitle}
+                                          </td>
+                                          <td
+                                              className="align-middle"
+                                              style={{ border: "none", minWidth: "80px" }}
+                                          >
+                                              {booking.players.length + 1}
+                                          </td>
+                                          <td
+                                              className="align-middle"
+                                              style={{ border: "none", minWidth: "120px" }}
+                                          >
+                                              <div style={{ display: "flex", alignItems: "center" }}>
+                                                  <span
+                                                      className="d-flex align-items-center"
+                                                      style={{
+                                                          backgroundColor:
+                                                              booking.mode === "Online"
+                                                                  ? "#03D41414"
+                                                                  : "#FF00000D",
+                                                          borderRadius: "20px",
+                                                          padding: "5px 10px",
+                                                          color:
+                                                              booking.mode === "Online" ? "#00AF0F" : "#FF0000",
+                                                      }}
+                                                  >
+                                                      <div
+                                                          style={{
+                                                              width: "10px",
+                                                              height: "10px",
+                                                              borderRadius: "50%",
+                                                              backgroundColor:
+                                                                  booking.mode === "Online"
+                                                                      ? "#03D414"
+                                                                      : "#FF0000",
+                                                              marginRight: "5px",
+                                                          }}
+                                                      />
+                                                      {booking.mode}
+                                                  </span>
+                                              </div>
+                                          </td>
+                                          <td
+                                              className="align-middle"
+                                              style={{ border: "none", minWidth: "120px" }}
+                                          >
+                                              {formatDate(booking.slot_date)}<br />
+                                              {convertTo12Hour(booking?.slot_id?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time)}
+                                          </td>
+                                          <td
+                                              className="align-middle"
+                                              style={{
+                                                  border: "none",
+                                                  position: "relative",
+                                                  minWidth: "100px",
+                                              }}
+                                          >
+                                              <Button
+                                                  variant="link"
+                                                  className="text-primary"
+                                                  onClick={() =>
+                                                      setActiveDropdownId(
+                                                          activeDropdownId === booking.id ? null : booking.id
+                                                      )
+                                                  }
+                                              >
+                                                  <FaEdit
+                                                      style={{ color: "#0062FF", fontSize: "1.2rem" }}
+                                                  />
+                                              </Button>
+          
+                                              {activeDropdownId === booking.id && (
+                                                  <div
+                                                      ref={editDropdownRef}
+                                                      style={{
+                                                          position: "absolute",
+                                                          right: "0",
+                                                          top: "100%",
+                                                          backgroundColor: "white",
+                                                          boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+                                                          borderRadius: "4px",
+                                                          zIndex: 1000,
+                                                          minWidth: "150px",
+                                                      }}
+                                                  >
+                                                      <div
+                                                          style={{
+                                                              padding: "10px",
+                                                              cursor: "pointer",
+                                                              color: "#0062FF",
+                                                              borderBottom: "1px solid #eee",
+                                                          }}
+                                                          onClick={() => {
+                                                              setActiveDropdownId(null);
+                                                          }}
+                                                      >
+                                                          Edit Booking
+                                                      </div>
+                                                      <div
+                                                          style={{
+                                                              padding: "10px",
+                                                              cursor: "pointer",
+                                                              color: "#FF0000",
+                                                          }}
+                                                          onClick={() => {
+                                                              setActiveDropdownId(null);
+                                                          }}
+                                                      >
+                                                          Cancel Booking
+                                                      </div>
+                                                  </div>
+                                              )}
+                                          </td>
+                                      </tr>
+                                  ))}
+                              </tbody>
+                          </Table>
+                      </div>
         </Card>
       )}
     </div>
