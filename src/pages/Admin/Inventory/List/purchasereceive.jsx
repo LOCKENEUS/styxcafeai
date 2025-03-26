@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,9 +17,38 @@ import solar_export from "/assets/inventory/solar_export-linear.png";
 import add from "/assets/inventory/material-symbols_add-rounded.png";
 import DataTable from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
+import { getPurchaseReceive, getPurchaseReceiveList } from "../../../../store/AdminSlice/Inventory/purchaseReceive";
+import { useDispatch, useSelector } from "react-redux";
 
 
 export const PurchaseReceivedAdmin = () => {
+
+  const user = JSON.parse(sessionStorage.getItem("user"));
+
+  const cafeId = user?._id;
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+      dispatch(getPurchaseReceiveList(cafeId));
+     
+  },[dispatch, cafeId])
+
+  const POIdGetList= useSelector(state => state.purchaseReceiveSlice);
+
+  console.log("POIdGetList ==== ",POIdGetList);
+
+  const POName = POIdGetList?.selectedItem?.map((item) => item.po_no);
+  console.log("POName ==== 11",POName);
+
+  const delivery_date = POIdGetList?.selectedItem?.map((item) => item.delivery_date);
+  console.log("delivery_date ==== 22",delivery_date);
+
+
+
+
+
+
+
      const [searchText, setSearchText] = useState("");
       const navigate = useNavigate();
       const [searchQuery, setSearchQuery] = useState("");
@@ -41,19 +70,29 @@ export const PurchaseReceivedAdmin = () => {
         let index = (name.charCodeAt(0) + name.charCodeAt(name.length - 1)) % colors.length;
         return colors[index];
       };
+
+      const itemsData = POIdGetList?.selectedItem?.map((item, index) => ({
+        sn: index + 1,
+        _id: item?._id,
+        name: item?.po_no || "N/A", 
+        vendor: item?.vendor_name || "N/A",
+        status: item?.status || "Draft",
+        deliveredDate: item?.delivery_date
+          ? new Date(item.delivery_date).toISOString().split("T")[0]
+          : "N/A",
+      })) || [];
+      
       
     
       const columns = [
         {
           name: "SN",
           selector: (row) => row.sn,
-    
           minWidth: "70px",
           maxWidth: "70px",
-    
         },
         {
-          name: "Order No",
+          name: "Receive No",
           selector: (row) => row.name,
           sortable: true,
           cell: (row) => (
@@ -66,35 +105,34 @@ export const PurchaseReceivedAdmin = () => {
                   backgroundColor: getRandomColor(row.name),
                   color: "white",
                   fontWeight: "bold",
-                  padding: "8px 12px",
-                  gap: "10px",
                 }}
               >
-    
                 {row.name.charAt(0).toUpperCase()}
               </span>
               <div>
-                <div style={{ color: "#0062FF",cursor:"pointer" }} onClick={handleShowDetails}>{row.name}</div>
-                {/* <div style={{ fontSize: "12px", color: "gray" }}>{row.email}</div> */}
+                <div
+                  style={{ color: "#0062FF", cursor: "pointer" }}
+                  onClick={() => handleShowDetails(row._id)}
+                  
+                >
+                  {row.name}
+                </div>
               </div>
             </div>
           ),
         },
-        { name: "vendor", selector: (row) => row.vendor, sortable: true },
-        { name: " Status", selector: (row) => row.status, sortable: true },
-        { name: "Delivered Date", selector: (row) => row.deliveredDate, sortable: true },
-    
+        { name: "Vendor", selector: (row) => row.vendor, sortable: true },
+        { name: "Status", selector: (row) => row.status, sortable: true },
+        {
+          name: "Delivery Date",
+          selector: (row) => row.deliveredDate,
+          sortable: true,
+        },
       ];
+      
     
     
-      const itemsData = [
-        { sn: 1, name: "PR-190", vendor: "31", status: "Packed", deliveredDate: "21/10/2022" },
-        { sn: 2, name: "PR-191", vendor: "6", status: "Shipped", deliveredDate: "21/2/2022" },
-        { sn: 3, name: "PR-192", vendor: "21", status: "Packed", deliveredDate: "21/2/2022" },
-        { sn: 4, name: "PR-193", vendor: "1", status: "Shipped", deliveredDate: "21/12/2022" },
-        { sn: 5, name: "PR-198", vendor: "2", status: "Packed", deliveredDate: "21/12/2022" },
     
-      ];
     
       const handlePageChange = (page) => {
         if (page >= 1 && page <= totalPages) {
@@ -102,8 +140,9 @@ export const PurchaseReceivedAdmin = () => {
         }
       };
     
-        const handleShowDetails = () => {
-          navigate("/admin/inventory/PurchaseReceivedDetails");
+        const handleShowDetails = (PRID) => {
+          console.log("PRID", PRID);
+          navigate("/admin/inventory/PurchaseReceivedDetails", { state: PRID });
         }
       const filteredItems = itemsData.filter((item) =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

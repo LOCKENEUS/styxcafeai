@@ -7,10 +7,43 @@ import print from "/assets/inventory/Vector.png";
 import sendMail from "/assets/inventory/Group.png";
 import editlogo from "/assets/inventory/mage_edit.png";
 import companylog from "/assets/inventory/companylogo.png";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getPurchaseReceive } from "../../../../store/AdminSlice/Inventory/purchaseReceive";
+import { useEffect } from "react";
 
 
 export const PurchaseReceivedDetails = () => {
+
+    const user = JSON.parse(sessionStorage.getItem("user"));
+
+    const cafeId = user?._id;
+    console.log("user ----", user);
+    const userName= user?.name;
+    const userEmail= user?.email;
+    const UserContactN = user?.contact_no;
+    const UserAddress = user?.address;
+    const UesrPAN = user?.panNo;
+    console.log("userName call ----", userName);
+   
+
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(getPurchaseReceive(purchaseReceive));
+    }, [dispatch, cafeId]);
+
+    const POIdGet= useSelector(state => state.purchaseReceiveSlice);
+    console.log("POIdGet ==== ",POIdGet);
+    const location = useLocation();
+    const purchaseReceive = location.state;
+  
+    console.log("purchase Receive 101:", purchaseReceive);
+
+    // count items
+    
+     const countItems =POIdGet?.selectedItem?.items;
+     console.log("countItems length",countItems);
+
     return (
         <Container >
             <Row className="mx-2">
@@ -32,7 +65,7 @@ export const PurchaseReceivedDetails = () => {
                             <Col sm={6} xs={12}>
                                 <h5 className="text-dark p-2" style={{ fontSize: '18px' }}>
                                     <span>Purchase Receive: </span>
-                                    <span>PR - 014</span>
+                                    <span>{POIdGet?.selectedItem?.po_no}</span>
                                 </h5>
                             </Col>
                             <Col sm={6} xs={12} className="d-flex flex-wrap justify-content-center justify-content-sm-end align-items-center gap-2 text-center">
@@ -57,12 +90,12 @@ export const PurchaseReceivedDetails = () => {
                                 <img src={companylog} alt="Logo" className="img-fluid" />
                             </Col>
                             <Col sm={8}>
-                                <h5>Linganwar</h5>
-                                <p className="mb-1">yash123linganwar@gmail.com / 91562173745</p>
+                                <h5>{userName}</h5>
+                                <p className="mb-1">{userEmail}/ {UserContactN}</p>
                                 <p className="mb-1">
-                                    Karve Statue, DP Road, Mayur Colony, Kothrud, Pune, Maharashtra, India
+                                   {UserAddress}
                                 </p>
-                                <strong>PAN: ADNP5467B</strong>
+                                <strong>PAN: {UesrPAN}</strong>
                             </Col>
                             <Col sm={2} className=" d-flex  ">
                                 <span className="p-2 float-right">PO:<b className="text-primary">Draft</b></span>
@@ -109,12 +142,12 @@ export const PurchaseReceivedDetails = () => {
 
                                     {/* Order Info */}
                                     <Col sm={6} >
-                                        <span className="mb-3 float-end" style={{ fontSize: '16px', fontWeight: '500' }}>Order No:<b className="text-primary">PO-009</b></span>
+
                                         <p className="my-5 mx-2 border-start border-3 p-2">
+                                           
+                                            <p><span className="my-1" style={{ fontSize: '16px', fontWeight: '500' }}>Order No:<b className="text-primary">{POIdGet?.selectedItem?.po_no}</b></span></p>
                                             <p><span className="my-1 fw-bold">Expected Delivery:</span> Oct 14, 1985</p>
-                                            <p><span className="my-1 fw-bold">Payment Terms:</span> Cheaque</p>
-                                            <p><span className="my-1 fw-bold">Reference:</span> Non aut autem volupt</p>
-                                            <p><span className="my-1 fw-bold">Shipment Preference:</span> Minus autem dolor ad</p>
+                                            <p><span className="my-1 fw-bold">Received Date:</span> Oct 14, 1985</p>
                                         </p>
 
                                     </Col>
@@ -132,114 +165,73 @@ export const PurchaseReceivedDetails = () => {
                             <Col sm={12}>
                                 <div className="table-responsive">
 
-                                    <Table className="text-center align-middle">
-                                        <thead className="text-start" >
-                                            <tr style={{ borderBottom: "2px solid #dee2e6" }}>
-                                                <th className="fw-bold"  >PRODUCT</th>
-                                                <th className="fw-bold" >QUANTITY</th>
-                                                <th className="fw-bold" >PRICE</th>
-                                                <th className="fw-bold" >TAX</th>
-                                                <th className="fw-bold" >TOTAL</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="text-start" >
-                                            <tr>
+                                    
+                                       { countItems && countItems.length > 0 ? (
+                                        countItems.map((item, index) => (
+                                            <Table className="text-center align-middle">
+                                            <thead className="text-start" >
+                                                <tr style={{ borderBottom: "2px solid #dee2e6" }}>
+                                                    <th className="fw-bold"  >PRODUCT</th>
+                                                    <th className="fw-bold" ></th>
+                                                    <th className="fw-bold" >QUANTITY</th>
+                                                    <th className="fw-bold" ></th>
+                                                   
+                                                </tr>
+                                            </thead>
+                                            <tbody className="text-start" >
+                                                <tr>
                                                 <td>
                                                     <b>Shaeleigh Shaffer</b>
                                                     <br />
-                                                    HSN : 1
+                                                    HSN : {item.hsn}
                                                 </td>
                                                 <td>
-                                                    SKU : 646546 <br />
-                                                    Qty : 50 Nos
+                                                    SKU : {item.sku} 
+                                                   
                                                 </td>
-                                                <td>Price : ₹7000</td>
-                                                <td>GST (10%)</td>
-                                                <td>Total : ₹385000</td>
-                                            </tr>
-                                        </tbody>
-                                    </Table>
+                                                <td>
+                                                    
+                                                Ordered Qty  : 50 Nos
+                                                </td>
+                                                <td>  Received Qty :  {item.qty_received}</td>
+                                                </tr>
+                                            </tbody>
+                                        </Table>
+                                            ))
+                                        ) : (
+                                            <p className="text-center text-primary">No Items</p>
+                                        )
+
+                                       
+
+                                    }
+
+                                   
                                 </div>
                             </Col>
                         </Row>
-                        {/* <Row className="mt-4 border-top border-3 p-2">
-        <Col sm={6} className="border-end border-3">
-          <p>
-            <b>Description:</b>  Et quae qui veritati 
-          </p>
-        </Col>
-        <Col sm={6} className="text-end">
-          <Table  className="text-end">
-  <tbody>
-    <tr>
-      <td className="fw-bold text-start">Subtotal:</td>
-      <td>₹385000</td>
-    </tr>
-    <tr>
-      <td className="fw-bold text-start">Discount:</td>
-      <td>
-        <span className="text-primary" style={{ cursor: "pointer" }}>
-          5%
-        </span>{" "}
-        ₹19250
-      </td>
-    </tr>
-    <tr>
-      <td className="fw-bold text-start">Tax:</td>
-      <td>GST (10%)</td>
-    </tr>
-    <tr>
-      <td className="fw-bold text-start">Total:</td>
-      <td>₹ 251</td>
-    </tr>
-    <tr>
-      <td className="fw-bold text-start">Occaecat qui eaque u:</td>
-      <td>₹ 1</td>
-    </tr>
-  </tbody>
-</Table>
-        </Col>
-
-        </Row> */}
-
+                        
                     </Card>
                 </Col>
-                {/* 
-    <Col sm={12} className="my-2">
-        <Card className=" p-3 shadow-sm">
-            <h5 className=" mb-3" style={{ fontSize:'20px' }}>Receive & Payment Details</h5>
-            <div className="table-responsive">
 
-            <Table className="text-center align-middle">
-            <thead >
-              <tr  style={{ borderBottom: "2px solid #dee2e6",borderTop: "2px solid #dee2e6" }}>
-                <th className="fw-bold">#</th>
-                <th className="fw-bold">Receive  No</th>
-                <th className="fw-bold">Bill No</th>
-                <th className="fw-bold">Bill Date</th>
-                <th className="fw-bold">Amount</th>
-                <th className="fw-bold">Status</th>
-                
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                1
-                </td>
-                <td>
-                PACK-005
-                </td>
-                <td>Feb 13, 2025</td>
-                <td>Draft</td>
-                
-              </tr>
-            </tbody>
-          </Table>
+                <Col sm={12} className="my-2">
+                    <Card className="p-3 shadow-sm">
+                        <Row>
 
-            </div>
-        </Card>
-    </Col> */}
+
+                        <Col sm={6} className="p-2 position-relative">
+                            <p><b>Description : </b>{POIdGet?.selectedItem?.description}</p>
+                            <div className="d-none d-sm-block" style={{ height: "2rem" }}></div>
+                        </Col>
+                        <Col sm={6} className="p-2">
+                            {/* Add any content here if needed */}
+                        </Col>
+                            </Row>
+                            </Card>
+                            </Col>
+
+                
+    
             </Row>
 
         </Container>

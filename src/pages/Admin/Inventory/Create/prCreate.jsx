@@ -20,7 +20,7 @@ export const PRCreate = () => {
 
 
     });
-    const [inventoryItems ,setInventoryItems]= useState([]);
+    // const [inventoryItems ,setInventoryItems]= useState([]);
     const [selectedVendor, setSelectedVendor] = useState("");
     const [PurchaseOrder, setPurchaseOrder] = useState("");
     const [selectedDate, setSelectedDate] = useState("");
@@ -82,16 +82,8 @@ console.log("Items Details display -------", POItems);
 // }
 
 
-    const [products, setProducts] = useState([
-        {
-            id: 1,
-            item: '',
-            quantity: '',
-            price: '',
-            tax: '',
-            total: ''
-        }
-    ]);
+    const [products, setProducts] = useState([ ]);
+    console.log("products ======", products);
     const [taxList, setTaxList] = useState([]);
 
 
@@ -102,16 +94,7 @@ console.log("Items Details display -------", POItems);
         setCurrentDate(today);
     }, []);
 
-    const addProduct = () => {
-        setProducts([...products, {
-            id: products.length + 1,
-            item: '',
-            quantity: '',
-            price: '',
-            tax: '',
-            total: ''
-        }]);
-    };
+    
     const handleTaxSubmit = (e) => {
         e.preventDefault();
         setTaxList([...taxList, newTax]);
@@ -138,13 +121,41 @@ console.log("Items Details display -------", POItems);
 
     const handlePoChange = async (poId) => {
         setPurchaseOrder(poId);
-        // console.log("Selected PO: ", poId);
         console.log("Selected PO: ", poId);
+        console.log("---------------------------------------------");
+      
+        if (POItems && poId) {
+          const filteredProducts = POItems
+            .filter((item) => item?.refer_id === poId)
+            .map((item, index) => {
+              console.log(`POItems[${index}] _id:`, item?._id);
+              console.log("Matched Selected PO:", poId);
+              console.log("Full Item:", item);
+      
+              return {
+                id: item?._id,
+                item_id: item?.item_id?._id || "",
+                hsn: item?.hsn?.toString() || "",
+                qty_to_receive: item?.quantity || 0,
+                price: item?.price || 0,
+                tax: item?.tax || "",
+                tax_amt: item?.tax_amt || 0,
+                total: item?.total || 0,
+              };
+            });
+      
+          setProducts(filteredProducts);
+          console.log("Updated Products:", filteredProducts);
+        }
+      
+        console.log("---------------------------------------------");
+      
         setFormData((prev) => ({
-            ...prev,
-            PurchaseOrder: poId,  
+          ...prev,
+          PurchaseOrder: poId,
         }));
       };
+      
 // const handleSubmit = (e) => {
 //     e.preventDefault();
 //     console.log("Submitted data:", formData);
@@ -168,6 +179,7 @@ const handleQtyChange = (e, index) => {
         console.log("Remaining quantity:", POItems[0]?.quantity);
         console.log("remainingQty", remainingQty);
 
+
         if (enteredQty > remainingQty) {
             setInventoryItems((prevItems) =>
                 prevItems.map((item, i) =>
@@ -188,7 +200,7 @@ const handleQtyChange = (e, index) => {
             );
         }
 
-        console.log("inventoryItems", inventoryItems);
+    
 
 
 
@@ -197,17 +209,46 @@ const handleQtyChange = (e, index) => {
         
     };
 
+
+    // ----------------------------------------------------------------------------
+
+    const [inventoryItems, setInventoryItems] = useState([
+        {
+          id: "",
+          name: "",
+          qty: 1,
+          rate: "",
+          tax: "",
+          tax_amt: "",
+          amount: "",
+          qty_to_receive: 1,
+        },
+      ]);
+
+
+
+
+
+
+
+
+
+
+
+
+    // ----------------------------------------------------------------------------------
+
    
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Submitted data:", formData);
         const submitData = {
-            cafe: cafeId,
-            vendor_id: selectedVendor,
-            received_date: formData.currentDate,
             po_id: formData.PurchaseOrder,
+            vendor_id: selectedVendor,
+            cafe: cafeId,
+            received_date: formData.currentDate,
             description: formData.description,
-            items: formData.selectedVendor, 
+            items: products, 
         };
 
         
@@ -344,7 +385,7 @@ const handleQtyChange = (e, index) => {
                             </thead>
                            {itemsCount > 0 && (
                                 <tbody>
-                                    {POItems.map((item, index) => (
+                                  {POItems.filter(item => item.refer_id === PurchaseOrder).map((item, index) => (
                                         <tr key={index}>
                                             <td >
                                                 <span className="fw-bold">{item?.item_id?.name}</span>
