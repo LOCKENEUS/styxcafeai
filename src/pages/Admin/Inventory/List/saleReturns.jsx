@@ -53,8 +53,8 @@ export const InvoicePaymentInventory = () => {
       maxWidth: "70px",
     },
     {
-      name: "Transaction ID",
-      selector: (row) => row.transaction_id,
+      name: "Invoice ID",
+      selector: (row) => row?.invoice_id?.so_no,
       sortable: true,
       cell: (row) => (
         <div className="d-flex align-items-center">
@@ -63,21 +63,21 @@ export const InvoicePaymentInventory = () => {
             style={{
               width: "35px",
               height: "35px",
-              backgroundColor: getRandomColor(row.transaction_id),
+              backgroundColor: getRandomColor(row?.invoice_id?.so_no),
               color: "white",
               fontWeight: "bold",
               padding: "8px 12px",
               gap: "10px",
             }}
           >
-            {row.transaction_id.charAt(0).toUpperCase()}
+            {row?.invoice_id?.so_no.charAt(0).toUpperCase()}
           </span>
           <div>
             <div 
               style={{ color: "#0062FF", cursor: "pointer" }} 
-              onClick={() => handleDetails(row.invoice_id)}
+              onClick={() => handleDetails(row?.invoice_id?._id)}
             >
-              {row.transaction_id}
+              {row?.invoice_id?.so_no}
             </div>
           </div>
         </div>

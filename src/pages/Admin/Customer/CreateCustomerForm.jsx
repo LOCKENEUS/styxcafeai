@@ -235,8 +235,8 @@ const CreateCustomerForm = () => {
     submittedData.append("city", formData.city);
     submittedData.append("additional_notes", formData.additionalNotes);
     submittedData.append("creditEligibility", formData.creditEligibility);
-    submittedData.append("creditLimit", formData.creditLimit);
-    submittedData.append("creditAmount", formData.creditAmount);
+    submittedData.append("creditLimit", parseInt(formData.creditLimit) || 0);
+    submittedData.append("creditAmount", parseInt(formData.creditAmount) || 0);
     
     if (formData.customerProfile) {
       submittedData.append("customerProfile", formData.customerProfile);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { HiChevronDoubleLeft, HiChevronDown, HiChevronUp } from "react-icons/hi";
 import { GiHamburgerMenu } from "react-icons/gi";
 import navItems from "./sidebarConfig";
@@ -15,6 +15,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
   const [expandedItems, setExpandedItems] = useState({});
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   // Detect mobile viewport
   useEffect(() => {
@@ -101,6 +102,14 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
           <div style={{marginBottom: window.innerWidth <= 768 ? "5rem" : "2rem"}} className="nav nav-pills nav-flush flex-column">
             {navItems.map((item, index) => {
               const collapseId = `collapse-${index}`;
+              
+              // Check if any sub-item matches current path
+              const isActive = item.subItems.some(subItem => 
+                subItem.sub && subItem.sub.some(furtherSubItem => 
+                  furtherSubItem.path === location.pathname
+                )
+              );
+
               return (
                 <div key={index} className="nav-item">
                   
@@ -115,8 +124,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
                       aria-controls={collapseId}
                       style={{
                         color: "#1e3a8a",
-                        backgroundColor: expandedItems[collapseId] ? "#F4F4F4" : "transparent"
-                        ,
+                        backgroundColor: expandedItems[collapseId] || isActive ? "#F4F4F4" : "transparent",
                         transition: "all 0.2s",
                     
                       }}
@@ -170,7 +178,9 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
                                   color: "#4b5563",
                                   fontSize: "0.9rem",
                                   transition: "all 0.2s",
-                                  zIndex: "200"
+                                  zIndex: "200",
+                                  backgroundColor: location.pathname === furtherSubItem.path ? "#F4F4F4" : "transparent",
+                                  fontWeight: location.pathname === furtherSubItem.path ? "600" : "normal",
                                 }}
                               >
                                 <span className="d-flex position-relative align-items-center gap-2">
