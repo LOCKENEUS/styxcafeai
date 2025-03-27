@@ -1,35 +1,91 @@
-import React, { useState } from 'react';
-import { Button, Row, Col, Form, FormGroup, Modal, ModalHeader, ModalBody, ModalFooter, ModalTitle } from "react-bootstrap";
+import React, { useState, useEffect } from 'react';
+import { Button, Row, Col, Form, FormGroup, Modal, ModalHeader, ModalBody, ModalFooter, ModalTitle, Alert } from "react-bootstrap";
+import { useDispatch, useSelector } from 'react-redux';
+import { addPayment, getPaymentById } from '../../../../store/AdminSlice/Inventory/CollectPaymentSlice';
 
-const CollectPayment = ({ show, handleClose, maxAmount = 0 }) => {
+const CollectPayment = ({ show, handleClose, maxAmount, invoiceId, onSuccess }) => {
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.payment || {});
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const cafeId = user?._id;
+  const [showError, setShowError] = useState(false);
+
+  // Reset form data and error state when modal opens
+  useEffect(() => {
+    if (show) {
+      setShowError(false);
+      setFormData({
+        invoice_id: invoiceId,
+        deposit_amount: maxAmount,
+        mode: 'Cash',
+        deposit_date: new Date().toISOString().split('T')[0],
+        transaction_id: '',
+        description: '',
+        cafe: cafeId
+      });
+    }
+  }, [show, maxAmount, invoiceId, cafeId]);
+
   const [formData, setFormData] = useState({
+    invoice_id: invoiceId,
     deposit_amount: maxAmount,
-    payment_mode: 'Cash',
+    mode: 'Cash',
     deposit_date: new Date().toISOString().split('T')[0],
     transaction_id: '',
-    description: ''
+    description: '',
+    cafe: cafeId
   });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    
+    if (name === 'deposit_amount') {
+      const amount = parseFloat(value);
+      if (amount > maxAmount) {
+        setShowError(true);
+        return; // Don't update the value if it exceeds maxAmount
+      }
+      setShowError(false);
+    }
+
     setFormData(prevState => ({
       ...prevState,
       [name]: value
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // onSubmit && onSubmit(formData);
-    handleClose();
+    if (parseFloat(formData.deposit_amount) > maxAmount) {
+      setShowError(true);
+      return;
+    }
+    try {
+      await dispatch(addPayment(formData)).unwrap();
+      // Fetch updated payment data
+      await dispatch(getPaymentById(invoiceId));
+      // Close modal and trigger success callback
+      handleClose();
+      if (onSuccess) {
+        onSuccess();
+      }
+    } catch (error) {
+      console.error('Failed to collect payment:', error);
+      setShowError(true);
+    }
   };
 
   return (
     <Modal style={{ zIndex: 10000 }} show={show} onHide={handleClose} centered >
-      <ModalHeader closeButton style={{ backgroundColor: '#bad1f7' , padding:"1rem" }}>
+      <ModalHeader closeButton style={{ backgroundColor: '#bad1f7', padding:"1rem" }}>
         <ModalTitle>Collect Payment</ModalTitle>
       </ModalHeader>
       <ModalBody>
+        {showError && (
+          <Alert variant="danger" onClose={() => setShowError(false)} dismissible>
+            Amount cannot exceed ₹{maxAmount}
+          </Alert>
+        )}
         <Form onSubmit={handleSubmit}>
           <Row>
             <Col md={6}>
@@ -43,15 +99,22 @@ const CollectPayment = ({ show, handleClose, maxAmount = 0 }) => {
                   max={maxAmount}
                   min={0}
                   required
+                  isInvalid={showError}
                 />
+                <Form.Control.Feedback type="invalid">
+                  Amount cannot exceed ₹{maxAmount}
+                </Form.Control.Feedback>
+                <Form.Text className="text-muted">
+                  Maximum allowed amount: ₹{maxAmount}
+                </Form.Text>
               </FormGroup>
             </Col>
             <Col md={6}>
               <FormGroup className="mb-3">
                 <Form.Label>Payment Mode</Form.Label>
                 <Form.Select
-                  name="payment_mode"
-                  value={formData.payment_mode}
+                  name="mode"
+                  value={formData.mode}
                   onChange={handleInputChange}
                   required
                 >
@@ -107,8 +170,12 @@ const CollectPayment = ({ show, handleClose, maxAmount = 0 }) => {
         <Button variant="secondary" onClick={handleClose}>
           Close
         </Button>
-        <Button variant="primary" onClick={handleSubmit}>
-          Collect
+        <Button 
+          variant="primary" 
+          onClick={handleSubmit}
+          disabled={loading || showError}
+        >
+          {loading ? 'Collecting...' : 'Collect'}
         </Button>
       </ModalFooter>
     </Modal>

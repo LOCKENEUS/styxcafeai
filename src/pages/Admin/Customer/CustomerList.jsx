@@ -45,15 +45,7 @@ const CustomerList = () => {
 
   return (
     <div className="container mt-4" style={{ padding: '0 1rem' }}>
-      {loading ? (
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
-          <Loader />
-        </div>
-      ) : error ? (
-        <div className="alert alert-danger" role="alert">
-          {error}
-        </div>
-      ) : (
+
         <>
           <div
             className="d-flex justify-content-between align-items-center mt-5 mb-5"
@@ -160,7 +152,7 @@ const CustomerList = () => {
                 </tr>
               </thead>
               <tbody>
-                {customers.length === 0 ? (
+                {loading ? (
                   <tr>
                     <td 
                       colSpan="8" 
@@ -170,8 +162,20 @@ const CustomerList = () => {
                         fontSize: 'clamp(14px, 3vw, 16px)',
                       }}
                     >
-                   empty customer list
-
+                      <Loader />
+                    </td>
+                  </tr>
+                ) : customers.length === 0 ? (
+                  <tr>
+                    <td 
+                      colSpan="8" 
+                      style={{
+                        textAlign: 'center',
+                        padding: '20px',
+                        fontSize: 'clamp(14px, 3vw, 16px)',
+                      }}
+                    >
+                      empty customer list
                     </td>
                   </tr>
                 ) : (
@@ -278,7 +282,7 @@ const CustomerList = () => {
             </Table>
           </div>
         </>
-      )}
+    
 
       {/* Optional: Add custom CSS */}
       <style jsx>{`

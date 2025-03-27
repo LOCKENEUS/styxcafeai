@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,113 +14,107 @@ import {
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import gm1 from "/assets/inventory/mynaui_search.svg";
 import solar_export from "/assets/inventory/solar_export-linear.png";
-import add from "/assets/inventory/material-symbols_add-rounded.png";
 import DataTable from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { getPayments } from '../../../../store/AdminSlice/Inventory/CollectPaymentSlice';
+import Loader from "../../../../components/common/Loader/Loader";
 
 export const InvoicePaymentInventory = () => {
-    const [searchText, setSearchText] = useState("");
-  const navigator = useNavigate();
+  const dispatch = useDispatch();
+  const { payments, loading } = useSelector((state) => state.payment || {});
   const [searchQuery, setSearchQuery] = useState("");
-  const [activePage, setActivePage] = useState(1);
-  const itemsPerPage = 5;
-  const totalPages = Math.ceil(3 / itemsPerPage); 
- 
-  
+  const navigator = useNavigate();
 
-  // Function to handle modal (replace with actual logic)
-  const handleShowCreate = () => {
-    console.log("Show create item modal");
-  };
+  useEffect(() => {
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    const cafeId = user?._id;
+    if (cafeId) {
+      dispatch(getPayments(cafeId));
+    }
+  }, [dispatch]);
 
-
-  const getRandomColor = (name) => {
+  const getRandomColor = (str) => {
     const colors = ["#FAED39", "#FF5733", "#33FF57", "#339FFF", "#FF33F6", "#FFAA33","#39DDFA","#3DFF16"];
-    let index = name.charCodeAt(0) % colors.length; // Generate a consistent index
+    let index = str?.charCodeAt(0) % colors.length || 0;
     return colors[index];
   };
 
-    
+  const handleDetails = (id) => {
+    navigator(`/admin/Inventory/SaleInvoiceDetails/${id}`);
+  };
+
+
   const columns = [
     {
       name: "SN",
-      selector: (row) => row.sn,
-     
-      minWidth: "70px", 
+      selector: (row, index) => index + 1,
+      minWidth: "70px",
       maxWidth: "70px",
-      
     },
     {
-      name: "Return No",
-      selector: (row) => row.name,
+      name: "Transaction ID",
+      selector: (row) => row.transaction_id,
       sortable: true,
       cell: (row) => (
         <div className="d-flex align-items-center">
           <span
-  className="d-flex justify-content-center align-items-center rounded-circle me-2"
-  style={{
-    width: "35px",
-    height: "35px",
-    backgroundColor: getRandomColor(row.name),
-    color: "white",
-    fontWeight: "bold",
-    padding: "8px 12px",
-    gap: "10px",
-  }}
->
-
-            {row.name.charAt(0).toUpperCase()}
+            className="d-flex justify-content-center align-items-center rounded-circle me-2"
+            style={{
+              width: "35px",
+              height: "35px",
+              backgroundColor: getRandomColor(row.transaction_id),
+              color: "white",
+              fontWeight: "bold",
+              padding: "8px 12px",
+              gap: "10px",
+            }}
+          >
+            {row.transaction_id.charAt(0).toUpperCase()}
           </span>
           <div>
-            <div style={{ color: "#0062FF",cursor:"pointer"}} onClick={handaleDetails}>{row.name}</div>
-            {/* <div style={{ fontSize: "12px", color: "gray" }}>{row.email}</div> */}
+            <div 
+              style={{ color: "#0062FF", cursor: "pointer" }} 
+              onClick={() => handleDetails(row.invoice_id)}
+            >
+              {row.transaction_id}
+            </div>
           </div>
         </div>
       ),
     },
-    { name: "Client", selector: (row) => row.client, sortable: true },
-    { name: " Status", selector: (row) => row.status, sortable: true },
-    { name: "Return Date", selector: (row) => row.returnDate, sortable: true },
-    
+    { 
+      name: "Amount", 
+      selector: (row) => `₹${row.deposit_amount}`,
+      sortable: true 
+    },
+    { 
+      name: "Payment Mode", 
+      selector: (row) => row.mode, 
+      sortable: true 
+    },
+    { 
+      name: "Payment Date", 
+      selector: (row) => new Date(row.deposit_date).toLocaleDateString(),
+      sortable: true 
+    },
+    { 
+      name: "Description", 
+      selector: (row) => row.description,
+      sortable: true 
+    },
   ];
-  
-    
-  const itemsData = [
-    { sn: 1, name: "Alice", client: "31", status: "Packed", returnDate: "21/10/2022" },
-    { sn: 2, name: "Bob", client: "6", status: "Shipped", returnDate: "21/2/2022" },
-    { sn: 3, name: "Charlie", client: "21", status: "Packed", returnDate: "21/2/2022" },
-    { sn: 4, name: "David", client: "1", status: "Shipped", returnDate: "21/12/2022" },
-    { sn: 5, name: "Eve", client: "2", status: "Packed", returnDate: "21/12/2022" },    
-  
-  ];
-  
-    const handaleDetails = () => {
-        navigator("/admin/Inventory/InvoicePaymentDetails");
-      };
-      
 
-     
-    
-      const handlePageChange = (page) => {
-        if (page >= 1 && page <= totalPages) {
-          setActivePage(page);
-        }
-      };
-  
-    //   const handleShowCreate = () => {
-    //     navigator("/Inventory/itemCreate");
-    //   }
-    const filteredItems = itemsData.filter((item) =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.client.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.returnDate.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      
+  const filteredItems = payments?.filter((item) =>
+    item.transaction_id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.mode?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
+
   return (
-    <Container >
+    <Container className="p-0">
       <Row>
-        <Col sm={12} className="mx-4 my-3">
+        <Col sm={12} className="mx-2 my-3">
           <div style={{ top: "186px", fontSize: "18px" }}>
             <Breadcrumb>
               <BreadcrumbItem href="#">Home</BreadcrumbItem>
@@ -130,100 +124,100 @@ export const InvoicePaymentInventory = () => {
           </div>
         </Col>
 
-        {/* Items List Card */}
-       <Col sm={12}>
-       
-       <Card data-aos="fade-right" data-aos-duration="800" className="mx-4 p-3">
-          <Row className="align-items-center">
-            {/* Title */}
-            <Col sm={4} className="d-flex my-2">
-              <h1
-                style={{
-                  fontSize: "20px",
-                  fontWeight: "500",
-                  lineHeight: "18px",
-                }}
-                className="m-0"
-              >
-                Invoice Payment List
-              </h1>
-            </Col>
+        <Col sm={12}>
+          <Card data-aos="fade-right" data-aos-duration="800" className="mx-2 p-3">
+            <Row className="align-items-center">
+              <Col sm={4} className="d-flex my-2">
+                <h1 style={{ fontSize: "20px", fontWeight: "500", lineHeight: "18px" }} className="m-0">
+                  Invoice Payment List
+                </h1>
+              </Col>
 
-            {/* Search Input */}
-            <Col sm={3} className="d-flex my-2">
-              <InputGroup className="navbar-input-group">
-                <InputGroupText
-                  className="border-0"
-                  style={{ backgroundColor: "#FAFAFA" }}
+              <Col sm={3} className="d-flex my-2">
+                <InputGroup className="navbar-input-group">
+                  <InputGroupText className="border-0" style={{ backgroundColor: "#FAFAFA" }}>
+                    <Image src={gm1} />
+                  </InputGroupText>
+
+                  <FormControl
+                    type="search"
+                    size="sm"
+                    placeholder="Search payments..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{ backgroundColor: "#FAFAFA", border: "none" }}
+                  />
+
+                  {searchQuery && (
+                    <InputGroupText
+                      as="button"
+                      className="border-0 bg-transparent"
+                      onClick={() => setSearchQuery("")}
+                    >
+                      ✖
+                    </InputGroupText>
+                  )}
+                </InputGroup>
+              </Col>
+
+              <Col sm={5} className="d-flex justify-content-end text-end my-2">
+                <Button 
+                  variant="white" 
+                  className="btn px-4 mx-2" 
+                  size="sm" 
+                  style={{ borderColor: "#FF3636", color: "#FF3636" }}
                 >
-                  <Image src={gm1} />
-                </InputGroupText>
+                  <Image 
+                    className="me-2 size-sm" 
+                    style={{ width: "22px", height: "22px" }} 
+                    src={solar_export} 
+                  />
+                  Export
+                </Button>
+              </Col>
 
-                <FormControl
-  type="search"
-  size="sm"
-  placeholder="Search for vendors"
-  aria-label="Search in docs"
-  value={searchQuery}
-  onChange={(e) => setSearchQuery(e.target.value)}  // Update searchQuery directly
-  style={{ backgroundColor: "#FAFAFA", border: "none" }}
-/>
-
-
-{searchQuery && (
-  <InputGroupText
-    as="button"
-    className="border-0 bg-transparent"
-    onClick={() => setSearchQuery("")}  // Clear searchQuery instead of searchText
-  >
-    ✖
-  </InputGroupText>
-)}
-
-              </InputGroup>
-            </Col>
-
-            {/* Action Buttons */}
-            <Col sm={5} className="d-flex justify-content-end text-end my-2">
-            <Button variant="denger" className="btn  px-4 mx-2" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }}>
-                <Image className="me-2 size-sm" style={{ width: "22px", height: "22px" }} src={solar_export} />
-                Export
-              </Button>
-
-              {/* <Button variant="primary" className="px-4 mx-2" size="sm" onClick={handleShowCreate}>
-                <Image
-                  className="me-2"
-                  style={{ width: "22px", height: "22px" }}
-                  src={add}
-                />
-                New Item
-              </Button> */}
-            </Col>
-
-
-            <Col sm={12} style={{marginTop:"30px"}}>
-              <DataTable
-                columns={columns}
-                data={filteredItems}
-                // pagination
-                highlightOnHover
-                responsive
-                persistTableHead
-                customStyles={{
-                  rows: { style: { backgroundColor: "#ffffff", padding: 'clamp(10px, 2vw, 15px)',
-                    border: 'none',
-                    fontSize: '14px',} },
-                  headCells: {
-                    style: { backgroundColor: "#e9f5f8", padding: 'clamp(10px, 2vw, 15px)',
-                        border: 'none',
-                        fontSize: 'clamp(14px, 3vw, 16px)', },
-                  },
-                  table: { style: { borderRadius: "5px", overflow: "hidden" } },
-                }}
-              />
-            </Col>
-          </Row>
-        </Card></Col>
+              <Col sm={12} style={{marginTop:"30px"}}>
+                {loading ? (
+                  <div className="text-center p-4">
+                    <Loader />
+                  </div>
+                ) : (
+                  <DataTable
+                    columns={columns}
+                    data={filteredItems}
+                    highlightOnHover
+                    responsive
+                    persistTableHead
+                    customStyles={{
+                      rows: { 
+                        style: { 
+                          backgroundColor: "#ffffff", 
+                          padding: 'clamp(10px, 2vw, 15px)',
+                          border: 'none',
+                          fontSize: '14px',
+                        } 
+                      },
+                      headCells: {
+                        style: { 
+                          backgroundColor: "#e9f5f8", 
+                          padding: 'clamp(10px, 2vw, 15px)',
+                          border: 'none',
+                          fontSize: 'clamp(14px, 3vw, 16px)',
+                        },
+                      },
+                      table: { 
+                        style: { 
+                          borderRadius: "5px", 
+                          overflow: "hidden" 
+                        } 
+                      },
+                    }}
+                  />
+                )}
+              </Col>
+            </Row>
+          </Card>
+        </Col>
       </Row>
     </Container>
   );

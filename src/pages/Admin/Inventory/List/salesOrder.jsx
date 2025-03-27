@@ -136,9 +136,9 @@ export const SalesOrder = () => {
   ) || [];
 
   return (
-    <Container >
+    <Container  className="p-0">
       <Row>
-        <Col sm={12} className="mx-4 my-3">
+        <Col sm={12} className="mx-2 my-3">
           <div style={{ top: "186px", fontSize: "18px" }}>
             <Breadcrumb>
               <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
@@ -151,7 +151,7 @@ export const SalesOrder = () => {
         {/* Items List Card */}
         <Col sm={12}>
 
-          <Card data-aos="fade-right" data-aos-duration="800" className="mx-4 p-3">
+          <Card data-aos="fade-right" data-aos-duration="800" className="mx-2 p-1">
             <Row className="align-items-center">
               {/* Title */}
               <Col sm={4} className="d-flex my-2">
@@ -161,7 +161,7 @@ export const SalesOrder = () => {
                     fontWeight: "500",
                     lineHeight: "18px",
                   }}
-                  className="m-0"
+                  className="ms-2"
                 >
                   Sales Order List
                 </h1>

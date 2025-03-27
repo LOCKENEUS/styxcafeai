@@ -268,8 +268,8 @@ const DashboardInventory = () => {
         </Col>
 
         <Col md={8}>
-          <Card className="p-4">
-            <Card.Body>
+          <Card className="p-1">
+            <Card.Body className="p-1">
               <div className="d-flex justify-content-between align-items-center mb-4">
                 <h6 className="text-muted">Monthly Earning</h6>
                 <div className="text-end">

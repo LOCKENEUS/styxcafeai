@@ -32,6 +32,7 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
     gameImage: null,
     cafe: cafeId,
     commission: 0,
+    payLater: false,
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -84,6 +85,7 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
     formDataToSend.append('details', formData.details);
     formDataToSend.append('cafe', formData.cafe);
     formDataToSend.append('commission', formData.commission);
+    formDataToSend.append('payLater', formData.payLater === "Yes" ? true : false);
 
     // Append image file if exists
     if (formData.gameImage instanceof File) {
@@ -134,6 +136,7 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
         cafe: game.data.cafe || cafeId,
         _id: game.data._id,
         commission: game.data.commission || "",
+        payLater: game.data.payLater ? "Yes" : "No",
       });
       if (game.data.gameImage) {
         setImagePreview(`${import.meta.env.VITE_API_URL}/${game.data.gameImage}`);
@@ -283,6 +286,23 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
                 <option>No</option>
               </Form.Select>
             </Col>
+            <Col md={6}>
+              <Form.Label htmlFor="payLater" className="fw-bold text-secondary">Pay Later Option</Form.Label>
+              <Form.Select
+                id="payLater"
+                name="payLater"
+                value={formData.payLater}
+                onChange={handleInputChange}
+                required
+                className="form-select-lg border-2"
+              >
+                <option>Yes</option>
+                <option>No</option>
+              </Form.Select>
+            </Col>
+          </Row>
+
+          <Row className="mb-2 g-4">
             <Col md={6}>
               <Form.Label className="fw-bold text-secondary d-block">Upload Image</Form.Label>
               <div className="border-2 align-items-center rounded-3 p-3 bg-light">

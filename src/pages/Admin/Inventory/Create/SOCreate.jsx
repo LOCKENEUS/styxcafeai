@@ -290,11 +290,31 @@ const SOCreate = () => {
   // Add this new state for the validation modal
   const [showValidationModal, setShowValidationModal] = useState(false);
 
+  // Add this new state for validation errors
+  const [validationErrors, setValidationErrors] = useState({});
+
   // Update the handleSubmit function
   const handleSubmit = async () => {
+    // Validate all products have items selected
+    let hasErrors = false;
+    const newValidationErrors = {};
+
     // Check if client is selected
     if (!selectedClient) {
       setShowValidationModal(true);
+      return;
+    }
+
+    // Validate products
+    products.forEach(product => {
+      if (!product.item) {
+        hasErrors = true;
+        newValidationErrors[`product-${product.id}`] = 'Product selection is required';
+      }
+    });
+
+    if (hasErrors) {
+      setValidationErrors(newValidationErrors);
       return;
     }
 
@@ -561,11 +581,33 @@ const SOCreate = () => {
                   <div className="d-flex gap-2">
                     <Form.Select
                       className="flex-grow-1"
-                      style={{ border: "1px solid black", borderStyle: "dashed" }}
+                      style={{ 
+                        border: `1px solid ${validationErrors[`product-${product.id}`] ? 'red' : 'black'}`, 
+                        borderStyle: "dashed" 
+                      }}
                       value={product.item || ""}
-                      onChange={(e) => updateProduct(product.id, "item", e.target.value)}
+                      onChange={(e) => {
+                        updateProduct(product.id, "item", e.target.value);
+                        // Clear validation error when value is selected
+                        if (e.target.value) {
+                          setValidationErrors(prev => ({
+                            ...prev,
+                            [`product-${product.id}`]: null
+                          }));
+                        }
+                      }}
+                      onBlur={() => {
+                        // Set validation error if empty on blur
+                        if (!product.item) {
+                          setValidationErrors(prev => ({
+                            ...prev,
+                            [`product-${product.id}`]: 'Product selection is required'
+                          }));
+                        }
+                      }}
+                      required
                     >
-                      <option value="">Select Item</option>
+                      <option value="">Select Item *</option>
                       {items.map((item) => (
                         <option key={item._id} value={item._id}>
                           {item.name} (₹{item.sellingPrice})
@@ -575,6 +617,11 @@ const SOCreate = () => {
                         <option value={product.item}>{product.itemName}</option>
                       )}
                     </Form.Select>
+                    {validationErrors[`product-${product.id}`] && (
+                      <div style={{ color: 'red', fontSize: '0.875rem', marginTop: '0.25rem' }}>
+                        {validationErrors[`product-${product.id}`]}
+                      </div>
+                    )}
                     <Button
                       onClick={handleShowCreateItem}
                       className="flex-shrink-0"

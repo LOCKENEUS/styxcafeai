@@ -31,9 +31,11 @@ const ItemsList = () => {
         return colors[index];
     };
 
-    const filteredItems = items.filter((item) =>
-        item.name.toLowerCase().includes(searchText.toLowerCase())
-    );
+    const filteredItems = items
+        .filter((item) =>
+            item.name.toLowerCase().includes(searchText.toLowerCase())
+        )
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
 
@@ -65,7 +67,7 @@ const ItemsList = () => {
     };
 
     return (
-        <Container fluid>
+        <Container fluid className="p-1">
             <Row>
                 <Col xs={12} className="mx-2 mx-md-4 my-3">
                     <div style={{ fontSize: "16px" }}>
@@ -87,7 +89,7 @@ const ItemsList = () => {
                                         fontWeight: "500",
                                         lineHeight: "18px",
                                     }}
-                                    className="m-0"
+                                    className="ms-2"
                                 >
                                     Items List
                                 </h1>

@@ -157,10 +157,10 @@ export const InventorySettingAdmin = () => {
   };
 
   return (
-    <Container>
-      <Row className="px-2">
-        <Col sm={12} className="mx-4 my-3">
-          <div style={{ top: "186px", fontSize: "18px" }}>
+    <Container fluid>
+      <Row>
+        <Col sm={12} className="mx-2 my-3">
+          <div style={{ fontSize: "18px" }}>
             <Breadcrumb>
               <BreadcrumbItem href="#">Home</BreadcrumbItem>
               <BreadcrumbItem href="#">Inventory</BreadcrumbItem>
@@ -173,15 +173,11 @@ export const InventorySettingAdmin = () => {
           id="inventory-tabs"
           activeKey={activeKey}
           onSelect={(k) => setActiveKey(k)}
-        
         >
-          <Row>
-            <Col sm={5} className="tabs-responsive-side my-4 ">
+          <Row className="justify-content-center">
+            <Col xs={12} md={8} lg={5} className="tabs-responsive-side my-4">
               <Card className="rounded-4 p-1 border">
-                <Nav
-                  variant="pills"
-                  className="nav-material justify-content-center "
-                >
+                <Nav variant="pills" className="nav-material flex-wrap justify-content-center">
                   <NavItem>
                     <NavLink
                       eventKey="unit"
@@ -229,12 +225,12 @@ export const InventorySettingAdmin = () => {
                 </Nav>
               </Card>
             </Col>
-            <Col sm={6}></Col>
-            <Col   data-aos="fade-right" data-aos-duration="800"  sm={12}>
+
+            <Col xs={12}>
               <TabContent>
-                <TabPane  eventKey="unit">
-                  <Row>
-                    <Col sm={3} className="mb-2">
+                <TabPane eventKey="unit">
+                  <Row className="g-3">
+                    <Col xs={12} md={4} lg={3}>
                       <Card className="rounded-4 p-1 border h-100">
                         <div className="my-3 mx-3">
                           <h4 className="mb-4">Create New Unit</h4>
@@ -272,75 +268,78 @@ export const InventorySettingAdmin = () => {
                         </div>
                       </Card>
                     </Col>
-                    <Col sm={9} className="mb-2" style={{ overflowX: "auto" }}>
+                    
+                    <Col xs={12} md={8} lg={9}>
                       <Card className="rounded-4 p-2 border h-100">
                         <div className="my-3 mx-3">
                           <h4 className="mb-4">Unit List</h4>
-                          <Table className="border-none" hover size="sm">
-                            <thead>
-                              <tr>
-                                <th></th>
-                                <th>Name</th>
-                                <th>Unit Code</th>
-                                <th>Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {units.map((unit) => (
-                                <tr key={unit._id}>
-                                  <td>{unit._id}</td>
-                                  <td>
-                                    <FormControl
-                                      type="text"
-                                      value={editedFields[unit._id]?.name ?? unit.name}
-                                      onChange={(e) => handleFieldChange(unit._id, 'name', e.target.value)}
-                                      style={{ minWidth: "200px" }}
-                                      className="border-0 bg-transparent"
-                                    />
-                                  </td>
-                                  <td>
-                                    <FormControl
-                                      type="text"
-                                      value={editedFields[unit._id]?.code ?? unit.code}
-                                      onChange={(e) => handleFieldChange(unit._id, 'code', e.target.value)}
-                                      style={{ minWidth: "200px" }}
-                                      className="border-0 bg-transparent"
-                                    />
-                                  </td>
-                                  <td className="d-flex gap-2">
-                                    <Button
-                                      variant="light"
-                                      size="sm"
-                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
-                                      onClick={() => handleDelete(unit._id)}
-                                      style={{ backgroundColor: "#FFE5E5" }}
-                                    >
-                                      <BiTrash size={20} color="#FF4242" />
-                                    </Button>
-                                    <Button
-                                      variant="light"
-                                      size="sm"
-                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
-                                      onClick={() => handleSubmitChanges(unit._id)}
-                                      style={{ backgroundColor: "#E8FFE5" }}
-                                      disabled={!editedFields[unit._id]}
-                                    >
-                                      <BiCheck size={20} color="#28A745" />
-                                    </Button>
-                                  </td>
+                          <div className="table-responsive">
+                            <Table className="border-none" hover size="sm">
+                              <thead>
+                                <tr>
+                                  <th></th>
+                                  <th>Name</th>
+                                  <th>Unit Code</th>
+                                  <th>Action</th>
                                 </tr>
-                              ))}
-                            </tbody>
-                          </Table>
+                              </thead>
+                              <tbody>
+                                {units.map((unit) => (
+                                  <tr key={unit._id}>
+                                    <td>{unit._id}</td>
+                                    <td>
+                                      <FormControl
+                                        type="text"
+                                        value={editedFields[unit._id]?.name ?? unit.name}
+                                        onChange={(e) => handleFieldChange(unit._id, 'name', e.target.value)}
+                                        style={{ minWidth: "200px" }}
+                                        className="border-0 bg-transparent"
+                                      />
+                                    </td>
+                                    <td>
+                                      <FormControl
+                                        type="text"
+                                        value={editedFields[unit._id]?.code ?? unit.code}
+                                        onChange={(e) => handleFieldChange(unit._id, 'code', e.target.value)}
+                                        style={{ minWidth: "200px" }}
+                                        className="border-0 bg-transparent"
+                                      />
+                                    </td>
+                                    <td className="d-flex gap-2">
+                                      <Button
+                                        variant="light"
+                                        size="sm"
+                                        className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                        onClick={() => handleDelete(unit._id)}
+                                        style={{ backgroundColor: "#FFE5E5" }}
+                                      >
+                                        <BiTrash size={20} color="#FF4242" />
+                                      </Button>
+                                      <Button
+                                        variant="light"
+                                        size="sm"
+                                        className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                        onClick={() => handleSubmitChanges(unit._id)}
+                                        style={{ backgroundColor: "#E8FFE5" }}
+                                        disabled={!editedFields[unit._id]}
+                                      >
+                                        <BiCheck size={20} color="#28A745" />
+                                      </Button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </Table>
+                          </div>
                         </div>
                       </Card>
                     </Col>
                   </Row>
                 </TabPane>
 
-                <TabPane  eventKey="brand">
-                  <Row>
-                    <Col sm={3} className="mb-2">
+                <TabPane eventKey="brand">
+                  <Row className="g-3">
+                    <Col xs={12} md={4} lg={3}>
                       <Card className="rounded-4 p-1 border h-100">
                         <div className="my-3 mx-3">
                           <h4 className="mb-4">Create New Brand</h4>
@@ -366,65 +365,67 @@ export const InventorySettingAdmin = () => {
                         </div>
                       </Card>
                     </Col>
-                    <Col sm={9} className="mb-2" style={{ overflowX: "auto" }}>
+                    <Col xs={12} md={8} lg={9}>
                       <Card className="rounded-4 p-2 border h-100">
                         <div className="my-3 mx-3">
                           <h4 className="mb-4">Brand List</h4>
-                          <Table className="border-none" hover size="sm">
-                            <thead>
-                              <tr>
-                                <th></th>
-                                <th>Name</th>
-                                <th>Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {brands.map((brand) => (
-                                <tr key={brand._id}>
-                                  <td>{brand._id}</td>
-                                  <td>
-                                    <FormControl
-                                      type="text"
-                                      value={editedFields[brand._id]?.name ?? brand.name}
-                                      onChange={(e) => handleFieldChange(brand._id, 'name', e.target.value)}
-                                      style={{ minWidth: "200px" }}
-                                      className="border-0 bg-transparent"
-                                    />
-                                  </td>
-                                  <td className="d-flex gap-2">
-                                    <Button
-                                      variant="light"
-                                      size="sm"
-                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
-                                      onClick={() => handleDelete(brand._id)}
-                                      style={{ backgroundColor: "#FFE5E5" }}
-                                    >
-                                      <BiTrash size={20} color="#FF4242" />
-                                    </Button>
-                                    <Button
-                                      variant="light"
-                                      size="sm"
-                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
-                                      onClick={() => handleSubmitChanges(brand._id)}
-                                      style={{ backgroundColor: "#E8FFE5" }}
-                                      disabled={!editedFields[brand._id]}
-                                    >
-                                      <BiCheck size={20} color="#28A745" />
-                                    </Button>
-                                  </td>
+                          <div className="table-responsive">
+                            <Table className="border-none" hover size="sm">
+                              <thead>
+                                <tr>
+                                  <th></th>
+                                  <th>Name</th>
+                                  <th>Action</th>
                                 </tr>
-                              ))}
-                            </tbody>
-                          </Table>
+                              </thead>
+                              <tbody>
+                                {brands.map((brand) => (
+                                  <tr key={brand._id}>
+                                    <td>{brand._id}</td>
+                                    <td>
+                                      <FormControl
+                                        type="text"
+                                        value={editedFields[brand._id]?.name ?? brand.name}
+                                        onChange={(e) => handleFieldChange(brand._id, 'name', e.target.value)}
+                                        style={{ minWidth: "200px" }}
+                                        className="border-0 bg-transparent"
+                                      />
+                                    </td>
+                                    <td className="d-flex gap-2">
+                                      <Button
+                                        variant="light"
+                                        size="sm"
+                                        className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                        onClick={() => handleDelete(brand._id)}
+                                        style={{ backgroundColor: "#FFE5E5" }}
+                                      >
+                                        <BiTrash size={20} color="#FF4242" />
+                                      </Button>
+                                      <Button
+                                        variant="light"
+                                        size="sm"
+                                        className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                        onClick={() => handleSubmitChanges(brand._id)}
+                                        style={{ backgroundColor: "#E8FFE5" }}
+                                        disabled={!editedFields[brand._id]}
+                                      >
+                                        <BiCheck size={20} color="#28A745" />
+                                      </Button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </Table>
+                          </div>
                         </div>
                       </Card>
                     </Col>
                   </Row>
                 </TabPane>
 
-                <TabPane  eventKey="manufacturer">
-                  <Row>
-                    <Col sm={3} className="mb-2">
+                <TabPane eventKey="manufacturer">
+                  <Row className="g-3">
+                    <Col xs={12} md={4} lg={3}>
                       <Card className="rounded-4 p-1 border h-100">
                         <div className="my-3 mx-3">
                           <h4 className="mb-4">Create New Manufacturer</h4>
@@ -450,65 +451,67 @@ export const InventorySettingAdmin = () => {
                         </div>
                       </Card>
                     </Col>
-                    <Col sm={9} className="mb-2" style={{ overflowX: "auto" }}>
+                    <Col xs={12} md={8} lg={9}>
                       <Card className="rounded-4 p-2 border h-100">
                         <div className="my-3 mx-3">
                           <h4 className="mb-4">Manufacturer List</h4>
-                          <Table className="border-none" hover size="sm">
-                            <thead>
-                              <tr>
-                                <th></th>
-                                <th>Name</th>
-                                <th>Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {manufacturers.map((manufacturer) => (
-                                <tr key={manufacturer._id}>
-                                  <td>{manufacturer._id}</td>
-                                  <td>
-                                    <FormControl
-                                      type="text"
-                                      value={editedFields[manufacturer._id]?.name ?? manufacturer.name}
-                                      onChange={(e) => handleFieldChange(manufacturer._id, 'name', e.target.value)}
-                                      style={{ minWidth: "200px" }}
-                                      className="border-0 bg-transparent"
-                                    />
-                                  </td>
-                                  <td className="d-flex gap-2">
-                                    <Button
-                                      variant="light"
-                                      size="sm"
-                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
-                                      onClick={() => handleDelete(manufacturer._id)}
-                                      style={{ backgroundColor: "#FFE5E5" }}
-                                    >
-                                      <BiTrash size={20} color="#FF4242" />
-                                    </Button>
-                                    <Button
-                                      variant="light"
-                                      size="sm"
-                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
-                                      onClick={() => handleSubmitChanges(manufacturer._id)}
-                                      style={{ backgroundColor: "#E8FFE5" }}
-                                      disabled={!editedFields[manufacturer._id]}
-                                    >
-                                      <BiCheck size={20} color="#28A745" />
-                                    </Button>
-                                  </td>
+                          <div className="table-responsive">
+                            <Table className="border-none" hover size="sm">
+                              <thead>
+                                <tr>
+                                  <th></th>
+                                  <th>Name</th>
+                                  <th>Action</th>
                                 </tr>
-                              ))}
-                            </tbody>
-                          </Table>
+                              </thead>
+                              <tbody>
+                                {manufacturers.map((manufacturer) => (
+                                  <tr key={manufacturer._id}>
+                                    <td>{manufacturer._id}</td>
+                                    <td>
+                                      <FormControl
+                                        type="text"
+                                        value={editedFields[manufacturer._id]?.name ?? manufacturer.name}
+                                        onChange={(e) => handleFieldChange(manufacturer._id, 'name', e.target.value)}
+                                        style={{ minWidth: "200px" }}
+                                        className="border-0 bg-transparent"
+                                      />
+                                    </td>
+                                    <td className="d-flex gap-2">
+                                      <Button
+                                        variant="light"
+                                        size="sm"
+                                        className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                        onClick={() => handleDelete(manufacturer._id)}
+                                        style={{ backgroundColor: "#FFE5E5" }}
+                                      >
+                                        <BiTrash size={20} color="#FF4242" />
+                                      </Button>
+                                      <Button
+                                        variant="light"
+                                        size="sm"
+                                        className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                        onClick={() => handleSubmitChanges(manufacturer._id)}
+                                        style={{ backgroundColor: "#E8FFE5" }}
+                                        disabled={!editedFields[manufacturer._id]}
+                                      >
+                                        <BiCheck size={20} color="#28A745" />
+                                      </Button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </Table>
+                          </div>
                         </div>
                       </Card>
                     </Col>
                   </Row>
                 </TabPane>
 
-                <TabPane  eventKey="paymentterms">
-                  <Row>
-                    <Col sm={3} className="mb-2">
+                <TabPane eventKey="paymentterms">
+                  <Row className="g-3">
+                    <Col xs={12} md={4} lg={3}>
                       <Card className="rounded-4 p-1 border h-100">
                         <div className="my-3 mx-3">
                           <h4 className="mb-4">Create New Payment Terms</h4>
@@ -544,66 +547,68 @@ export const InventorySettingAdmin = () => {
                         </div>
                       </Card>
                     </Col>
-                    <Col sm={9} className="mb-2" style={{ overflowX: "auto" }}>
+                    <Col xs={12} md={8} lg={9}>
                       <Card className="rounded-4 p-2 border h-100">
                         <div className="my-3 mx-3">
                           <h4 className="mb-4">Payment Terms List</h4>
-                          <Table className="border-none" hover size="sm">
-                            <thead>
-                              <tr>
-                                <th></th>
-                                <th>Name</th>
-                                <th>Days</th>
-                                <th>Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {paymentTerms.map((term) => (
-                                <tr key={term._id}>
-                                  <td>{term._id}</td>
-                                  <td>
-                                    <FormControl
-                                      type="text"
-                                      value={editedFields[term._id]?.name ?? term.name}
-                                      onChange={(e) => handleFieldChange(term._id, 'name', e.target.value)}
-                                      style={{ minWidth: "200px" }}
-                                      className="border-0 bg-transparent"
-                                    />
-                                  </td>
-                                  <td>
-                                    <FormControl
-                                      type="text"
-                                      value={editedFields[term._id]?.code ?? term.code}
-                                      onChange={(e) => handleFieldChange(term._id, 'code', e.target.value)}
-                                      style={{ minWidth: "200px" }}
-                                      className="border-0 bg-transparent"
-                                    />
-                                  </td>
-                                  <td className="d-flex gap-2">
-                                    <Button
-                                      variant="light"
-                                      size="sm"
-                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
-                                      onClick={() => handleDelete(term._id)}
-                                      style={{ backgroundColor: "#FFE5E5" }}
-                                    >
-                                      <BiTrash size={20} color="#FF4242" />
-                                    </Button>
-                                    <Button
-                                      variant="light"
-                                      size="sm"
-                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
-                                      onClick={() => handleSubmitChanges(term._id)}
-                                      style={{ backgroundColor: "#E8FFE5" }}
-                                      disabled={!editedFields[term._id]}
-                                    >
-                                      <BiCheck size={20} color="#28A745" />
-                                    </Button>
-                                  </td>
+                          <div className="table-responsive">
+                            <Table className="border-none" hover size="sm">
+                              <thead>
+                                <tr>
+                                  <th></th>
+                                  <th>Name</th>
+                                  <th>Days</th>
+                                  <th>Action</th>
                                 </tr>
-                              ))}
-                            </tbody>
-                          </Table>
+                              </thead>
+                              <tbody>
+                                {paymentTerms.map((term) => (
+                                  <tr key={term._id}>
+                                    <td>{term._id}</td>
+                                    <td>
+                                      <FormControl
+                                        type="text"
+                                        value={editedFields[term._id]?.name ?? term.name}
+                                        onChange={(e) => handleFieldChange(term._id, 'name', e.target.value)}
+                                        style={{ minWidth: "200px" }}
+                                        className="border-0 bg-transparent"
+                                      />
+                                    </td>
+                                    <td>
+                                      <FormControl
+                                        type="text"
+                                        value={editedFields[term._id]?.code ?? term.code}
+                                        onChange={(e) => handleFieldChange(term._id, 'code', e.target.value)}
+                                        style={{ minWidth: "200px" }}
+                                        className="border-0 bg-transparent"
+                                      />
+                                    </td>
+                                    <td className="d-flex gap-2">
+                                      <Button
+                                        variant="light"
+                                        size="sm"
+                                        className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                        onClick={() => handleDelete(term._id)}
+                                        style={{ backgroundColor: "#FFE5E5" }}
+                                      >
+                                        <BiTrash size={20} color="#FF4242" />
+                                      </Button>
+                                      <Button
+                                        variant="light"
+                                        size="sm"
+                                        className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                        onClick={() => handleSubmitChanges(term._id)}
+                                        style={{ backgroundColor: "#E8FFE5" }}
+                                        disabled={!editedFields[term._id]}
+                                      >
+                                        <BiCheck size={20} color="#28A745" />
+                                      </Button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </Table>
+                          </div>
                         </div>
                       </Card>
                     </Col>

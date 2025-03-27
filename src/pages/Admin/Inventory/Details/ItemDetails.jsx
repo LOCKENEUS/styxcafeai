@@ -101,8 +101,8 @@ const ItemDetails = () => {
     </Breadcrumb>
     <Tab.Container defaultActiveKey="checkout">
       <Row>
-        <Col sm={6} className="mt-3">
-          <Nav variant="tabs">
+        <Col xs={12} sm={6} className="mt-3">
+          <Nav variant="tabs" className="flex-nowrap overflow-auto">
             <Nav.Item>
               <Nav.Link eventKey="checkout">Checkout Details</Nav.Link>
             </Nav.Item>
@@ -114,14 +114,14 @@ const ItemDetails = () => {
             </Nav.Item>
           </Nav>
         </Col>
-        <Col sm={6}>
-          <div className="d-flex justify-content-end mt-3">
+        <Col xs={12} sm={6}>
+          <div className="d-flex justify-content-end mt-3 flex-wrap gap-2">
             <button
-            onClick={() => navigate(`/admin/inventory/edit/${id}`)}
-            className="btn btn-primary me-2">
+              onClick={() => navigate(`/admin/inventory/edit/${id}`)}
+              className="btn btn-primary">
               <BiCloudUpload /> Edit
             </button>
-            <button className="btn btn-danger me-2" onClick={handleDelete}>
+            <button className="btn btn-danger" onClick={handleDelete}>
               <HiOutlineTrash /> Delete
             </button>
             <button className="btn btn-secondary" onClick={() => navigate(-1)}>
@@ -129,183 +129,197 @@ const ItemDetails = () => {
             </button>
           </div>
         </Col>
-        <Col sm={5} className="mt-3">
+        
+        <Col xs={12} lg={5} className="mt-3">
           <Tab.Content>
             <Tab.Pane eventKey="checkout">
-                <Card className='p-3'>
-              <h4>Details</h4>
-              <Table className='w-50' borderless>
-                <tbody>
-                  <tr>
-                    <td className='fw-bold'>SKU</td>
-                    <td>{selectedItem.sku}</td>
-                  </tr>
-                  <tr>
-                    <td className='fw-bold'>Unit</td>
-                    <td>{selectedItem.unit}</td>
-                  </tr>
-                  <tr>
-                    <td className='fw-bold'>Dimension</td>
-                    <td>{selectedItem.length} × {selectedItem.width} × {selectedItem.height} {selectedItem.dimensionUnit}</td>
-                  </tr>
-                  <tr>
-                    <td className='fw-bold'>Weight</td>
-                    <td>{selectedItem.weight} {selectedItem.weightUnit}</td>
-                  </tr>
-                  <tr>
-                    <td className='fw-bold'>Manufacturer</td>
-                    <td>{manufacturer ? manufacturer.name : 'Loading...'}</td>
-                  </tr>
-                  <tr>
-                    <td className='fw-bold'>Brand</td>
-                    <td>{brand ? brand.name : 'Loading...'}</td>
-                  </tr>
-                </tbody>
-              </Table>
-              <hr className='w-50' />
-              <h4>Purchase Information</h4>
-              <Table className='w-50' borderless>
-                <tbody>
-                  <tr>
-                    <td className='fw-bold'>Cost Price</td>
-                    <td>₹ {selectedItem.costPrice}</td>
-                  </tr>
-                  <tr>
-                    <td className='fw-bold'>Selling Price</td>
-                    <td>₹ {selectedItem.sellingPrice}</td>
-                  </tr>
-                </tbody>
-              </Table>
-              <hr className='w-50' />
-              <h4>Other Information</h4>
-              <Table className='w-50' borderless>
-                <tbody>
-                  <tr>
-                    <td className='fw-bold'>Cost Price</td>
-                    <td>₹ {selectedItem.costPrice}</td>
-                  </tr>
-                  <tr>
-                    <td className='fw-bold'>Selling Price</td>
-                    <td>₹ {selectedItem.sellingPrice}</td>
-                  </tr>
-                </tbody>
-              </Table>
+              <Card className='p-3'>
+                <h4>Details</h4>
+                <div className="table-responsive">
+                  <Table borderless>
+                    <tbody>
+                      <tr>
+                        <td className='fw-bold'>SKU</td>
+                        <td>{selectedItem.sku}</td>
+                      </tr>
+                      <tr>
+                        <td className='fw-bold'>Unit</td>
+                        <td>{selectedItem.unit}</td>
+                      </tr>
+                      <tr>
+                        <td className='fw-bold'>Dimension</td>
+                        <td>{selectedItem.length} × {selectedItem.width} × {selectedItem.height} {selectedItem.dimensionUnit}</td>
+                      </tr>
+                      <tr>
+                        <td className='fw-bold'>Weight</td>
+                        <td>{selectedItem.weight} {selectedItem.weightUnit}</td>
+                      </tr>
+                      <tr>
+                        <td className='fw-bold'>Manufacturer</td>
+                        <td>{manufacturer ? manufacturer.name : 'Loading...'}</td>
+                      </tr>
+                      <tr>
+                        <td className='fw-bold'>Brand</td>
+                        <td>{brand ? brand.name : 'Loading...'}</td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                </div>
+                <hr className='w-50' />
+                <h4>Purchase Information</h4>
+                <div className="table-responsive">
+                  <Table borderless>
+                    <tbody>
+                      <tr>
+                        <td className='fw-bold'>Cost Price</td>
+                        <td>₹ {selectedItem.costPrice}</td>
+                      </tr>
+                      <tr>
+                        <td className='fw-bold'>Selling Price</td>
+                        <td>₹ {selectedItem.sellingPrice}</td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                </div>
+                <hr className='w-50' />
+                <h4>Other Information</h4>
+                <div className="table-responsive">
+                  <Table borderless>
+                    <tbody>
+                      <tr>
+                        <td className='fw-bold'>Cost Price</td>
+                        <td>₹ {selectedItem.costPrice}</td>
+                      </tr>
+                      <tr>
+                        <td className='fw-bold'>Selling Price</td>
+                        <td>₹ {selectedItem.sellingPrice}</td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                </div>
               </Card>
             </Tab.Pane>
             <Tab.Pane eventKey="transaction">
               <Card className='p-3'>
                 <h5>Transaction History</h5>
-                <Table className='w-100' borderless>
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>BILL NO</th>
-                      <th>QTY</th>
-                      <th>PRICE</th>
-                      <th>STATUS</th>
-                      <th>DATETIME</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td colSpan="6" className="text-center">No transaction history available.</td>
-                    </tr>
-                  </tbody>
-                </Table>
+                <div className="table-responsive">
+                  <Table borderless>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>BILL NO</th>
+                        <th>QTY</th>
+                        <th>PRICE</th>
+                        <th>STATUS</th>
+                        <th>DATETIME</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td colSpan="6" className="text-center">No transaction history available.</td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                </div>
               </Card>
             </Tab.Pane>
             <Tab.Pane eventKey="history">
               <Card className='p-3'>
                 <h5>History</h5>
-                <Table className='w-100' borderless>
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>QUANTITY</th>
-                      <th>DESCRIPTION</th>
-                      <th>DATETIME</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td  className="text-center">No history available.</td>
-                    </tr>
-                  </tbody>
-                </Table>
+                <div className="table-responsive">
+                  <Table borderless>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>QUANTITY</th>
+                        <th>DESCRIPTION</th>
+                        <th>DATETIME</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td  className="text-center">No history available.</td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                </div>
               </Card>
             </Tab.Pane>
           </Tab.Content>
         </Col>
-        <Col sm={7} className="mt-3">
-        <Card className='p-3'>
-        <Container className="mt-4">
-      <Card className="p-4">
-        <div className="d-flex justify-content-center mb-4">
-        {selectedItem.image ? <Card className="p-5 d-flex justify-content-center align-items-center" style={{ width: "250px", height: "250px", border: "1px dashed #ccc" }}>
-            <img src={`${import.meta.env.VITE_API_URL}/${selectedItem.image}`} alt="Item" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-          </Card> : <Card className="p-5 d-flex justify-content-center align-items-center" style={{ width: "250px", height: "250px", border: "1px dashed #ccc" }}>
-            <BiCloudUpload size={40} className="mb-2" />
-            <p>Upload Image (250 × 250)</p>
-          </Card>}
-        </div>
-        
-        <h5>Accounting Stock</h5>
-        <Table borderless>
-          <tbody>
-            <tr>
-              <td>Stock in hand</td>
-              <td><b>{selectedItem.stock}</b></td>
-            </tr>
-            <tr>
-              <td>Committed Stock</td>
-              <td><b>0</b></td>
-            </tr>
-            <tr>
-              <td>Available Stock</td>
-              <td><b>{selectedItem.stock}</b></td>
-            </tr>
-          </tbody>
-        </Table>
-        
-        <h5>Physical Stock</h5>
-        <Table borderless>
-          <tbody>
-            <tr>
-              <td>Stock in hand</td>
-              <td><b>{selectedItem.stock}</b></td>
-            </tr>
-            <tr>
-              <td>Stock Rate</td>
-              <td><b>{selectedItem.stockRate || selectedItem.costPrice}</b></td>
-            </tr>
-            <tr>
-              <td>Available Stock</td>
-              <td><b>{selectedItem.stock}</b></td>
-            </tr>
-          </tbody>
-        </Table>
-        
-        <Row className="mt-4">
-          {['To be Shipped', 'To be Received', 'To be Invoiced', 'To be Billed'].map((item, index) => (
-            <Col key={index} xs={6} className="mb-3"> {/* Changed xs={6} to xs={3} to cover the width */}
-              <Card className="p-3 d-flex">
-                <div className="d-flex gap-3 justify-content-center align-items-center">
-                  <div className="">
-                    <img src={user_check} alt="icon" />
-                  </div>
-                  <div>
-                    <h6>{item}</h6>
-                    <h4>145</h4>
-                  </div>
+        <Col xs={12} lg={7} className="mt-3">
+          <Card className='p-3'>
+            <Container fluid className="px-0">
+              <Card className="p-4">
+                <div className="d-flex justify-content-center mb-4">
+                  {selectedItem.image ? <Card className="p-5 d-flex justify-content-center align-items-center" style={{ width: "250px", height: "250px", border: "1px dashed #ccc" }}>
+                      <img src={`${import.meta.env.VITE_API_URL}/${selectedItem.image}`} alt="Item" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    </Card> : <Card className="p-5 d-flex justify-content-center align-items-center" style={{ width: "250px", height: "250px", border: "1px dashed #ccc" }}>
+                      <BiCloudUpload size={40} className="mb-2" />
+                      <p>Upload Image (250 × 250)</p>
+                    </Card>}
                 </div>
+                
+                <h5>Accounting Stock</h5>
+                <div className="table-responsive">
+                  <Table borderless>
+                    <tbody>
+                      <tr>
+                        <td>Stock in hand</td>
+                        <td><b>{selectedItem.stock}</b></td>
+                      </tr>
+                      <tr>
+                        <td>Committed Stock</td>
+                        <td><b>0</b></td>
+                      </tr>
+                      <tr>
+                        <td>Available Stock</td>
+                        <td><b>{selectedItem.stock}</b></td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                </div>
+                
+                <h5>Physical Stock</h5>
+                <div className="table-responsive">
+                  <Table borderless>
+                    <tbody>
+                      <tr>
+                        <td>Stock in hand</td>
+                        <td><b>{selectedItem.stock}</b></td>
+                      </tr>
+                      <tr>
+                        <td>Stock Rate</td>
+                        <td><b>{selectedItem.stockRate || selectedItem.costPrice}</b></td>
+                      </tr>
+                      <tr>
+                        <td>Available Stock</td>
+                        <td><b>{selectedItem.stock}</b></td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                </div>
+                
+                <Row className="mt-4">
+                  {['To be Shipped', 'To be Received', 'To be Invoiced', 'To be Billed'].map((item, index) => (
+                    <Col key={index} xs={12} sm={6} className="mb-3">
+                      <Card className="p-3">
+                        <div className="d-flex gap-3 justify-content-center align-items-center">
+                          <div>
+                            <img src={user_check} alt="icon" />
+                          </div>
+                          <div>
+                            <h6>{item}</h6>
+                            <h4>145</h4>
+                          </div>
+                        </div>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
               </Card>
-            </Col>
-          ))}
-        </Row>
-      </Card>
-    </Container>
-        </Card>
-
+            </Container>
+          </Card>
         </Col>
       </Row>
     </Tab.Container>

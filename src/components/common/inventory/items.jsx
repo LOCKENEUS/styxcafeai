@@ -67,20 +67,20 @@ export const Items = () => {
   ];
   
     
-  const itemsData = [
-    { sn: 1, name: "Alice", price: "231", stock: "231", sku: "231", hsn: "231", unit: "231", dimension: "231",  unit: "Telephone Exchange Chowk, Nagpur, Maharashtra, India" },
-    { sn: 2, name: "Bob", price: "231", stock: "231", sku: "231", hsn: "231", unit: "231", dimension: "231",  unit: "Telephone Exchange Chowk, Nagpur, Maharashtra, India" },
-    { sn: 3, name: "Charlie", price: "231", stock: "231", sku: "231", hsn: "231", unit: "231", dimension: "231",  unit: "Telephone Exchange Chowk, Nagpur, Maharashtra, India" },
-    { sn: 4, name: "David", price: "231", stock: "231", sku: "231", hsn: "231", unit: "231", dimension: "231",  unit: "Telephone Exchange Chowk, Nagpur, Maharashtra, India" },
-    { sn: 5, name: "Eve", price: "231", stock: "231", sku: "231", hsn: "231", unit: "231", dimension: "231",  unit: "Telephone Exchange Chowk, Nagpur, Maharashtra, India" },    
+  // const itemsData = [
+  //   { sn: 1, name: "Alice", price: "231", stock: "231", sku: "231", hsn: "231", unit: "231", dimension: "231",  unit: "Telephone Exchange Chowk, Nagpur, Maharashtra, India" },
+  //   { sn: 2, name: "Bob", price: "231", stock: "231", sku: "231", hsn: "231", unit: "231", dimension: "231",  unit: "Telephone Exchange Chowk, Nagpur, Maharashtra, India" },
+  //   { sn: 3, name: "Charlie", price: "231", stock: "231", sku: "231", hsn: "231", unit: "231", dimension: "231",  unit: "Telephone Exchange Chowk, Nagpur, Maharashtra, India" },
+  //   { sn: 4, name: "David", price: "231", stock: "231", sku: "231", hsn: "231", unit: "231", dimension: "231",  unit: "Telephone Exchange Chowk, Nagpur, Maharashtra, India" },
+  //   { sn: 5, name: "Eve", price: "231", stock: "231", sku: "231", hsn: "231", unit: "231", dimension: "231",  unit: "Telephone Exchange Chowk, Nagpur, Maharashtra, India" },    
   
-  ];
+  // ];
   
     
-      const filteredItems = itemsData.filter((item) =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()) 
+      // const filteredItems = itemsData.filter((item) =>
+      //   item.name.toLowerCase().includes(searchQuery.toLowerCase()) 
         
-      );
+      // );
 
      
     
@@ -185,7 +185,7 @@ export const Items = () => {
 
             </div>
             </Col>
-
+{/* 
             <Col sm={12}>
               <DataTable
                 columns={columns}
@@ -202,8 +202,9 @@ export const Items = () => {
                   table: { style: { borderRadius: "5px", overflow: "hidden" } },
                 }}
               />
-            </Col>
+            </Col> */}
           </Row>
+
 
           
         </Card>

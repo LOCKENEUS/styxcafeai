@@ -6,11 +6,13 @@ import sendMail from "/assets/inventory/Group.png";
 import editlogo from "/assets/inventory/mage_edit.png";
 import companylog from "/assets/inventory/companylogo.png";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getSOInvoiceById } from "../../../../store/AdminSlice/Inventory/SoInvoiceSlice";
 import CollectPayment from "../modal/CollectPayment";
+import { getPaymentById } from '../../../../store/AdminSlice/Inventory/CollectPaymentSlice';
+import Loader from '../../../../components/common/Loader/Loader';
 
 
 export const SIDetails = () => {
@@ -19,12 +21,56 @@ export const SIDetails = () => {
     const navigate = useNavigate()
     const [openPaymentModel , setOpenPaymentModel] = useState(false)
     const { selectedInvoice: invoice, loading } = useSelector((state) => state.soInvoice);
+    const { selectedPayment, loading: paymentLoading } = useSelector((state) => state.payment || {});
+    const [collectAmount , setCollectAmount] = useState(0)
+    const [showCollectModal, setShowCollectModal] = useState(false);
+
+    // Calculate remaining amount using useMemo
+    const { totalPaidAmount, remainingAmount } = useMemo(() => {
+        const totalPaid = selectedPayment?.reduce(
+            (sum, payment) => sum + (payment.deposit_amount || 0), 
+            0
+        ) || 0;
+
+        return {
+            totalPaidAmount: totalPaid,
+            remainingAmount: (invoice?.total || 0) - totalPaid
+        };
+    }, [selectedPayment, invoice?.total]);
+
+    // Update collect amount when remaining amount changes
+    useEffect(() => {
+        setCollectAmount(remainingAmount);
+    }, [remainingAmount]);
 
     useEffect(() => {
         if (id) {
             dispatch(getSOInvoiceById(id));
         }
     }, [dispatch, id]);
+
+    useEffect(() => {
+        if (id) {
+            dispatch(getPaymentById(id));
+        }
+    }, [dispatch, id]);
+
+    // Function to refresh payment data
+    const refreshPaymentData = async () => {
+        if (id) {
+            await dispatch(getPaymentById(id));
+        }
+    };
+
+    const handleModalClose = () => {
+        setShowCollectModal(false);
+        refreshPaymentData();
+    };
+
+    // Initial data fetch
+    useEffect(() => {
+        refreshPaymentData();
+    }, [id]);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -33,6 +79,12 @@ export const SIDetails = () => {
     if (!invoice) {
         return <div>No invoice found</div>;
     }
+    
+    const handleCollectData = () => {
+        if (remainingAmount > 0) {
+            setShowCollectModal(true);
+        }
+    };
 
     return (
         <Container>
@@ -242,17 +294,23 @@ export const SIDetails = () => {
                                         <tr className="border-top border-3">
                                             <th className="text-start">Balance</th>
                                             <th>
-                                                <Button
-                                                onClick={()=> setOpenPaymentModel(true)}
-                                                variant="outline-success">
-                                                    Collect ₹{invoice.total}
-                                                </Button>
+                                                {((invoice?.total || 0) - (selectedPayment?.reduce((sum, payment) => sum + (payment.deposit_amount || 0), 0) || 0)) <= 0 ? (
+                                                    <span style={{fontWeight:"600"}} className="text-success">Amount Paid</span>
+                                                ) : (
+                                                    <Button
+                                                    onClick={handleCollectData}
+                                                    variant="outline-success">
+                                                        Collect ₹{(invoice?.total || 0) - (selectedPayment?.reduce((sum, payment) => sum + (payment.deposit_amount || 0), 0) || 0)}
+                                                    </Button>
+                                                )}
                                                 
-                                                 <CollectPayment    show={ openPaymentModel}
-                                                  handleClose={() => setOpenPaymentModel(false)}
-                                                   maxAmount={invoice.total} />
-   
-                                               
+                                                 <CollectPayment
+                                                    show={showCollectModal}
+                                                    handleClose={handleModalClose}
+                                                    maxAmount={remainingAmount}
+                                                    invoiceId={id}
+                                                    onSuccess={refreshPaymentData}
+                                                 />
                                             </th>
                                         </tr>
                                     </tbody>
@@ -261,7 +319,73 @@ export const SIDetails = () => {
                         </Row>
                     </Card>
                 </Col>
-
+                <Col sm={12} className="my-2">
+        <Card className=" p-3 shadow-sm">
+            <h5 className=" mb-3" style={{ fontSize:'20px' }}>Payment Collection Details</h5>
+            <div className="table-responsive">
+              {paymentLoading ? (
+                <div className="text-center p-4">
+                  <Loader />
+                </div>
+              ) : (
+                <Table className="text-center align-middle">
+                  <thead>
+                    <tr style={{ borderBottom: "2px solid #dee2e6", borderTop: "2px solid #dee2e6" }}>
+                      <th className="fw-bold">#</th>
+                      <th className="fw-bold">Date</th>
+                      <th className="fw-bold">Amount</th>
+                      <th className="fw-bold">Mode</th>
+                      <th className="fw-bold">Transaction</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedPayment?.length > 0 ? (
+                      <>
+                        {/* Payment rows */}
+                        {selectedPayment.map((payment, index) => (
+                          <tr key={payment._id}>
+                            <td>{index + 1}</td>
+                            <td>
+                              {new Date(payment.deposit_date).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: '2-digit'
+                              })}
+                            </td>
+                            <td>₹ {payment.deposit_amount}</td>
+                            <td>{payment.mode}</td>
+                            <td>{payment.transaction_id}</td>
+                          </tr>
+                        ))}
+                        {/* Summary row */}
+                        <tr style={{ backgroundColor: '#f8f9fa' }}>
+                          <td colSpan="2" className="text-end fw-bold">
+                            Total Paid:
+                          </td>
+                          <td className="fw-bold">₹ {totalPaidAmount}</td>
+                          <td colSpan="2"></td>
+                        </tr>
+                        <tr style={{ backgroundColor: '#f8f9fa' }}>
+                          <td colSpan="2" className="text-end fw-bold">
+                            Remaining Amount:
+                          </td>
+                          <td className="fw-bold">₹ {remainingAmount}</td>
+                          <td colSpan="2"></td>
+                        </tr>
+                      </>
+                    ) : (
+                      <tr>
+                        <td colSpan="5" className="text-center py-3">
+                          No payment records found
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </Table>
+              )}
+            </div>
+        </Card>
+    </Col>
               
                 <Col sm={12} className="my-2">
                     <Card className="p-3 shadow-sm">
