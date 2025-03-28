@@ -202,12 +202,14 @@ const ItemGroupForm = () => {
     }));
   };
 
-  const handleCopyToAll = (field, value) => {
+  const handleCopyToAll = (field, sourceIndex = 0) => {
+    const valueToCopy = formData.items[sourceIndex]?.[field] || '';
+    
     setFormData(prev => ({
       ...prev,
       items: prev.items.map(item => ({
         ...item,
-        [field]: value
+        [field]: valueToCopy
       }))
     }));
   };
@@ -529,14 +531,50 @@ const ItemGroupForm = () => {
                 <tr>
                   <th>SN</th>
                   <th nowrap="">Item name</th>
-                  <th nowrap="" className="px-1">HSN<br /><span type="button" className="text-primary" onClick={() => document.querySelectorAll('.hsn').forEach(el => el.value = document.querySelector('.hsn').value)}>(Copy to All)</span></th>
+                  <th nowrap="" className="px-1">
+                    HSN<br />
+                    <span 
+                      type="button" 
+                      className="text-primary" 
+                      onClick={() => handleCopyToAll('hsn')}
+                    >
+                      (Copy to All)
+                    </span>
+                  </th>
                   <th nowrap="" className="px-1">SKU<br /><span type="button" className="text-primary">(Generate SKU)</span></th>
-                  <th nowrap="" className="px-1">Cost Price<br /><span type="button" className="text-primary" onClick={() => document.querySelectorAll('.cost-price').forEach(el => el.value = document.querySelector('.cost-price').value)}>(Copy to All)</span></th>
-                  <th nowrap="" className="px-1">Selling Price<br /><span type="button" className="text-primary" onClick={() => document.querySelectorAll('.selling-price').forEach(el => el.value = document.querySelector('.selling-price').value)}>(Copy to All)</span></th>
+                  <th nowrap="" className="px-1">
+                    Cost Price<br />
+                    <span 
+                      type="button" 
+                      className="text-primary" 
+                      onClick={() => handleCopyToAll('costPrice')}
+                    >
+                      (Copy to All)
+                    </span>
+                  </th>
+                  <th nowrap="" className="px-1">
+                    Selling Price<br />
+                    <span 
+                      type="button" 
+                      className="text-primary" 
+                      onClick={() => handleCopyToAll('sellingPrice')}
+                    >
+                      (Copy to All)
+                    </span>
+                  </th>
                   <th>UPC</th>
                   <th>EAN</th>
                   <th>ISBN</th>
-                  <th nowrap="" className="px-1">Opening Stock<br /><span type="button" className="text-primary" onClick={() => document.querySelectorAll('.stock').forEach(el => el.value = document.querySelector('.stock').value)}>(Copy to All)</span></th>
+                  <th nowrap="" className="px-1">
+                    Opening Stock<br />
+                    <span 
+                      type="button" 
+                      className="text-primary" 
+                      onClick={() => handleCopyToAll('stock')}
+                    >
+                      (Copy to All)
+                    </span>
+                  </th>
                 </tr>
               </thead>
               <tbody id="table-body">
