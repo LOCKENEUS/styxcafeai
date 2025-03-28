@@ -56,6 +56,10 @@ export const InvoiceCreate =()=>{
   // Filter payment terms from custom fields
   const paymentTerms = customFields.filter(field => field.type === 'Payment Terms');
 
+  // Add these new state variables near the top with other state declarations
+  const [latestPaymentTerm, setLatestPaymentTerm] = useState(null);
+  const [latestTax, setLatestTax] = useState(null);
+
   useEffect(() => {
     dispatch(getCustomFields(cafeId));
     dispatch(getTaxFields(cafeId));
@@ -139,6 +143,40 @@ export const InvoiceCreate =()=>{
     setShowClientList(true);
   };
 
+  // Add these new handler functions
+  const handlePaymentTermCreated = (newTerm) => {
+    setLatestPaymentTerm(newTerm);
+    // Automatically set the new payment term in the form
+    setFormData(prev => ({
+      ...prev,
+      payment_terms: newTerm.name
+    }));
+  };
+
+  const handleTaxCreated = (newTax) => {
+    // Update the current product's tax field with the newly created tax
+    const updatedProducts = products.map(product => {
+      if (product.id === products[products.length - 1].id) {
+        return {
+          ...product,
+          tax: newTax.id,
+          taxRate: parseFloat(newTax.rate),
+          totalTax: Math.round((product.price * product.quantity * newTax.rate) / 100),
+          total: product.price * product.quantity + Math.round((product.price * product.quantity * newTax.rate) / 100)
+        };
+      }
+      return product;
+    });
+    
+    setProducts(updatedProducts);
+
+    // Also add the new tax to selected taxes for the total calculation
+    setTotals(prev => ({
+      ...prev,
+      selectedTaxes: [...prev.selectedTaxes, { id: newTax.id, rate: parseFloat(newTax.rate) }]
+    }));
+  };
+
   // Add these new state and calculation functions
   const priceList = {
     "34": 34,
@@ -158,8 +196,7 @@ export const InvoiceCreate =()=>{
           const selectedItem = items.find(item => item._id === value);
           if (selectedItem) {
             updatedProduct.price = selectedItem.sellingPrice;
-            // Handle null tax case
-            updatedProduct.tax = selectedItem.tax || ''; // Set empty string if tax is null
+            updatedProduct.tax = selectedItem.tax || '';
             const itemTax = selectedItem.tax ? taxFields.find(tax => tax._id === selectedItem.tax) : null;
             updatedProduct.taxRate = itemTax ? itemTax.tax_rate : 0;
           }
@@ -170,8 +207,14 @@ export const InvoiceCreate =()=>{
           updatedProduct.taxRate = selectedTax ? selectedTax.tax_rate : 0;
         }
 
+        // Ensure quantity is at least 1
+        const quantity = field === "quantity" ? 
+          (parseInt(value) || 1) : // If updating quantity, use input value or 1 if invalid
+          (parseInt(updatedProduct.quantity) || 1); // Otherwise use existing quantity or 1 if invalid
+        
+        updatedProduct.quantity = quantity;
+
         const price = parseFloat(updatedProduct.price) || 0;
-        const quantity = parseInt(updatedProduct.quantity) || 1;
         const taxRate = parseFloat(updatedProduct.taxRate) || 0;
 
         const subtotal = price * quantity;
@@ -191,7 +234,15 @@ export const InvoiceCreate =()=>{
   const addProduct = () => {
     setProducts([
       ...products,
-      { id: products.length + 1, item: "", qty: 1, price: 0, tax: 0, total: 0, totalTax: 0 },
+      { 
+        id: products.length + 1, 
+        item: "", 
+        quantity: 1,  // Always set default quantity to 1
+        price: 0, 
+        tax: "", 
+        total: 0, 
+        totalTax: 0 
+      },
     ]);
   };
 
@@ -577,7 +628,12 @@ export const InvoiceCreate =()=>{
                   placeholder="QTY : 1"
                   style={{ border: "1px solid black", width: "100%" }}
                   value={product.quantity}
-                  onChange={(e) => updateProduct(product.id, "quantity", e.target.value)}
+                  onChange={(e) => updateProduct(product.id, "quantity", e.target.value || 1)}
+                  onBlur={(e) => {
+                    if (!e.target.value || e.target.value < 1) {
+                      updateProduct(product.id, "quantity", 1);
+                    }
+                  }}
                 />
               </td>
               <td>
@@ -886,8 +942,13 @@ export const InvoiceCreate =()=>{
     <PaymentTermsModal
       show={showPaymentTerms}
       handleClose={() => setShowPaymentTerms(false)}
+      onCreated={handlePaymentTermCreated}
     />
-    <Tax show={showTaxModal} handleClose={() => setShowTaxModal(false)} />
+    <Tax 
+      show={showTaxModal} 
+      handleClose={() => setShowTaxModal(false)}
+      onCreated={handleTaxCreated}
+    />
     <OffcanvesItemsNewCreate 
       showOffCanvasCreateItem={showOffCanvasCreateItem} 
       handleCloseCreateItem={handleCloseCreateItem} 

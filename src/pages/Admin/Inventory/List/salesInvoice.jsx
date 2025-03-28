@@ -117,6 +117,41 @@ export const SaleInvoiceInventory = () => {
     item.total.toString().includes(searchQuery.toLowerCase())
   );
 
+  const handleExport = () => {
+    // Define CSV headers
+    const csvHeader = "S/N,Invoice No,Sales Person,Total,Date\n";
+    
+    // Convert invoices data to CSV rows
+    const csvRows = filteredItems.map((invoice, index) => {
+      // Format the date
+      const date = new Date(invoice.date);
+      const formattedDate = date instanceof Date && !isNaN(date) 
+        ? `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`
+        : "N/A";
+
+      // Create CSV row
+      return `${index + 1},${invoice.so_no || ""},${invoice.sales_person || ""},${invoice.total || 0},${formattedDate}`;
+    });
+
+    // Combine header and rows
+    const csvContent = csvHeader + csvRows.join("\n");
+
+    // Create a Blob with CSV content
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+
+    // Create a temporary download link
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "sales_invoices.csv";
+    document.body.appendChild(a);
+    a.click();
+
+    // Cleanup
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <Container className="p-0"> 
       <Row>
@@ -182,8 +217,18 @@ export const SaleInvoiceInventory = () => {
 
               {/* Action Buttons */}
               <Col sm={5} className="d-flex justify-content-end text-end my-2">
-                <Button variant="denger" className="btn  px-4 mx-2" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }}>
-                  <Image className="me-2 size-sm" style={{ width: "22px", height: "22px" }} src={solar_export} />
+                <Button 
+                  variant="denger" 
+                  className="btn px-4 mx-2" 
+                  size="sm" 
+                  style={{ borderColor: "#FF3636", color: "#FF3636" }}
+                  onClick={handleExport}
+                >
+                  <Image 
+                    className="me-2 size-sm" 
+                    style={{ width: "22px", height: "22px" }} 
+                    src={solar_export} 
+                  />
                   Export
                 </Button>
 

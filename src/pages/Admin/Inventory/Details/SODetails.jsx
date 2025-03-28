@@ -118,12 +118,12 @@ export const SODetails = () => {
             return;
         }
 
-        dispatch(addSOInvoice(invoiceData)).then((result) => {
-            if (!result.error) {
-                toast.success("Invoice created successfully");
-                // Optionally navigate to the invoice list or details page
-                // navigate(`/admin/Inventory/InvoiceDetails/${result.payload._id}`);
-            }
+        dispatch(addSOInvoice(invoiceData))
+        .then(() => {
+            navigate(`/admin/Inventory/SaleInvoiceDetails/${id}`);
+        })
+        .catch((error) => {
+            console.error("Error creating invoice:", error);
         });
     };
 

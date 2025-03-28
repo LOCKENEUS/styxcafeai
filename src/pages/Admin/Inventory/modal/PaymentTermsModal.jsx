@@ -3,7 +3,7 @@ import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { addCustomField } from '../../../../store/AdminSlice/CustomField';
 
-const PaymentTermsModal = ({ show, handleClose }) => {
+const PaymentTermsModal = ({ show, handleClose, onCreated }) => {
   const dispatch = useDispatch();
   const loading = useSelector(state => state.customFields.loading);
   const user = JSON.parse(sessionStorage.getItem("user"));
@@ -21,26 +21,33 @@ const PaymentTermsModal = ({ show, handleClose }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {
-    // Map term_name to name and term_days to code
-    const submitData = {
-      ...formData,
-      name: formData.term_name,
-      code: formData.term_days
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Map term_name to name and term_days to code
+      const submitData = {
+        ...formData,
+        name: formData.term_name,
+        code: formData.term_days
+      };
 
-    dispatch(addCustomField(submitData))
-      .unwrap()
-      .then(() => {
-        handleClose();
-        setFormData({
-          name: '',
-          code: '',
-          cafe: cafeId,
-          type: 'Payment Terms',
-          description: 'Custom field for product'
-        });
+      const response = await dispatch(addCustomField(submitData)).unwrap();
+      
+      if (onCreated && response) {
+        onCreated(response);
+      }
+      
+      handleClose();
+      setFormData({
+        name: '',
+        code: '',
+        cafe: cafeId,
+        type: 'Payment Terms',
+        description: 'Custom field for product'
       });
+    } catch (error) {
+      console.error('Error creating payment term:', error);
+    }
   };
 
   return (  

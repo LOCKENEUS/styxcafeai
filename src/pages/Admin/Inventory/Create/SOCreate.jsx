@@ -56,6 +56,45 @@ const SOCreate = () => {
   // Filter payment terms from custom fields
   const paymentTerms = customFields.filter(field => field.type === 'Payment Terms');
 
+  // Add new state to track latest created items
+  const [latestPaymentTerm, setLatestPaymentTerm] = useState(null);
+  const [latestTax, setLatestTax] = useState(null);
+
+  // Add handler for new payment term creation
+  const handlePaymentTermCreated = (newTerm) => {
+    setLatestPaymentTerm(newTerm);
+    // Automatically set the new payment term in the form
+    setFormData(prev => ({
+      ...prev,
+      payment_terms: newTerm.name
+    }));
+  };
+
+  // Update the handleTaxCreated function in SOCreate component
+  const handleTaxCreated = (newTax) => {
+    // Update the current product's tax field with the newly created tax
+    const updatedProducts = products.map(product => {
+      if (product.id === products[products.length - 1].id) {
+        return {
+          ...product,
+          tax: newTax.id,
+          taxRate: parseFloat(newTax.rate),
+          totalTax: Math.round((product.price * product.quantity * newTax.rate) / 100),
+          total: product.price * product.quantity + Math.round((product.price * product.quantity * newTax.rate) / 100)
+        };
+      }
+      return product;
+    });
+    
+    setProducts(updatedProducts);
+
+    // Also add the new tax to selected taxes for the total calculation
+    setTotals(prev => ({
+      ...prev,
+      selectedTaxes: [...prev.selectedTaxes, { id: newTax.id, rate: parseFloat(newTax.rate) }]
+    }));
+  };
+
   useEffect(() => {
     dispatch(getCustomFields(cafeId));
     dispatch(getTaxFields(cafeId));
@@ -948,8 +987,13 @@ const SOCreate = () => {
       <PaymentTermsModal
         show={showPaymentTerms}
         handleClose={() => setShowPaymentTerms(false)}
+        onCreated={handlePaymentTermCreated}
       />
-      <Tax show={showTaxModal} handleClose={() => setShowTaxModal(false)} />
+      <Tax 
+        show={showTaxModal} 
+        handleClose={() => setShowTaxModal(false)}
+        onCreated={handleTaxCreated}
+      />
       <OffcanvesItemsNewCreate 
         showOffCanvasCreateItem={showOffCanvasCreateItem} 
         handleCloseCreateItem={handleCloseCreateItem} 

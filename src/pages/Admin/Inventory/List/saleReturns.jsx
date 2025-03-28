@@ -44,6 +44,50 @@ export const InvoicePaymentInventory = () => {
     navigator(`/admin/Inventory/SaleInvoiceDetails/${id}`);
   };
 
+  const handleExport = () => {
+    // Define CSV headers
+    const csvHeader = "S/N,Invoice ID,Amount,Payment Mode,Payment Date,Description\n";
+    
+    // Convert payments data to CSV rows
+    const csvRows = filteredItems.map((payment, index) => {
+      // Format the date
+      const date = new Date(payment.deposit_date);
+      const formattedDate = date instanceof Date && !isNaN(date) 
+        ? `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`
+        : "N/A";
+
+      // Format amount to remove the '₹' symbol for CSV
+      const amount = payment.deposit_amount || 0;
+
+      // Create CSV row with proper escaping for potential commas in text
+      return [
+        index + 1,
+        payment?.invoice_id?.so_no || "",
+        amount,
+        payment.mode || "",
+        formattedDate,
+        `"${payment.description || ""}"`  // Wrap description in quotes to handle commas
+      ].join(',');
+    });
+
+    // Combine header and rows
+    const csvContent = csvHeader + csvRows.join("\n");
+
+    // Create a Blob with CSV content
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+
+    // Create a temporary download link
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "invoice_payments.csv";
+    document.body.appendChild(a);
+    a.click();
+
+    // Cleanup
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   const columns = [
     {
@@ -70,7 +114,7 @@ export const InvoicePaymentInventory = () => {
               gap: "10px",
             }}
           >
-            {row?.invoice_id?.so_no.charAt(0).toUpperCase()}
+            {row?.invoice_id?.so_no?.charAt(0).toUpperCase()}
           </span>
           <div>
             <div 
@@ -166,6 +210,7 @@ export const InvoicePaymentInventory = () => {
                   className="btn px-4 mx-2" 
                   size="sm" 
                   style={{ borderColor: "#FF3636", color: "#FF3636" }}
+                  onClick={handleExport}
                 >
                   <Image 
                     className="me-2 size-sm" 

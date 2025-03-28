@@ -102,7 +102,6 @@ const ItemGroupForm = () => {
           } else {
             acc.push({ color, options: optionString });
           }
-
           return acc;
         }, []);
         setAttributes(reconstructedAttributes);

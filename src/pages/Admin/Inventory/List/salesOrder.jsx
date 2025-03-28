@@ -46,7 +46,16 @@ export const SalesOrder = () => {
   };
 
   const getRandomColor = (name) => {
-    const colors = ["#FAED39", "#FF5733", "#33FF57", "#339FFF", "#FF33F6", "#FFAA33", "#39DDFA", "#3DFF16"];
+    const colors = [
+      "#FAED39",
+      "#FF5733",
+      "#33FF57",
+      "#339FFF",
+      "#FF33F6",
+      "#FFAA33",
+      "#39DDFA",
+      "#3DFF16",
+    ];
     let index = name.charCodeAt(0) % colors.length; // Generate a consistent index
     return colors[index];
   };
@@ -83,8 +92,8 @@ export const SalesOrder = () => {
             {row.so_no.charAt(0).toUpperCase()}
           </span>
           <div>
-            <div 
-              style={{ color: "#0062FF", cursor: "pointer" }} 
+            <div
+              style={{ color: "#0062FF", cursor: "pointer" }}
               onClick={() => handleShowDetails(row._id)}
             >
               {row.so_no}
@@ -93,32 +102,40 @@ export const SalesOrder = () => {
         </div>
       ),
     },
-    { 
-      name: "Client", 
-      selector: (row) => row.customer_id?.name || "N/A", 
-      sortable: true 
+    {
+      name: "Client",
+      selector: (row) => row.customer_id?.name || "N/A",
+      sortable: true,
     },
-    { 
-      name: "Status", 
+    {
+      name: "Status",
       selector: (row) => "Pending", // You may need to adjust this based on your API response
       sortable: true,
       cell: (row) => (
-        <span className={`badge ${row.pending_qty > 0 ? "bg-warning" : "bg-success"}`}>
+        <span
+          className={`badge ${
+            row.pending_qty > 0 ? "bg-warning" : "bg-success"
+          }`}
+        >
           {row.pending_qty > 0 ? "Pending" : "Completed"}
         </span>
-      )
+      ),
     },
-    { 
-      name: "Date", 
-      selector: (row) => row.date, 
+    {
+      name: "Date",
+      selector: (row) => row.date,
       sortable: true,
       cell: (row) => {
         // Extract only the date part from the ISO string
         if (!row.date) return "N/A";
         const date = new Date(row.date);
         if (isNaN(date)) return "Invalid Date";
-        return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
-      }
+        return `${date.getDate().toString().padStart(2, "0")}/${(
+          date.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}/${date.getFullYear()}`;
+      },
     },
   ];
 
@@ -130,19 +147,72 @@ export const SalesOrder = () => {
     }
   };
 
-  const filteredItems = salesOrders?.filter((item) =>
-    item.so_no?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.customer_id?.name?.toLowerCase().includes(searchQuery.toLowerCase())
-  ) || [];
+  const filteredItems =
+    salesOrders?.filter(
+      (item) =>
+        item.so_no?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.customer_id?.name
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase())
+    ) || [];
+
+  const handleExport = () => {
+    // Define CSV headers
+    const csvHeader = "S/N,Order No,Client,Status,Date\n";
+
+    // Convert salesOrders data to CSV rows
+    const csvRows = filteredItems.map((order, index) => {
+      // Format the date
+      const date = new Date(order.date);
+      const formattedDate =
+        date instanceof Date && !isNaN(date)
+          ? `${date.getDate().toString().padStart(2, "0")}/${(
+              date.getMonth() + 1
+            )
+              .toString()
+              .padStart(2, "0")}/${date.getFullYear()}`
+          : "N/A";
+
+      // Format the status
+      const status = order.pending_qty > 0 ? "Pending" : "Completed";
+
+      // Create CSV row
+      return `${index + 1},${order.so_no || ""},${
+        order.customer_id?.name || "N/A"
+      },${status},${formattedDate}`;
+    });
+
+    // Combine header and rows
+    const csvContent = csvHeader + csvRows.join("\n");
+
+    // Create a Blob with CSV content
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+
+    // Create a temporary download link
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "sales_orders.csv";
+    document.body.appendChild(a);
+    a.click();
+
+    // Cleanup
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   return (
-    <Container  className="p-0">
+    <Container className="p-0">
       <Row>
         <Col sm={12} className="mx-2 my-3">
           <div style={{ top: "186px", fontSize: "18px" }}>
             <Breadcrumb>
-              <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
-              <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link to="/admin/dashboard">Home</Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link to="/admin/inventory/dashboard">Inventory</Link>
+              </BreadcrumbItem>
               <BreadcrumbItem active>Sales Order List</BreadcrumbItem>
             </Breadcrumb>
           </div>
@@ -150,8 +220,11 @@ export const SalesOrder = () => {
 
         {/* Items List Card */}
         <Col sm={12}>
-
-          <Card data-aos="fade-right" data-aos-duration="800" className="mx-2 p-1">
+          <Card
+            data-aos="fade-right"
+            data-aos-duration="800"
+            className="mx-2 p-1"
+          >
             <Row className="align-items-center">
               {/* Title */}
               <Col sm={4} className="d-flex my-2">
@@ -183,32 +256,44 @@ export const SalesOrder = () => {
                     placeholder="Search for vendors"
                     aria-label="Search in docs"
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}  // Update searchQuery directly
+                    onChange={(e) => setSearchQuery(e.target.value)} // Update searchQuery directly
                     style={{ backgroundColor: "#FAFAFA", border: "none" }}
                   />
-
 
                   {searchQuery && (
                     <InputGroupText
                       as="button"
                       className="border-0 bg-transparent"
-                      onClick={() => setSearchQuery("")}  // Clear searchQuery instead of searchText
+                      onClick={() => setSearchQuery("")} // Clear searchQuery instead of searchText
                     >
                       ✖
                     </InputGroupText>
                   )}
-
                 </InputGroup>
               </Col>
 
               {/* Action Buttons */}
               <Col sm={5} className="d-flex justify-content-end text-end my-2">
-                <Button variant="denger" className="btn  px-4 mx-2" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }}>
-                  <Image className="me-2 size-sm" style={{ width: "22px", height: "22px" }} src={solar_export} />
+                <Button
+                  variant="denger"
+                  className="btn px-4 mx-2"
+                  size="sm"
+                  onClick={handleExport}
+                >
+                  <Image
+                    className="me-2 size-sm"
+                    style={{ width: "22px", height: "22px" }}
+                    src={solar_export}
+                  />
                   Export
                 </Button>
 
-                <Button variant="primary" className="px-4 mx-2" size="sm" onClick={handleShowCreate}>
+                <Button
+                  variant="primary"
+                  className="px-4 mx-2"
+                  size="sm"
+                  onClick={handleShowCreate}
+                >
                   <Image
                     className="me-2"
                     style={{ width: "22px", height: "22px" }}
@@ -217,7 +302,6 @@ export const SalesOrder = () => {
                   New SO
                 </Button>
               </Col>
-
 
               <Col sm={12} style={{ marginTop: "30px" }}>
                 {loading ? (
@@ -240,32 +324,37 @@ export const SalesOrder = () => {
                     responsive
                     persistTableHead
                     noDataComponent={
-                      <div className="p-4 text-center">No sales orders found</div>
+                      <div className="p-4 text-center">
+                        No sales orders found
+                      </div>
                     }
                     customStyles={{
                       rows: {
                         style: {
-                          backgroundColor: "#ffffff", 
-                          padding: 'clamp(10px, 2vw, 15px)',
-                          border: 'none',
-                          fontSize: '14px',
-                        }
+                          backgroundColor: "#ffffff",
+                          padding: "clamp(10px, 2vw, 15px)",
+                          border: "none",
+                          fontSize: "14px",
+                        },
                       },
                       headCells: {
                         style: {
-                          backgroundColor: "#e9f5f8", 
-                          padding: 'clamp(10px, 2vw, 15px)',
-                          border: 'none',
-                          fontSize: 'clamp(14px, 3vw, 16px)',
+                          backgroundColor: "#e9f5f8",
+                          padding: "clamp(10px, 2vw, 15px)",
+                          border: "none",
+                          fontSize: "clamp(14px, 3vw, 16px)",
                         },
                       },
-                      table: { style: { borderRadius: "5px", overflow: "hidden" } },
+                      table: {
+                        style: { borderRadius: "5px", overflow: "hidden" },
+                      },
                     }}
                   />
                 )}
               </Col>
             </Row>
-          </Card></Col>
+          </Card>
+        </Col>
       </Row>
     </Container>
   );

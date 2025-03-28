@@ -1,17 +1,43 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Table, Button, Form, InputGroup, Pagination, Container, Row, Col, Breadcrumb, FormControl, Spinner, Card, BreadcrumbItem } from "react-bootstrap";
+import {
+  Table,
+  Button,
+  Form,
+  InputGroup,
+  Pagination,
+  Container,
+  Row,
+  Col,
+  Breadcrumb,
+  FormControl,
+  Spinner,
+  Card,
+  BreadcrumbItem,
+} from "react-bootstrap";
 import { FaFileExport, FaSearch } from "react-icons/fa";
 import { BsPlusLg } from "react-icons/bs";
 import { IoAdd } from "react-icons/io5";
 import { FaEdit } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import gm1 from '/assets/inventory/mynaui_search.svg'
+import gm1 from "/assets/inventory/mynaui_search.svg";
 import solar_export from "/assets/inventory/solar_export-linear.png";
 import { useDispatch, useSelector } from "react-redux";
-import { getVendors, deleteVendor } from "../../../../store/AdminSlice/Inventory/VendorSlice";
+import {
+  getVendors,
+  deleteVendor,
+} from "../../../../store/AdminSlice/Inventory/VendorSlice";
 import { toast } from "react-toastify";
 
-const avatarColors = ['#0062FF', '#FF6B6B', '#4CAF50', '#9C27B0', '#FF9800', '#795548', '#607D8B', '#E91E63'];
+const avatarColors = [
+  "#0062FF",
+  "#FF6B6B",
+  "#4CAF50",
+  "#9C27B0",
+  "#FF9800",
+  "#795548",
+  "#607D8B",
+  "#E91E63",
+];
 
 const VendorList = () => {
   const [search, setSearch] = useState("");
@@ -20,17 +46,20 @@ const VendorList = () => {
   const itemsPerPage = 10;
   const editDropdownRef = useRef(null);
   const dispatch = useDispatch();
-  const { vendors, loading, error } = useSelector(state => state.vendors);
+  const { vendors, loading, error } = useSelector((state) => state.vendors);
   const user = JSON.parse(sessionStorage.getItem("user"));
-  const cafeId = user?._id;  
+  const cafeId = user?._id;
   useEffect(() => {
     dispatch(getVendors(cafeId));
   }, [dispatch, cafeId]);
-  
+
   useEffect(() => {
     // Close dropdown when clicking outside
     const handleClickOutside = (event) => {
-      if (editDropdownRef.current && !editDropdownRef.current.contains(event.target)) {
+      if (
+        editDropdownRef.current &&
+        !editDropdownRef.current.contains(event.target)
+      ) {
         setActiveDropdownId(null);
       }
     };
@@ -44,11 +73,11 @@ const VendorList = () => {
   const getRandomColor = (index) => {
     return avatarColors[index % avatarColors.length];
   };
-  
+
   const getInitials = (name) => {
     return name ? name.charAt(0).toUpperCase() : "?";
   };
-  
+
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this vendor?")) {
       dispatch(deleteVendor(id))
@@ -56,44 +85,50 @@ const VendorList = () => {
         .then(() => {
           setActiveDropdownId(null);
         })
-        .catch(error => {
+        .catch((error) => {
           toast.error(error || "Failed to delete vendor");
         });
     }
   };
-  
+
   const handleExport = () => {
-    const csvHeader = "S/N,Vendor Name,Email,Company,Billing Address,Shipping Address\n";
-    const csvRows = filteredVendors.map((vendor, index) =>
-      `${index + 1},${vendor.name},${vendor.email},${vendor.company},${vendor.billingAddress},${vendor.shippingAddress}`
+    const csvHeader =
+      "S/N,Vendor Name,Email,Company,Billing Address,Shipping Address\n";
+    const csvRows = filteredVendors.map(
+      (vendor, index) =>
+        `${index + 1},${vendor.name},${vendor.email},${vendor.company},${
+          vendor.billingAddress
+        },${vendor.shippingAddress}`
     );
-  
+
     const csvContent = csvHeader + csvRows.join("\n");
-  
+
     // Create a Blob with CSV content
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-  
+
     // Create a temporary download link
     const a = document.createElement("a");
     a.href = url;
     a.download = "vendor_list.csv";
     document.body.appendChild(a);
     a.click();
-  
+
     // Cleanup
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
-  
+
   // Filter and sort vendors based on search and creation date
-  const filteredVendors = vendors
-    ?.filter(vendor => 
-      vendor.name?.toLowerCase().includes(search.toLowerCase()) ||
-      vendor.email?.toLowerCase().includes(search.toLowerCase()) ||
-      vendor.company?.toLowerCase().includes(search.toLowerCase())
-    )
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
+  const filteredVendors =
+    vendors
+      ?.filter(
+        (vendor) =>
+          vendor.name?.toLowerCase().includes(search.toLowerCase()) ||
+          vendor.email?.toLowerCase().includes(search.toLowerCase()) ||
+          vendor.company?.toLowerCase().includes(search.toLowerCase())
+      )
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) || [];
 
   // Add handlePageChange function
   const handlePageChange = (page) => {
@@ -109,10 +144,14 @@ const VendorList = () => {
     <Container fluid className="px-3">
       <Row>
         <Col sm={12} className="mx-md-4 my-3">
-          <div style={{ top: "186px"}}>
+          <div style={{ top: "186px" }}>
             <Breadcrumb>
-              <BreadcrumbItem  ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
-              <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link to="/admin/dashboard">Home</Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link to="/admin/inventory/dashboard">Inventory</Link>
+              </BreadcrumbItem>
               <BreadcrumbItem active>Vendor List</BreadcrumbItem>
             </Breadcrumb>
           </div>
@@ -122,11 +161,14 @@ const VendorList = () => {
           <Card className="mx-md-4 p-3">
             <Row className="align-items-center">
               <Col xs={12} sm={6} lg={4} className="d-flex my-2">
-                <h1 style={{
-                  fontSize: "20px",
-                  fontWeight: "500",
-                  lineHeight: "18px",
-                }} className="m-0">
+                <h1
+                  style={{
+                    fontSize: "20px",
+                    fontWeight: "500",
+                    lineHeight: "18px",
+                  }}
+                  className="m-0"
+                >
                   Vendor List
                 </h1>
               </Col>
@@ -161,19 +203,31 @@ const VendorList = () => {
                 </InputGroup>
               </Col>
 
-              <Col xs={12} lg={5} className="d-flex justify-content-lg-end justify-content-center text-end my-2 gap-2 flex-wrap">
-                <Button 
-                  variant="white" 
-                  className="btn px-3" 
-                  size="sm" 
-                  onClick={handleExport} 
+              <Col
+                xs={12}
+                lg={5}
+                className="d-flex justify-content-lg-end justify-content-center text-end my-2 gap-2 flex-wrap"
+              >
+                <Button
+                  variant="white"
+                  className="btn px-3"
+                  size="sm"
+                  onClick={handleExport}
                   style={{ borderColor: "#FF3636", color: "#FF3636" }}
                 >
-                  <img src={solar_export} alt="Export Icon" style={{ width: "22px", height: "22px" }} className="me-2" />
+                  <img
+                    src={solar_export}
+                    alt="Export Icon"
+                    style={{ width: "22px", height: "22px" }}
+                    className="me-2"
+                  />
                   Export
                 </Button>
 
-                <Link to={'/admin/inventory/create-vendor'} className="d-inline-block">
+                <Link
+                  to={"/admin/inventory/create-vendor"}
+                  className="d-inline-block"
+                >
                   <Button variant="primary" className="px-3" size="sm">
                     <BsPlusLg className="me-2" style={{ fontSize: "1.2rem" }} />
                     New Vendor
@@ -183,11 +237,35 @@ const VendorList = () => {
 
               <Col xs={12} style={{ marginTop: "30px" }}>
                 <div className="table-responsive">
-                  <Table striped hover style={{ minWidth: '600px', marginTop: "2rem" }}>
-                    <thead className="no-uppercase" style={{ backgroundColor: '#0062FF0D' }}>
-                      <tr >
-                        {['S/N', 'Vendor Name', 'Company', 'Billing Address', 'Shipping Address', 'Actions'].map((header, index) => (
-                          <th key={index} style={{  fontSize: "0.9rem" ,color:'black', textAlign:"center" }}>  <h4> {header} </h4> </th>
+                  <Table
+                    striped
+                    hover
+                    style={{ minWidth: "600px", marginTop: "2rem" }}
+                  >
+                    <thead
+                      className="no-uppercase"
+                      style={{ backgroundColor: "#0062FF0D" }}
+                    >
+                      <tr>
+                        {[
+                          "S/N",
+                          "Vendor Name",
+                          "Company",
+                          "Billing Address",
+                          "Shipping Address",
+                          "Actions",
+                        ].map((header, index) => (
+                          <th
+                            key={index}
+                            style={{
+                              fontSize: "0.9rem",
+                              color: "black",
+                              textAlign: "center",
+                            }}
+                          >
+                            {" "}
+                            <h4> {header} </h4>{" "}
+                          </th>
                         ))}
                       </tr>
                     </thead>
@@ -200,27 +278,40 @@ const VendorList = () => {
                         </tr>
                       ) : (
                         filteredVendors
-                          .slice((activePage - 1) * itemsPerPage, activePage * itemsPerPage)
+                          .slice(
+                            (activePage - 1) * itemsPerPage,
+                            activePage * itemsPerPage
+                          )
                           .map((vendor, index) => (
                             <tr key={vendor._id}>
-                              <td>{(activePage - 1) * itemsPerPage + index + 1}</td>
+                              <td>
+                                {(activePage - 1) * itemsPerPage + index + 1}
+                              </td>
                               <td>
                                 <div className="d-flex gap-2 align-items-center">
-                                  <div style={{
-                                    width: '40px',
-                                    height: '40px',
-                                    borderRadius: '50%',
-                                    backgroundColor: getRandomColor(index),
-                                    color: 'white',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    marginRight: '10px',
-                                  }}>
+                                  <div
+                                    style={{
+                                      width: "40px",
+                                      height: "40px",
+                                      borderRadius: "50%",
+                                      backgroundColor: getRandomColor(index),
+                                      color: "white",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      marginRight: "10px",
+                                    }}
+                                  >
                                     {getInitials(vendor.name)}
                                   </div>
                                   <div>
-                                    <Link to={`/admin/inventory/vendor-details/${vendor._id}`} className="fw-bold text-primary">{vendor.name}</Link><br />
+                                    <Link
+                                      to={`/admin/inventory/vendor-details/${vendor._id}`}
+                                      className="fw-bold text-primary"
+                                    >
+                                      {vendor.name}
+                                    </Link>
+                                    <br />
                                     <small>{vendor.email}</small>
                                   </div>
                                 </div>
@@ -232,45 +323,57 @@ const VendorList = () => {
                                 <Button
                                   variant="link"
                                   className="text-primary"
-                                  onClick={() => setActiveDropdownId(
-                                    activeDropdownId === vendor._id ? null : vendor._id
-                                  )}
+                                  onClick={() =>
+                                    setActiveDropdownId(
+                                      activeDropdownId === vendor._id
+                                        ? null
+                                        : vendor._id
+                                    )
+                                  }
                                 >
-                                  <FaEdit style={{ color: '#0062FF', fontSize: '1.2rem' }} />
+                                  <FaEdit
+                                    style={{
+                                      color: "#0062FF",
+                                      fontSize: "1.2rem",
+                                    }}
+                                  />
                                 </Button>
 
                                 {activeDropdownId === vendor._id && (
                                   <div
                                     ref={editDropdownRef}
                                     style={{
-                                      position: 'absolute',
-                                      right: '0',
-                                      top: '100%',
-                                      backgroundColor: 'white',
-                                      boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-                                      borderRadius: '4px',
+                                      position: "absolute",
+                                      right: "0",
+                                      top: "100%",
+                                      backgroundColor: "white",
+                                      boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+                                      borderRadius: "4px",
                                       zIndex: 1000,
-                                      minWidth: 'clamp(120px, 30vw, 150px)',
+                                      minWidth: "clamp(120px, 30vw, 150px)",
                                     }}
                                   >
                                     <Link
                                       to={`/admin/inventory/vendors/edit/${vendor._id}`}
-                                      style={{ textDecoration: 'none' }}
+                                      style={{ textDecoration: "none" }}
                                     >
-                                      <div style={{
-                                        padding: 'clamp(8px, 2vw, 10px)',
-                                        cursor: 'pointer',
-                                        color: '#0062FF',
-                                        borderBottom: '1px solid #eee',
-                                      }}>
+                                      <div
+                                        style={{
+                                          padding: "clamp(8px, 2vw, 10px)",
+                                          cursor: "pointer",
+                                          color: "#0062FF",
+                                          borderBottom: "1px solid #eee",
+                                        }}
+                                      >
                                         Edit Vendor
                                       </div>
                                     </Link>
-                                    <div style={{
-                                      padding: 'clamp(8px, 2vw, 10px)',
-                                      cursor: 'pointer',
-                                      color: '#FF0000',
-                                    }}
+                                    <div
+                                      style={{
+                                        padding: "clamp(8px, 2vw, 10px)",
+                                        cursor: "pointer",
+                                        color: "#FF0000",
+                                      }}
                                       onClick={() => handleDelete(vendor._id)}
                                     >
                                       Delete Vendor
@@ -293,7 +396,7 @@ const VendorList = () => {
       <div className="d-flex justify-content-center mt-3 mb-3">
         <div className="pagination-wrapper">
           <Pagination size={window.innerWidth < 768 ? "sm" : ""}>
-            <Pagination.Prev 
+            <Pagination.Prev
               onClick={() => handlePageChange(activePage - 1)}
               disabled={activePage === 1}
             />
@@ -324,12 +427,12 @@ const VendorList = () => {
           .table-responsive {
             margin: 0 -10px;
           }
-          
+
           th h4 {
             font-size: 0.8rem;
             white-space: nowrap;
           }
-          
+
           td {
             font-size: 0.8rem;
             white-space: nowrap;
@@ -344,7 +447,7 @@ const VendorList = () => {
           .btn {
             margin: 5px 0;
           }
-          
+
           .dropdown-menu {
             position: fixed !important;
             top: auto !important;
