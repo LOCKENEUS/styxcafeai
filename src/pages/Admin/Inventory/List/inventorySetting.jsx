@@ -169,7 +169,7 @@ export const InventorySettingAdmin = () => {
           </div>
         </Col>
 
-        <TabContainer
+        <TabContainer 
           id="inventory-tabs"
           activeKey={activeKey}
           onSelect={(k) => setActiveKey(k)}
@@ -233,7 +233,7 @@ export const InventorySettingAdmin = () => {
                     <Col xs={12} md={4} lg={3}>
                       <Card className="rounded-4 p-1 border h-100">
                         <div className="my-3 mx-3">
-                          <h4 className="mb-4">Create New Unit</h4>
+                          <h4 className="mb-4">Create New Unit</h4> 
                           <Form autoComplete="off" onSubmit={handleUnitSubmit}>
                             <FormGroup className="mb-3">
                               <FormLabel>Unit Name</FormLabel>

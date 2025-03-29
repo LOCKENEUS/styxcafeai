@@ -598,14 +598,30 @@ export const InvoiceCreate =()=>{
                     className="flex-grow-1"
                     style={{ border: "1px solid black", borderStyle: "dashed" }}
                     value={product.item || ""}
-                    onChange={(e) => updateProduct(product.id, "item", e.target.value)}
+                    onChange={(e) => {
+                      // Check if the selected item is already used in another product row
+                      const isItemAlreadySelected = products.some(
+                        p => p.id !== product.id && p.item === e.target.value
+                      );
+
+                      if (isItemAlreadySelected) {
+                        // Show an alert or handle the duplicate selection
+                        alert("This item is already selected in another row. Please choose a different item.");
+                        return;
+                      }
+
+                      updateProduct(product.id, "item", e.target.value);
+                    }}
                   >
                     <option value="">Select Item</option>
-                    {items.map((item) => (
-                      <option key={item._id} value={item._id}>
-                        {item.name} (₹{item.sellingPrice})
-                      </option>
-                    ))}
+                    {items
+                      // Filter out items that are already selected in other rows
+                      .filter(item => !products.some(p => p.id !== product.id && p.item === item._id))
+                      .map((item) => (
+                        <option key={item._id} value={item._id}>
+                          {item.name} (₹{item.sellingPrice})
+                        </option>
+                      ))}
                     {product.item && !items.some(item => item._id === product.item) && product.itemName && (
                       <option value={product.item}>{product.itemName}</option>
                     )}

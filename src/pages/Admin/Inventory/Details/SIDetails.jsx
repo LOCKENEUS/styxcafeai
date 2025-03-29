@@ -401,30 +401,23 @@ export const SIDetails = () => {
                       <tr className="border-top border-3">
                         <th className="text-start">Balance</th>
                         <th>
-                          {(invoice?.total || 0) -
-                            (selectedPayment?.reduce(
-                              (sum, payment) =>
-                                sum + (payment.deposit_amount || 0),
-                              0
-                            ) || 0) <=
-                          0 ? (
-                            <span
-                              style={{ fontWeight: "600" }}
-                              className="text-success"
-                            >
-                              Amount Paid
-                            </span>
+                          {((invoice?.total || 0) - (selectedPayment?.reduce((sum, payment) => sum + (payment.deposit_amount || 0), 0) || 0)) <= 0 ? (
+                            <span style={{fontWeight:"600"}} className="text-success">Amount Paid</span>
                           ) : (
-                            <span>
-                              ₹
-                              {(invoice?.total || 0) -
-                                (selectedPayment?.reduce(
-                                  (sum, payment) =>
-                                    sum + (payment.deposit_amount || 0),
-                                  0
-                                ) || 0)}
-                            </span>
+                            <Button
+                              onClick={handleCollectData}
+                              variant="outline-success">
+                              Collect ₹{(invoice?.total || 0) - (selectedPayment?.reduce((sum, payment) => sum + (payment.deposit_amount || 0), 0) || 0)}
+                            </Button>
                           )}
+                          
+                          <CollectPayment
+                            show={showCollectModal}
+                            handleClose={handleModalClose}
+                            maxAmount={remainingAmount}
+                            invoiceId={id}
+                            onSuccess={refreshPaymentData}
+                          />
                         </th>
                       </tr>
                     </tbody>
