@@ -53,3 +53,25 @@ export const formatDate = (isoString) => {
 
   return `${formattedDate},  ${dayOfWeek}`;
 };
+
+export const formatDateAndTime = (isoString) => {
+  const date = new Date(isoString);
+
+  // Get the day of the week
+  const options = { weekday: "long" };
+  const dayOfWeek = date.toLocaleDateString("en-US", options);
+
+  // Get the date in DD/MM/YYYY format
+  const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-");
+
+  // Get the time in HH:MM AM/PM format
+  const formattedTime = date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true, // Ensures AM/PM format
+  });
+
+  return `${dayOfWeek}, ${formattedDate}, ${formattedTime}`;
+};
+
+

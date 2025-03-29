@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Row,
@@ -18,9 +18,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { getGameById } from "../../../store/slices/gameSlice";
 import { getSlotDetails } from "../../../store/slices/slotsSlice";
-import { addBooking } from "../../../store/AdminSlice/BookingSlice";
+import { addBooking, deleteBooking } from "../../../store/AdminSlice/BookingSlice";
 import ClientModel from "./Model/ClientModel";
 import { IoAdd } from "react-icons/io5";
+import { FaDeleteLeft } from "react-icons/fa6";
 
 const BookingDetails = () => {
   const { customers, loading, error } = useSelector((state) => state.customers);
@@ -42,7 +43,6 @@ const BookingDetails = () => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [showOnCredit, setShowOnCredit] = useState(false);
   const [activeTab, setActiveTab] = useState("checkout");
-  const target = useRef(null);
   const [showClientModal, setShowClientModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Payment Options");
 
@@ -89,6 +89,8 @@ const BookingDetails = () => {
     }
   }, [dispatch, gameId, slotId]);
 
+  console.log("payableAmount", payableAmount);
+
   const handleAddPlayer = async () => {
     const submittedData = new FormData();
     submittedData.append("cafe", cafeId);
@@ -110,6 +112,11 @@ const BookingDetails = () => {
       setShowInput(false);
       setSearchCustTerm("");
     }
+  };
+
+ const handleRemovePlayer = (playerId) => {
+    const updatedTeamMembers = teamMembers.filter(player => player.id !== playerId);
+    setTeamMembers(updatedTeamMembers);
   };
 
   const filteredCustomers = customers.filter((customer) =>
@@ -183,11 +190,20 @@ const BookingDetails = () => {
         slot_id: slot?._id,
         mode: "Offline",
         status: "Pending",
-        total: selectedGame?.data?.price,
+        total: priceToPay,
+        paid_amount:payableAmount,
         slot_date: newdate,
         players: teamMembers,
         playerCredits: playerCredits
       };
+      if(showOnCredit){
+        let limit = selectedCustomer?.creditLimit - selectedCustomer?.creditAmount
+        
+        if(payableAmount > limit){
+          alert("Credit Limit Exceeded")
+          return
+        }
+      }
       await dispatch(addBooking(bookingData)).unwrap()
       navigate("/admin/bookings")
     } catch (error) { }
@@ -200,7 +216,7 @@ const BookingDetails = () => {
         customer_id: selectedCustomer?._id,
         game_id: selectedGame?.data?._id,
         slot_id: slot?._id,
-        mode: "Offline",
+        mode: "Online",
         status: "Pending",
         total: selectedGame?.data?.price,
         slot_date: newdate,
@@ -261,24 +277,9 @@ const BookingDetails = () => {
     );
   };
 
-  console.log("playerCredits", playerCredits)
-
   const handleOnlinePayment = async () => {
     try {
-      const bookingData = {
-        cafe: cafeId,
-        customer_id: selectedCustomer?._id,
-        game_id: selectedGame?.data?._id,
-        slot_id: slot?._id,
-        mode: "Online",
-        status: "Pending",
-        total: selectedGame?.data?.price,
-        slot_date: newdate,
-        players: teamMembers
-      };
-
-      const result = await dispatch(addBooking(bookingData)).unwrap()
-
+      // Step 1: Create Razorpay Order FIRST (before creating booking)
       const response = await fetch(`${backend_url}/admin/booking/payment`, {
         method: "POST",
         headers: {
@@ -295,18 +296,41 @@ const BookingDetails = () => {
           teamMembers: [],
         }),
       });
-
+  
       const data = await response.json();
-      if (data.success && data.order) {
-        const options = {
-          key: import.meta.env.VITE_RAZOR_LIVE_KEY,
-          amount: data.order.amount,
-          currency: data.order.currency,
-          name: "Lockene Inc",
-          description: "Game Booking",
-          order_id: data.order.id,
-          handler: async function (response) {
-            // Send transaction details to backend
+      if (!data.success || !data.order) {
+        console.error("Failed to create Razorpay order");
+        return;
+      }
+  
+      // Step 2: Set up Razorpay Payment Options
+      const options = {
+        key: import.meta.env.VITE_RAZOR_LIVE_KEY,
+        amount: data.order.amount,
+        currency: data.order.currency,
+        name: "Lockene Inc",
+        description: "Game Booking",
+        order_id: data.order.id,
+        handler: async function (response) {
+          try {
+            // Step 3: Create Booking ONLY if Payment is Successful
+            const bookingData = {
+              cafe: cafeId,
+              customer_id: selectedCustomer?._id,
+              game_id: selectedGame?.data?._id,
+              slot_id: slot?._id,
+              mode: "Online",
+              status: "Paid",
+              total: priceToPay,
+              paid_amount:payableAmount,
+              playerCredits:playerCredits,
+              slot_date: newdate,
+              players: teamMembers,
+            };
+  
+            const result = await dispatch(addBooking(bookingData)).unwrap();
+  
+            // Step 4: Verify Payment
             const verifyResponse = await fetch(`${backend_url}/admin/booking/verify-payment`, {
               method: "POST",
               headers: {
@@ -317,38 +341,48 @@ const BookingDetails = () => {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
-                booking_id: result?.data?._id, // Pass the booking ID
+                booking_id: result?.data?._id,
                 amount: data.order.amount,
               }),
             });
-
+  
             const verifyData = await verifyResponse.json();
             if (verifyData.success) {
-              alert("Payment Successful and Saved!");
+              alert("Payment Successful and Booking Confirmed!");
+              navigate("/admin/bookings");
             } else {
+              await dispatch(deleteBooking(result?.data?._id)); // Remove booking if verification fails
               alert("Payment Verification Failed");
             }
+          } catch (error) {
+            console.error("Booking creation error:", error);
+          }
+        },
+        prefill: {
+          name: selectedCustomer?.name,
+          email: selectedCustomer?.email,
+          contact: selectedCustomer?.contact_no,
+        },
+        theme: {
+          color: "#3399cc",
+        },
+        modal: {
+          escape: true, // Allow closing on ESC
+          ondismiss: function () {
+            console.log("Payment closed by user");
+            // No booking should be created if payment was closed
           },
-          prefill: {
-            name: selectedCustomer?.name,
-            email: selectedCustomer?.email,
-            contact: selectedCustomer?.contact_no,
-          },
-          theme: {
-            color: "#3399cc",
-          },
-        };
-
-        const razorpay = new window.Razorpay(options);
-        razorpay.open();
-      } else {
-        console.error("Failed to create Razorpay order");
-      }
+        },
+      };
+  
+      // Step 5: Open Razorpay Payment Modal
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
     } catch (error) {
       console.error("Payment error:", error);
     }
   };
-
+  
   return (
     <Container fluid className="p-4 ">
       <h6 className="mb-3 text-muted">
@@ -509,7 +543,7 @@ const BookingDetails = () => {
                       <h5 className="fw-bold">No of Candidates  ({teamMembers.length+1})</h5>
                       {teamMembers.map((player, index) => (
                         <p key={index} className="mt-4">
-                          {player.name} - {player.contact_no}
+                          {player.name} - {player.contact_no} <><FaDeleteLeft size={20} className="text-danger" onClick={() => handleRemovePlayer(player.id)}/></>
                         </p>
                       ))}
                     </div>
@@ -686,7 +720,7 @@ const BookingDetails = () => {
                         <Form.Control aria-label="Text input with checkbox" placeholder="Rs 0" value={playerCredits.find((p) => p.id === selectedCustomer._id)?.credit || 0}
                           onChange={(e) => handleCreditChange(selectedCustomer._id, e.target.value)} />
                       </InputGroup>
-                      <IoAdd
+                      {/* <IoAdd
                         style={{
                           fontSize: 'clamp(30px, 8vw, 40px)',
                           cursor: 'pointer',
@@ -696,7 +730,7 @@ const BookingDetails = () => {
                           borderRadius: '50%',
                           padding: '0.2rem',
                         }}
-                      />
+                      /> */}
                         </Col>
                       </Row>
                       {teamMembers.length > 0 && teamMembers.map((player, index) => (

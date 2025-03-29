@@ -21,6 +21,22 @@ export const getBookings = createAsyncThunk(
   }
 );
 
+export const getBookingsByDate = createAsyncThunk(
+  "bookings/getbookingsByDate",
+  async ({cafeId, date}, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/booking/list/${cafeId}/${date}`
+      );
+      return response.data.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Something went wrong"
+      );
+    }
+  }
+);
+
 export const getBookingsByGame = createAsyncThunk(
   "bookings/getbookingsByGame",
   async (id, thunkAPI) => {
@@ -58,8 +74,8 @@ export const updateBooking = createAsyncThunk(
   "bookings/updatebooking",
   async ({ id, updatedData }, thunkAPI) => {
     try {
-      const response = await axios.patch(
-        `${BASE_URL}/superadmin/booking/${id}`,
+      const response = await axios.put(
+        `${BASE_URL}/admin/booking/${id}`,
         updatedData
       );
       return response.data;
@@ -90,7 +106,7 @@ export const deleteBooking = createAsyncThunk(
   "bookings/deletebooking",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`${BASE_URL}/superadmin/booking/${id}`);
+      await axios.delete(`${BASE_URL}/admin/booking/${id}`);
       return id;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -102,8 +118,20 @@ export const deleteBooking = createAsyncThunk(
 
 export const processOnlinePayment = createAsyncThunk(
   "bookings/processOnlinePayment",
-  async ({ selectedGame, selectedCustomer, slot, bookingId, payableAmount }, thunkAPI) => {
-
+  async (
+    {
+      selectedGame,
+      selectedCustomer,
+      slot,
+      bookingId,
+      payableAmount,
+      paid_amount,
+      total,
+      looser,
+      playerCredits,
+    },
+    thunkAPI
+  ) => {
     try {
       const backend_url = import.meta.env.VITE_API_URL;
       const response = await axios.post(
@@ -144,10 +172,16 @@ export const processOnlinePayment = createAsyncThunk(
                   razorpay_signature: response.razorpay_signature,
                   booking_id: bookingId,
                   amount: data.order.amount,
+                  paid_amount,
+                  total,
+                  looser,
+                  playerCredits,
                 },
                 {
                   headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+                    Authorization: `Bearer ${sessionStorage.getItem(
+                      "authToken"
+                    )}`,
                   },
                 }
               );
@@ -159,7 +193,9 @@ export const processOnlinePayment = createAsyncThunk(
                 return thunkAPI.rejectWithValue("Payment Verification Failed");
               }
             } catch (error) {
-              return thunkAPI.rejectWithValue(error.response?.data || "Payment verification error");
+              return thunkAPI.rejectWithValue(
+                error.response?.data || "Payment verification error"
+              );
             }
           },
           prefill: {
@@ -185,7 +221,6 @@ export const processOnlinePayment = createAsyncThunk(
   }
 );
 
-
 const bookingslice = createSlice({
   name: "bookings",
   initialState: {
@@ -207,6 +242,20 @@ const bookingslice = createSlice({
         state.bookings = action.payload;
       })
       .addCase(getBookings.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Get bookings by date
+      .addCase(getBookingsByDate.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getBookingsByDate.fulfilled, (state, action) => {
+        state.loading = false;
+        state.bookings = action.payload;
+      })
+      .addCase(getBookingsByDate.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -267,6 +316,7 @@ const bookingslice = createSlice({
         if (index !== -1) {
           state.bookings[index] = updatedbooking; // Update state
         }
+        window.location.href = "/admin/bookings";
       })
       .addCase(updateBooking.rejected, (state, action) => {
         state.loading = false;
@@ -289,20 +339,19 @@ const bookingslice = createSlice({
         state.error = action.payload;
       });
 
-      builder
-  .addCase(processOnlinePayment.pending, (state) => {
-    state.loading = true;
-    state.error = null;
-  })
-  .addCase(processOnlinePayment.fulfilled, (state, action) => {
-    state.loading = false;
-    state.successMessage = action.payload.message;
-  })
-  .addCase(processOnlinePayment.rejected, (state, action) => {
-    state.loading = false;
-    state.error = action.payload;
-  });
-
+    builder
+      .addCase(processOnlinePayment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(processOnlinePayment.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = action.payload.message;
+      })
+      .addCase(processOnlinePayment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 

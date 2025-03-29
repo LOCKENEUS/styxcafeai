@@ -103,6 +103,7 @@ import  PurchaseBillCreate  from "../pages/Admin/Inventory/Create/PBCreate";
 import { BillPaymentDetails } from "../pages/Admin/Inventory/Details/billPayment";
 import BookingCheckout from "../pages/Admin/Booking/BookingCheckout";
 import { PurchaseOrderUpdate } from "../pages/Admin/Inventory/Update/PurchaseOrderUpdate ";
+import BookingEdit from "../pages/Admin/Booking/BookingEdit";
 
 
 
@@ -189,6 +190,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/bookings" element={<BookingList />} />
           <Route path="/admin/booking/games" element={<BookGames />} />
           <Route path="/admin/booking/checkout/:id" element={<BookingCheckout />} />
+          <Route path="/admin/booking/edit/:id" element={<BookingEdit />} />
 
 
           <Route path="/admin/users/customer-list" element={<CustomerList />} />

@@ -20,6 +20,24 @@ export const getslots = createAsyncThunk(
   }
 );
 
+
+// 24 hour format time
+export const getslots24 = createAsyncThunk(
+  "slots/getslots24",
+  async (id, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/superadmin/slot/list24/${id}`
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Something went wrong"
+      );
+    }
+  }
+);
+
 // Async thunk to add a new slot
 export const addslot = createAsyncThunk(
   "slots/addslot",
@@ -106,6 +124,19 @@ const slotslice = createSlice({
         state.slots = action.payload.data;
       })
       .addCase(getslots.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(getslots24.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getslots24.fulfilled, (state, action) => {
+        state.loading = false;
+        state.slots = action.payload.data;
+      })
+      .addCase(getslots24.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

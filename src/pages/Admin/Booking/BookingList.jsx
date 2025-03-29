@@ -16,7 +16,7 @@ import {
 } from "react-icons/fa";
 import { FiFilter } from "react-icons/fi";
 import { IoAdd } from "react-icons/io5";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getGameById, getGames } from "../../../store/slices/gameSlice";
 import { getBookings } from "../../../store/AdminSlice/BookingSlice";
@@ -26,6 +26,7 @@ import { convertTo12Hour, formatDate } from "../../../components/utils/utils";
 const BookingList = () => {
     const { gameId } = useParams();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const user = JSON.parse(sessionStorage.getItem("user"));
     const cafeId = user?._id;
@@ -46,14 +47,18 @@ const BookingList = () => {
     useEffect(() => {
         const user = JSON.parse(sessionStorage.getItem('user'));
         if (user?._id) {
-          dispatch(getGames(user._id));
+            dispatch(getGames(user._id));
         }
-      }, [dispatch]);
+    }, [dispatch]);
 
     const filterBookingsByDate = (filter) => {
         const today = moment().startOf("day");
 
         switch (filter) {
+            case "Today":
+                return bookings?.filter((booking) =>
+                    moment(booking.slot_date).isSame(today, "day")
+                );
             case "Tomorrow":
                 return bookings?.filter((booking) =>
                     moment(booking.slot_date).isSame(today.clone().add(1, "days"), "day")
@@ -79,8 +84,8 @@ const BookingList = () => {
     // );
 
     const filteredBookings = filterBookingsByDate(selectedFilter)
-    .filter((booking) => booking?.customerName?.toLowerCase().includes(searchTerm.toLowerCase()))
-    .filter((booking) => gameFilter === "All" || booking?.gameTitle === gameFilter);
+        .filter((booking) => booking?.customerName?.toLowerCase().includes(searchTerm.toLowerCase()))
+        .filter((booking) => gameFilter === "All" || booking?.gameTitle === gameFilter);
 
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
@@ -94,10 +99,12 @@ const BookingList = () => {
 
     useEffect(() => {
         setCollection(0);
+        let collectionAmount = 0;
         if (filteredBookings.length > 0) {
             filteredBookings.map((booking) => {
-                setCollection(collection + booking?.total);
+                collectionAmount += booking?.paid_amount;
             });
+            setCollection(collectionAmount);
         }
     }, [dispatch, dropdownOpen]);
 
@@ -365,16 +372,20 @@ const BookingList = () => {
                                 >
                                     <div style={{ display: "flex", alignItems: "center" }}>
                                         <span
-                                            className="d-flex align-items-center"
+                                            className="d-flex align-items-center w-75 justify-content-center"
                                             style={{
                                                 backgroundColor:
-                                                    booking.mode === "Online"
-                                                        ? "#03D41414"
-                                                        : "#FF00000D",
+                                                    booking.status === "Pending" ? "#FFF3CD"
+                                                        :
+                                                        booking.mode === "Online"
+                                                            ? "#03D41414"
+                                                            : "#FF00000D",
                                                 borderRadius: "20px",
                                                 padding: "5px 10px",
                                                 color:
-                                                    booking.mode === "Online" ? "#00AF0F" : "#FF0000",
+                                                    booking.status === "Pending" ? "#856404"
+                                                        :
+                                                        booking.mode === "Online" ? "#00AF0F" : "orange",
                                             }}
                                         >
                                             <div
@@ -383,13 +394,14 @@ const BookingList = () => {
                                                     height: "10px",
                                                     borderRadius: "50%",
                                                     backgroundColor:
-                                                        booking.mode === "Online"
-                                                            ? "#03D414"
-                                                            : "#FF0000",
+                                                        booking.status === "Pending" ? "#856404"
+                                                            : booking.mode === "Online"
+                                                                ? "#03D414"
+                                                                : "orange",
                                                     marginRight: "5px",
                                                 }}
                                             />
-                                            {booking.mode}
+                                            {booking?.status === "Pending" ? "Pending" : booking?.mode}
                                         </span>
                                     </div>
                                 </td>
@@ -412,57 +424,13 @@ const BookingList = () => {
                                         variant="link"
                                         className="text-primary"
                                         onClick={() =>
-                                            setActiveDropdownId(
-                                                activeDropdownId === booking.id ? null : booking.id
-                                            )
+                                            navigate(`/admin/booking/edit/${booking._id}`)
                                         }
                                     >
                                         <FaEdit
                                             style={{ color: "#0062FF", fontSize: "1.2rem" }}
                                         />
                                     </Button>
-
-                                    {activeDropdownId === booking.id && (
-                                        <div
-                                            ref={editDropdownRef}
-                                            style={{
-                                                position: "absolute",
-                                                right: "0",
-                                                top: "100%",
-                                                backgroundColor: "white",
-                                                boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
-                                                borderRadius: "4px",
-                                                zIndex: 1000,
-                                                minWidth: "150px",
-                                            }}
-                                        >
-                                            <div
-                                                style={{
-                                                    padding: "10px",
-                                                    cursor: "pointer",
-                                                    color: "#0062FF",
-                                                    borderBottom: "1px solid #eee",
-                                                }}
-                                                onClick={() => {
-                                                    setActiveDropdownId(null);
-                                                }}
-                                            >
-                                                Edit Booking
-                                            </div>
-                                            <div
-                                                style={{
-                                                    padding: "10px",
-                                                    cursor: "pointer",
-                                                    color: "#FF0000",
-                                                }}
-                                                onClick={() => {
-                                                    setActiveDropdownId(null);
-                                                }}
-                                            >
-                                                Cancel Booking
-                                            </div>
-                                        </div>
-                                    )}
                                 </td>
                             </tr>
                         ))}
@@ -475,3 +443,4 @@ const BookingList = () => {
 };
 
 export default BookingList;
+

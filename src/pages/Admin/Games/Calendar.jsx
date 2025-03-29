@@ -3,9 +3,9 @@ import { Button } from "react-bootstrap";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
 import { TbMoodSad } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router-dom";
-import { getslots } from "../../../store/slices/slotsSlice";
+import { getslots, getslots24 } from "../../../store/slices/slotsSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { convertTo24HourFormat } from "../../../components/utils/utils";
+import { convertTo12Hour, convertTo24HourFormat } from "../../../components/utils/utils";
 import { getBookingsByGame } from "../../../store/AdminSlice/BookingSlice";
 
 const Calendar = ({ selectedGame }) => {
@@ -354,7 +354,7 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
 
   useEffect(() => {
     if (gameId) {
-      dispatch(getslots(gameId));
+      dispatch(getslots24(gameId));
       dispatch(getBookingsByGame(gameId)); // Fetch bookings for the selected game
     }
   }, [gameId, dispatch]);
@@ -388,7 +388,7 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
           <div key={index} className="slot-row mb-2 border border-2 p-2">
             <div className="d-flex flex-column flex-md-row justify-content-between align-items-center">
               <span className="mb-2 mb-md-0">
-                {slot.start_time} - {slot.end_time}
+                {convertTo12Hour(slot.start_time)} - {convertTo12Hour(slot.end_time)}
               </span>
               <div className="d-flex flex-column flex-md-row align-items-center gap-3">
                 <span className={booked ? "text-danger" : slot.is_active ? "text-success" : "text-danger"}>

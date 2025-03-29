@@ -139,7 +139,6 @@ const CreateNewGameForm = () => {
         <Link to="/admin/dashboard">Home</Link> / <span style={{ color: "blue" }}>
           {id ? "Edit Game" : "Create New Game"}
           </span>
-      
       </h5>
       <div className="p-4">
         <Form onSubmit={handleSubmit}>
@@ -302,7 +301,7 @@ const CreateNewGameForm = () => {
             </Col>
           </Row>
 
-          <div className="d-flex justify-content-end">
+          <div className="d-flex justify-content-end mt-2">
             <Button 
               variant="light" 
               className="me-2" 

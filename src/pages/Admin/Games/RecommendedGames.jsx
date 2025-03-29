@@ -149,6 +149,7 @@ const RecommendedGames = () => {
                     height: '120px',
                     objectFit: 'cover'
                   }}
+                  onClick={() => handleCardClick(game._id)}
                 />
                 <Card.Body>
                   <Card.Title>{game.name}</Card.Title>
