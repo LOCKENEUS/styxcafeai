@@ -16,7 +16,7 @@ import gm1 from "/assets/inventory/mynaui_search.svg";
 import solar_export from "/assets/inventory/solar_export-linear.png";
 import add from "/assets/inventory/material-symbols_add-rounded.png";
 import DataTable from "react-data-table-component";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getPurchaseReceive, getPurchaseReceiveList } from "../../../../store/AdminSlice/Inventory/purchaseReceive";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -37,12 +37,13 @@ export const PurchaseReceivedAdmin = () => {
 
   console.log("POIdGetList ==== ",POIdGetList);
 
-  const POName = POIdGetList?.selectedItem?.map((item) => item.po_no);
-  console.log("POName ==== 11",POName);
+  // const POName = POIdGetList?.selectedItem?.map((item) => item.po_no);
+  // console.log("POName ==== 11",POName);
 
-  const delivery_date = POIdGetList?.selectedItem?.map((item) => item.delivery_date);
-  console.log("delivery_date ==== 22",delivery_date);
+  // const delivery_date = POIdGetList?.selectedItem?.map((item) => item.delivery_date);
+  // console.log("delivery_date ==== 22",delivery_date);
 
+ 
 
 
 
@@ -75,7 +76,7 @@ export const PurchaseReceivedAdmin = () => {
         sn: index + 1,
         _id: item?._id,
         name: item?.po_no || "N/A", 
-        vendor: item?.vendor_name || "N/A",
+        vendor: item?.vendor_id?.name || "N/A",
         status: item?.status || "Draft",
         deliveredDate: item?.delivery_date
           ? new Date(item.delivery_date).toISOString().split("T")[0]
@@ -150,6 +151,25 @@ export const PurchaseReceivedAdmin = () => {
         item.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.deliveredDate.toLowerCase().includes(searchQuery.toLowerCase())
       );
+
+      const handleExport = () => {
+        const headers = ["S/N", "Receive No", "Vendor", "Status", "Delivery Date" ];
+        const rows = POIdGetList?.selectedItem?.map(item => [
+            item.sn, item.name, item.vendor,item.status, item.delivery_date
+
+        ]);
+        
+        
+        const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'items_list.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
     
       return (
         <Container data-aos="fade-right" data-aos-duration="500" fluid className="mt-4 min-vh-100">
@@ -157,7 +177,7 @@ export const PurchaseReceivedAdmin = () => {
             <Col sm={12} className="mx-4 my-3">
               <div style={{ top: "186px", fontSize: "18px" }}>
                 <Breadcrumb>
-                  <BreadcrumbItem href="#">Home</BreadcrumbItem>
+                  <BreadcrumbItem href="#"><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
                   <BreadcrumbItem href="#">Purchase </BreadcrumbItem>
                   <BreadcrumbItem active>Purchase Received List</BreadcrumbItem>
                 </Breadcrumb>
@@ -219,7 +239,7 @@ export const PurchaseReceivedAdmin = () => {
     
                   {/* Action Buttons */}
                   <Col sm={5} className="d-flex justify-content-end text-end my-2">
-                    <Button variant="denger" className="btn  px-4 mx-2" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }}>
+                    <Button variant="denger" className="btn  px-4 mx-2" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }} onClick={handleExport}>
                       <Image className="me-2 size-sm" style={{ width: "22px", height: "22px" }} src={solar_export} />
                       Export
                     </Button>

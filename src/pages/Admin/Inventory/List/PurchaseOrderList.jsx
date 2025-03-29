@@ -17,7 +17,7 @@ import gm1 from "/assets/inventory/mynaui_search.svg";
 import solar_export from "/assets/inventory/solar_export-linear.png";
 import add from "/assets/inventory/material-symbols_add-rounded.png";
 import DataTable from "react-data-table-component";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CreateVendor, GetPOList } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -94,13 +94,31 @@ console.log("formattedPOList", formattedPOList);
     }
   };
 
+  const generateCSV = () => {
+    const headers = ["S/N", "Order No", "Vendor", "Amount", "Status", "Items"];
+    const rows = paginatedData.map(item => [
+        item.sn, item.name, item.vendor, item.amount, item.status, item.delivery_date
+    ]);
+    
+    
+    const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'items_list.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+};
+
   return (
     <Container>
       <Row>
         <Col sm={12} className="mx-4 my-3">
           <div style={{ top: "186px", fontSize: "18px" }}>
             <Breadcrumb>
-              <BreadcrumbItem href="#">Home</BreadcrumbItem>
+              <BreadcrumbItem href="#"><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
               <BreadcrumbItem href="#">Purchase</BreadcrumbItem>
               <BreadcrumbItem active>Purchase Order List</BreadcrumbItem>
             </Breadcrumb>
@@ -147,9 +165,10 @@ console.log("formattedPOList", formattedPOList);
               </Col>
 
               <Col sm={5} className="d-flex justify-content-end text-end my-2">
-                <Button variant="denger" className="btn  px-4 mx-2" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }}>
+                <Button variant="denger" className="btn  px-4 mx-2" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }} onClick={generateCSV}>
                   <Image className="me-2 size-sm" style={{ width: "22px", height: "22px" }} src={solar_export} />
                   Export
+                  
                 </Button>
                 <Button variant="primary" className="px-4 mx-2" size="sm" onClick={handleShowCreate}>
                   <Image className="me-2" src={add} alt="Add" style={{ width: "22px", height: "22px" }} />

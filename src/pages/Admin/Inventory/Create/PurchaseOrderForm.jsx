@@ -75,7 +75,6 @@ const PurchaseOrderForm = () => {
 useEffect(() => {
     const user = JSON.parse(sessionStorage.getItem('user'));
     const cafeId = user?._id;
-    
     if (cafeId) {
       dispatch(getCustomers(cafeId));
     }
@@ -111,13 +110,26 @@ useEffect(() => {
 
         if (field === "item") {
           const selectedItem = items.find(item => item._id === value);
+
+
           if (selectedItem) {
             updatedProduct.price = selectedItem.sellingPrice;
             updatedProduct.tax = selectedItem.tax;
             const itemTax = taxFields.find(tax => tax._id === selectedItem.tax);
             updatedProduct.taxRate = itemTax ? itemTax.tax_rate : 0;
           }
+          const isDuplicate = products.some(
+            (product) => product.id !== id && product.item === value
+          );
+      
+          if (isDuplicate) {
+            alert("You have selected the same item.");
+            return product; 
+          }
+          
+         
         }
+        
 
         if (field === "tax") {
           const selectedTax = taxFields.find(tax => tax._id === value);
@@ -127,7 +139,6 @@ useEffect(() => {
         const price = parseFloat(updatedProduct.price) || 0;
         const quantity = parseInt(updatedProduct.quantity) || 1;
         const taxRate = parseFloat(updatedProduct.taxRate) || 0;
-
         const subtotal = price * quantity;
         const totalTax = (subtotal * taxRate) / 100;
         updatedProduct.total = subtotal + totalTax;
@@ -135,6 +146,7 @@ useEffect(() => {
 
         return updatedProduct;
       }
+      
       return product;
     });
 
@@ -359,9 +371,9 @@ useEffect(() => {
       setVendorSelected(selectedVendor);
       setFormData({
         ...formData,
-        vendor_id: selectedVendor?._id, // Update formData with selected vendor ID
+        vendor_id: selectedVendor?._id, 
       });
-      setVendorId(selectedVendor?._id); // Update vendorId state
+      setVendorId(selectedVendor?._id);
     }
     handleClose();
     console.log("Selected vendor ID:---", newVendorId);

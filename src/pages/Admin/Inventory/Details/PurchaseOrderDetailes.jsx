@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { GetPurchaseOrder } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 
 const PurchaseOrderDetails = () => {
+    
     const dispatch = useDispatch();
     const location = useLocation();
     const purchaseOrder = location.state;
@@ -54,7 +55,15 @@ const PurchaseOrderDetails = () => {
 
 
 
-
+//   const handlePrint = () => {
+//     const printContent = document.getElementById("printableArea").innerHTML;
+//     const originalContent = document.body.innerHTML;
+  
+//     document.body.innerHTML = printContent;
+//     window.print();
+//     document.body.innerHTML = originalContent;
+//   };
+  
 
 
   
@@ -65,7 +74,7 @@ const PurchaseOrderDetails = () => {
             <Col sm={12} className="my-3">
                 <div style={{ top: "186px", fontSize: "18px" }}>
                     <Breadcrumb>
-                        <BreadcrumbItem >Home</BreadcrumbItem>
+                        <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
                         <BreadcrumbItem><Link to="/admin/inventory/purchase-order-list">Purchase Order List</Link></BreadcrumbItem>
                         <BreadcrumbItem active>Purchase Order Details</BreadcrumbItem>
                     </Breadcrumb>
@@ -83,15 +92,28 @@ const PurchaseOrderDetails = () => {
                             </h5>
                         </Col>
                         <Col sm={6} xs={12} className="d-flex flex-wrap justify-content-center justify-content-sm-end align-items-center gap-2 text-center">
-                            <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                            <Button className="d-flex align-items-center 	" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}
+                            //  onClick={handlePrint}
+                            onClick={() => window.print()}
+                            >
                                 <Image src={print} className="me-2" /> Print
                             </Button>
                             <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                                 <Image src={sendMail} className="me-2" /> Send Email
                             </Button>
-                            {/* <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
-                                <Image src={editlogo} className="me-2" /> Edit
-                            </Button> */}
+                            <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                                <Image src={receive} className="me-2" /> Receive
+                            </Button>
+                            <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                                <Link to="/admin/inventory/PurchaseOrderUpdate">
+                                    <Image src={editlogo} className="me-2" /> Edit
+                                </Link>
+
+
+                            </Button>
+                            <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                                <Image src={deleteplogo} />
+                            </Button>
 
                         </Col>
                     </Row>

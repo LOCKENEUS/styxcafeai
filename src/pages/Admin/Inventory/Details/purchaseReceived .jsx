@@ -19,30 +19,34 @@ export const PurchaseReceivedDetails = () => {
 
     const cafeId = user?._id;
     console.log("user ----", user);
-    const userName= user?.name;
-    const userEmail= user?.email;
+    const userName = user?.name;
+    const userEmail = user?.email;
     const UserContactN = user?.contact_no;
     const UserAddress = user?.address;
     const UesrPAN = user?.panNo;
     console.log("userName call ----", userName);
-   
+
 
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(getPurchaseReceive(purchaseReceive));
     }, [dispatch, cafeId]);
 
-    const POIdGet= useSelector(state => state.purchaseReceiveSlice);
-    console.log("POIdGet ==== ",POIdGet);
+    const POIdGet = useSelector(state => state.purchaseReceiveSlice);
+    console.log("POIdGet ==== ", POIdGet);
     const location = useLocation();
     const purchaseReceive = location.state;
-  
+
     console.log("purchase Receive 101:", purchaseReceive);
 
     // count items
-    
-     const countItems =POIdGet?.selectedItem?.items;
-     console.log("countItems length",countItems);
+
+    const countItems = POIdGet?.selectedItem?.items;
+    console.log("countItems length", countItems);
+
+
+    //  const billingAdress =POIdGet?.selectedItem?.vendor_id?.billingAddress;
+    //  console.log("billingAdress",billingAdress);
 
     return (
         <Container >
@@ -69,13 +73,20 @@ export const PurchaseReceivedDetails = () => {
                                 </h5>
                             </Col>
                             <Col sm={6} xs={12} className="d-flex flex-wrap justify-content-center justify-content-sm-end align-items-center gap-2 text-center">
-                                <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                                <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}
+                                 onClick={() => window.print()}
+                                >
                                     <Image src={print} className="me-2" /> Print
                                 </Button>
                                 <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                                     <Image src={sendMail} className="me-2" /> Send Email
                                 </Button>
-                                
+                                <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                                    {/* <Image src={sendMail} className="me-2" />  */}
+                                    <Link to="/admin/inventory/PurchaseBillCreate" className="text-decoration-none text-dark"><b >+</b>  Create Bill </Link>
+                                    
+                                </Button>
+
 
                             </Col>
                         </Row>
@@ -93,7 +104,7 @@ export const PurchaseReceivedDetails = () => {
                                 <h5>{userName}</h5>
                                 <p className="mb-1">{userEmail}/ {UserContactN}</p>
                                 <p className="mb-1">
-                                   {UserAddress}
+                                    {UserAddress}
                                 </p>
                                 <strong>PAN: {UesrPAN}</strong>
                             </Col>
@@ -111,16 +122,16 @@ export const PurchaseReceivedDetails = () => {
                         <Row>
                             {/* Customer Info */}
                             <Col sm={4}  >
-                                <h5 className="text-primary mb-3" style={{ fontSize: '20px' }}>Rupesh Suryvanshi</h5>
+                                <h5 className="text-primary mb-3" style={{ fontSize: '20px' }}>{POIdGet?.selectedItem?.vendor_id?.name}</h5>
                                 <Row>
                                     <Col sm={6} >
                                         <span style={{ fontSize: '16px', fontWeight: '500' }}>Billing Address</span>
-                                        <p className="my-3">Nagpur Division, Maharashtra, India</p>
+                                        <p className="my-3">{POIdGet?.selectedItem?.vendor_id?.billingAddress}</p>
                                     </Col>
 
                                     <Col sm={6} className="border-end border-3" >
                                         <span style={{ fontSize: '16px', fontWeight: '500' }}>Shipping Address</span>
-                                        <p className="my-3">Nagpur Division, Maharashtra, India</p>
+                                        <p className="my-3">{POIdGet?.selectedItem?.vendor_id?.shippingAddress}</p>
                                     </Col>
                                 </Row>
                             </Col>
@@ -144,10 +155,14 @@ export const PurchaseReceivedDetails = () => {
                                     <Col sm={6} >
 
                                         <p className="my-5 mx-2 border-start border-3 p-2">
-                                           
-                                            <p><span className="my-1" style={{ fontSize: '16px', fontWeight: '500' }}>Order No:<b className="text-primary">{POIdGet?.selectedItem?.po_no}</b></span></p>
-                                            <p><span className="my-1 fw-bold">Expected Delivery:</span> Oct 14, 1985</p>
-                                            <p><span className="my-1 fw-bold">Received Date:</span> Oct 14, 1985</p>
+                                            <p><span className="my-1 fw-bold">Received No:</span> <span className="float-end">{POIdGet?.selectedItem?.po_no}</span></p>
+                                            <p><span className="my-1 fw-bold" >Order No:<b className="text-primary float-end">{POIdGet?.selectedItem?.refer_id?.po_no}</b></span></p>
+                                            <p><span className="my-1 fw-bold">Received No:</span> <span className="float-end">{POIdGet?.selectedItem?.po_no}</span></p>
+                                            {/* {new Date(delivery_datedelivery_date).toLocaleDateString()} */}
+                                            <p>
+                                                <span className="my-1 fw-bold">Received Date :</span>{' '}
+                                                <span className="float-end">{new Date(POIdGet?.selectedItem?.delivery_date).toLocaleDateString()}</span>
+                                            </p>
                                         </p>
 
                                     </Col>
@@ -165,52 +180,52 @@ export const PurchaseReceivedDetails = () => {
                             <Col sm={12}>
                                 <div className="table-responsive">
 
-                                    
-                                       { countItems && countItems.length > 0 ? (
+
+                                    {countItems && countItems.length > 0 ? (
                                         countItems.map((item, index) => (
                                             <Table className="text-center align-middle">
-                                            <thead className="text-start" >
-                                                <tr style={{ borderBottom: "2px solid #dee2e6" }}>
-                                                    <th className="fw-bold"  >PRODUCT</th>
-                                                    <th className="fw-bold" ></th>
-                                                    <th className="fw-bold" >QUANTITY</th>
-                                                    <th className="fw-bold" ></th>
-                                                   
-                                                </tr>
-                                            </thead>
-                                            <tbody className="text-start" >
-                                                <tr>
-                                                <td>
-                                                    <b>Shaeleigh Shaffer</b>
-                                                    <br />
-                                                    HSN : {item.hsn}
-                                                </td>
-                                                <td>
-                                                    SKU : {item.sku} 
-                                                   
-                                                </td>
-                                                <td>
-                                                    
-                                                Ordered Qty  : 50 Nos
-                                                </td>
-                                                <td>  Received Qty :  {item.qty_received}</td>
-                                                </tr>
-                                            </tbody>
-                                        </Table>
-                                            ))
-                                        ) : (
-                                            <p className="text-center text-primary">No Items</p>
-                                        )
+                                                <thead className="text-start" >
+                                                    <tr style={{ borderBottom: "2px solid #dee2e6" }}>
+                                                        <th className="fw-bold"  >PRODUCT</th>
+                                                        <th className="fw-bold" ></th>
+                                                        <th className="fw-bold" >QUANTITY</th>
+                                                        <th className="fw-bold" ></th>
 
-                                       
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="text-start" >
+                                                    <tr>
+                                                        <td>
+                                                            <b>{item?.item_id?.name}</b>
+                                                            <br />
+                                                            HSN : {item?.item_id?.hsn}
+                                                        </td>
+                                                        <td>
+                                                            SKU : {item.item_id?.sku}
+
+                                                        </td>
+                                                        <td>
+
+                                                            Ordered Qty  : 50 Nos
+                                                        </td>
+                                                        <td>  Received Qty :  {item.qty_received}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </Table>
+                                        ))
+                                    ) : (
+                                        <p className="text-center text-primary">No Items</p>
+                                    )
+
+
 
                                     }
 
-                                   
+
                                 </div>
                             </Col>
                         </Row>
-                        
+
                     </Card>
                 </Col>
 
@@ -219,19 +234,21 @@ export const PurchaseReceivedDetails = () => {
                         <Row>
 
 
-                        <Col sm={6} className="p-2 position-relative">
-                            <p><b>Description : </b>{POIdGet?.selectedItem?.description}</p>
-                            <div className="d-none d-sm-block" style={{ height: "2rem" }}></div>
-                        </Col>
-                        <Col sm={6} className="p-2">
-                            {/* Add any content here if needed */}
-                        </Col>
-                            </Row>
-                            </Card>
+                            <Col sm={6} className="p-2 position-relative">
+                                <p><b>Description : </b></p>
+                                <div className="d-none d-sm-block" style={{ height: "2rem" }}>
+                                    {POIdGet?.selectedItem?.description}
+                                </div>
                             </Col>
+                            <Col sm={6} className="p-2">
+                                {/* Add any content here if needed */}
+                            </Col>
+                        </Row>
+                    </Card>
+                </Col>
 
-                
-    
+
+
             </Row>
 
         </Container>

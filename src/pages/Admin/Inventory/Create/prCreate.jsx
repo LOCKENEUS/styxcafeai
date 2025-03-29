@@ -52,37 +52,37 @@ export const PRCreate = () => {
         ? listOfPO
             .filter((po) => po?.vendor_id?._id === selectedVendor)
             .map((po) => ({
-                full: po 
+                full: po
             }))
         : [];
-    const POItems =formattedPOList[0]?.full?.items;
+    const POItems = formattedPOList[0]?.full?.items;
     // po pass in formdata 
-    
-console.log("Items Details display -------", POItems);
+
+    console.log("Items Details display -------", POItems);
 
 
 
 
 
-// POItems pass in formdata POItems
+    // POItems pass in formdata POItems
 
 
-// const handalItemsCountTable = () => {
+    // const handalItemsCountTable = () => {
     // formattedPOList[0]?.full?.items count who many time item added
     const itemsCount = formattedPOList[0]?.full?.items.reduce((acc, item) => {
         return acc + item.quantity;
 
     }, 0);
-    
-    console.log("Count Items -----",itemsCount);
+
+    console.log("Count Items -----", itemsCount);
 
     // const product = formattedPOList[0]?.full?.items ;
 
 
-// }
+    // }
 
 
-    const [products, setProducts] = useState([ ]);
+    const [products, setProducts] = useState([]);
     console.log("products ======", products);
     const [taxList, setTaxList] = useState([]);
 
@@ -94,7 +94,7 @@ console.log("Items Details display -------", POItems);
         setCurrentDate(today);
     }, []);
 
-    
+
     const handleTaxSubmit = (e) => {
         e.preventDefault();
         setTaxList([...taxList, newTax]);
@@ -107,7 +107,7 @@ console.log("Items Details display -------", POItems);
         console.log("Selected vendor: ", vendorId);
         setFormData((prev) => ({
             ...prev,
-            selectedVendor: vendorId,  
+            selectedVendor: vendorId,
         }));
     };
     const handleChange = (e) => {
@@ -117,52 +117,48 @@ console.log("Items Details display -------", POItems);
             [name]: value,
         }));
     };
-    
+
 
     const handlePoChange = async (poId) => {
         setPurchaseOrder(poId);
         console.log("Selected PO: ", poId);
         console.log("---------------------------------------------");
-      
+
         if (POItems && poId) {
-          const filteredProducts = POItems
-            .filter((item) => item?.refer_id === poId)
-            .map((item, index) => {
-              console.log(`POItems[${index}] _id:`, item?._id);
-              console.log("Matched Selected PO:", poId);
-              console.log("Full Item:", item);
-      
-              return {
-                id: item?._id,
-                item_id: item?.item_id?._id || "",
-                hsn: item?.hsn?.toString() || "",
-                qty_to_receive: item?.quantity || 0,
-                price: item?.price || 0,
-                tax: item?.tax || "",
-                tax_amt: item?.tax_amt || 0,
-                total: item?.total || 0,
-              };
-            });
-      
-          setProducts(filteredProducts);
-          console.log("Updated Products:", filteredProducts);
+            const filteredProducts = POItems
+                .filter((item) => item?.refer_id === poId)
+                .map((item, index) => {
+                    console.log(`POItems[${index}] _id:`, item?._id);
+                    console.log("Matched Selected PO:", poId);
+                    console.log("Full Item:", item);
+
+                    return {
+                        id: item?._id,
+                        item_id: item?.item_id?._id || "",
+                        hsn: item?.hsn?.toString() || "",
+                        qty_to_receive: item?.quantity || 0,
+                        price: item?.price || 0,
+                        tax: item?.tax || "",
+                        tax_amt: item?.tax_amt || 0,
+                        total: item?.total || 0,
+                    };
+                });
+
+            setProducts(filteredProducts);
+            console.log("Updated Products:", filteredProducts);
         }
-      
+
         console.log("---------------------------------------------");
-      
+
         setFormData((prev) => ({
-          ...prev,
-          PurchaseOrder: poId,
+            ...prev,
+            PurchaseOrder: poId,
         }));
-      };
-      
-// const handleSubmit = (e) => {
-//     e.preventDefault();
-//     console.log("Submitted data:", formData);
-// };
+    };
 
 
-const handleQtyChange = (e, index) => {
+
+    const handleQtyChange = (e, index) => {
         const { value } = e.target;
         const enteredQty = parseInt(value, 10) || 0;
         console.log("Entered quantity:", value);
@@ -173,7 +169,7 @@ const handleQtyChange = (e, index) => {
             selectedVendor: POItems,
         }));
 
-        
+
 
         const remainingQty = POItems[0]?.quantity - value;
         console.log("Remaining quantity:", POItems[0]?.quantity);
@@ -200,13 +196,13 @@ const handleQtyChange = (e, index) => {
             );
         }
 
-    
 
 
 
-        
-    
-        
+
+
+
+
     };
 
 
@@ -214,16 +210,16 @@ const handleQtyChange = (e, index) => {
 
     const [inventoryItems, setInventoryItems] = useState([
         {
-          id: "",
-          name: "",
-          qty: 1,
-          rate: "",
-          tax: "",
-          tax_amt: "",
-          amount: "",
-          qty_to_receive: 1,
+            id: "",
+            name: "",
+            qty: 1,
+            rate: "",
+            tax: "",
+            tax_amt: "",
+            amount: "",
+            qty_to_receive: 1,
         },
-      ]);
+    ]);
 
 
 
@@ -238,7 +234,7 @@ const handleQtyChange = (e, index) => {
 
     // ----------------------------------------------------------------------------------
 
-   
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Submitted data:", formData);
@@ -248,10 +244,10 @@ const handleQtyChange = (e, index) => {
             cafe: cafeId,
             received_date: formData.currentDate,
             description: formData.description,
-            items: products, 
+            items: products,
         };
 
-        
+
 
 
         try {
@@ -318,10 +314,10 @@ const handleQtyChange = (e, index) => {
                                     <span style={{ color: "red" }}>*</span>
                                 </FormLabel>
                                 <FormSelect aria-label="Default select example"
-                                value={formData.selectedVendor}
-                                name="selectedVendor"
-                                onChange={(e) => handleVendorChange(e.target.value)}
-                                
+                                    value={formData.selectedVendor}
+                                    name="selectedVendor"
+                                    onChange={(e) => handleVendorChange(e.target.value)}
+
                                 >
                                     <option> select vendor</option>
                                     {vendors.map((vendor) => (
@@ -332,25 +328,25 @@ const handleQtyChange = (e, index) => {
                                 </FormSelect>
                             </Col>
                             <Col sm={4}>
-    <FormLabel className="my-3" style={{ fontSize: "16px", fontWeight: "500" }}>
-        Purchase Order <span style={{ color: "red" }}>*</span>
-    </FormLabel>
-    <FormSelect
-        aria-label="Default select example"
-        name="PurchaseOrder"
-        value={formData.PurchaseOrder}
-        onChange={(e) => handlePoChange(e.target.value)}
-    >
-        <option value="">
-            {formattedPOList.length ? "PO found!" : "Select PO No"}
-        </option>
-        {formattedPOList.map((po) => (
-            <option key={po.full._id} value={po.full._id}>
-                {po.full.po_no}
-            </option>
-        ))}
-    </FormSelect>
-</Col>
+                                <FormLabel className="my-3" style={{ fontSize: "16px", fontWeight: "500" }}>
+                                    Purchase Order <span style={{ color: "red" }}>*</span>
+                                </FormLabel>
+                                <FormSelect
+                                    aria-label="Default select example"
+                                    name="PurchaseOrder"
+                                    value={formData.PurchaseOrder}
+                                    onChange={(e) => handlePoChange(e.target.value)}
+                                >
+                                    <option value="">
+                                        {formattedPOList.length ? "PO found!" : "Select PO No"}
+                                    </option>
+                                    {formattedPOList.map((po) => (
+                                        <option key={po.full._id} value={po.full._id}>
+                                            {po.full.po_no}
+                                        </option>
+                                    ))}
+                                </FormSelect>
+                            </Col>
 
                             <Col sm={4}>
                                 <FormLabel className="my-3" style={{ fontSize: "16px", fontWeight: "500" }}>
@@ -383,11 +379,11 @@ const handleQtyChange = (e, index) => {
                                     <th className="w-30">QTY to RECEIVE</th>
                                 </tr>
                             </thead>
-                           {itemsCount > 0 && (
+                            {itemsCount > 0 && (
                                 <tbody>
-                                  {POItems.filter(item => item.refer_id === PurchaseOrder).map((item, index) => (
+                                    {POItems.filter(item => item.refer_id === PurchaseOrder).map((item, index) => (
                                         <tr key={index}>
-                                            <td >
+                                            <td>
                                                 <span className="fw-bold">{item?.item_id?.name}</span>
                                                 <br />
                                                 <span className="fw-none"> HSN : {item.item_id?.hsn}</span>
