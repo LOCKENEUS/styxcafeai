@@ -1,5 +1,5 @@
 import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Dropdown, Form, FormCheck, FormControl, FormGroup, InputGroup, Row, Table } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import companylog from "/assets/inventory/companylogo.png";
 import { useEffect, useState } from "react";
 import PaymentTermsModal from "../modal/PaymentTermsModal";
@@ -9,9 +9,13 @@ import { getItems } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import Tax from "../modal/Tax";
 import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
+import { GetVendorsList } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 
 
 export const PurchaseOrderUpdate = () => {
+
+  const POID  = useParams(); 
+  console.log("Purchase Order ID:", POID);
 
   const [deliveryType, setDeliveryType] = useState('organization');
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
@@ -42,7 +46,7 @@ export const PurchaseOrderUpdate = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // dispatch(GetVendorsList(cafeId));
+    dispatch(GetVendorsList(cafeId));
     dispatch(getTaxFields(cafeId));
     dispatch(getItems(cafeId));
   }, [dispatch]);
@@ -50,6 +54,11 @@ export const PurchaseOrderUpdate = () => {
   console.log("items List ", items);
   const { taxFields } = useSelector((state) => state.taxFieldSlice);
   console.log("unit Tax 101", taxFields);
+  const vendorsList = useSelector((state) => state.purchaseOrder?.vendors);
+  console.log("vendors List 101", vendorsList);
+  
+
+  
 
   const [totals, setTotals] = useState({
     subtotal: 0,

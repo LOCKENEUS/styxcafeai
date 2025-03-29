@@ -19,6 +19,9 @@ const PurchaseOrderDetails = () => {
     const dispatch = useDispatch();
     const location = useLocation();
     const purchaseOrder = location.state;
+
+    const POId =purchaseOrder?._id;
+    console.log("Purchase Order ID call:", POId);
   
     console.log("Purchase Order 101:", purchaseOrder);
     const ShippingAd = purchaseOrder?.vendor_id?.shippingAddress;
@@ -54,16 +57,6 @@ const PurchaseOrderDetails = () => {
   console.log("Purchase Order filter data selectedItem:", PurchaseOrderList?.selectedItem);
 
 
-
-//   const handlePrint = () => {
-//     const printContent = document.getElementById("printableArea").innerHTML;
-//     const originalContent = document.body.innerHTML;
-  
-//     document.body.innerHTML = printContent;
-//     window.print();
-//     document.body.innerHTML = originalContent;
-//   };
-  
 
 
   
@@ -105,7 +98,8 @@ const PurchaseOrderDetails = () => {
                                 <Image src={receive} className="me-2" /> Receive
                             </Button>
                             <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
-                                <Link to="/admin/inventory/PurchaseOrderUpdate">
+                                <Link to={`/admin/inventory/PurchaseOrderUpdate/${POId}`} >
+                               
                                     <Image src={editlogo} className="me-2" /> Edit
                                 </Link>
 

@@ -345,6 +345,15 @@ useEffect(() => {
     }
   };
 
+  const handleDeliveryChange = (type) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      delivery_type: type,
+      customer_id: type === 'Organization' ? '' : prevData.customer_id || '', // reset if org
+    }));
+  };
+  
+
 
   // const handleVendorSelect = (newVendor) => {
   //   const selectedVendorId = newVendor;
@@ -454,10 +463,7 @@ useEffect(() => {
           <Col sm={4}>
             <div className="d-flex my-3 flex-row align-items-center gap-2">
               <h5 className="text-muted">Delivery Address <span className="text-danger">*</span></h5>
-
             </div>
-
-
             <div>
               {/* Radio Buttons */}
               <Form.Check
@@ -469,9 +475,9 @@ useEffect(() => {
                 onChange={(e) =>
                   setFormData({ ...formData, delivery_type: e.target.value })
                 }
+                
                 style={{ fontWeight: "bold", color: "black" }}
-                // check by default
-                defaultChecked
+               
 
               />
               <Form.Check

@@ -250,7 +250,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/inventory/PurchaseBillDetails" element={<PurchaseBillDetailsAdmin />} />
           <Route path="/admin/inventory/PurchaseBillCreate" element={<PurchaseBillCreate />} />
           <Route path="/admin/inventory/BillPaymentDetails" element={<BillPaymentDetails />} />
-          <Route path="/admin/inventory/PurchaseOrderUpdate" element={<PurchaseOrderUpdate />} />
+          <Route path="/admin/inventory/PurchaseOrderUpdate/:id" element={<PurchaseOrderUpdate />} />
         </Route>
       </Route>
 
