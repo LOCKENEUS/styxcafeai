@@ -99,7 +99,7 @@ import { PRCreate } from "../pages/Admin/Inventory/Create/prCreate";
 import { PurchaseReceivedDetails } from "../pages/Admin/Inventory/Details/purchaseReceived ";
 import { PurchaseBillDetailsAdmin } from "../pages/Admin/Inventory/Details/purchaseBill";
 import BookGames from "../pages/Admin/Booking/BookGames";
-import { PurchaseBillCreate } from "../pages/Admin/Inventory/Create/PBCreate";
+import  PurchaseBillCreate  from "../pages/Admin/Inventory/Create/PBCreate";
 import { BillPaymentDetails } from "../pages/Admin/Inventory/Details/billPayment";
 import BookingCheckout from "../pages/Admin/Booking/BookingCheckout";
 import { PurchaseOrderUpdate } from "../pages/Admin/Inventory/Update/PurchaseOrderUpdate ";

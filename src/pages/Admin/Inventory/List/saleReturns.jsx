@@ -142,11 +142,11 @@ export const InvoicePaymentInventory = () => {
       selector: (row) => new Date(row.deposit_date).toLocaleDateString(),
       sortable: true 
     },
-    { 
-      name: "Description", 
-      selector: (row) => row.description,
-      sortable: true 
-    },
+    // { 
+    //   name: "Description", 
+    //   selector: (row) => row.description,
+    //   sortable: true 
+    // },
   ];
 
   const filteredItems = payments?.filter((item) =>

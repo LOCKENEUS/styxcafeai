@@ -86,7 +86,7 @@ export const SaleInvoiceInventory = () => {
     },
     { 
       name: "Sales Person", 
-      selector: (row) => row.sales_person, 
+      selector: (row) => row?.customer_id?.name, 
       sortable: true 
     },
     { 
@@ -130,7 +130,7 @@ export const SaleInvoiceInventory = () => {
         : "N/A";
 
       // Create CSV row
-      return `${index + 1},${invoice.so_no || ""},${invoice.sales_person || ""},${invoice.total || 0},${formattedDate}`;
+      return `${index + 1},${invoice.so_no || ""},${invoice?.customer_id?.name || ""},${invoice.total || 0},${formattedDate}`;
     });
 
     // Combine header and rows

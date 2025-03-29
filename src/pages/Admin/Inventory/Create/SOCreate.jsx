@@ -232,15 +232,7 @@ const SOCreate = () => {
   const addProduct = () => {
     setProducts([
       ...products,
-      { 
-        id: products.length + 1, 
-        item: "", 
-        quantity: 1, 
-        price: 0, 
-        tax: 0, 
-        total: 0, 
-        totalTax: 0 
-      },
+      { id: products.length + 1, item: "", quantity: 1, price: 0, tax: 0, total: 0, totalTax: 0 },
     ]);
   };
 
@@ -634,17 +626,6 @@ const SOCreate = () => {
                       }}
                       value={product.item || ""}
                       onChange={(e) => {
-                        // Check if the selected item is already used in another product row
-                        const isItemAlreadySelected = products.some(
-                          p => p.id !== product.id && p.item === e.target.value
-                        );
-
-                        if (isItemAlreadySelected) {
-                          // Show an alert or handle the duplicate selection
-                          alert("This item is already selected in another row. Please choose a different item.");
-                          return;
-                        }
-
                         updateProduct(product.id, "item", e.target.value);
                         // Clear validation error when value is selected
                         if (e.target.value) {
@@ -666,14 +647,11 @@ const SOCreate = () => {
                       required
                     >
                       <option value="">Select Item *</option>
-                      {items
-                        // Filter out items that are already selected in other rows
-                        .filter(item => !products.some(p => p.id !== product.id && p.item === item._id))
-                        .map((item) => (
-                          <option key={item._id} value={item._id}>
-                            {item.name} (₹{item.sellingPrice})
-                          </option>
-                        ))}
+                      {items.map((item) => (
+                        <option key={item._id} value={item._id}>
+                          {item.name} (₹{item.sellingPrice})
+                        </option>
+                      ))}
                       {product.item && !items.some(item => item._id === product.item) && product.itemName && (
                         <option value={product.item}>{product.itemName}</option>
                       )}
@@ -828,7 +806,9 @@ const SOCreate = () => {
 
               {/* Discount */}
               <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
-                <span>Discount</span>
+                <span>Discount (₹{totals.discountType === 'Percentage' 
+                  ? Math.round((totals.subtotal * totals.discount) / 100).toFixed(2) 
+                  : parseFloat(totals.discount || 0).toFixed(2)})</span>
                 <div className="d-flex gap-2" style={{ maxWidth: "200px" }}>
                   <Form.Control
                     type="number"
