@@ -27,7 +27,6 @@ const PurchaseOrderForm = () => {
   const handleShowCreateItem = () => setShowOffCanvasCreateItem(true);
   const handleCloseCreateItem = () => setShowOffCanvasCreateItem(false);
   const [showPaymentTerms, setShowPaymentTerms] = useState(false);
-  const [showAddressModal, setShowAddressModal] = useState(false);
 
   const [products, setProducts] = useState([
     { id: 1, item: "", quantity: 1, price: 0, tax: 0, total: 0, totalTax: 0 },
@@ -36,6 +35,7 @@ const PurchaseOrderForm = () => {
   const [showTaxModal, setShowTaxModal] = useState(false);
   const [taxList, setTaxList] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
+
   const dispatch = useDispatch();
   const { customFields } = useSelector((state) => state.customFields);
   const { taxFields } = useSelector((state) => state.taxFieldSlice);
@@ -47,17 +47,14 @@ const PurchaseOrderForm = () => {
   const [selectedOption, setSelectedOption] = useState("Organization");
   const [vendorId, setVendorId] = useState("");
   const user = JSON.parse(sessionStorage.getItem("user"));
- 
+
   const cafeId = user?._id;
 
-  console.log("user ----", user);
-  const userName= user?.name;
-  const userEmail= user?.email;
+  const userName = user?.name;
+  const userEmail = user?.email;
   const UserContactN = user?.contact_no;
   const UserAddress = user?.address;
   const UesrPAN = user?.panNo;
-  console.log("userName ----", userName);
-
 
   // Filter payment terms from custom fields
   const paymentTerms = customFields.filter(field => field.type === 'Payment Terms');
@@ -69,10 +66,10 @@ const PurchaseOrderForm = () => {
   }, [dispatch]);
   const vendorsList = useSelector((state) => state.purchaseOrder?.vendors);
   // const lisgetCustomers = useSelector((state) => state.customers?.customers);
-  const  lisgetCustomers= useSelector((state) => state.customers);
+  const lisgetCustomers = useSelector((state) => state.customers);
   const customersList = lisgetCustomers?.customers;
-  console.log("lisgetCustomers ========", customersList);
-useEffect(() => {
+
+  useEffect(() => {
     const user = JSON.parse(sessionStorage.getItem('user'));
     const cafeId = user?._id;
     if (cafeId) {
@@ -85,21 +82,11 @@ useEffect(() => {
     setShowClientList(true);
   };
 
-  // Add these new state and calculation functions
-  const priceList = {
-    "34": 34,
-    "3": 3,
-    "4": 4,
-    "1800": 1800,
-  };
-
-
   const TaxList = useSelector((state) => state.taxFieldSlice?.taxFields);
-  console.log("unit Tax 101", TaxList);
 
   const calculateTotal = (price, quantity, tax) => {
-    const subtotal = price * quantity;
-    const totalTax = (subtotal * tax) / 100;
+    const subtotal = Math.round(price * quantity);
+    const totalTax = Math.round((subtotal * tax) / 100);
     return { total: subtotal + totalTax, totalTax };
   };
 
@@ -121,39 +108,30 @@ useEffect(() => {
           const isDuplicate = products.some(
             (product) => product.id !== id && product.item === value
           );
-      
+
           if (isDuplicate) {
             alert("You have selected the same item.");
-            return product; 
+            return product;
           }
-          
-         
         }
-        
-
         if (field === "tax") {
           const selectedTax = taxFields.find(tax => tax._id === value);
           updatedProduct.taxRate = selectedTax ? selectedTax.tax_rate : 0;
         }
-
         const price = parseFloat(updatedProduct.price) || 0;
         const quantity = parseInt(updatedProduct.quantity) || 1;
         const taxRate = parseFloat(updatedProduct.taxRate) || 0;
-        const subtotal = price * quantity;
-        const totalTax = (subtotal * taxRate) / 100;
-        updatedProduct.total = subtotal + totalTax;
-        updatedProduct.totalTax = totalTax;
-
+        const subtotal = Math.round(price * quantity);
+        const totalTax = Math.round((subtotal * taxRate) / 100);
+        updatedProduct.total = Math.round(subtotal + totalTax);
+        updatedProduct.totalTax = Math.round(totalTax);
         return updatedProduct;
       }
-      
       return product;
     });
-
     setProducts(updatedProducts);
   };
 
-  // Update the addProduct function
   const addProduct = () => {
     setProducts([
       ...products,
@@ -166,10 +144,6 @@ useEffect(() => {
     setSelectedClient(client);
   };
 
-  // Update the payment terms section in your existing JSX
-
-  // Add the payment terms modal
-
   const [totals, setTotals] = useState({
     subtotal: 0,
     discount: 0,
@@ -178,7 +152,8 @@ useEffect(() => {
     selectedTaxes: [],
     total: 0,
     adjustmentNote: '',
-    adjustmentAmount: 0
+    adjustmentAmount: 0,
+    discountAmount: 0
   });
 
   // Add this calculation function
@@ -189,9 +164,9 @@ useEffect(() => {
     // Calculate discount
     let discountAmount = 0;
     if (totals.discountType === 'Percentage') {
-      discountAmount = (subtotal * totals.discount) / 100;
+      discountAmount = Math.round((subtotal * totals.discount) / 100);
     } else {
-      discountAmount = parseFloat(totals.discount) || 0;
+      discountAmount = Math.round(parseFloat(totals.discount)) || 0;
     }
 
     // Calculate tax amount
@@ -201,13 +176,15 @@ useEffect(() => {
     }, 0);
 
     // Calculate final total
-    const total = subtotal - discountAmount + taxAmount + (parseFloat(totals.adjustmentAmount) || 0);
+    // const total = subtotal - discountAmount + taxAmount + (parseFloat(totals.adjustmentAmount) || 0);
+const total = Math.round((subtotal - discountAmount + taxAmount + (parseFloat(totals?.adjustmentAmount) || 0)));
 
     setTotals(prev => ({
       ...prev,
       subtotal,
       taxAmount,
-      total
+      total,
+      discountAmount
     }));
   };
 
@@ -219,11 +196,6 @@ useEffect(() => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [files, setFiles] = useState([]);
-
-  const handleFileChange = (event) => {
-    const newFiles = Array.from(event.target.files);
-    setFiles(prev => [...prev, ...newFiles]);
-  };
 
   const handleRemoveFile = (index, event) => {
     // Stop event from bubbling up to parent
@@ -263,17 +235,12 @@ useEffect(() => {
     }));
   };
 
-  
   // Update the handleSubmit function
   const handleSubmit = async () => {
-
-
     const submitData = new FormData();
-
     for (let i = 0; i < files.length; i++) {
       submitData.append("images", files[i]);
     }
-
     // Add basic form fields
     submitData.append('cafe', cafeId);
     submitData.append('vendor_id', vendorId);
@@ -288,7 +255,7 @@ useEffect(() => {
     // Add financial details
     submitData.append('subtotal', totals.subtotal.toString());
     submitData.append('discount_value', totals.discount.toString());
-    // submitData.append('discount_type', totals.discountType.toLowerCase());
+    submitData.append('discount_type', totals.discountType.toLowerCase());
 
     // Format tax data - just send array of tax IDs
     const taxIds = totals.selectedTaxes.map(tax => tax.id);
@@ -298,8 +265,6 @@ useEffect(() => {
     submitData.append('adjustment_note', totals.adjustmentNote);
     submitData.append('adjustment_amount', totals.adjustmentAmount.toString());
     // submitData.append('type', 'PO');
-
-
 
     // Format items data - updated to send tax ID
     const formattedItems = products.map(product => ({
@@ -321,7 +286,6 @@ useEffect(() => {
     try {
       await dispatch(CreatePurchaseOrder(submitData)).unwrap();
       // Handle success (e.g., redirect to SO list)
-
       setFormData({
         cafeId: '',
         vendorId: '',
@@ -337,41 +301,12 @@ useEffect(() => {
         taxIds: [],
         adjustmentNote: '',
         adjustmentAmount: '',
-
       });
     } catch (error) {
       // Handle error
       console.error('Error creating SO:', error);
     }
   };
-
-  const handleDeliveryChange = (type) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      delivery_type: type,
-      customer_id: type === 'Organization' ? '' : prevData.customer_id || '', // reset if org
-    }));
-  };
-  
-
-
-  // const handleVendorSelect = (newVendor) => {
-  //   const selectedVendorId = newVendor;
-  //   const selectedVendor = vendorsList.find(
-  //     (vendor) => vendor?._id == selectedVendorId
-  //   );
-  //   if (selectedVendor) {
-  //     setVendorSelected(selectedVendor);
-  //     setFormData({
-  //       ...formData,
-  //       vendor_id: selectedVendor?._id,
-  //     });
-  //     setVendorId(selectedVendor?._id);
-  //   }
-  //   handleClose();
-  //   setVendorId(newVendor._id);
-  //   console.log("Selected vendor ID:---", vendorId);
-  // };
 
 
   const handleVendorSelect = (newVendorId) => {
@@ -380,12 +315,11 @@ useEffect(() => {
       setVendorSelected(selectedVendor);
       setFormData({
         ...formData,
-        vendor_id: selectedVendor?._id, 
+        vendor_id: selectedVendor?._id,
       });
       setVendorId(selectedVendor?._id);
     }
     handleClose();
-    console.log("Selected vendor ID:---", newVendorId);
   };
 
   return (
@@ -456,8 +390,6 @@ useEffect(() => {
                 <p className="mb-0" style={{ fontSize: "0.9rem" }}>{vendorSelected?.country2 || "Shipping Country"}</p>
               </Col>
             </Row>
-
-
           </Col>
 
           <Col sm={4}>
@@ -468,17 +400,14 @@ useEffect(() => {
               {/* Radio Buttons */}
               <Form.Check
                 type="radio"
-                name="delivery_type" 
+                name="delivery_type"
                 label="Organization"
                 value="Organization"
                 checked={formData.delivery_type === "Organization"}
                 onChange={(e) =>
                   setFormData({ ...formData, delivery_type: e.target.value })
                 }
-                
                 style={{ fontWeight: "bold", color: "black" }}
-               
-
               />
               <Form.Check
                 type="radio"
@@ -491,7 +420,6 @@ useEffect(() => {
                 }
                 style={{ fontWeight: "bold", color: "black" }}
               />
-
 
               {formData.delivery_type === "Organization" && (
                 <>
@@ -544,8 +472,6 @@ useEffect(() => {
                 />
               </div>
 
-
-
               <div className="d-flex flex-row align-items-center gap-2">
                 <Form.Select
                   name="payment_terms"
@@ -592,8 +518,6 @@ useEffect(() => {
                 onChange={handleInputChange}
                 placeholder="Enter Shipment Preference"
               />
-
-
             </div>
           </Col>
         </Row>
@@ -774,7 +698,10 @@ useEffect(() => {
 
               {/* Discount */}
               <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
-                <span>Discount</span>
+                <span>
+                  Discount
+                  {totals?.discountAmount > 0 && <> &#40;<FaRupeeSign />{totals?.discountAmount}&#41;</>}
+                </span>
                 <div className="d-flex gap-2" style={{ maxWidth: "200px" }}>
                   <Form.Control
                     type="number"
@@ -795,7 +722,7 @@ useEffect(() => {
 
               {/* Tax */}
               <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
-                <span>Tax ₹{totals.taxAmount.toFixed(2)}</span>
+                <span>Tax &#40;<FaRupeeSign />{totals.taxAmount.toFixed(2)}&#41;</span>
                 <Dropdown style={{ maxWidth: "200px" }}>
                   <Dropdown.Toggle variant="outline-primary" style={{ width: "100%" }}>
                     {totals.selectedTaxes.length ?
@@ -871,7 +798,7 @@ useEffect(() => {
       <Card className="p-3 mt-3  shadow-sm">
         <h6>Terms And Condition & Attachments</h6>
         <Row className="mt-3">
-          <Col md={6}>
+          <Col md={12}>
             <Form.Control
               as="textarea"
               rows={9}
@@ -883,7 +810,7 @@ useEffect(() => {
             />
           </Col>
 
-          <Col md={6}>
+          {/* <Col md={6}>
             <div
               className="rounded d-flex flex-column align-items-center justify-content-center p-4"
               style={{
@@ -949,7 +876,7 @@ useEffect(() => {
                 ))}
               </div>
             </div>
-          </Col>
+          </Col> */}
         </Row>
       </Card>
 
@@ -990,9 +917,6 @@ useEffect(() => {
           Submit
         </Button>
       </div>
-
-      
-
     </Container>
   );
 };

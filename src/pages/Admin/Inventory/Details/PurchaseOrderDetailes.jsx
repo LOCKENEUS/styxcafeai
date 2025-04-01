@@ -1,6 +1,4 @@
 import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Table } from "react-bootstrap";
-import { LuPencil } from "react-icons/lu";
-import pdflogo from "/assets/Admin/profileDetails/pdflogo.svg";
 import deleteplogo from "/assets/inventory/Vector (1).png";
 import receive from "/assets/inventory/solar_card-send-linear.png";
 import print from "/assets/inventory/Vector.png";
@@ -9,274 +7,263 @@ import editlogo from "/assets/inventory/mage_edit.png";
 import companylog from "/assets/inventory/companylogo.png";
 import { Link, useLocation, useParams } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
-// import { GetPurchaseOrder } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
-
 import { useDispatch, useSelector } from "react-redux";
 import { GetPurchaseOrder } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 
 const PurchaseOrderDetails = () => {
-    
+
+    const [vendor, setVendor] = useState("");
+    const [items, setItems] = useState([]);
+    const [taxes, setTaxes] = useState([]);
+    const [discount, setDiscount] = useState(0);
     const dispatch = useDispatch();
     const location = useLocation();
     const purchaseOrder = location.state;
-
-    const POId =purchaseOrder?._id;
-    console.log("Purchase Order ID call:", POId);
-  
-    console.log("Purchase Order 101:", purchaseOrder);
-    const ShippingAd = purchaseOrder?.vendor_id?.shippingAddress;
-    const BillingAddress = purchaseOrder?.vendor_id?.billingAddress;
-    const payment_terms = purchaseOrder?.payment_terms;
-    const reference = purchaseOrder?.reference;
-    const shipment_preference = purchaseOrder?.shipment_preference;
-    console.log("payment_terms", shipment_preference);
-    const delivery_datedelivery_date = purchaseOrder?.delivery_date;
-    console.log("delivery_datedelivery_date", new Date(delivery_datedelivery_date).toLocaleDateString());
-    
-
+    const selectedPo = useSelector((state) => state.purchaseOrder.selectedPo);
     const user = JSON.parse(sessionStorage.getItem("user"));
- 
-  const cafeId = user?._id;
+    const POId = purchaseOrder?._id;
 
-  console.log("user ----", user);
-  const userName= user?.name;
-  const userEmail= user?.email;
-  const UserContactN = user?.contact_no;
-  const UserAddress = user?.address;
-  const UesrPAN = user?.panNo;
-  console.log("userName call ----", userName);
- 
- 
-  useEffect(() => {
-    dispatch(GetPurchaseOrder(user?._id));
-    
-    
-  }, [dispatch]);
-  const PurchaseOrderList = useSelector((state) => state.purchaseOrder);
-  console.log("Purchase Order filter data PurchaseOrderList :", PurchaseOrderList);
-  console.log("Purchase Order filter data selectedItem:", PurchaseOrderList?.selectedItem);
+    const userName = user?.name;
+    const userEmail = user?.email;
+    const UserContactN = user?.contact_no;
+    const UserAddress = user?.address;
+    const UesrPAN = user?.panNo;
 
+    useEffect(() => {
+        dispatch(GetPurchaseOrder(POId));
+    }, [dispatch]);
 
+    useEffect(() => {
+        if (selectedPo) {
+            setVendor(selectedPo?.vendor_id);
+            setItems(selectedPo?.items);
+            setTaxes(selectedPo?.tax);
 
+            const discountValue = selectedPo?.discount_type === "Percentage" ? (selectedPo?.discount_value * selectedPo?.subtotal / 100) : selectedPo?.discount_value;
+            setDiscount(discountValue);
+        }
+    }, [selectedPo]);
 
-  
-  return (
-    <Container >
-        <Row className="mx-2">
-            {/* Breadcrumb Section */}
-            <Col sm={12} className="my-3">
-                <div style={{ top: "186px", fontSize: "18px" }}>
-                    <Breadcrumb>
-                        <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
-                        <BreadcrumbItem><Link to="/admin/inventory/purchase-order-list">Purchase Order List</Link></BreadcrumbItem>
-                        <BreadcrumbItem active>Purchase Order Details</BreadcrumbItem>
-                    </Breadcrumb>
-                </div>
-            </Col>
+    console.log("purchaseOrder", selectedPo);
+    console.log("items", items);
+    console.log("taxes", taxes);
 
-
-            <Col sm={12} className="my-2">
-                <Card className="p-3">
-                    <Row>
-                        <Col sm={6} xs={12}>
-                            <h5 className="text-dark p-2" style={{ fontSize: '18px' }}>
-                                <span>Purchase Order  :  </span>
-                                <span> {purchaseOrder?.po_no}</span>
-                            </h5>
-                        </Col>
-                        <Col sm={6} xs={12} className="d-flex flex-wrap justify-content-center justify-content-sm-end align-items-center gap-2 text-center">
-                            <Button className="d-flex align-items-center 	" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}
-                            //  onClick={handlePrint}
-                            onClick={() => window.print()}
-                            >
-                                <Image src={print} className="me-2" /> Print
-                            </Button>
-                            <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
-                                <Image src={sendMail} className="me-2" /> Send Email
-                            </Button>
-                            <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
-                                <Image src={receive} className="me-2" /> Receive
-                            </Button>
-                            <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
-                                <Link to={`/admin/inventory/PurchaseOrderUpdate/${POId}`} >
-                               
-                                    <Image src={editlogo} className="me-2" /> Edit
-                                </Link>
+    return (
+        <Container >
+            <Row className="mx-2">
+                {/* Breadcrumb Section */}
+                <Col sm={12} className="my-3">
+                    <div style={{ top: "186px", fontSize: "18px" }}>
+                        <Breadcrumb>
+                            <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
+                            <BreadcrumbItem><Link to="/admin/inventory/purchase-order-list">Purchase Order List</Link></BreadcrumbItem>
+                            <BreadcrumbItem active>Purchase Order Details</BreadcrumbItem>
+                        </Breadcrumb>
+                    </div>
+                </Col>
 
 
-                            </Button>
-                            <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
-                                <Image src={deleteplogo} />
-                            </Button>
+                <Col sm={12} className="my-2">
+                    <Card className="p-3">
+                        <Row>
+                            <Col sm={6} xs={12}>
+                                <h5 className="text-dark p-2" style={{ fontSize: '18px' }}>
+                                    <span>Purchase Order  :  </span>
+                                    <span> {selectedPo?.po_no}</span>
+                                </h5>
+                            </Col>
+                            <Col sm={6} xs={12} className="d-flex flex-wrap justify-content-center justify-content-sm-end align-items-center gap-2 text-center">
+                                <Button className="d-flex align-items-center 	" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}
+                                    //  onClick={handlePrint}
+                                    onClick={() => window.print()}
+                                >
+                                    <Image src={print} className="me-2" /> Print
+                                </Button>
+                                <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                                    <Image src={sendMail} className="me-2" /> Send Email
+                                </Button>
+                                <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                                    <Image src={receive} className="me-2" /> Receive
+                                </Button>
+                                <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                                    <Link to={`/admin/inventory/PurchaseOrderUpdate/${POId}`} >
 
-                        </Col>
-                    </Row>
-                </Card>
-            </Col>
-
-            {/* Company Info */}
-            <Col sm={12} className="my-2">
-                <Card className="p-3">
-                    <Row className="align-items-center">
-                        <Col sm={2}>
-                            <img src={companylog} alt="Logo" className="img-fluid" />
-                        </Col>
-                        <Col sm={8}>
-                            <h5>{userName}</h5>
-                            <p className="mb-1">{userEmail} / {UserContactN}</p>
-                            <p className="mb-1">
-                               {UserAddress}
-                            </p>
-                            <strong>PAN: {UesrPAN}</strong>
-                        </Col>
-                        <Col sm={2} className=" d-flex  ">
-                            <span className="p-2 float-right">PO :<b className="text-primary">Received</b></span>
-                            {/* <strong className="text-primary"> Draft</strong> */}
-                        </Col>
-                    </Row>
-                </Card>
-            </Col>
-
-            {/* Customer & Order Details */}
-            <Col sm={12} className="my-2">
-                <Card className="p-3 shadow-sm">
-                    <Row>
-                        {/* Customer Info */}
-                        <Col sm={4}  >
-                            <h5 className="text-primary mb-3" style={{ fontSize: '20px' }}>{purchaseOrder?.reference}</h5>
-                            <Row>
-                                <Col sm={6} >
-                                    <span style={{ fontSize: '16px', fontWeight: '500' }}>Billing Address</span>
-                                    <p className="my-3">{BillingAddress} ||Nagpur Division, Maharashtra, India</p>
-                                </Col>
-
-                                <Col sm={6} className="border-end border-3" >
-                                    <span style={{ fontSize: '16px', fontWeight: '500' }}>Shipping Address</span>
-                                    <p className="my-3">{ShippingAd} || Nagpur Division, Maharashtra, India</p>
-                                </Col>
-                            </Row>
-                        </Col>
+                                        <Image src={editlogo} className="me-2" /> Edit
+                                    </Link>
 
 
+                                </Button>
+                                <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                                    <Image src={deleteplogo} />
+                                </Button>
 
-                        <Col sm={8} >
-                            <Row>
-                                {/* Delivery Details */}
-                                <Col sm={6}  >
-                                    <span className="mb-3" style={{ fontSize: '16px', fontWeight: '500' }}>Delivery Address</span>
-                                    <p className="my-3">
-                                        <span style={{ fontSize: '16px' }}>{userName}</span><br />
-                                        <span>{userEmail} / {UserContactN}</span>
-                                        <br />
-                                        <span>{UserAddress}</span>
-                                        <br />
-                                        <span>PAN:</span> {UesrPAN}
-                                    </p>
-                                </Col>
+                            </Col>
+                        </Row>
+                    </Card>
+                </Col>
 
-                                {/* Order Info */}
-                                <Col sm={6} >
-                                    <span className="mb-3 float-end" style={{ fontSize: '16px', fontWeight: '500' }}>Order No:<b className="text-primary"> {purchaseOrder?.po_no}</b></span>
-                                    <p className="my-5 mx-2 border-start border-3 p-2">
-                                        <p><span className="my-1 fw-bold">Expected Delivery:</span> {new Date(delivery_datedelivery_date).toLocaleDateString()}</p>
-                                        <p><span className="my-1 fw-bold">Payment Terms:</span> {payment_terms}</p>
-                                        <p><span className="my-1 fw-bold">Reference:</span> {reference}</p>
-                                        <p><span className="my-1 fw-bold">Shipment Preference:</span> {shipment_preference}</p>
-                                    </p>
+                {/* Company Info */}
+                <Col sm={12} className="my-2">
+                    <Card className="p-3">
+                        <Row className="align-items-center">
+                            <Col sm={2}>
+                                <img src={companylog} alt="Logo" className="img-fluid" />
+                            </Col>
+                            <Col sm={8}>
+                                <h5>{userName}</h5>
+                                <p className="mb-1">{userEmail} / {UserContactN}</p>
+                                <p className="mb-1">
+                                    {UserAddress}
+                                </p>
+                                <strong>PAN: {UesrPAN}</strong>
+                            </Col>
+                            <Col sm={2} className=" d-flex  ">
+                                <span className="p-2 float-right">PO :<b className="text-primary">Received</b></span>
+                                {/* <strong className="text-primary"> Draft</strong> */}
+                            </Col>
+                        </Row>
+                    </Card>
+                </Col>
 
-                                </Col>
-                            </Row>
-                        </Col>
-                    </Row>
-                </Card>
-            </Col>
+                {/* Customer & Order Details */}
+                <Col sm={12} className="my-2">
+                    <Card className="p-3 shadow-sm">
+                        <Row>
+                            {/* Customer Info */}
+                            <Col sm={4}  >
+                                <h5 className="text-primary mb-3" style={{ fontSize: '20px' }}>{selectedPo?.reference}</h5>
+                                <Row>
+                                    <Col sm={6} >
+                                        <span style={{ fontSize: '16px', fontWeight: '500' }}>Billing Address</span>
+                                        <p className="my-3">{vendor?.billingAddress} ||Nagpur Division, Maharashtra, India</p>
+                                    </Col>
 
-            <Col sm={12} className="my-2">
-                <Card className="p-3 shadow-sm">
-                    <Row>
+                                    <Col sm={6} className="border-end border-3" >
+                                        <span style={{ fontSize: '16px', fontWeight: '500' }}>Shipping Address</span>
+                                        <p className="my-3">{vendor?.shippingAddress} || Nagpur Division, Maharashtra, India</p>
+                                    </Col>
+                                </Row>
+                            </Col>
 
+                            <Col sm={8} >
+                                <Row>
+                                    {/* Delivery Details */}
+                                    <Col sm={6}  >
+                                        <span className="mb-3" style={{ fontSize: '16px', fontWeight: '500' }}>Delivery Address</span>
+                                        <p className="my-3">
+                                            <span style={{ fontSize: '16px' }}>{userName}</span><br />
+                                            <span>{userEmail} / {UserContactN}</span>
+                                            <br />
+                                            <span>{UserAddress}</span>
+                                            <br />
+                                            <span>PAN:</span> {UesrPAN}
+                                        </p>
+                                    </Col>
 
-                        <Col sm={12}>
-                            <div className="table-responsive">
+                                    {/* Order Info */}
+                                    <Col sm={6} >
+                                        <span className="mb-3 float-end" style={{ fontSize: '16px', fontWeight: '500' }}>Order No:<b className="text-primary"> {selectedPo?.po_no}</b></span>
+                                        <p className="my-5 mx-2 border-start border-3 p-2">
+                                            <p><span className="my-1 fw-bold">Expected Delivery:</span> {new Date(selectedPo?.delivery_date).toLocaleDateString()}</p>
+                                            <p><span className="my-1 fw-bold">Payment Terms:</span> {selectedPo?.payment_terms}</p>
+                                            <p><span className="my-1 fw-bold">Reference:</span> {selectedPo?.reference}</p>
+                                            <p><span className="my-1 fw-bold">Shipment Preference:</span> {selectedPo?.shipment_preference}</p>
+                                        </p>
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
+                    </Card>
+                </Col>
 
-                                <Table className="text-center align-middle">
-                                    <thead className="text-start" >
-                                        <tr style={{ borderBottom: "2px solid #dee2e6" }}>
-                                            <th className="fw-bold"  >PRODUCT</th>
-                                            <th className="fw-bold" >QUANTITY</th>
-                                            <th className="fw-bold" >PRICE</th>
-                                            <th className="fw-bold" >TAX</th>
-                                            <th className="fw-bold" >TOTAL</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="text-start" >
+                <Col sm={12} className="my-2">
+                    <Card className="p-3 shadow-sm">
+                        <Row>
+                            <Col sm={12}>
+                                <div className="table-responsive">
+                                    <Table className="text-center align-middle">
+                                        <thead className="text-start" >
+                                            <tr style={{ borderBottom: "2px solid #dee2e6" }}>
+                                                <th className="fw-bold"  >PRODUCT</th>
+                                                <th className="fw-bold" >QUANTITY</th>
+                                                <th className="fw-bold" >PRICE</th>
+                                                <th className="fw-bold" >TAX</th>
+                                                <th className="fw-bold" >TOTAL</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-start" >
+                                            {items.length > 0 && items.map((item, index) => (
+                                                <tr>
+                                                    <td>
+                                                        <b>{item?.item_id?.name}</b>
+                                                        <br />
+                                                        HSN : {item?.hsn}
+                                                    </td>
+                                                    <td>
+                                                        SKU : {item?.sku} <br />
+                                                        Qty : {item?.quantity}
+                                                    </td>
+                                                    <td>Price : {item?.price}</td>
+                                                    <td>{item?.tax?.tax_name}:{item?.tax?.tax_rate}</td>
+                                                    <td>Total : {item?.total}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </Table>
+                                </div>
+                            </Col>
+                        </Row>
+                        <Row className="mt-4 border-top border-3 p-2">
+                            <Col sm={6} className="border-end border-3">
+                                <p>
+                                    <b>Description:</b>  {selectedPo?.description}
+                                </p>
+                            </Col>
+                            <Col sm={6} className="text-end">
+                                <Table className="text-end">
+                                    <tbody>
                                         <tr>
+                                            <td className="fw-bold text-start">Subtotal:</td>
+                                            <td>{selectedPo?.subtotal}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="fw-bold text-start">Discount{selectedPo?.discount_type === "Percentage" && <>({selectedPo?.discount_value})</>}:</td>
                                             <td>
-                                                <b>{purchaseOrder?.items?.[0]?.item_id?.name} </b>
-                                                <br />
-                                                HSN : {purchaseOrder?.items?.[0]?.item_id?.hsn}
+                                                <span className="text-secondary" style={{ cursor: "pointer" }}>
+                                                    {discount.toFixed(2)}
+                                                </span>{" "}
                                             </td>
-                                            <td>
-                                                SKU : {purchaseOrder?.items?.[0]?.item_id?.sku} <br />
-                                                Qty : {purchaseOrder?.items?.[0]?.quantity}
+                                        </tr>
+                                        {/* <tr>
+                                            <td className="fw-bold text-start">Tax:</td>
+                                            <td>{purchaseOrder?.tax?.[0]?.tax_name}: ({purchaseOrder?.tax?.[0]?.tax_rate})</td>
+                                        </tr> */}
+                                        <tr>
+                                            {taxes.length > 0 && taxes.map((tax, index) => (
+                                                <>  <td className="fw-bold text-start" key={index}>{tax?.tax_name}:</td>
+                                                    <td className="fw-bold text-end" key={index}>{Math.round((selectedPo?.subtotal-discount)*tax?.tax_rate/100).toFixed(2)}</td>
+                                                </>
+                                            ))}
+                                        </tr>
+                                        <tr>
+                                            <td className="fw-bold text-start">Total:</td>
+                                            <td>{purchaseOrder?.total.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="fw-bold text-start">{purchaseOrder?.adjustment_note}
                                             </td>
-                                            <td>Price : {purchaseOrder?.items?.[0]?.price}</td>
-                                            <td>{purchaseOrder?.tax?.[0]?.tax_name}:{purchaseOrder?.tax?.[0]?.tax_rate }</td>
-                                            <td>Total : {purchaseOrder?.items?.[0]?.total}</td>
+                                            <td>{selectedPo?.adjustment_amount}</td>
                                         </tr>
                                     </tbody>
                                 </Table>
-                            </div>
-                        </Col>
-                    </Row>
-                    <Row className="mt-4 border-top border-3 p-2">
-    <Col sm={6} className="border-end border-3">
-      <p>
-        <b>Description:</b>  Et quae qui veritati 
-      </p>
-    </Col>
-    <Col sm={6} className="text-end">
-      <Table  className="text-end">
-<tbody>
-<tr>
-  <td className="fw-bold text-start">Subtotal:</td>
-  <td>{purchaseOrder?.subtotal}</td>
-</tr>
-<tr>
-  <td className="fw-bold text-start">Discount:</td>
-  <td>
-    <span className="text-primary" style={{ cursor: "pointer" }}>
-    {purchaseOrder?.discount_value}{purchaseOrder?.discount_type === 'percentage' ? '%' : ' Rs'}
+                            </Col>
 
-    </span>{" "}
-   
-  </td>
-</tr>
-<tr>
-  <td className="fw-bold text-start">Tax:</td>
-  <td>{purchaseOrder?.tax?.[0]?.tax_name}: ({purchaseOrder?.tax?.[0]?.tax_rate })</td>
-</tr>
-<tr>
-  <td className="fw-bold text-start">Total:</td>
-  <td>{purchaseOrder?.total}</td>
-</tr>
-<tr>
-  <td className="fw-bold text-start">{purchaseOrder?.adjustment_note === 0 ? "No Adjustment" : "Adjustment:"}
-  {/* {purchaseOrder?.discount_value}{purchaseOrder?.discount_type === 'percentage' ? '%' : ' Rs'}  adjustment_note */}
+                        </Row>
 
-  </td>
-  <td>{purchaseOrder?.adjustment_amount }</td>
-</tr>
-</tbody>
-</Table>
-    </Col>
+                    </Card>
+                </Col>
 
-    </Row>
-
-                </Card>
-            </Col>
-            
-{/* <Col sm={12} className="my-2">
+                {/* <Col sm={12} className="my-2">
     <Card className=" p-3 shadow-sm">
         <h5 className=" mb-3" style={{ fontSize:'20px' }}>Receive & Payment Details</h5>
         <div className="table-responsive">
@@ -314,10 +301,10 @@ const PurchaseOrderDetails = () => {
     </Card>
 </Col> */}
 
-        </Row>
+            </Row>
 
-    </Container>
-)
+        </Container>
+    )
 };
 
 export default PurchaseOrderDetails;

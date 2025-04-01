@@ -262,7 +262,7 @@ const BookingCheckout = () => {
                 <strong className="text-dark">Location:</strong> <span>{selectedCustomer?.address || "-"}</span>
               </p>
               <p className="d-flex justify-content-between">
-                <strong className="text-dark">Played Games:</strong> <span>14</span>
+                <strong className="text-dark">Played Games:</strong> <span>{booking?.totalGamesPlayed}</span>
               </p>
             </div>
 

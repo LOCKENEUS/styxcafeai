@@ -206,9 +206,9 @@ export const PurchaseReceivedDetails = () => {
                                                         </td>
                                                         <td>
 
-                                                            Ordered Qty  : 50 Nos
+                                                            Ordered Qty  : {item?.quantity} Nos
                                                         </td>
-                                                        <td>  Received Qty :  {item.qty_received}</td>
+                                                        <td>  Received Qty :  {item?.qty_received}</td>
                                                     </tr>
                                                 </tbody>
                                             </Table>
