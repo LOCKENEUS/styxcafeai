@@ -23,7 +23,7 @@ export const getPBillById = createAsyncThunk(
   'pBill/getPBillById',
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/inventory/po/bill/${id}`);
+      const response = await axios.get(`${BASE_URL}/admin/inventory/po/${id}`);
       return response.data.data;
     } catch (error) {
       toast.error(error.response?.data?.message || 'Something went wrong');

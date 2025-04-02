@@ -410,25 +410,24 @@ export const InvoiceCreate =()=>{
     </Col>
     {/* Header Card */}
     <Card className="p-3 mb-3 shadow-sm">
-      <Row className="align-items-center">
-        <Col xs={2}>
-          <img src={Lockenelogo} alt="Logo" className="img-fluid" />
-        </Col>
-        <Col>
-          <h5>Linganwar</h5>
-          <p className="mb-1">yash123linganwar@gmail.com / 91562173745</p>
-          <p className="mb-1">
-            Karve Statue, DP Road, Mayur Colony, Kothrud, Pune, Maharashtra,
-            India
-          </p>
-          <strong>PAN: ADNP5467B</strong>
-        </Col>
-        <Col xs={2} className="text-end">
-          <span className="text-muted">PO:</span>
-          <strong className="text-primary"> Draft</strong>
-        </Col>
-      </Row>
-    </Card>
+        <Row className="align-items-center">
+          <Col xs={2}>
+            <img src={Lockenelogo} alt="Logo" className="img-fluid" />
+          </Col>
+          <Col>
+            <h5>{user?.name}</h5>
+            <p className="mb-1">{user?.email} / {user?.contact_no}</p>
+            <p className="mb-1">
+              {user?.address}
+            </p>
+            <strong>PAN: {user?.panNo}</strong>
+          </Col>
+          <Col xs={2} className="text-end">
+            <span className="text-muted">SO:</span>
+            <strong className="text-primary"> Draft</strong>
+          </Col>
+        </Row>
+      </Card>
 
     {/* Client & Delivery Details */}
     <Card className="p-3 shadow-sm">

@@ -3,7 +3,7 @@ import { Form, Button, Row, Col } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import { useDispatch } from "react-redux";
-import { addUser, updateUser } from "../../../store/AdminSlice/UserSlice";
+import { addUser, updateUser, getUserById } from "../../../store/AdminSlice/UserSlice";
 import axios from "axios";
 
 const CreateUser = () => {
@@ -92,24 +92,24 @@ const CreateUser = () => {
       if (id) {
         try {
           const user = JSON.parse(sessionStorage.getItem('user'));
-          const response = await axios.get(`${import.meta.env.REACT_APP_API_URL}/admin/staff-member/${id}?cafe=${user.cafe}`);
-          const userData = response.data.data;
+          // Use the getUserById action from the slice instead of direct axios call
+          const response = await dispatch(getUserById(id)).unwrap();
           
           setFormData({
-            name: userData.name || '',
-            email: userData.email || '',
-            contact_no: userData.contact_no || '',
-            age: userData.age || '',
-            gender: userData.gender || '',
-            address: userData.address || '',
-            city: userData.city || '',
-            state: userData.state || '',
-            country: userData.country || '',
-            department: userData.department || '',
-            role: userData.role || '',
-            additionalNotes: userData.additional_notes || '',
+            name: response.name || '',
+            email: response.email || '',
+            contact_no: response.contact_no || '',
+            age: response.age || '',
+            gender: response.gender || '',
+            address: response.address || '',
+            city: response.city || '',
+            state: response.state || '',
+            country: response.country || '',
+            department: response.department || '',
+            role: response.role || '',
+            additionalNotes: response.additional_notes || '',
             userProfile: null,
-            existingImage: userData.userProfile || '',
+            existingImage: response.userProfile || '',
             cafe: cafeId,
           });
         } catch (error) {
@@ -119,7 +119,7 @@ const CreateUser = () => {
     };
 
     fetchUserData();
-  }, [id]);
+  }, [id, dispatch]);
 
   const handleSelect = (place) => {
     const placeId = place.value.place_id;
@@ -517,7 +517,7 @@ const CreateUser = () => {
             {formData.existingImage && (
               <div className="mb-2">
                 <img
-                  src={`${import.meta.env.REACT_APP_API_URL}/${formData.existingImage}`}
+                  src={`${import.meta.env.VITE_API_URL}/${formData.existingImage}`}
                   alt="Current profile"
                   className="rounded-2"
                   style={{ maxWidth: '150px', height: 'auto', border: '1px solid #ddd' }}

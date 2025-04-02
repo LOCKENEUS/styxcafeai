@@ -19,6 +19,7 @@ import DataTable from "react-data-table-component";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getSOs } from "../../../../store/AdminSlice/Inventory/SoSlice";
+import Loader from "../../../../components/common/Loader/Loader";
 // import { format } from "date-fns";
 
 export const SalesOrder = () => {
@@ -306,9 +307,7 @@ export const SalesOrder = () => {
               <Col sm={12} style={{ marginTop: "30px" }}>
                 {loading ? (
                   <div className="text-center py-4">
-                    <div className="spinner-border text-primary" role="status">
-                      <span className="visually-hidden">Loading...</span>
-                    </div>
+                  <Loader />
                   </div>
                 ) : error ? (
                   <div className="alert alert-danger" role="alert">

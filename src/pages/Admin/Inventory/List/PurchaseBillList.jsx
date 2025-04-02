@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,16 +17,23 @@ import solar_export from "/assets/inventory/solar_export-linear.png";
 import add from "/assets/inventory/material-symbols_add-rounded.png";
 import DataTable from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getPBills } from "../../../../store/AdminSlice/Inventory/PBillSlice";
 
 const PurchaseBillList = () => {
   const [searchText, setSearchText] = useState("");
+  const dispatch = useDispatch();
+  const { bills, loading, error } = useSelector((state) => state.pBill);
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [activePage, setActivePage] = useState(1);
   const itemsPerPage = 5;
   const totalPages = Math.ceil(3 / itemsPerPage);
-   
-
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const cafeId = user?._id;
+  useEffect(() => {
+    dispatch(getPBills(cafeId)).unwrap()
+  }, [dispatch]);
 
   // Function to handle modal (replace with actual logic)
   const handleShowCreate = () => {
@@ -34,10 +41,9 @@ const PurchaseBillList = () => {
     navigate("/admin/inventory/PurchaseBillCreate");
   };
 
-
-  const getRandomColor = (name) => {
+  const getRandomColor = (po_no) => {
     const colors = ["#FAED39", "#FF5733", "#33FF57", "#339FFF", "#FF33F6", "#FFAA33", "#39DDFA", "#3DFF16"];
-    let index = (name.charCodeAt(0) + name.charCodeAt(name.length - 1)) % colors.length;
+    let index = (po_no?.charCodeAt(0) + po_no?.charCodeAt(po_no?.length - 1)) % colors.length;
     return colors[index];
   };
   
@@ -45,15 +51,13 @@ const PurchaseBillList = () => {
   const columns = [
     {
       name: "SN",
-      selector: (row) => row.sn,
-
+      cell: (row, index) => index + 1,
       minWidth: "70px",
       maxWidth: "70px",
-
     },
     {
       name: "Order No",
-      selector: (row) => row.name,
+      selector: (row) => row.po_no,
       sortable: true,
       cell: (row) => (
         <div className="d-flex align-items-center">
@@ -62,7 +66,7 @@ const PurchaseBillList = () => {
             style={{
               width: "35px",
               height: "35px",
-              backgroundColor: getRandomColor(row.name),
+              backgroundColor: getRandomColor(row.po_no),
               color: "white",
               fontWeight: "bold",
               padding: "8px 12px",
@@ -70,45 +74,29 @@ const PurchaseBillList = () => {
             }}
           >
 
-            {row.name.charAt(0).toUpperCase()}
+            {row.po_no?.charAt(0).toUpperCase()}
           </span>
           <div>
-            <div style={{ color: "#0062FF",cursor:"pointer" }} onClick={handleShowDetails}>{row.name}</div>
+            <div style={{ color: "#0062FF",cursor:"pointer" }} onClick={() => handleShowDetails(row)}>{row.po_no}</div>
             {/* <div style={{ fontSize: "12px", color: "gray" }}>{row.email}</div> */}
           </div>
         </div>
       ),
     },
-    { name: "vendor", selector: (row) => row.vendor, sortable: true },
-    { name: " Status", selector: (row) => row.status, sortable: true },
+    { name: "vendor", selector: (row) => row.vendor_id?.name, sortable: true },
+    { name: " Status", selector: (row) => row.status || "Pending", sortable: true },
     { name: "Total", selector: (row) => row.total, sortable: true },
 
   ];
-
-
-  const itemsData = [
-    { sn: 1, name: "PB-190", vendor: "31", status: "Packed", total: "2122" },
-    { sn: 2, name: "PB-191", vendor: "6", status: "Shipped", total: "888" },
-    { sn: 3, name: "PB-192", vendor: "21", status: "Packed", total: "722" },
-    { sn: 4, name: "PB-193", vendor: "1", status: "Shipped", total: "02" },
-    { sn: 5, name: "PB-198", vendor: "2", status: "Packed", total: "21" },
-
-  ];
-
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setActivePage(page);
+    const handleShowDetails = (row) => {
+      navigate(`/admin/inventory/PurchaseBillDetails/${row._id}`);
     }
-  };
 
-    const handleShowDetails = () => {
-      navigate("/admin/inventory/PurchaseBillDetails");
-    }
-  const filteredItems = itemsData.filter((item) =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.vendor.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.total.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredItems = bills.filter((item) =>
+    item.vendor_id?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.vendor_id?._id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.status?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    String(item.total)?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -126,7 +114,6 @@ const PurchaseBillList = () => {
 
         {/* Items List Card */}
         <Col sm={12}>
-
           <Card className="mx-4 p-3">
             <Row className="align-items-center">
               {/* Title */}
@@ -142,7 +129,6 @@ const PurchaseBillList = () => {
                   Purchase Bill List
                 </h1>
               </Col>
-
               {/* Search Input */}
               <Col sm={3} className="d-flex my-2">
                 <InputGroup className="navbar-input-group">
@@ -162,8 +148,6 @@ const PurchaseBillList = () => {
                     onChange={(e) => setSearchQuery(e.target.value)} 
                     style={{ backgroundColor: "#FAFAFA", border: "none" }}
                   />
-
-
                   {searchQuery && (
                     <InputGroupText
                       as="button"
@@ -173,7 +157,6 @@ const PurchaseBillList = () => {
                       ✖
                     </InputGroupText>
                   )}
-
                 </InputGroup>
               </Col>
 
@@ -193,7 +176,6 @@ const PurchaseBillList = () => {
                   New PB
                 </Button>
               </Col>
-
 
               <Col sm={12} style={{ marginTop: "30px" }}>
                 <DataTable

@@ -100,10 +100,11 @@ import { PurchaseReceivedDetails } from "../pages/Admin/Inventory/Details/purcha
 import { PurchaseBillDetailsAdmin } from "../pages/Admin/Inventory/Details/purchaseBill";
 import BookGames from "../pages/Admin/Booking/BookGames";
 import  PurchaseBillCreate  from "../pages/Admin/Inventory/Create/PBCreate";
-import { BillPaymentDetails } from "../pages/Admin/Inventory/Details/billPayment";
+// import { BillPaymentDetails } from "../pages/Admin/Inventory/Details/billPayment";
 import BookingCheckout from "../pages/Admin/Booking/BookingCheckout";
 import { PurchaseOrderUpdate } from "../pages/Admin/Inventory/Update/PurchaseOrderUpdate ";
 import BookingEdit from "../pages/Admin/Booking/BookingEdit";
+import ParchaseBCreate from "../pages/Admin/Inventory/modal/ParchaseBCreate";
 
 
 
@@ -249,9 +250,12 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/inventory/purchaseReceived" element={<PurchaseReceivedAdmin />} />
           <Route path="/admin/inventory/purchaseReceivedCreate" element={<PRCreate />} />
           <Route path="/admin/inventory/PurchaseReceivedDetails" element={<PurchaseReceivedDetails />} />
-          <Route path="/admin/inventory/PurchaseBillDetails" element={<PurchaseBillDetailsAdmin />} />
+          <Route path="/admin/inventory/PurchaseBillDetails/:id" element={<PurchaseBillDetailsAdmin />} />
           <Route path="/admin/inventory/PurchaseBillCreate" element={<PurchaseBillCreate />} />
-          <Route path="/admin/inventory/BillPaymentDetails" element={<BillPaymentDetails />} />
+          <Route path="/admin/inventory/PurchaseBillCreate/:id" element={<PurchaseBillCreate />} />
+          <Route path="/admin/inventory/GenerateBill/:id" element={<ParchaseBCreate />} />
+
+          {/* <Route path="/admin/inventory/BillPaymentDetails" element={<BillPaymentDetails />} /> */}
           <Route path="/admin/inventory/PurchaseOrderUpdate/:id" element={<PurchaseOrderUpdate />} />
         </Route>
       </Route>

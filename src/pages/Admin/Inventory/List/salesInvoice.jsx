@@ -19,6 +19,7 @@ import DataTable from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getSOInvoices } from "../../../../store/AdminSlice/Inventory/SoInvoiceSlice";
+import Loader from "../../../../components/common/Loader/Loader";
 
 export const SaleInvoiceInventory = () => {
   const dispatch = useDispatch();
@@ -243,6 +244,11 @@ export const SaleInvoiceInventory = () => {
               </Col>
 
               <Col sm={12} style={{marginTop:"30px"}}>
+                              {loading ? (
+                                <div className="text-center p-4">
+                                  <Loader />
+                                </div>
+                              ) : (
                 <DataTable
                   columns={columns}
                   data={filteredItems}
@@ -262,6 +268,7 @@ export const SaleInvoiceInventory = () => {
                     table: { style: { borderRadius: "5px", overflow: "hidden" } },
                   }}
                 />
+                              )}
               </Col>
             </Row>
           </Card></Col>

@@ -22,6 +22,13 @@ export const SODetails = () => {
     const { selectedSO, loading, error } = useSelector((state) => state.so);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    const userName = user?.name;
+    const userEmail = user?.email;
+    const UserContactN = user?.contact_no;
+    const UserAddress = user?.address;
+    const UesrPAN = user?.panNo;
+
     useEffect(() => {
         if (id) {
             dispatch(getSOById(id));
@@ -224,20 +231,19 @@ export const SODetails = () => {
         <Col sm={12} className="my-2">
             <Card className="p-3">
                 <Row className="align-items-center">
-                    <Col  sm={2}>
+                    <Col sm={2}>
                         <img src={companylog} alt="Logo" className="img-fluid" />
                     </Col>
-                    <Col  sm={8}>
-                        <h5>Linganwar</h5>
-                        <p className="mb-1">yash123linganwar@gmail.com / 91562173745</p>
+                    <Col sm={8}>
+                        <h5>{userName}</h5>
+                        <p className="mb-1">{userEmail} / {UserContactN}</p>
                         <p className="mb-1">
-                            Karve Statue, DP Road, Mayur Colony, Kothrud, Pune, Maharashtra, India
+                            {UserAddress}
                         </p>
-                        <strong>PAN: ADNP5467B</strong>
+                        <strong>PAN: {UesrPAN}</strong>
                     </Col>
-                    <Col  sm={2} className=" d-flex  ">
-                        <span className="p-2 float-right">PO:<b className="text-primary">Draft</b></span>
-                        {/* <strong className="text-primary"> Draft</strong> */}
+                    <Col sm={2} className="d-flex">
+                        <span className="p-2 float-right">SO:<b className="text-primary">Draft</b></span>
                     </Col>
                 </Row>
             </Card>

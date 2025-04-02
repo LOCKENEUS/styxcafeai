@@ -64,7 +64,7 @@ export const PurchaseReceivedDetails = () => {
                                 </Button>
                                 <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                                     {/* <Image src={sendMail} className="me-2" />  */}
-                                    <Link to="/admin/inventory/PurchaseBillCreate" className="text-decoration-none text-dark"><b >+</b>  Create Bill </Link>
+                                    <Link to={`/admin/inventory/GenerateBill/${POIdGet?.selectedItem?._id}`} className="text-decoration-none text-dark"><b >+</b>  Create Bill </Link>
                                 </Button>
                             </Col>
                         </Row>

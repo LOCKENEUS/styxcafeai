@@ -27,6 +27,7 @@ import {
   deleteVendor,
 } from "../../../../store/AdminSlice/Inventory/VendorSlice";
 import { toast } from "react-toastify";
+import Loader from "../../../../components/common/Loader/Loader";
 
 const avatarColors = [
   "#0062FF",
@@ -237,6 +238,11 @@ const VendorList = () => {
 
               <Col xs={12} style={{ marginTop: "30px" }}>
                 <div className="table-responsive">
+                {loading ? (
+                                <div className="text-center p-4">
+                                  <Loader />
+                                </div>
+                              ) : (
                   <Table
                     striped
                     hover
@@ -386,6 +392,7 @@ const VendorList = () => {
                       )}
                     </tbody>
                   </Table>
+                              )}
                 </div>
               </Col>
             </Row>

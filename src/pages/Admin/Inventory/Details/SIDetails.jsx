@@ -28,7 +28,15 @@ export const SIDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [openPaymentModel, setOpenPaymentModel] = useState(false);
+
+
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const userName = user?.name;
+  const userEmail = user?.email;
+  const UserContactN = user?.contact_no;
+  const UserAddress = user?.address;
+  const UesrPAN = user?.panNo;
+
   const { selectedInvoice: invoice, loading } = useSelector(
     (state) => state.soInvoice
   );
@@ -225,30 +233,24 @@ export const SIDetails = () => {
           {/* Company Info Card */}
           <Col sm={12} className="my-2">
             <Card className="p-3">
-              <Row className="align-items-center">
-                <Col sm={2}>
-                  <img src={companylog} alt="Logo" className="img-fluid" />
-                </Col>
-                <Col sm={8}>
-                  <h5>Linganwar</h5>
-                  <p className="mb-1">
-                    yash123linganwar@gmail.com / 91562173745
-                  </p>
-                  <p className="mb-1">
-                    Karve Statue, DP Road, Mayur Colony, Kothrud, Pune,
-                    Maharashtra, India
-                  </p>
-                  <strong>PAN: ADNP5467B</strong>
-                </Col>
-                <Col sm={2} className="d-flex">
-                  <span className="p-2 float-right">
-                    Status:{" "}
-                    <b className="text-primary">{invoice.status || "Draft"}</b>
-                  </span>
-                </Col>
-              </Row>
+                <Row className="align-items-center">
+                    <Col sm={2}>
+                        <img src={companylog} alt="Logo" className="img-fluid" />
+                    </Col>
+                    <Col sm={8}>
+                        <h5>{userName}</h5>
+                        <p className="mb-1">{userEmail} / {UserContactN}</p>
+                        <p className="mb-1">
+                            {UserAddress}
+                        </p>
+                        <strong>PAN: {UesrPAN}</strong>
+                    </Col>
+                    <Col sm={2} className="d-flex">
+                        <span className="p-2 float-right">SO:<b className="text-primary">Draft</b></span>
+                    </Col>
+                </Row>
             </Card>
-          </Col>
+        </Col>
 
           {/* Customer Info and Invoice Details */}
           <Col sm={12} className="my-2">

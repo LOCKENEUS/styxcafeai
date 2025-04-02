@@ -25,6 +25,7 @@ import soReducer from './AdminSlice/Inventory/SoSlice';
 import purchaseReceiveSliceReducer from './AdminSlice/Inventory/purchaseReceive';
 import soInvoiceRouter from './AdminSlice/Inventory/SoInvoiceSlice';
 import CollectPaymentRouter from './AdminSlice/Inventory/CollectPaymentSlice';
+import CollectPurchaseBill from './AdminSlice/Inventory/CollectPurchaseBill';
 import pBillReducer from './AdminSlice/Inventory/PBillSlice';
 
 export const store = configureStore({
@@ -56,6 +57,7 @@ export const store = configureStore({
      soInvoice: soInvoiceRouter,
      payment: CollectPaymentRouter,
      pBill: pBillReducer,
+     purchaseBill: CollectPurchaseBill,
         // bookings
         bookings: bookingsReducer,
         timer: timerReducer

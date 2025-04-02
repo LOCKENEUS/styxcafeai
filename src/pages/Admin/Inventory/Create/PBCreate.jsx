@@ -8,7 +8,7 @@ import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems"
 import Tax from "../modal/Tax";
 // import AddClint from "../modal/vendorListModal";
 import PaymentTermsModal from "../modal/PaymentTermsModal";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { CreatePurchaseOrder, GetVendorsList, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch, useSelector } from "react-redux";
 import AddClint from "../modal/AddClint";
@@ -16,23 +16,24 @@ import VendorsList from "../modal/vendoreListModal";
 import { getItems } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
 import { getCustomers } from "../../../../store/AdminSlice/CustomerSlice";
-import { addPBill } from "../../../../store/AdminSlice/Inventory/PBillSlice";
+import { addPBill, getPBillById, updatePBill } from "../../../../store/AdminSlice/Inventory/PBillSlice";
 
 const PurchaseBillCreate = () => {
   const [show, setShow] = useState(false);
+  const { id } = useParams();
   const [showClientList, setShowClientList] = useState(true);
   const [showOffCanvasCreateItem, setShowOffCanvasCreateItem] = useState(false);
   const handleShowCreateItem = () => setShowOffCanvasCreateItem(true);
   const handleCloseCreateItem = () => setShowOffCanvasCreateItem(false);
   const [showPaymentTerms, setShowPaymentTerms] = useState(false);
-  const [showAddressModal, setShowAddressModal] = useState(false);
+
 
   const [products, setProducts] = useState([
     { id: 1, item: "", quantity: 1, price: 0, tax: 0, total: 0, totalTax: 0 },
   ]);
   const [showProductList, setShowProductList] = useState(false);
   const [showTaxModal, setShowTaxModal] = useState(false);
-  const [taxList, setTaxList] = useState([]);
+
   const [selectedClient, setSelectedClient] = useState(null);
   const dispatch = useDispatch();
   const { customFields } = useSelector((state) => state.customFields);
@@ -42,7 +43,6 @@ const PurchaseBillCreate = () => {
   const handleShowVendorList = () => setShowVendorList(true);
   const handleCloseVendorList = () => setShowVendorList(false);
   const [vendorSelected, setVendorSelected] = useState([]);
-  const [selectedOption, setSelectedOption] = useState("Organization");
   const [vendorId, setVendorId] = useState("");
   const user = JSON.parse(sessionStorage.getItem("user"));
  
@@ -98,9 +98,12 @@ const PurchaseBillCreate = () => {
   console.log("unit Tax 101", TaxList);
 
   const calculateTotal = (price, quantity, tax) => {
-    const subtotal = price * quantity;
-    const totalTax = (subtotal * tax) / 100;
-    return { total: subtotal + totalTax, totalTax };
+    const subtotal = Math.round(price * quantity * 100) / 100;
+    const totalTax = Math.round((subtotal * tax) / 100 * 100) / 100;
+    return { 
+      total: Math.round((subtotal + totalTax) * 100) / 100, 
+      totalTax: totalTax
+    };
   };
 
   const updateProduct = (id, field, value) => {
@@ -110,13 +113,11 @@ const PurchaseBillCreate = () => {
 
         if (field === "item") {
           const selectedItem = items.find(item => item._id === value);
-
-
           if (selectedItem) {
-            updatedProduct.price = selectedItem.sellingPrice;
+            updatedProduct.price = Math.round(selectedItem.sellingPrice * 100) / 100;
             updatedProduct.tax = selectedItem.tax;
             const itemTax = taxFields.find(tax => tax._id === selectedItem.tax);
-            updatedProduct.taxRate = itemTax ? itemTax.tax_rate : 0;
+            updatedProduct.taxRate = itemTax ? Math.round(itemTax.tax_rate * 100) / 100 : 0;
           }
           const isDuplicate = products.some(
             (product) => product.id !== id && product.item === value
@@ -133,15 +134,15 @@ const PurchaseBillCreate = () => {
 
         if (field === "tax") {
           const selectedTax = taxFields.find(tax => tax._id === value);
-          updatedProduct.taxRate = selectedTax ? selectedTax.tax_rate : 0;
+          updatedProduct.taxRate = selectedTax ? Math.round(selectedTax.tax_rate * 100) / 100 : 0;
         }
 
-        const price = parseFloat(updatedProduct.price) || 0;
+        const price = Math.round(parseFloat(updatedProduct.price || 0) * 100) / 100;
         const quantity = parseInt(updatedProduct.quantity) || 1;
-        const taxRate = parseFloat(updatedProduct.taxRate) || 0;
-        const subtotal = price * quantity;
-        const totalTax = (subtotal * taxRate) / 100;
-        updatedProduct.total = subtotal + totalTax;
+        const taxRate = Math.round(parseFloat(updatedProduct.taxRate || 0) * 100) / 100;
+        const subtotal = Math.round(price * quantity * 100) / 100;
+        const totalTax = Math.round((subtotal * taxRate) / 100 * 100) / 100;
+        updatedProduct.total = Math.round((subtotal + totalTax) * 100) / 100;
         updatedProduct.totalTax = totalTax;
 
         return updatedProduct;
@@ -173,7 +174,7 @@ const PurchaseBillCreate = () => {
   const [totals, setTotals] = useState({
     subtotal: 0,
     discount: 0,
-    discountType: 'Percentage',
+    discountType: 'percentage',
     taxAmount: 0,
     selectedTaxes: [],
     total: 0,
@@ -184,24 +185,25 @@ const PurchaseBillCreate = () => {
   // Add this calculation function
   const calculateTotals = () => {
     // Calculate subtotal from products
-    const subtotal = products.reduce((sum, product) => sum + (product.total), 0);
+    const subtotal = Math.round(products.reduce((sum, product) => sum + (product.total || 0), 0) * 100) / 100;
 
     // Calculate discount
     let discountAmount = 0;
-    if (totals.discountType === 'Percentage') {
-      discountAmount = (subtotal * totals.discount) / 100;
+    if (totals.discountType === 'percentage') {
+      discountAmount = Math.round((subtotal * totals.discount / 100) * 100) / 100;
     } else {
-      discountAmount = parseFloat(totals.discount) || 0;
+      discountAmount = Math.round(parseFloat(totals.discount || 0) * 100) / 100;
     }
 
     // Calculate tax amount
     const taxableAmount = subtotal - discountAmount;
-    const taxAmount = totals.selectedTaxes.reduce((sum, tax) => {
+    const taxAmount = Math.round(totals.selectedTaxes.reduce((sum, tax) => {
       return sum + (taxableAmount * (tax.rate / 100));
-    }, 0);
+    }, 0) * 100) / 100;
 
     // Calculate final total
-    const total = subtotal - discountAmount + taxAmount + (parseFloat(totals.adjustmentAmount) || 0);
+    const total = Math.round(subtotal - discountAmount + taxAmount + (parseFloat(totals.adjustmentAmount) || 0));
+    console.log("total", total);
 
     setTotals(prev => ({
       ...prev,
@@ -264,9 +266,73 @@ const PurchaseBillCreate = () => {
   };
 
   
-  // Update the handleSubmit function
+  // Add this useEffect to fetch data when id is present
+  useEffect(() => {
+    if (id) {
+      dispatch(getPBillById(id))
+        .unwrap()
+        .then((data) => {
+          // Set vendor data
+          setVendorSelected(data.vendor_id);
+          setVendorId(data.vendor_id._id);
+
+          // Set form data including delivery type and customer
+          setFormData({
+            ...formData,
+            delivery_type: data.delivery_type || 'organization',
+            date: data.delivery_date || '',
+            payment_terms: data.payment_terms || '',
+            reference: data.reference || '',
+            shipment_preference: data.shipment_preference || '',
+            description: data.description || '',
+            internal_team_notes: data.internal_team_notes || '',
+            customer_id: data.customer_id?._id || ''
+          });
+
+          // Set selected customer if delivery type is customer
+          if (data.delivery_type === 'customer' && data.customer_id) {
+            setSelectedCustomer(data.customer_id);
+          }
+
+          // Set products
+          if (data.items && data.items.length > 0) {
+            const formattedProducts = data.items.map((item, index) => ({
+              id: index + 1,
+              item: item.item_id._id,
+              quantity: item.quantity,
+              price: item.price,
+              tax: item.tax?._id || '',
+              taxRate: item.tax?.tax_rate || 0,
+              total: item.total,
+              totalTax: item.tax_amt,
+              hsn: item.item_id.hsn
+            }));
+            setProducts(formattedProducts);
+          }
+
+          // Set totals
+          setTotals({
+            subtotal: data.subtotal || 0,
+            discount: data.discount_value || 0,
+            discountType: data.discount_type || 'percentage',
+            taxAmount: data.items.reduce((sum, item) => sum + (item.tax_amt || 0), 0),
+            selectedTaxes: data.tax?.map(tax => ({
+              id: tax._id,
+              rate: tax.tax_rate
+            })) || [],
+            total: data.total || 0,
+            adjustmentNote: data.adjustment_note || '',
+            adjustmentAmount: data.adjustment_amount || 0
+          });
+        })
+        .catch((error) => {
+          console.error('Error fetching purchase bill:', error);
+        });
+    }
+  }, [id, dispatch]);
+
+  // Update handleSubmit to handle both create and update
   const handleSubmit = async () => {
-    // Create JSON data according to the required format
     const submitData = {
       cafe: cafeId,
       vendor_id: vendorId,
@@ -277,62 +343,38 @@ const PurchaseBillCreate = () => {
       shipment_preference: formData.shipment_preference,
       description: formData.description,
       internal_team_notes: formData.internal_team_notes,
+      // Add customer_id when delivery type is Customer
+      ...(formData.delivery_type === "Customer" && { customer_id: formData.customer_id }),
       
       // Financial details
-      subtotal: totals.subtotal,
-      tax: totals.selectedTaxes.map(tax => tax.id), // Array of tax IDs
-      total: totals.total,
+      subtotal: Math.round(totals.subtotal * 100) / 100,
+      discount_value: Math.round(totals.discount * 100) / 100,
+      discount_type: totals.discountType,
+      tax: totals.selectedTaxes.map(tax => tax.id),
+      total: Math.round(totals.total * 100) / 100,
       adjustment_note: totals.adjustmentNote,
-      adjustment_amount: parseFloat(totals.adjustmentAmount) || 0,
+      adjustment_amount: Math.round(parseFloat(totals.adjustmentAmount || 0) * 100) / 100,
 
       // Items details
       items: products.map(product => ({
-        id: product.item, // Item ID
+        id: product.item,
         hsn: product.hsn || '',
         qty: parseInt(product.quantity) || 1,
-        price: parseFloat(product.price) || 0,
-        tax: product.tax || '', // Tax ID
-        tax_amt: parseFloat(product.totalTax) || 0,
-        total: parseFloat(product.total) || 0
+        price: Math.round(parseFloat(product.price || 0) * 100) / 100,
+        tax: product.tax || '',
+        tax_amt: Math.round(parseFloat(product.totalTax || 0) * 100) / 100,
+        total: Math.round(parseFloat(product.total || 0) * 100) / 100
       }))
     };
 
     try {
-      // Dispatch addPBill action
-      await dispatch(addPBill(submitData)).unwrap();
-      
-      // Reset form after successful submission
-      setFormData({
-        vendorId: '',
-        delivery_type: 'organization',
-        date: '',
-        payment_terms: '',
-        reference: '',
-        shipment_preference: '',
-        description: '',
-        internal_team_notes: ''
-      });
-      
-      setProducts([
-        { id: 1, item: "", quantity: 1, price: 0, tax: 0, total: 0, totalTax: 0 }
-      ]);
-      
-      setTotals({
-        subtotal: 0,
-        discount: 0,
-        discountType: 'Percentage',
-        taxAmount: 0,
-        selectedTaxes: [],
-        total: 0,
-        adjustmentNote: '',
-        adjustmentAmount: 0
-      });
-
-      // Optional: Navigate to list page after success
-      // navigate('/admin/inventory/purchase-bill-list');
-      
+      if (id) {
+        await dispatch(updatePBill({ id, billData: submitData })).unwrap();
+      } else {
+        await dispatch(addPBill(submitData)).unwrap();
+      }
     } catch (error) {
-      console.error('Error creating Purchase Bill:', error);
+      console.error('Error saving Purchase Bill:', error);
     }
   };
 
@@ -466,11 +508,11 @@ const PurchaseBillCreate = () => {
               {/* Radio Buttons */}
               <div className="d-flex flex-row mb-2 align-items-center gap-2">
               <Form.Check
+                checked={formData.delivery_type === "organization"}
                 type="radio"
                 name="delivery_type" 
                 label="Organization"
-                value="Organization"
-                checked={formData.delivery_type === "Organization"}
+                value="organization"
                 onChange={(e) =>
                   setFormData({ ...formData, delivery_type: e.target.value })
                 }
@@ -483,8 +525,8 @@ const PurchaseBillCreate = () => {
                 type="radio"
                 name="delivery_type"
                 label="Customer"
-                value="Customer"
-                checked={formData.delivery_type === "Customer"}
+                value="customer"
+                checked={formData.delivery_type === "customer"}
                 onChange={(e) =>
                   setFormData({ ...formData, delivery_type: e.target.value })
                 }
@@ -493,7 +535,7 @@ const PurchaseBillCreate = () => {
               </div>
 
 
-              {formData.delivery_type === "Organization" && (
+              {formData.delivery_type === "organization" && (
                 <>
                   <p style={{ fontWeight: "bold", marginTop: "30px", color: "black" }} className="mb-1">
                     {userName}
@@ -506,7 +548,7 @@ const PurchaseBillCreate = () => {
                 </>
               )}
 
-              {formData.delivery_type === "Customer" && (
+              {formData.delivery_type === "customer" && (
                 <>
                   <Form.Select 
                     className="my-3" 
@@ -802,7 +844,7 @@ const PurchaseBillCreate = () => {
                     onChange={(e) => setTotals(prev => ({ ...prev, discountType: e.target.value }))}
                     style={{ width: "70px" }}
                   >
-                    <option value="Percentage">%</option>
+                    <option value="percentage">%</option>
                     <option value="flat">₹</option>
                   </Form.Select>
                 </div>
@@ -1000,9 +1042,8 @@ const PurchaseBillCreate = () => {
         <Button
           variant="primary"
           onClick={handleSubmit}
-        // disabled={!selectedClient || products.length === 0}
         >
-          Submit
+          {id ? 'Update' : 'Submit'}
         </Button>
       </div>
 

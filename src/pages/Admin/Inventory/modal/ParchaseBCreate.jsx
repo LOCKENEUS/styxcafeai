@@ -1,184 +1,92 @@
-import React, { useState, useEffect } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Button,
-  Form,
-  InputGroup,
-  Table,
-  Modal,
-  Breadcrumb,
-  BreadcrumbItem,
-  Dropdown,
-} from "react-bootstrap";
+import React, { useEffect, useRef, useState } from "react";
+import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Modal, Breadcrumb, BreadcrumbItem, Dropdown } from "react-bootstrap";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
-import { FaCheck, FaRupeeSign, FaTrash, FaUpload, FaFilePdf } from "react-icons/fa";
+import { FaFilePdf, FaRupeeSign, FaTrash, FaUpload } from "react-icons/fa";
 import { BiArrowToLeft, BiPlus } from "react-icons/bi";
+// import  { OffcanvesItemsCreate } from "../Offcanvas/OffcanvesItems";
 import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems"
-import Tax from "../modal/Tax";
-import AddClint from "../modal/AddClint";
-import PaymentTermsModal from "../modal/PaymentTermsModal";
-import { Link, useParams, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from 'react-redux';
-import { getCustomFields } from '../../../../store/AdminSlice/CustomField';
-import { getTaxFields } from '../../../../store/AdminSlice/TextFieldSlice';
-import { getItems } from '../../../../store/AdminSlice/Inventory/ItemsSlice';
-import { MdOutlineRemoveCircleOutline } from "react-icons/md";
-import { addSO, getSOById, updateSO } from '../../../../store/AdminSlice/Inventory/SoSlice';
+import Tax from "./Tax";
+// import AddClint from "../modal/vendorListModal";
+import PaymentTermsModal from "./PaymentTermsModal";
+import { Link, useParams } from "react-router-dom";
+import { CreatePurchaseOrder, GetVendorsList, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { useDispatch, useSelector } from "react-redux";
+import AddClint from "./AddClint";
+import VendorsList from "./vendoreListModal";
+import { getItems } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
+import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
+import { getCustomers } from "../../../../store/AdminSlice/CustomerSlice";
+import { addPBill,  updatePBill } from "../../../../store/AdminSlice/Inventory/PBillSlice";
+import { getPurchaseReceive } from "../../../../store/AdminSlice/Inventory/purchaseReceive";
 
-const SOCreate = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const isEditMode = !!id;
+const ParchaseBCreate = () => {
   const [show, setShow] = useState(false);
+  const { id } = useParams();
   const [showClientList, setShowClientList] = useState(true);
   const [showOffCanvasCreateItem, setShowOffCanvasCreateItem] = useState(false);
   const handleShowCreateItem = () => setShowOffCanvasCreateItem(true);
   const handleCloseCreateItem = () => setShowOffCanvasCreateItem(false);
   const [showPaymentTerms, setShowPaymentTerms] = useState(false);
 
+
   const [products, setProducts] = useState([
     { id: 1, item: "", quantity: 1, price: 0, tax: 0, total: 0, totalTax: 0 },
   ]);
   const [showProductList, setShowProductList] = useState(false);
   const [showTaxModal, setShowTaxModal] = useState(false);
-  const [taxList, setTaxList] = useState([]);
+
   const [selectedClient, setSelectedClient] = useState(null);
   const dispatch = useDispatch();
   const { customFields } = useSelector((state) => state.customFields);
   const { taxFields } = useSelector((state) => state.taxFieldSlice);
   const { items, loading } = useSelector((state) => state.items);
+  const [showVendorList, setShowVendorList] = useState(false);
+  const handleShowVendorList = () => setShowVendorList(true);
+  const handleCloseVendorList = () => setShowVendorList(false);
+  const [vendorSelected, setVendorSelected] = useState([]);
+  const [vendorId, setVendorId] = useState("");
   const user = JSON.parse(sessionStorage.getItem("user"));
+  const {selectedItem} = useSelector(state => state.purchaseReceiveSlice);
+
   const cafeId = user?._id;
-  
+
+  const userName= user?.name;
+  const userEmail= user?.email;
+  const UserContactN = user?.contact_no;
+  const UserAddress = user?.address;
+  const UesrPAN = user?.panNo;
+
+console.log("selectedItem", selectedItem);
   // Filter payment terms from custom fields
   const paymentTerms = customFields.filter(field => field.type === 'Payment Terms');
 
-  // Add new state to track latest created items
-  const [latestPaymentTerm, setLatestPaymentTerm] = useState(null);
-  const [latestTax, setLatestTax] = useState(null);
-
-  // Add handler for new payment term creation
-  const handlePaymentTermCreated = (newTerm) => {
-    setLatestPaymentTerm(newTerm);
-    // Automatically set the new payment term in the form
-    setFormData(prev => ({
-      ...prev,
-      payment_terms: newTerm.name
-    }));
-  };
-
-  // Update the handleTaxCreated function in SOCreate component
-  const handleTaxCreated = (newTax) => {
-    // Update the current product's tax field with the newly created tax
-    const updatedProducts = products.map(product => {
-      if (product.id === products[products.length - 1].id) {
-        return {
-          ...product,
-          tax: newTax.id,
-          taxRate: parseFloat(newTax.rate),
-          totalTax: Math.round((product.price * product.quantity * newTax.rate) / 100),
-          total: product.price * product.quantity + Math.round((product.price * product.quantity * newTax.rate) / 100)
-        };
-      }
-      return product;
-    });
-    
-    setProducts(updatedProducts);
-
-    // Also add the new tax to selected taxes for the total calculation
-    setTotals(prev => ({
-      ...prev,
-      selectedTaxes: [...prev.selectedTaxes, { id: newTax.id, rate: parseFloat(newTax.rate) }]
-    }));
-  };
-
   useEffect(() => {
-    dispatch(getCustomFields(cafeId));
+    dispatch(GetVendorsList(cafeId));
     dispatch(getTaxFields(cafeId));
     dispatch(getItems(cafeId));
   }, [dispatch]);
+  const vendorsList = useSelector((state) => state.purchaseOrder?.vendors);
+  // const lisgetCustomers = useSelector((state) => state.customers?.customers);
+  const { customers, loading: customerLoading } = useSelector((state) => state.customers);
+  const customersList = customers?.customers;
 
   useEffect(() => {
-    if (isEditMode) {
-      dispatch(getSOById(id))
-        .unwrap()
-        .then((soData) => {
-          console.log("SO Data received:", soData);
-          
-          setFormData({
-            date: soData.date ? new Date(soData.date).toISOString().split('T')[0] : '',
-            shipment_date: soData.shipment_date ? new Date(soData.shipment_date).toISOString().split('T')[0] : '',
-            payment_terms: soData.payment_terms || '',
-            reference: soData.reference || '',
-            delivery_preference: soData.delivery_preference || '',
-            sales_person: soData.sales_person || '',
-            description: soData.description || '',
-            internal_team_notes: soData.internal_team_notes || ''
-          });
-          
-          if (soData.customer_id) {
-            setSelectedClient(soData.customer_id);
-          }
-          
-          if (soData.items && soData.items.length > 0) {
-            const formattedProducts = soData.items.map((item, index) => {
-              // Handle tax object, tax ID, or null tax
-              const taxId = item.tax ? 
-                (typeof item.tax === 'object' ? item.tax._id : item.tax) : 
-                '';
-              
-              const taxRate = item.tax ? 
-                (typeof item.tax === 'object' ? 
-                  item.tax.tax_rate : 
-                  taxFields.find(t => t._id === item.tax)?.tax_rate || 0) :
-                0;
-              
-              return {
-                id: index + 1,
-                item: item.item_id?._id || '', 
-                itemName: item.item_id?.name || '',
-                quantity: item.quantity || 1,
-                price: item.price || 0,
-                tax: taxId, // Will be empty string if tax is null
-                taxRate: taxRate,
-                total: item.total || 0,
-                totalTax: item.tax_amt || 0,
-                hsn: item.hsn || ''
-              };
-            });
-            setProducts(formattedProducts);
-          }
-          
-          // Set tax totals
-          setTotals({
-            subtotal: soData.subtotal || 0,
-            discount: soData.discount_value || 0,
-            discountType: soData.discount_type === 'flat' ? 'flat' : 'Percentage',
-            taxAmount: soData.tax?.reduce((sum, tax) => sum + (soData.subtotal * (tax.tax_rate / 100)), 0) || 0,
-            selectedTaxes: soData.tax?.map(tax => ({ id: tax._id, rate: tax.tax_rate })) || [],
-            total: soData.total || 0,
-            adjustmentNote: soData.adjustment_note || '',
-            adjustmentAmount: soData.adjustment_amount || 0
-          });
-          
-          if (soData.internal_team_file && soData.internal_team_file.length > 0) {
-            // Handle existing files if needed
-          }
-        })
-        .catch((error) => {
-          console.error('Error fetching SO data:', error);
-        });
+    const user = JSON.parse(sessionStorage.getItem('user'));
+    const cafeId = user?._id;
+    if (cafeId) {
+      dispatch(getCustomers(cafeId));
     }
-  }, [dispatch, id, isEditMode, taxFields]);
+  }, [dispatch]);
 
   const handleShow = () => setShow(true);
   const handleClose = () => {
     setShow(false);
     setShowClientList(true);
   };
+
+  useEffect(() => {
+    dispatch(getPurchaseReceive(id));
+}, [dispatch, cafeId]);
 
   // Add these new state and calculation functions
   const priceList = {
@@ -189,6 +97,16 @@ const SOCreate = () => {
   };
 
 
+  const TaxList = useSelector((state) => state.taxFieldSlice?.taxFields);
+
+  const calculateTotal = (price, quantity, tax) => {
+    const subtotal = Math.round(price * quantity * 100) / 100;
+    const totalTax = Math.round((subtotal * tax) / 100 * 100) / 100;
+    return { 
+      total: Math.round((subtotal + totalTax) * 100) / 100, 
+      totalTax: totalTax
+    };
+  };
 
   const updateProduct = (id, field, value) => {
     const updatedProducts = products.map((product) => {
@@ -198,30 +116,40 @@ const SOCreate = () => {
         if (field === "item") {
           const selectedItem = items.find(item => item._id === value);
           if (selectedItem) {
-            updatedProduct.price = selectedItem.sellingPrice;
-            // Handle null tax case
-            updatedProduct.tax = selectedItem.tax || ''; // Set empty string if tax is null
-            const itemTax = selectedItem.tax ? taxFields.find(tax => tax._id === selectedItem.tax) : null;
-            updatedProduct.taxRate = itemTax ? itemTax.tax_rate : 0;
+            updatedProduct.price = Math.round(selectedItem.sellingPrice * 100) / 100;
+            updatedProduct.tax = selectedItem.tax;
+            const itemTax = taxFields.find(tax => tax._id === selectedItem.tax);
+            updatedProduct.taxRate = itemTax ? Math.round(itemTax.tax_rate * 100) / 100 : 0;
           }
+          const isDuplicate = products.some(
+            (product) => product.id !== id && product.item === value
+          );
+      
+          if (isDuplicate) {
+            alert("You have selected the same item.");
+            return product; 
+          }
+          
+         
         }
+        
 
         if (field === "tax") {
-          const selectedTax = value ? taxFields.find(tax => tax._id === value) : null;
-          updatedProduct.taxRate = selectedTax ? selectedTax.tax_rate : 0;
+          const selectedTax = taxFields.find(tax => tax._id === value);
+          updatedProduct.taxRate = selectedTax ? Math.round(selectedTax.tax_rate * 100) / 100 : 0;
         }
 
-        const price = parseFloat(updatedProduct.price) || 0;
+        const price = Math.round(parseFloat(updatedProduct.price || 0) * 100) / 100;
         const quantity = parseInt(updatedProduct.quantity) || 1;
-        const taxRate = parseFloat(updatedProduct.taxRate) || 0;
-
-        const subtotal = price * quantity;
-        const totalTax = Math.round((subtotal * taxRate) / 100);
-        updatedProduct.total = subtotal + totalTax;
+        const taxRate = Math.round(parseFloat(updatedProduct.taxRate || 0) * 100) / 100;
+        const subtotal = Math.round(price * quantity * 100) / 100;
+        const totalTax = Math.round((subtotal * taxRate) / 100 * 100) / 100;
+        updatedProduct.total = Math.round((subtotal + totalTax) * 100) / 100;
         updatedProduct.totalTax = totalTax;
 
         return updatedProduct;
       }
+      
       return product;
     });
 
@@ -248,7 +176,7 @@ const SOCreate = () => {
   const [totals, setTotals] = useState({
     subtotal: 0,
     discount: 0,
-    discountType: 'Percentage',
+    discountType: 'percentage',
     taxAmount: 0,
     selectedTaxes: [],
     total: 0,
@@ -259,24 +187,24 @@ const SOCreate = () => {
   // Add this calculation function
   const calculateTotals = () => {
     // Calculate subtotal from products
-    const subtotal = products.reduce((sum, product) => sum + (product.total), 0);
-    
+    const subtotal = Math.round(products.reduce((sum, product) => sum + (product.total || 0), 0) * 100) / 100;
+
     // Calculate discount
     let discountAmount = 0;
-    if (totals.discountType === 'Percentage') {
-      discountAmount = Math.round((subtotal * totals.discount) / 100);
+    if (totals.discountType === 'percentage') {
+      discountAmount = Math.round((subtotal * totals.discount / 100) * 100) / 100;
     } else {
-      discountAmount = Math.round(parseFloat(totals.discount) || 0);
+      discountAmount = Math.round(parseFloat(totals.discount || 0) * 100) / 100;
     }
 
     // Calculate tax amount
     const taxableAmount = subtotal - discountAmount;
     const taxAmount = Math.round(totals.selectedTaxes.reduce((sum, tax) => {
       return sum + (taxableAmount * (tax.rate / 100));
-    }, 0));
+    }, 0) * 100) / 100;
 
     // Calculate final total
-    const total = subtotal - discountAmount + taxAmount + Math.round(parseFloat(totals.adjustmentAmount) || 0);
+    const total = Math.round(subtotal - discountAmount + taxAmount + (parseFloat(totals.adjustmentAmount) || 0));
 
     setTotals(prev => ({
       ...prev,
@@ -291,7 +219,8 @@ const SOCreate = () => {
     calculateTotals();
   }, [products, totals.discount, totals.discountType, totals.selectedTaxes, totals.adjustmentAmount]);
 
-
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [files, setFiles] = useState([]);
 
   const handleFileChange = (event) => {
@@ -305,14 +234,25 @@ const SOCreate = () => {
     setFiles(prev => prev.filter((_, i) => i !== index));
   };
 
+  const handleFileChange2 = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+  };
+
+  const handleRemoveFile2 = (index, e) => {
+    e.stopPropagation();
+    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  };
+
   // Add new state for form data
   const [formData, setFormData] = useState({
+    vendorId: '',
+    delivery_type: "organization",
     date: '',
     shipment_date: '',
     payment_terms: '',
     reference: '',
-    delivery_preference: '',
-    sales_person: '',
+    shipment_preference: '',
     description: '',
     internal_team_notes: ''
   });
@@ -326,109 +266,148 @@ const SOCreate = () => {
     }));
   };
 
-  // Add this new state for the validation modal
-  const [showValidationModal, setShowValidationModal] = useState(false);
-
-  // Add this new state for validation errors
-  const [validationErrors, setValidationErrors] = useState({});
-
-  // Update the handleSubmit function
+  // Update handleSubmit to only handle create
   const handleSubmit = async () => {
-    // Validate all products have items selected
-    let hasErrors = false;
-    const newValidationErrors = {};
+    const submitData = {
+      cafe: cafeId,
+      vendor_id: vendorId,
+      delivery_type: formData.delivery_type.toLowerCase(),
+      delivery_date: formData.date,
+      payment_terms: formData.payment_terms,
+      reference: formData.reference,
+      shipment_preference: formData.shipment_preference,
+      description: formData.description,
+      internal_team_notes: formData.internal_team_notes,
+      // Add customer_id when delivery type is Customer
+      ...(formData.delivery_type === "Customer" && { customer_id: formData.customer_id }),
+      
+      // Financial details
+      subtotal: Math.round(totals.subtotal * 100) / 100,
+      discount_value: Math.round(totals.discount * 100) / 100,
+      discount_type: totals.discountType,
+      tax: totals.selectedTaxes.map(tax => tax.id),
+      total: Math.round(totals.total * 100) / 100,
+      adjustment_note: totals.adjustmentNote,
+      adjustment_amount: Math.round(parseFloat(totals.adjustmentAmount || 0) * 100) / 100,
 
-    // Check if client is selected
-    if (!selectedClient) {
-      setShowValidationModal(true);
-      return;
-    }
-
-    // Validate products
-    products.forEach(product => {
-      if (!product.item) {
-        hasErrors = true;
-        newValidationErrors[`product-${product.id}`] = 'Product selection is required';
-      }
-    });
-
-    if (hasErrors) {
-      setValidationErrors(newValidationErrors);
-      return;
-    }
-
-    const submitData = new FormData();
-
-    // Add basic form fields
-    submitData.append('cafe', cafeId);
-    submitData.append('customer_id', selectedClient?._id || '');
-    submitData.append('date', formData.date);
-    submitData.append('shipment_date', formData.shipment_date);
-    submitData.append('payment_terms', formData.payment_terms);
-    submitData.append('reference', formData.reference);
-    submitData.append('delivery_preference', formData.delivery_preference);
-    submitData.append('sales_person', formData.sales_person);
-    submitData.append('description', formData.description);
-    submitData.append('internal_team_notes', formData.internal_team_notes);
-
-    // Add financial details
-    submitData.append('subtotal', totals.subtotal.toString());
-    submitData.append('discount_value', totals.discount.toString());
-    submitData.append('discount_type', totals.discountType.toLowerCase());
-    
-    // Format tax data - just send array of tax IDs
-    const taxIds = totals.selectedTaxes.map(tax => tax.id);
-    submitData.append('tax', JSON.stringify(taxIds));
-
-    submitData.append('total', totals.total.toString());
-    submitData.append('adjustment_note', totals.adjustmentNote);
-    submitData.append('adjustment_amount', totals.adjustmentAmount.toString());
-    submitData.append('type', 'SO');
-
-    // Format items data - updated to send tax ID
-    const formattedItems = products.map(product => ({
-      id: product.item,
-      qty: product.quantity,
-      hsn: product.hsn || '',
-      price: product.price,
-      tax: product.tax || '', // Send the tax ID instead of tax rate
-      tax_amt: product.totalTax || 0,
-      total: product.total
-    }));
-    submitData.append('items', JSON.stringify(formattedItems));
-
-    // Append files
-    files.forEach((file, index) => {
-      submitData.append('internal_team_file', file);
-    });
+      // Items details
+      items: products.map(product => ({
+        id: product.item,
+        hsn: product.hsn || '',
+        qty: parseInt(product.quantity) || 1,
+        price: Math.round(parseFloat(product.price || 0) * 100) / 100,
+        tax: product.tax || '',
+        tax_amt: Math.round(parseFloat(product.totalTax || 0) * 100) / 100,
+        total: Math.round(parseFloat(product.total || 0) * 100) / 100
+      }))
+    };
 
     try {
-      if (isEditMode) {
-        await dispatch(updateSO({ id, soData: submitData })).unwrap();
-      } else {
-        await dispatch(addSO(submitData)).unwrap();
-      }
-      navigate('/admin/Inventory/SalesOrder');
+      await dispatch(addPBill(submitData)).unwrap();
     } catch (error) {
-      console.error('Error with Sales Order:', error);
+      console.error('Error saving Purchase Bill:', error);
     }
   };
 
-  // Update the page title based on mode
-  const pageTitle = isEditMode ? "Edit Sales Order" : "Create Sales Order";
-  
+
+  // const handleVendorSelect = (newVendor) => {
+  //   const selectedVendorId = newVendor;
+  //   const selectedVendor = vendorsList.find(
+  //     (vendor) => vendor?._id == selectedVendorId
+  //   );
+  //   if (selectedVendor) {
+  //     setVendorSelected(selectedVendor);
+  //     setFormData({
+  //       ...formData,
+  //       vendor_id: selectedVendor?._id,
+  //     });
+  //     setVendorId(selectedVendor?._id);
+  //   }
+  //   handleClose();
+  //   setVendorId(newVendor._id);
+  //   console.log("Selected vendor ID:---", vendorId);
+  // };
+
+
+  const handleVendorSelect = (newVendorId) => {
+    const selectedVendor = vendorsList.find((vendor) => vendor?._id == newVendorId);
+    if (selectedVendor) {
+      setVendorSelected(selectedVendor);
+      setFormData({
+        ...formData,
+        vendor_id: selectedVendor?._id, 
+      });
+      setVendorId(selectedVendor?._id);
+    }
+    handleClose();
+  };
+
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+
+  // Update the customer selection handler
+  const handleCustomerSelect = (e) => {
+    const customerId = e.target.value;
+    const customer = customers.find((c) => c._id === customerId);
+    setSelectedCustomer(customer);
+    setFormData({
+      ...formData,
+      customer_id: customerId
+    });
+  };
+
+  // Update useEffect to handle selectedItem data
+  useEffect(() => {
+    if (selectedItem) {
+      // Set vendor data
+      const vendor = selectedItem.vendor_id;
+      setVendorSelected(vendor);
+      setVendorId(vendor._id);
+
+      // Set form data
+      setFormData({
+        ...formData,
+        vendor_id: vendor._id,
+        delivery_type: selectedItem.delivery_type || "organization",
+        date: selectedItem.delivery_date?.split('T')[0] || '',
+        description: selectedItem.description || '',
+        internal_team_notes: selectedItem.internal_team_notes || '',
+      });
+
+      // Set products data
+      const mappedProducts = selectedItem.items.map((item, index) => ({
+        id: index + 1,
+        item: item.item_id._id,
+        quantity: item.qty_received ,
+        price: item.price || 0,
+        tax: item.tax?._id || '',
+        taxRate: item.tax?.tax_rate || 0,
+        total: item.total || 0,
+        totalTax: item.tax_amt || 0,
+        hsn: item.hsn || ''
+      }));
+
+      setProducts(mappedProducts);
+
+      // Set totals
+      setTotals({
+        ...totals,
+        subtotal: selectedItem.subtotal || 0,
+        discount: selectedItem.discount_value || 0,
+        discountType: selectedItem.discount_type || 'percentage',
+        adjustmentAmount: selectedItem.adjustment_amount || 0,
+        total: selectedItem.total || 0
+      });
+    }
+  }, [selectedItem]);
+
   return (
     <Container fluid className="p-4">
       <Col sm={12} className="my-3">
         <div style={{ top: "186px", fontSize: "18px" }}>
           <Breadcrumb>
-            <BreadcrumbItem>Home</BreadcrumbItem>
-            <BreadcrumbItem>
-              <Link to="/admin/Inventory/SalesOrder">
-                Sales Order List
-              </Link>
-            </BreadcrumbItem>
-            <BreadcrumbItem active>{pageTitle}</BreadcrumbItem>
+            <BreadcrumbItem >Home</BreadcrumbItem>
+            <BreadcrumbItem><Link to="/admin/inventory/purchase-order-list">Purchase Bill List</Link></BreadcrumbItem>
+            <BreadcrumbItem active>Purchase Bill Create</BreadcrumbItem>
           </Breadcrumb>
         </div>
       </Col>
@@ -439,15 +418,15 @@ const SOCreate = () => {
             <img src={Lockenelogo} alt="Logo" className="img-fluid" />
           </Col>
           <Col>
-            <h5>{user?.name}</h5>
-            <p className="mb-1">{user?.email} / {user?.contact_no}</p>
+            <h5>{userName}</h5>
+            <p className="mb-1">{userEmail} / {UserContactN}</p>
             <p className="mb-1">
-              {user?.address}
+              {UserAddress}
             </p>
-            <strong>PAN: {user?.panNo}</strong>
+            <strong>PAN: {UesrPAN}</strong>
           </Col>
           <Col xs={2} className="text-end">
-            <span className="text-muted">SO:</span>
+            <span className="text-muted">PO:</span>
             <strong className="text-primary"> Draft</strong>
           </Col>
         </Row>
@@ -456,61 +435,132 @@ const SOCreate = () => {
       {/* Client & Delivery Details */}
       <Card className="p-3 shadow-sm">
         <Row>
-          <Col md={6} className="d-flex border-end flex-column gap-2">
+          <Col sm={4} className="d-flex border-end flex-column gap-2">
             <div className="border-bottom ">
-              <div className="d-flex flex-row align-items-center mb-3 gap-2">
-                <h5 className="text-muted me-2">Client Name Here</h5>
+              <div className="d-flex flex-row align-items-center justify-content-around mb-3 gap-2">
+                <h5 className="text-muted">Vendor :  </h5>
                 <Button
-                  style={{
-                    width: "144px",
-                    height: "44px",
-                    borderStyle: "dashed",
-                  }}
+                  style={{ width: "144px", height: "44px", borderStyle: "dashed" }}
                   variant="outline-primary"
                   className="d-flex align-items-center justify-content-center gap-2"
-                  onClick={handleShow}
+                  onClick={handleShowVendorList}
                 >
-                  <span> { selectedClient ? <FaCheck/> : <BiPlus/>}</span>
-                  { selectedClient ? "Client" : "Add Client"}
+                  <span>+</span> Add Vendor
                 </Button>
               </div>
             </div>
-            <Row className="mt-3"> 
-              <Col style={{ fontSize: "1rem" , color:"black" }} md={5}>
-                {selectedClient ? selectedClient.name : "Client Name"}
+            <Row className="mt-3">
+              <p style={{fontSize:"1.2rem" , fontWeight:"600"}} className="text-primary">{vendorSelected?.name || "Vendor Name"}</p>
+
+              <Col md={5}>
+                <h6 style={{ fontSize: "1rem" }}>Billing Address</h6>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.city1 || "Billing City"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state1 || "Billing State"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.pincode1 || "Billing Pincode"}</p>
+                <p className="mb-0" style={{ fontSize: "0.9rem" }}>{vendorSelected?.country1 || "Billing Country"}</p>
               </Col>
-              <Col style={{ fontSize: "1rem", color:"black" }} md={7}>
-                {selectedClient 
-                  ? `${selectedClient.email} / ${selectedClient.contact_no}`
-                  : "example@gmail.com / 00-0000-0000"}
+
+              <Col md={5}>
+                <h6 style={{ fontSize: "1rem" }}>Shipping Address</h6>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.city2 || "Shipping City"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state2 || "Shipping State"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.pincode2 || "Shipping Pincode"}</p>
+                <p className="mb-0" style={{ fontSize: "0.9rem" }}>{vendorSelected?.country2 || "Shipping Country"}</p>
               </Col>
             </Row>
 
-            <Row className="mt-3 justify-content-center ">
-              <Col className="" md={12}>
-                <h6
-                  className="d-flex align-items-center"
-                  style={{ fontSize: "1rem" }}
-                >
-                  {" "}
-                  <span style={{ marginRight: "10px" }}>
-                    Billing Address
-                  </span>{" "}
-                </h6>
-                <p style={{ fontSize: "0.9rem" }} className="mb-1">
-                  {selectedClient ? selectedClient.address : "Address"}
-                </p>
-                <p style={{ fontSize: "0.9rem" }} className="mb-1">
-                  {selectedClient ? selectedClient.city : "City"}
-                </p>
-                <p style={{ fontSize: "0.9rem" }} className="mb-0">
-                  {selectedClient ? selectedClient.state : "State"}
-                </p>
-              </Col>
-            </Row>
+
           </Col>
 
-          <Col md={6} style={{ marginTop: "2rem" }}>
+          <Col sm={4}>
+            <div className="d-flex my-3 flex-row align-items-center gap-2">
+              <h5 className="text-muted">Delivery Address <span className="text-danger">*</span></h5>
+
+            </div>
+
+
+            <div >
+              {/* Radio Buttons */}
+              <div className="d-flex flex-row mb-2 align-items-center gap-2">
+              <Form.Check
+                checked={formData.delivery_type === "organization"}
+                type="radio"
+                name="delivery_type" 
+                label="Organization"
+                value="organization"
+                onChange={(e) =>
+                  setFormData({ ...formData, delivery_type: e.target.value })
+                }
+                style={{ fontWeight: "bold", color: "black" }}
+                // check by default
+                defaultChecked
+
+              />
+              <Form.Check
+                type="radio"
+                name="delivery_type"
+                label="Customer"
+                value="customer"
+                checked={formData.delivery_type === "customer"}
+                onChange={(e) =>
+                  setFormData({ ...formData, delivery_type: e.target.value })
+                }
+                style={{ fontWeight: "bold", color: "black" }}
+              />
+              </div>
+
+
+              {formData.delivery_type === "organization" && (
+                <>
+                  <p style={{ fontWeight: "bold", marginTop: "30px", color: "black" }} className="mb-1">
+                    {userName}
+                  </p>
+                  <div style={{ marginTop: "15px" }} className="d-flex flex-column gap-2">
+                    <p className="mb-1"> {userEmail} / {UserContactN}</p>
+                    <p className="mb-1">{UserAddress}</p>
+                    <p className="mb-0">PAN: {UesrPAN}</p>
+                  </div>
+                </>
+              )}
+
+              {formData.delivery_type === "customer" && (
+                <>
+                  <Form.Select 
+                    className="my-3" 
+                    onChange={handleCustomerSelect}
+                    value={selectedCustomer?._id || ''}
+                  >
+                    <option value="">Select Customer</option>
+                    {customers && customers.map((customer) => (
+                      <option key={customer._id} value={customer._id}>
+                        {customer.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                  <div className="my-3">
+                    {selectedCustomer ? (
+                      <>
+                        <p style={{ fontWeight: "bold", color: "black" }} className="mb-1">
+                          {selectedCustomer.name}
+                        </p>
+                        <div style={{ marginTop: "15px" }} className="d-flex flex-column gap-2">
+                          <p className="mb-1">{selectedCustomer.email} / {selectedCustomer.contact_no}</p>
+                          <p className="mb-1">{selectedCustomer.address}</p>
+                          <p className="mb-1">{selectedCustomer.city}, {selectedCustomer.state}</p>
+                          <p className="mb-0">{selectedCustomer.country} - {selectedCustomer.pincode}</p>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-muted mb-0">Select a customer to view their details</p>
+                    )}
+                  </div>
+                </>
+              )}
+
+            </div>
+          </Col>
+
+          <Col sm={4} style={{ marginTop: "2rem" }}>
             <div className="d-flex flex-column gap-2">
               <div className="d-flex flex-row align-items-center gap-2">
                 <Form.Control
@@ -518,7 +568,7 @@ const SOCreate = () => {
                   name="date"
                   value={formData.date}
                   onChange={handleInputChange}
-                  placeholder="Date"
+                  placeholder="Delivery Date"
                   onFocus={(e) => e.target.type = 'date'}
                   onBlur={(e) => {
                     if (!e.target.value) e.target.type = 'text'
@@ -526,19 +576,7 @@ const SOCreate = () => {
                 />
               </div>
 
-              {/* <div className="d-flex flex-row align-items-center gap-2">
-                <Form.Control
-                  type="text"
-                  name="shipment_date"
-                  value={formData.shipment_date}
-                  onChange={handleInputChange}
-                  placeholder="Expected Shipment"
-                  onFocus={(e) => e.target.type = 'date'}
-                  onBlur={(e) => {
-                    if (!e.target.value) e.target.type = 'text'
-                  }}
-                />
-              </div> */}
+
 
               <div className="d-flex flex-row align-items-center gap-2">
                 <Form.Select
@@ -553,7 +591,7 @@ const SOCreate = () => {
                 >
                   <option value="">Select Payment Term</option>
                   {paymentTerms.map((term) => (
-                    <option key={term._id} value={term.name}>
+                    <option key={term._id} value={term._id}>
                       {term.name}
                     </option>
                   ))}
@@ -580,21 +618,14 @@ const SOCreate = () => {
                 placeholder="Enter Reference"
               />
 
-              {/* <Form.Control
-                name="delivery_preference"
-                value={formData.delivery_preference}
+              <Form.Control
+                name="shipment_preference"
+                value={formData.shipment_preference}
                 onChange={handleInputChange}
                 placeholder="Enter Shipment Preference"
-              /> */}
+              />
 
-              <Form.Select
-                name="sales_person"
-                value={formData.sales_person}
-                onChange={handleInputChange}
-              >
-                <option value="">Select Sale Person</option>
-                <option value="Super Admin">Super Admin</option>
-              </Form.Select>
+
             </div>
           </Col>
         </Row>
@@ -619,47 +650,17 @@ const SOCreate = () => {
                   <div className="d-flex gap-2">
                     <Form.Select
                       className="flex-grow-1"
-                      style={{ 
-                        border: `1px solid ${validationErrors[`product-${product.id}`] ? 'red' : 'black'}`, 
-                        borderStyle: "dashed" 
-                      }}
-                      value={product.item || ""}
-                      onChange={(e) => {
-                        updateProduct(product.id, "item", e.target.value);
-                        // Clear validation error when value is selected
-                        if (e.target.value) {
-                          setValidationErrors(prev => ({
-                            ...prev,
-                            [`product-${product.id}`]: null
-                          }));
-                        }
-                      }}
-                      onBlur={() => {
-                        // Set validation error if empty on blur
-                        if (!product.item) {
-                          setValidationErrors(prev => ({
-                            ...prev,
-                            [`product-${product.id}`]: 'Product selection is required'
-                          }));
-                        }
-                      }}
-                      required
+                      style={{ border: "1px solid black", borderStyle: "dashed" }}
+                      value={product.item}
+                      onChange={(e) => updateProduct(product.id, "item", e.target.value)}
                     >
-                      <option value="">Select Item *</option>
+                      <option value="">Select Item</option>
                       {items.map((item) => (
                         <option key={item._id} value={item._id}>
                           {item.name} (₹{item.sellingPrice})
                         </option>
                       ))}
-                      {product.item && !items.some(item => item._id === product.item) && product.itemName && (
-                        <option value={product.item}>{product.itemName}</option>
-                      )}
                     </Form.Select>
-                    {validationErrors[`product-${product.id}`] && (
-                      <div style={{ color: 'red', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-                        {validationErrors[`product-${product.id}`]}
-                      </div>
-                    )}
                     <Button
                       onClick={handleShowCreateItem}
                       className="flex-shrink-0"
@@ -805,9 +806,7 @@ const SOCreate = () => {
 
               {/* Discount */}
               <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
-                <span>Discount (₹{totals.discountType === 'Percentage' 
-                  ? Math.round((totals.subtotal * totals.discount) / 100).toFixed(2) 
-                  : parseFloat(totals.discount || 0).toFixed(2)})</span>
+                <span>Discount</span>
                 <div className="d-flex gap-2" style={{ maxWidth: "200px" }}>
                   <Form.Control
                     type="number"
@@ -820,7 +819,7 @@ const SOCreate = () => {
                     onChange={(e) => setTotals(prev => ({ ...prev, discountType: e.target.value }))}
                     style={{ width: "70px" }}
                   >
-                    <option value="Percentage">%</option>
+                    <option value="percentage">%</option>
                     <option value="flat">₹</option>
                   </Form.Select>
                 </div>
@@ -831,8 +830,8 @@ const SOCreate = () => {
                 <span>Tax ₹{totals.taxAmount.toFixed(2)}</span>
                 <Dropdown style={{ maxWidth: "200px" }}>
                   <Dropdown.Toggle variant="outline-primary" style={{ width: "100%" }}>
-                    {totals.selectedTaxes.length ? 
-                      totals.selectedTaxes.map(tax => `${tax.rate}%`).join(', ') : 
+                    {totals.selectedTaxes.length ?
+                      totals.selectedTaxes.map(tax => `${tax.rate}%`).join(', ') :
                       '0.00% Tax'}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
@@ -915,56 +914,68 @@ const SOCreate = () => {
               style={{ border: "1px solid gray" }}
             />
           </Col>
-              {/* Add a Attachment */}
-          {/* <Col className="" md={6}>
+
+          {/* <Col md={6}>
             <div
               className="rounded d-flex flex-column align-items-center justify-content-center p-4"
               style={{
                 minHeight: "200px",
                 border: "1px solid black",
                 borderStyle: "dashed",
-                cursor: "pointer"
+                cursor: "pointer",
               }}
-              onClick={() => document.getElementById('fileInput').click()}
+              onClick={() => document.getElementById("fileInput").click()}
             >
               <input
                 type="file"
                 id="fileInput"
                 multiple
                 accept=".pdf,.jpg,.jpeg,.png"
-                style={{ display: 'none' }}
-                onChange={handleFileChange}
+                style={{ display: "none" }}
+                onChange={handleFileChange2}
               />
-              
+
               <div className="text-center">
                 <div className="mb-2">
                   <FaUpload />
                 </div>
-                <p className="mb-0">
-                  Click to upload multiple files (.pdf, .jpg, .jpeg, .png)
-                </p>
+                <p className="mb-0">Click to upload multiple files (.pdf, .jpg, .jpeg, .png)</p>
               </div>
-              <div style={{height:"100px"}} className="mt-3 d-flex align-items-end w-100 flex-wrap gap-2">
+
+              <div
+                style={{ height: "100px" }}
+                className="mt-3 d-flex align-items-end w-100 flex-wrap gap-2"
+              >
                 {files.map((file, index) => (
                   <div key={index} className="position-relative">
-                    {file.type.includes('image') ? (
+                    {file.type.includes("image") ? (
                       <img
                         src={URL.createObjectURL(file)}
                         alt={`Preview ${index}`}
-                        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                        style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                        onLoad={(e) => {
+                          // Cleanup the object URL after the image has loaded
+                          const objectUrl = URL.createObjectURL(file);
+                          e.target.src = objectUrl;
+                          URL.revokeObjectURL(objectUrl);
+                        }}
                       />
                     ) : (
-                      <div className="d-flex align-items-center justify-content-center bg-light" 
-                           style={{ width: '50px', height: '50px' }}>
+                      <div
+                        className="d-flex align-items-center justify-content-center bg-light"
+                        style={{ width: "50px", height: "50px" }}
+                      >
                         <FaFilePdf size={40} />
                       </div>
                     )}
                     <div
-                      className="position-absolute  end-0"
-                      onClick={(e) => handleRemoveFile(index, e)}
-                      style={{ cursor: 'pointer', top:"-20px" }}
+                      className="position-absolute end-0"
+                      onClick={(e) => handleRemoveFile2(index, e)}
+                      style={{ cursor: "pointer", top: "-20px" }}
                     >
-                      <MdOutlineRemoveCircleOutline style={{color:"red", fontWeight:"bold", fontSize:"20px"}} /> 
+                      <MdOutlineRemoveCircleOutline
+                        style={{ color: "red", fontWeight: "bold", fontSize: "20px" }}
+                      />
                     </div>
                   </div>
                 ))}
@@ -974,9 +985,9 @@ const SOCreate = () => {
         </Row>
       </Card>
 
-      <AddClint 
-        show={show} 
-        handleClose={handleClose} 
+      <AddClint
+        show={show}
+        handleClose={handleClose}
         onClientSelect={handleClientSelect}
       />
       {showProductList && (
@@ -988,55 +999,33 @@ const SOCreate = () => {
       <PaymentTermsModal
         show={showPaymentTerms}
         handleClose={() => setShowPaymentTerms(false)}
-        onCreated={handlePaymentTermCreated}
       />
-      <Tax 
-        show={showTaxModal} 
-        handleClose={() => setShowTaxModal(false)}
-        onCreated={handleTaxCreated}
-      />
-      <OffcanvesItemsNewCreate 
-        showOffCanvasCreateItem={showOffCanvasCreateItem} 
-        handleCloseCreateItem={handleCloseCreateItem} 
+      <Tax show={showTaxModal} handleClose={() => setShowTaxModal(false)} />
+      <OffcanvesItemsNewCreate
+        showOffCanvasCreateItem={showOffCanvasCreateItem}
+        handleCloseCreateItem={handleCloseCreateItem}
       />
 
-      {/* Add a submit button */}
+      <VendorsList
+        showVendorList={showVendorList}
+        handleCloseVendorList={handleCloseVendorList}
+        onVendorSelect={handleVendorSelect}
+      />
+
+      {/* Update the submit button */}
       <div className="d-flex justify-content-end mt-3">
         <Button
           variant="primary"
           onClick={handleSubmit}
         >
-          {isEditMode ? "Update Sales Order" : "Create Sales Order"}
+          Submit
         </Button>
       </div>
 
-      {/* Validation Modal */}
-      <Modal 
-        show={showValidationModal} 
-        onHide={() => setShowValidationModal(false)}
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Required Field Missing</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>Please select a client before creating the sales order.</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={() => {
-            setShowValidationModal(false);
-            handleShow(); // Open the client selection modal
-          }}>
-            Add Client
-          </Button>
-          <Button variant="secondary" onClick={() => setShowValidationModal(false)}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      
 
     </Container>
   );
 };
 
-export default SOCreate;
+export default ParchaseBCreate;
