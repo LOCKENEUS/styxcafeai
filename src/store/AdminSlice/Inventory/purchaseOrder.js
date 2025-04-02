@@ -67,6 +67,27 @@ export const CreatePurchaseOrder = createAsyncThunk(
     }
   }
 );
+
+export const UpdatePurchaseOrder = createAsyncThunk(
+  "purchaseOrder/UpdatePurchaseOrder",
+  async ({id, POData}, thunkAPI) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/admin/inventory/po/${id}`,
+        POData
+      );
+      toast.success("Purchase Order updated successfully!");
+      return response.data.data;
+    } catch (error) {
+      let errorMessage =
+        error.response?.data?.message || "Something went wrong";
+
+      toast.error(errorMessage); // Show error toast
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  }
+);
+
 // /admin/inventory/po/list/:id
 export const GetPOList = createAsyncThunk(
   "purchaseOrder/GetPOList",

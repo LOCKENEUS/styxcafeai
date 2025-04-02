@@ -95,7 +95,7 @@ console.log("formattedPOList", formattedPOList);
   };
 
   const generateCSV = () => {
-    const headers = ["S/N", "Order No", "Vendor", "Amount", "Status", "Items"];
+    const headers = ["S/N", "Order No", "Vendor", "Amount", "Status", "Delivery Date"];
     const rows = paginatedData.map(item => [
         item.sn, item.name, item.vendor, item.amount, item.status, item.delivery_date
     ]);
@@ -180,7 +180,7 @@ console.log("formattedPOList", formattedPOList);
               <Table className="mt-4" responsive style={{ borderRadius: "5px", overflow: "hidden" }}>
                 <thead style={{ backgroundColor: "#e9f5f8" }}>
                   <tr>
-                    {["S/N", "Order No", "Vendor", "Amount", "Status", "Items"].map((head, idx) => (
+                    {["S/N", "Order No", "Vendor", "Amount", "Status", "Delivery Date"].map((head, idx) => (
                       <th key={idx} style={{
                         fontWeight: "500",
                         fontSize: "clamp(14px, 3vw, 16px)",

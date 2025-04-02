@@ -1,17 +1,17 @@
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect, Row, Table } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormControl, FormLabel, FormSelect, Row, Table } from "react-bootstrap";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import companylog from "/assets/inventory/companylogo.png";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { getVendors } from "../../../../store/AdminSlice/Inventory/VendorSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { GetPOList, GetPOListByVendor, GetPurchaseOrder } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { GetPOListByVendor, GetPurchaseOrder } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { createPurchaseReceive } from "../../../../store/AdminSlice/Inventory/purchaseReceive";
 
 export const PRCreate = () => {
     const [formData, setFormData] = useState({
         selectedVendor: "",
         PurchaseOrder: "",
-        currentDate: "",
+        currentDate: new Date().toISOString().split("T")[0],
         description: "",
         inventoryItems: [],
     });
@@ -27,30 +27,40 @@ export const PRCreate = () => {
             qty_received: 0,
             hsn: "",
             sku: "",
-            qty_to_receive: 1,
+            qty_to_receive: 0,
         },
     ]);
-    // const [inventoryItems ,setInventoryItems]= useState([]);
-    const [selectedPo, setSelectedPo] = useState("");
+    const [poSelected, setPoSelected] = useState("");
     const [selectedVendor, setSelectedVendor] = useState("");
-    const [PurchaseOrder, setPurchaseOrder] = useState("");
-    const [selectedDate, setSelectedDate] = useState("");
-    const [currentDate, setCurrentDate] = useState("");
-    const [products, setProducts] = useState([]);
     const [taxList, setTaxList] = useState([]);
-    const dispatch = useDispatch();
 
-    const { purchaseOrder, selectedItem, loadingPO, errorPO } = useSelector((state) => state.purchaseOrder);
+    const dispatch = useDispatch();
+    const location = useLocation();
+    const navigate = useNavigate();
+    const purchaseOrderData = location.state;
+
+    const { purchaseOrder, selectedPo } = useSelector((state) => state.purchaseOrder);
     const { vendors, loading, error } = useSelector(state => state.vendors);
 
     const user = JSON.parse(sessionStorage.getItem("user"));
     const cafeId = user?._id;
-
     const userName = user?.name;
     const userEmail = user?.email;
     const UserContactN = user?.contact_no;
     const UserAddress = user?.address;
     const UesrPAN = user?.panNo;
+
+    useEffect(() => {
+        if (purchaseOrderData) {
+            setPoSelected(purchaseOrderData?._id);
+            setSelectedVendor(purchaseOrderData?.vendor_id?._id);
+            setFormData((prev) => ({
+                ...prev,
+                selectedVendor: purchaseOrderData?.vendor_id?._id,
+                currentDate: new Date().toISOString().split("T")[0],
+            }));
+        }
+    }, [purchaseOrderData]);
 
     useEffect(() => {
         dispatch(getVendors(cafeId));
@@ -63,24 +73,16 @@ export const PRCreate = () => {
     }, [dispatch, selectedVendor]);
 
     useEffect(() => {
+        if (poSelected) {
+            dispatch(GetPurchaseOrder(poSelected));
+        }
+    }, [dispatch, poSelected]);
+
+    useEffect(() => {
         if (selectedPo) {
-            dispatch(GetPurchaseOrder(selectedPo));
+            setInventoryItems(selectedPo?.items || []);
         }
-    }, [dispatch, selectedPo]);
-
-    useEffect(() => {
-        if (selectedItem) {
-            console.log("Setting Inventory Items:", selectedItem[0]?.items); // Debugging Log
-            setInventoryItems(selectedItem?.items || []);
-        }
-    }, [selectedItem]);
-
-    useEffect(() => {
-        const today = new Date().toISOString().split("T")[0];
-        setCurrentDate(today);
-    }, []);
-
-    console.log("purchaseOrder", purchaseOrder);
+    }, [selectedPo]);
 
     const handleTaxSubmit = (e) => {
         e.preventDefault();
@@ -105,86 +107,32 @@ export const PRCreate = () => {
         }));
     };
 
-    const handlePoChange = async (poId) => {
-        setPurchaseOrder(poId);
-
-        if (POItems && poId) {
-            const filteredProducts = POItems
-                .filter((item) => item?.refer_id === poId)
-                .map((item, index) => {
-                    return {
-                        id: item?._id,
-                        item_id: item?.item_id?._id || "",
-                        hsn: item?.hsn?.toString() || "",
-                        qty_to_receive: item?.quantity || 0,
-                        price: item?.price || 0,
-                        tax: item?.tax || "",
-                        tax_amt: item?.tax_amt || 0,
-                        total: item?.total || 0,
-                    };
-                });
-            setProducts(filteredProducts);
-        }
-        setFormData((prev) => ({
-            ...prev,
-            PurchaseOrder: poId,
-        }));
-    };
-
-    // const handleQtyChange = (e, index) => {
-    //     const { value } = e.target;
-    //     const enteredQty = parseInt(value, 10) || 0;
-
-    //     const orderedQty = POItems[index]?.quantity || 0; // Total Ordered Quantity
-    //     const receivedQty = POItems[index]?.qty_received || 0; // Already Received Quantity
-    //     const maxQty = orderedQty - receivedQty; // Max allowed qty to receive
-
-    //     if (enteredQty > maxQty) {
-    //         alert(`You cannot enter more than ${maxQty} units.`);
-    //         return;
-    //     }
-
-    //     setInventoryItems((prevItems) =>
-    //         prevItems.map((item, i) =>
-    //             i === index ? { ...item, qty_to_receive: enteredQty } : item
-    //         )
-    //     );
-
-    //     setFormData((prev) => ({
-    //         ...prev,
-    //         inventoryItems: prev.inventoryItems.map((item, i) =>
-    //             i === index ? { ...item, qty_to_receive: enteredQty } : item
-    //         ),
-    //     }));
-    // };
-
     const handleQtyChange = (e, index) => {
         const { value } = e.target;
         const enteredQty = parseInt(value, 10) || 0;
-    
+
         if (!inventoryItems || !inventoryItems[index]) return; // Prevent errors
-    
+
         const orderedQty = inventoryItems[index]?.quantity || 0;
         const receivedQty = inventoryItems[index]?.qty_received || 0;
         const maxQty = orderedQty - receivedQty;
-    
+
         if (enteredQty > maxQty) {
             alert(`You cannot enter more than ${maxQty} units.`);
             return;
         }
-    
+
         setInventoryItems((prevItems) =>
             prevItems.map((item, i) =>
                 i === index ? { ...item, qty_to_receive: enteredQty } : item
             )
         );
     };
-    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const submitData = {
-            po_id: selectedItem._id,
+            po_id: selectedPo._id,
             vendor_id: selectedVendor,
             cafe: cafeId,
             received_date: formData.currentDate,
@@ -193,8 +141,11 @@ export const PRCreate = () => {
         };
 
         try {
-            await dispatch(createPurchaseReceive(submitData)).unwrap();
-            // Handle success (e.g., redirect to SO list)
+            const response = await dispatch(createPurchaseReceive(submitData)).unwrap();
+
+            console.log("Purchase Receive created successfully:", response);
+
+            navigate("/admin/inventory/PurchaseReceivedDetails", { state: response?._id });
 
             setFormData({
                 selectedVendor: '',
@@ -205,12 +156,9 @@ export const PRCreate = () => {
             });
         } catch (error) {
             // Handle error
-            console.error('Error creating SO:', error);
+            console.error('Error creating purchase receive:', error);
         }
     };
-
-    console.log("selectedItem", selectedItem);
-    console.log("inventoryItems", inventoryItems);
 
     return (
         <Container >
@@ -250,8 +198,6 @@ export const PRCreate = () => {
                 <Col sm={12} className="my-2">
                     <Card className="p-3 shadow-sm">
                         <Row className="align-items-center">
-
-
                             <Col sm={4}>
                                 <FormLabel className="my-3" style={{ fontSize: "16px", fontWeight: "500" }}>Vendor
                                     <span style={{ color: "red" }}>*</span>
@@ -260,7 +206,6 @@ export const PRCreate = () => {
                                     value={formData.selectedVendor}
                                     name="selectedVendor"
                                     onChange={(e) => handleVendorChange(e.target.value)}
-
                                 >
                                     <option> select vendor</option>
                                     {vendors.map((vendor) => (
@@ -277,11 +222,11 @@ export const PRCreate = () => {
                                 <FormSelect
                                     aria-label="Default select example"
                                     name="PurchaseOrder"
-                                    value={selectedPo}
-                                    onChange={(e) => setSelectedPo(e.target.value)}
+                                    value={poSelected}
+                                    onChange={(e) => setPoSelected(e.target.value)}
                                 >
                                     <option value="">
-                                        {purchaseOrder.length ? "PO found!" : "Select PO No"}
+                                        {selectedVendor && purchaseOrder.length ? "PO found!" : "Select PO No"}
                                     </option>
                                     {purchaseOrder?.map((po) => (
                                         <option key={po._id} value={po._id}>
@@ -300,7 +245,6 @@ export const PRCreate = () => {
                                     type="date"
                                     name="currentDate"
                                     value={formData.currentDate}
-                                    // onChange={(e) => setCurrentDate(e.target.value)}
                                     onChange={handleChange}
                                 />
                             </Col>
@@ -309,7 +253,7 @@ export const PRCreate = () => {
                 </Col >
 
                 <Col sm={12} className="my-2">
-                    <Card className="p-3  shadow-sm">
+                    {selectedVendor && poSelected && purchaseOrder.length > 0 && <Card className="p-3  shadow-sm">
                         <Table responsive className="mb-2">
                             <thead>
                                 <tr>
@@ -366,7 +310,7 @@ export const PRCreate = () => {
                                 <Button type="submit " onClick={handleSubmit} style={{ padding: "10px 35px", fontSize: "14px" }}>Submit</Button>
                             </Col>
                         </Row>
-                    </Card>
+                    </Card>}
                 </Col>
             </Row>
         </Container>

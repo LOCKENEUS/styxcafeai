@@ -1,52 +1,34 @@
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Table } from "react-bootstrap";
-import { LuPencil } from "react-icons/lu";
-import pdflogo from "/assets/Admin/profileDetails/pdflogo.svg";
-import deleteplogo from "/assets/inventory/Vector (1).png";
-import receive from "/assets/inventory/solar_card-send-linear.png";
-import print from "/assets/inventory/Vector.png";
+import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Table } from "react-bootstrap";;
 import sendMail from "/assets/inventory/Group.png";
-import editlogo from "/assets/inventory/mage_edit.png";
 import companylog from "/assets/inventory/companylogo.png";
+import print from "/assets/inventory/Vector.png";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getPurchaseReceive } from "../../../../store/AdminSlice/Inventory/purchaseReceive";
 import { useEffect } from "react";
 
-
 export const PurchaseReceivedDetails = () => {
 
     const user = JSON.parse(sessionStorage.getItem("user"));
-
     const cafeId = user?._id;
-    console.log("user ----", user);
     const userName = user?.name;
     const userEmail = user?.email;
     const UserContactN = user?.contact_no;
     const UserAddress = user?.address;
     const UesrPAN = user?.panNo;
-    console.log("userName call ----", userName);
-
 
     const dispatch = useDispatch();
+    
     useEffect(() => {
         dispatch(getPurchaseReceive(purchaseReceive));
     }, [dispatch, cafeId]);
 
     const POIdGet = useSelector(state => state.purchaseReceiveSlice);
-    console.log("POIdGet ==== ", POIdGet);
     const location = useLocation();
     const purchaseReceive = location.state;
 
-    console.log("purchase Receive 101:", purchaseReceive);
-
     // count items
-
     const countItems = POIdGet?.selectedItem?.items;
-    console.log("countItems length", countItems);
-
-
-    //  const billingAdress =POIdGet?.selectedItem?.vendor_id?.billingAddress;
-    //  console.log("billingAdress",billingAdress);
 
     return (
         <Container >
@@ -62,7 +44,6 @@ export const PurchaseReceivedDetails = () => {
                     </div>
                 </Col>
 
-
                 <Col sm={12} className="my-2">
                     <Card className="p-3">
                         <Row>
@@ -74,7 +55,7 @@ export const PurchaseReceivedDetails = () => {
                             </Col>
                             <Col sm={6} xs={12} className="d-flex flex-wrap justify-content-center justify-content-sm-end align-items-center gap-2 text-center">
                                 <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}
-                                 onClick={() => window.print()}
+                                    onClick={() => window.print()}
                                 >
                                     <Image src={print} className="me-2" /> Print
                                 </Button>
@@ -84,10 +65,7 @@ export const PurchaseReceivedDetails = () => {
                                 <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                                     {/* <Image src={sendMail} className="me-2" />  */}
                                     <Link to="/admin/inventory/PurchaseBillCreate" className="text-decoration-none text-dark"><b >+</b>  Create Bill </Link>
-                                    
                                 </Button>
-
-
                             </Col>
                         </Row>
                     </Card>
@@ -135,9 +113,6 @@ export const PurchaseReceivedDetails = () => {
                                     </Col>
                                 </Row>
                             </Col>
-
-
-
                             <Col sm={8} >
                                 <Row>
                                     {/* Delivery Details */}
@@ -153,7 +128,6 @@ export const PurchaseReceivedDetails = () => {
 
                                     {/* Order Info */}
                                     <Col sm={6} >
-
                                         <p className="my-5 mx-2 border-start border-3 p-2">
                                             <p><span className="my-1 fw-bold">Received No:</span> <span className="float-end">{POIdGet?.selectedItem?.po_no}</span></p>
                                             <p><span className="my-1 fw-bold" >Order No:<b className="text-primary float-end">{POIdGet?.selectedItem?.refer_id?.po_no}</b></span></p>
@@ -164,7 +138,6 @@ export const PurchaseReceivedDetails = () => {
                                                 <span className="float-end">{new Date(POIdGet?.selectedItem?.delivery_date).toLocaleDateString()}</span>
                                             </p>
                                         </p>
-
                                     </Col>
                                 </Row>
                             </Col>
@@ -175,25 +148,20 @@ export const PurchaseReceivedDetails = () => {
                 <Col sm={12} className="my-2">
                     <Card className="p-3 shadow-sm">
                         <Row>
-
-
                             <Col sm={12}>
                                 <div className="table-responsive">
-
-
-                                    {countItems && countItems.length > 0 ? (
-                                        countItems.map((item, index) => (
-                                            <Table className="text-center align-middle">
-                                                <thead className="text-start" >
-                                                    <tr style={{ borderBottom: "2px solid #dee2e6" }}>
-                                                        <th className="fw-bold"  >PRODUCT</th>
-                                                        <th className="fw-bold" ></th>
-                                                        <th className="fw-bold" >QUANTITY</th>
-                                                        <th className="fw-bold" ></th>
-
-                                                    </tr>
-                                                </thead>
-                                                <tbody className="text-start" >
+                                    <Table className="text-center align-middle">
+                                        <thead className="text-start" >
+                                            <tr style={{ borderBottom: "2px solid #dee2e6" }}>
+                                                <th className="fw-bold"  >PRODUCT</th>
+                                                <th className="fw-bold" ></th>
+                                                <th className="fw-bold" >QUANTITY</th>
+                                                <th className="fw-bold" ></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-start" >
+                                            {countItems && countItems.length > 0 ? (
+                                                countItems.map((item, index) => (
                                                     <tr>
                                                         <td>
                                                             <b>{item?.item_id?.name}</b>
@@ -202,38 +170,28 @@ export const PurchaseReceivedDetails = () => {
                                                         </td>
                                                         <td>
                                                             SKU : {item.item_id?.sku}
-
                                                         </td>
                                                         <td>
-
                                                             Ordered Qty  : {item?.quantity} Nos
                                                         </td>
                                                         <td>  Received Qty :  {item?.qty_received}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </Table>
-                                        ))
-                                    ) : (
-                                        <p className="text-center text-primary">No Items</p>
-                                    )
-
-
-
-                                    }
-
-
+                                                    </tr>))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan="4" className="text-center">No Items Found</td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </Table>
                                 </div>
                             </Col>
                         </Row>
-
                     </Card>
                 </Col>
 
                 <Col sm={12} className="my-2">
                     <Card className="p-3 shadow-sm">
                         <Row>
-
-
                             <Col sm={6} className="p-2 position-relative">
                                 <p><b>Description : </b></p>
                                 <div className="d-none d-sm-block" style={{ height: "2rem" }}>
@@ -246,11 +204,7 @@ export const PurchaseReceivedDetails = () => {
                         </Row>
                     </Card>
                 </Col>
-
-
-
             </Row>
-
         </Container>
     )
 } 

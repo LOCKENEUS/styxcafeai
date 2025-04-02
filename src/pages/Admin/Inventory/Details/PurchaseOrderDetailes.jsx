@@ -5,8 +5,8 @@ import print from "/assets/inventory/Vector.png";
 import sendMail from "/assets/inventory/Group.png";
 import editlogo from "/assets/inventory/mage_edit.png";
 import companylog from "/assets/inventory/companylogo.png";
-import { Link, useLocation, useParams } from "react-router-dom";
-import React, { useEffect, useRef, useState } from "react";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GetPurchaseOrder } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 
@@ -18,6 +18,7 @@ const PurchaseOrderDetails = () => {
     const [discount, setDiscount] = useState(0);
     const dispatch = useDispatch();
     const location = useLocation();
+    const navigate = useNavigate();
     const purchaseOrder = location.state;
     const selectedPo = useSelector((state) => state.purchaseOrder.selectedPo);
     const user = JSON.parse(sessionStorage.getItem("user"));
@@ -39,17 +40,60 @@ const PurchaseOrderDetails = () => {
             setItems(selectedPo?.items);
             setTaxes(selectedPo?.tax);
 
-            const discountValue = selectedPo?.discount_type === "Percentage" ? (selectedPo?.discount_value * selectedPo?.subtotal / 100) : selectedPo?.discount_value;
-            setDiscount(discountValue);
+            const discountValue = selectedPo?.discount_type === "percentage" ? (selectedPo?.discount_value * selectedPo?.subtotal / 100) : selectedPo?.discount_value;
+            setDiscount(Math.round(discountValue));
         }
     }, [selectedPo]);
 
-    console.log("purchaseOrder", selectedPo);
-    console.log("items", items);
-    console.log("taxes", taxes);
+    const handleReceive = () => {
+        // Handle receive action here
+        console.log("Receive button clicked");
+        navigate("/admin/inventory/purchaseReceivedCreate", { state: selectedPo });
+    }
+
+    const handlePrint = () => {
+        const printContent = document.getElementById('printableArea');
+        const originalContents = document.body.innerHTML;
+
+        // Create a new window for printing
+        const printWindow = window.open('', '_blank');
+
+        // Add necessary styles for printing
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Sales Order: ${selectedPo.po_no}</title>
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+                    <style>
+                        body { font-family: Arial, sans-serif; }
+                        .print-header { text-align: center; margin-bottom: 20px; }
+                        @media print {
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container mt-4">
+                        <div class="print-header">
+                            <h3>Sales Order: ${selectedPo.po_no}</h3>
+                        </div>
+                        ${printContent.innerHTML}
+                        <div class="row mt-4 no-print">
+                            <div class="col-12 text-center">
+                                <button onclick="window.print()" class="btn btn-primary">Print</button>
+                                <button onclick="window.close()" class="btn btn-secondary ms-2">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+            </html>
+        `);
+
+        printWindow.document.close();
+    };
 
     return (
-        <Container >
+        <Container id="printableArea">
             <Row className="mx-2">
                 {/* Breadcrumb Section */}
                 <Col sm={12} className="my-3">
@@ -61,7 +105,6 @@ const PurchaseOrderDetails = () => {
                         </Breadcrumb>
                     </div>
                 </Col>
-
 
                 <Col sm={12} className="my-2">
                     <Card className="p-3">
@@ -75,28 +118,24 @@ const PurchaseOrderDetails = () => {
                             <Col sm={6} xs={12} className="d-flex flex-wrap justify-content-center justify-content-sm-end align-items-center gap-2 text-center">
                                 <Button className="d-flex align-items-center 	" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}
                                     //  onClick={handlePrint}
-                                    onClick={() => window.print()}
+                                    onClick={handlePrint}
                                 >
                                     <Image src={print} className="me-2" /> Print
                                 </Button>
                                 <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                                     <Image src={sendMail} className="me-2" /> Send Email
                                 </Button>
-                                <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                                {selectedPo?.status !== "Received" && <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }} onClick={handleReceive}>
                                     <Image src={receive} className="me-2" /> Receive
-                                </Button>
-                                <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                                </Button>}
+                                {selectedPo?.status !== "Received" && <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                                     <Link to={`/admin/inventory/PurchaseOrderUpdate/${POId}`} >
-
                                         <Image src={editlogo} className="me-2" /> Edit
                                     </Link>
-
-
-                                </Button>
+                                </Button>}
                                 <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                                     <Image src={deleteplogo} />
                                 </Button>
-
                             </Col>
                         </Row>
                     </Card>
@@ -118,7 +157,7 @@ const PurchaseOrderDetails = () => {
                                 <strong>PAN: {UesrPAN}</strong>
                             </Col>
                             <Col sm={2} className=" d-flex  ">
-                                <span className="p-2 float-right">PO :<b className="text-primary">Received</b></span>
+                                <span className="p-2 float-right">PO : <b className="text-primary">{selectedPo?.status}</b></span>
                                 {/* <strong className="text-primary"> Draft</strong> */}
                             </Col>
                         </Row>
@@ -131,16 +170,16 @@ const PurchaseOrderDetails = () => {
                         <Row>
                             {/* Customer Info */}
                             <Col sm={4}  >
-                                <h5 className="text-primary mb-3" style={{ fontSize: '20px' }}>{selectedPo?.reference}</h5>
+                                <h5 className="text-primary mb-3" style={{ fontSize: '20px' }}>{selectedPo?.vendor_id?.name}</h5>
                                 <Row>
                                     <Col sm={6} >
                                         <span style={{ fontSize: '16px', fontWeight: '500' }}>Billing Address</span>
-                                        <p className="my-3">{vendor?.billingAddress} ||Nagpur Division, Maharashtra, India</p>
+                                        <p className="my-3">{vendor?.billingAddress}</p>
                                     </Col>
 
                                     <Col sm={6} className="border-end border-3" >
                                         <span style={{ fontSize: '16px', fontWeight: '500' }}>Shipping Address</span>
-                                        <p className="my-3">{vendor?.shippingAddress} || Nagpur Division, Maharashtra, India</p>
+                                        <p className="my-3">{vendor?.shippingAddress}</p>
                                     </Col>
                                 </Row>
                             </Col>
@@ -150,19 +189,25 @@ const PurchaseOrderDetails = () => {
                                     {/* Delivery Details */}
                                     <Col sm={6}  >
                                         <span className="mb-3" style={{ fontSize: '16px', fontWeight: '500' }}>Delivery Address</span>
-                                        <p className="my-3">
-                                            <span style={{ fontSize: '16px' }}>{userName}</span><br />
-                                            <span>{userEmail} / {UserContactN}</span>
-                                            <br />
-                                            <span>{UserAddress}</span>
-                                            <br />
-                                            <span>PAN:</span> {UesrPAN}
-                                        </p>
+                                        {selectedPo?.delivery_type === 'Organization' ?
+                                            <p className="my-3">{UserAddress}
+                                                <span style={{ fontSize: '16px' }}>{userName}</span><br />
+                                                <span>{userEmail} / {UserContactN}</span>
+                                                <br />
+                                                <span>{UserAddress}</span>
+                                                <br />
+                                                <span>PAN:</span> {UesrPAN}
+                                            </p>
+                                            :
+                                            <p className="my-3">
+                                                <span style={{ fontSize: '16px' }}>{selectedPo?.customer_id?.name}</span><br />
+                                                <span>{selectedPo?.customer_id?.address} / {selectedPo?.customer_id?.contact_no}</span>
+                                            </p>
+                                        }
                                     </Col>
-
                                     {/* Order Info */}
                                     <Col sm={6} >
-                                        <span className="mb-3 float-end" style={{ fontSize: '16px', fontWeight: '500' }}>Order No:<b className="text-primary"> {selectedPo?.po_no}</b></span>
+                                        <span className="mb-3 float-end" style={{ fontSize: '16px', fontWeight: '500' }}>Order No : <b className="text-primary"> {selectedPo?.po_no}</b></span>
                                         <p className="my-5 mx-2 border-start border-3 p-2">
                                             <p><span className="my-1 fw-bold">Expected Delivery:</span> {new Date(selectedPo?.delivery_date).toLocaleDateString()}</p>
                                             <p><span className="my-1 fw-bold">Payment Terms:</span> {selectedPo?.payment_terms}</p>
@@ -226,40 +271,32 @@ const PurchaseOrderDetails = () => {
                                             <td className="fw-bold text-start">Subtotal:</td>
                                             <td>{selectedPo?.subtotal}</td>
                                         </tr>
-                                        <tr>
+                                        {selectedPo?.discount_value > 0 && <tr>
                                             <td className="fw-bold text-start">Discount{selectedPo?.discount_type === "Percentage" && <>({selectedPo?.discount_value})</>}:</td>
                                             <td>
                                                 <span className="text-secondary" style={{ cursor: "pointer" }}>
                                                     {discount.toFixed(2)}
                                                 </span>{" "}
                                             </td>
-                                        </tr>
-                                        {/* <tr>
-                                            <td className="fw-bold text-start">Tax:</td>
-                                            <td>{purchaseOrder?.tax?.[0]?.tax_name}: ({purchaseOrder?.tax?.[0]?.tax_rate})</td>
-                                        </tr> */}
-                                        <tr>
-                                            {taxes.length > 0 && taxes.map((tax, index) => (
-                                                <>  <td className="fw-bold text-start" key={index}>{tax?.tax_name}:</td>
-                                                    <td className="fw-bold text-end" key={index}>{Math.round((selectedPo?.subtotal-discount)*tax?.tax_rate/100).toFixed(2)}</td>
-                                                </>
-                                            ))}
-                                        </tr>
+                                        </tr>}
+                                        {taxes.length > 0 && taxes.map((tax, index) => (
+                                            <tr>  <td className="fw-bold text-start" key={index}>{tax?.tax_name} ({tax?.tax_rate}%):</td>
+                                                <td className="fw-bold text-end" key={index}>{Math.round((selectedPo?.subtotal - discount) * tax?.tax_rate / 100).toFixed(2)}</td>
+                                            </tr>
+                                        ))}
                                         <tr>
                                             <td className="fw-bold text-start">Total:</td>
                                             <td>{purchaseOrder?.total.toFixed(2)}</td>
                                         </tr>
-                                        <tr>
+                                        {selectedPo?.adjustment_note && <tr>
                                             <td className="fw-bold text-start">{purchaseOrder?.adjustment_note}
                                             </td>
                                             <td>{selectedPo?.adjustment_amount}</td>
-                                        </tr>
+                                        </tr>}
                                     </tbody>
                                 </Table>
                             </Col>
-
                         </Row>
-
                     </Card>
                 </Col>
 

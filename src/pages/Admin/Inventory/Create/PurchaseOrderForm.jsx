@@ -1,14 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Modal, Breadcrumb, BreadcrumbItem, Dropdown } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Breadcrumb, BreadcrumbItem, Dropdown } from "react-bootstrap";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
-import { FaFilePdf, FaRupeeSign, FaTrash, FaUpload } from "react-icons/fa";
-import { BiArrowToLeft, BiPlus } from "react-icons/bi";
-// import  { OffcanvesItemsCreate } from "../Offcanvas/OffcanvesItems";
+import { FaRupeeSign, FaTrash } from "react-icons/fa";
 import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems"
 import Tax from "../modal/Tax";
-// import AddClint from "../modal/vendorListModal";
 import PaymentTermsModal from "../modal/PaymentTermsModal";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CreatePurchaseOrder, GetVendorsList, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch, useSelector } from "react-redux";
 import AddClint from "../modal/AddClint";
@@ -16,9 +13,6 @@ import VendorsList from "../modal/vendoreListModal";
 import { getItems } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
 import { getCustomers } from "../../../../store/AdminSlice/CustomerSlice";
-import AddressModal from "../modal/AddressModal";
-import { getCustomFields } from "../../../../store/AdminSlice/CustomField";
-import { MdOutlineRemoveCircleOutline } from "react-icons/md";
 
 const PurchaseOrderForm = () => {
   const [show, setShow] = useState(false);
@@ -29,14 +23,14 @@ const PurchaseOrderForm = () => {
   const [showPaymentTerms, setShowPaymentTerms] = useState(false);
 
   const [products, setProducts] = useState([
-    { id: 1, item: "", quantity: 1, price: 0, tax: 0, total: 0, totalTax: 0 },
+    { id: 1, item: "", quantity: 1, hsn: "", sku: "", price: 0, tax: 0, total: 0, totalTax: 0 },
   ]);
   const [showProductList, setShowProductList] = useState(false);
   const [showTaxModal, setShowTaxModal] = useState(false);
-  const [taxList, setTaxList] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { customFields } = useSelector((state) => state.customFields);
   const { taxFields } = useSelector((state) => state.taxFieldSlice);
   const { items, loading } = useSelector((state) => state.items);
@@ -45,6 +39,7 @@ const PurchaseOrderForm = () => {
   const handleCloseVendorList = () => setShowVendorList(false);
   const [vendorSelected, setVendorSelected] = useState([]);
   const [selectedOption, setSelectedOption] = useState("Organization");
+  const [selectedCustomer, setSelectedCustomer] = useState("");
   const [vendorId, setVendorId] = useState("");
   const user = JSON.parse(sessionStorage.getItem("user"));
 
@@ -98,13 +93,17 @@ const PurchaseOrderForm = () => {
         if (field === "item") {
           const selectedItem = items.find(item => item._id === value);
 
-
           if (selectedItem) {
             updatedProduct.price = selectedItem.sellingPrice;
             updatedProduct.tax = selectedItem.tax;
+            updatedProduct.hsn = selectedItem.hsn || ""; // Set HSN from selected item
+            updatedProduct.sku = selectedItem.sku || ""; // Set SKU from selected item
+
             const itemTax = taxFields.find(tax => tax._id === selectedItem.tax);
             updatedProduct.taxRate = itemTax ? itemTax.tax_rate : 0;
           }
+
+          // Prevent duplicate item selection
           const isDuplicate = products.some(
             (product) => product.id !== id && product.item === value
           );
@@ -114,21 +113,27 @@ const PurchaseOrderForm = () => {
             return product;
           }
         }
+
         if (field === "tax") {
           const selectedTax = taxFields.find(tax => tax._id === value);
           updatedProduct.taxRate = selectedTax ? selectedTax.tax_rate : 0;
         }
+
         const price = parseFloat(updatedProduct.price) || 0;
         const quantity = parseInt(updatedProduct.quantity) || 1;
         const taxRate = parseFloat(updatedProduct.taxRate) || 0;
+
         const subtotal = Math.round(price * quantity);
         const totalTax = Math.round((subtotal * taxRate) / 100);
+
         updatedProduct.total = Math.round(subtotal + totalTax);
         updatedProduct.totalTax = Math.round(totalTax);
+
         return updatedProduct;
       }
       return product;
     });
+
     setProducts(updatedProducts);
   };
 
@@ -171,13 +176,12 @@ const PurchaseOrderForm = () => {
 
     // Calculate tax amount
     const taxableAmount = subtotal - discountAmount;
-    const taxAmount = totals.selectedTaxes.reduce((sum, tax) => {
+    const taxAmount = Math.round(totals.selectedTaxes.reduce((sum, tax) => {
       return sum + (taxableAmount * (tax.rate / 100));
-    }, 0);
+    }, 0));
 
     // Calculate final total
-    // const total = subtotal - discountAmount + taxAmount + (parseFloat(totals.adjustmentAmount) || 0);
-const total = Math.round((subtotal - discountAmount + taxAmount + (parseFloat(totals?.adjustmentAmount) || 0)));
+    const total = Math.round((subtotal - discountAmount + taxAmount + (parseFloat(totals?.adjustmentAmount) || 0)));
 
     setTotals(prev => ({
       ...prev,
@@ -193,37 +197,19 @@ const total = Math.round((subtotal - discountAmount + taxAmount + (parseFloat(to
     calculateTotals();
   }, [products, totals.discount, totals.discountType, totals.selectedTaxes, totals.adjustmentAmount]);
 
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [files, setFiles] = useState([]);
-
-  const handleRemoveFile = (index, event) => {
-    // Stop event from bubbling up to parent
-    event.stopPropagation();
-    setFiles(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const handleFileChange2 = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
-  };
-
-  const handleRemoveFile2 = (index, e) => {
-    e.stopPropagation();
-    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-  };
 
   // Add new state for form data
   const [formData, setFormData] = useState({
     vendorId: '',
-    delivery_type: "organization",
+    delivery_type: "Organization",
     date: '',
     shipment_date: '',
     payment_terms: '',
     reference: '',
     shipment_preference: '',
     description: '',
-    internal_team_notes: ''
+    internal_team_notes: '',
+    customer_id: ''
   });
 
   // Handle form input changes
@@ -238,9 +224,7 @@ const total = Math.round((subtotal - discountAmount + taxAmount + (parseFloat(to
   // Update the handleSubmit function
   const handleSubmit = async () => {
     const submitData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      submitData.append("images", files[i]);
-    }
+
     // Add basic form fields
     submitData.append('cafe', cafeId);
     submitData.append('vendor_id', vendorId);
@@ -251,6 +235,7 @@ const total = Math.round((subtotal - discountAmount + taxAmount + (parseFloat(to
     submitData.append('description', formData.description);
     submitData.append('internal_team_notes', formData.internal_team_notes);
     submitData.append('delivery_type', formData.delivery_type);
+    submitData.append('customer_id', formData.customer_id);
 
     // Add financial details
     submitData.append('subtotal', totals.subtotal.toString());
@@ -278,14 +263,11 @@ const total = Math.round((subtotal - discountAmount + taxAmount + (parseFloat(to
     }));
     submitData.append('items', JSON.stringify(formattedItems));
 
-    // Append files
-    files.forEach((file, index) => {
-      submitData.append('internal_team_file', file);
-    });
-
     try {
-      await dispatch(CreatePurchaseOrder(submitData)).unwrap();
-      // Handle success (e.g., redirect to SO list)
+      const response = await dispatch(CreatePurchaseOrder(submitData)).unwrap();
+
+      navigate("/admin/inventory/purchase-order-details", { state: response });
+
       setFormData({
         cafeId: '',
         vendorId: '',
@@ -321,6 +303,8 @@ const total = Math.round((subtotal - discountAmount + taxAmount + (parseFloat(to
     }
     handleClose();
   };
+
+  console.log("customer", selectedCustomer);
 
   return (
     <Container fluid className="p-4">
@@ -398,28 +382,31 @@ const total = Math.round((subtotal - discountAmount + taxAmount + (parseFloat(to
             </div>
             <div>
               {/* Radio Buttons */}
-              <Form.Check
-                type="radio"
-                name="delivery_type"
-                label="Organization"
-                value="Organization"
-                checked={formData.delivery_type === "Organization"}
-                onChange={(e) =>
-                  setFormData({ ...formData, delivery_type: e.target.value })
-                }
-                style={{ fontWeight: "bold", color: "black" }}
-              />
-              <Form.Check
-                type="radio"
-                name="delivery_type"
-                label="Customer"
-                value="Customer"
-                checked={formData.delivery_type === "Customer"}
-                onChange={(e) =>
-                  setFormData({ ...formData, delivery_type: e.target.value })
-                }
-                style={{ fontWeight: "bold", color: "black" }}
-              />
+              <div className="d-flex align-items-center gap-3">
+                <Form.Check
+                  type="radio"
+                  name="delivery_type"
+                  label="Organization"
+                  value="Organization"
+
+                  checked={formData.delivery_type === "Organization"}
+                  onChange={(e) =>
+                    setFormData({ ...formData, delivery_type: e.target.value })
+                  }
+                  style={{ fontWeight: "bold", color: "black" }}
+                />
+                <Form.Check
+                  type="radio"
+                  name="delivery_type"
+                  label="Customer"
+                  value="Customer"
+                  checked={formData.delivery_type === "Customer"}
+                  onChange={(e) =>
+                    setFormData({ ...formData, delivery_type: e.target.value })
+                  }
+                  style={{ fontWeight: "bold", color: "black" }}
+                />
+              </div>
 
               {formData.delivery_type === "Organization" && (
                 <>
@@ -436,19 +423,25 @@ const total = Math.round((subtotal - discountAmount + taxAmount + (parseFloat(to
 
               {formData.delivery_type === "Customer" && (
                 <>
-                  <Form.Select className="my-0" >
+                  <Form.Select
+                    className="my-0"
+                    value={formData.customer_id || ""}
+                    onChange={(e) => {
+                      const selectedCustomer = customersList.find(customer => customer._id === e.target.value);
+                      setFormData({ ...formData, customer_id: e.target.value });
+                      setSelectedCustomer(selectedCustomer);
+                    }}
+                  >
                     <option>Select Customer</option>
                     {customersList.map((customer, index) => (
-                      <option key={index} value={customer.customer_id}>
+                      <option key={index} value={customer._id}>
                         {customer.name}
                       </option>
                     ))}
                   </Form.Select>
                   <div className="my-3">
-                    <p className="my-0 mx-2">{customersList?.address}</p>
-                    <p className="my-0 mx-2">Customer City,</p>
-                    <p className="my-0 mx-2">Customer State,</p>
-                    <p className="my-0 mx-2">Customer Country-123456</p>
+                    <p className="my-0 mx-2">{selectedCustomer?.name}</p>
+                    <p className="my-0 mx-2">{selectedCustomer?.address},</p>
                   </div>
                 </>
               )}
@@ -485,7 +478,7 @@ const total = Math.round((subtotal - discountAmount + taxAmount + (parseFloat(to
                 >
                   <option value="">Select Payment Term</option>
                   {paymentTerms.map((term) => (
-                    <option key={term._id} value={term._id}>
+                    <option key={term._id} value={term.name}>
                       {term.name}
                     </option>
                   ))}
@@ -726,8 +719,8 @@ const total = Math.round((subtotal - discountAmount + taxAmount + (parseFloat(to
                 <Dropdown style={{ maxWidth: "200px" }}>
                   <Dropdown.Toggle variant="outline-primary" style={{ width: "100%" }}>
                     {totals.selectedTaxes.length ?
-                      totals.selectedTaxes.map(tax => `${tax.rate}%`).join(', ') :
-                      '0.00% Tax'}
+                      `${totals.selectedTaxes.reduce((sum, tax) => sum + tax.rate, 0)}% Tax`
+                      : '0.00% Tax'}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     {taxFields.map(tax => (
@@ -809,74 +802,6 @@ const total = Math.round((subtotal - discountAmount + taxAmount + (parseFloat(to
               style={{ border: "1px solid gray" }}
             />
           </Col>
-
-          {/* <Col md={6}>
-            <div
-              className="rounded d-flex flex-column align-items-center justify-content-center p-4"
-              style={{
-                minHeight: "200px",
-                border: "1px solid black",
-                borderStyle: "dashed",
-                cursor: "pointer",
-              }}
-              onClick={() => document.getElementById("fileInput").click()}
-            >
-              <input
-                type="file"
-                id="fileInput"
-                multiple
-                accept=".pdf,.jpg,.jpeg,.png"
-                style={{ display: "none" }}
-                onChange={handleFileChange2}
-              />
-
-              <div className="text-center">
-                <div className="mb-2">
-                  <FaUpload />
-                </div>
-                <p className="mb-0">Click to upload multiple files (.pdf, .jpg, .jpeg, .png)</p>
-              </div>
-
-              <div
-                style={{ height: "100px" }}
-                className="mt-3 d-flex align-items-end w-100 flex-wrap gap-2"
-              >
-                {files.map((file, index) => (
-                  <div key={index} className="position-relative">
-                    {file.type.includes("image") ? (
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt={`Preview ${index}`}
-                        style={{ width: "50px", height: "50px", objectFit: "cover" }}
-                        onLoad={(e) => {
-                          // Cleanup the object URL after the image has loaded
-                          const objectUrl = URL.createObjectURL(file);
-                          e.target.src = objectUrl;
-                          URL.revokeObjectURL(objectUrl);
-                        }}
-                      />
-                    ) : (
-                      <div
-                        className="d-flex align-items-center justify-content-center bg-light"
-                        style={{ width: "50px", height: "50px" }}
-                      >
-                        <FaFilePdf size={40} />
-                      </div>
-                    )}
-                    <div
-                      className="position-absolute end-0"
-                      onClick={(e) => handleRemoveFile2(index, e)}
-                      style={{ cursor: "pointer", top: "-20px" }}
-                    >
-                      <MdOutlineRemoveCircleOutline
-                        style={{ color: "red", fontWeight: "bold", fontSize: "20px" }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Col> */}
         </Row>
       </Card>
 
