@@ -16,6 +16,7 @@
 .content-wrapper {
   background-color: #F2F2F2;
   padding: 20px;
+  height: 100vh;
   margin-top: 60px; /* Navbar height */
 }
 

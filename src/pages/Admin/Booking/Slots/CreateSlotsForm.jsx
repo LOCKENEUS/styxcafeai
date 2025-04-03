@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Button, Row, Col } from "react-bootstrap";
+import { Form, Button, Row, Col, Card } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getGames } from "../../../../store/slices/gameSlice";
@@ -88,7 +88,7 @@ const CreateSlotForm = () => {
         <Link to="/admin/dashboard">Home</Link> /{" "}
         <span style={{ color: "blue" }}>Create Slots</span>
       </h5>
-      <div className="p-4">
+      <Card data-aos="fade-up" data-duration="400" className="p-4 mt-4">
         <Form onSubmit={handleSubmit}>
           <Row className="mb-3">
             <Col md={6}>
@@ -178,7 +178,7 @@ const CreateSlotForm = () => {
             <Button variant="primary" type="submit">Create Slot</Button>
           </div>
         </Form>
-      </div>
+      </Card>
     </div>
   );
 };

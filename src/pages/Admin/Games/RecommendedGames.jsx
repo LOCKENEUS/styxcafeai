@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getGames } from '../../../store/slices/gameSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoAdd } from 'react-icons/io5';
+import Nogame from "/assets/Admin/Game/No Game.png";
 const RecommendedGames = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -92,40 +93,54 @@ const RecommendedGames = () => {
       </div>
       <div className="horizontal-scroll mb-5">
         <Row className="flex-nowrap" style={{ margin: '0 -0.5rem' }}>
-          {indoorGames.map((game, index) => (
-            <Col key={game._id} lg={2.4} xs={8} md={3} style={{ padding: '0 0.5rem' }}>
-              <Card className="shadow-sm" style={{ cursor: 'pointer' }}>
-                <Card.Img
-                  variant="top"
-                  src={`${import.meta.env.VITE_API_URL}/${game.gameImage}`}
-                  alt={game.name}
-                  style={{
-                    height: '120px',
-                    objectFit: 'cover'
-                  }}
-                  onClick={() => handleCardClick(game._id)}
+          {indoorGames.length > 0 ? (
+            indoorGames.map((game, index) => (
+              <Col key={game._id} lg={2.4} xs={8} md={3} style={{ padding: '0 0.5rem' }}>
+                <Card className="shadow-sm" style={{ cursor: 'pointer' }}>
+                  <Card.Img
+                    variant="top"
+                    src={`${import.meta.env.VITE_API_URL}/${game.gameImage}`}
+                    alt={game.name}
+                    style={{
+                      height: '120px',
+                      objectFit: 'cover'
+                    }}
+                    onClick={() => handleCardClick(game._id)}
+                  />
+                  <Card.Body>
+                    <Card.Title>{game.name}</Card.Title>
+                    <Card.Text>
+                      <small className="text-success">
+                        ● {game.type} ({game.size} players)
+                      </small>
+                    </Card.Text>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <span className="text-primary fw-bold px-3 py-2 rounded-pill" style={{ backgroundColor: '#FAFAF4' }}>₹{game.price}/Person</span>
+                      <button
+                        className="btn btn-primary rounded-circle"
+                        style={{ width: '40px', height: '40px', padding: 0 }}
+                        onClick={() => navigate(`/admin/games/${game._id}`)}
+                      >
+                        <MdOutlineArrowOutward />
+                      </button>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))
+          ) : (
+            <Col className="text-center py-5">
+              <div className="d-flex flex-column align-items-center">
+                <img 
+                  src={Nogame} 
+                  alt="No games" 
+                  style={{ width: '150px', opacity: 0.7 }}
                 />
-                <Card.Body>
-                  <Card.Title>{game.name}</Card.Title>
-                  <Card.Text>
-                    <small className="text-success">
-                      ● {game.type} ({game.size} players)
-                    </small>
-                  </Card.Text>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <span className="text-primary fw-bold px-3 py-2 rounded-pill" style={{ backgroundColor: '#FAFAF4' }}>₹{game.price}/Person</span>
-                    <button
-                      className="btn btn-primary rounded-circle"
-                      style={{ width: '40px', height: '40px', padding: 0 }}
-                      onClick={() => navigate(`/admin/games/${game._id}`)}
-                    >
-                      <MdOutlineArrowOutward />
-                    </button>
-                  </div>
-                </Card.Body>
-              </Card>
+                <h5 className="mt-3 text-muted">No indoor games available</h5>
+                <p className="text-muted">Click the + button to add a new game</p>
+              </div>
             </Col>
-          ))}
+          )}
         </Row>
       </div>
 
@@ -138,40 +153,54 @@ const RecommendedGames = () => {
       </h5>
       <div className="horizontal-scroll">
         <Row className="flex-nowrap" style={{ margin: '0 -0.5rem' }}>
-          {outdoorGames.map((game, index) => (
-            <Col key={game._id} lg={2.4} xs={8} md={3} style={{ padding: '0 0.5rem' }}>
-              <Card className="shadow-sm">
-                <Card.Img
-                  variant="top"
-                  src={`${import.meta.env.VITE_API_URL}/${game.gameImage}`}
-                  alt={game.name}
-                  style={{
-                    height: '120px',
-                    objectFit: 'cover'
-                  }}
-                  onClick={() => handleCardClick(game._id)}
+          {outdoorGames.length > 0 ? (
+            outdoorGames.map((game, index) => (
+              <Col key={game._id} lg={2.4} xs={8} md={3} style={{ padding: '0 0.5rem' }}>
+                <Card className="shadow-sm">
+                  <Card.Img
+                    variant="top"
+                    src={`${import.meta.env.VITE_API_URL}/${game.gameImage}`}
+                    alt={game.name}
+                    style={{
+                      height: '120px',
+                      objectFit: 'cover'
+                    }}
+                    onClick={() => handleCardClick(game._id)}
+                  />
+                  <Card.Body>
+                    <Card.Title>{game.name}</Card.Title>
+                    <Card.Text>
+                      <small className="text-success">
+                        ● {game.type} ({game.size} players)
+                      </small>
+                    </Card.Text>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <span className="text-primary fw-bold px-3 py-2 rounded-pill" style={{ backgroundColor: '#FAFAFA' }}>₹{game.price}/Person </span>
+                      <button
+                        className="btn btn-primary rounded-circle"
+                        style={{ width: '40px', height: '40px', padding: 0 }}
+                        onClick={() => navigate(`/admin/games/${game._id}`)}
+                      >
+                        <MdOutlineArrowOutward />
+                      </button>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))
+          ) : (
+            <Col className="text-center py-5">
+              <div className="d-flex flex-column align-items-center">
+                <img 
+                  src={Nogame} 
+                  alt="No games" 
+                  style={{ width: '150px', opacity: 0.7 }}
                 />
-                <Card.Body>
-                  <Card.Title>{game.name}</Card.Title>
-                  <Card.Text>
-                    <small className="text-success">
-                      ● {game.type} ({game.size} players)
-                    </small>
-                  </Card.Text>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <span className="text-primary fw-bold px-3 py-2 rounded-pill" style={{ backgroundColor: '#FAFAFA' }}>₹{game.price}/Person </span>
-                    <button
-                      className="btn btn-primary rounded-circle"
-                      style={{ width: '40px', height: '40px', padding: 0 }}
-                      onClick={() => navigate(`/admin/games/${game._id}`)}
-                    >
-                      <MdOutlineArrowOutward />
-                    </button>
-                  </div>
-                </Card.Body>
-              </Card>
+                <h5 className="mt-3 text-muted">No outdoor games available</h5>
+                <p className="text-muted">Click the + button to add a new game</p>
+              </div>
             </Col>
-          ))}
+          )}
         </Row>
       </div>
     </Container>

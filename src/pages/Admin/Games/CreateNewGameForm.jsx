@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Form, Button, Row, Col } from "react-bootstrap";
+import { Form, Button, Row, Col, Card } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { addGame, updateGame } from '../../../store/slices/gameSlice';
@@ -140,7 +140,7 @@ const CreateNewGameForm = () => {
           {id ? "Edit Game" : "Create New Game"}
           </span>
       </h5>
-      <div className="p-4">
+      <Card data-aos="fade-up" ata-aos-duration="500" className="p-4 mt-4">
         <Form onSubmit={handleSubmit}>
           <Row className="mb-3">
             <Col md={6}>
@@ -315,7 +315,7 @@ const CreateNewGameForm = () => {
             </Button>
           </div>
         </Form>
-      </div>
+      </Card>
     </div>
   );
 };

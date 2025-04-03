@@ -78,114 +78,153 @@ const UserList = () => {
         </Link>
       </div>
 
-      <div style={{ overflowX: 'auto', width: '100%' }}>
-        <Table striped bordered hover style={{ minWidth: '600px' }}>
-          <thead style={{ backgroundColor: '#0062FF0D' }}>
-            <tr>
-              <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                S/N
-              </th>
-              <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                Name
-              </th>
-              <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                Contact
-              </th>
-              <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                Email
-              </th>
-              <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                Department
-              </th>
-              <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                Role
-              </th>
-              <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user,index) => (
-              <tr key={user._id}>
-                <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  {index + 1}
+      {users.length === 0 ? (
+        <div style={{ overflowX: 'auto', width: '100%' }}>
+          <Table data-aos="fade-right" ata-aos-duration="1000"  striped bordered hover style={{ minWidth: '600px' }}>
+            <thead style={{ backgroundColor: '#0062FF0D' }}>
+              <tr>
+                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                  S/N
+                </th>
+                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                  Name
+                </th>
+                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                  Contact
+                </th>
+                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                  Email
+                </th>
+                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                  Department
+                </th>
+                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                  Role
+                </th>
+                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colSpan="7" style={{ textAlign: 'center', padding: '2rem' }}>
+                  No users found. Click the + button to add a new user.
                 </td>
-                <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', 
-                color: 'blue',
-                fontSize: 'clamp(14px, 3vw, 16px)' }} 
-                onClick={() => navigate(`/admin/users/user-details/${user._id}`)}
-                >
-                  {user.name}
-                </td>
-                <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  {user.contact_no}
-                </td>
-                <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  {user.email}
-                </td>
-                <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  {user.department}
-                </td>
-                <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  {user.role}
-                </td>
-                <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)', position: 'relative' }}>
-                  <Button
-                    variant="link"
-                    className="text-primary"
-                    onClick={() => setActiveDropdownId(activeDropdownId === user._id ? null : user._id)}
+              </tr>
+            </tbody>
+          </Table>
+        </div>
+      ) : (
+        <div style={{ overflowX: 'auto', width: '100%' }}>
+          <Table striped bordered hover style={{ minWidth: '600px' }}>
+            <thead style={{ backgroundColor: '#0062FF0D' }}>
+              <tr>
+                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                  S/N
+                </th>
+                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                  Name
+                </th>
+                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                  Contact
+                </th>
+                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                  Email
+                </th>
+                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                  Department
+                </th>
+                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                  Role
+                </th>
+                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user,index) => (
+                <tr key={user._id}>
+                  <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                    {index + 1}
+                  </td>
+                  <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', 
+                  color: 'blue',
+                  fontSize: 'clamp(14px, 3vw, 16px)' }} 
+                  onClick={() => navigate(`/admin/users/user-details/${user._id}`)}
                   >
-                    <FaEdit style={{ color: '#0062FF', fontSize: '1.2rem' }} />
-                  </Button>
-
-                  {activeDropdownId === user._id && (
-                    <div
-                      ref={editDropdownRef}
-                      style={{
-                        position: 'absolute',
-                        right: '0',
-                        top: '100%',
-                        backgroundColor: 'white',
-                        boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-                        borderRadius: '4px',
-                        zIndex: 1000,
-                        minWidth: 'clamp(120px, 30vw, 150px)',
-                      }}
+                    {user.name}
+                  </td>
+                  <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                    {user.contact_no}
+                  </td>
+                  <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                    {user.email}
+                  </td>
+                  <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                    {user.department}
+                  </td>
+                  <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
+                    {user.role}
+                  </td>
+                  <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)', position: 'relative' }}>
+                    <Button
+                      variant="link"
+                      className="text-primary"
+                      onClick={() => setActiveDropdownId(activeDropdownId === user._id ? null : user._id)}
                     >
-                      <Link 
-                        to={`/admin/users/create-user/${user._id}`}
-                        style={{ textDecoration: 'none' }}
+                      <FaEdit style={{ color: '#0062FF', fontSize: '1.2rem' }} />
+                    </Button>
+
+                    {activeDropdownId === user._id && (
+                      <div
+                        ref={editDropdownRef}
+                        style={{
+                          position: 'absolute',
+                          right: '0',
+                          top: '100%',
+                          backgroundColor: 'white',
+                          boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                          borderRadius: '4px',
+                          zIndex: 1000,
+                          minWidth: 'clamp(120px, 30vw, 150px)',
+                        }}
                       >
+                        <Link 
+                          to={`/admin/users/create-user/${user._id}`}
+                          style={{ textDecoration: 'none' }}
+                        >
+                          <div
+                            style={{
+                              padding: 'clamp(8px, 2vw, 10px)',
+                              cursor: 'pointer',
+                              color: '#0062FF',
+                              borderBottom: '1px solid #eee',
+                            }}
+                          >
+                            Edit User
+                          </div>
+                        </Link>
                         <div
                           style={{
                             padding: 'clamp(8px, 2vw, 10px)',
                             cursor: 'pointer',
-                            color: '#0062FF',
-                            borderBottom: '1px solid #eee',
+                            color: '#FF0000',
                           }}
+                          onClick={() => handleDeleteUser(user._id)}
                         >
-                          Edit User
+                          Delete User
                         </div>
-                      </Link>
-                      <div
-                        style={{
-                          padding: 'clamp(8px, 2vw, 10px)',
-                          cursor: 'pointer',
-                          color: '#FF0000',
-                        }}
-                        onClick={() => handleDeleteUser(user._id)}
-                      >
-                        Delete User
                       </div>
-                    </div>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
+      )}
 
       <style jsx>{`
         @media (max-width: 768px) {

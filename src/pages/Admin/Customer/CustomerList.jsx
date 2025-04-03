@@ -73,7 +73,7 @@ const CustomerList = () => {
           </div>
 
           {/* Wrapping table in a scrollable div */}
-          <div style={{ overflowX: 'auto', width: '100%' }}>
+          <div data-aos="fade-right" ata-aos-duration="1000" style={{ overflowX: 'auto', width: '100%' }}>
             <Table striped bordered hover style={{ minWidth: '600px' }}>
               <thead style={{ backgroundColor: '#0062FF0D' }}>
                 <tr>
@@ -171,12 +171,11 @@ const CustomerList = () => {
                       colSpan="8" 
                       style={{
                         textAlign: 'center',
-                        padding: '20px',
+                        padding: '40px',
                         fontSize: 'clamp(14px, 3vw, 16px)',
                       }}
                     >
-                      empty customer list
-                    </td>
+No Customer found. Click the + button to add a new customer.                    </td>
                   </tr>
                 ) : (
                   customers.map((customer, index) => (

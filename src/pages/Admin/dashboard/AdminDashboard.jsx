@@ -17,6 +17,8 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGames } from '../../../store/slices/gameSlice';
 import { useNavigate } from 'react-router-dom';
+import Nogame from "/assets/Admin/Game/No Game.png";
+
 
 const summaryData = [
   {
@@ -216,43 +218,61 @@ const AdminDashboard = () => {
                 <Card.Title style={{ fontSize: "1.2rem" }}>Listed Games</Card.Title>
                 <Link to="/admin/games/recommended" className="text-primary" style={{ cursor: 'pointer', fontWeight: "bold" }}>View All</Link>
               </div>
-              <div className="horizontal-scroll">
-                <Row className="flex-nowrap" style={{ margin: '0 -0.5rem' }}>
-                  {games.slice(0, 3).map((game, index) => (
-                    <Col key={game._id} xs={10} sm={6} md={6} lg={4} style={{ padding: '0 0.5rem' }}>
-                      <Card className="border-0 h-100">
-                        <Card.Img
-                          variant="top"
-                          src={`${import.meta.env.VITE_API_URL}/${game.gameImage}`}
-                          alt={game.name}
-                          style={{
-                            height: '150px',
-                            objectFit: 'cover'
-                          }}
-                        />
-                        <Card.Body>
-                          <Card.Title className="h6">{game.name}</Card.Title>
-                          <Card.Text>
-                            <small className="text-success">
-                              ● {game.type} ({game.size} players)
-                            </small>
-                          </Card.Text>
-                          <div className="d-flex justify-content-between align-items-center mb-2">
-                            <span className="text-primary px-2 py-1 rounded-pill" style={{ backgroundColor: '#FAFAFA', fontSize: '0.9rem' }}>₹{game.price}/Person</span>
-                            <button
-                              className="btn btn-primary rounded-circle"
-                              style={{ width: '35px', height: '35px', padding: 0 }}
-                              onClick={() => navigate(`/admin/games/${game._id}`)}
-                            >
-                              <MdOutlineArrowOutward />
-                            </button>
-                          </div>
-                        </Card.Body>
-                      </Card>
-                    </Col>
-                  ))}
-                </Row>
-              </div>
+              {games.length > 0 ? (
+                <div className="horizontal-scroll">
+                  <Row className="flex-nowrap" style={{ margin: '0 -0.5rem' }}>
+                    {games.slice(0, 3).map((game, index) => (
+                      <Col key={game._id} xs={10} sm={6} md={6} lg={4} style={{ padding: '0 0.5rem' }}>
+                        <Card className="border-0 h-100">
+                          <Card.Img
+                            variant="top"
+                            src={`${import.meta.env.VITE_API_URL}/${game.gameImage}`}
+                            alt={game.name}
+                            style={{
+                              height: '150px',
+                              objectFit: 'cover'
+                            }}
+                          />
+                          <Card.Body>
+                            <Card.Title className="h6">{game.name}</Card.Title>
+                            <Card.Text>
+                              <small className="text-success">
+                                ● {game.type} ({game.size} players)
+                              </small>
+                            </Card.Text>
+                            <div className="d-flex justify-content-between align-items-center mb-2">
+                              <span className="text-primary px-2 py-1 rounded-pill" style={{ backgroundColor: '#FAFAFA', fontSize: '0.9rem' }}>₹{game.price}/Person</span>
+                              <button
+                                className="btn btn-primary rounded-circle"
+                                style={{ width: '35px', height: '35px', padding: 0 }}
+                                onClick={() => navigate(`/admin/games/${game._id}`)}
+                              >
+                                <MdOutlineArrowOutward />
+                              </button>
+                            </div>
+                          </Card.Body>
+                        </Card>
+                      </Col>
+                    ))}
+                  </Row>
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <img 
+                    src={Nogame} 
+                    alt="No games found" 
+                    style={{ width: '100px', opacity: 0.7 }}
+                  />
+                  <h5 className="mt-3 text-muted">No Games Listed</h5>
+                  <p className="text-muted">Add your first game to get started</p>
+                  <button 
+                    className="btn btn-primary mt-2"
+                    onClick={() => navigate('/admin/games/create-new-game/')}
+                  >
+                    Add Game
+                  </button>
+                </div>
+              )}
             </Card.Body>
           </Card>
           {/* Tournaments */}
