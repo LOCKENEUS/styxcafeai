@@ -1,4 +1,4 @@
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Table } from "react-bootstrap";
+import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Spinner, Table } from "react-bootstrap";
 import deleteplogo from "/assets/inventory/Vector (1).png";
 import receive from "/assets/inventory/solar_card-send-linear.png";
 import print from "/assets/inventory/Vector.png";
@@ -21,6 +21,7 @@ const PurchaseOrderDetails = () => {
     const navigate = useNavigate();
     const purchaseOrder = location.state;
     const selectedPo = useSelector((state) => state.purchaseOrder.selectedPo);
+    const loading = useSelector((state) => state.purchaseOrder.loading);
     const user = JSON.parse(sessionStorage.getItem("user"));
     const POId = purchaseOrder?._id;
 
@@ -96,9 +97,18 @@ const PurchaseOrderDetails = () => {
         printWindow.document.close();
     };
 
+    if (loading) {
+        return (
+          <Container className="d-flex justify-content-center align-items-center min-vh-100">
+            <Spinner animation="border" role="status">
+            </Spinner>
+          </Container>
+        );
+      }
+
     return (
         <Container id="printableArea">
-            <Row className="mx-2">
+            <Row  data-aos="fade-up" data-aos-duration="500" className="mx-2">
                 {/* Breadcrumb Section */}
                 <Col sm={12} className="my-3">
                     <div style={{ top: "186px", fontSize: "18px" }}>
@@ -111,7 +121,7 @@ const PurchaseOrderDetails = () => {
                 </Col>
 
                 <Col sm={12} className="my-2">
-                    <Card className="p-3">
+                    <Card  className="p-3">
                         <Row>
                             <Col sm={6} xs={12}>
                                 <h5 className="text-dark p-2" style={{ fontSize: '18px' }}>

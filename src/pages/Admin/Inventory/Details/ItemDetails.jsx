@@ -78,7 +78,7 @@ const ItemDetails = () => {
     return (
       <Container className="d-flex justify-content-center align-items-center min-vh-100">
         <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
+ 
         </Spinner>
       </Container>
     );
@@ -156,7 +156,7 @@ const ItemDetails = () => {
           </Col>
 
           <Col xs={12} lg={5} className="mt-3">
-            <Tab.Content>
+            <Tab.Content data-aos="fade-up" data-aos-duration="500">
               <Tab.Pane eventKey="checkout">
                 <Card className="p-3">
                   <h4>Details</h4>
@@ -281,7 +281,7 @@ const ItemDetails = () => {
               </Tab.Pane>
             </Tab.Content>
           </Col>
-          <Col xs={12} lg={7} className="mt-3">
+          <Col data-aos="fade-down" data-aos-duration="500" xs={12} lg={7} className="mt-3">
               <Container fluid className="px-0">
                 <Card className="p-4">
                   <div className="d-flex justify-content-center mb-4">
