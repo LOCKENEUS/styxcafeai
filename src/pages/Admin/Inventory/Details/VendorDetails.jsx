@@ -32,7 +32,7 @@ const VendorDetails = () => {
   if (!selectedVendor) return <div className="text-center my-5">No vendor data found</div>;
 
   return (
-    <Container data-aos="fade-down" data-aos-duration="700" className="mt-4">
+    <Container className="mt-4">
 
       <Breadcrumb>
         <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
@@ -40,7 +40,7 @@ const VendorDetails = () => {
         <BreadcrumbItem ><Link to="/admin/inventory/vendors-list">Vendors List</Link></BreadcrumbItem>
         <BreadcrumbItem active>Vendor Details</BreadcrumbItem>
       </Breadcrumb>
-      <Row>
+      <Row data-aos="fade-up" data-aos-duration="500">
         {/* Sidebar with Profile */}
         <Col md={4}>
           <Card className="p-3 text-center">

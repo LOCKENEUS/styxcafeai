@@ -52,12 +52,7 @@ export const CreateVendorForm = () => {
         bank_name: '',
         accountnumber: '',
         ifsccode: '',
-        accounttype: '',
-        address: '',
-        country: '',
-        state: '',
-        city: '',
-        zipcode: ''
+        accounttype: ''
     });
 
     useEffect(() => {
@@ -316,12 +311,7 @@ export const CreateVendorForm = () => {
             bank_name: '',
             accountnumber: '',
             ifsccode: '',
-            accounttype: '',
-            address: '',
-            country: '',
-            state: '',
-            city: '',
-            zipcode: ''
+            accounttype: ''
         };
 
         // Vendor Name validation
@@ -359,27 +349,7 @@ export const CreateVendorForm = () => {
             isValid = false;
         }
 
-        // Billing Address validation
-        if (!formData.address.trim()) {
-            newErrors.address = 'Address is required';
-            isValid = false;
-        }
-        if (!formData.country.trim()) {
-            newErrors.country = 'Country is required';
-            isValid = false;
-        }
-        if (!formData.state.trim()) {
-            newErrors.state = 'State is required';
-            isValid = false;
-        }
-        if (!formData.city.trim()) {
-            newErrors.city = 'City is required';
-            isValid = false;
-        }
-        if (!formData.zipcode.trim()) {
-            newErrors.zipcode = 'Zipcode is required';
-            isValid = false;
-        }
+        // Bank details validation - removed required validation since it's optional
 
         setErrors(newErrors);
         return isValid;
@@ -598,7 +568,7 @@ export const CreateVendorForm = () => {
                         <Card className="shadow p-4 my-4">
                         <Row>
                         <div className="d-flex justify-content-start align-items-start">
-                        <h1>Billing Address</h1>
+                        <h1>Billing Address <span className="text-danger ms-1 ">*</span></h1>
                     </div>
 
                        
@@ -608,12 +578,11 @@ export const CreateVendorForm = () => {
                                 <label className="fw-bold my-2">
                                     
                                     Address
-                                    <span className="text-danger ms-1">*</span>
                                 </label>
                                 <GooglePlacesAutocomplete
+                                    
                                     apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
                                     selectProps={{
-                                        className: errors.address ? 'is-invalid' : '',
                                         value: formData.address 
                                             ? { label: formData.address, value: formData.address }
                                             : null,
@@ -634,6 +603,7 @@ export const CreateVendorForm = () => {
                                             }
                                         },
                                         placeholder: "Enter Address",
+                                        required: true,
                                         styles: {
                                             control: (provided) => ({
                                                 ...provided,
@@ -645,9 +615,6 @@ export const CreateVendorForm = () => {
                                         }
                                     }}
                                 />
-                                {errors.address && (
-                                    <div className="invalid-feedback">{errors.address}</div>
-                                )}
                             </FormGroup>
                         </Col>
 
@@ -656,7 +623,6 @@ export const CreateVendorForm = () => {
                         <FormGroup>
                             <label className="fw-bold my-2">Country</label>
                             <FormSelect
-                                className={`form-control ${errors.country ? 'is-invalid' : ''}`}
                                 aria-label="select country"
                                 id="country"
                                 value={formData.country}
@@ -667,16 +633,13 @@ export const CreateVendorForm = () => {
                                     city: ''
                                 })}
                             >
-                                <option value="">Select Country</option>
+                                <option>Select Country</option>
                                 {countries.map((c, idx) => (
                                     <option key={idx} value={c.country}>
                                         {c.country}
                                     </option>
                                 ))}
                             </FormSelect>
-                            {errors.country && (
-                                <div className="invalid-feedback">{errors.country}</div>
-                            )}
                         </FormGroup>
                         
                         </Col>
@@ -685,7 +648,6 @@ export const CreateVendorForm = () => {
                         <FormGroup>
                             <label className="fw-bold my-2">State</label>
                             <FormSelect
-                                className={`form-control ${errors.state ? 'is-invalid' : ''}`}
                                 aria-label="select state"
                                 id="state"
                                 value={formData.state}
@@ -696,16 +658,13 @@ export const CreateVendorForm = () => {
                                 })}
                                 disabled={!formData.country}
                             >
-                                <option value="">Select State</option>
+                                <option>Select State</option>
                                 {states.map((s, idx) => (
                                     <option key={idx} value={s.name}>
                                         {s.name}
                                     </option>
                                 ))}
                             </FormSelect>
-                            {errors.state && (
-                                <div className="invalid-feedback">{errors.state}</div>
-                            )}
                         </FormGroup>
                         
                         </Col>
@@ -714,7 +673,6 @@ export const CreateVendorForm = () => {
                         <FormGroup>
                             <label className="fw-bold my-2">City</label>
                             <FormSelect
-                                className={`form-control ${errors.city ? 'is-invalid' : ''}`}
                                 aria-label="select city"
                                 id="city"
                                 value={formData.city}
@@ -724,16 +682,13 @@ export const CreateVendorForm = () => {
                                 })}
                                 disabled={!formData.state}
                             >
-                                <option value="">Select City</option>
+                                <option>Select City</option>
                                 {cities.map((c, idx) => (
                                     <option key={idx} value={c}>
                                         {c}
                                     </option>
                                 ))}
                             </FormSelect>
-                            {errors.city && (
-                                <div className="invalid-feedback">{errors.city}</div>
-                            )}
                         </FormGroup>
                         
                         </Col>
@@ -741,7 +696,7 @@ export const CreateVendorForm = () => {
                             <FormGroup>
                                 <label className="fw-bold my-2">
                                    Zipcode
-                                   <span className="text-danger ms-1">*</span>
+                                    
                                 </label>
                                 <input
                                     type="text"
