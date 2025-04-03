@@ -10,7 +10,7 @@ import ForgotPassword from "../pages/SuperAdmin/authentication/ForgotPassword";
 import Signup from "../pages/SuperAdmin/authentication/Signup";
 import CreateLocation from "../pages/SuperAdmin/location/CreateLocation";
 import LocationDetails from "../pages/SuperAdmin/location/LocationDetails";
-import CreateCefe from "../pages/SuperAdmin/cafe/CreateCefe";
+// import CreateCefe from "../pages/SuperAdmin/cafe/CreateCefe";
 import ViewDetails from "../pages/SuperAdmin/cafe/ViewDetails";
 import CafeDetails from "../pages/SuperAdmin/cafe/CefeDetails";
 import CreateGames from "../pages/SuperAdmin/games/CreateGames";
@@ -105,6 +105,9 @@ import BookingCheckout from "../pages/Admin/Booking/BookingCheckout";
 import { PurchaseOrderUpdate } from "../pages/Admin/Inventory/Update/PurchaseOrderUpdate ";
 import BookingEdit from "../pages/Admin/Booking/BookingEdit";
 import ParchaseBCreate from "../pages/Admin/Inventory/modal/ParchaseBCreate";
+import CafeManager from "../pages/SuperAdmin/cafe/CefeList";
+import CafeGames from "../pages/SuperAdmin/cafe/Games/CafeGames";
+import CreateMembership from "../pages/SuperAdmin/cafe/membership/CreateMembership";
 
 
 
@@ -137,7 +140,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/superadmin/dashboard/alternative" element={<Alternative />} />
           <Route path="/superadmin/create-location" element={<CreateLocation locations={locations} setLocations={setLocations} />} />
           <Route path="/superadmin/location-details" element={<LocationDetails locations={locations} />} />
-          <Route path="/superadmin/create-cafe" element={<CreateCefe />} />
+          <Route path="/superadmin/cafeList" element={<CafeManager />} />
           <Route path="/superadmin/cafe-details" element={<CafeDetails />} />
           <Route path="/superadmin/create-games" element={<CreateGames />} />
           <Route path="/superadmin/games/create" element={<GameManager />} />
@@ -166,6 +169,11 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/Inventory/VendorDetails" element={<VendoreDetails />} />
           <Route path="/Inventory/ItemDetails" element={<ItemsDetails />} />
           <Route path="/Inventory/PurchaseOrderDetails/:id" element={<PODetails />} />
+
+
+
+          <Route path="/superadmin/CafeGames/:cafeId" element={<CafeGames />} />
+          <Route path="/superadmin/CreateMembership/:cafeId" element={<CreateMembership />} />
 
 
 

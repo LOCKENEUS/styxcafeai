@@ -20,6 +20,8 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
   const [width, setWidth] = useState(window.innerWidth < 768 ? "90%" : "50%");
   const [isLoading, setIsLoading] = useState(false);
 
+  console.log("game cafe id ", cafeId);
+
   const initialFormData = {
     name: "",
     type: "Single",
@@ -160,7 +162,9 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
       <Offcanvas.Body style={{ padding: "1.4rem" }}>
         <Form onSubmit={handleSubmit} className="rounded-3 bg-white">
           <Form.Group className="mb-2">
-            <Form.Label htmlFor="gameName" className="fw-bold text-secondary">Name of Game</Form.Label>
+            <Form.Label htmlFor="gameName" className="fw-bold text-secondary">Name of Game
+              <span className="text-danger">*</span>
+            </Form.Label>
             <Form.Control
               id="gameName"
               type="text"
@@ -189,7 +193,9 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
               </Form.Select>
               {formData.type === "Multiplayer" && (
                 <Form.Group className="mb-2 mt-2">
-                  <Form.Label htmlFor="players" className="fw-bold text-secondary">Number of Players</Form.Label>
+                  <Form.Label htmlFor="players" className="fw-bold text-secondary">Number of Players
+                  <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control
                     id="players"
                     type="number"
@@ -204,7 +210,9 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
               )}
             </Col>
             <Col md={6}>
-              <Form.Label htmlFor="gamePrice" className="fw-bold text-secondary">Price of Game</Form.Label>
+              <Form.Label htmlFor="gamePrice" className="fw-bold text-secondary">Price of Game
+              <span className="text-danger">*</span>
+              </Form.Label>
               <Form.Control
                 id="gamePrice"
                 type="number"
@@ -217,7 +225,9 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
               />
             </Col>
             <Col md={6}>
-              <Form.Label htmlFor="gameSize" className="fw-bold text-secondary">Size of Game</Form.Label>
+              <Form.Label htmlFor="gameSize" className="fw-bold text-secondary">Size of Game
+              <span className="text-danger">*</span>
+              </Form.Label>
               <Form.Control
                 id="gameSize"
                 type="text"
@@ -304,7 +314,9 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
 
           <Row className="mb-2 g-4">
             <Col md={6}>
-              <Form.Label className="fw-bold text-secondary d-block">Upload Image</Form.Label>
+              <Form.Label className="fw-bold text-secondary d-block">Upload Image
+              <span className="text-danger">*</span>
+              </Form.Label>
               <div className="border-2 align-items-center rounded-3 p-3 bg-light">
                 <Form.Control
                   type="file"
@@ -351,7 +363,9 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
           </Row>
 
           <Form.Group className="mb-2">
-            <Form.Label htmlFor="gameDetails" className="fw-bold text-secondary">Game Details</Form.Label>
+            <Form.Label htmlFor="gameDetails" className="fw-bold text-secondary">Game Details
+            <span className="text-danger">*</span>
+            </Form.Label>
             <Form.Control
               id="gameDetails"
               as="textarea"

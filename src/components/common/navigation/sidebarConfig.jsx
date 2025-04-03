@@ -31,7 +31,7 @@ import { SlCup } from 'react-icons/sl';
     title: "Cafe",
     icon: SlCup ,
     subItems: [
-      { title: "Create Cafe", path: "/superadmin/create-cafe" },
+      { title: "Create Cafe", path: "/superadmin/cafeList" },
       { title: "Cafe Information", path: "/superadmin/cafe-details" },
     ]
   },

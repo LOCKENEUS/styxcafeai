@@ -13,6 +13,7 @@ const MembershipForm = ({ showCanvas, handleCloseCanvas, membership, cafeId, isE
     name: '',
     validity: 'Yearly', // Default value
     limit: '',
+    price: '',
     is_active: true,
     cafe: cafeId
   };
@@ -115,7 +116,9 @@ const MembershipForm = ({ showCanvas, handleCloseCanvas, membership, cafeId, isE
       <Offcanvas.Body>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
-            <Form.Label>Name</Form.Label>
+            <Form.Label>Name
+              <span className="text-danger">*</span>
+            </Form.Label>
             <Form.Control
               type="text"
               name="name"
@@ -142,7 +145,9 @@ const MembershipForm = ({ showCanvas, handleCloseCanvas, membership, cafeId, isE
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Limit</Form.Label>
+            <Form.Label>Limit
+              <span className="text-danger">*</span>
+            </Form.Label>
             <Form.Control
               type="number"
               name="limit"
@@ -153,7 +158,22 @@ const MembershipForm = ({ showCanvas, handleCloseCanvas, membership, cafeId, isE
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Details</Form.Label>
+            <Form.Label>Price
+              <span className="text-danger">*</span>
+            </Form.Label>
+            <Form.Control
+              type="number"
+              name="price"
+              value={formData.price}
+              onChange={handleInputChange}
+              required
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Details
+              <span className="text-danger">*</span>
+            </Form.Label>
             {details.map((detail, index) => (
               <div key={index} className="d-flex mb-2 gap-2">
                 <Form.Control
