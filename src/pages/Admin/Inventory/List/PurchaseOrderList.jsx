@@ -16,11 +16,10 @@ import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import gm1 from "/assets/inventory/mynaui_search.svg";
 import solar_export from "/assets/inventory/solar_export-linear.png";
 import add from "/assets/inventory/material-symbols_add-rounded.png";
-import DataTable from "react-data-table-component";
 import { Link, useNavigate } from "react-router-dom";
 import { CreateVendor, GetPOList } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch, useSelector } from "react-redux";
-
+import Loader from "../../../../components/common/Loader/Loader";
 
 const PurchaseOrderList = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -125,7 +124,7 @@ console.log("formattedPOList", formattedPOList);
           </div>
         </Col>
 
-        <Col sm={12}>
+        <Col data-aos="fade-right" data-aos-duration="1000" sm={12}>
           <Card className="mx-4 p-3">
             <Row className="align-items-center">
               <Col sm={4} className="d-flex my-2">
@@ -194,7 +193,7 @@ console.log("formattedPOList", formattedPOList);
                 <tbody >
                   {loading ? (
                     <tr>
-                      <td colSpan="6" className="text-center py-4">Loading...</td>
+                      <td colSpan="6" className="text-center py-4"><Loader/></td>
                     </tr>
                   ) : error ? (
                     <tr>

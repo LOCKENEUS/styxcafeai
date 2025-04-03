@@ -8,6 +8,7 @@ import {
   Card,
   Breadcrumb,
   BreadcrumbItem,
+  Spinner,
 } from "react-bootstrap";
 import { BiArrowBack, BiCloudUpload } from "react-icons/bi";
 import { HiOutlineTrash } from "react-icons/hi";
@@ -17,6 +18,7 @@ import {
   getItemGroupById,
   deleteItemGroup,
 } from "../../../../store/AdminSlice/Inventory/ItemGroupSlice";
+import Loader from "../../../../components/common/Loader/Loader";
 
 const ItemGroupsDetails = () => {
   const navigate = useNavigate();
@@ -38,13 +40,19 @@ const ItemGroupsDetails = () => {
     // }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <Container className="d-flex justify-content-center align-items-center min-vh-100">
+        <Spinner animation="border" role="status">
+        </Spinner>
+      </Container>
+    );
+  }
   if (error) return <p>Error: {error}</p>;
 
   return (
     <Container
-      data-aos="fade-down"
-      data-aos-duration="700"
+ 
       fluid
       className="mt-4 min-vh-100"
     >
@@ -60,8 +68,8 @@ const ItemGroupsDetails = () => {
         </BreadcrumbItem>
         <BreadcrumbItem active>Item Groups Details</BreadcrumbItem>
       </Breadcrumb>
-      <Tab.Container defaultActiveKey="checkout">
-        <Row>
+      <Tab.Container   defaultActiveKey="checkout">
+        <Row data-aos="fade-down" data-aos-duration="1000">
           <Col sm={12} className="mt-3">
             <Tab.Content>
               <Card className="p-3">

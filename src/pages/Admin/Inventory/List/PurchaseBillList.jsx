@@ -19,6 +19,7 @@ import DataTable from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getPBills } from "../../../../store/AdminSlice/Inventory/PBillSlice";
+import Loader from "../../../../components/common/Loader/Loader";
 
 const PurchaseBillList = () => {
   const [searchText, setSearchText] = useState("");
@@ -99,8 +100,36 @@ const PurchaseBillList = () => {
     String(item.total)?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleExport = () => {
+    // Define CSV headers
+    const csvHeader = "S/N,Order No,Vendor,Status,Total\n";
+    
+    // Convert bills data to CSV rows
+    const csvRows = filteredItems.map((bill, index) => {
+      return `${index + 1},${bill.po_no || ""},${bill?.vendor_id?.name || ""},${bill.status || "Pending"},${bill.total || 0}`;
+    });
+
+    // Combine header and rows
+    const csvContent = csvHeader + csvRows.join("\n");
+
+    // Create a Blob with CSV content
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+
+    // Create a temporary download link
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "purchase_bills.csv";
+    document.body.appendChild(a);
+    a.click();
+
+    // Cleanup
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
-    <Container data-aos="fade-right" data-aos-duration="500" fluid className="mt-4 min-vh-100">
+    <Container  fluid className="mt-4 min-vh-100">
       <Row>
         <Col sm={12} className="mx-4 my-3">
           <div style={{ top: "186px", fontSize: "18px" }}>
@@ -113,7 +142,7 @@ const PurchaseBillList = () => {
         </Col>
 
         {/* Items List Card */}
-        <Col sm={12}>
+        <Col data-aos="fade-right" data-aos-duration="1000" sm={12}>
           <Card className="mx-4 p-3">
             <Row className="align-items-center">
               {/* Title */}
@@ -162,7 +191,13 @@ const PurchaseBillList = () => {
 
               {/* Action Buttons */}
               <Col sm={5} className="d-flex justify-content-end text-end my-2">
-                <Button variant="denger" className="btn  px-4 mx-2" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }}>
+                <Button 
+                  variant="denger" 
+                  className="btn px-4 mx-2" 
+                  size="sm" 
+                  style={{ borderColor: "#FF3636", color: "#FF3636" }}
+                  onClick={handleExport}
+                >
                   <Image className="me-2 size-sm" style={{ width: "22px", height: "22px" }} src={solar_export} />
                   Export
                 </Button>
@@ -184,6 +219,8 @@ const PurchaseBillList = () => {
                   // pagination
                   highlightOnHover
                   responsive
+                  progressPending={loading}
+                  progressComponent={<div><Loader/></div>}
                   persistTableHead
                   customStyles={{
                     rows: {

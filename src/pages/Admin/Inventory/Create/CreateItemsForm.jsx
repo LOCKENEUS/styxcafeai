@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect, Image, InputGroup, Row } from "react-bootstrap";
+import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect, Image, InputGroup, Row, Spinner } from "react-bootstrap";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { FaPlus, FaStarOfLife, FaTrash } from "react-icons/fa";
 import { Link, useParams, useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ import Brand from "../modal/Brand";
 import { getCustomFields, deleteCustomField } from "../../../../store/AdminSlice/CustomField";
 import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
 import { getVendors } from "../../../../store/AdminSlice/Inventory/VendorSlice";
-import Units from "../modal/units";
+import Units from "../modal/Units";
 
 const CreateItemsForm = () => {
     const { id } = useParams();
@@ -323,6 +323,13 @@ const CreateItemsForm = () => {
     const handleDeleteBrand = (brandId) => {
         dispatch(deleteCustomField(brandId));
     };
+
+    if (loading) {
+      <Container className="d-flex justify-content-center align-items-center min-vh-100">
+        <Spinner animation="border" role="status">
+        </Spinner>
+      </Container>
+    }
 
   return (
     <Container data-aos="fade-up" data-aos-duration="700">

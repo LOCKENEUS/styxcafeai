@@ -223,7 +223,7 @@ export const SalesOrder = () => {
         <Col sm={12}>
           <Card
             data-aos="fade-right"
-            data-aos-duration="800"
+            data-aos-duration="1000"
             className="mx-2 p-1"
           >
             <Row className="align-items-center">

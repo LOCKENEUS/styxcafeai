@@ -8,7 +8,7 @@ import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems"
 import Tax from "./Tax";
 // import AddClint from "../modal/vendorListModal";
 import PaymentTermsModal from "./PaymentTermsModal";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { CreatePurchaseOrder, GetVendorsList, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch, useSelector } from "react-redux";
 import AddClint from "./AddClint";
@@ -22,6 +22,7 @@ import { getPurchaseReceive } from "../../../../store/AdminSlice/Inventory/purch
 const ParchaseBCreate = () => {
   const [show, setShow] = useState(false);
   const { id } = useParams();
+  const navigate = useNavigate();
   const [showClientList, setShowClientList] = useState(true);
   const [showOffCanvasCreateItem, setShowOffCanvasCreateItem] = useState(false);
   const handleShowCreateItem = () => setShowOffCanvasCreateItem(true);
@@ -303,7 +304,9 @@ console.log("selectedItem", selectedItem);
     };
 
     try {
-      await dispatch(addPBill(submitData)).unwrap();
+      await dispatch(addPBill(submitData)).unwrap().then(() => {
+        navigate("/admin/inventory/purchase-bill-list");
+      });
     } catch (error) {
       console.error('Error saving Purchase Bill:', error);
     }

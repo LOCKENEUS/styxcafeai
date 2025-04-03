@@ -22,6 +22,7 @@ import {
   deleteItem,
 } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { getCustomFieldById } from "../../../../store/AdminSlice/CustomField";
+import Loader from "../../../../components/common/Loader/Loader";
 
 const ItemDetails = () => {
   const navigate = useNavigate();
@@ -76,7 +77,7 @@ const ItemDetails = () => {
     return (
       <Container className="d-flex justify-content-center align-items-center min-vh-100">
         <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
+          <span className="visually-hidden"><Loader/></span>
         </Spinner>
       </Container>
     );

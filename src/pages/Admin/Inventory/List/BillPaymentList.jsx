@@ -19,9 +19,9 @@ import DataTable from "react-data-table-component";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getPurchaseBillPayments } from "../../../../store/AdminSlice/Inventory/CollectPurchaseBill";
+import Loader from "../../../../components/common/Loader/Loader";
 
 const BillPaymentList = () => {
-    const [searchText, setSearchText] = useState("");
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
     const [activePage, setActivePage] = useState(1);
@@ -37,10 +37,7 @@ const BillPaymentList = () => {
     }, [dispatch, cafeId]);
 
     // Function to handle modal (replace with actual logic)
-    const handleShowCreate = () => {
-      console.log("Show create item modal");
-      navigate("/admin/inventory/purchaseReceivedCreate");
-    };
+ 
 
     const getRandomColor = (name) => {
       const colors = ["#FAED39", "#FF5733", "#33FF57", "#339FFF", "#FF33F6", "#FFAA33", "#39DDFA", "#3DFF16"];
@@ -118,8 +115,42 @@ const BillPaymentList = () => {
       item.transaction_id?.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    const handleExport = () => {
+      // Define CSV headers
+      const csvHeader = "S/N,Bill No,Mode,Amount,Transaction ID,Date\n";
+      
+      // Convert payments data to CSV rows
+      const csvRows = filteredItems.map((payment, index) => {
+        // Format the date
+        const date = new Date(payment.deposit_date);
+        const formattedDate = date instanceof Date && !isNaN(date) 
+          ? `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`
+          : "N/A";
+
+        return `${index + 1},${payment.bill_id?.po_no || ""},${payment.mode || ""},${payment.deposit_amount || 0},${payment.transaction_id || ""},${formattedDate}`;
+      });
+
+      // Combine header and rows
+      const csvContent = csvHeader + csvRows.join("\n");
+
+      // Create a Blob with CSV content
+      const blob = new Blob([csvContent], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+
+      // Create a temporary download link
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "bill_payments.csv";
+      document.body.appendChild(a);
+      a.click();
+
+      // Cleanup
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+
     return (
-      <Container data-aos="fade-right" data-aos-duration="500" fluid className="mt-4 min-vh-100">
+      <Container fluid className="mt-4 min-vh-100">
         <Row>
           <Col sm={12} className="mx-4 my-3">
             <div style={{ top: "186px", fontSize: "18px" }}>
@@ -132,7 +163,7 @@ const BillPaymentList = () => {
           </Col>
 
           {/* Items List Card */}
-          <Col sm={12}>
+          <Col data-aos="fade-right" data-aos-duration="1000" sm={12}>
             <Card  className="mx-4 p-3">
               <Row className="align-items-center">
                 {/* Title */}
@@ -184,20 +215,28 @@ const BillPaymentList = () => {
 
                 {/* Action Buttons */}
                 <Col sm={5} className="d-flex justify-content-end text-end my-2">
-                  <Button variant="denger" className="btn  px-4 mx-2" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }}>
+                  <Button 
+                    variant="denger" 
+                    className="btn px-4 mx-2" 
+                    size="sm" 
+                    style={{ borderColor: "#FF3636", color: "#FF3636" }}
+                    onClick={handleExport}
+                  >
                     <Image className="me-2 size-sm" style={{ width: "22px", height: "22px" }} src={solar_export} />
                     Export
                   </Button>
                 </Col>
 
                 <Col sm={12} style={{ marginTop: "30px" }}>
+                
                   <DataTable
                     columns={columns}
                     data={filteredItems}
-                    progressPending={loading}
                     highlightOnHover
                     responsive
                     persistTableHead
+                    progressPending={loading}
+                    progressComponent={<div><Loader/></div>}
                     customStyles={{
                       rows: {
                         style: {

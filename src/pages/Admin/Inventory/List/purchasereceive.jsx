@@ -19,6 +19,7 @@ import DataTable from "react-data-table-component";
 import { Link, useNavigate } from "react-router-dom";
 import { getPurchaseReceiveList } from "../../../../store/AdminSlice/Inventory/purchaseReceive";
 import { useDispatch, useSelector } from "react-redux";
+import Loader from "../../../../components/common/Loader/Loader";
 
 export const PurchaseReceivedAdmin = () => {
 
@@ -31,6 +32,7 @@ export const PurchaseReceivedAdmin = () => {
   }, [dispatch, cafeId])
 
   const POIdGetList = useSelector(state => state.purchaseReceiveSlice);
+  const loading = POIdGetList.loading;
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -142,7 +144,7 @@ export const PurchaseReceivedAdmin = () => {
   };
 
   return (
-    <Container data-aos="fade-right" data-aos-duration="500" fluid className="mt-4 min-vh-100">
+    <Container data-aos="fade-right" data-aos-duration="1000" fluid className="mt-4 min-vh-100">
       <Row>
         <Col sm={12} className="mx-4 my-3">
           <div style={{ top: "186px", fontSize: "18px" }}>
@@ -227,6 +229,8 @@ export const PurchaseReceivedAdmin = () => {
                 <DataTable
                   columns={columns}
                   data={filteredItems}
+                  progressPending={loading}
+                  progressComponent={<div><Loader/></div>}
                   // pagination
                   highlightOnHover
                   responsive

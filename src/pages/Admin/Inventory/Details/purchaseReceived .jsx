@@ -1,4 +1,4 @@
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Table } from "react-bootstrap";;
+import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Spinner, Table } from "react-bootstrap";;
 import sendMail from "/assets/inventory/Group.png";
 import companylog from "/assets/inventory/companylogo.png";
 import print from "/assets/inventory/Vector.png";
@@ -24,11 +24,21 @@ export const PurchaseReceivedDetails = () => {
     }, [dispatch, cafeId]);
 
     const POIdGet = useSelector(state => state.purchaseReceiveSlice);
+    const loading = POIdGet.loading;
     const location = useLocation();
     const purchaseReceive = location.state;
 
     // count items
     const countItems = POIdGet?.selectedItem?.items;
+
+    if (loading) {
+        return (
+          <Container className="d-flex justify-content-center align-items-center min-vh-100">
+            <Spinner animation="border" role="status">
+            </Spinner>
+          </Container>
+        );
+      }
 
     return (
         <Container >

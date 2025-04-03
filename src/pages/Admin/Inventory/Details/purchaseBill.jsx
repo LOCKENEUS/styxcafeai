@@ -1,4 +1,4 @@
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Table } from "react-bootstrap";
+import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Spinner, Table } from "react-bootstrap";
 import print from "/assets/inventory/Vector.png";
 import sendMail from "/assets/inventory/Group.png";
 import editlogo from "/assets/inventory/mage_edit.png";
@@ -90,8 +90,13 @@ export const PurchaseBillDetailsAdmin = () => {
     };
 
     if (loading) {
-        return <div>Loading...</div>;
-    }
+        return (
+          <Container className="d-flex justify-content-center align-items-center min-vh-100">
+            <Spinner animation="border" color="primary" role="status">
+            </Spinner>
+          </Container>
+        );
+      }
 
     if (!selectedBill) {
         return <div>No data found</div>;

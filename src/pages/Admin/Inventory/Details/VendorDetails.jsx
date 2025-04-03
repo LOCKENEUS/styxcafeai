@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Image, Nav, Breadcrumb, BreadcrumbItem } from "react-bootstrap";
+import { Container, Row, Col, Card, Image, Nav, Breadcrumb, BreadcrumbItem, Spinner } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { getVendorById } from "../../../../store/AdminSlice/Inventory/VendorSlice";
@@ -20,8 +20,14 @@ const VendorDetails = () => {
       dispatch(getVendorById(id));
     }
   }, [dispatch, id]);
-
-  if (loading) return <div className="text-center my-5">Loading...</div>;
+  if (loading) {
+    return (
+      <Container className="d-flex justify-content-center align-items-center min-vh-100">
+        <Spinner animation="border" role="status">
+        </Spinner>
+      </Container>
+    );
+  }
   if (error) return <div className="text-center my-5 text-danger">{error}</div>;
   if (!selectedVendor) return <div className="text-center my-5">No vendor data found</div>;
 

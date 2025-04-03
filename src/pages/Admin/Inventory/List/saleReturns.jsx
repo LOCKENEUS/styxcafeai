@@ -169,7 +169,7 @@ export const InvoicePaymentInventory = () => {
         </Col>
 
         <Col sm={12}>
-          <Card data-aos="fade-right" data-aos-duration="800" className="mx-2 p-3">
+          <Card data-aos="fade-right" data-aos-duration="1000" className="mx-2 p-3">
             <Row className="align-items-center">
               <Col sm={4} className="d-flex my-2">
                 <h1 style={{ fontSize: "20px", fontWeight: "500", lineHeight: "18px" }} className="m-0">

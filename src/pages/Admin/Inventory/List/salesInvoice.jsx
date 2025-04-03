@@ -168,7 +168,7 @@ export const SaleInvoiceInventory = () => {
 
         {/* Items List Card */}
         <Col sm={12}>
-          <Card data-aos="fade-right" data-aos-duration="800" className="mx-4 p-1">
+          <Card data-aos="fade-right" data-aos-duration="1000" className="mx-4 p-1">
             <Row className="align-items-center">
               {/* Title */}
               <Col sm={4} className="d-flex my-2">

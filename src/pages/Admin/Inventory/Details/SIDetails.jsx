@@ -7,6 +7,7 @@ import {
   Container,
   Image,
   Row,
+  Spinner,
   Table,
 } from "react-bootstrap";
 import deleteplogo from "/assets/inventory/Vector (1).png";
@@ -135,9 +136,14 @@ export const SIDetails = () => {
   useEffect(() => {
     refreshPaymentData();
   }, [id]);
-
+  
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Container className="d-flex justify-content-center align-items-center min-vh-100">
+        <Spinner animation="border" role="status">
+        </Spinner>
+      </Container>
+    );
   }
 
   if (!invoice) {
