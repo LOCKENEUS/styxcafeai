@@ -32,6 +32,7 @@ export const CreateVendor = createAsyncThunk(
     }
   }
 );
+
 export const GetVendorsList = createAsyncThunk(
   "purchaseOrder/getVendorsList",
   async (id, thunkAPI) => {
@@ -48,6 +49,7 @@ export const GetVendorsList = createAsyncThunk(
     }
   }
 );
+
 export const CreatePurchaseOrder = createAsyncThunk(
   "purchaseOrder/CreatePurchaseOrder",
   async (POData, thunkAPI) => {
@@ -138,6 +140,37 @@ export const GetPurchaseOrder = createAsyncThunk(
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Something went wrong"
       );
+    }
+  }
+);
+
+// send mail to vendor
+
+export const sendMailToVendor = createAsyncThunk(
+  "purchaseOrder/sendMail",
+  async (orderData, thunkAPI) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/admin/inventory/po/send-mail`,
+        orderData
+      );
+      toast.success("Mail sent successfully!");
+      return response.data.data;
+    } catch (error) {
+      let errorMessage =
+        error.response?.data?.message || "Something went wrong";
+      toast.error(errorMessage); // Show error toast for CreateVendor
+
+      // Check if the error is a duplicate email
+      if (
+        errorMessage.includes("E11000 duplicate key error") &&
+        errorMessage.includes("email")
+      ) {
+        errorMessage = "Email already exists!";
+      }
+
+      toast.error(errorMessage); // Show error toast
+      return thunkAPI.rejectWithValue(errorMessage);
     }
   }
 );

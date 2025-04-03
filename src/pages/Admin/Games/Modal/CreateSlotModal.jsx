@@ -57,9 +57,23 @@
       e.preventDefault();
       if(slot?._id) {
         dispatch(updateslot({ id: slot?._id, updatedData: formData }));
+        setFormData({
+          game_id: selectedGame?.data?._id,
+          day: "",
+          start_time: "",
+          end_time: "",
+          slot_price: "",
+        });
         handleClose();
       }else{
         dispatch(addslot(formData));
+        setFormData({
+          game_id: selectedGame?.data?._id,
+          day: "",
+          start_time: "",
+          end_time: "",
+          slot_price: "",
+        })
         handleClose();
       }
     };

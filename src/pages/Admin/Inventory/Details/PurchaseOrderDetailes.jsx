@@ -1,4 +1,4 @@
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Spinner, Table } from "react-bootstrap";
+import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Table } from "react-bootstrap";
 import deleteplogo from "/assets/inventory/Vector (1).png";
 import receive from "/assets/inventory/solar_card-send-linear.png";
 import print from "/assets/inventory/Vector.png";
@@ -8,7 +8,7 @@ import companylog from "/assets/inventory/companylogo.png";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { GetPurchaseOrder } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { GetPurchaseOrder, sendMailToVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 
 const PurchaseOrderDetails = () => {
 
@@ -21,7 +21,6 @@ const PurchaseOrderDetails = () => {
     const navigate = useNavigate();
     const purchaseOrder = location.state;
     const selectedPo = useSelector((state) => state.purchaseOrder.selectedPo);
-    const loading = useSelector((state) => state.purchaseOrder.loading);
     const user = JSON.parse(sessionStorage.getItem("user"));
     const POId = purchaseOrder?._id;
 
@@ -45,6 +44,10 @@ const PurchaseOrderDetails = () => {
             setDiscount(Math.round(discountValue));
         }
     }, [selectedPo]);
+
+    const handleSendMail = () => {
+       dispatch(sendMailToVendor(selectedPo));
+    }
 
     const handleReceive = () => {
         // Handle receive action here
@@ -93,15 +96,6 @@ const PurchaseOrderDetails = () => {
         printWindow.document.close();
     };
 
-    if (loading) {
-        return (
-          <Container className="d-flex justify-content-center align-items-center min-vh-100">
-            <Spinner animation="border" role="status">
-            </Spinner>
-          </Container>
-        );
-      }
-
     return (
         <Container id="printableArea">
             <Row className="mx-2">
@@ -132,7 +126,7 @@ const PurchaseOrderDetails = () => {
                                 >
                                     <Image src={print} className="me-2" /> Print
                                 </Button>
-                                <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                                <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }} onClick={handleSendMail}>
                                     <Image src={sendMail} className="me-2" /> Send Email
                                 </Button>
                                 {selectedPo?.status !== "Received" && <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }} onClick={handleReceive}>

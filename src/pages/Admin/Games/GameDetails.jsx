@@ -34,6 +34,7 @@ const GameDetails = () => {
 
     const handleSlotCreate = () => {
         setShowSlotModal(true);
+        setSlotToEdit(null);
     };
 
     useEffect(() => {
@@ -75,6 +76,8 @@ const GameDetails = () => {
         setSlotToEdit(slot);
         setShowSlotModal(true);
     };
+
+    const filteredSlots = slots.filter(slot => slot.day === weekdays[activeDate.getDay()]);
 
     return (
         <div className="container mt-4">
@@ -226,7 +229,8 @@ const GameDetails = () => {
             }
         `}</style>
 
-                {activeDate.getDay() === 0 ? (
+                {/* {activeDate.getDay() === 0 ? ( */}
+                {filteredSlots.length === 0 ? (
                     <div className="no-slots-message d-flex flex-column align-items-center border border-3 rounded-4 justify-content-center" style={{ height: "40vh", textAlign: "center", marginTop: "20px" }}>
                         <TbMoodSad style={{ fontSize: "4rem", color: "gray" }} />
                         <p style={{ fontSize: "1rem", color: "gray", fontWeight: "bold" }}>
@@ -238,7 +242,8 @@ const GameDetails = () => {
                     </div>
                 ) : (
                     <div className="booking-slots mt-5 p-3">
-                        {slots.map((slot, index) => (
+                        {/* {slots.map((slot, index) => ( */}
+                        {filteredSlots.map((slot, index) => (
                             <div key={index} className="slot-row mb-2 border border-2 px-4 py-2">
                                 <div className="d-flex flex-column flex-md-row justify-content-between align-items-center">
                                     <span className="mb-2 mb-md-0">{slot.start_time} - {slot.end_time}</span>

@@ -20,15 +20,15 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getItemById,
   deleteItem,
+  getItemsCount,
 } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { getCustomFieldById } from "../../../../store/AdminSlice/CustomField";
-import Loader from "../../../../components/common/Loader/Loader";
 
 const ItemDetails = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams();
-  const { selectedItem, loading, error } = useSelector((state) => state.items);
+  const { selectedItem, itemsCount, loading, error } = useSelector((state) => state.items);
   const { selectedCustomField } = useSelector((state) => state.customFields);
   const [manufacturer, setManufacturer] = React.useState(null);
   const [brand, setBrand] = React.useState(null);
@@ -37,6 +37,7 @@ const ItemDetails = () => {
   useEffect(() => {
     if (id) {
       dispatch(getItemById(id));
+      dispatch(getItemsCount(id));
     }
   }, [dispatch, id]);
 
@@ -77,7 +78,7 @@ const ItemDetails = () => {
     return (
       <Container className="d-flex justify-content-center align-items-center min-vh-100">
         <Spinner animation="border" role="status">
-          <span className="visually-hidden"><Loader/></span>
+          <span className="visually-hidden">Loading...</span>
         </Spinner>
       </Container>
     );
@@ -186,12 +187,12 @@ const ItemDetails = () => {
                         <tr>
                           <td className="fw-bold">Manufacturer</td>
                           <td>
-                            {manufacturer ? manufacturer.name : "Loading..."}
+                            {manufacturer ? manufacturer.name : "-"}
                           </td>
                         </tr>
                         <tr>
                           <td className="fw-bold">Brand</td>
-                          <td>{brand ? brand.name : "Loading..."}</td>
+                          <td>{brand ? brand.name : "-"}</td>
                         </tr>
                       </tbody>
                     </Table>
@@ -281,7 +282,6 @@ const ItemDetails = () => {
             </Tab.Content>
           </Col>
           <Col xs={12} lg={7} className="mt-3">
-            <Card className="p-3">
               <Container fluid className="px-0">
                 <Card className="p-4">
                   <div className="d-flex justify-content-center mb-4">
@@ -321,32 +321,6 @@ const ItemDetails = () => {
                     )}
                   </div>
 
-                  <h5>Accounting Stock</h5>
-                  <div className="table-responsive">
-                    <Table borderless>
-                      <tbody>
-                        <tr>
-                          <td>Stock in hand</td>
-                          <td>
-                            <b>{selectedItem.stock}</b>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Committed Stock</td>
-                          <td>
-                            <b>0</b>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Available Stock</td>
-                          <td>
-                            <b>{selectedItem.stock}</b>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </Table>
-                  </div>
-
                   <h5>Physical Stock</h5>
                   <div className="table-responsive">
                     <Table borderless>
@@ -375,31 +349,81 @@ const ItemDetails = () => {
                     </Table>
                   </div>
 
+                  <br/>
+
+                  <h5>Accounting Stock</h5>
+                  <div className="table-responsive">
+                    <Table borderless>
+                      <tbody>
+                        <tr>
+                          <td>Stock in hand</td>
+                          <td>
+                            <b>{selectedItem.stock}</b>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Committed Stock</td>
+                          <td>
+                            <b>
+                              {itemsCount?.toBeInvoiced}
+                            </b>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Available Stock</td>
+                          <td>
+                            <b>{selectedItem.stock}</b>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </Table>
+                  </div>
+
                   <Row className="mt-4">
-                    {[
-                      "To be Shipped",
-                      "To be Received",
-                      "To be Invoiced",
-                      "To be Billed",
-                    ].map((item, index) => (
-                      <Col key={index} xs={12} sm={6} className="mb-3">
+                      <Col xs={12} sm={6} className="mb-3">
                         <Card className="p-3">
                           <div className="d-flex gap-3 justify-content-center align-items-center">
                             <div>
                               <img src={user_check} alt="icon" />
                             </div>
                             <div>
-                              <h6>{item}</h6>
-                              <h4>145</h4>
+                              <h6>To be Received</h6>
+                              <h4>{itemsCount?.toBeReceived}</h4>
                             </div>
                           </div>
                         </Card>
                       </Col>
-                    ))}
+
+                      <Col xs={12} sm={6} className="mb-3">
+                        <Card className="p-3">
+                          <div className="d-flex gap-3 justify-content-center align-items-center">
+                            <div>
+                              <img src={user_check} alt="icon" />
+                            </div>
+                            <div>
+                              <h6>To be Billed</h6>
+                              <h4>{itemsCount?.toBeBilled}</h4>
+                            </div>
+                          </div>
+                        </Card>
+                      </Col>
+
+                      <Col xs={12} sm={6} className="mb-3">
+                        <Card className="p-3">
+                          <div className="d-flex gap-3 justify-content-center align-items-center">
+                            <div>
+                              <img src={user_check} alt="icon" />
+                            </div>
+                            <div>
+                              <h6>To be Invoiced</h6>
+                              <h4>{itemsCount?.toBeInvoiced}</h4>
+                            </div>
+                          </div>
+                        </Card>
+                      </Col>
                   </Row>
                 </Card>
               </Container>
-            </Card>
           </Col>
         </Row>
       </Tab.Container>
