@@ -7,6 +7,7 @@ import { FaCaretDown, FaCaretRight, FaCaretUp } from "react-icons/fa";
 import { LuCornerDownRight, LuCornerUpRight, LuLogOut } from "react-icons/lu";
 import { useDispatch } from 'react-redux';
 import { logout } from '../../../../store/slices/authSlice';
+import { gsap } from "gsap";
 
 const Sidebar = ({ collapsed, toggleSidebar }) => {
   const [isMobile, setIsMobile] = useState(false);
@@ -16,6 +17,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
+  const waveRef = useRef(null);
 
   // Detect mobile viewport
   useEffect(() => {
@@ -46,11 +48,63 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, [isMobile, collapsed, toggleSidebar]);
 
+  // Improved wave animation effect
+  useEffect(() => {
+    if (!collapsed && waveRef.current) {
+      // First, reset all elements to their initial state
+      gsap.set(waveRef.current.querySelectorAll('.nav-item'), {
+        x: -30,
+        opacity: 0
+      });
+
+      // Set initial state for sub-items to prevent flash
+      gsap.set(waveRef.current.querySelectorAll('.nav-collapse-item'), {
+        x: -20,
+        opacity: 0
+      });
+
+      // Animate main menu items
+      gsap.to(waveRef.current.querySelectorAll('.nav-item'), {
+        duration: 0.5,
+        x: 0,
+        opacity: 1,
+        stagger: 0.1,
+        ease: "power2.out",
+        clearProps: "all" // Clear properties after animation
+      });
+    }
+  }, [collapsed]);
+
+  // Add animation for when sub-items expand
   const handleItemClick = (collapseId) => {
-    setExpandedItems((prevExpandedItems) => ({
-      ...prevExpandedItems,
-      [collapseId]: !prevExpandedItems[collapseId]
-    }));
+    setExpandedItems((prevExpandedItems) => {
+      const newState = {
+        ...prevExpandedItems,
+        [collapseId]: !prevExpandedItems[collapseId]
+      };
+
+      // Set initial state before animation
+      const subItems = document.querySelectorAll(`#${collapseId} .nav-collapse-item`);
+      gsap.set(subItems, {
+        x: -20,
+        opacity: 0
+      });
+
+      // Animate sub-items after state update
+      if (newState[collapseId]) {
+        setTimeout(() => {
+          gsap.to(subItems, {
+            duration: 0.4,
+            x: 0,
+            opacity: 1,
+            stagger: 0.05,
+            ease: "power2.out"
+          });
+        }, 50); // Small delay to ensure DOM is updated
+      }
+
+      return newState;
+    });
   };
 
   const handleLogout = async () => {
@@ -85,11 +139,13 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
         transition: "all 0.3s ease-in-out",
         borderRight: "1px solid #e5e7eb",
         zIndex: 99,
-        overflowY: "auto"
+        overflowY: "auto",
+        transform: collapsed ? "translateX(-272px)" : "translateX(0)",
       }}
     >
       
       <div 
+        ref={waveRef}
         className="navbar-vertical-container"
         style={{
           height: "100%",
@@ -104,7 +160,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
               const collapseId = `collapse-${index}`;
               
               // Check if any sub-item matches current path
-              const isActive = item.subItems.some(subItem => 
+              const isActive = item.subItems && item.subItems.some(subItem => 
                 subItem.sub && subItem.sub.some(furtherSubItem => 
                   furtherSubItem.path === location.pathname
                 )
@@ -115,7 +171,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
                   
                   <div className="nav-item-wrapper">
                     <a
-                      className="nav-link  rounded py-3 px-3"
+                      className="nav-link rounded py-3 px-3"
                       href={`#${collapseId}`}
                       role="button"
                       data-bs-toggle="collapse" 
@@ -126,9 +182,25 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
                         color: "#1e3a8a",
                         backgroundColor: expandedItems[collapseId] || isActive ? "#F4F4F4" : "transparent",
                         transition: "all 0.2s",
-                    
+                        '&:hover': {
+                          transform: 'translateX(5px)'
+                        }
                       }}
                       onClick={() => handleItemClick(collapseId)}
+                      onMouseEnter={(e) => {
+                        gsap.to(e.currentTarget, {
+                          x: 5,
+                          duration: 0.8,
+                          ease: "power2.out"
+                        });
+                      }}
+                      onMouseLeave={(e) => {
+                        gsap.to(e.currentTarget, {
+                          x: 0,
+                          duration: 0.8,
+                          ease: "power2.out"
+                        });
+                      }}
                     >
                        {expandedItems[collapseId] ? (
                         <FaCaretDown
@@ -157,11 +229,11 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
                     </a>
                     <div 
                       id={collapseId}
-                      className="collapse nav-collapse"
+                      className={`collapse nav-collapse ${expandedItems[collapseId] ? 'show' : ''}`}
                       data-bs-parent="#navbarVerticalMenu"
                     >
                       <div className="nav-collapse-items justify-content-end pt-1 pb-2 ">
-                        {item.subItems.map((subItem, subIndex) => (
+                        {item.subItems && item.subItems.map((subItem, subIndex) => (
                           <div key={subIndex}>
                             {subItem.label && (
                               <div className="nav-sub-label py-1 px-3" style={{ fontWeight: 'bold', color: '#4b5563' }}>
@@ -177,10 +249,28 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
                                 style={{
                                   color: "#4b5563",
                                   fontSize: "0.9rem",
-                                  transition: "all 0.2s",
+                                  transition: "all 0.2s ease",
                                   zIndex: "200",
+                                  display: "block",
+                                  visibility: "visible",
+                                  opacity: 1,
                                   backgroundColor: location.pathname === furtherSubItem.path ? "#F4F4F4" : "transparent",
                                   fontWeight: location.pathname === furtherSubItem.path ? "600" : "normal",
+                                  transform: "scale(1)",
+                                }}
+                                onMouseEnter={(e) => {
+                                  gsap.to(e.currentTarget, {
+                                    scale: 1.04,
+                                    duration: 0.1,
+                                    ease: "power1.out"
+                                  });
+                                }}
+                                onMouseLeave={(e) => {
+                                  gsap.to(e.currentTarget, {
+                                    scale: 1,
+                                    duration: 0.2,
+                                    ease: "power1.out"
+                                  });
                                 }}
                               >
                                 <span className="d-flex position-relative align-items-center gap-2">

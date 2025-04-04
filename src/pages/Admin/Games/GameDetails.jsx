@@ -13,10 +13,13 @@ import CreateSlotModal from "./Modal/CreateSlotModal";
 import { TbMoodSad } from "react-icons/tb";
 import { deleteslot, getslots } from "../../../store/slices/slotsSlice";
 import { FaEdit } from "react-icons/fa";
+import { MdOutlineArrowOutward } from "react-icons/md";
+import { BiPen, BiPencil } from "react-icons/bi";
 
 const GameDetails = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { selectedGame, status, error } = useSelector((state) => state.games);
     const [showSlotModal, setShowSlotModal] = useState(false);
     const [slotStatus, setSlotStatus] = useState({});
@@ -96,7 +99,7 @@ const GameDetails = () => {
             {/* Booking Overview */}
             <Card className="p-3 mb-2" style={{ backgroundColor: "transparent" }}>
                 <Row className="gap-3" style={{ backgroundColor: "transparent" }}>
-                    <Col md={2} style={{ backgroundColor: "transparent" }}>
+                    <Col md={2} style={{ backgroundColor: "transparent", position: "relative" }}>
                         <img
                             src={
                                 `${import.meta.env.VITE_API_URL}/${selectedGame?.data?.gameImage}` ||
@@ -111,6 +114,27 @@ const GameDetails = () => {
                                 objectFit: "cover",
                             }}
                         />
+                        <div
+                            onClick={() => navigate(`/admin/games/edit-game/${id}`)}
+                            className="rounded-circle"
+                            style={{
+                                position: "absolute",
+                                bottom: "35px",
+                                right: "15px",
+                                width: "30px",
+                                height: "30px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                backgroundColor: "white",
+                                border: "none",
+                                boxShadow: "none",
+                                outline: "none",
+                                cursor: "pointer",
+                            }}
+                        >
+                          <BiPencil  color="blue" />
+                        </div>
                     </Col>
                     <Col
                         md={5}

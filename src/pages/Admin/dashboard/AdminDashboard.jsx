@@ -13,12 +13,12 @@ import TGm1 from '/assets/Admin/Dashboard/GamesImage/TGm1.png'
 import TGm2 from '/assets/Admin/Dashboard/GamesImage/Tgm2.png'
 import { Link } from 'react-router-dom';
 import { BiSearch } from 'react-icons/bi';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGames } from '../../../store/slices/gameSlice';
 import { useNavigate } from 'react-router-dom';
 import Nogame from "/assets/Admin/Game/No Game.png";
-
+import gsap from 'gsap';
 
 const summaryData = [
   {
@@ -105,6 +105,10 @@ const AdminDashboard = () => {
   const dispatch = useDispatch();
   const { games } = useSelector((state) => state.games);
   const cafeId = JSON.parse(sessionStorage.getItem('user'))?._id;
+  const summaryCardsRef = useRef(null);
+  const gamesRef = useRef(null);
+  const tournamentsRef = useRef(null);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     if (cafeId) {
@@ -112,8 +116,112 @@ const AdminDashboard = () => {
     }
   }, [dispatch, cafeId]);
 
+  // Animation effects
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Container animation
+      gsap.from(containerRef.current, {
+        opacity: 0,
+        duration: 0.5,
+        ease: "power1.inOut"
+      });
+
+      // Summary cards animation
+      gsap.from(".summary-card", {
+        y: 50,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.6,
+        ease: "back.out(1.7)",
+        delay: 0.3
+      });
+
+      // Enhanced Games section animation - FIXED
+      gsap.from(".game-card", {
+        y: 50,
+        opacity: 0,
+        scale: 0.9,
+        duration: 0.7,
+        stagger: 0.15,
+        ease: "power2.out",
+        delay: 0.6,
+        scrollTrigger: {
+          trigger: gamesRef.current,
+          start: "top 80%"
+        }
+      });
+
+      // Enhanced Tournaments animation - FIXED
+      gsap.from(".tournament-card", {
+        y: 50,
+        opacity: 0,
+        duration: 0.7,
+        stagger: 0.15,
+        ease: "power2.out",
+        delay: 0.9,
+        scrollTrigger: {
+          trigger: tournamentsRef.current,
+          start: "top 80%"
+        }
+      });
+
+      // Bookings animation
+      gsap.from(".booking-item", {
+        y: 30,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.5,
+        ease: "elastic.out(1, 0.5)",
+        delay: 1.2
+      });
+
+      // // Hover animations for game cards
+      // gsap.utils.toArray(".game-card").forEach(card => {
+      //   gsap.set(card, { willChange: "transform" });
+      //   card.addEventListener("mouseenter", () => {
+      //     gsap.to(card, {
+      //       y: -5,
+      //       scale: 1.02,
+      //       duration: 0.2,
+      //       ease: "power1.out"
+      //     });
+      //   });
+      //   card.addEventListener("mouseleave", () => {
+      //     gsap.to(card, {
+      //       y: 0,
+      //       scale: 1,
+      //       duration: 0.2,
+      //       ease: "power1.out"
+      //     });
+      //   });
+      // });
+
+      // // Hover animations for tournament cards
+      // gsap.utils.toArray(".tournament-card").forEach(card => {
+      //   gsap.set(card, { willChange: "transform" });
+      //   card.addEventListener("mouseenter", () => {
+      //     gsap.to(card, {
+      //       y: -3,
+      //       boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
+      //       duration: 0.2
+      //     });
+      //   });
+      //   card.addEventListener("mouseleave", () => {
+      //     gsap.to(card, {
+      //       y: 0,
+      //       boxShadow: "none",
+      //       duration: 0.2
+      //     });
+      //   });
+      // });
+
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <Container data-aos="fade-up" data-aos-duration="500" fluid className="p-2" >
+    <Container fluid className="p-2" ref={containerRef}>
       <h3 className="mb-4">Hello, Styx Cafe</h3>
 
       {/* Search Bar for Mobile */}
@@ -130,48 +238,33 @@ const AdminDashboard = () => {
 
       {/* Summary Cards */}
       <Row className="mt-4 mb-4">
-        <Col>
-          <Card className="border-0">
-            <Card.Body>
-              <Row className="g-3 ">
-                {summaryData.map((item, index) => (
-                  <Col key={index} xs={6} md={3} >
-                    <div
-                      style={{
-                        gap: "1rem",
-                        height: '100%',
-                        backgroundColor: window.innerWidth <= 768 ? item.bgColor : 'transparent'
-                      }}
-                      className={`summary-card  ${window.innerWidth >= 768 && index !== 0 ? 'border-start border-3 ' : ''} shadow-none`}
-                    >
-                      <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100'>
-                        <span className='d-flex align-items-center justify-content-center rounded-4'
-                          style={{ width: '50px', height: '50px', background: item.bgColor }}>
-                          <img src={item.icon} alt={item.title} />
-                        </span>
-                        <div>
-                          <small className="text-muted">{item.title}</small>
-                          <h2 className="mt-2">{item.value}</h2>
-                        </div>
-                      </div>
+        {summaryData.map((item, index) => (
+          <Col key={index} xs={6} md={3}>
+            <div className="summary-card">
+              <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100'>
+                <span className='d-flex align-items-center justify-content-center rounded-4'
+                  style={{ width: '50px', height: '50px', background: item.bgColor }}>
+                  <img src={item.icon} alt={item.title} />
+                </span>
+                <div>
+                  <small className="text-muted">{item.title}</small>
+                  <h2 className="mt-2">{item.value}</h2>
+                </div>
+              </div>
 
-                      <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
-                        <small className="text-muted">{item.title}</small>
-                        <div className='d-flex align-items-center justify-content-between mt-2'>
-                          <span className='d-flex align-items-center justify-content-center rounded-4'
-                            style={{ width: '50px', height: '50px', background: item.bgColor }}>
-                            <img src={item.icon} alt={item.title} />
-                          </span>
-                          <h2 className="mb-0">{item.value}</h2>
-                        </div>
-                      </div>
-                    </div>
-                  </Col>
-                ))}
-              </Row>
-            </Card.Body>
-          </Card>
-        </Col>
+              <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
+                <small className="text-muted">{item.title}</small>
+                <div className='d-flex align-items-center justify-content-between mt-2'>
+                  <span className='d-flex align-items-center justify-content-center rounded-4'
+                    style={{ width: '50px', height: '50px', background: item.bgColor }}>
+                    <img src={item.icon} alt={item.title} />
+                  </span>
+                  <h2 className="mb-0">{item.value}</h2>
+                </div>
+              </div>
+            </div>
+          </Col>
+        ))}
       </Row>
 
       {/* Mobile Bookings Card */}
@@ -212,7 +305,7 @@ const AdminDashboard = () => {
         {/* Left Column */}
         <Col md={8}>
           {/* Listed Games */}
-          <Card className="border-0">
+          <Card className="border-0" ref={gamesRef}>
             <Card.Body>
               <div className="d-flex justify-content-between mb-3 align-items-center">
                 <Card.Title style={{ fontSize: "1.2rem" }}>Listed Games</Card.Title>
@@ -221,9 +314,12 @@ const AdminDashboard = () => {
               {games.length > 0 ? (
                 <div className="horizontal-scroll">
                   <Row className="flex-nowrap" style={{ margin: '0 -0.5rem' }}>
-                    {games.slice(0, 3).map((game, index) => (
+                    {games.slice(0, 3).map((game) => (
                       <Col key={game._id} xs={10} sm={6} md={6} lg={4} style={{ padding: '0 0.5rem' }}>
-                        <Card className="border-0 h-100">
+                        <Card className="border-0 h-100 game-card" style={{ 
+                          transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                          willChange: 'transform'
+                        }}>
                           <Card.Img
                             variant="top"
                             src={`${import.meta.env.VITE_API_URL}/${game.gameImage}`}
@@ -276,7 +372,7 @@ const AdminDashboard = () => {
             </Card.Body>
           </Card>
           {/* Tournaments */}
-          <Card className="border-0 mt-4">
+          <Card className="border-0 mt-4" ref={tournamentsRef}>
             <Card.Body>
               <div className="d-flex mb-4 justify-content-between align-items-center">
                 <Card.Title style={{ fontSize: "1.2rem", marginBottom: "0.8rem" }}>Tournaments</Card.Title>
@@ -284,9 +380,12 @@ const AdminDashboard = () => {
               </div>
               <div className="horizontal-scroll">
                 <Row className="flex-nowrap" style={{ margin: '0 -0.5rem' }}>
-                  {tournaments.map((tournament, index) => (
-                    <Col key={index} xs={10} sm={6} md={6} lg={6} style={{ padding: '0 0.5rem' }}>
-                      <Card className="border-0">
+                  {tournaments.map((tournament) => (
+                    <Col key={tournament.title} xs={10} sm={6} md={6} lg={6} style={{ padding: '0 0.5rem' }}>
+                      <Card className="border-0 tournament-card" style={{ 
+                        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                        willChange: 'transform'
+                      }}>
                         <div className="position-relative">
                           <Card.Img
                             variant="top"
@@ -344,7 +443,7 @@ const AdminDashboard = () => {
                 <Card.Title style={{ fontSize: "1.2rem", marginBottom: "0.8rem" }} className="mb-4">Bookings</Card.Title>
                 <ListGroup variant="flush">
                   {bookingsData.map((booking) => (
-                    <ListGroup.Item key={booking.id} className="border-bottom py-3">
+                    <ListGroup.Item key={booking.id} className="border-bottom py-3 booking-item">
                       <div className="d-flex gap-3">
                         <div style={{ width: '60px', height: '60px' }}>
                           <img

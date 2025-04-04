@@ -101,11 +101,11 @@ console.log("selectedItem", selectedItem);
   const TaxList = useSelector((state) => state.taxFieldSlice?.taxFields);
 
   const calculateTotal = (price, quantity, tax) => {
-    const subtotal = Math.round(price * quantity * 100) / 100;
-    const totalTax = Math.round((subtotal * tax) / 100 * 100) / 100;
+    const subtotal = parseFloat(price) * parseInt(quantity);
+    const totalTax = (subtotal * parseFloat(tax)) / 100;
     return { 
       total: Math.round((subtotal + totalTax) * 100) / 100, 
-      totalTax: totalTax
+      totalTax: Math.round(totalTax * 100) / 100
     };
   };
 

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Form, Button, Row, Col, Card } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from 'react-redux';
-import { addGame, updateGame } from '../../../store/slices/gameSlice';
+import { addGame, updateGame, getGameById } from '../../../store/slices/gameSlice';
 import axios from "axios";
 
 const CreateNewGameForm = () => {
@@ -36,8 +36,8 @@ const CreateNewGameForm = () => {
       if (id) {
         try {
           const user = JSON.parse(sessionStorage.getItem('user'));
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/superadmin/game/${id}`);
-          const gameData = response.data.data;
+          const response = await dispatch(getGameById(id)).unwrap();
+          const gameData = response.data;
           
           setFormData({
             name: gameData.name || "",
@@ -50,12 +50,13 @@ const CreateNewGameForm = () => {
             details: gameData.details || "",
             gameImage: null,
             existingImage: gameData.gameImage || "",
-            cafe: cafeId,
+            cafe: gameData.cafe,
+            payLater: gameData.payLater || false,
           });
 
           // Set image preview if exists
           if (gameData.gameImage) {
-            setImagePreview(`${process.env.REACT_APP_API_URL}/${gameData.gameImage}`);
+            setImagePreview(`${import.meta.env.VITE_API_URL}/${gameData.gameImage}`);
           }
         } catch (error) {
           console.error('Error fetching game data:', error);
@@ -64,7 +65,7 @@ const CreateNewGameForm = () => {
     };
 
     fetchGameData();
-  }, [id, cafeId]);
+  }, [id, cafeId, dispatch]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -110,7 +111,7 @@ const CreateNewGameForm = () => {
     try {
       if (id) {
         // Edit mode
-        await dispatch(updateGame({ id, updatedData: formDataToSend })).unwrap();
+        await dispatch(updateGame({ id, updateGame: formDataToSend })).unwrap();
       } else {
         // Create mode
         await dispatch(addGame(formDataToSend)).unwrap();
@@ -246,7 +247,7 @@ const CreateNewGameForm = () => {
                 {(formData.existingImage || imagePreview) && (
                   <div className="mb-2">
                     <img
-                      src={formData.existingImage ? `${process.env.REACT_APP_API_URL}/${formData.existingImage}` : imagePreview}
+                      src={formData.existingImage ? `${import.meta.env.VITE_API_URL}/${formData.existingImage}` : imagePreview}
                       alt="Game preview"
                       style={{ maxWidth: '150px', height: 'auto', marginBottom: '10px' }}
                     />
