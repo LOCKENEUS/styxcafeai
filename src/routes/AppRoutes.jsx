@@ -172,8 +172,8 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
 
 
 
-          <Route path="/superadmin/CafeGames/:cafeId" element={<CafeGames />} />
-          <Route path="/superadmin/CreateMembership/:cafeId" element={<CreateMembership />} />
+          <Route path="/superadmin/CafeGames" element={<CafeGames />} />
+          <Route path="/superadmin/CreateMembership" element={<CreateMembership />} />
 
 
 

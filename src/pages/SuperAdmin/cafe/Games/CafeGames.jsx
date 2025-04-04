@@ -11,13 +11,15 @@ import {
 } from "../../../../store/slices/gameSlice";
 import GameDetails from "./GameDetails";
 import GameForm from "./GameForm";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import Add from "/assets/superAdmin/cafe/formkit_addWhite.png";
 
 const CafeGames = () => {
 
-  const cafeId =useParams().cafeId;
-  console.log("your cafe id ",cafeId);
+  const location = useLocation();
+    const { cafeId } = location.state || {}; 
+
+  console.log("your cafe id game ",cafeId);
   const baseURL = import.meta.env.VITE_API_URL;
 
   console.log(cafeId);
@@ -132,12 +134,12 @@ const CafeGames = () => {
                         />
                       </div>
 
-                      <Card.Body>
+                      <Card.Body >
                         <Card.Title className=" " style={{ fontSize: "18.07px", fontWeight: "600" }}>{game.name || "Game Title"}</Card.Title>
                         <Card.Text>
-                          <Row className="gap-2 my-3">
+                          <Row className="gap-2 mt-3">
                             {/* Buttons Section */}
-                            <Col xs={12} className="d-flex gap-2 justify-content-start">
+                            <Col xs={12} className="d-flex gap-2 justify-content-start mb-2">
                               <Button className="border-0 rounded-3" size="sm" style={{ backgroundColor: "#2C99FF" }}>
                                 Single
                               </Button>
@@ -148,7 +150,7 @@ const CafeGames = () => {
 
                             {/* Price */}
                             <Col xs={4}>
-                              <h6 className="text-primary fw-semibold" style={{ fontSize: "15.81px", fontWeight: "600" }}>Price:</h6>
+                              <h6 className="text-primary fw-semibold" style={{ fontSize: "16px", fontWeight: "500" }}>Price:</h6>
                             </Col>
                             <Col xs={6}>
                               <h6 className="fw-medium" style={{ fontSize: "15.81px", fontWeight: "500" }}>₹ {game.price || 1000}</h6>
@@ -156,7 +158,7 @@ const CafeGames = () => {
 
                             {/* Zone */}
                             <Col xs={4}>
-                              <h6 className="text-primary fw-semibold" style={{ fontSize: "15.81px", fontWeight: "600" }}>Zone:</h6>
+                              <h6 className="text-primary fw-semibold" style={{ fontSize: "16px", fontWeight: "500" }}>Zone:</h6>
                             </Col>
                             <Col xs={6}>
                               <h6 className="fw-medium" style={{ fontSize: "15.81px", fontWeight: "500" }}>{game.zone || "A"}</h6>
@@ -164,7 +166,7 @@ const CafeGames = () => {
 
                             {/* Size */}
                             <Col xs={4}>
-                              <h6 className="text-primary fw-semibold" style={{ fontSize: "15.81px", fontWeight: "600" }}>Size:</h6>
+                              <h6 className="text-primary fw-semibold" style={{ fontSize: "16px", fontWeight: "500" }}>Size:</h6>
                             </Col>
                             <Col xs={6}>
                               <h6 className="fw-medium" style={{ fontSize: "15.81px", fontWeight: "500" }} >{game.players || 2}</h6>

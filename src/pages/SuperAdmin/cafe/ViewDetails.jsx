@@ -19,9 +19,15 @@ import FrameKing from '/assets/superAdmin/cafe/FrameKing.png';
 import { getMembershipsByCafeId } from "../../../store/slices/MembershipSlice";
 import GameForm from "./Games/GameForm";
 import { FaCrown } from "react-icons/fa";
-import AddMembershipOffcanvas from "./offcanvasCafe/addGames";
+import AddGamesOffcanvas from "./offcanvasCafe/addGames";
+import AddMembershipOffcanvas from "./offcanvasCafe/addMembership";
+
 
 const ViewDetails = () => {
+
+
+
+  
   const { games, selectedGame } = useSelector((state) => state.games);
   const cafes = useSelector(selectCafes);
   const dispatch = useDispatch();
@@ -34,11 +40,8 @@ const ViewDetails = () => {
   const [imagePreview, setImagePreview] = useState([]);
   const fileInputRef = React.useRef(null);
   const [showModalAdd, setShowModalAdd] = useState(false);
-  useEffect(() => {
-    setTimeout(() => {
-      setShowModalAdd(true); // Opens Offcanvas after 2 seconds
-    }, 2000);
-  }, []);
+  const [showMembershipAdd, setShowMembershipAdd] = useState(false);
+
 
   useEffect(() => {
     dispatch(fetchCafes());
@@ -63,14 +66,17 @@ const ViewDetails = () => {
   console.log("selected game -- ", selectedGame)
 
   // -------------- Games --------------
-
+  const gamesDetails = useSelector(state => state.games);
+   const { selectedGameDetails } = useSelector((state) => state.games);
   useEffect(() => {
     if (cafeId) {
       dispatch(getGames(cafeId));
     }
   }, [cafeId, dispatch]);
   //   games  const POIdGet = useSelector(state => state.purchaseReceiveSlice);
-  const gamesDetails = useSelector(state => state.games);
+  
+
+  
   console.log("games -- ", gamesDetails);
 
 
@@ -265,15 +271,20 @@ const ViewDetails = () => {
                     ADD</h5>
 
 
-                    <AddMembershipOffcanvas  show={showModalAdd} handleClose={() => setShowModalAdd(false)} />
+                    <AddGamesOffcanvas  show={showModalAdd} handleClose={() => setShowModalAdd(false)}  cafeId={cafeId} selectedGameDetails={selectedGameDetails}/>
 
                   
 
                   <h5 className="text-end mx-3 " style={{ fontSize: "16px", fontWeight: "600", cursor: "pointer", color: "#0065FF", marginTop: "3.5px" }} >
                     {/* pass cafeid */}
-                    <Link to={`/superadmin/CafeGames/${cafeId}`}>
+                    {/* <Link to={`/superadmin/CafeGames/${cafeId}`}> */}
+
+                    <Link to={{ pathname: '/superadmin/CafeGames', state: { cafeId } }}>
+             
                       View All
-                    </Link></h5>
+                    </Link>
+                    
+                    </h5>
 
 
 
@@ -302,9 +313,9 @@ const ViewDetails = () => {
                         <Card.Body>
                           <Card.Title className="fs-6 fw-semibold">{game.name || "Game Title"}</Card.Title>
                           <Card.Text>
-                            <Row className="gap-2 my-3">
+                            <Row className="gap-2 mt-3">
                               {/* Buttons Section */}
-                              <Col xs={12} className="d-flex gap-2 justify-content-center">
+                              <Col xs={12} className="d-flex gap-2 justify-content-center mb-3">
                                 <Button className="border-0 rounded-3  " size="sm" style={{ backgroundColor: "#2C99FF" }}>
                                   Single
                                 </Button>
@@ -371,14 +382,18 @@ const ViewDetails = () => {
               <Col sm={6} className=" alingn-items-end ">
                 <div className="d-flex justify-content-end">
                   <h5 className="text-end mx-3" style={{ fontSize: "16px", fontWeight: "600", cursor: "pointer", color: "#00AF0F" }}
-
+                    onClick={() => setShowMembershipAdd(true)}
                   >
                     <Image src={Add} alt="CafeCall" className="mx-1  " style={{ objectFit: "cover", width: "26.25px", height: "26.25px" }} />
                     ADD</h5>
 
+                    <AddMembershipOffcanvas  show={showMembershipAdd} handleClose={() => setShowMembershipAdd(false)}  cafeId={cafeId} selectedMembership={selectedMembership}/>
+
+
                   <h5 className="text-end mx-3 " style={{ fontSize: "16px", fontWeight: "600", cursor: "pointer", color: "#0065FF", marginTop: "3.5px" }} >
                     {/* pass cafeid */}
-                    <Link to={`/superadmin/CreateMembership/${cafeId}`}>
+                    <Link to={{ pathname: '/superadmin/CreateMembership/', state: { cafeId } }}>
+                    {/* <Link to={`/superadmin/CreateMembership/${cafeId}`}> */}
                       View All
                     </Link></h5>
 

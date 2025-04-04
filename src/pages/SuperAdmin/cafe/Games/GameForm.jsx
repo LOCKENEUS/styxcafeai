@@ -103,19 +103,23 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
     try {
       if (isEditing) {
         await dispatch(updateGame({ id: formData._id, updatedData: formDataToSend }));
+        handleCloseCanvas();
       } else {
         await dispatch(addGame(formDataToSend));
+        handleCloseCanvas();
       }
     } catch (error) {
       console.error("Error submitting form:", error);
+      handleCloseCanvas();
     } finally {
       setIsLoading(false);
+      // handleCloseCanvas();
     }
 
     // Reset form data and image preview after submission
     setFormData(initialFormData);
     setImagePreview(null);
-    handleCloseCanvas();
+    
   };
 
 
@@ -325,6 +329,7 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
                   className="d-none"
                   id="fileUploadLocation"
                   ref={fileInputRef}
+                  required
                 />
                 <div className="d-flex justify-content-b gap-6 align-content-center">
                   <div className="d-flex justify-content-center align-items-center">
@@ -343,6 +348,7 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
                         alt="Preview"
                         className="img-thumbnail"
                         style={{ width: "300px" }}
+                        
                       />
                       <div
                         onClick={handleRemoveImage}

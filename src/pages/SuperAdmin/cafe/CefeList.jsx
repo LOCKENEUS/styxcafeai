@@ -49,7 +49,7 @@ const CafeManager = () => {
   };
 
   const [formDataState, setFormDataState] = useState(initialFormData);
- 
+
 
 
   // MObile Size 
@@ -117,8 +117,8 @@ const CafeManager = () => {
       cafe.cafe_name.toLowerCase().includes(lowercasedQuery) ||
       cafe.address.toLowerCase().includes(lowercasedQuery) ||
       cafe.contact_no.toLowerCase().includes(lowercasedQuery) ||
-      cafe.name.toLowerCase().includes(lowercasedQuery) || // Include owner name if needed
-      cafe.email.toLowerCase().includes(lowercasedQuery) 
+      cafe.name.toLowerCase().includes(lowercasedQuery) || 
+      cafe.email.toLowerCase().includes(lowercasedQuery)
 
     );
   });
@@ -149,7 +149,7 @@ const CafeManager = () => {
   };
 
   const handleCreateClick = () => {
-    setFormData(initialFormData); // Ensure fresh form
+    setFormData(initialFormData); 
     setIsEditing(false);
     setShowCanvas(true);
   };
@@ -189,131 +189,144 @@ const CafeManager = () => {
 
   return (
     <div className="my-5">
-      <div className="d-flex justify-content-center align-items-center mb-3">
+      {/* <div className="d-flex justify-content-center align-items-start mb-3">
         <h1 className="text-center">Cafe List</h1>
-        {/* <Button variant="primary" onClick={handleCreateClick}>Add New Cafe</Button> */}
-      </div>
+        
+      </div> */}
+
+      {/* <Link to={{ pathname: '/superadmin/CreateMembership/', state: { cafeId } }}></Link>
+      to={`/superadmin/cafe/viewdetails/${selectedCafe._id}`} 
+      */}
 
       {showDetails && selectedCafe ? (
+
+        
         <Navigate to={`/superadmin/cafe/viewdetails/${selectedCafe._id}`} />
       ) : (
         loading ? <Loader /> : (
 
           <Container fluid>
-          <Card className="my-3 mx-auto py-3 px-3 rounded-4" style={{ backgroundColor: "white" }}>
+            <Card className="my-3 mx-auto py-3 px-3 rounded-4" style={{ backgroundColor: "white" }}>
 
               <Row>
-                <Col sm={7} className="fluid"></Col>
-               
-              <Col  sm={4}  className="my-1" >
-                <InputGroup className="navbar-input-group">
-                  <InputGroupText className="border-0"
-                    style={{ backgroundColor: "#FAFAFA" }}>
-                    <Image src={gm1} alt="search" />
-                  </InputGroupText>
+                <Col sm={7} className="fluid d-flex justify-content-start">
 
-                  <FormControl
-                    type="search"
-                    placeholder="Search for Booking"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    style={{ backgroundColor: "#FAFAFA", border: "none" }}
-                  />
-                  {searchQuery && (
-                    <InputGroupText
-                      as="button"
-                      className="border-0 bg-transparent"
-                      onClick={() => setSearchQuery("")}
-                    >
-                      ✖
+                  <h1 className="text-center mx-3 mt-2">Cafe List</h1>
+
+                </Col>
+
+                <Col sm={4} className="my-1" >
+                  <InputGroup className="navbar-input-group">
+                    <InputGroupText className="border-0"
+                      style={{ backgroundColor: "#FAFAFA" }}>
+                      <Image src={gm1} alt="search" />
                     </InputGroupText>
-                  )}
-                </InputGroup>
-              </Col>
-              <Col sm={1} className=" my-1 d-flex justify-content-start">
-                <Button  onClick={handleCreateClick} className=" rounded-4 border-0" style={{ backgroundColor: "#F2F2F2" }} >
-                  <Image src={plus} alt="add" className=" "/>
-                </Button>
-              </Col>
+
+                    <FormControl
+                      type="search"
+                      placeholder="Search for Booking"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      style={{ backgroundColor: "#FAFAFA", border: "none" }}
+                    />
+                    {searchQuery && (
+                      <InputGroupText
+                        as="button"
+                        className="border-0 bg-transparent"
+                        onClick={() => setSearchQuery("")}
+                      >
+                        ✖
+                      </InputGroupText>
+                    )}
+                  </InputGroup>
+                </Col>
+                <Col sm={1} className=" my-1 d-flex justify-content-start">
+                  <Button onClick={handleCreateClick} className=" rounded-4 border-0" style={{ backgroundColor: "#F2F2F2" }} >
+                    <Image src={plus} alt="add" className=" " />
+                  </Button>
+                </Col>
 
                 <Col sm={12}>
 
-                <Table   hover responsive className=" my-3">
-          <thead style={{ backgroundColor: "#e9f5f8" }}>
-            <tr  className="rounded-4">
-              <th style={{
-                        fontWeight: "500",
-                        fontSize: "clamp(14px, 3vw, 16px)",
-                        padding: "clamp(10px, 2vw, 15px)",
-                        border: "none",
-                        color: "black",
-                        borderTopLeftRadius: "10px" ,
-                        borderBottomLeftRadius: "10px",
-                      }}>#</th>
-              <th style={{
-                        fontWeight: "500",
-                        fontSize: "clamp(14px, 3vw, 16px)",
-                        padding: "clamp(10px, 2vw, 15px)",
-                        border: "none",
-                        color: "black",
-                      }}>Cafe Name</th>
-              <th style={{
-                        fontWeight: "500",
-                        fontSize: "clamp(14px, 3vw, 16px)",
-                        padding: "clamp(10px, 2vw, 15px)",
-                        border: "none",
-                        color: "black",
-                      }}>Address</th>
-              <th style={{
-                        fontWeight: "500",
-                        fontSize: "clamp(14px, 3vw, 16px)",
-                        padding: "clamp(10px, 2vw, 15px)",
-                        border: "none",
-                        color: "black",
-                      }}>Contact</th>
-              <th style={{
-                        fontWeight: "500",
-                        fontSize: "clamp(14px, 3vw, 16px)",
-                        padding: "clamp(10px, 2vw, 15px)",
-                        border: "none",
-                        color: "black",
-                      }}>Owner</th>
-              <th style={{
-                        fontWeight: "500",
-                        fontSize: "clamp(14px, 3vw, 16px)",
-                        padding: "clamp(10px, 2vw, 15px)",
-                        border: "none",
-                        color: "black",
-                        borderTopRightRadius: "10px",
-                        borderBottomRightRadius: "10px"
-                      }}>Email</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredCafes.length ? (
-              filteredCafes.map((cafe, index) => (
-                <tr  key={index}  style={{ }}>
-                  <td className="py-4 " style={{}}>{index + 1}</td>
-                  <td className="py-4 " style={{fontWeight: "600" , color: "#0062FF", cursor: "pointer"}} onClick={() => { setSelectedCafeState(cafe); setShowDetails(true); }}>{cafe.cafe_name}</td>
-                  <td className="py-4 " style={{width: "20%"}}>{cafe.address}</td>
-                  <td className="py-4 " style={{width: "20%"}}>{cafe.contact_no}</td>
-                  <td className="py-4 " style={{width: "20%"}}><Image src={profile} alt="owner" className="rounded-circle mr-2" style={{ width: "50px", height: "50px" }} />{cafe.name}</td>
-                  <td className="py-4 " style={{width: "20%"}}>{cafe.email}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7" className="text-center fw-bold py-3">No Cafes Added Yet</td>
-              </tr>
-            )}
-          </tbody>
-        </Table>
+                  <Table hover responsive className=" my-3">
+                    <thead style={{ backgroundColor: "#e9f5f8" }}>
+                      <tr className="rounded-4">
+                        <th style={{
+                          fontWeight: "500",
+                          fontSize: "clamp(14px, 3vw, 16px)",
+                          padding: "clamp(10px, 2vw, 15px)",
+                          border: "none",
+                          color: "black",
+                          borderTopLeftRadius: "10px",
+                          borderBottomLeftRadius: "10px",
+                        }}>#</th>
+                        <th style={{
+                          fontWeight: "500",
+                          fontSize: "clamp(14px, 3vw, 16px)",
+                          padding: "clamp(10px, 2vw, 15px)",
+                          border: "none",
+                          color: "black",
+                        }}>Cafe Name</th>
+                        <th style={{
+                          fontWeight: "500",
+                          fontSize: "clamp(14px, 3vw, 16px)",
+                          padding: "clamp(10px, 2vw, 15px)",
+                          border: "none",
+                          color: "black",
+                        }}>Address</th>
+                        <th style={{
+                          fontWeight: "500",
+                          fontSize: "clamp(14px, 3vw, 16px)",
+                          padding: "clamp(10px, 2vw, 15px)",
+                          border: "none",
+                          color: "black",
+                        }}>Contact</th>
+                        <th style={{
+                          fontWeight: "500",
+                          fontSize: "clamp(14px, 3vw, 16px)",
+                          padding: "clamp(10px, 2vw, 15px)",
+                          border: "none",
+                          color: "black",
+                        }}>Owner</th>
+                        <th style={{
+                          fontWeight: "500",
+                          fontSize: "clamp(14px, 3vw, 16px)",
+                          padding: "clamp(10px, 2vw, 15px)",
+                          border: "none",
+                          color: "black",
+                          borderTopRightRadius: "10px",
+                          borderBottomRightRadius: "10px"
+                        }}>Email</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredCafes.length ? (
+                        filteredCafes.map((cafe, index) => (
+                          <tr key={index} style={{}}>
+                            <td className="py-4 " style={{}}>{index + 1}</td>
+                            <td className="py-4 " style={{ fontWeight: "600", color: "#0062FF", cursor: "pointer" }} 
+                              onClick={() => { setSelectedCafeState(cafe); setShowDetails(true); }}>
+                              {cafe.cafe_name}
+                            </td>
+                            <td className="py-4 " style={{ width: "20%" }}>{cafe.address}</td>
+                            <td className="py-4 " style={{ width: "20%" }}>{cafe.contact_no}</td>
+                            <td className="py-4 " style={{ width: "20%" }}><Image src={profile} alt="owner" className="rounded-circle mr-2" style={{ width: "50px", height: "50px" }} />{cafe.name}</td>
+                            <td className="py-4 " style={{ width: "20%" }}>{cafe.email}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="7" className="text-center fw-bold py-3">No Cafes Added Yet</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </Table>
                 </Col>
               </Row>
 
 
-         </Card>
-         </Container>
+            </Card>
+          </Container>
         )
       )}
 

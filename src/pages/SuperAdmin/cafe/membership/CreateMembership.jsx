@@ -6,14 +6,17 @@ import MembershipForm from "./MembershipForm"; // You'll need to create this com
 import { RiVipCrownFill, RiDeleteBin6Fill } from "react-icons/ri";
 import { FaCalendarAlt, FaDollarSign } from "react-icons/fa";
 import { SiListmonk } from "react-icons/si";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import Add from "/assets/superAdmin/cafe/formkit_addWhite.png";
 import FrameKing from '/assets/superAdmin/cafe/FrameKing.png';
 
 const CreateMembership = () => {
 
-  const cafeId = useParams().cafeId;
-  console.log("your cafe id membership ", cafeId);
+  // const cafeId = useParams().cafeId;
+  // console.log("your cafe id membership ", cafeId);
+
+  const location = useLocation();
+    const { cafeId } = location.state || {}; 
 
   const dispatch = useDispatch();
   const { memberships, loading, error, selectedMembership } = useSelector((state) => state.memberships);
