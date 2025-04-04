@@ -15,7 +15,7 @@ import {
     FaChevronUp,
 } from "react-icons/fa";
 import { FiFilter } from "react-icons/fi";
-import { IoAdd } from "react-icons/io5";
+import nobookings from "/assets/Admin/Game/nobookings.png";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getGameById, getGames } from "../../../store/slices/gameSlice";
@@ -312,7 +312,7 @@ const BookingList = () => {
                                 Persons
                             </th>
                             <th
-                                style={{ border: "none", fontSize: "1rem", color: "black" }}
+                                style={{ paddingLeft: "20px", border: "none", fontSize: "1rem", color: "black" }}
                             >
                                 Mode
                             </th>
@@ -329,111 +329,117 @@ const BookingList = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredBookings?.map((booking, index) => (
-                            <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
-                                <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
-                                    {index + 1}
-                                </td>
-                                <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
-                                    <Link to={`/admin/booking/checkout/${booking._id}`}>
-                                        {booking.booking_id}
-                                    </Link>
-                                </td>
-                                <td style={{ border: "none", minWidth: "150px" }}>
-                                    <div className="d-flex align-items-center">
-                                        <img
-                                            src={profile}
-                                            alt={booking?.customerName}
-                                            style={{
-                                                width: "40px",
-                                                height: "40px",
-                                                borderRadius: "100%",
-                                                marginRight: "10px",
-                                            }}
-                                        />
-                                        <span>{booking?.customerName}</span>
-                                    </div>
-                                </td>
-                                <td
-                                    className="align-middle"
-                                    style={{ border: "none", minWidth: "120px" }}
-                                >
-                                    {booking?.gameTitle}
-                                </td>
-                                <td
-                                    className="align-middle"
-                                    style={{ border: "none", minWidth: "80px" }}
-                                >
-                                    {booking.players.length + 1}
-                                </td>
-                                <td
-                                    className="align-middle"
-                                    style={{ border: "none", minWidth: "120px" }}
-                                >
-                                    <div style={{ display: "flex", alignItems: "center" }}>
-                                        <span
-                                            className="d-flex align-items-center w-75 justify-content-center"
-                                            style={{
-                                                backgroundColor:
-                                                    booking.status === "Pending" ? "#FFF3CD"
-                                                        :
-                                                        booking.mode === "Online"
-                                                            ? "#03D41414"
-                                                            : "#FF00000D",
-                                                borderRadius: "20px",
-                                                padding: "5px 10px",
-                                                color:
-                                                    booking.status === "Pending" ? "#856404"
-                                                        :
-                                                        booking.mode === "Online" ? "#00AF0F" : "orange",
-                                            }}
-                                        >
-                                            <div
+                        {filteredBookings.length > 0 ?
+                            filteredBookings?.map((booking, index) => (
+                                <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
+                                    <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
+                                        {index + 1}
+                                    </td>
+                                    <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
+                                        <Link to={`/admin/booking/checkout/${booking._id}`}>
+                                            {booking.booking_id}
+                                        </Link>
+                                    </td>
+                                    <td style={{ border: "none", minWidth: "150px" }}>
+                                        <div className="d-flex align-items-center">
+                                            <img
+                                                src={profile}
+                                                alt={booking?.customerName}
                                                 style={{
-                                                    width: "10px",
-                                                    height: "10px",
-                                                    borderRadius: "50%",
-                                                    backgroundColor:
-                                                        booking.status === "Pending" ? "#856404"
-                                                            : booking.mode === "Online"
-                                                                ? "#03D414"
-                                                                : "orange",
-                                                    marginRight: "5px",
+                                                    width: "40px",
+                                                    height: "40px",
+                                                    borderRadius: "100%",
+                                                    marginRight: "10px",
                                                 }}
                                             />
-                                            {booking?.status === "Pending" ? "Pending" : booking?.mode}
-                                        </span>
-                                    </div>
-                                </td>
-                                <td
-                                    className="align-middle"
-                                    style={{ border: "none", minWidth: "120px" }}
-                                >
-                                    {formatDate(booking.slot_date)}<br />
-                                    {convertTo12Hour(booking?.slot_id?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time)}
-                                </td>
-                                <td
-                                    className="align-middle"
-                                    style={{
-                                        border: "none",
-                                        position: "relative",
-                                        minWidth: "100px",
-                                    }}
-                                >
-                                    <Button
-                                        variant="link"
-                                        className="text-primary"
-                                        onClick={() =>
-                                            navigate(`/admin/booking/edit/${booking._id}`)
-                                        }
+                                            <span>{booking?.customerName}</span>
+                                        </div>
+                                    </td>
+                                    <td
+                                        className="align-middle"
+                                        style={{ border: "none", minWidth: "120px" }}
                                     >
-                                        <FaEdit
-                                            style={{ color: "#0062FF", fontSize: "1.2rem" }}
-                                        />
-                                    </Button>
+                                        {booking?.gameTitle}
+                                    </td>
+                                    <td
+                                        className="align-middle"
+                                        style={{ border: "none", minWidth: "80px" }}
+                                    >
+                                        {booking.players.length + 1}
+                                    </td>
+                                    <td
+                                        className="align-middle"
+                                        style={{ border: "none", minWidth: "140px" }}
+                                    >
+                                        <div style={{ display: "flex", alignItems: "center" }}>
+                                            <span
+                                                className="d-flex align-items-center w-75 justify-content-center"
+                                                style={{
+                                                    backgroundColor:
+                                                        booking.status === "Pending" ? "#FFF3CD"
+                                                            :
+                                                            booking.mode === "Online"
+                                                                ? "#03D41414"
+                                                                : "#FF00000D",
+                                                    borderRadius: "20px",
+                                                    padding: "5px 10px",
+                                                    color:
+                                                        booking.status === "Pending" ? "#856404"
+                                                            :
+                                                            booking.mode === "Online" ? "#00AF0F" : "orange",
+                                                }}
+                                            >
+                                                <div
+                                                    style={{
+                                                        width: "10px",
+                                                        height: "10px",
+                                                        borderRadius: "50%",
+                                                        backgroundColor:
+                                                            booking.status === "Pending" ? "#856404"
+                                                                : booking.mode === "Online"
+                                                                    ? "#03D414"
+                                                                    : "orange",
+                                                        marginRight: "5px",
+                                                    }}
+                                                />
+                                                {booking?.status === "Pending" ? "Pending" : booking?.mode}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td
+                                        className="align-middle"
+                                        style={{ border: "none", minWidth: "120px" }}
+                                    >
+                                        {formatDate(booking.slot_date)}<br />
+                                        {convertTo12Hour(booking?.slot_id?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time)}
+                                    </td>
+                                    <td
+                                        className="align-middle"
+                                        style={{
+                                            border: "none",
+                                            position: "relative",
+                                            minWidth: "100px",
+                                        }}
+                                    >
+                                        <Button
+                                            variant="link"
+                                            className="text-primary"
+                                            onClick={() =>
+                                                navigate(`/admin/booking/edit/${booking._id}`)
+                                            }
+                                        >
+                                            <FaEdit
+                                                style={{ color: "#0062FF", fontSize: "1.2rem" }}
+                                            />
+                                        </Button>
+                                    </td>
+                                </tr>
+                            )) :
+                            <tr>
+                                <td colSpan={8} className="text-center" style={{ border: "none" }}>
+                                    <img src={nobookings} alt="no bookings" className="img-fluid w-50" />
                                 </td>
-                            </tr>
-                        ))}
+                            </tr>}
                     </tbody>
                 </Table>
             </div>

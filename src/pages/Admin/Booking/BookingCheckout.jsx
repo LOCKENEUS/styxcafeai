@@ -363,7 +363,7 @@ const BookingCheckout = () => {
             </Row>
           </Card>
 
-          {selectedGame?.type === "Multiplayer" ?
+          {selectedGame?.type === "Multiplayer" || selectedGame?.type === "Single" ?
             booking?.status === "Paid" ?
               <div className="p-2 bg-white rounded shadow-sm w-100">
                 <Row className="mt-3">

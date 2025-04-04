@@ -199,7 +199,7 @@ const Calendar = ({ selectedGame }) => {
                   height: "10px",
                   borderRadius: "50%",
                   backgroundColor: date.status.startsWith("Sun")
-                    ? "red"
+                    ? "orange"
                     : "green",
                 }}
               />
@@ -211,32 +211,7 @@ const Calendar = ({ selectedGame }) => {
       <button className="nav-button next-button" onClick={handleNext}>
         <RiArrowRightSLine />
       </button>
-
-      {activeDate.getDay() === 0 ? (
-        <div
-          className="no-slots-message d-flex flex-column align-items-center border border-3 rounded-4  justify-content-center"
-          style={{ height: "40vh", textAlign: "center", marginTop: "20px" }}
-        >
-          <TbMoodSad style={{ fontSize: "4rem", color: "gray" }} />
-          <p style={{ fontSize: "1rem", color: "gray", fontWeight: "bold" }}>
-            Sorry! No Slots Available for Today
-          </p>
-          <button
-            onClick={() => setActiveDate(new Date(2025, 1, 17))}
-            style={{
-              backgroundColor: "white",
-              padding: "10px 20px",
-              borderRadius: "10px",
-              border: "2px solid blue",
-              color: "blue",
-            }}
-          >
-            Book For 17 Mon
-          </button>
-        </div>
-      ) : (
         <BookingSlots date={activeDate} selectedGame={selectedGame} gameId={id} />
-      )}
     </div>
   );
 };
@@ -376,17 +351,17 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
                   <span>₹{slot.slot_price ? slot.slot_price : selectedGame?.data.price}</span>
                   <Button
                     variant="primary"
-                    disabled={booked || isPast}
+                    disabled={booked || isPast || !slot.is_active}
                     className="w-100 w-md-auto"
                     style={{
                       backgroundColor: booked || isPast ? "#ccc" : "white",
-                      border: booked || isPast ? "2px solid gray" : "2px solid blue",
-                      color: booked || isPast ? "gray" : "blue",
+                      border: booked || isPast || !slot.is_active ? "2px solid gray" : "2px solid blue",
+                      color: booked || isPast || !slot.is_active ? "gray" : "blue",
                       minWidth: "120px",
                     }}
                     onClick={() => handleBookSlot(gameId, slot._id, date)}
                   >
-                    {booked ? "Booked" : isPast ? "Time Passed" : "Book Slot"}
+                    {booked ? "Booked" : isPast ? "Time Passed" : !slot.is_active ? "Unavailable" : "Book Slot"}
                   </Button>
                 </div>
               </div>

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -163,10 +164,12 @@ const slotslice = createSlice({
       .addCase(addslot.fulfilled, (state, action) => {
         state.loading = false;
         state.slots.push(action.payload.data);
+        toast.success("Slot added successfully");
       })
       .addCase(addslot.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        toast.error(action.payload.message || "Failed to add slot");
       })
 
       // Update slot
