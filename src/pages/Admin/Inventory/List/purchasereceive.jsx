@@ -230,11 +230,14 @@ export const PurchaseReceivedAdmin = () => {
                   columns={columns}
                   data={filteredItems}
                   progressPending={loading}
-                  progressComponent={<div><Loader/></div>}
+                  progressComponent={<div><Loader /></div>}
                   // pagination
                   highlightOnHover
                   responsive
                   persistTableHead
+                  pagination
+                  paginationPerPage={10}
+                  paginationRowsPerPageOptions={[10, 20, 30, 40]}
                   customStyles={{
                     rows: {
                       style: {

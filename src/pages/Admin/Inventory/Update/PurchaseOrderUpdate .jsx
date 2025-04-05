@@ -177,7 +177,7 @@ export const PurchaseOrderUpdate = () => {
         if (field === "item") {
           const selectedItem = items.find(item => item._id === value);
           if (selectedItem) {
-            updatedProduct.price = selectedItem.sellingPrice;
+            updatedProduct.price = selectedItem.costPrice;
             updatedProduct.tax = selectedItem.tax;
             const itemTax = taxFields.find(tax => tax._id === selectedItem.tax);
             updatedProduct.taxRate = itemTax ? itemTax.tax_rate : 0;
@@ -606,7 +606,7 @@ export const PurchaseOrderUpdate = () => {
                       <option value="">Select Item</option>
                       {items.map((item) => (
                         <option key={item._id} value={item._id}>
-                          {item.name} (₹{item.sellingPrice})
+                          {item.name} (₹{item.costPrice})
                         </option>
                       ))}
                     </Form.Select>

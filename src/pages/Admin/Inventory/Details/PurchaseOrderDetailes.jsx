@@ -188,12 +188,20 @@ const PurchaseOrderDetails = () => {
                                 <Row>
                                     <Col sm={6} >
                                         <span style={{ fontSize: '16px', fontWeight: '500' }}>Billing Address</span>
-                                        <p className="my-3">{vendor?.billingAddress}</p>
+                                        <p className="my-1">{vendor?.billingAddress}</p>
+                                        <p className="my-1">{vendor?.city1}</p>
+                                        <p className="my-1">{vendor?.state1}</p>
+                                        <p className="my-1">{vendor?.pincode1}</p>
+                                        <p className="my-1">{vendor?.country1}</p>
                                     </Col>
 
                                     <Col sm={6} className="border-end border-3" >
                                         <span style={{ fontSize: '16px', fontWeight: '500' }}>Shipping Address</span>
-                                        <p className="my-3">{vendor?.shippingAddress}</p>
+                                        <p className="my-1">{vendor?.shippingAddress}</p>
+                                        <p className="my-1">{vendor?.city2}</p>
+                                        <p className="my-1">{vendor?.state2}</p>
+                                        <p className="my-1">{vendor?.pincode2}</p>
+                                        <p className="my-1">{vendor?.country2}</p>
                                     </Col>
                                 </Row>
                             </Col>
@@ -201,7 +209,7 @@ const PurchaseOrderDetails = () => {
                             <Col sm={8} >
                                 <Row>
                                     {/* Delivery Details */}
-                                    <Col sm={6}  >
+                                    <Col sm={6} className="pt-6" >
                                         <span className="mb-3" style={{ fontSize: '16px', fontWeight: '500' }}>Delivery Address</span>
                                         {selectedPo?.delivery_type === 'Organization' ?
                                             <p className="my-3">{UserAddress}
@@ -254,7 +262,7 @@ const PurchaseOrderDetails = () => {
                                             {items.length > 0 && items.map((item, index) => (
                                                 <tr>
                                                     <td>
-                                                        <b>{item?.item_id?.name}</b>
+                                                        <b><Link to={`/admin/inventory/item-details/${item?.item_id?._id}`}>{item?.item_id?.name}</Link></b>
                                                         <br />
                                                         HSN : {item?.hsn}
                                                     </td>

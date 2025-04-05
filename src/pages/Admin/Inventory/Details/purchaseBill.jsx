@@ -10,6 +10,7 @@ import { getPBillById } from "../../../../store/AdminSlice/Inventory/PBillSlice"
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import CollectPayment from "../modal/CollectBillPayment";
 import {  getPurchaseBillPaymentById } from "../../../../store/AdminSlice/Inventory/CollectPurchaseBill";
+import { sendMailToVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 
 export const PurchaseBillDetailsAdmin = () => {
     const dispatch = useDispatch();
@@ -78,6 +79,10 @@ export const PurchaseBillDetailsAdmin = () => {
         }
     };
 
+    const handleSendMail = async () => {
+       await dispatch(sendMailToVendor(selectedBill))
+    }
+
     const handleModalClose = () => {
         setShowCollectModal(false);
         refreshPaymentData();
@@ -129,7 +134,7 @@ export const PurchaseBillDetailsAdmin = () => {
                                 <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                                     <Image src={print} className="me-2" /> Print
                                 </Button>
-                                <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                                <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }} onClick={handleSendMail}>
                                     <Image src={sendMail} className="me-2" /> Send Email
                                 </Button>
                                 <Button

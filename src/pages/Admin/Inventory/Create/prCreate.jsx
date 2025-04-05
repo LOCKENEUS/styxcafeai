@@ -49,7 +49,7 @@ export const PRCreate = () => {
     const UserAddress = user?.address;
     const UesrPAN = user?.panNo;
 
- 
+
     useEffect(() => {
         if (purchaseOrderData) {
             setPoSelected(purchaseOrderData?._id);
@@ -117,16 +117,26 @@ export const PRCreate = () => {
         const receivedQty = inventoryItems[index]?.qty_received || 0;
         const maxQty = orderedQty - receivedQty;
 
+        console.log("Max Quantity:", maxQty);
+        console.log("Entered Quantity:", enteredQty);
+        console.log("index:", index);
+        console.log("Inventory Items:", inventoryItems);
+
         if (enteredQty > maxQty) {
             alert(`You cannot enter more than ${maxQty} units.`);
+            setInventoryItems((prevItems) =>
+                prevItems.map((item, i) =>
+                    i === index ? { ...item, qty_to_receive: maxQty } : item
+                )
+            );
             return;
+        } else {
+            setInventoryItems((prevItems) =>
+                prevItems.map((item, i) =>
+                    i === index ? { ...item, qty_to_receive: enteredQty } : item
+                )
+            );
         }
-
-        setInventoryItems((prevItems) =>
-            prevItems.map((item, i) =>
-                i === index ? { ...item, qty_to_receive: enteredQty } : item
-            )
-        );
     };
 
     const handleSubmit = async (e) => {
@@ -159,6 +169,8 @@ export const PRCreate = () => {
             console.error('Error creating purchase receive:', error);
         }
     };
+
+    console.log("Inventory Items:", inventoryItems);
 
     return (
         <Container >
@@ -279,6 +291,7 @@ export const PRCreate = () => {
                                             <td>
                                                 <Form.Control
                                                     id={`product_qty${item.id}`}
+                                                    value={inventoryItems[index]?.qty_to_receive || ""}
                                                     type="number"
                                                     placeholder={item.qty_to_receive}
                                                     min="0"

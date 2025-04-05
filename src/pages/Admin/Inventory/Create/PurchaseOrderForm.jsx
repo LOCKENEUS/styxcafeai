@@ -13,6 +13,7 @@ import VendorsList from "../modal/vendoreListModal";
 import { getItems } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
 import { getCustomers } from "../../../../store/AdminSlice/CustomerSlice";
+import { toast } from "react-toastify";
 
 const PurchaseOrderForm = () => {
   const [show, setShow] = useState(false);
@@ -94,7 +95,7 @@ const PurchaseOrderForm = () => {
           const selectedItem = items.find(item => item._id === value);
 
           if (selectedItem) {
-            updatedProduct.price = selectedItem.sellingPrice;
+            updatedProduct.price = selectedItem.costPrice;
             updatedProduct.tax = selectedItem.tax;
             updatedProduct.hsn = selectedItem.hsn || ""; // Set HSN from selected item
             updatedProduct.sku = selectedItem.sku || ""; // Set SKU from selected item
@@ -202,7 +203,7 @@ const PurchaseOrderForm = () => {
   const [formData, setFormData] = useState({
     vendorId: '',
     delivery_type: "Organization",
-    date: '',
+    date: new Date().toISOString().split('T')[0], // Default to today's date
     shipment_date: '',
     payment_terms: '',
     reference: '',
@@ -223,6 +224,11 @@ const PurchaseOrderForm = () => {
 
   // Update the handleSubmit function
   const handleSubmit = async () => {
+
+    if (!vendorId) {
+      toast.error("Please select a vendor.");
+      return;
+    }
     const submitData = new FormData();
 
     // Add basic form fields
@@ -343,7 +349,7 @@ const PurchaseOrderForm = () => {
         <Row>
           <Col sm={4} className="d-flex border-end flex-column gap-2">
             <div className="border-bottom ">
-              <div className="d-flex flex-row align-items-center justify-content-around mb-3 gap-2">
+              <div className="d-flex flex-row align-items-center mb-3 gap-2">
                 <h5 className="text-muted">Vendor :  </h5>
                 <Button
                   style={{ width: "144px", height: "44px", borderStyle: "dashed" }}
@@ -358,7 +364,7 @@ const PurchaseOrderForm = () => {
             <Row className="mt-3">
               <p>{vendorSelected?.name || "Vendor Name"}</p>
 
-              <Col md={5}>
+              <Col md={6}>
                 <h6 style={{ fontSize: "1rem" }}>Billing Address</h6>
                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.city1 || "Billing City"}</p>
                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state1 || "Billing State"}</p>
@@ -366,7 +372,7 @@ const PurchaseOrderForm = () => {
                 <p className="mb-0" style={{ fontSize: "0.9rem" }}>{vendorSelected?.country1 || "Billing Country"}</p>
               </Col>
 
-              <Col md={5}>
+              <Col md={6}>
                 <h6 style={{ fontSize: "1rem" }}>Shipping Address</h6>
                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.city2 || "Shipping City"}</p>
                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state2 || "Shipping State"}</p>
@@ -542,7 +548,7 @@ const PurchaseOrderForm = () => {
                       <option value="">Select Item</option>
                       {items.map((item) => (
                         <option key={item._id} value={item._id}>
-                          {item.name} (₹{item.sellingPrice})
+                          {item.name} (₹{item.costPrice})
                         </option>
                       ))}
                     </Form.Select>

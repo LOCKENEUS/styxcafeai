@@ -6,6 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getPurchaseReceive } from "../../../../store/AdminSlice/Inventory/purchaseReceive";
 import { useEffect } from "react";
+import { sendMailToVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 
 export const PurchaseReceivedDetails = () => {
 
@@ -27,6 +28,15 @@ export const PurchaseReceivedDetails = () => {
     const loading = POIdGet.loading;
     const location = useLocation();
     const purchaseReceive = location.state;
+
+    const handleSendMail = () => {
+        dispatch(sendMailToVendor(POIdGet?.selectedItem))
+    }
+
+    const handlePoNavigation = () => {
+        const poId = POIdGet?.selectedItem?.refer_id?._id;
+        navigate(`/admin/inventory/purchase-order-details`);
+    }
 
     // count items
     const countItems = POIdGet?.selectedItem?.items;
@@ -69,7 +79,7 @@ export const PurchaseReceivedDetails = () => {
                                 >
                                     <Image src={print} className="me-2" /> Print
                                 </Button>
-                                <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                                <Button className="d-flex align-items-center" onClick={handleSendMail} style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                                     <Image src={sendMail} className="me-2" /> Send Email
                                 </Button>
                                 <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
@@ -140,7 +150,7 @@ export const PurchaseReceivedDetails = () => {
                                     <Col sm={6} >
                                         <p className="my-5 mx-2 border-start border-3 p-2">
                                             <p><span className="my-1 fw-bold">Received No:</span> <span className="float-end">{POIdGet?.selectedItem?.po_no}</span></p>
-                                            <p><span className="my-1 fw-bold" >Order No:<b className="text-primary float-end">{POIdGet?.selectedItem?.refer_id?.po_no}</b></span></p>
+                                            <p><span className="my-1 fw-bold" style={{ cursor: 'pointer' }} onClick={handlePoNavigation}>Order No:<b className="text-primary float-end">{POIdGet?.selectedItem?.refer_id?.po_no}</b></span></p>
                                             <p><span className="my-1 fw-bold">Received No:</span> <span className="float-end">{POIdGet?.selectedItem?.po_no}</span></p>
                                             {/* {new Date(delivery_datedelivery_date).toLocaleDateString()} */}
                                             <p>
@@ -174,7 +184,10 @@ export const PurchaseReceivedDetails = () => {
                                                 countItems.map((item, index) => (
                                                     <tr>
                                                         <td>
-                                                            <b>{item?.item_id?.name}</b>
+                                                            {/* <b>{item?.item_id?.name}</b> */}
+                                                            <b><Link to={`/admin/inventory/item-details/${item?.item_id?._id}`}>
+                                                                {item?.item_id?.name}</Link>
+                                                            </b>
                                                             <br />
                                                             HSN : {item?.item_id?.hsn}
                                                         </td>

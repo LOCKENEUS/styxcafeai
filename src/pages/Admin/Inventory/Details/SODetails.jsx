@@ -14,6 +14,7 @@ import editlogo from "/assets/inventory/mage_edit.png";
 import companylog from "/assets/inventory/companylogo.png";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { sendMailToVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 
 export const SODetails = () => {
     const navigate = useNavigate();
@@ -134,6 +135,12 @@ export const SODetails = () => {
         });
     };
 
+    const handleSendMail =  async () => {
+        await dispatch(sendMailToVendor(selectedSO))
+    };
+
+    console.log("Selected SO:", selectedSO);
+
     if (loading) {
         return (
             <div className="d-flex justify-content-center align-items-center" style={{ height: "70vh" }}>
@@ -198,7 +205,7 @@ export const SODetails = () => {
                     >
                         <Image src={print} className="me-2" /> Print
                     </Button>
-                    <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                    <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }} onClick={handleSendMail}>
                         <Image src={sendMail} className="me-2" /> Send Email
                     </Button>
                     <Button 

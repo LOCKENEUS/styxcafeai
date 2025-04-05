@@ -31,7 +31,6 @@ const PurchaseOrderList = () => {
 
   const { selectedItem, loading, error } = useSelector((state) => state.purchaseOrder);
   const listOfPO = selectedItem;
-  console.log("listOfPO", listOfPO);
   const user = JSON.parse(sessionStorage.getItem("user"));
 
   useEffect(() => {
@@ -40,16 +39,7 @@ const PurchaseOrderList = () => {
       dispatch(GetPOList(user._id));
     }
   }, [dispatch]);
-console.log("ID user ppp", user?._id);
-  // const formattedPOList = listOfPO.map((po, index) => ({
-  //   sn: index + 1,
-  //   name: po.po_no,
-  //   vendor: po.vendor_id?.name || "-",
-  //   amount: po.total || "-",
-  //   status: po.status ? "Pending" : "Completed",
-  //   delivery_date: new Date(po.delivery_date).toLocaleDateString(),
 
-  // }));
   const formattedPOList = Array.isArray(listOfPO)
   ? listOfPO.map((po, index) => ({
       sn: index + 1,
@@ -61,7 +51,7 @@ console.log("ID user ppp", user?._id);
       full: po, // Keep original object for view details
     }))
   : [];
-console.log("formattedPOList", formattedPOList);
+
   const getRandomColor = (name) => {
     const colors = ["#FAED39", "#FF5733", "#33FF57", "#339FFF", "#FF33F6", "#FFAA33", "#39DDFA", "#3DFF16"];
     const index = (name.charCodeAt(0) + name.charCodeAt(name.length - 1)) % colors.length;
@@ -80,8 +70,7 @@ console.log("formattedPOList", formattedPOList);
   const filteredList = formattedPOList.filter((item) =>
     item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.vendor?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.status?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.deliveryDate?.toLowerCase().includes(searchQuery.toLowerCase())
+    item.status?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredList.length / itemsPerPage);
