@@ -22,6 +22,24 @@ export const getItems = createAsyncThunk(
   }
 );
 
+// Fetch all items transactions
+export const getItemTransactions = createAsyncThunk(
+  "items/getItemTransactions",
+  async (id, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/inventory/item/transactions/${id}`
+      );
+      return response.data.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
+    }
+  }
+);
+
 // Fetch a single item by ID
 export const getItemById = createAsyncThunk(
   "items/getItemById",
@@ -123,6 +141,7 @@ const itemsSlice = createSlice({
   name: "items",
   initialState: {
     items: [],
+    itemTransactions: [],
     selectedItem: null,
     itemsCount: null,
     loading: false,
@@ -145,6 +164,19 @@ const itemsSlice = createSlice({
         state.items = action.payload;
       })
       .addCase(getItems.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Get item transactions
+      .addCase(getItemTransactions.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getItemTransactions.fulfilled, (state, action) => {
+        state.loading = false;
+        state.itemTransactions = action.payload;
+      })
+      .addCase(getItemTransactions.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

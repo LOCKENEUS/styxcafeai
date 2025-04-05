@@ -93,6 +93,7 @@ export const SODetails = () => {
         const invoiceData = {
             cafe: selectedSO.cafe?._id,
             customer_id: selectedSO.customer_id?._id,
+            refer_id: selectedSO._id,
             date: new Date().toISOString(),
             shipment_date: "",
             payment_terms: selectedSO.payment_terms || "",

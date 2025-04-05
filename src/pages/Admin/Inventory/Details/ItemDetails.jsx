@@ -21,14 +21,16 @@ import {
   getItemById,
   deleteItem,
   getItemsCount,
+  getItemTransactions,
 } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { getCustomFieldById } from "../../../../store/AdminSlice/CustomField";
+import { formatDateAndTime } from "../../../../components/utils/utils";
 
 const ItemDetails = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams();
-  const { selectedItem, itemsCount, loading, error } = useSelector((state) => state.items);
+  const { selectedItem, itemTransactions, itemsCount, loading, error } = useSelector((state) => state.items);
   const { selectedCustomField } = useSelector((state) => state.customFields);
   const [manufacturer, setManufacturer] = React.useState(null);
   const [brand, setBrand] = React.useState(null);
@@ -38,6 +40,7 @@ const ItemDetails = () => {
     if (id) {
       dispatch(getItemById(id));
       dispatch(getItemsCount(id));
+      dispatch(getItemTransactions(id));
     }
   }, [dispatch, id]);
 
@@ -78,7 +81,7 @@ const ItemDetails = () => {
     return (
       <Container className="d-flex justify-content-center align-items-center min-vh-100">
         <Spinner animation="border" role="status">
- 
+
         </Spinner>
       </Container>
     );
@@ -247,11 +250,22 @@ const ItemDetails = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
+                        {itemTransactions.length > 0 ? (
+                          itemTransactions.map((transaction, index) => (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>{transaction?.refer_data?.po_no || transaction?.refer_data?.so_no}</td>
+                              <td>{transaction.quantity}</td>
+                              <td>₹ {transaction.price}</td>
+                              <td>{transaction?.refer_data?.status}</td>
+                              <td>{new Date(transaction?.createdAt).toLocaleString()}</td>
+                            </tr>
+                          ))
+                        ) : <tr>
                           <td colSpan="6" className="text-center">
                             No transaction history available.
                           </td>
-                        </tr>
+                        </tr>}
                       </tbody>
                     </Table>
                   </div>
@@ -271,9 +285,20 @@ const ItemDetails = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td className="text-center">No history available.</td>
-                        </tr>
+                        {itemTransactions.length > 0 ? (
+                          itemTransactions.map((transaction, index) => (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>{transaction.quantity}</td>
+                              <td>{transaction.description}</td>
+                              <td>{new Date(transaction?.createdAt).toLocaleString()}</td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td className="text-center">No history available.</td>
+                          </tr>
+                        )}
                       </tbody>
                     </Table>
                   </div>
@@ -282,148 +307,147 @@ const ItemDetails = () => {
             </Tab.Content>
           </Col>
           <Col data-aos="fade-down" data-aos-duration="500" xs={12} lg={7} className="mt-3">
-              <Container fluid className="px-0">
-                <Card className="p-4">
-                  <div className="d-flex justify-content-center mb-4">
-                    {selectedItem.image ? (
-                      <Card
-                        className="p-5 d-flex justify-content-center align-items-center"
-                        style={{
-                          width: "250px",
-                          height: "250px",
-                          border: "1px dashed #ccc",
-                        }}
-                      >
-                        <img
-                          src={`${import.meta.env.VITE_API_URL}/${
-                            selectedItem.image
+            <Container fluid className="px-0">
+              <Card className="p-4">
+                <div className="d-flex justify-content-center mb-4">
+                  {selectedItem.image ? (
+                    <Card
+                      className="p-5 d-flex justify-content-center align-items-center"
+                      style={{
+                        width: "250px",
+                        height: "250px",
+                        border: "1px dashed #ccc",
+                      }}
+                    >
+                      <img
+                        src={`${import.meta.env.VITE_API_URL}/${selectedItem.image
                           }`}
-                          alt="Item"
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
-                        />
-                      </Card>
-                    ) : (
-                      <Card
-                        className="p-5 d-flex justify-content-center align-items-center"
+                        alt="Item"
                         style={{
-                          width: "250px",
-                          height: "250px",
-                          border: "1px dashed #ccc",
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
                         }}
-                      >
-                        <BiCloudUpload size={40} className="mb-2" />
-                        <p>Upload Image (250 × 250)</p>
-                      </Card>
-                    )}
-                  </div>
+                      />
+                    </Card>
+                  ) : (
+                    <Card
+                      className="p-5 d-flex justify-content-center align-items-center"
+                      style={{
+                        width: "250px",
+                        height: "250px",
+                        border: "1px dashed #ccc",
+                      }}
+                    >
+                      <BiCloudUpload size={40} className="mb-2" />
+                      <p>Upload Image (250 × 250)</p>
+                    </Card>
+                  )}
+                </div>
 
-                  <h5>Physical Stock</h5>
-                  <div className="table-responsive">
-                    <Table borderless>
-                      <tbody>
-                        <tr>
-                          <td>Stock in hand</td>
-                          <td>
-                            <b>{selectedItem.stock}</b>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Stock Rate</td>
-                          <td>
-                            <b>
-                              {selectedItem.stockRate || selectedItem.costPrice}
-                            </b>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Available Stock</td>
-                          <td>
-                            <b>{selectedItem.stock}</b>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </Table>
-                  </div>
+                <h5>Physical Stock</h5>
+                <div className="table-responsive">
+                  <Table borderless>
+                    <tbody>
+                      <tr>
+                        <td>Stock in hand</td>
+                        <td>
+                          <b>{selectedItem.stock}</b>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Stock Rate</td>
+                        <td>
+                          <b>
+                            {selectedItem.stockRate || selectedItem.costPrice}
+                          </b>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Available Stock</td>
+                        <td>
+                          <b>{selectedItem.stock}</b>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                </div>
 
-                  <br/>
+                <br />
 
-                  <h5>Accounting Stock</h5>
-                  <div className="table-responsive">
-                    <Table borderless>
-                      <tbody>
-                        <tr>
-                          <td>Stock in hand</td>
-                          <td>
-                            <b>{selectedItem.stock}</b>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Committed Stock</td>
-                          <td>
-                            <b>
-                              {itemsCount?.toBeInvoiced}
-                            </b>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Available Stock</td>
-                          <td>
-                            <b>{selectedItem.stock}</b>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </Table>
-                  </div>
+                <h5>Accounting Stock</h5>
+                <div className="table-responsive">
+                  <Table borderless>
+                    <tbody>
+                      <tr>
+                        <td>Stock in hand</td>
+                        <td>
+                          <b>{selectedItem.stock}</b>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Committed Stock</td>
+                        <td>
+                          <b>
+                            {itemsCount?.toBeInvoiced}
+                          </b>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Available Stock</td>
+                        <td>
+                          <b>{selectedItem.stock}</b>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                </div>
 
-                  <Row className="mt-4">
-                      <Col xs={12} sm={6} className="mb-3">
-                        <Card className="p-3">
-                          <div className="d-flex gap-3 justify-content-center align-items-center">
-                            <div>
-                              <img src={user_check} alt="icon" />
-                            </div>
-                            <div>
-                              <h6>To be Received</h6>
-                              <h4>{itemsCount?.toBeReceived}</h4>
-                            </div>
-                          </div>
-                        </Card>
-                      </Col>
+                <Row className="mt-4">
+                  <Col xs={12} sm={6} className="mb-3">
+                    <Card className="p-3">
+                      <div className="d-flex gap-3 justify-content-center align-items-center">
+                        <div>
+                          <img src={user_check} alt="icon" />
+                        </div>
+                        <div>
+                          <h6>To be Received</h6>
+                          <h4>{itemsCount?.toBeReceived}</h4>
+                        </div>
+                      </div>
+                    </Card>
+                  </Col>
 
-                      <Col xs={12} sm={6} className="mb-3">
-                        <Card className="p-3">
-                          <div className="d-flex gap-3 justify-content-center align-items-center">
-                            <div>
-                              <img src={user_check} alt="icon" />
-                            </div>
-                            <div>
-                              <h6>To be Billed</h6>
-                              <h4>{itemsCount?.toBeBilled}</h4>
-                            </div>
-                          </div>
-                        </Card>
-                      </Col>
+                  <Col xs={12} sm={6} className="mb-3">
+                    <Card className="p-3">
+                      <div className="d-flex gap-3 justify-content-center align-items-center">
+                        <div>
+                          <img src={user_check} alt="icon" />
+                        </div>
+                        <div>
+                          <h6>To be Billed</h6>
+                          <h4>{itemsCount?.toBeBilled}</h4>
+                        </div>
+                      </div>
+                    </Card>
+                  </Col>
 
-                      <Col xs={12} sm={6} className="mb-3">
-                        <Card className="p-3">
-                          <div className="d-flex gap-3 justify-content-center align-items-center">
-                            <div>
-                              <img src={user_check} alt="icon" />
-                            </div>
-                            <div>
-                              <h6>To be Invoiced</h6>
-                              <h4>{itemsCount?.toBeInvoiced}</h4>
-                            </div>
-                          </div>
-                        </Card>
-                      </Col>
-                  </Row>
-                </Card>
-              </Container>
+                  <Col xs={12} sm={6} className="mb-3">
+                    <Card className="p-3">
+                      <div className="d-flex gap-3 justify-content-center align-items-center">
+                        <div>
+                          <img src={user_check} alt="icon" />
+                        </div>
+                        <div>
+                          <h6>To be Invoiced</h6>
+                          <h4>{itemsCount?.toBeInvoiced}</h4>
+                        </div>
+                      </div>
+                    </Card>
+                  </Col>
+                </Row>
+              </Card>
+            </Container>
           </Col>
         </Row>
       </Tab.Container>
