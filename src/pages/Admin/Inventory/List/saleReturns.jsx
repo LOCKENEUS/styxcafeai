@@ -231,6 +231,9 @@ export const InvoicePaymentInventory = () => {
                     columns={columns}
                     data={filteredItems}
                     highlightOnHover
+                    pagination
+                  paginationPerPage={10}
+                  paginationRowsPerPageOptions={[10, 20, 30, 40]}
                     responsive
                     persistTableHead
                     customStyles={{

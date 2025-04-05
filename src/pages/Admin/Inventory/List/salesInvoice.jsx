@@ -259,6 +259,9 @@ export const SaleInvoiceInventory = () => {
                   progressPending={loading}
                   highlightOnHover
                   responsive
+                  pagination
+                  paginationPerPage={10}
+                  paginationRowsPerPageOptions={[10, 20, 30, 40]}
                   persistTableHead
                   customStyles={{
                     rows: { style: { backgroundColor: "#ffffff", padding: 'clamp(10px, 2vw, 15px)',

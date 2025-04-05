@@ -317,10 +317,12 @@ export const SalesOrder = () => {
                   <DataTable
                     columns={columns}
                     data={filteredItems}
-                    pagination
-                    paginationPerPage={itemsPerPage}
+             
                     highlightOnHover
                     responsive
+                    pagination
+                  paginationPerPage={10}
+                  paginationRowsPerPageOptions={[10, 20, 30, 40]}
                     persistTableHead
                     noDataComponent={
                       <div className="p-4 text-center">

@@ -222,6 +222,9 @@ const PurchaseBillList = () => {
                   data={filteredItems}
                   // pagination
                   highlightOnHover
+                  pagination
+                  paginationPerPage={10}
+                  paginationRowsPerPageOptions={[10, 20, 30, 40]}
                   responsive
                   progressPending={loading}
                   progressComponent={<div><Loader/></div>}

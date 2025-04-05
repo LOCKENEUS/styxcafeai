@@ -231,6 +231,7 @@ export const PurchaseReceivedAdmin = () => {
                   data={filteredItems}
                   progressPending={loading}
                   progressComponent={<div><Loader /></div>}
+                  
                   // pagination
                   highlightOnHover
                   responsive
