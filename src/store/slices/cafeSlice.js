@@ -23,6 +23,16 @@ export const fetchCafes = createAsyncThunk("cafes/fetchCafes", async () => {
   }
 });
 
+export const fetchCafesID = createAsyncThunk("cafes/fetchCafesID", async () => {
+  const response = await axios.get(`${API_URL}/${id}`);
+  // Assuming the response structure is as provided
+  if (response.data.status) {
+    return response.data.data; // Return the 'data' array from the response
+  } else {
+    throw new Error(response.data.message || "Failed to fetch cafes");
+  }
+});
+
 // Async thunk to add a new cafe
 export const addCafe = createAsyncThunk(
   "cafes/addCafe",
@@ -136,6 +146,19 @@ const cafeSlice = createSlice({
         state.cafes = action.payload;
       })
       .addCase(fetchCafes.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      // fetchCafesID
+      .addCase(fetchCafesID.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCafesID.fulfilled, (state, action) => {
+        state.loading = false;
+        state.cafes = action.payload;
+      })
+      .addCase(fetchCafesID.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       })

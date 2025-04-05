@@ -120,6 +120,18 @@ const CafeForm = ({
         }
         break;
 
+        // adress are blank enter REQUIRED adress
+      case 'address':
+        if (value.length < 3) {
+          setErrors(prev => ({
+            ...prev,
+            address: 'Address are Required'
+          }));
+        } else {
+          setErrors(prev => ({ ...prev, address: '' }));
+        }
+        break;
+
       case 'password':
         if (!validatePassword(value)) {
           setErrors(prev => ({
@@ -191,6 +203,12 @@ const CafeForm = ({
 
     if (formDataState.password !== formDataState.confirm_password) {
       toast.error('Passwords do not match');
+      return;
+    }
+
+    // check user are pass adress are blank enter REQUIRED adress
+    if (formDataState.address === '') {
+      toast.warning('Address are Required');
       return;
     }
 
@@ -370,6 +388,7 @@ const CafeForm = ({
               <Form.Group className="mb-2">
                 <Form.Label htmlFor="name" className="fw-bold text-secondary">
                   Name
+                  <span className="text-danger">*</span>
                 </Form.Label>
                 <Form.Control
                   id="name"
@@ -395,6 +414,7 @@ const CafeForm = ({
                   className="fw-bold text-secondary"
                 >
                   Cafe Name
+                  <span className="text-danger">*</span>
                 </Form.Label>
                 <Form.Control
                   id="cafeName"
@@ -405,6 +425,7 @@ const CafeForm = ({
                   onChange={handleChange}
                   required
                   className="py-2 border-2"
+                  
                 />
               </Form.Group>
             </Col>
@@ -413,10 +434,12 @@ const CafeForm = ({
           <Form.Group className="mb-1">
             <Form.Label htmlFor="address" className="fw-bold text-secondary">
               Address
+              <span className="text-danger">*</span>
             </Form.Label>
             {!useManualAddress ? (
               <>
                 <GooglePlacesAutocomplete
+                 
                   apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
                   selectProps={{
                     value: formDataState.address
@@ -435,6 +458,7 @@ const CafeForm = ({
                         ...provided,
                         zIndex: 1000
                       })
+                      
                     }
                   }}
                 />
@@ -458,6 +482,7 @@ const CafeForm = ({
                   onChange={handleManualAddressChange}
                   placeholder="Enter your address manually"
                   className="mb-1"
+                  required
                 />
                 <div className="mt-1">
                   <Button
@@ -480,6 +505,7 @@ const CafeForm = ({
                   className="fw-bold text-secondary"
                 >
                   Contact Number
+                  <span className="text-danger">*</span>
                 </Form.Label>
                 <Form.Control
                   id="contact"
@@ -524,6 +550,7 @@ const CafeForm = ({
               <Form.Group className="mb-2">
                 <Form.Label htmlFor="email" className="fw-bold text-secondary">
                   Email Address
+                  <span className="text-danger">*</span>
                 </Form.Label>
                 <Form.Control
                   id="email"
@@ -572,6 +599,7 @@ const CafeForm = ({
                   className="fw-bold text-secondary"
                 >
                   Website URL
+                  <span className="text-danger">*</span>
                 </Form.Label>
                 <Form.Control
                   id="website"
@@ -582,6 +610,7 @@ const CafeForm = ({
                   onChange={handleChange}
                   pattern="https?://.+"
                   className="py-2 border-2"
+                  required
                 />
               </Form.Group>
             </Col>
@@ -667,6 +696,7 @@ const CafeForm = ({
               <Form.Group className="mb-2">
                 <Form.Label htmlFor="password" className="fw-bold text-secondary">
                   Password
+                  <span className="text-danger">*</span>
                 </Form.Label>
                 <div className="position-relative">
                   <Form.Control
@@ -701,6 +731,7 @@ const CafeForm = ({
               <Form.Group className="mb-2">
                 <Form.Label htmlFor="confirmPassword" className="fw-bold text-secondary">
                   Confirm Password
+                  <span className="text-danger">*</span>
                 </Form.Label>
                 <div className="position-relative">
                   <Form.Control
@@ -774,6 +805,7 @@ const CafeForm = ({
               <Form.Group className="mb-2">
                 <Form.Label htmlFor="ownershipType" className="fw-bold text-secondary">
                   Ownership Type
+                  <span className="text-danger">*</span>
                 </Form.Label>
                 <Form.Select
                   id="ownershipType"

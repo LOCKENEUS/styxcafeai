@@ -14,6 +14,10 @@ import InputGroupText from "react-bootstrap/esm/InputGroupText";
 const CafeManager = () => {
   const dispatch = useDispatch();
   const cafes = useSelector(selectCafes);
+
+
+
+
   const loading = useSelector(selectLoading);
   const error = useSelector(selectError);
   const [formData, setFormData] = useState({});
@@ -301,7 +305,7 @@ const CafeManager = () => {
                     </thead>
                     <tbody>
                       {filteredCafes.length ? (
-                        filteredCafes.map((cafe, index) => (
+                        filteredCafes.reverse().map((cafe, index) => (
                           <tr key={index} style={{}}>
                             <td className="py-4 " style={{}}>{index + 1}</td>
                             <td className="py-4 " style={{ fontWeight: "600", color: "#0062FF", cursor: "pointer" }} 
