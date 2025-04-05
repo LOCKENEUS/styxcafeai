@@ -96,7 +96,7 @@ const BookGames = () => {
         </h5>
       </div>
 
-      <div className="horizontal-scroll mb-5">
+      <div data-aos="fade-right" data-aos-duration="600"  className="horizontal-scroll mb-5">
         <Row className="flex-nowrap" style={{ margin: '0 -0.5rem' }}>
           {indoorGames.length > 0 ? (
             indoorGames.map((game) => (
@@ -148,6 +148,7 @@ const BookGames = () => {
           )}
         </Row>
       </div>
+
 
       {/* Outdoor Games Section */}
       <h5 className="text-dark fw-bold mb-2" style={{ fontSize: 'clamp(20px, 5vw, 25px)', margin: 0 }}>

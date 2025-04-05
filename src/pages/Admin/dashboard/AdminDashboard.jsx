@@ -104,7 +104,8 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { games } = useSelector((state) => state.games);
-  const cafeId = JSON.parse(sessionStorage.getItem('user'))?._id;
+  const cafe = JSON.parse(sessionStorage.getItem('user'));
+  const cafeId = cafe?._id
   const summaryCardsRef = useRef(null);
   const gamesRef = useRef(null);
   const tournamentsRef = useRef(null);
@@ -185,9 +186,10 @@ const AdminDashboard = () => {
     return () => ctx.revert();
   }, []);
 
+
   return (
     <Container fluid className="p-2" ref={containerRef}>
-      <h3 className="mb-4">Hello, Styx Cafe</h3>
+      <h3 className="mb-4">Hello, {cafe.cafe_name}</h3>
 
       {/* Search Bar for Mobile */}
       <Row className="d-md-none mb-3">

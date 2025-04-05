@@ -16,7 +16,7 @@ import gm1 from "/assets/inventory/mynaui_search.svg";
 import solar_export from "/assets/inventory/solar_export-linear.png";
 import add from "/assets/inventory/material-symbols_add-rounded.png";
 import DataTable from "react-data-table-component";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getPBills } from "../../../../store/AdminSlice/Inventory/PBillSlice";
 import Loader from "../../../../components/common/Loader/Loader";
@@ -131,11 +131,15 @@ const PurchaseBillList = () => {
   return (
     <Container  fluid className="mt-4 min-vh-100">
       <Row>
-        <Col sm={12} className="mx-4 my-3">
-          <div style={{ top: "186px", fontSize: "18px" }}>
+      <Col sm={12} className="mx-2 my-3">
+          <div style={{ top: "186px", fontSize: "15px" }}>
             <Breadcrumb>
-              <BreadcrumbItem href="#">Home</BreadcrumbItem>
-              <BreadcrumbItem href="#">Purchase </BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link to="/admin/dashboard">Home</Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link to="/admin/inventory/dashboard">Inventory</Link>
+              </BreadcrumbItem>
               <BreadcrumbItem active>Purchase Bill List</BreadcrumbItem>
             </Breadcrumb>
           </div>

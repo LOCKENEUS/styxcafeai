@@ -51,31 +51,49 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
   // Improved wave animation effect
   useEffect(() => {
     if (!collapsed && waveRef.current) {
-      // First, reset all elements to their initial state
-      gsap.set(waveRef.current.querySelectorAll('.nav-item'), {
-        x: -30,
-        opacity: 0
-      });
-
-      // Set initial state for sub-items to prevent flash
-      gsap.set(waveRef.current.querySelectorAll('.nav-collapse-item'), {
-        x: -20,
-        opacity: 0
+      // Set initial state for all items (main and sub-items)
+      gsap.set([
+        waveRef.current.querySelectorAll('.nav-item'),
+        waveRef.current.querySelectorAll('.nav-collapse-item')
+      ], {
+        x: -50,
+        opacity: 0,
+        scale: 0.8,
+        display: 'block' // Ensure items are visible before animation
       });
 
       // Animate main menu items
       gsap.to(waveRef.current.querySelectorAll('.nav-item'), {
-        duration: 1,
+        duration: 0.8,
         x: 0,
         opacity: 1,
+        scale: 1,
         stagger: 0.1,
-        ease: "power2.out",
-        clearProps: "all" // Clear properties after animation
+        ease: "back.out(1.7)",
+        clearProps: "all"
+      });
+
+      // Handle initially expanded items with smoother transition
+      Object.keys(expandedItems).forEach(collapseId => {
+        if (expandedItems[collapseId]) {
+          const subItems = document.querySelectorAll(`#${collapseId} .nav-collapse-item`);
+          gsap.fromTo(subItems, 
+            { x: -30, opacity: 0, scale: 0.9 },
+            {
+              duration: 0.5,
+              x: 0,
+              opacity: 1,
+              scale: 1,
+              stagger: 0.07,
+              ease: "elastic.out(1, 0.5)"
+            }
+          );
+        }
       });
     }
   }, [collapsed]);
 
-  // Add animation for when sub-items expand
+  // Enhanced sub-item animation with better timing
   const handleItemClick = (collapseId) => {
     setExpandedItems((prevExpandedItems) => {
       const newState = {
@@ -83,24 +101,44 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
         [collapseId]: !prevExpandedItems[collapseId]
       };
 
-      // Set initial state before animation
       const subItems = document.querySelectorAll(`#${collapseId} .nav-collapse-item`);
-      gsap.set(subItems, {
-        x: -20,
-        opacity: 0
+      
+      // Always ensure items are display block before animation
+      gsap.set(subItems, { 
+        display: 'block',
+        pointerEvents: 'none' // Disable interaction during animation
       });
 
-      // Animate sub-items after state update
       if (newState[collapseId]) {
-        setTimeout(() => {
-          gsap.to(subItems, {
-            duration: 0.4,
+        gsap.fromTo(subItems, 
+          { x: -30, opacity: 0, scale: 0.9 },
+          {
+            duration: 0.6, // Slightly longer duration
             x: 0,
             opacity: 1,
-            stagger: 0.05,
-            ease: "power2.out"
-          });
-        }, 50); // Small delay to ensure DOM is updated
+            scale: 1,
+            stagger: 0.07,
+            ease: "elastic.out(1, 0.5)",
+            onComplete: () => {
+              gsap.set(subItems, { pointerEvents: 'auto' }); // Re-enable interaction
+            }
+          }
+        );
+      } else {
+        gsap.to(subItems, {
+          duration: 0.4, // Slightly longer duration
+          x: -30,
+          opacity: 0,
+          scale: 0.9,
+          stagger: 0.03,
+          ease: "power2.in",
+          onComplete: () => {
+            gsap.set(subItems, { 
+              display: 'none',
+              pointerEvents: 'auto' // Re-enable interaction
+            });
+          }
+        });
       }
 
       return newState;
@@ -190,14 +228,16 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
                       onMouseEnter={(e) => {
                         gsap.to(e.currentTarget, {
                           x: 5,
-                          duration: 0.8,
+                          scale: 1.02,
+                          duration: 0.3,
                           ease: "power2.out"
                         });
                       }}
                       onMouseLeave={(e) => {
                         gsap.to(e.currentTarget, {
                           x: 0,
-                          duration: 0.8,
+                          scale: 1,
+                          duration: 0.3,
                           ease: "power2.out"
                         });
                       }}
@@ -260,16 +300,18 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
                                 }}
                                 onMouseEnter={(e) => {
                                   gsap.to(e.currentTarget, {
-                                    scale: 1.04,
-                                    duration: 0.1,
-                                    ease: "power1.out"
+                                    scale: 1.05,
+                                    x: 5,
+                                    duration: 0.2,
+                                    ease: "power2.out"
                                   });
                                 }}
                                 onMouseLeave={(e) => {
                                   gsap.to(e.currentTarget, {
                                     scale: 1,
-                                    duration: 0.2,
-                                    ease: "power1.out"
+                                    x: 0,
+                                    duration: 0.3,
+                                    ease: "elastic.out(1, 0.5)"
                                   });
                                 }}
                               >

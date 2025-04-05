@@ -160,11 +160,16 @@ export const SIDetails = () => {
     <Container>
       <Row className="mx-2">
         {/* Breadcrumb Section */}
+
         <Col sm={12} className="my-3">
           <div style={{ top: "186px", fontSize: "18px" }}>
             <Breadcrumb>
-              <BreadcrumbItem href="#">Home</BreadcrumbItem>
-              <BreadcrumbItem href="#">Sales</BreadcrumbItem>
+            <BreadcrumbItem>
+                <Link to="/admin/dashboard">Home</Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link to="/admin/inventory/dashboard">Inventory</Link>
+              </BreadcrumbItem>
               <BreadcrumbItem>
                 <Link to="/admin/Inventory/SaleInvoice">
                   Sales Invoice List
@@ -346,7 +351,7 @@ export const SIDetails = () => {
                         {invoice.items.map((item) => (
                           <tr key={item._id}>
                             <td>
-                              <b>{item?.item_id?.name}</b>
+                              <b> <Link to={`/admin/inventory/item-details/${item?.item_id?._id}`}> {item?.item_id?.name}</Link></b>
                               <br />
                               HSN: {item?.item_id?.hsn}
                             </td>

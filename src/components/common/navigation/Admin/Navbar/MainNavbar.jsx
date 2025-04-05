@@ -89,7 +89,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
             onMouseMove={handleHover}
             onMouseLeave={handleHoverEnd}
           >
-            STYX CAFE
+        {user.cafe_name}
           </Link>
         </a>
         {/* Responsive View */}

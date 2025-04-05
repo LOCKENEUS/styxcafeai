@@ -148,10 +148,12 @@ const DashboardInventory = () => {
     { name: "Appearance Pvt Ltd", quantity: "200 Kg", price: "56000" },
     { name: "Appearance Pvt Ltd", quantity: "200 Kg", price: "56000" }
   ];
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const cafe_name = user?.cafe_name;
 
   return (
     <Container fluid className="p-4">
-      <h3 className="mb-4">Hello, Styx Cafe</h3>
+      <h3 className="mb-4">Hello, {cafe_name}</h3>
       
       {/* Stats Cards */}
       <Row className="g-3 mb-4">

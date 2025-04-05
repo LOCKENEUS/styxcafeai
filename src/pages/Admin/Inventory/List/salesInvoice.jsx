@@ -16,7 +16,7 @@ import gm1 from "/assets/inventory/mynaui_search.svg";
 import solar_export from "/assets/inventory/solar_export-linear.png";
 import add from "/assets/inventory/material-symbols_add-rounded.png";
 import DataTable from "react-data-table-component";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getSOInvoices } from "../../../../store/AdminSlice/Inventory/SoInvoiceSlice";
 import Loader from "../../../../components/common/Loader/Loader";
@@ -156,12 +156,16 @@ export const SaleInvoiceInventory = () => {
   return (
     <Container className="p-0"> 
       <Row>
-        <Col sm={12} className="mx-2 my-3">
+      <Col sm={12} className="mx-2 my-3">
           <div style={{ top: "186px", fontSize: "18px" }}>
             <Breadcrumb>
-              <BreadcrumbItem href="#">Home</BreadcrumbItem>
-              <BreadcrumbItem href="#">Sales</BreadcrumbItem>
-              <BreadcrumbItem active>Sales Invoice</BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link to="/admin/dashboard">Home</Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link to="/admin/inventory/dashboard">Inventory</Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem active>Sales Invoice List</BreadcrumbItem>
             </Breadcrumb>
           </div>
         </Col>

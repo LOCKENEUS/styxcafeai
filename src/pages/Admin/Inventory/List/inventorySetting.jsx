@@ -28,6 +28,7 @@ import {
   deleteCustomField,
 } from "../../../../store/AdminSlice/CustomField";
 import { BiCheck, BiTrash } from "react-icons/bi";
+import { Link } from "react-router-dom";
 
 export const InventorySettingAdmin = () => {
   const dispatch = useDispatch();
@@ -159,12 +160,16 @@ export const InventorySettingAdmin = () => {
   return (
     <Container fluid>
       <Row>
-        <Col sm={12} className="mx-2 my-3">
-          <div style={{ fontSize: "18px" }}>
+      <Col sm={12} className="mx-2 my-3">
+          <div style={{ top: "186px", fontSize: "18px" }}>
             <Breadcrumb>
-              <BreadcrumbItem href="#">Home</BreadcrumbItem>
-              <BreadcrumbItem href="#">Inventory</BreadcrumbItem>
-              <BreadcrumbItem active> Inventory Settings</BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link to="/admin/dashboard">Home</Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link to="/admin/inventory/dashboard">Inventory</Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem active>Inventory Settings</BreadcrumbItem>
             </Breadcrumb>
           </div>
         </Col>
