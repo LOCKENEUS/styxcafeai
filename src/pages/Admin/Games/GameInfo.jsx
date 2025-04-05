@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getGameById } from "../../../store/slices/gameSlice";
 import { getBookingsByGame } from "../../../store/AdminSlice/BookingSlice";
 import { convertTo12Hour, formatDate } from "../../../components/utils/utils";
+import { BiPencil } from "react-icons/bi";
 
 const GameInfo = () => {
   const { gameId } = useParams();
@@ -170,7 +171,7 @@ const GameInfo = () => {
       {/* Booking Overview */}
       <Card className="p-3 mb-2" style={{ backgroundColor: "transparent" }}>
         <Row className="gap-3" style={{ backgroundColor: "transparent" }}>
-          <Col md={2} style={{ backgroundColor: "transparent" }}>
+          <Col md={2} className="position-relative" style={{ backgroundColor: "transparent" }}>
             <img
               src={
                 `${import.meta.env.VITE_API_URL}/${selectedGame?.data?.gameImage}` ||
@@ -185,6 +186,27 @@ const GameInfo = () => {
                 objectFit: "cover",
               }}
             />
+             <div
+                            onClick={() => navigate(`/admin/games/edit-game/${gameId}`)}
+                            className="rounded-circle"
+                            style={{
+                                position: "absolute",
+                                bottom: "35px",
+                                right: "15px",
+                                width: "30px",
+                                height: "30px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                backgroundColor: "white",
+                                border: "none",
+                                boxShadow: "none",
+                                outline: "none",
+                                cursor: "pointer",
+                            }}
+                        >
+                          <BiPencil  color="blue" />
+               </div>
           </Col>
           <Col
             md={5}

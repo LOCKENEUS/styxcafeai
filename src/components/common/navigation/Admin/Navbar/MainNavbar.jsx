@@ -401,7 +401,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
               <div className="dropdown">
                 <button type="button" className="btn " id="navbarAppsDropdown">
 
-                  <sapn className='d-flex align-items-center justify-content-center'> <PiMapPinBold style={{ fontSize: "1.3rem" }} /> Nagpur</sapn>
+                  <sapn className='d-flex align-items-center justify-content-center'> <PiMapPinBold style={{ fontSize: "1.3rem" }} /> {user?.location?.city}</sapn>
                 </button>
               </div>
 
@@ -422,11 +422,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                 <div className="dropdown-menu dropdown-menu-end navbar-dropdown-menu navbar-dropdown-menu-borderless navbar-dropdown-account" aria-labelledby="accountNavbarDropdown" style={{ width: "16rem" }}>
                   <div className="dropdown-item-text">
                     <div className="d-flex align-items-center">
-                      <div className="avatar avatar-sm avatar-circle">
-
-                        <img className="avatar-img" src={profilePic} alt="Image Description" />
-
-                      </div>
+       
                       <div className="flex-grow-1 ms-3">
                         <h5 className="mb-0">{user?.name}</h5>
                         <p className="card-text text-body">{user?.email}</p>
@@ -445,7 +441,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
 
 
 
-                  <div className="dropdown-divider"></div>
+                  {/* <div className="dropdown-divider"></div> */}
 
 
                   <div className="dropdown">
