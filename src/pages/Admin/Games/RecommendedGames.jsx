@@ -6,6 +6,8 @@ import { getGames } from '../../../store/slices/gameSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoAdd } from 'react-icons/io5';
 import Nogame from "/assets/Admin/Game/No Game.png";
+import gsap from 'gsap';
+
 const RecommendedGames = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -18,6 +20,26 @@ const RecommendedGames = () => {
     }
   }, [dispatch]);
 
+  // Separate animation useEffect
+  useEffect(() => {
+    if (status === 'succeeded' && games.length > 0) {
+      const ctx = gsap.context(() => {
+        gsap.from('.game-card', {
+          y: 50,
+          opacity: 0,
+          duration: 0.3,
+          stagger: {
+            each: 0.1,
+            from: "start"
+          },
+          ease: "power2.out"
+        });
+      });
+
+      return () => ctx.revert(); // Cleanup
+    }
+  }, [status, games]);
+
   // Filter games by zone
   const indoorGames = games.filter(game => game.zone === 'Indoor');
   const outdoorGames = games.filter(game => game.zone === 'Outdoor');
@@ -27,7 +49,7 @@ const RecommendedGames = () => {
   };
 
   return (
-    <Container data-aos="fade-down" data-aos-duration="700" fluid className="p-4">
+    <Container fluid className="p-4">
       <style>
         {`
           .horizontal-scroll {
@@ -96,7 +118,14 @@ const RecommendedGames = () => {
           {indoorGames.length > 0 ? (
             indoorGames.map((game, index) => (
               <Col key={game._id} lg={2.4} xs={8} md={3} style={{ padding: '0 0.5rem' }}>
-                <Card className="shadow-sm" style={{ cursor: 'pointer' }}>
+                <Card 
+                  className="shadow-sm game-card" 
+                  style={{ 
+                    cursor: 'pointer',
+                    opacity: 1, // Ensure initial visibility
+                    transform: 'none' // Reset any transforms
+                  }}
+                >
                   <Card.Img
                     variant="top"
                     src={`${import.meta.env.VITE_API_URL}/${game.gameImage}`}
@@ -156,7 +185,13 @@ const RecommendedGames = () => {
           {outdoorGames.length > 0 ? (
             outdoorGames.map((game, index) => (
               <Col key={game._id} lg={2.4} xs={8} md={3} style={{ padding: '0 0.5rem' }}>
-                <Card className="shadow-sm">
+                <Card 
+                  className="shadow-sm game-card"
+                  style={{ 
+                    opacity: 1, // Ensure initial visibility
+                    transform: 'none' // Reset any transforms
+                  }}
+                >
                   <Card.Img
                     variant="top"
                     src={`${import.meta.env.VITE_API_URL}/${game.gameImage}`}

@@ -9,9 +9,12 @@ import { toast } from 'react-toastify';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { HiChevronDoubleLeft } from 'react-icons/hi';
 import { useEffect, useRef, useState } from 'react';
+import { gsap } from "gsap";
+
 const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
   const [profilePic, setProfilePic] = useState("/assets/profile/user_avatar.jpg");
   const navigate = useNavigate();//+
+  const logoRef = useRef(null);
 
   const user = JSON.parse(sessionStorage.getItem("user"));
   const backend_url = import.meta.env.VITE_API_URL
@@ -38,6 +41,26 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
     navigate('/login');//+
   };
 
+  const handleHover = (e) => {
+    if (logoRef.current) {
+      gsap.to(logoRef.current, {
+        scale: 1.1,
+        rotation: 5,
+        duration: 0.3,
+        ease: "power2.out"
+      });
+    }
+  };
+
+  const handleHoverEnd = () => {
+    gsap.to(logoRef.current, {
+      scale: 1,
+      rotation: 0,
+      duration: 0.5,
+      ease: "elastic.out(1, 0.5)"
+    });
+  };
+
   return (
     <header id="header" className="navbar navbar-expand-lg  navbar-fixed navbar-height navbar-container navbar-bordered bg-white">
       <div style={{ width: "100%" }} className=" d-flex justify-content-between align-items-center">
@@ -54,7 +77,20 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
               <HiChevronDoubleLeft />
             )}
           </button>
-          <Link to="/admin/dashboard" style={{ textDecoration: "none", color: "#333333" }}> STYX CAFE</Link>
+          <Link 
+            ref={logoRef}
+            to="/admin/dashboard" 
+            style={{ 
+              textDecoration: "none", 
+           
+              display: "inline-block" 
+            }}
+            className="nav-logo"
+            onMouseMove={handleHover}
+            onMouseLeave={handleHoverEnd}
+          >
+            STYX CAFE
+          </Link>
         </a>
         {/* Responsive View */}
         <div className="d-md-none ">

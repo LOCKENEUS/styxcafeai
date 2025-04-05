@@ -305,7 +305,7 @@ export const PurchaseBillDetailsAdmin = () => {
                                                         variant="outline-success"
                                                         disabled={remainingAmount <= 0}
                                                     >
-                                                        Collect ₹{remainingAmount.toFixed(2)}
+                                                        Pay ₹{remainingAmount.toFixed(2)}
                                                     </Button>
                                                 )}
                                                 <CollectPayment

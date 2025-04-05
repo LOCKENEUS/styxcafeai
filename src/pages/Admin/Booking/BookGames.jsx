@@ -4,8 +4,8 @@ import { MdOutlineArrowOutward } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGames } from '../../../store/slices/gameSlice';
 import { Link, useNavigate } from 'react-router-dom';
-import { IoAdd } from 'react-icons/io5';
 import Nogame from "/assets/Admin/Game/No Game.png";
+import gsap from 'gsap';
 
 const BookGames = () => {
   const navigate = useNavigate();
@@ -19,16 +19,38 @@ const BookGames = () => {
     }
   }, [dispatch]);
 
-  // Filter games by zone
+  // Animate game cards with GSAP
+  useEffect(() => {
+    if (status === 'succeeded' && games.length > 0) {
+      const cards = document.querySelectorAll('.game-card');
+      if (cards.length === 0) return;
+
+      gsap.set(cards, {
+        opacity: 0,
+        y: 50
+      });
+
+      setTimeout(() => {
+        gsap.to(cards, {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          stagger: {
+            amount: 0.3,
+            from: "start"
+          },
+          ease: "power2.out",
+          clearProps: "all"
+        });
+      }, 100);
+    }
+  }, [status, games]);
+
   const indoorGames = games.filter(game => game.zone === 'Indoor');
   const outdoorGames = games.filter(game => game.zone === 'Outdoor');
 
-  const handleCardClick = (gameId) => {
-    navigate(`/admin/games/game-details/${gameId}`);
-  };
-
   return (
-    <Container data-aos="fade-down" data-aos-duration="700" fluid className="p-4">
+    <Container fluid className="p-4">
       <style>
         {`
           .horizontal-scroll {
@@ -61,40 +83,34 @@ const BookGames = () => {
         `}
       </style>
 
-      {/* Indoor Games Section */}
+      {/* Breadcrumb */}
       <h5>
-        <Link to="/admin/dashboard">Home</Link> / <span style={{ color: "blue" }}>
-          {"Recommended Games"}
-        </span>
-
+        <Link to="/admin/dashboard">Home</Link> /{' '}
+        <span style={{ color: 'blue' }}>Recommended Games</span>
       </h5>
-      <div
-        className="d-flex justify-content-between align-items-center mt-4 mb-2"
-        style={{ flexDirection: 'row', gap: '1rem' }}
-      >
-        <h5
-          className="text-dark fw-bold"
-          style={{ fontSize: 'clamp(20px, 5vw, 25px)', margin: 0 }}
-        >
+
+      {/* Indoor Games Section */}
+      <div className="d-flex justify-content-between align-items-center mt-4 mb-2">
+        <h5 className="text-dark fw-bold" style={{ fontSize: 'clamp(20px, 5vw, 25px)', margin: 0 }}>
           Indoor Games
         </h5>
       </div>
+
       <div className="horizontal-scroll mb-5">
         <Row className="flex-nowrap" style={{ margin: '0 -0.5rem' }}>
           {indoorGames.length > 0 ? (
-            indoorGames.map((game, index) => (
+            indoorGames.map((game) => (
               <Col key={game._id} lg={2.4} xs={8} md={3} style={{ padding: '0 0.5rem' }}>
-                <Card className="shadow-sm" style={{ cursor: 'pointer' }} onClick={() => navigate(`/admin/games/${game._id}`)}
+                <Card
+                  className="shadow-sm game-card"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => navigate(`/admin/games/${game._id}`)}
                 >
                   <Card.Img
                     variant="top"
                     src={`${import.meta.env.VITE_API_URL}/${game.gameImage}`}
                     alt={game.name}
-                    style={{
-                      height: '120px',
-                      objectFit: 'cover'
-                    }}
-                  // onClick={() => handleCardClick(game._id)}
+                    style={{ height: '120px', objectFit: 'cover' }}
                   />
                   <Card.Body>
                     <Card.Title>{game.name}</Card.Title>
@@ -104,7 +120,12 @@ const BookGames = () => {
                       </small>
                     </Card.Text>
                     <div className="d-flex justify-content-between align-items-center">
-                      <span className="text-primary fw-bold px-3 py-2 rounded-pill" style={{ backgroundColor: '#FAFAF4' }}>₹{game.price}/Person</span>
+                      <span
+                        className="text-primary fw-bold px-3 py-2 rounded-pill"
+                        style={{ backgroundColor: '#FAFAF4' }}
+                      >
+                        ₹{game.price}/Person
+                      </span>
                       <button
                         className="btn btn-primary rounded-circle"
                         style={{ width: '40px', height: '40px', padding: 0 }}
@@ -120,11 +141,7 @@ const BookGames = () => {
           ) : (
             <Col className="text-center py-5">
               <div className="d-flex flex-column align-items-center">
-                <img 
-                  src={Nogame} 
-                  alt="No games" 
-                  style={{ width: '150px', opacity: 0.7 }}
-                />
+                <img src={Nogame} alt="No games" style={{ width: '150px', opacity: 0.7 }} />
                 <h5 className="mt-3 text-muted">No indoor games available</h5>
               </div>
             </Col>
@@ -133,26 +150,25 @@ const BookGames = () => {
       </div>
 
       {/* Outdoor Games Section */}
-      <h5
-        className="text-dark fw-bold mb-2"
-        style={{ fontSize: 'clamp(20px, 5vw, 25px)', margin: 0 }}
-      >
+      <h5 className="text-dark fw-bold mb-2" style={{ fontSize: 'clamp(20px, 5vw, 25px)', margin: 0 }}>
         Outdoor Games
       </h5>
+
       <div className="horizontal-scroll">
         <Row className="flex-nowrap" style={{ margin: '0 -0.5rem' }}>
           {outdoorGames.length > 0 ? (
-            outdoorGames.map((game, index) => (
+            outdoorGames.map((game) => (
               <Col key={game._id} lg={2.4} xs={8} md={3} style={{ padding: '0 0.5rem' }}>
-                <Card className="shadow-sm" style={{ cursor: 'pointer' }} onClick={() => navigate(`/admin/games/${game._id}`)}>
+                <Card
+                  className="shadow-sm game-card"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => navigate(`/admin/games/${game._id}`)}
+                >
                   <Card.Img
                     variant="top"
                     src={`${import.meta.env.VITE_API_URL}/${game.gameImage}`}
                     alt={game.name}
-                    style={{
-                      height: '120px',
-                      objectFit: 'cover'
-                    }}
+                    style={{ height: '120px', objectFit: 'cover' }}
                   />
                   <Card.Body>
                     <Card.Title>{game.name}</Card.Title>
@@ -162,7 +178,12 @@ const BookGames = () => {
                       </small>
                     </Card.Text>
                     <div className="d-flex justify-content-between align-items-center">
-                      <span className="text-primary fw-bold px-3 py-2 rounded-pill" style={{ backgroundColor: '#FAFAFA' }}>₹{game.price}/Person </span>
+                      <span
+                        className="text-primary fw-bold px-3 py-2 rounded-pill"
+                        style={{ backgroundColor: '#FAFAFA' }}
+                      >
+                        ₹{game.price}/Person
+                      </span>
                       <button
                         className="btn btn-primary rounded-circle"
                         style={{ width: '40px', height: '40px', padding: 0 }}
@@ -178,11 +199,7 @@ const BookGames = () => {
           ) : (
             <Col className="text-center py-5">
               <div className="d-flex flex-column align-items-center">
-                <img 
-                  src={Nogame} 
-                  alt="No games" 
-                  style={{ width: '150px', opacity: 0.7 }}
-                />
+                <img src={Nogame} alt="No games" style={{ width: '150px', opacity: 0.7 }} />
                 <h5 className="mt-3 text-muted">No outdoor games available</h5>
               </div>
             </Col>

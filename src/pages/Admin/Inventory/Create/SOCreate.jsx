@@ -19,7 +19,6 @@ import { BiArrowToLeft, BiPlus } from "react-icons/bi";
 import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems"
 import Tax from "../modal/Tax";
 import AddClint from "../modal/AddClint";
-import PaymentTermsModal from "../modal/PaymentTermsModal";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { getCustomFields } from '../../../../store/AdminSlice/CustomField';
@@ -27,6 +26,7 @@ import { getTaxFields } from '../../../../store/AdminSlice/TextFieldSlice';
 import { getItems } from '../../../../store/AdminSlice/Inventory/ItemsSlice';
 import { MdOutlineRemoveCircleOutline } from "react-icons/md";
 import { addSO, getSOById, updateSO } from '../../../../store/AdminSlice/Inventory/SoSlice';
+import Select from 'react-select';
 
 const SOCreate = () => {
   const { id } = useParams();
@@ -37,7 +37,6 @@ const SOCreate = () => {
   const [showOffCanvasCreateItem, setShowOffCanvasCreateItem] = useState(false);
   const handleShowCreateItem = () => setShowOffCanvasCreateItem(true);
   const handleCloseCreateItem = () => setShowOffCanvasCreateItem(false);
-  const [showPaymentTerms, setShowPaymentTerms] = useState(false);
 
   const [products, setProducts] = useState([
     { id: 1, item: "", quantity: 1, price: 0, tax: 0, total: 0, totalTax: 0 },
@@ -54,21 +53,11 @@ const SOCreate = () => {
   const cafeId = user?._id;
   
   // Filter payment terms from custom fields
-  const paymentTerms = customFields.filter(field => field.type === 'Payment Terms');
 
   // Add new state to track latest created items
-  const [latestPaymentTerm, setLatestPaymentTerm] = useState(null);
   const [latestTax, setLatestTax] = useState(null);
 
-  // Add handler for new payment term creation
-  const handlePaymentTermCreated = (newTerm) => {
-    setLatestPaymentTerm(newTerm);
-    // Automatically set the new payment term in the form
-    setFormData(prev => ({
-      ...prev,
-      payment_terms: newTerm.name
-    }));
-  };
+  
 
   // Update the handleTaxCreated function in SOCreate component
   const handleTaxCreated = (newTax) => {
@@ -187,8 +176,6 @@ const SOCreate = () => {
     "4": 4,
     "1800": 1800,
   };
-
-
 
   const updateProduct = (id, field, value) => {
     const updatedProducts = products.map((product) => {
@@ -417,6 +404,16 @@ const SOCreate = () => {
   // Update the page title based on mode
   const pageTitle = isEditMode ? "Edit Sales Order" : "Create Sales Order";
   
+  // Add this function to format items for react-select
+  const formatItemsForSelect = (items) => {
+    return items.map(item => ({
+      value: item._id,
+      label: `${item.name} (₹${item.sellingPrice})`,
+      price: item.sellingPrice,
+      tax: item.tax
+    }));
+  };
+
   return (
     <Container fluid className="p-4">
       <Col sm={12} className="my-3">
@@ -540,45 +537,9 @@ const SOCreate = () => {
                 />
               </div> */}
 
-              <div className="d-flex flex-row align-items-center gap-2">
-                <Form.Select
-                  name="payment_terms"
-                  value={formData.payment_terms}
-                  onChange={handleInputChange}
-                  style={{
-                    border: "1px solid black",
-                    height: "44px",
-                    borderStyle: "dashed",
-                  }}
-                >
-                  <option value="">Select Payment Term</option>
-                  {paymentTerms.map((term) => (
-                    <option key={term._id} value={term.name}>
-                      {term.name}
-                    </option>
-                  ))}
-                </Form.Select>
-                <Button
-                  style={{
-                    width: "50px",
-                    border: "1px solid black",
-                    height: "30px",
-                    borderStyle: "dashed",
-                  }}
-                  variant="outline-secondary"
-                  onClick={() => setShowPaymentTerms(true)}
-                  className="end-0 top-0 h-100 px-2"
-                >
-                  +
-                </Button>
-              </div>
+         
 
-              <Form.Control
-                name="reference"
-                value={formData.reference}
-                onChange={handleInputChange}
-                placeholder="Enter Reference"
-              />
+        
 
               {/* <Form.Control
                 name="delivery_preference"
@@ -616,61 +577,121 @@ const SOCreate = () => {
             {products.map((product, index) => (
               <tr key={product.id}>
                 <td>
-                  <div className="d-flex gap-2">
-                    <Form.Select
-                      className="flex-grow-1"
-                      style={{ 
-                        border: `1px solid ${validationErrors[`product-${product.id}`] ? 'red' : 'black'}`, 
-                        borderStyle: "dashed" 
-                      }}
-                      value={product.item || ""}
-                      onChange={(e) => {
-                        updateProduct(product.id, "item", e.target.value);
-                        // Clear validation error when value is selected
-                        if (e.target.value) {
-                          setValidationErrors(prev => ({
-                            ...prev,
-                            [`product-${product.id}`]: null
-                          }));
-                        }
-                      }}
-                      onBlur={() => {
-                        // Set validation error if empty on blur
-                        if (!product.item) {
-                          setValidationErrors(prev => ({
-                            ...prev,
-                            [`product-${product.id}`]: 'Product selection is required'
-                          }));
-                        }
-                      }}
-                      required
-                    >
-                      <option value="">Select Item *</option>
-                      {items.map((item) => (
-                        <option key={item._id} value={item._id}>
-                          {item.name} (₹{item.sellingPrice})
-                        </option>
-                      ))}
-                      {product.item && !items.some(item => item._id === product.item) && product.itemName && (
-                        <option value={product.item}>{product.itemName}</option>
-                      )}
-                    </Form.Select>
+                  <div className="d-flex gap-2 flex-column">
+                    <div className="d-flex gap-2">
+                      <div className="flex-grow-1">
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          placeholder="Select Item *"
+                          isClearable={true}
+                          isSearchable={true}
+                          name={`item-${product.id}`}
+                          options={formatItemsForSelect(items)}
+                          value={
+                            product.item
+                              ? formatItemsForSelect(items).find(option => option.value === product.item) ||
+                                (product.itemName ? { value: product.item, label: product.itemName } : null)
+                              : null
+                          }
+                          onChange={(selectedOption) => {
+                            updateProduct(
+                              product.id,
+                              "item",
+                              selectedOption ? selectedOption.value : ""
+                            );
+                            if (selectedOption) {
+                              setValidationErrors(prev => ({
+                                ...prev,
+                                [`product-${product.id}`]: null
+                              }));
+                            }
+                          }}
+                          onBlur={() => {
+                            if (!product.item) {
+                              setValidationErrors(prev => ({
+                                ...prev,
+                                [`product-${product.id}`]: 'Product selection is required'
+                              }));
+                            }
+                          }}
+                          styles={{
+                            control: (baseStyles, state) => ({
+                              ...baseStyles,
+                              borderColor: validationErrors[`product-${product.id}`] ? 'red' : 'black',
+                              borderStyle: 'dashed',
+                              borderWidth: '1px',
+                              '&:hover': {
+                                borderColor: validationErrors[`product-${product.id}`] ? 'red' : 'black'
+                              }
+                            }),
+                            placeholder: (baseStyles) => ({
+                              ...baseStyles,
+                              color: '#6c757d'
+                            }),
+                            input: (baseStyles) => ({
+                              ...baseStyles,
+                              color: 'black'
+                            }),
+                            singleValue: (baseStyles) => ({
+                              ...baseStyles,
+                              color: 'black'
+                            }),
+                            option: (baseStyles, { isFocused, isSelected }) => ({
+                              ...baseStyles,
+                              backgroundColor: isSelected 
+                                ? '#0d6efd' 
+                                : isFocused 
+                                ? '#e9ecef' 
+                                : null,
+                              color: isSelected ? 'white' : 'black',
+                              ':active': {
+                                backgroundColor: '#0d6efd',
+                                color: 'white'
+                              }
+                            }),
+                            menu: (baseStyles) => ({
+                              ...baseStyles,
+                              position: 'absolute',
+                              width: '100%',
+                              maxWidth: '400px',
+                              zIndex: 9999,
+                            }),
+                            menuList: (baseStyles) => ({
+                              ...baseStyles,
+                              maxHeight: '200px',
+                              overflowY: 'auto',
+                            })
+                          }}
+                          menuPlacement="auto"
+                          menuPosition="absolute"
+                          menuPortalTarget={document.body}
+                        />
+                      </div>
+                      <Button
+                        onClick={handleShowCreateItem}
+                        className="flex-shrink-0"
+                        style={{ 
+                          width: "40px", 
+                          height: "38px",
+                          border: "1px solid black", 
+                          borderStyle: "dashed",
+                          marginTop: "auto" 
+                        }}
+                        variant="outline-secondary"
+                      >
+                        +
+                      </Button>
+                    </div>
                     {validationErrors[`product-${product.id}`] && (
-                      <div style={{ color: 'red', fontSize: '0.875rem', marginTop: '0.25rem' }}>
+                      <div style={{ color: 'red', fontSize: '0.875rem' }}>
                         {validationErrors[`product-${product.id}`]}
                       </div>
                     )}
-                    <Button
-                      onClick={handleShowCreateItem}
-                      className="flex-shrink-0"
-                      style={{ width: "40px", border: "1px solid black", borderStyle: "dashed" }}
-                      variant="outline-secondary"
-                    >
-                      +
-                    </Button>
                   </div>
                 </td>
                 <td>
+                  
                   <Form.Control
                     type="number"
                     min="1"
@@ -832,7 +853,7 @@ const SOCreate = () => {
                 <Dropdown style={{ maxWidth: "200px" }}>
                   <Dropdown.Toggle variant="outline-primary" style={{ width: "100%" }}>
                     {totals.selectedTaxes.length ? 
-                      totals.selectedTaxes.map(tax => `${tax.rate}%`).join(', ') : 
+                      `${totals.selectedTaxes.reduce((sum, tax) => sum + tax.rate, 0)}%` : 
                       '0.00% Tax'}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
@@ -985,11 +1006,7 @@ const SOCreate = () => {
           handleClose={() => setShowProductList(false)}
         />
       )}
-      <PaymentTermsModal
-        show={showPaymentTerms}
-        handleClose={() => setShowPaymentTerms(false)}
-        onCreated={handlePaymentTermCreated}
-      />
+
       <Tax 
         show={showTaxModal} 
         handleClose={() => setShowTaxModal(false)}

@@ -111,12 +111,12 @@ const CreateNewGameForm = () => {
     try {
       if (id) {
         // Edit mode
-        await dispatch(updateGame({ id, updateGame: formDataToSend })).unwrap();
+        await dispatch(updateGame({ id, updatedData: formDataToSend })).unwrap();
       } else {
         // Create mode
         await dispatch(addGame(formDataToSend)).unwrap();
       }
-      navigate('/admin/dashboard');
+      navigate('/admin/games/recommended');
     } catch (error) {
       console.error('Failed to save game:', error);
     } finally {
@@ -306,7 +306,7 @@ const CreateNewGameForm = () => {
             <Button 
               variant="light" 
               className="me-2" 
-              onClick={() => navigate('/admin/dashboard')}
+              onClick={() => navigate('/admin/games/recommended')}
               style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray' }}
             >
               Cancel

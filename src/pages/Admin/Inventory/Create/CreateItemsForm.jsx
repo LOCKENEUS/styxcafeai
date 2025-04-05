@@ -72,7 +72,6 @@ const CreateItemsForm = () => {
     const [errors, setErrors] = useState({
         name: '',
         sku: '',
-        hsnCode: '',
         unit: '',
         costPrice: '',
         sellingPrice: ''
@@ -84,7 +83,6 @@ const CreateItemsForm = () => {
         const newErrors = {
             name: '',
             sku: '',
-            hsnCode: '',
             unit: '',
             costPrice: '',
             sellingPrice: ''
@@ -102,12 +100,6 @@ const CreateItemsForm = () => {
         // SKU validation
         if (!formData.sku.trim()) {
             newErrors.sku = 'SKU is required';
-            isValid = false;
-        }
-
-        // HSN Code validation
-        if (!formData.hsnCode) {
-            newErrors.hsnCode = 'HSN Code is required';
             isValid = false;
         }
 

@@ -21,6 +21,8 @@ import Tax from "../modal/Tax";
 import AddClint from "../modal/AddClint";
 import PaymentTermsModal from "../modal/PaymentTermsModal";
 import { Link, useParams, useNavigate } from "react-router-dom";
+import Select from 'react-select';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { getCustomFields } from '../../../../store/AdminSlice/CustomField';
 import { getTaxFields } from '../../../../store/AdminSlice/TextFieldSlice';
@@ -53,12 +55,9 @@ export const InvoiceCreate =()=>{
   const user = JSON.parse(sessionStorage.getItem("user"));
   const cafeId = user?._id;
   
-  // Filter payment terms from custom fields
-  const paymentTerms = customFields.filter(field => field.type === 'Payment Terms');
 
-  // Add these new state variables near the top with other state declarations
-  const [latestPaymentTerm, setLatestPaymentTerm] = useState(null);
-  const [latestTax, setLatestTax] = useState(null);
+  // Add this new state for validation errors
+  const [validationErrors, setValidationErrors] = useState({});
 
   useEffect(() => {
     dispatch(getCustomFields(cafeId));
@@ -185,7 +184,14 @@ export const InvoiceCreate =()=>{
     "1800": 1800,
   };
 
-
+  const formatItemsForSelect = (items) => {
+    return items.map(item => ({
+      value: item._id,
+      label: `${item.name} (₹${item.sellingPrice})`,
+      price: item.sellingPrice,
+      tax: item.tax
+    }));
+  };
 
   const updateProduct = (id, field, value) => {
     const updatedProducts = products.map((product) => {
@@ -337,9 +343,26 @@ export const InvoiceCreate =()=>{
 
   // Update the handleSubmit function
   const handleSubmit = async () => {
+    // Validate all products have items selected
+    let hasErrors = false;
+    const newValidationErrors = {};
+
     // Check if client is selected
     if (!selectedClient) {
       setShowValidationModal(true);
+      return;
+    }
+
+    // Validate products
+    products.forEach(product => {
+      if (!product.item) {
+        hasErrors = true;
+        newValidationErrors[`product-${product.id}`] = 'Product selection is required';
+      }
+    });
+
+    if (hasErrors) {
+      setValidationErrors(newValidationErrors);
       return;
     }
 
@@ -348,10 +371,8 @@ export const InvoiceCreate =()=>{
       cafe: cafeId,
       customer_id: selectedClient?._id || '',
       date: formData.date,
-      shipment_date: formData.shipment_date,
       payment_terms: formData.payment_terms,
       reference: formData.reference,
-      delivery_preference: formData.delivery_preference,
       sales_person: formData.sales_person,
       description: formData.description,
       internal_team_notes: formData.internal_team_notes,
@@ -516,7 +537,7 @@ export const InvoiceCreate =()=>{
               />
             </div> */}
 
-            <div className="d-flex flex-row align-items-center gap-2">
+            {/* <div className="d-flex flex-row align-items-center gap-2">
               <Form.Select
                 name="payment_terms"
                 value={formData.payment_terms}
@@ -547,14 +568,14 @@ export const InvoiceCreate =()=>{
               >
                 +
               </Button>
-            </div>
+            </div> */}
 
-            <Form.Control
+            {/* <Form.Control
               name="reference"
               value={formData.reference}
               onChange={handleInputChange}
               placeholder="Enter Reference"
-            />
+            /> */}
 
             {/* <Form.Control
               name="delivery_preference"
@@ -592,47 +613,117 @@ export const InvoiceCreate =()=>{
           {products.map((product, index) => (
             <tr key={product.id}>
               <td>
-                <div className="d-flex gap-2">
-                  <Form.Select
-                    className="flex-grow-1"
-                    style={{ border: "1px solid black", borderStyle: "dashed" }}
-                    value={product.item || ""}
-                    onChange={(e) => {
-                      // Check if the selected item is already used in another product row
-                      const isItemAlreadySelected = products.some(
-                        p => p.id !== product.id && p.item === e.target.value
-                      );
-
-                      if (isItemAlreadySelected) {
-                        // Show an alert or handle the duplicate selection
-                        alert("This item is already selected in another row. Please choose a different item.");
-                        return;
-                      }
-
-                      updateProduct(product.id, "item", e.target.value);
-                    }}
-                  >
-                    <option value="">Select Item</option>
-                    {items
-                      // Filter out items that are already selected in other rows
-                      .filter(item => !products.some(p => p.id !== product.id && p.item === item._id))
-                      .map((item) => (
-                        <option key={item._id} value={item._id}>
-                          {item.name} (₹{item.sellingPrice})
-                        </option>
-                      ))}
-                    {product.item && !items.some(item => item._id === product.item) && product.itemName && (
-                      <option value={product.item}>{product.itemName}</option>
-                    )}
-                  </Form.Select>
-                  <Button
-                    onClick={handleShowCreateItem}
-                    className="flex-shrink-0"
-                    style={{ width: "40px", border: "1px solid black", borderStyle: "dashed" }}
-                    variant="outline-secondary"
-                  >
-                    +
-                  </Button>
+                <div className="d-flex gap-2 flex-column">
+                  <div className="d-flex gap-2">
+                    <div className="flex-grow-1">
+                      <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        placeholder="Select Item *"
+                        isClearable={true}
+                        isSearchable={true}
+                        name={`item-${product.id}`}
+                        options={formatItemsForSelect(items)}
+                        value={
+                          product.item
+                            ? formatItemsForSelect(items).find(option => option.value === product.item) ||
+                              (product.itemName ? { value: product.item, label: product.itemName } : null)
+                            : null
+                        }
+                        onChange={(selectedOption) => {
+                          updateProduct(
+                            product.id,
+                            "item",
+                            selectedOption ? selectedOption.value : ""
+                          );
+                          if (selectedOption) {
+                            setValidationErrors(prev => ({
+                              ...prev,
+                              [`product-${product.id}`]: null
+                            }));
+                          }
+                        }}
+                        onBlur={() => {
+                          if (!product.item) {
+                            setValidationErrors(prev => ({
+                              ...prev,
+                              [`product-${product.id}`]: 'Product selection is required'
+                            }));
+                          }
+                        }}
+                        styles={{
+                          control: (baseStyles, state) => ({
+                            ...baseStyles,
+                            borderColor: validationErrors[`product-${product.id}`] ? 'red' : 'black',
+                            borderStyle: 'dashed',
+                            borderWidth: '1px',
+                            '&:hover': {
+                              borderColor: validationErrors[`product-${product.id}`] ? 'red' : 'black'
+                            }
+                          }),
+                          placeholder: (baseStyles) => ({
+                            ...baseStyles,
+                            color: '#6c757d'
+                          }),
+                          input: (baseStyles) => ({
+                            ...baseStyles,
+                            color: 'black'
+                          }),
+                          singleValue: (baseStyles) => ({
+                            ...baseStyles,
+                            color: 'black'
+                          }),
+                          option: (baseStyles, { isFocused, isSelected }) => ({
+                            ...baseStyles,
+                            backgroundColor: isSelected 
+                              ? '#0d6efd' 
+                              : isFocused 
+                              ? '#e9ecef' 
+                              : null,
+                            color: isSelected ? 'white' : 'black',
+                            ':active': {
+                              backgroundColor: '#0d6efd',
+                              color: 'white'
+                            }
+                          }),
+                          menu: (baseStyles) => ({
+                            ...baseStyles,
+                            position: 'absolute',
+                            width: '100%',
+                            maxWidth: '400px',
+                            zIndex: 9999,
+                          }),
+                          menuList: (baseStyles) => ({
+                            ...baseStyles,
+                            maxHeight: '200px',
+                            overflowY: 'auto',
+                          })
+                        }}
+                        menuPlacement="auto"
+                        menuPosition="absolute"
+                        menuPortalTarget={document.body}
+                      />
+                    </div>
+                    <Button
+                      onClick={handleShowCreateItem}
+                      className="flex-shrink-0"
+                      style={{ 
+                        width: "40px", 
+                        height: "38px",
+                        border: "1px solid black", 
+                        borderStyle: "dashed",
+                        marginTop: "auto" 
+                      }}
+                      variant="outline-secondary"
+                    >
+                      +
+                    </Button>
+                  </div>
+                  {validationErrors[`product-${product.id}`] && (
+                    <div style={{ color: 'red', fontSize: '0.875rem' }}>
+                      {validationErrors[`product-${product.id}`]}
+                    </div>
+                  )}
                 </div>
               </td>
               <td>
@@ -801,8 +892,7 @@ export const InvoiceCreate =()=>{
               <Dropdown style={{ maxWidth: "200px" }}>
                 <Dropdown.Toggle variant="outline-primary" style={{ width: "100%" }}>
                   {totals.selectedTaxes.length ? 
-                    totals.selectedTaxes.map(tax => `${tax.rate}%`).join(', ') : 
-                    '0.00% Tax'}
+ `${totals.selectedTaxes.reduce((sum, tax) => sum + tax.rate, 0)}%` :                    '0.00% Tax'}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   {taxFields.map(tax => (
@@ -954,11 +1044,7 @@ export const InvoiceCreate =()=>{
         handleClose={() => setShowProductList(false)}
       />
     )}
-    <PaymentTermsModal
-      show={showPaymentTerms}
-      handleClose={() => setShowPaymentTerms(false)}
-      onCreated={handlePaymentTermCreated}
-    />
+
     <Tax 
       show={showTaxModal} 
       handleClose={() => setShowTaxModal(false)}
@@ -989,7 +1075,7 @@ export const InvoiceCreate =()=>{
         <Modal.Title>Required Field Missing</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>Please select a client before creating the sales order.</p>
+        <p>Please select a client before creating the invoice.</p>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="primary" onClick={() => {

@@ -119,101 +119,66 @@ const AdminDashboard = () => {
   // Animation effects
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Container animation
-      gsap.from(containerRef.current, {
+      // Initial state
+      gsap.set([containerRef.current, ".summary-card", ".game-card", ".tournament-card", ".booking-item"], { 
         opacity: 0,
-        duration: 0.5,
-        ease: "power1.inOut"
+        y: 20
+      });
+
+      // Main container fade in
+      gsap.to(containerRef.current, {
+        opacity: 1,
+        duration: 0.4,
+        ease: "power2.out"
       });
 
       // Summary cards animation
-      gsap.from(".summary-card", {
-        y: 50,
-        opacity: 0,
-        stagger: 0.1,
+      gsap.to(".summary-card", {
+        opacity: 1,
+        y: 0,
         duration: 0.6,
-        ease: "back.out(1.7)",
-        delay: 0.3
+        stagger: 0.1,
+        ease: "power3.out",
+        delay: 0.2
       });
 
-      // Enhanced Games section animation - FIXED
-      gsap.from(".game-card", {
-        y: 50,
-        opacity: 0,
-        scale: 0.9,
-        duration: 0.7,
+      // Games cards animation
+      gsap.to(".game-card", {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
         stagger: 0.15,
         ease: "power2.out",
-        delay: 0.6,
         scrollTrigger: {
           trigger: gamesRef.current,
-          start: "top 80%"
+          start: "top 85%",
+          toggleActions: "play none none reverse"
         }
       });
 
-      // Enhanced Tournaments animation - FIXED
-      gsap.from(".tournament-card", {
-        y: 50,
-        opacity: 0,
-        duration: 0.7,
+      // Tournament cards animation
+      gsap.to(".tournament-card", {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
         stagger: 0.15,
         ease: "power2.out",
-        delay: 0.9,
         scrollTrigger: {
           trigger: tournamentsRef.current,
-          start: "top 80%"
+          start: "top 85%",
+          toggleActions: "play none none reverse"
         }
       });
 
-      // Bookings animation
-      gsap.from(".booking-item", {
-        y: 30,
-        opacity: 0,
-        stagger: 0.1,
+      // Booking items animation
+      gsap.to(".booking-item", {
+        opacity: 1,
+        y: 0,
         duration: 0.5,
-        ease: "elastic.out(1, 0.5)",
-        delay: 1.2
+        stagger: 0.08,
+        ease: "power2.out",
+        delay: 0.4
       });
-
-      // // Hover animations for game cards
-      // gsap.utils.toArray(".game-card").forEach(card => {
-      //   gsap.set(card, { willChange: "transform" });
-      //   card.addEventListener("mouseenter", () => {
-      //     gsap.to(card, {
-      //       y: -5,
-      //       scale: 1.02,
-      //       duration: 0.2,
-      //       ease: "power1.out"
-      //     });
-      //   });
-      //   card.addEventListener("mouseleave", () => {
-      //     gsap.to(card, {
-      //       y: 0,
-      //       scale: 1,
-      //       duration: 0.2,
-      //       ease: "power1.out"
-      //     });
-      //   });
-      // });
-
-      // // Hover animations for tournament cards
-      // gsap.utils.toArray(".tournament-card").forEach(card => {
-      //   gsap.set(card, { willChange: "transform" });
-      //   card.addEventListener("mouseenter", () => {
-      //     gsap.to(card, {
-      //       y: -3,
-      //       boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
-      //       duration: 0.2
-      //     });
-      //   });
-      //   card.addEventListener("mouseleave", () => {
-      //     gsap.to(card, {
-      //       y: 0,
-      //       boxShadow: "none",
-      //       duration: 0.2
-      //     });
-      //   });
-      // });
 
     }, containerRef);
 

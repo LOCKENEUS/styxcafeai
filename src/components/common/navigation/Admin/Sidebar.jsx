@@ -65,7 +65,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
 
       // Animate main menu items
       gsap.to(waveRef.current.querySelectorAll('.nav-item'), {
-        duration: 0.5,
+        duration: 1,
         x: 0,
         opacity: 1,
         stagger: 0.1,

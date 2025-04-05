@@ -1,22 +1,41 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Modal, Breadcrumb, BreadcrumbItem, Dropdown } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+  Form,
+  InputGroup,
+  Table,
+  Modal,
+  Breadcrumb,
+  BreadcrumbItem,
+  Dropdown,
+} from "react-bootstrap";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import { FaFilePdf, FaRupeeSign, FaTrash, FaUpload } from "react-icons/fa";
 import { BiArrowToLeft, BiPlus } from "react-icons/bi";
 // import  { OffcanvesItemsCreate } from "../Offcanvas/OffcanvesItems";
-import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems"
+import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems";
 import Tax from "./Tax";
 // import AddClint from "../modal/vendorListModal";
 import PaymentTermsModal from "./PaymentTermsModal";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { CreatePurchaseOrder, GetVendorsList, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import {
+  CreatePurchaseOrder,
+  GetVendorsList,
+} from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch, useSelector } from "react-redux";
 import AddClint from "./AddClint";
 import VendorsList from "./vendoreListModal";
 import { getItems } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
 import { getCustomers } from "../../../../store/AdminSlice/CustomerSlice";
-import { addPBill,  updatePBill } from "../../../../store/AdminSlice/Inventory/PBillSlice";
+import {
+  addPBill,
+  updatePBill,
+} from "../../../../store/AdminSlice/Inventory/PBillSlice";
 import { getPurchaseReceive } from "../../../../store/AdminSlice/Inventory/purchaseReceive";
 
 const ParchaseBCreate = () => {
@@ -28,7 +47,6 @@ const ParchaseBCreate = () => {
   const handleShowCreateItem = () => setShowOffCanvasCreateItem(true);
   const handleCloseCreateItem = () => setShowOffCanvasCreateItem(false);
   const [showPaymentTerms, setShowPaymentTerms] = useState(false);
-
 
   const [products, setProducts] = useState([
     { id: 1, item: "", quantity: 1, price: 0, tax: 0, total: 0, totalTax: 0 },
@@ -47,19 +65,21 @@ const ParchaseBCreate = () => {
   const [vendorSelected, setVendorSelected] = useState([]);
   const [vendorId, setVendorId] = useState("");
   const user = JSON.parse(sessionStorage.getItem("user"));
-  const {selectedItem} = useSelector(state => state.purchaseReceiveSlice);
+  const { selectedItem } = useSelector((state) => state.purchaseReceiveSlice);
 
   const cafeId = user?._id;
 
-  const userName= user?.name;
-  const userEmail= user?.email;
+  const userName = user?.name;
+  const userEmail = user?.email;
   const UserContactN = user?.contact_no;
   const UserAddress = user?.address;
   const UesrPAN = user?.panNo;
 
-console.log("selectedItem", selectedItem);
+  console.log("selectedItem", selectedItem);
   // Filter payment terms from custom fields
-  const paymentTerms = customFields.filter(field => field.type === 'Payment Terms');
+  const paymentTerms = customFields.filter(
+    (field) => field.type === "Payment Terms"
+  );
 
   useEffect(() => {
     dispatch(GetVendorsList(cafeId));
@@ -68,11 +88,13 @@ console.log("selectedItem", selectedItem);
   }, [dispatch]);
   const vendorsList = useSelector((state) => state.purchaseOrder?.vendors);
   // const lisgetCustomers = useSelector((state) => state.customers?.customers);
-  const { customers, loading: customerLoading } = useSelector((state) => state.customers);
+  const { customers, loading: customerLoading } = useSelector(
+    (state) => state.customers
+  );
   const customersList = customers?.customers;
 
   useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem('user'));
+    const user = JSON.parse(sessionStorage.getItem("user"));
     const cafeId = user?._id;
     if (cafeId) {
       dispatch(getCustomers(cafeId));
@@ -87,25 +109,24 @@ console.log("selectedItem", selectedItem);
 
   useEffect(() => {
     dispatch(getPurchaseReceive(id));
-}, [dispatch, cafeId]);
+  }, [dispatch, cafeId]);
 
   // Add these new state and calculation functions
   const priceList = {
-    "34": 34,
-    "3": 3,
-    "4": 4,
-    "1800": 1800,
+    34: 34,
+    3: 3,
+    4: 4,
+    1800: 1800,
   };
-
 
   const TaxList = useSelector((state) => state.taxFieldSlice?.taxFields);
 
   const calculateTotal = (price, quantity, tax) => {
     const subtotal = parseFloat(price) * parseInt(quantity);
     const totalTax = (subtotal * parseFloat(tax)) / 100;
-    return { 
-      total: Math.round((subtotal + totalTax) * 100) / 100, 
-      totalTax: Math.round(totalTax * 100) / 100
+    return {
+      total: Math.round((subtotal + totalTax) * 100) / 100,
+      totalTax: Math.round(totalTax * 100) / 100,
     };
   };
 
@@ -115,42 +136,48 @@ console.log("selectedItem", selectedItem);
         const updatedProduct = { ...product, [field]: value };
 
         if (field === "item") {
-          const selectedItem = items.find(item => item._id === value);
+          const selectedItem = items.find((item) => item._id === value);
           if (selectedItem) {
-            updatedProduct.price = Math.round(selectedItem.sellingPrice * 100) / 100;
+            updatedProduct.price =
+              Math.round(selectedItem.sellingPrice * 100) / 100;
             updatedProduct.tax = selectedItem.tax;
-            const itemTax = taxFields.find(tax => tax._id === selectedItem.tax);
-            updatedProduct.taxRate = itemTax ? Math.round(itemTax.tax_rate * 100) / 100 : 0;
+            const itemTax = taxFields.find(
+              (tax) => tax._id === selectedItem.tax
+            );
+            updatedProduct.taxRate = itemTax
+              ? Math.round(itemTax.tax_rate * 100) / 100
+              : 0;
           }
           const isDuplicate = products.some(
             (product) => product.id !== id && product.item === value
           );
-      
+
           if (isDuplicate) {
             alert("You have selected the same item.");
-            return product; 
+            return product;
           }
-          
-         
         }
-        
 
         if (field === "tax") {
-          const selectedTax = taxFields.find(tax => tax._id === value);
-          updatedProduct.taxRate = selectedTax ? Math.round(selectedTax.tax_rate * 100) / 100 : 0;
+          const selectedTax = taxFields.find((tax) => tax._id === value);
+          updatedProduct.taxRate = selectedTax
+            ? Math.round(selectedTax.tax_rate * 100) / 100
+            : 0;
         }
 
-        const price = Math.round(parseFloat(updatedProduct.price || 0) * 100) / 100;
+        const price =
+          Math.round(parseFloat(updatedProduct.price || 0) * 100) / 100;
         const quantity = parseInt(updatedProduct.quantity) || 1;
-        const taxRate = Math.round(parseFloat(updatedProduct.taxRate || 0) * 100) / 100;
+        const taxRate =
+          Math.round(parseFloat(updatedProduct.taxRate || 0) * 100) / 100;
         const subtotal = Math.round(price * quantity * 100) / 100;
-        const totalTax = Math.round((subtotal * taxRate) / 100 * 100) / 100;
+        const totalTax = Math.round(((subtotal * taxRate) / 100) * 100) / 100;
         updatedProduct.total = Math.round((subtotal + totalTax) * 100) / 100;
         updatedProduct.totalTax = totalTax;
 
         return updatedProduct;
       }
-      
+
       return product;
     });
 
@@ -161,7 +188,15 @@ console.log("selectedItem", selectedItem);
   const addProduct = () => {
     setProducts([
       ...products,
-      { id: products.length + 1, item: "", quantity: 1, price: 0, tax: 0, total: 0, totalTax: 0 },
+      {
+        id: products.length + 1,
+        item: "",
+        quantity: 1,
+        price: 0,
+        tax: 0,
+        total: 0,
+        totalTax: 0,
+      },
     ]);
   };
 
@@ -177,48 +212,66 @@ console.log("selectedItem", selectedItem);
   const [totals, setTotals] = useState({
     subtotal: 0,
     discount: 0,
-    discountType: 'percentage',
+    discountType: "percentage",
     taxAmount: 0,
     selectedTaxes: [],
     total: 0,
-    adjustmentNote: '',
-    adjustmentAmount: 0
+    adjustmentNote: "",
+    adjustmentAmount: 0,
   });
 
   // Add this calculation function
   const calculateTotals = () => {
     // Calculate subtotal from products
-    const subtotal = Math.round(products.reduce((sum, product) => sum + (product.total || 0), 0) * 100) / 100;
+    const subtotal =
+      Math.round(
+        products.reduce((sum, product) => sum + (product.total || 0), 0) * 100
+      ) / 100;
 
     // Calculate discount
     let discountAmount = 0;
-    if (totals.discountType === 'percentage') {
-      discountAmount = Math.round((subtotal * totals.discount / 100) * 100) / 100;
+    if (totals.discountType === "percentage") {
+      discountAmount =
+        Math.round(((subtotal * totals.discount) / 100) * 100) / 100;
     } else {
       discountAmount = Math.round(parseFloat(totals.discount || 0) * 100) / 100;
     }
 
     // Calculate tax amount
     const taxableAmount = subtotal - discountAmount;
-    const taxAmount = Math.round(totals.selectedTaxes.reduce((sum, tax) => {
-      return sum + (taxableAmount * (tax.rate / 100));
-    }, 0) * 100) / 100;
+    const taxAmount =
+      Math.round(
+        totals.selectedTaxes.reduce((sum, tax) => {
+          return sum + taxableAmount * (tax.rate / 100);
+        }, 0) * 100
+      ) / 100;
 
     // Calculate final total
-    const total = Math.round(subtotal - discountAmount + taxAmount + (parseFloat(totals.adjustmentAmount) || 0));
+    const total = Math.round(
+      subtotal -
+        discountAmount +
+        taxAmount +
+        (parseFloat(totals.adjustmentAmount) || 0)
+    );
 
-    setTotals(prev => ({
+    setTotals((prev) => ({
       ...prev,
       subtotal,
       taxAmount,
-      total
+      total,
     }));
   };
 
   // Add useEffect to recalculate when products or totals change
   useEffect(() => {
     calculateTotals();
-  }, [products, totals.discount, totals.discountType, totals.selectedTaxes, totals.adjustmentAmount]);
+  }, [
+    products,
+    totals.discount,
+    totals.discountType,
+    totals.selectedTaxes,
+    totals.adjustmentAmount,
+  ]);
 
   const [previewUrl, setPreviewUrl] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -226,13 +279,13 @@ console.log("selectedItem", selectedItem);
 
   const handleFileChange = (event) => {
     const newFiles = Array.from(event.target.files);
-    setFiles(prev => [...prev, ...newFiles]);
+    setFiles((prev) => [...prev, ...newFiles]);
   };
 
   const handleRemoveFile = (index, event) => {
     // Stop event from bubbling up to parent
     event.stopPropagation();
-    setFiles(prev => prev.filter((_, i) => i !== index));
+    setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleFileChange2 = (e) => {
@@ -247,23 +300,23 @@ console.log("selectedItem", selectedItem);
 
   // Add new state for form data
   const [formData, setFormData] = useState({
-    vendorId: '',
+    vendorId: "",
     delivery_type: "organization",
-    date: '',
-    shipment_date: '',
-    payment_terms: '',
-    reference: '',
-    shipment_preference: '',
-    description: '',
-    internal_team_notes: ''
+    date: "",
+    shipment_date: "",
+    payment_terms: "",
+    reference: "",
+    shipment_preference: "",
+    description: "",
+    internal_team_notes: "",
   });
 
   // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -280,38 +333,42 @@ console.log("selectedItem", selectedItem);
       description: formData.description,
       internal_team_notes: formData.internal_team_notes,
       // Add customer_id when delivery type is Customer
-      ...(formData.delivery_type === "Customer" && { customer_id: formData.customer_id }),
-      
+      ...(formData.delivery_type === "Customer" && {
+        customer_id: formData.customer_id,
+      }),
+
       // Financial details
       subtotal: Math.round(totals.subtotal * 100) / 100,
       discount_value: Math.round(totals.discount * 100) / 100,
       discount_type: totals.discountType,
-      tax: totals.selectedTaxes.map(tax => tax.id),
+      tax: totals.selectedTaxes.map((tax) => tax.id),
       total: Math.round(totals.total * 100) / 100,
       adjustment_note: totals.adjustmentNote,
-      adjustment_amount: Math.round(parseFloat(totals.adjustmentAmount || 0) * 100) / 100,
+      adjustment_amount:
+        Math.round(parseFloat(totals.adjustmentAmount || 0) * 100) / 100,
 
       // Items details
-      items: products.map(product => ({
+      items: products.map((product) => ({
         id: product.item,
-        hsn: product.hsn || '',
+        hsn: product.hsn || "",
         qty: parseInt(product.quantity) || 1,
         price: Math.round(parseFloat(product.price || 0) * 100) / 100,
-        tax: product.tax || '',
+        tax: product.tax || "",
         tax_amt: Math.round(parseFloat(product.totalTax || 0) * 100) / 100,
-        total: Math.round(parseFloat(product.total || 0) * 100) / 100
-      }))
+        total: Math.round(parseFloat(product.total || 0) * 100) / 100,
+      })),
     };
 
     try {
-      await dispatch(addPBill(submitData)).unwrap().then(() => {
-        navigate("/admin/inventory/purchase-bill-list");
-      });
+      await dispatch(addPBill(submitData))
+        .unwrap()
+        .then(() => {
+          navigate("/admin/inventory/purchase-bill-list");
+        });
     } catch (error) {
-      console.error('Error saving Purchase Bill:', error);
+      console.error("Error saving Purchase Bill:", error);
     }
   };
-
 
   // const handleVendorSelect = (newVendor) => {
   //   const selectedVendorId = newVendor;
@@ -331,14 +388,15 @@ console.log("selectedItem", selectedItem);
   //   console.log("Selected vendor ID:---", vendorId);
   // };
 
-
   const handleVendorSelect = (newVendorId) => {
-    const selectedVendor = vendorsList.find((vendor) => vendor?._id == newVendorId);
+    const selectedVendor = vendorsList.find(
+      (vendor) => vendor?._id == newVendorId
+    );
     if (selectedVendor) {
       setVendorSelected(selectedVendor);
       setFormData({
         ...formData,
-        vendor_id: selectedVendor?._id, 
+        vendor_id: selectedVendor?._id,
       });
       setVendorId(selectedVendor?._id);
     }
@@ -354,7 +412,7 @@ console.log("selectedItem", selectedItem);
     setSelectedCustomer(customer);
     setFormData({
       ...formData,
-      customer_id: customerId
+      customer_id: customerId,
     });
   };
 
@@ -371,22 +429,22 @@ console.log("selectedItem", selectedItem);
         ...formData,
         vendor_id: vendor._id,
         delivery_type: selectedItem.delivery_type || "organization",
-        date: selectedItem.delivery_date?.split('T')[0] || '',
-        description: selectedItem.description || '',
-        internal_team_notes: selectedItem.internal_team_notes || '',
+        date: selectedItem.delivery_date?.split("T")[0] || "",
+        description: selectedItem.description || "",
+        internal_team_notes: selectedItem.internal_team_notes || "",
       });
 
       // Set products data
       const mappedProducts = selectedItem.items.map((item, index) => ({
         id: index + 1,
         item: item.item_id._id,
-        quantity: item.qty_received ,
+        quantity: item.qty_received,
         price: item.price || 0,
-        tax: item.tax?._id || '',
+        tax: item.tax?._id || "",
         taxRate: item.tax?.tax_rate || 0,
         total: item.total || 0,
         totalTax: item.tax_amt || 0,
-        hsn: item.hsn || ''
+        hsn: item.hsn || "",
       }));
 
       setProducts(mappedProducts);
@@ -396,9 +454,9 @@ console.log("selectedItem", selectedItem);
         ...totals,
         subtotal: selectedItem.subtotal || 0,
         discount: selectedItem.discount_value || 0,
-        discountType: selectedItem.discount_type || 'percentage',
+        discountType: selectedItem.discount_type || "percentage",
         adjustmentAmount: selectedItem.adjustment_amount || 0,
-        total: selectedItem.total || 0
+        total: selectedItem.total || 0,
       });
     }
   }, [selectedItem]);
@@ -408,8 +466,12 @@ console.log("selectedItem", selectedItem);
       <Col sm={12} className="my-3">
         <div style={{ top: "186px", fontSize: "18px" }}>
           <Breadcrumb>
-            <BreadcrumbItem >Home</BreadcrumbItem>
-            <BreadcrumbItem><Link to="/admin/inventory/purchase-order-list">Purchase Bill List</Link></BreadcrumbItem>
+            <BreadcrumbItem>Home</BreadcrumbItem>
+            <BreadcrumbItem>
+              <Link to="/admin/inventory/purchase-order-list">
+                Purchase Bill List
+              </Link>
+            </BreadcrumbItem>
             <BreadcrumbItem active>Purchase Bill Create</BreadcrumbItem>
           </Breadcrumb>
         </div>
@@ -422,10 +484,10 @@ console.log("selectedItem", selectedItem);
           </Col>
           <Col>
             <h5>{userName}</h5>
-            <p className="mb-1">{userEmail} / {UserContactN}</p>
             <p className="mb-1">
-              {UserAddress}
+              {userEmail} / {UserContactN}
             </p>
+            <p className="mb-1">{UserAddress}</p>
             <strong>PAN: {UesrPAN}</strong>
           </Col>
           <Col xs={2} className="text-end">
@@ -441,9 +503,13 @@ console.log("selectedItem", selectedItem);
           <Col sm={4} className="d-flex border-end flex-column gap-2">
             <div className="border-bottom ">
               <div className="d-flex flex-row align-items-center justify-content-around mb-3 gap-2">
-                <h5 className="text-muted">Vendor :  </h5>
+                <h5 className="text-muted">Vendor : </h5>
                 <Button
-                  style={{ width: "144px", height: "44px", borderStyle: "dashed" }}
+                  style={{
+                    width: "144px",
+                    height: "44px",
+                    borderStyle: "dashed",
+                  }}
                   variant="outline-primary"
                   className="d-flex align-items-center justify-content-center gap-2"
                   onClick={handleShowVendorList}
@@ -453,73 +519,103 @@ console.log("selectedItem", selectedItem);
               </div>
             </div>
             <Row className="mt-3">
-              <p style={{fontSize:"1.2rem" , fontWeight:"600"}} className="text-primary">{vendorSelected?.name || "Vendor Name"}</p>
+              <p
+                style={{ fontSize: "1.2rem", fontWeight: "600" }}
+                className="text-primary"
+              >
+                {vendorSelected?.name || "Vendor Name"}
+              </p>
 
               <Col md={5}>
                 <h6 style={{ fontSize: "1rem" }}>Billing Address</h6>
-                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.city1 || "Billing City"}</p>
-                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state1 || "Billing State"}</p>
-                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.pincode1 || "Billing Pincode"}</p>
-                <p className="mb-0" style={{ fontSize: "0.9rem" }}>{vendorSelected?.country1 || "Billing Country"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>
+                  {vendorSelected?.city1 || "Billing City"}
+                </p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>
+                  {vendorSelected?.state1 || "Billing State"}
+                </p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>
+                  {vendorSelected?.pincode1 || "Billing Pincode"}
+                </p>
+                <p className="mb-0" style={{ fontSize: "0.9rem" }}>
+                  {vendorSelected?.country1 || "Billing Country"}
+                </p>
               </Col>
 
               <Col md={5}>
                 <h6 style={{ fontSize: "1rem" }}>Shipping Address</h6>
-                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.city2 || "Shipping City"}</p>
-                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state2 || "Shipping State"}</p>
-                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.pincode2 || "Shipping Pincode"}</p>
-                <p className="mb-0" style={{ fontSize: "0.9rem" }}>{vendorSelected?.country2 || "Shipping Country"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>
+                  {vendorSelected?.city2 || "Shipping City"}
+                </p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>
+                  {vendorSelected?.state2 || "Shipping State"}
+                </p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>
+                  {vendorSelected?.pincode2 || "Shipping Pincode"}
+                </p>
+                <p className="mb-0" style={{ fontSize: "0.9rem" }}>
+                  {vendorSelected?.country2 || "Shipping Country"}
+                </p>
               </Col>
             </Row>
-
-
           </Col>
 
           <Col sm={4}>
             <div className="d-flex my-3 flex-row align-items-center gap-2">
-              <h5 className="text-muted">Delivery Address <span className="text-danger">*</span></h5>
-
+              <h5 className="text-muted">
+                Delivery Address <span className="text-danger">*</span>
+              </h5>
             </div>
 
-
-            <div >
+            <div>
               {/* Radio Buttons */}
               <div className="d-flex flex-row mb-2 align-items-center gap-2">
-              <Form.Check
-                checked={formData.delivery_type === "organization"}
-                type="radio"
-                name="delivery_type" 
-                label="Organization"
-                value="organization"
-                onChange={(e) =>
-                  setFormData({ ...formData, delivery_type: e.target.value })
-                }
-                style={{ fontWeight: "bold", color: "black" }}
-                // check by default
-                defaultChecked
-
-              />
-              <Form.Check
-                type="radio"
-                name="delivery_type"
-                label="Customer"
-                value="customer"
-                checked={formData.delivery_type === "customer"}
-                onChange={(e) =>
-                  setFormData({ ...formData, delivery_type: e.target.value })
-                }
-                style={{ fontWeight: "bold", color: "black" }}
-              />
+                <Form.Check
+                  checked={formData.delivery_type === "organization"}
+                  type="radio"
+                  name="delivery_type"
+                  label="Organization"
+                  value="organization"
+                  onChange={(e) =>
+                    setFormData({ ...formData, delivery_type: e.target.value })
+                  }
+                  style={{ fontWeight: "bold", color: "black" }}
+                  // check by default
+                  defaultChecked
+                />
+                <Form.Check
+                  type="radio"
+                  name="delivery_type"
+                  label="Customer"
+                  value="customer"
+                  checked={formData.delivery_type === "customer"}
+                  onChange={(e) =>
+                    setFormData({ ...formData, delivery_type: e.target.value })
+                  }
+                  style={{ fontWeight: "bold", color: "black" }}
+                />
               </div>
-
 
               {formData.delivery_type === "organization" && (
                 <>
-                  <p style={{ fontWeight: "bold", marginTop: "30px", color: "black" }} className="mb-1">
+                  <p
+                    style={{
+                      fontWeight: "bold",
+                      marginTop: "30px",
+                      color: "black",
+                    }}
+                    className="mb-1"
+                  >
                     {userName}
                   </p>
-                  <div style={{ marginTop: "15px" }} className="d-flex flex-column gap-2">
-                    <p className="mb-1"> {userEmail} / {UserContactN}</p>
+                  <div
+                    style={{ marginTop: "15px" }}
+                    className="d-flex flex-column gap-2"
+                  >
+                    <p className="mb-1">
+                      {" "}
+                      {userEmail} / {UserContactN}
+                    </p>
                     <p className="mb-1">{UserAddress}</p>
                     <p className="mb-0">PAN: {UesrPAN}</p>
                   </div>
@@ -528,38 +624,54 @@ console.log("selectedItem", selectedItem);
 
               {formData.delivery_type === "customer" && (
                 <>
-                  <Form.Select 
-                    className="my-3" 
+                  <Form.Select
+                    className="my-3"
                     onChange={handleCustomerSelect}
-                    value={selectedCustomer?._id || ''}
+                    value={selectedCustomer?._id || ""}
                   >
                     <option value="">Select Customer</option>
-                    {customers && customers.map((customer) => (
-                      <option key={customer._id} value={customer._id}>
-                        {customer.name}
-                      </option>
-                    ))}
+                    {customers &&
+                      customers.map((customer) => (
+                        <option key={customer._id} value={customer._id}>
+                          {customer.name}
+                        </option>
+                      ))}
                   </Form.Select>
                   <div className="my-3">
                     {selectedCustomer ? (
                       <>
-                        <p style={{ fontWeight: "bold", color: "black" }} className="mb-1">
+                        <p
+                          style={{ fontWeight: "bold", color: "black" }}
+                          className="mb-1"
+                        >
                           {selectedCustomer.name}
                         </p>
-                        <div style={{ marginTop: "15px" }} className="d-flex flex-column gap-2">
-                          <p className="mb-1">{selectedCustomer.email} / {selectedCustomer.contact_no}</p>
+                        <div
+                          style={{ marginTop: "15px" }}
+                          className="d-flex flex-column gap-2"
+                        >
+                          <p className="mb-1">
+                            {selectedCustomer.email} /{" "}
+                            {selectedCustomer.contact_no}
+                          </p>
                           <p className="mb-1">{selectedCustomer.address}</p>
-                          <p className="mb-1">{selectedCustomer.city}, {selectedCustomer.state}</p>
-                          <p className="mb-0">{selectedCustomer.country} - {selectedCustomer.pincode}</p>
+                          <p className="mb-1">
+                            {selectedCustomer.city}, {selectedCustomer.state}
+                          </p>
+                          <p className="mb-0">
+                            {selectedCustomer.country} -{" "}
+                            {selectedCustomer.pincode}
+                          </p>
                         </div>
                       </>
                     ) : (
-                      <p className="text-muted mb-0">Select a customer to view their details</p>
+                      <p className="text-muted mb-0">
+                        Select a customer to view their details
+                      </p>
                     )}
                   </div>
                 </>
               )}
-
             </div>
           </Col>
 
@@ -572,14 +684,12 @@ console.log("selectedItem", selectedItem);
                   value={formData.date}
                   onChange={handleInputChange}
                   placeholder="Delivery Date"
-                  onFocus={(e) => e.target.type = 'date'}
+                  onFocus={(e) => (e.target.type = "date")}
                   onBlur={(e) => {
-                    if (!e.target.value) e.target.type = 'text'
+                    if (!e.target.value) e.target.type = "text";
                   }}
                 />
               </div>
-
-
 
               <div className="d-flex flex-row align-items-center gap-2">
                 <Form.Select
@@ -627,8 +737,6 @@ console.log("selectedItem", selectedItem);
                 onChange={handleInputChange}
                 placeholder="Enter Shipment Preference"
               />
-
-
             </div>
           </Col>
         </Row>
@@ -653,9 +761,14 @@ console.log("selectedItem", selectedItem);
                   <div className="d-flex gap-2">
                     <Form.Select
                       className="flex-grow-1"
-                      style={{ border: "1px solid black", borderStyle: "dashed" }}
+                      style={{
+                        border: "1px solid black",
+                        borderStyle: "dashed",
+                      }}
                       value={product.item}
-                      onChange={(e) => updateProduct(product.id, "item", e.target.value)}
+                      onChange={(e) =>
+                        updateProduct(product.id, "item", e.target.value)
+                      }
                     >
                       <option value="">Select Item</option>
                       {items.map((item) => (
@@ -667,7 +780,11 @@ console.log("selectedItem", selectedItem);
                     <Button
                       onClick={handleShowCreateItem}
                       className="flex-shrink-0"
-                      style={{ width: "40px", border: "1px solid black", borderStyle: "dashed" }}
+                      style={{
+                        width: "40px",
+                        border: "1px solid black",
+                        borderStyle: "dashed",
+                      }}
                       variant="outline-secondary"
                     >
                       +
@@ -681,12 +798,21 @@ console.log("selectedItem", selectedItem);
                     placeholder="QTY : 1"
                     style={{ border: "1px solid black", width: "100%" }}
                     value={product.quantity}
-                    onChange={(e) => updateProduct(product.id, "quantity", e.target.value)}
+                    onChange={(e) =>
+                      updateProduct(product.id, "quantity", e.target.value)
+                    }
                   />
                 </td>
                 <td>
                   <div className="position-relative w-100">
-                    <span className="position-absolute" style={{ left: "10px", top: "50%", transform: "translateY(-50%)" }}>
+                    <span
+                      className="position-absolute"
+                      style={{
+                        left: "10px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                      }}
+                    >
                       <FaRupeeSign />
                     </span>
                     <Form.Control
@@ -695,7 +821,9 @@ console.log("selectedItem", selectedItem);
                       className="w-100"
                       style={{ paddingLeft: "25px", border: "1px solid black" }}
                       value={product.price}
-                      onChange={(e) => updateProduct(product.id, "price", e.target.value)}
+                      onChange={(e) =>
+                        updateProduct(product.id, "price", e.target.value)
+                      }
                     />
                   </div>
                 </td>
@@ -705,10 +833,12 @@ console.log("selectedItem", selectedItem);
                       className="flex-grow-1"
                       style={{ border: "1px solid black" }}
                       value={product.tax || ""}
-                      onChange={(e) => updateProduct(product.id, "tax", e.target.value)}
+                      onChange={(e) =>
+                        updateProduct(product.id, "tax", e.target.value)
+                      }
                     >
                       <option value="">Select Tax</option>
-                      {taxFields.map(tax => (
+                      {taxFields.map((tax) => (
                         <option key={tax._id} value={tax._id}>
                           {tax.tax_name} ({tax.tax_rate}%)
                         </option>
@@ -716,7 +846,11 @@ console.log("selectedItem", selectedItem);
                     </Form.Select>
                     <Button
                       className="flex-shrink-0"
-                      style={{ width: "40px", border: "1px solid black", borderStyle: "dashed" }}
+                      style={{
+                        width: "40px",
+                        border: "1px solid black",
+                        borderStyle: "dashed",
+                      }}
                       variant="outline-secondary"
                       onClick={() => setShowTaxModal(true)}
                     >
@@ -724,7 +858,14 @@ console.log("selectedItem", selectedItem);
                     </Button>
                   </div>
                   <div className="position-relative w-100 my-3">
-                    <span className="position-absolute" style={{ left: "10px", top: "50%", transform: "translateY(-50%)" }}>
+                    <span
+                      className="position-absolute"
+                      style={{
+                        left: "10px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                      }}
+                    >
                       <FaRupeeSign />
                     </span>
                     <Form.Control
@@ -738,7 +879,14 @@ console.log("selectedItem", selectedItem);
                 </td>
                 <td>
                   <div className="position-relative w-100">
-                    <span className="position-absolute" style={{ left: "10px", top: "50%", transform: "translateY(-50%)" }}>
+                    <span
+                      className="position-absolute"
+                      style={{
+                        left: "10px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                      }}
+                    >
                       <FaRupeeSign />
                     </span>
                     <Form.Control
@@ -755,11 +903,19 @@ console.log("selectedItem", selectedItem);
                   <td>
                     <Button
                       onClick={() => {
-                        const updatedProducts = products.filter((_, i) => i !== index);
+                        const updatedProducts = products.filter(
+                          (_, i) => i !== index
+                        );
                         setProducts(updatedProducts);
                       }}
                       className="flex-shrink-0 d-flex justify-content-center align-items-center"
-                      style={{ width: "40px", padding: "0px", height: "40px", border: "1px solid black", borderStyle: "dashed" }}
+                      style={{
+                        width: "40px",
+                        padding: "0px",
+                        height: "40px",
+                        border: "1px solid black",
+                        borderStyle: "dashed",
+                      }}
                       variant="outline-danger"
                     >
                       <FaTrash style={{ fontSize: "15px" }} />
@@ -798,7 +954,9 @@ console.log("selectedItem", selectedItem);
               <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
                 <span>Subtotal</span>
                 <InputGroup style={{ maxWidth: "200px" }}>
-                  <InputGroup.Text><FaRupeeSign /></InputGroup.Text>
+                  <InputGroup.Text>
+                    <FaRupeeSign />
+                  </InputGroup.Text>
                   <Form.Control
                     type="text"
                     value={totals.subtotal.toFixed(2)}
@@ -814,12 +972,22 @@ console.log("selectedItem", selectedItem);
                   <Form.Control
                     type="number"
                     value={totals.discount}
-                    onChange={(e) => setTotals(prev => ({ ...prev, discount: e.target.value }))}
+                    onChange={(e) =>
+                      setTotals((prev) => ({
+                        ...prev,
+                        discount: e.target.value,
+                      }))
+                    }
                     placeholder="0.00"
                   />
                   <Form.Select
                     value={totals.discountType}
-                    onChange={(e) => setTotals(prev => ({ ...prev, discountType: e.target.value }))}
+                    onChange={(e) =>
+                      setTotals((prev) => ({
+                        ...prev,
+                        discountType: e.target.value,
+                      }))
+                    }
                     style={{ width: "70px" }}
                   >
                     <option value="percentage">%</option>
@@ -832,29 +1000,42 @@ console.log("selectedItem", selectedItem);
               <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
                 <span>Tax ₹{totals.taxAmount.toFixed(2)}</span>
                 <Dropdown style={{ maxWidth: "200px" }}>
-                  <Dropdown.Toggle variant="outline-primary" style={{ width: "100%" }}>
-                    {totals.selectedTaxes.length ?
-                      totals.selectedTaxes.map(tax => `${tax.rate}%`).join(', ') :
-                      '0.00% Tax'}
+                  <Dropdown.Toggle
+                    variant="outline-primary"
+                    style={{ width: "100%" }}
+                  >
+                    {totals.selectedTaxes.length
+                      ? `${totals.selectedTaxes.reduce(
+                          (sum, tax) => sum + tax.rate,
+                          0
+                        )}%`
+                      : "0.00% Tax"}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
-                    {taxFields.map(tax => (
+                    {taxFields.map((tax) => (
                       <Dropdown.Item key={tax._id} as="div">
                         <Form.Check
                           type="checkbox"
                           id={`tax-${tax._id}`}
                           label={`${tax.tax_name} (${tax.tax_rate}%)`}
-                          checked={totals.selectedTaxes.some(t => t.id === tax._id)}
+                          checked={totals.selectedTaxes.some(
+                            (t) => t.id === tax._id
+                          )}
                           onChange={(e) => {
                             if (e.target.checked) {
-                              setTotals(prev => ({
+                              setTotals((prev) => ({
                                 ...prev,
-                                selectedTaxes: [...prev.selectedTaxes, { id: tax._id, rate: tax.tax_rate }]
+                                selectedTaxes: [
+                                  ...prev.selectedTaxes,
+                                  { id: tax._id, rate: tax.tax_rate },
+                                ],
                               }));
                             } else {
-                              setTotals(prev => ({
+                              setTotals((prev) => ({
                                 ...prev,
-                                selectedTaxes: prev.selectedTaxes.filter(t => t.id !== tax._id)
+                                selectedTaxes: prev.selectedTaxes.filter(
+                                  (t) => t.id !== tax._id
+                                ),
                               }));
                             }
                           }}
@@ -869,7 +1050,9 @@ console.log("selectedItem", selectedItem);
               <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
                 <span>Total</span>
                 <InputGroup style={{ maxWidth: "200px" }}>
-                  <InputGroup.Text><FaRupeeSign /></InputGroup.Text>
+                  <InputGroup.Text>
+                    <FaRupeeSign />
+                  </InputGroup.Text>
                   <Form.Control
                     type="text"
                     value={totals.total.toFixed(2)}
@@ -884,16 +1067,28 @@ console.log("selectedItem", selectedItem);
                   type="text"
                   placeholder="Adjustment Note"
                   value={totals.adjustmentNote}
-                  onChange={(e) => setTotals(prev => ({ ...prev, adjustmentNote: e.target.value }))}
+                  onChange={(e) =>
+                    setTotals((prev) => ({
+                      ...prev,
+                      adjustmentNote: e.target.value,
+                    }))
+                  }
                   style={{ maxWidth: "200px" }}
                 />
                 <InputGroup style={{ maxWidth: "200px" }}>
-                  <InputGroup.Text><FaRupeeSign /></InputGroup.Text>
+                  <InputGroup.Text>
+                    <FaRupeeSign />
+                  </InputGroup.Text>
                   <Form.Control
                     type="number"
                     placeholder="Adjustment Amount"
                     value={totals.adjustmentAmount}
-                    onChange={(e) => setTotals(prev => ({ ...prev, adjustmentAmount: e.target.value }))}
+                    onChange={(e) =>
+                      setTotals((prev) => ({
+                        ...prev,
+                        adjustmentAmount: e.target.value,
+                      }))
+                    }
                   />
                 </InputGroup>
               </div>
@@ -1017,16 +1212,10 @@ console.log("selectedItem", selectedItem);
 
       {/* Update the submit button */}
       <div className="d-flex justify-content-end mt-3">
-        <Button
-          variant="primary"
-          onClick={handleSubmit}
-        >
+        <Button variant="primary" onClick={handleSubmit}>
           Submit
         </Button>
       </div>
-
-      
-
     </Container>
   );
 };

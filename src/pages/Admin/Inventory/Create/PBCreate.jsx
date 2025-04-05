@@ -856,8 +856,7 @@ const PurchaseBillCreate = () => {
                 <Dropdown style={{ maxWidth: "200px" }}>
                   <Dropdown.Toggle variant="outline-primary" style={{ width: "100%" }}>
                     {totals.selectedTaxes.length ?
-                      totals.selectedTaxes.map(tax => `${tax.rate}%`).join(', ') :
-                      '0.00% Tax'}
+ `${totals.selectedTaxes.reduce((sum, tax) => sum + tax.rate, 0)}%` :                      '0.00% Tax'}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     {taxFields.map(tax => (
