@@ -146,11 +146,15 @@ export const PurchaseReceivedAdmin = () => {
   return (
     <Container data-aos="fade-right" data-aos-duration="1000" fluid className="mt-4 min-vh-100">
       <Row>
-        <Col sm={12} className="mx-4 my-3">
-          <div style={{ top: "186px", fontSize: "18px" }}>
+      <Col sm={12} className="mx-2 my-3">
+          <div style={{ top: "186px", fontSize: "15px" }}>
             <Breadcrumb>
-              <BreadcrumbItem href="#"><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
-              <BreadcrumbItem href="#">Purchase </BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link to="/admin/dashboard">Home</Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link to="/admin/inventory/dashboard">Inventory</Link>
+              </BreadcrumbItem>
               <BreadcrumbItem active>Purchase Received List</BreadcrumbItem>
             </Breadcrumb>
           </div>

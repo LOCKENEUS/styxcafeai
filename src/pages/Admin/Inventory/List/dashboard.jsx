@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Container, Row, Col, Card, Table, Image } from "react-bootstrap";
 import { Doughnut, Line } from "react-chartjs-2";
 import dashboardBarIcon from "/assets/Admin/Dashboard/dashboardBarIcon.svg"
@@ -38,6 +38,11 @@ const DashboardInventory = () => {
     }],
   };
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+  }, [])
+  
   // Conversion Rate Doughnut Data
   const conversionData = {
     datasets: [{

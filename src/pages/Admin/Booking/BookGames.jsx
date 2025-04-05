@@ -13,6 +13,8 @@ const BookGames = () => {
   const { games, status } = useSelector((state) => state.games);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     const user = JSON.parse(sessionStorage.getItem('user'));
     if (user?._id) {
       dispatch(getGames(user._id));

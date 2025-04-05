@@ -112,6 +112,9 @@ const AdminDashboard = () => {
   const containerRef = useRef(null);
 
   useEffect(() => {
+    // Scroll to top on mount
+    window.scrollTo(0, 0);
+    
     if (cafeId) {
       dispatch(getGames(cafeId));
     }

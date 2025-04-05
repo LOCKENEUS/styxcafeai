@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getSOById, deleteSO } from "../../../../store/AdminSlice/Inventory/SoSlice";
 import { addSOInvoice } from "../../../../store/AdminSlice/Inventory/SoInvoiceSlice";
@@ -176,16 +176,23 @@ export const SODetails = () => {
         <Container >
            <Row className="mx-2">
     {/* Breadcrumb Section */}
-    <Col sm={12} className="my-3">
-    <div style={{ top: "186px", fontSize: "18px" }}>
-        <Breadcrumb>
-            <BreadcrumbItem href="#">Home</BreadcrumbItem>
-            <BreadcrumbItem href="#">Sales</BreadcrumbItem>
-            <BreadcrumbItem>Items List</BreadcrumbItem>
-            <BreadcrumbItem active>Sales Order Details</BreadcrumbItem>
-        </Breadcrumb>
-        </div>
-    </Col>
+    <Col sm={12} className="mx-2 my-3">
+          <div style={{ top: "186px", fontSize: "15px" }}>
+            <Breadcrumb>
+              <BreadcrumbItem>
+                <Link to="/admin/dashboard">Home</Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link to="/admin/inventory/dashboard">Inventory</Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <Link to="/admin/Inventory/SalesOrder">Sales Order List</Link>
+              </BreadcrumbItem>
+              <BreadcrumbItem active>SaleOrderDetails</BreadcrumbItem>
+            </Breadcrumb>
+          </div>
+        </Col>
+
 
     
     <Col sm={12} className="my-2">

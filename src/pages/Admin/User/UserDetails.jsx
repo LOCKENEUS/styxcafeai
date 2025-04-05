@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Container, Row, Col, Card, Image } from "react-bootstrap";
+import { Container, Row, Col, Card, Image, Spinner } from "react-bootstrap";
 import profileBg from "/assets/Admin/profileDetails/profileBg.png";
 import { LuPencil } from "react-icons/lu";
 import profileImg from "/assets/Admin/profileDetails/ProfileImg.png";
@@ -20,12 +20,18 @@ const UserDetails = () => {
 
   const defaultProfileImage = profileImg;
 
-
+  if (loading) {
+    return (
+      <Container className="d-flex justify-content-center align-items-center min-vh-100">
+        <Spinner animation="border" role="status">
+ 
+        </Spinner>
+      </Container>
+    );
+  }
   return (
     <Container className="mt-4">
-      {loading ? (
-        <div>Loading...</div>
-      ) : (
+
         <Row>
           {/* Sidebar with Profile */}
           <Col md={4}>
@@ -108,7 +114,7 @@ const UserDetails = () => {
             </Card>
           </Col>
         </Row>
-      )}
+
     </Container>
   );
 };
