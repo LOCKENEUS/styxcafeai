@@ -93,7 +93,7 @@ const CreateSlotForm = () => {
           <Row className="mb-3">
             <Col md={6}>
               <Form.Group>
-                <Form.Label style={labelStyle}>Select Games</Form.Label>
+                <Form.Label style={labelStyle}>Select Games<span className="text-danger">*</span></Form.Label>
                 <Form.Select name="game_id" value={formData.game_id} onChange={handleChange} required>
                   <option value="">Select Your Game</option>
                   {games.map((game) => (
@@ -121,7 +121,7 @@ const CreateSlotForm = () => {
             </Col>
             <Col md={6}>
               <Form.Group>
-                <Form.Label style={labelStyle}>Day</Form.Label>
+                <Form.Label style={labelStyle}>Day<span className="text-danger">*</span></Form.Label>
                 <Form.Select name="day" value={formData.day} onChange={handleChange} >
                   <option value="">Pick Day</option>
                   <option value="Monday">Monday</option>
@@ -139,13 +139,13 @@ const CreateSlotForm = () => {
           <Row className="mb-3">
             <Col md={6}>
               <Form.Group>
-                <Form.Label style={labelStyle}>Start Time</Form.Label>
+                <Form.Label style={labelStyle}>Start Time<span className="text-danger">*</span></Form.Label>
                 <Form.Control type="time" name="start_time" value={formData.start_time} onChange={handleChange} required />
               </Form.Group>
             </Col>
             <Col md={6}>
               <Form.Group>
-                <Form.Label style={labelStyle}>End Time</Form.Label>
+                <Form.Label style={labelStyle}>End Time<span className="text-danger">*</span></Form.Label>
                 <Form.Control type="time" name="end_time" value={formData.end_time} onChange={handleChange} required />
               </Form.Group>
             </Col>

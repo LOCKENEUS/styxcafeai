@@ -83,14 +83,14 @@ const VendorDetails = () => {
                 </div>
                 <div style={{ position: "relative", bottom: "2rem" }}>
                   <h5>{selectedVendor.name}</h5>
-                  <p>{selectedVendor.email}</p>
+                  <p>{selectedVendor.emailID}</p>
                 </div>
               </div>
             </div>
 
             {/* Profile Info */}
             <div className="d-flex flex-column text-start gap-2 mt-3">
-              <p><strong>Email Id:</strong> {selectedVendor.email}</p>
+              <p><strong>Email Id:</strong> {selectedVendor.emailID}</p>
               <p><strong>Phone Number:</strong> {selectedVendor.phone}</p>
               <p><strong>Location:</strong> {selectedVendor.city1}</p>
               <p><strong>Company:</strong> {selectedVendor.company}</p>

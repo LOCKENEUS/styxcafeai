@@ -66,7 +66,7 @@ export const CreateVendorForm = () => {
             setFormData({
                 vendorName: selectedVendor.name,
                 companyName: selectedVendor.company,
-                vendorEmail: selectedVendor.email,
+                vendorEmail: selectedVendor.emailID,
                 vendorPhone: selectedVendor.phone,
                 address: selectedVendor.billingAddress,
                 country: selectedVendor.country1,
@@ -367,7 +367,7 @@ export const CreateVendorForm = () => {
         
         // Add all the text fields
         formDataToSend.append('name', formData.vendorName);
-        formDataToSend.append('email', formData.vendorEmail);
+        formDataToSend.append('emailID', formData.vendorEmail);
         formDataToSend.append('company', formData.companyName);
         formDataToSend.append('phone', formData.vendorPhone);
         formDataToSend.append('billingAddress', formData.address);

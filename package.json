@@ -24,6 +24,7 @@
     "react-router-dom": "^7.1.5",
     "react-scripts": "^5.0.1",
     "react-stripe-checkout": "^2.6.3",
+    "react-time-picker": "^7.0.0",
     "react-toastify": "^11.0.3",
     "stripe": "^17.7.0",
     "styled-components": "^6.1.15",

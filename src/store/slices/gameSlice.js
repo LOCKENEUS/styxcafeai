@@ -145,8 +145,18 @@ const gameSlice = createSlice({
         state.error = action.payload;
       })
 
+      .addCase(addGame.pending, (state) => {
+        state.status = "loading";
+      })
       .addCase(addGame.fulfilled, (state, action) => {
-        state.games.push(action.payload.data); // Assuming backend returns { data: game }
+        state.games.push(action.payload.data);
+        toast.success("Game added successfully!");
+        state.status = "succeeded";
+      })
+      .addCase(addGame.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+        toast.error(action.payload);
       })
 
       .addCase(updateGame.fulfilled, (state, action) => {

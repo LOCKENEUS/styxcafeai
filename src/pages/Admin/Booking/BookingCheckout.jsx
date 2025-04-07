@@ -226,6 +226,7 @@ const BookingCheckout = () => {
               variant="top"
               src={`${backend_url}/${selectedGame?.gameImage}`}
               className="rounded"
+              style={{ height: "200px", width: "auto", objectFit: "cover" }}
             />
             <Row className="align-items-center mt-3">
               <Col xs={3}>
@@ -363,7 +364,7 @@ const BookingCheckout = () => {
             </Row>
           </Card>
 
-          {selectedGame?.type === "Multiplayer" || selectedGame?.type === "Single" ?
+          {selectedGame?.type === "Multiplayer" && selectedGame?.payLater || selectedGame?.type === "Single" && selectedGame?.payLater ?
             booking?.status === "Paid" ?
               <div className="p-2 bg-white rounded shadow-sm w-100">
                 <Row className="mt-3">

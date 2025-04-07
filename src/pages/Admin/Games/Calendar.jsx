@@ -163,10 +163,10 @@ const Calendar = ({ selectedGame }) => {
               border: "none",
             }}
             className={`date-box ${date.day === activeDate.getDate() &&
-                date.month ===
-                activeDate.toLocaleString("default", { month: "short" })
-                ? "active"
-                : ""
+              date.month ===
+              activeDate.toLocaleString("default", { month: "short" })
+              ? "active"
+              : ""
               } ${date.status === "Today" ? "today" : ""}`}
             onClick={() => {
               const newDate = new Date(activeDate);
@@ -211,7 +211,7 @@ const Calendar = ({ selectedGame }) => {
       <button className="nav-button next-button" onClick={handleNext}>
         <RiArrowRightSLine />
       </button>
-        <BookingSlots date={activeDate} selectedGame={selectedGame} gameId={id} />
+      <BookingSlots date={activeDate} selectedGame={selectedGame} gameId={id} />
     </div>
   );
 };
@@ -247,7 +247,7 @@ const Calendar = ({ selectedGame }) => {
 //       {slots.map((slot, index) => {
 //         const currentTime = new Date();
 //         const slotDateTime = new Date(date);
-        
+
 //         const slotHours = parseInt(slot.start_time.split(":")[0], 10);
 //         const slotMinutes = parseInt(slot.start_time.split(":")[1], 10);
 //         slotDateTime.setHours(slotHours, slotMinutes, 0, 0);
@@ -323,53 +323,115 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
     navigate(`/admin/bookings/booking-details/${gameId}/${slotId}/${date}`);
   };
 
+  // return (
+  //   <div className="booking-slots mt-5">
+  //     {slots
+  //       .filter((slot) => slot.day === selectedDay) // Show only slots for the selected day
+  //       .map((slot, index) => {
+  //         const currentTime = new Date();
+  //         const slotDateTime = new Date(date);
+
+  //         const slotHours = parseInt(slot.start_time.split(":")[0], 10);
+  //         const slotMinutes = parseInt(slot.start_time.split(":")[1], 10);
+  //         slotDateTime.setHours(slotHours, slotMinutes, 0, 0);
+
+  //         const isPast = slotDateTime < currentTime;
+  //         const booked = isSlotBooked(slot._id, date);
+
+  //         return (
+  //           <div key={index} className="slot-row mb-2 border border-2 p-2">
+  //             <div className="d-flex flex-column flex-md-row justify-content-between align-items-center">
+  //               <span className="mb-2 mb-md-0">
+  //                 {convertTo12Hour(slot.start_time)} - {convertTo12Hour(slot.end_time)}
+  //               </span>
+  //               <div className="d-flex flex-column flex-md-row align-items-center gap-3">
+  //                 <span className={booked ? "text-danger" : slot.is_active ? "text-success" : "text-danger"}>
+  //                   {booked ? "Booked" : slot.is_active ? "Available" : "Unavailable"}
+  //                 </span>
+  //                 <span>₹{slot.slot_price ? slot.slot_price : selectedGame?.data.price}</span>
+  //                 <Button
+  //                   variant="primary"
+  //                   disabled={booked || isPast || !slot.is_active}
+  //                   className="w-100 w-md-auto"
+  //                   style={{
+  //                     backgroundColor: booked || isPast ? "#ccc" : "white",
+  //                     border: booked || isPast || !slot.is_active ? "2px solid gray" : "2px solid blue",
+  //                     color: booked || isPast || !slot.is_active ? "gray" : "blue",
+  //                     minWidth: "120px",
+  //                   }}
+  //                   onClick={() => handleBookSlot(gameId, slot._id, date)}
+  //                 >
+  //                   {booked ? "Booked" : isPast ? "Time Passed" : !slot.is_active ? "Unavailable" : "Book Slot"}
+  //                 </Button>
+  //               </div>
+  //             </div>
+  //           </div>
+  //         );
+  //       })}
+  //   </div>
+  // );
+
   return (
     <div className="booking-slots mt-5">
-      {slots
-        .filter((slot) => slot.day === selectedDay) // Show only slots for the selected day
-        .map((slot, index) => {
-          const currentTime = new Date();
-          const slotDateTime = new Date(date);
-          
-          const slotHours = parseInt(slot.start_time.split(":")[0], 10);
-          const slotMinutes = parseInt(slot.start_time.split(":")[1], 10);
-          slotDateTime.setHours(slotHours, slotMinutes, 0, 0);
+      {slots.filter((slot) => slot.day === selectedDay).length === 0 ? (
+        // <div className="text-center text-muted mt-3">No slots available</div>
+        <div className="no-slots-message d-flex flex-column align-items-center border border-3 rounded-4 justify-content-center" style={{ height: "40vh", textAlign: "center", marginTop: "20px" }}>
+          <TbMoodSad style={{ fontSize: "4rem", color: "gray" }} />
+          <p style={{ fontSize: "1rem", color: "gray", fontWeight: "bold" }}>
+            Sorry! No Slots Available for Today
+          </p>
+          <button onClick={() => setActiveDate(new Date(2025, 1, 17))} style={{ backgroundColor: "white", padding: "10px 20px", borderRadius: "10px", border: "2px solid blue", color: "blue" }}>
+            Book For 17 Mon
+          </button>
+        </div>
+      ) : (
+        slots
+          .filter((slot) => slot.day === selectedDay)
+          .map((slot, index) => {
+            const currentTime = new Date();
+            const slotDateTime = new Date(date);
 
-          const isPast = slotDateTime < currentTime;
-          const booked = isSlotBooked(slot._id, date);
+            const slotHours = parseInt(slot.start_time.split(":")[0], 10);
+            const slotMinutes = parseInt(slot.start_time.split(":")[1], 10);
+            slotDateTime.setHours(slotHours, slotMinutes, 0, 0);
 
-          return (
-            <div key={index} className="slot-row mb-2 border border-2 p-2">
-              <div className="d-flex flex-column flex-md-row justify-content-between align-items-center">
-                <span className="mb-2 mb-md-0">
-                  {convertTo12Hour(slot.start_time)} - {convertTo12Hour(slot.end_time)}
-                </span>
-                <div className="d-flex flex-column flex-md-row align-items-center gap-3">
-                  <span className={booked ? "text-danger" : slot.is_active ? "text-success" : "text-danger"}>
-                    {booked ? "Booked" : slot.is_active ? "Available" : "Unavailable"}
+            const isPast = slotDateTime < currentTime;
+            const booked = isSlotBooked(slot._id, date);
+
+            return (
+              <div key={index} className="slot-row mb-2 border border-2 p-2">
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                  <span className="mb-2 mb-md-0">
+                    {convertTo12Hour(slot.start_time)} - {convertTo12Hour(slot.end_time)}
                   </span>
-                  <span>₹{slot.slot_price ? slot.slot_price : selectedGame?.data.price}</span>
-                  <Button
-                    variant="primary"
-                    disabled={booked || isPast || !slot.is_active}
-                    className="w-100 w-md-auto"
-                    style={{
-                      backgroundColor: booked || isPast ? "#ccc" : "white",
-                      border: booked || isPast || !slot.is_active ? "2px solid gray" : "2px solid blue",
-                      color: booked || isPast || !slot.is_active ? "gray" : "blue",
-                      minWidth: "120px",
-                    }}
-                    onClick={() => handleBookSlot(gameId, slot._id, date)}
-                  >
-                    {booked ? "Booked" : isPast ? "Time Passed" : !slot.is_active ? "Unavailable" : "Book Slot"}
-                  </Button>
+                  <div className="d-flex flex-column flex-md-row align-items-center gap-3">
+                    <span className={booked ? "text-danger" : slot.is_active ? "text-success" : "text-danger"}>
+                      {booked ? "Booked" : slot.is_active ? "Available" : "Unavailable"}
+                    </span>
+                    <span>₹{slot.slot_price ? slot.slot_price : selectedGame?.data.price}</span>
+                    <Button
+                      variant="primary"
+                      disabled={booked || isPast || !slot.is_active}
+                      className="w-100 w-md-auto"
+                      style={{
+                        backgroundColor: booked || isPast ? "#ccc" : "white",
+                        border: booked || isPast || !slot.is_active ? "2px solid gray" : "2px solid blue",
+                        color: booked || isPast || !slot.is_active ? "gray" : "blue",
+                        minWidth: "120px",
+                      }}
+                      onClick={() => handleBookSlot(gameId, slot._id, date)}
+                    >
+                      {booked ? "Booked" : isPast ? "Time Passed" : !slot.is_active ? "Unavailable" : "Book Slot"}
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+      )}
     </div>
   );
+
 };
 
 export default Calendar;

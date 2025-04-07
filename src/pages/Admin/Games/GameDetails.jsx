@@ -300,7 +300,7 @@ const GameDetails = () => {
                                                 color: "white",
                                                 padding: "5px 15px",
                                                 fontSize: "14px",
-                                                width: "80px",
+                                                width: "100px",
                                                 textAlign: "center",
                                             }}
                                         >

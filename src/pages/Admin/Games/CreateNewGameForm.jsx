@@ -146,7 +146,7 @@ const CreateNewGameForm = () => {
           <Row className="mb-3">
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Game Type</Form.Label>
+                <Form.Label>Game Type<span className="text-danger">*</span></Form.Label>
                 <Form.Select
                   name="type"
                   value={formData.type}
@@ -159,7 +159,7 @@ const CreateNewGameForm = () => {
             </Col>
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Name of Game</Form.Label>
+                <Form.Label>Name of Game<span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   type="text"
                   name="name"
@@ -175,7 +175,7 @@ const CreateNewGameForm = () => {
           <Row className="mb-2">
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Zone of Game</Form.Label>
+                <Form.Label>Zone of Game<span className="text-danger">*</span></Form.Label>
                 <Form.Select
                   name="zone"
                   value={formData.zone}
@@ -188,7 +188,7 @@ const CreateNewGameForm = () => {
             </Col>
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Size of Game</Form.Label>
+                <Form.Label>Size of Game<span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   type="text"
                   name="size"
@@ -203,7 +203,7 @@ const CreateNewGameForm = () => {
           <Row className="mb-2">
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Cancellation Option</Form.Label>
+                <Form.Label>Cancellation Option<span className="text-danger">*</span></Form.Label>
                 <Form.Select
                   name="cancellation"
                   value={formData.cancellation ? "Yes" : "No"}
@@ -216,7 +216,7 @@ const CreateNewGameForm = () => {
             </Col>
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Game Price</Form.Label>
+                <Form.Label>Game Price<span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   type="number"
                   name="price"
@@ -231,7 +231,7 @@ const CreateNewGameForm = () => {
           <Row className="mb-2">
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Number of Players</Form.Label>
+                <Form.Label>Number of Players<span className="text-danger">*</span></Form.Label>
                 <Form.Control
                   type="number"
                   name="players"
@@ -243,7 +243,7 @@ const CreateNewGameForm = () => {
             </Col>
             <Col md={6}>
               <Form.Group className="">
-                <Form.Label>Upload Image</Form.Label>
+                <Form.Label>Upload Image<span className="text-danger">*</span></Form.Label>
                 {(formData.existingImage || imagePreview) && (
                   <div className="mb-2">
                     <img
@@ -275,7 +275,7 @@ const CreateNewGameForm = () => {
           <Row className="">
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Pay Later</Form.Label>
+                <Form.Label>Pay Later<span className="text-danger">*</span></Form.Label>
                 <Form.Select
                   name="payLater"
                   value={formData.payLater}

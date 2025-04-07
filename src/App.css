@@ -23,3 +23,44 @@
   scrollbar-width: thin;
   scrollbar-color: #888 #f0f0f0;
 }
+
+
+/* Make react-time-picker look like Bootstrap */
+.bootstrap-timepicker-wrapper .react-time-picker__wrapper {
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  width: 100%;
+}
+
+.bootstrap-timepicker-wrapper .react-time-picker__inputGroup__input {
+  border: none;
+  outline: none;
+  font-family: inherit;
+}
+
+.bootstrap-timepicker-wrapper .react-time-picker {
+  width: 100%;
+}
+
+.react-time-picker__inputGroup {
+  justify-content: space-between;
+  gap: 4px;
+}
+
+/* Neutralize background colors on focus */
+.bootstrap-timepicker-wrapper input:focus,
+.bootstrap-timepicker-wrapper input:active {
+  background-color: #fff !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Remove autofill background color in Chrome */
+.bootstrap-timepicker-wrapper input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px white inset !important;
+  box-shadow: 0 0 0 1000px white inset !important;
+  -webkit-text-fill-color: #000 !important;
+}
