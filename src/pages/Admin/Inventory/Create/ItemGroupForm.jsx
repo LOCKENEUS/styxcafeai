@@ -41,7 +41,7 @@ const ItemGroupForm = () => {
     unit: '',
     taxable: taxPreference === 'Taxable',
     tax: null,
-    manufacturer: '',
+    manufacturer: '' ,
     brand: '',
     description: '',
     items: [],
@@ -80,8 +80,8 @@ const ItemGroupForm = () => {
         unit: selectedItemGroup.unit || '',
         taxable: selectedItemGroup.taxable || false,
         tax: selectedItemGroup.tax ? selectedItemGroup.tax._id : null,
-        manufacturer: selectedItemGroup.manufacturer ? selectedItemGroup.manufacturer._id : '',
-        brand: selectedItemGroup.brand ? selectedItemGroup.brand._id : '',
+        manufacturer: selectedItemGroup.manufacturer ? selectedItemGroup.manufacturer._id : undefined,
+        brand: selectedItemGroup.brand ? selectedItemGroup.brand._id : undefined,
         description: selectedItemGroup.description || '',
         items: selectedItemGroup.items || [],
         cafe: cafeId
@@ -474,7 +474,7 @@ const ItemGroupForm = () => {
           <Form.Group>
             <Form.Label className="fw-bold my-2">Description</Form.Label>
             <Form.Control 
-              required
+              
               value={formData.description}
               onChange={handleInputChange}
               as="textarea" placeholder="Description" name="description" rows={3} />

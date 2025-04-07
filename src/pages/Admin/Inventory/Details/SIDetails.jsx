@@ -75,7 +75,41 @@ export const SIDetails = () => {
                             <h3>Sales Invoice: ${invoice.so_no}</h3>
                         </div>
                         ${printContent.innerHTML}
-                        <div class="row mt-4 no-print">
+                       
+                        <div>
+                            <h5>Payment Collection Details</h5>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>Mode</th>
+                                        <th>Transaction</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${selectedPayment?.length > 0 ? selectedPayment.map((payment, index) => `
+                                        <tr>
+                                            <td>${index + 1}</td>
+                                            <td>${new Date(payment.deposit_date).toLocaleDateString("en-US", {
+                                                year: "numeric",
+                                                month: "short",
+                                                day: "2-digit",
+                                            })}</td>
+                                            <td>₹ ${payment.deposit_amount}</td>
+                                            <td>${payment.mode}</td>
+                                            <td>${payment.transaction_id}</td>
+                                        </tr>
+                                    `).join('') : `
+                                        <tr>
+                                            <td colspan="5" class="text-center py-3">No payment records found</td>
+                                        </tr>
+                                    `}
+                                </tbody>
+                            </table>
+                        </div>
+                         <div class="row mt-4 no-print">
                             <div class="col-12 text-center">
                                 <button onclick="window.print()" class="btn btn-primary">Print</button>
                                 <button onclick="window.close()" class="btn btn-secondary ms-2">Close</button>

@@ -8,7 +8,7 @@ import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems"
 import Tax from "../modal/Tax";
 // import AddClint from "../modal/vendorListModal";
 import PaymentTermsModal from "../modal/PaymentTermsModal";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { CreatePurchaseOrder, GetVendorsList, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch, useSelector } from "react-redux";
 import AddClint from "../modal/AddClint";
@@ -26,7 +26,7 @@ const PurchaseBillCreate = () => {
   const handleShowCreateItem = () => setShowOffCanvasCreateItem(true);
   const handleCloseCreateItem = () => setShowOffCanvasCreateItem(false);
   const [showPaymentTerms, setShowPaymentTerms] = useState(false);
-
+  const navigate = useNavigate();
 
   const [products, setProducts] = useState([
     { id: 1, item: "", quantity: 1, price: 0, tax: 0, total: 0, totalTax: 0 },
@@ -247,7 +247,7 @@ const PurchaseBillCreate = () => {
   const [formData, setFormData] = useState({
     vendorId: '',
     delivery_type: "organization",
-    date: '',
+    date: new Date().toISOString().split('T')[0],
     shipment_date: '',
     payment_terms: '',
     reference: '',
@@ -369,9 +369,13 @@ const PurchaseBillCreate = () => {
 
     try {
       if (id) {
-        await dispatch(updatePBill({ id, billData: submitData })).unwrap();
+        await dispatch(updatePBill({ id, billData: submitData })).unwrap().then((res) => {
+          navigate(`/admin/inventory/PurchaseBillDetails/${res._id}`);
+        });
       } else {
-        await dispatch(addPBill(submitData)).unwrap();
+        await dispatch(addPBill(submitData)).unwrap().then((res) => {
+          navigate(`/admin/inventory/PurchaseBillDetails/${res._id}`);
+        });
       }
     } catch (error) {
       console.error('Error saving Purchase Bill:', error);
@@ -431,7 +435,7 @@ const PurchaseBillCreate = () => {
         <div style={{ top: "186px", fontSize: "18px" }}>
           <Breadcrumb>
             <BreadcrumbItem >Home</BreadcrumbItem>
-            <BreadcrumbItem><Link to="/admin/inventory/purchase-order-list">Purchase Bill List</Link></BreadcrumbItem>
+            <BreadcrumbItem><Link to="/admin/inventory/purchase-bill-list">Purchase Bill List</Link></BreadcrumbItem>
             <BreadcrumbItem active>Purchase Bill Create</BreadcrumbItem>
           </Breadcrumb>
         </div>
@@ -591,7 +595,7 @@ const PurchaseBillCreate = () => {
                 <Form.Control
                   type="text"
                   name="date"
-                  value={formData.date}
+                  value={formData.date || new Date().toISOString().split('T')[0]}
                   onChange={handleInputChange}
                   placeholder="Delivery Date"
                   onFocus={(e) => e.target.type = 'date'}

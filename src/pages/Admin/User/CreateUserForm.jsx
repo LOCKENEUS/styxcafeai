@@ -274,7 +274,7 @@ const CreateUser = () => {
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-                  Full Name
+                  Full Name <span className="text-danger">*</span>
                 </Form.Label>
                 <Form.Control
                   value={formData.name}
@@ -291,7 +291,7 @@ const CreateUser = () => {
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-                  Contact Number
+                  Contact Number <span className="text-danger">*</span>
                 </Form.Label>
                 <Form.Control
                   type="tel"
@@ -311,7 +311,7 @@ const CreateUser = () => {
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-                  Email
+                  Email <span className="text-danger">*</span>
                 </Form.Label>
                 <Form.Control
                   type="email"
@@ -328,7 +328,7 @@ const CreateUser = () => {
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-                  Age
+                  Age <span className="text-danger">*</span>
                 </Form.Label>
                 <Form.Control
                   type="number"
@@ -347,7 +347,7 @@ const CreateUser = () => {
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-                  Gender
+                  Gender <span className="text-danger">*</span>
                 </Form.Label>
                 <Form.Select
                   value={formData.gender}
@@ -366,7 +366,7 @@ const CreateUser = () => {
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-                  Address
+                  Address 
                 </Form.Label>
                 <GooglePlacesAutocomplete
   apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
@@ -458,7 +458,7 @@ const CreateUser = () => {
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-                  Department
+                  Department <span className="text-danger">*</span>
                 </Form.Label>
                 <Form.Select
                   value={formData.department}
@@ -477,7 +477,7 @@ const CreateUser = () => {
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-                  Role / Position
+                  Role / Position <span className="text-danger">*</span>
                 </Form.Label>
                 <Form.Control
                   type="text"

@@ -391,11 +391,21 @@ const SOCreate = () => {
 
     try {
       if (isEditMode) {
-        await dispatch(updateSO({ id, soData: submitData })).unwrap();
+        const res = await dispatch(updateSO({ id, soData: submitData })).unwrap();
+        console.log(res)
+        if (res?.data?._id) {
+          navigate(`/admin/Inventory/SaleOrderDetails/${res._id}`);
+        } else {
+          console.error('No ID returned from update operation');
+        }
       } else {
-        await dispatch(addSO(submitData)).unwrap();
+        const res = await dispatch(addSO(submitData)).unwrap();
+        if (res?._id) {
+          navigate(`/admin/Inventory/SaleOrderDetails/${res._id}`);
+        } else {
+          console.error('No ID returned from create operation');
+        }
       }
-      navigate('/admin/Inventory/SalesOrder');
     } catch (error) {
       console.error('Error with Sales Order:', error);
     }

@@ -397,9 +397,16 @@ export const InvoiceCreate =()=>{
 
     try {
       if (isEditMode) {
-        await dispatch(updateSOInvoice({ id, invoiceData: submitData })).unwrap();
+        await dispatch(updateSOInvoice({ id, invoiceData: submitData })).unwrap().then((res) =>{
+          navigate(`/admin/Inventory/SaleInvoiceDetails/${res._id}`);
+
+
+
+        });
       } else {
-        await dispatch(addSOInvoice(submitData)).unwrap();
+        await dispatch(addSOInvoice(submitData)).unwrap().then((res)=>{
+          navigate(`/admin/Inventory/SaleInvoiceDetails/${res._id}`);
+        });
       }
       navigate('/admin/Inventory/SaleInvoice');
     } catch (error) {

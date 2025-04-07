@@ -160,8 +160,8 @@ const ItemDetails = () => {
 
           <Col xs={12} lg={5} className="mt-3">
             <Tab.Content data-aos="fade-up" data-aos-duration="500">
-              <Tab.Pane eventKey="checkout">
-                <Card className="p-3">
+              <Tab.Pane eventKey="checkout" className="h-100">
+                <Card className="p-3 h-100">
                   <h4>Details</h4>
                   <div className="table-responsive">
                     <Table borderless>

@@ -366,8 +366,8 @@ export const SODetails = () => {
                   {selectedSO.items && selectedSO.items.map((item, index) => (
                     <tr key={item._id || index}>
                       <td>
-                        <b>{item.item_id ? item.item_id.name : "Product Item"}</b>
-                        <br />
+                      <b> <Link to={`/admin/inventory/item-details/${item?.item_id?._id}`}> {item?.item_id?.name}</Link></b>
+                      <br />
                         HSN : {item.item_id ? item.item_id.hsn : "N/A"}
                       </td>
                       <td>

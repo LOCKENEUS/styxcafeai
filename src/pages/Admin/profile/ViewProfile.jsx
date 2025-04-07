@@ -35,8 +35,8 @@ const ViewProfile = () => {
               </div>
               {user?.role === "superadmin" ? (
                 <div
-                  className="bg-primary rounded-circle d-flex justify-content-center align-items-center position-relative"
-                  style={{ width: "40px", height: "40px", cursor: "pointer" }}
+                 className="bg-primary rounded-circle d-flex justify-content-center align-items-center position-relative"
+                   style={{ width: "40px", height: "40px", cursor: "pointer" }}
                   title="Edit Profile"
                 >
                   <GoPencil className="text-white" />
