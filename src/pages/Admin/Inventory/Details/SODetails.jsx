@@ -243,7 +243,7 @@ export const SODetails = () => {
     {/* Printable area starts here */}
     <div id="printableArea">
         {/* Company Info */}
-        <Col sm={12} className="my-2">
+        {/* <Col sm={12} className="my-2">
             <Card className="p-3">
                 <Row className="align-items-center">
                     <Col sm={2}>
@@ -262,7 +262,7 @@ export const SODetails = () => {
                     </Col>
                 </Row>
             </Card>
-        </Col>
+        </Col> */}
 
         {/* Customer & Order Details */}
         <Col sm={12} className="my-2">

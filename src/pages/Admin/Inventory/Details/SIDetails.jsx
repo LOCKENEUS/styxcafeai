@@ -276,7 +276,7 @@ export const SIDetails = () => {
         {/* Printable area starts here */}
         <div id="printableArea">
           {/* Company Info Card */}
-          <Col sm={12} className="my-2">
+          {/* <Col sm={12} className="my-2">
             <Card className="p-3">
                 <Row className="align-items-center">
                     <Col sm={2}>
@@ -295,7 +295,7 @@ export const SIDetails = () => {
                     </Col>
                 </Row>
             </Card>
-        </Col>
+        </Col> */}
 
           {/* Customer Info and Invoice Details */}
           <Col sm={12} className="my-2">

@@ -51,7 +51,7 @@ export const IPDetails = () => {
         </Card>
     </Col>
 
-
+{/* 
     <Col sm={12} className="my-2">
         <Card className="p-3">
             <Row className="align-items-center">
@@ -70,11 +70,10 @@ export const IPDetails = () => {
                     <div className="p-3 text-end">
                     <span className="p-2 text-center text-primary">Invoice Status:<b className="text-black"> Paid</b></span>
                     </div>
-                    {/* <strong className="text-primary"> Draft</strong> */}
                 </Col>
             </Row>
         </Card>
-    </Col>
+    </Col> */}
 
     <Col sm={12} className="my-2">
         <Card className="p-3 shadow-sm">

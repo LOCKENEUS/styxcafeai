@@ -440,7 +440,7 @@ const SOCreate = () => {
         </div>
       </Col>
       {/* Header Card */}
-      <Card className="p-3 mb-3 shadow-sm">
+      {/* <Card className="p-3 mb-3 shadow-sm">
         <Row className="align-items-center">
           <Col xs={2}>
             <img src={Lockenelogo} alt="Logo" className="img-fluid" />
@@ -458,7 +458,7 @@ const SOCreate = () => {
             <strong className="text-primary"> Draft</strong>
           </Col>
         </Row>
-      </Card>
+      </Card> */}
 
       {/* Client & Delivery Details */}
       <Card className="p-3 shadow-sm">

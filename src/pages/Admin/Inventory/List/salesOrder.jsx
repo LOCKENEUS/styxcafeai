@@ -109,16 +109,12 @@ export const SalesOrder = () => {
       sortable: true,
     },
     {
-      name: "Status",
-      selector: (row) => "Pending", // You may need to adjust this based on your API response
+      name: "Total",
+      selector: (row) => row.total,
       sortable: true,
       cell: (row) => (
-        <span
-          className={`badge ${
-            row.pending_qty > 0 ? "bg-warning" : "bg-success"
-          }`}
-        >
-          {row.pending_qty > 0 ? "Pending" : "Completed"}
+        <span>
+          {row.total ? row.total : "N/A"}
         </span>
       ),
     },
@@ -159,7 +155,7 @@ export const SalesOrder = () => {
 
   const handleExport = () => {
     // Define CSV headers
-    const csvHeader = "S/N,Order No,Client,Status,Date\n";
+    const csvHeader = "S/N,Order No,Client,Total,Date\n";
 
     // Convert salesOrders data to CSV rows
     const csvRows = filteredItems.map((order, index) => {
@@ -174,13 +170,13 @@ export const SalesOrder = () => {
               .padStart(2, "0")}/${date.getFullYear()}`
           : "N/A";
 
-      // Format the status
-      const status = order.pending_qty > 0 ? "Pending" : "Completed";
+      // Format the total
+      const total = order.total ? order.total : "N/A";
 
       // Create CSV row
       return `${index + 1},${order.so_no || ""},${
         order.customer_id?.name || "N/A"
-      },${status},${formattedDate}`;
+      },${total},${formattedDate}`;
     });
 
     // Combine header and rows

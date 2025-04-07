@@ -8,6 +8,7 @@ import { LuCornerDownRight, LuCornerUpRight, LuLogOut } from "react-icons/lu";
 import { useDispatch } from 'react-redux';
 import { logout } from '../../../../store/slices/authSlice';
 import { gsap } from "gsap";
+import { BiHomeAlt } from "react-icons/bi";
 
 const Sidebar = ({ collapsed, toggleSidebar }) => {
   const [isMobile, setIsMobile] = useState(false);
@@ -181,6 +182,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
         transform: collapsed ? "translateX(-272px)" : "translateX(0)",
       }}
     >
+          
       
       <div 
         ref={waveRef}
@@ -192,8 +194,28 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
           paddingTop: "1rem"
         }}
       >
+
         <div className="navbar-vertical-content px-2" style={{ overflowY: 'auto', height: 'calc(100% - 100px)' }}>
           <div style={{marginBottom: window.innerWidth <= 768 ? "5rem" : "2rem"}} className="nav nav-pills nav-flush flex-column">
+          <div className="nav-item">
+            <div className="nav-item-wrapper">
+              <Link
+                className="nav-link rounded py-3 px-3"
+                to="/admin/dashboard"
+                style={{
+                  marginLeft: "20px",
+                  color: "#1e3a8a",
+                  backgroundColor: location.pathname === "/admin/dashboard" ? "#F4F4F4" : "transparent",
+                  fontWeight: location.pathname === "/admin/dashboard" ? "600" : "normal",
+                  transition: "all 0.2s",
+                }}
+              >
+                <BiHomeAlt className="flex-shrink-0 me-3" style={{ fontSize: "1.25rem" }} />                         
+                <span className="nav-link-text flex-grow-1">Dashboard</span>
+              </Link>
+            </div>
+          </div>
+
             {navItems.map((item, index) => {
               const collapseId = `collapse-${index}`;
               

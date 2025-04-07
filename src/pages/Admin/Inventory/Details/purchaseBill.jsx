@@ -176,26 +176,7 @@ export const PurchaseBillDetailsAdmin = () => {
                                     className="d-flex align-items-center" 
                                     style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }} 
                                     onClick={handlePrint}
-                                    onMouseEnter={() => {
-                                        var tooltip = document.createElement('div');
-                                        tooltip.innerText = 'Print > More Settings > Page Size > Select A3';
-                                        tooltip.style.position = 'absolute';
-                                        tooltip.style.backgroundColor = 'white';
-                                        tooltip.style.border = '1px solid black';
-                                        tooltip.style.padding = '5px';
-                                        tooltip.style.zIndex = '1000';
-                                        tooltip.style.top = '10rem'; // Adjust as needed
-                                        tooltip.style.right = '7rem'; // Adjust as needed
-                                        document.body.appendChild(tooltip);
-                                        // Store reference to remove later
-                                        this.tooltip = tooltip; 
-                                    }}
-                                    onMouseLeave={() => {
-                                        if (this.tooltip) {
-                                            document.body.removeChild(this.tooltip);
-                                            this.tooltip = null; // Clear reference
-                                        }
-                                    }}
+                                    title="Print > More Settings > Page Size > Select A3"
                                 >
                                     <Image src={print} className="me-2" /> Print
                                 </Button>

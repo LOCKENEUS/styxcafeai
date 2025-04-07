@@ -185,7 +185,7 @@ export const PRCreate = () => {
                         </Breadcrumb>
                     </div>
                 </Col>
-                <Col sm={12} className="my-2">
+                {/* <Col sm={12} className="my-2">
                     <Card className="p-3">
                         <Row className="align-items-center">
                             <Col sm={2}>
@@ -200,12 +200,11 @@ export const PRCreate = () => {
                                 <strong>PAN: {UesrPAN}</strong>
                             </Col>
                             <Col sm={2} className=" d-flex  ">
-                                {/* <strong className="text-primary"> Draft</strong> */}
                             </Col>
                         </Row>
                     </Card>
 
-                </Col>
+                </Col> */}
 
                 <Col sm={12} className="my-2">
                     <Card className="p-3 shadow-sm">

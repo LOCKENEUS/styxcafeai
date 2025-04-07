@@ -156,7 +156,7 @@ const PurchaseOrderDetails = () => {
                 </Col>
 
                 {/* Company Info */}
-                <Col sm={12} className="my-2">
+                {/* <Col sm={12} className="my-2">
                     <Card className="p-3">
                         <Row className="align-items-center">
                             <Col sm={2}>
@@ -172,11 +172,10 @@ const PurchaseOrderDetails = () => {
                             </Col>
                             <Col sm={2} className=" d-flex  ">
                                 <span className="p-2 float-right">PO : <b className="text-primary">{selectedPo?.status}</b></span>
-                                {/* <strong className="text-primary"> Draft</strong> */}
                             </Col>
                         </Row>
                     </Card>
-                </Col>
+                </Col> */}
 
                 {/* Customer & Order Details */}
                 <Col sm={12} className="my-2">

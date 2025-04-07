@@ -92,7 +92,7 @@ export const PurchaseReceivedDetails = () => {
                 </Col>
 
                 {/* Company Info */}
-                <Col sm={12} className="my-2">
+                {/* <Col sm={12} className="my-2">
                     <Card className="p-3">
                         <Row className="align-items-center">
                             <Col sm={2}>
@@ -108,11 +108,10 @@ export const PurchaseReceivedDetails = () => {
                             </Col>
                             <Col sm={2} className=" d-flex  ">
                                 <span className="p-2 float-right">PO:<b className="text-primary">Draft</b></span>
-                                {/* <strong className="text-primary"> Draft</strong> */}
                             </Col>
                         </Row>
                     </Card>
-                </Col>
+                </Col> */}
 
                 {/* Customer & Order Details */}
                 <Col sm={12} className="my-2">

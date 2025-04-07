@@ -10,19 +10,20 @@ import { MdOutlineSubscriptions, MdOutlinePeople, MdOutlineAnalytics, MdTableBar
 import { SlCup } from 'react-icons/sl';
 
 const navItems = [
-  {
-    title: "Dashboard",
-    icon: BiHomeAlt,
-    subItems: [
-      {
-        label: "",
-        sub: [
-          { title: "Overview", path: "/admin/dashboard" }
-        ]
-      },
-      // { title: "Analytics", path: "/admin/dashboard/analytics" }
-    ]
-  },
+  // {
+  //   title: "Dashboard",
+  //   path: "/admin/dashboard",
+  //   icon: BiHomeAlt,
+  //   subItems: [
+  //     {
+  //       label: "",
+  //       sub: [
+     
+  //       ]
+  //     },
+  //     // { title: "Analytics", path: "/admin/dashboard/analytics" }
+  //   ]
+  // },
   {
     title: "Users",
     icon: MdOutlinePeople,

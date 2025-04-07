@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Card, Form, Row, Col, Table } from "react-bootstrap";
-import { BiPlus, BiArrowToLeft } from "react-icons/bi";
+import { BiPlus, BiArrowToLeft, BiCross } from "react-icons/bi";
 import { useDispatch } from 'react-redux';
 import { addCustomer, searchCustomers } from "../../../../store/AdminSlice/CustomerSlice";
+import { CgCross } from 'react-icons/cg';
+import { RxCross1 } from 'react-icons/rx';
 
 const AddClint = ({ show, handleClose, onClientSelect }) => {
   const dispatch = useDispatch();
@@ -21,7 +23,9 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
     city: "",
     zipCode: "",
     gender: "",
-    cafe: cafeId
+    cafe: cafeId,
+    creditEligibility: "",
+    creditLimit: ""
   });
 
   useEffect(() => {
@@ -70,6 +74,20 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
       if (onClientSelect) {
         onClientSelect(result);
       }
+      setNewClient({
+        fullName: "",
+        email: "",
+        contactNumber: "",
+        address: "",
+        country: "",
+        state: "",
+        city: "",
+        zipCode: "",
+        gender: "",
+        cafe: cafeId,
+        creditEligibility: "",
+        creditLimit: ""
+      });
       handleClose();
     } catch (error) {
       console.error('Error creating customer:', error);
@@ -89,25 +107,39 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
         <span style={{fontSize:"20px", fontWeight:"500"}}>
           {showClientList ? "Choose a client" : "Create New Client"}
         </span>
-        <Button 
-          variant="info" 
-          size="sm" 
-          onClick={toggleView}
-        >
-          <BiArrowToLeft size={20}/>
-        </Button>
-      </Modal.Header>
-      <Modal.Body>
-        {showClientList ? (
-          <div>
-            <h4 style={{fontSize:"15px"}}>Choose a client for create quote?</h4>
-            <Card className="shadow">
-              <Card.Header className="p-2 bg-info bg-opacity-10">
-                <Row className="mb-2">
-                  <Col xs={8} sm={6} md={4}>
-                    <Form.Control 
-                      type="text" 
-                      placeholder="Search..." 
+  
+
+
+          {
+            !showClientList ?
+            <Button 
+            variant="info" 
+            size="sm" 
+            onClick={toggleView}
+          > 
+            <BiArrowToLeft  size={20}/>
+            </Button>
+             :
+             <Button 
+             variant="info" 
+             size="sm" 
+             onClick={handleClose}
+           > 
+             <RxCross1  size={20}/>
+           </Button>
+          }
+    
+          </Modal.Header>
+          <Modal.Body>
+            {showClientList ? (
+              <div>
+                <Card className="shadow">
+                  <Card.Header className="p-2 bg-info bg-opacity-10">
+                    <Row className="mb-2">
+                      <Col xs={8} sm={6} md={4}>
+                        <Form.Control 
+                          type="text" 
+                          placeholder="Search..." 
                       value={searchTerm}
                       onChange={handleSearch}
                     />
@@ -162,25 +194,27 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
             <Row className="mb-3">
               <Col md={6}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Full Name</Form.Label>
+                  <Form.Label>Full Name <span className="text-danger">*</span></Form.Label>
                   <Form.Control
+                    required
                     type="text"
                     name="fullName"
                     value={newClient.fullName}
                     onChange={handleChange}
-                    required
+                    
                   />
                 </Form.Group>
               </Col>
               <Col md={6}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Contact Number</Form.Label>
+                  <Form.Label>Contact Number <span className="text-danger">*</span></Form.Label>
                   <Form.Control
+                    required
                     type="tel"
                     name="contactNumber"
                     value={newClient.contactNumber}
                     onChange={handleChange}
-                    required
+                    
                   />
                 </Form.Group>
               </Col>
@@ -189,13 +223,14 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
             <Row className="mb-3">
               <Col md={4}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Email</Form.Label>
+                  <Form.Label>Email <span className="text-danger">*</span></Form.Label>
                   <Form.Control
+                    required
                     type="email"
                     name="email"
                     value={newClient.email}
                     onChange={handleChange}
-                    required
+                    
                   />
                 </Form.Group>
               </Col>
@@ -207,18 +242,19 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                     name="address"
                     value={newClient.address}
                     onChange={handleChange}
-                    required
+                    
                   />
                 </Form.Group>
               </Col>
               <Col md={4}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Gender</Form.Label>
+                  <Form.Label>Gender <span className="text-danger">*</span></Form.Label>
                   <Form.Select
+                    required
                     name="gender"
                     value={newClient.gender}
                     onChange={handleChange}
-                    required
+                    
                   >
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
@@ -238,7 +274,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                     name="country"
                     value={newClient.country}
                     onChange={handleChange}
-                    required
+                    
                   />
                 </Form.Group>
               </Col>
@@ -250,7 +286,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                     name="state"
                     value={newClient.state}
                     onChange={handleChange}
-                    required
+                    
                   />
                 </Form.Group>
               </Col>
@@ -262,7 +298,43 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                     name="city"
                     value={newClient.city}
                     onChange={handleChange}
-                    required
+                    
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+
+            <Row className="mb-3">
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
+                    Eligible for Credit <span className="text-danger">*</span>
+                  </Form.Label>
+                  <Form.Select
+                    name="creditEligibility"
+                    value={newClient.creditEligibility}
+                    onChange={handleChange}
+                    className="rounded-2"
+                    style={{ padding: '10px', fontSize: '0.9rem' }}
+                  >
+                    <option value="">Select Options</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
+                    Credit Limit
+                  </Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="creditLimit"
+                    value={newClient.creditLimit}
+                    onChange={handleChange}
+                    className="rounded-2"
+                    style={{ padding: '10px', fontSize: '0.9rem' }}
                   />
                 </Form.Group>
               </Col>
