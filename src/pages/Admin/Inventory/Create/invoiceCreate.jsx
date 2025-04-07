@@ -400,15 +400,12 @@ export const InvoiceCreate =()=>{
         await dispatch(updateSOInvoice({ id, invoiceData: submitData })).unwrap().then((res) =>{
           navigate(`/admin/Inventory/SaleInvoiceDetails/${res._id}`);
 
-
-
         });
       } else {
         await dispatch(addSOInvoice(submitData)).unwrap().then((res)=>{
           navigate(`/admin/Inventory/SaleInvoiceDetails/${res._id}`);
         });
       }
-      navigate('/admin/Inventory/SaleInvoice');
     } catch (error) {
       console.error('Error with Sales Order:', error);
     }
@@ -520,7 +517,7 @@ export const InvoiceCreate =()=>{
               <Form.Control
                 type="text"
                 name="date"
-                value={formData.date}
+                value={formData.date || new Date().toISOString().split('T')[0]}
                 onChange={handleInputChange}
                 placeholder="Date"
                 onFocus={(e) => e.target.type = 'date'}

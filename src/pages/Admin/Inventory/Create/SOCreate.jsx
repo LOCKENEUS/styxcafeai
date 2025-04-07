@@ -523,7 +523,7 @@ const SOCreate = () => {
                 <Form.Control
                   type="text"
                   name="date"
-                  value={formData.date}
+                  value={formData.date || new Date().toISOString().split('T')[0]}
                   onChange={handleInputChange}
                   placeholder="Date"
                   onFocus={(e) => e.target.type = 'date'}
