@@ -17,6 +17,8 @@ const CreateMembership = () => {
 
   const location = useLocation();
     const { cafeId } = location.state || {}; 
+    console.log("your cafe id membership ", cafeId);
+
 
   const dispatch = useDispatch();
   const { memberships, loading, error, selectedMembership } = useSelector((state) => state.memberships);
@@ -27,10 +29,13 @@ const CreateMembership = () => {
   useEffect(() => {
     if (cafeId) {
       dispatch(getMembershipsByCafeId(cafeId));
+      
     }
 
   }, [dispatch, cafeId]);
   console.log("this is mameber ship sata  :", memberships);
+  
+
 
   const handleEdit = (membership) => {
     dispatch(setSelectedMembership(membership));
@@ -88,7 +93,10 @@ const CreateMembership = () => {
   <Row className="d-flex ">
     {memberships && memberships.length > 0 ? (
       memberships.map((membership, index) => (
-        <Col key={index} sm={4} xs={12} className="d-flex">
+        <Col key={index} sm={4} xs={12} 
+        // className="d-flex border-end border-3"
+        className={`d-flex my-3 ${index !== memberships.length - 1 ? 'border-end border-3' : ''}`}
+        >
           <div className="my-3">
             <Row className="align-items-center">
               {/* Image Section */}

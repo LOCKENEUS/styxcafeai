@@ -53,6 +53,9 @@ const CafeManager = () => {
   };
 
   const [formDataState, setFormDataState] = useState(initialFormData);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const indexOfLastItem = currentPage * itemsPerPage;
 
 
 
@@ -105,6 +108,7 @@ const CafeManager = () => {
   };
 
 
+
   // Updated handleRemoveImage to remove specific image
   const handleRemoveImage = (index) => {
     setImagePreview(prev => prev.filter((_, i) => i !== index));
@@ -121,7 +125,7 @@ const CafeManager = () => {
       cafe.cafe_name.toLowerCase().includes(lowercasedQuery) ||
       cafe.address.toLowerCase().includes(lowercasedQuery) ||
       cafe.contact_no.toLowerCase().includes(lowercasedQuery) ||
-      cafe.name.toLowerCase().includes(lowercasedQuery) || 
+      cafe.name.toLowerCase().includes(lowercasedQuery) ||
       cafe.email.toLowerCase().includes(lowercasedQuery)
 
     );
@@ -153,10 +157,14 @@ const CafeManager = () => {
   };
 
   const handleCreateClick = () => {
-    setFormData(initialFormData); 
+    setFormData(initialFormData);
     setIsEditing(false);
     setShowCanvas(true);
   };
+
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentCafes = filteredCafes.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredCafes.length / itemsPerPage);
 
   const handleEdit = () => {
     if (selectedCafe) {
@@ -204,7 +212,7 @@ const CafeManager = () => {
 
       {showDetails && selectedCafe ? (
 
-        
+
         <Navigate to={`/superadmin/cafe/viewdetails/${selectedCafe._id}`} />
       ) : (
         loading ? <Loader /> : (
@@ -250,9 +258,10 @@ const CafeManager = () => {
                   </Button>
                 </Col>
 
-                <Col sm={12}>
 
-                  <Table hover responsive className=" my-3">
+
+                <Col sm={12}>
+                  <Table hover responsive className="my-3">
                     <thead style={{ backgroundColor: "#e9f5f8" }}>
                       <tr className="rounded-4">
                         <th style={{
@@ -304,18 +313,27 @@ const CafeManager = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredCafes.length ? (
-                        filteredCafes.reverse().map((cafe, index) => (
-                          <tr key={index} style={{}}>
-                            <td className="py-4 " style={{}}>{index + 1}</td>
-                            <td className="py-4 " style={{ fontWeight: "600", color: "#0062FF", cursor: "pointer" }} 
-                              onClick={() => { setSelectedCafeState(cafe); setShowDetails(true); }}>
+                      {currentCafes.length ? (
+                        currentCafes.reverse().map((cafe, index) => (
+                          <tr key={index}>
+                            <td className="py-4">{indexOfFirstItem + index + 1}</td>
+                            <td
+                              className="py-4"
+                              style={{ fontWeight: "600", color: "#0062FF", cursor: "pointer" }}
+                              onClick={() => {
+                                setSelectedCafeState(cafe);
+                                setShowDetails(true);
+                              }}
+                            >
                               {cafe.cafe_name}
                             </td>
-                            <td className="py-4 " style={{ width: "20%" }}>{cafe.address}</td>
-                            <td className="py-4 " style={{ width: "20%" }}>{cafe.contact_no}</td>
-                            <td className="py-4 " style={{ width: "20%" }}><Image src={profile} alt="owner" className="rounded-circle mr-2" style={{ width: "50px", height: "50px" }} />{cafe.name}</td>
-                            <td className="py-4 " style={{ width: "20%" }}>{cafe.email}</td>
+                            <td className="py-4" style={{ width: "20%" }}>{cafe.address}</td>
+                            <td className="py-4" style={{ width: "20%" }}>{cafe.contact_no}</td>
+                            <td className="py-4" style={{ width: "20%" }}>
+                              <Image src={profile} alt="owner" className="rounded-circle mr-2" style={{ width: "50px", height: "50px" }} />
+                              {cafe.name}
+                            </td>
+                            <td className="py-4" style={{ width: "20%" }}>{cafe.email}</td>
                           </tr>
                         ))
                       ) : (
@@ -325,6 +343,28 @@ const CafeManager = () => {
                       )}
                     </tbody>
                   </Table>
+                </Col>
+
+                <Col sm={12} className="d-flex justify-content-center align-items-center mt-3">
+                  <Button
+                    variant="primary"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage((prev) => prev - 1)}
+                  >
+                    Previous
+                  </Button>
+
+                  <span className="mx-3">
+                    Page {currentPage} of {totalPages}
+                  </span>
+
+                  <Button
+                    variant="primary"
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage((prev) => prev + 1)}
+                  >
+                    Next
+                  </Button>
                 </Col>
               </Row>
 

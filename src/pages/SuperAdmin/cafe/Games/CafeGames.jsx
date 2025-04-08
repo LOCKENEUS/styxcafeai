@@ -22,7 +22,7 @@ const CafeGames = () => {
   console.log("your cafe id game ",cafeId);
   const baseURL = import.meta.env.VITE_API_URL;
 
-  console.log(cafeId);
+  console.log("your cafe id game ",cafeId);
 
 
   const dispatch = useDispatch();

@@ -574,6 +574,7 @@ const CafeForm = ({
                   className="fw-bold text-secondary"
                 >
                   Location
+                  <span className="text-danger">*</span>
                 </Form.Label>
                 <Form.Control
                   as="select"
@@ -582,6 +583,7 @@ const CafeForm = ({
                   value={formDataState.location || ""}
                   onChange={handleChange}
                   className="py-2 border-2"
+                  required
                 >
                   <option value="">Select a location</option>
                   {locations.map((location) => (
