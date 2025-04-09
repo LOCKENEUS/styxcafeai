@@ -26,8 +26,14 @@ const CafeForm = ({
   fileInputRef,
   formDataState,
 }) => {
+
+
+  console.log("isEditing", isEditing);
+  console.log("cafeData", cafeData);
+
   const dispatch = useDispatch();
   const { locations = [] } = useSelector((state) => state.locations);
+  console.log("Locations", locations);
   const [width, setWidth] = useState(window.innerWidth < 768 ? "80%" : "50%");
 
   const [isLoading, setIsLoading] = useState(false);
@@ -366,6 +372,8 @@ const CafeForm = ({
     }));
   };
 
+  console.log("editingIndex", editingIndex);
+
   return (
     <Offcanvas
       show={showCanvas}
@@ -377,7 +385,7 @@ const CafeForm = ({
       <Offcanvas.Header closeButton>
         <Offcanvas.Title>
           <h2 className="text-primary fw-bold">
-            {editingIndex === null ? "Add New Cafe" : "Edit Cafe"}
+            {editingIndex === null ? "Add New Cafe " : "Edit Cafe"}
           </h2>
         </Offcanvas.Title>
       </Offcanvas.Header>
@@ -583,7 +591,7 @@ const CafeForm = ({
                   value={formDataState.location || ""}
                   onChange={handleChange}
                   className="py-2 border-2"
-                  required
+                  // required
                 >
                   <option value="">Select a location</option>
                   {locations.map((location) => (

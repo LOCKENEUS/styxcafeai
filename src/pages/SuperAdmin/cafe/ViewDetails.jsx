@@ -24,6 +24,8 @@ import AddMembershipOffcanvas from "./offcanvasCafe/addMembership";
 import EditCafeOffcanvas from "./offcanvasCafe/editCafe";
 import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import { MdOutlineNavigateNext } from "react-icons/md";
+import ForwordPassword from "./modal/forwordPassword";
+
 
 
 
@@ -41,6 +43,7 @@ const ViewDetails = () => {
   const [cafe, setCafe] = useState(null);
   const [showCanvas, setShowCanvas] = useState(false);
   const [showCanvasEditCafe, setShowCanvasEditCafe] = useState(false);
+  const [showModalForwordPassword, setShowModalForwordPassword] = useState(false);
   const [formDataState, setFormDataState] = useState({});
   const [imagePreview, setImagePreview] = useState([]);
   const fileInputRef = React.useRef(null);
@@ -254,8 +257,29 @@ const ViewDetails = () => {
               </Col>
               <Col sm={8} xs={8} className="mb-1 ">
                 <p className="text-start" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
-                  {cafe?.name || ''}
+                  {cafe?.name || '---'}
                 </p>
+              </Col>
+              <Col sm={4} xs={4} className="mb-3">
+                <h1 className="text-start mt-3" style={{ fontWeight: 600, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
+                  Owner  :
+                </h1>
+              </Col>
+              <Col sm={8} xs={8} className="mb-3">
+                <div className="d-flex align-items-center">
+                  <Image
+                    src={profile}
+                    alt="Cafe Image"
+                    className="me-1 "
+                    style={{ width: "21%", objectFit: "cover", borderRadius: "50%" }}
+                  />
+                  <p
+                    className="mb-0 text-start"
+                    style={{ fontWeight: 500, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%", color: "#0062FF" }}
+                  >
+                    {cafe?.name || '---'}
+                  </p>
+                </div>
               </Col>
               <Col sm={4} xs={4} className="mb-1 ">
                 <h1 className="text-start" style={{ fontWeight: 600, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
@@ -264,7 +288,7 @@ const ViewDetails = () => {
               </Col>
               <Col sm={8} xs={8} className="mb-1 ">
                 <p className="text-start" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
-                  {cafe?.address || ''}
+                  {cafe?.address || '---'}
                 </p>
               </Col>
               <Col sm={4} xs={4} className="mb-3">
@@ -274,7 +298,7 @@ const ViewDetails = () => {
               </Col>
               <Col sm={8} xs={8} className="mb-3">
                 <p className="text-start" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
-                  {cafe?.contact_no || ''}
+                  {cafe?.contact_no || '---'}
                 </p>
               </Col>
               <Col sm={4} xs={4} className="mb-3">
@@ -284,7 +308,7 @@ const ViewDetails = () => {
               </Col>
               <Col sm={8} xs={8} className="mb-3">
                 <p className="text-start" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
-                  {cafe?.officeContactNo || ''}
+                  {cafe?.officeContactNo || '---'}
                 </p>
               </Col>
               <Col sm={4} xs={4} className="mb-3">
@@ -294,7 +318,7 @@ const ViewDetails = () => {
               </Col>
               <Col sm={8} xs={8} className="mb-3">
                 <p className="text-start" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
-                  {cafe?.gstNo || ''}
+                  {cafe?.gstNo || '---'}
                 </p>
               </Col>
 
@@ -306,7 +330,7 @@ const ViewDetails = () => {
               </Col>
               <Col sm={8} xs={8} className="mb-3">
                 <p className="text-start" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
-                  {cafe?.panNo || ''}
+                  {cafe?.panNo || '---'}
                 </p>
               </Col>
 
@@ -317,38 +341,18 @@ const ViewDetails = () => {
               </Col>
               <Col sm={8} xs={8} className="mb-3">
                 <p className="text-start" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
-                  {cafe?.email || ''}
+                  {cafe?.email || '---'}
                 </p>
               </Col>
-              <Col sm={4} xs={4} className="mb-3">
-                <h1 className="text-start" style={{ fontWeight: 600, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
-                  Owner  :
-                </h1>
-              </Col>
-              <Col sm={8} xs={8} className="mb-3">
-                <div className="d-flex align-items-center">
-                  <Image
-                    src={profile}
-                    alt="Cafe Image"
-                    className="me-2"
-                    style={{ width: "21%", objectFit: "cover", borderRadius: "50%" }}
-                  />
-                  <p
-                    className="mb-0 text-start"
-                    style={{ fontWeight: 500, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%", color: "#0062FF" }}
-                  >
-                    {cafe?.name || ''}
-                  </p>
-                </div>
-              </Col>
+              
               <Col sm={4} xs={4} className="mb-3">
                 <h1 className="text-start" style={{ fontWeight: 600, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
                   WEBSITE  :
                 </h1>
               </Col>
-              <Col sm={8} xs={8} className="my-3">
+              <Col sm={8} xs={8} className="mb-3">
                 <p className="text-start" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
-                  {cafe?.website_url || ''}
+                  {cafe?.website_url || '---'}
                 </p>
               </Col>
 
@@ -372,10 +376,17 @@ const ViewDetails = () => {
               </Col>
               <Col xs="auto" sm={4} className="my-1">
                 <Button className=" rounded-circle border-0" style={{ backgroundColor: "#F2F2F2" }} >
-                  <Image src={Message} alt="CafeCall" className="mx-1 my-2 " style={{ objectFit: "cover", width: "23.63px", height: "18.38px" }} />
+                  <Image src={Message} alt="CafeCall" className="mx-0 my-2 " style={{ objectFit: "cover", width: "23.63px", height: "18.38px" }} />
                 </Button>
 
               </Col>
+
+              <div className="d-flex justify-content-center mt-3">
+                <h4 className="text-center " style={{ fontSize: "16px", fontWeight: "500" ,color: "#0062FF", cursor:"pointer" }}
+                onClick={() => setShowModalForwordPassword(true)}
+                >Forword Password ?
+                </h4>
+              </div>
             </Row>
 
 
@@ -531,8 +542,12 @@ const ViewDetails = () => {
                     {/* pass cafeid */}
                     {/* <Link to={`/superadmin/CafeGames/${cafeId}`}> */}
 
-                    <Link to={{ pathname: '/superadmin/CafeGames', state: { cafeId } }}>
-
+                    <Link
+                      to={{
+                        pathname: '/superadmin/CafeGames',
+                      }}
+                      state={{ cafeId }}
+                    >
                       View All
                     </Link>
 {/* 
@@ -798,6 +813,12 @@ const ViewDetails = () => {
       <EditCafeOffcanvas
         show={showCanvasEditCafe}
         handleClose={() => setShowCanvasEditCafe(false)}
+        cafeId={cafeId}
+      />
+
+      <ForwordPassword
+        show={showModalForwordPassword}
+        handleClose={() => setShowModalForwordPassword(false)}
         cafeId={cafeId}
       />
 

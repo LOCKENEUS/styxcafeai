@@ -115,7 +115,7 @@ const MainNavbar = ({ setIsAuthenticated }) => {
           <ul className="navbar-nav">
             <li className="nav-item d-none d-sm-inline-block">
 
-              <div className="dropdown">
+              {/* <div className="dropdown">
                 <button type="button" className="btn btn-ghost-secondary btn-icon rounded-circle" id="navbarNotificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" data-bs-dropdown-animation="">
                   <BiBell />
                   <span className="btn-status btn-sm-status btn-status-danger"></span>
@@ -130,7 +130,7 @@ const MainNavbar = ({ setIsAuthenticated }) => {
 
                       <div className="dropdown">
                         <button type="button" className="btn btn-icon btn-sm btn-ghost-secondary rounded-circle" id="navbarNotificationsDropdownSettings" data-bs-toggle="dropdown" aria-expanded="false">
-                          {/* <i className="bi-three-dots-vertical"></i> */}
+                          
                           <BiDotsVertical />
                         </button>
 
@@ -194,13 +194,13 @@ const MainNavbar = ({ setIsAuthenticated }) => {
 
                   </div>
                 </div>
-              </div>
+              </div> */}
 
             </li>
 
             <li className="nav-item d-none d-sm-inline-block">
 
-              <div className="dropdown">
+              {/* <div className="dropdown">
                 <button type="button" className="btn btn-icon btn-ghost-secondary rounded-circle" id="navbarAppsDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-dropdown-animation="">
 
                   <MdOutlineFitbit />
@@ -219,15 +219,15 @@ const MainNavbar = ({ setIsAuthenticated }) => {
 
                   </div>
                 </div>
-              </div>
+              </div> */}
 
             </li>
 
             <li className="nav-item d-none d-sm-inline-block">
 
-              <button className="btn btn-ghost-secondary btn-icon rounded-circle" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasActivityStream" aria-controls="offcanvasActivityStream">
+              {/* <button className="btn btn-ghost-secondary btn-icon rounded-circle" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasActivityStream" aria-controls="offcanvasActivityStream">
                 <i className="bi-x-diamond"></i>
-              </button>
+              </button> */}
 
             </li>
 
@@ -247,9 +247,9 @@ const MainNavbar = ({ setIsAuthenticated }) => {
                       <div className="avatar avatar-sm avatar-circle">
                         <img className="avatar-img" src={profilePic} alt="Image Description" />
                       </div>
-                      <div className="flex-grow-1 ms-3">
-                        <h5 className="mb-0">{user?.name}</h5>
-                        <p className="card-text text-body">{user?.email}</p>
+                      <div className="flex-grow-1 ">
+                        <h5 className="mb-1">{user?.name}</h5>
+                        <p className="card-text text-body ">{user?.email}</p>
                       </div>
                     </div>
                   </div>
@@ -259,16 +259,16 @@ const MainNavbar = ({ setIsAuthenticated }) => {
 
 
                   <a className="dropdown-item" href="#">Profile &amp; account</a>
-                  <a className="dropdown-item" href="#">Settings</a>
+                  {/* <a className="dropdown-item" href="#">Settings</a> */}
 
-                  <div className="dropdown-divider"></div>
-
-
-
-                  <div className="dropdown-divider"></div>
+                  {/* <div className="dropdown-divider"></div> */}
 
 
-                  <div className="dropdown">
+
+                  {/* <div className="dropdown-divider"></div> */}
+
+
+                  {/* <div className="dropdown">
                     <a className="navbar-dropdown-submenu-item dropdown-item dropdown-toggle" href="#" id="navSubmenuPagesAccountDropdown2" data-bs-toggle="dropdown" aria-expanded="false">Customization</a>
 
                     <div className="dropdown-menu dropdown-menu-end navbar-dropdown-menu navbar-dropdown-menu-borderless navbar-dropdown-sub-menu" aria-labelledby="navSubmenuPagesAccountDropdown2">
@@ -284,7 +284,7 @@ const MainNavbar = ({ setIsAuthenticated }) => {
                         <i className="bi-box-arrow-in-up-right"></i>
                       </a>
                     </div>
-                  </div>
+                  </div> */}
 
 
                   <div className="dropdown-divider"></div>

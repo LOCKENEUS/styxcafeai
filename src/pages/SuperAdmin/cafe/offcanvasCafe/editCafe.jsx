@@ -36,7 +36,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
   const dispatch = useDispatch();
   const IDCafeFetch = useSelector((state) => state.cafes);
 
- 
+
   useEffect(() => {
     if (cafeId) {
       dispatch(fetchCafesID(cafeId));
@@ -91,14 +91,14 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     const previews = files.map((file) => URL.createObjectURL(file));
-    
+
     setImagePreview((prev) => [...prev, ...previews]);
     setFormDataState((prev) => ({
       ...prev,
       cafeImage: [...(prev.cafeImage || []), ...files],
     }));
   };
-  
+
 
   const toggleConfirmPasswordVisibility = (e) => {
     e.preventDefault(); // Prevent form submission
@@ -147,11 +147,11 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
     e.preventDefault();
     console.log("submit form edit mmm 00", imagePreview);
 
-     // all fields are required
-  // if(!cafeId || name || email || contact_no || cafe_name || address || website_url || location || description || password || gstNo || panNo || ownershipType || depositAmount || yearsOfContract || officeContactNo){
-  //   toast.error('Please fix All  before submitting');
-  //   return;
-  // }
+    // all fields are required
+    // if(!cafeId || name || email || contact_no || cafe_name || address || website_url || location || description || password || gstNo || panNo || ownershipType || depositAmount || yearsOfContract || officeContactNo){
+    //   toast.error('Please fix All  before submitting');
+    //   return;
+    // }
 
 
     const formDataToSend = new FormData();
@@ -251,24 +251,31 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
 
   const handleRemoveExistingImage = (indexToRemove) => {
     const updatedCafeImage = filteredCafes[0].cafeImage.filter((_, index) => index !== indexToRemove);
-  
+
     const updatedCafe = {
       ...filteredCafes[0],
       cafeImage: updatedCafeImage,
     };
-  
+
     setFilteredCafes([updatedCafe]);
-  
+
     // Optionally, delete on the server too
     // fetch('your-api/delete-image', { method: 'POST', body: JSON.stringify({ img: filteredCafes[0].cafeImage[indexToRemove] }) })
   };
-  const handleRemoveDocument = (indexToRemove) => {
-    const updatedDocs = documentPreview.filter((_, index) => index !== indexToRemove);
-    setDocumentPreview(updatedDocs);
+  const handleRemoveDocument = (indexToRemove, type = "new") => {
+    if (type === "new") {
+      const updatedDocs = documentPreview.filter((_, index) => index !== indexToRemove);
+      setDocumentPreview(updatedDocs);
+    } else if (type === "existing") {
+      const updatedExisting = [...filteredCafes];
+      updatedExisting[0].document = updatedExisting[0].document.filter((_, index) => index !== indexToRemove);
+      setFilteredCafes(updatedExisting); 
+    }
   };
   
-  
-  
+
+
+
   return (
     <Offcanvas show={show} onHide={handleClose} placement="end" style={{ width: "700px" }}>
       <Offcanvas.Header closeButton>
@@ -340,7 +347,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                       ? { label: formDataState.address, value: formDataState.address }
                       : null,
                     onChange: (selected) => {
-                      handleSelect(selected?.value || ""); 
+                      handleSelect(selected?.value || "");
                     },
                     placeholder: "Enter address",
                     styles: {
@@ -426,7 +433,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                 </Form.Label>
                 <Form.Control
                   id="officeContact"
-                  type="tel"
+                  type="number"
                   name="officeContactNo"
                   placeholder="Enter Office Contact Number"
                   value={formDataState.officeContactNo || filteredCafes?.[0]?.officeContactNo || ''}
@@ -457,6 +464,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                   value={formDataState.email || filteredCafes?.[0]?.email || ''}
                   onChange={handleChange}
                   className="py-2 border-2"
+                  readOnly
                 />
               </Form.Group>
             </Col>
@@ -467,6 +475,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
               <Form.Group className="mb-2">
                 <Form.Label htmlFor="location" className="fw-bold text-secondary">
                   Location
+                  <span className='text-danger'>*</span>
                 </Form.Label>
                 <Form.Control
                   as="select"
@@ -498,7 +507,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                   className="fw-bold text-secondary"
                 >
                   Website URL
-                  <span className="text-danger">*</span>
+                  {/* <span className="text-danger">*</span> */}
                 </Form.Label>
                 <Form.Control
                   id="website"
@@ -509,7 +518,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                   onChange={handleChange}
                   pattern="https?://.+"
                   className="py-2 border-2"
-                  required
+
                 />
               </Form.Group>
             </Col>
@@ -534,7 +543,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
             />
           </Form.Group>
 
-          <Row className="mb-3">
+          {/* <Row className="mb-3">
             <Col md={6}>
               <Form.Label className="fw-bold text-secondary d-block">
                 Upload Images
@@ -607,7 +616,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
               </div>
             </Col>
 
-          </Row>
+          </Row> */}
 
           {/* <Row className="mb-2">
                     <Col md={6}>
@@ -804,49 +813,75 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                     </label>
                   </div>
 
-                  {/* ✅ Existing Documents from DB */}
-                  {filteredCafes[0]?.document?.length > 0 && (
-                    <div className="d-flex flex-column gap-2">
-                      {filteredCafes[0].document.map((doc, index) => (
-                        <div
-                          key={`existing-doc-${index}`}
-                          className="d-flex justify-content-between align-items-center p-2 border rounded"
-                        >
-                          <a
-                            href={`${BASE_URL}${doc}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-decoration-none text-dark"
-                          >
-                            {doc.split('/').pop()}
-                          </a>
-                        </div>
-                      ))}
-                    </div>
-                  )}
 
-                  {/* ✅ New Documents (just selected by user) */}
-                  {documentPreview.length > 0 && (
-  <div className="d-flex flex-column gap-2 mt-2">
-    {documentPreview.map((doc, index) => (
-      <div
-        key={`new-doc-${index}`}
-        className="d-flex justify-content-between align-items-center p-2 border rounded bg-white"
-      >
-        <span>{doc.name}</span>
-        <TiDeleteOutline
-          size={22}
-          className="cursor-pointer text-danger"
-          onClick={() => handleRemoveDocument(index)}
-        />
-      </div>
-    ))}
-  </div>
-)}
+
 
                 </div>
               </div>
             </Col>
+            <Col sm={6}>
+              {/* ✅ Existing Documents from DB */}
+              {filteredCafes[0]?.document?.length > 0 && (
+                <div className="d-flex flex-wrap gap-2">
+                  {filteredCafes[0].document.map((doc, index) => (
+                    <div
+                      key={`existing-doc-${index}`}
+                      className="p-2 border rounded bg-white d-flex justify-content-between align-items-center"
+                      style={{ width: '48%' }}
+                    >
+                      <a
+                        href={`${BASE_URL}${doc}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-decoration-none text-dark text-truncate d-block"
+                        style={{ maxWidth: '80%' }}
+                        title={doc.split('/').pop()}
+                      >
+                        {doc.split('/').pop().length > 10
+                          ? doc.split('/').pop().slice(0, 10) + '...'
+                          : doc.split('/').pop()}
+                      </a>
+                      <TiDeleteOutline
+                        size={22}
+                        className="cursor-pointer text-danger"
+                        // onClick={() => handleRemoveDocument(index)}
+                        onClick={() => handleRemoveDocument(index, "existing")}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* ✅ New Documents (just selected by user) */}
+              {documentPreview.length > 0 && (
+                <div className="d-flex flex-wrap gap-2 mt-4">
+                  {documentPreview.map((doc, index) => (
+                    <div
+                      key={`new-doc-${index}`}
+                      className="p-2 border rounded bg-white d-flex justify-content-between align-items-center"
+                      style={{ width: '48%' }}
+                    >
+                      <span
+                        className="text-truncate d-block"
+                        style={{ maxWidth: '80%' }}
+                        title={doc.name}
+                      >
+                        {doc.name.length > 10 ? doc.name.slice(0, 10) + '...' : doc.name}
+                      </span>
+                      <TiDeleteOutline
+                        size={22}
+                        className="cursor-pointer text-danger"
+                        // onClick={() => handleRemoveDocument(index)}
+                        onClick={() => handleRemoveDocument(index, "new")}
+
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Col>
+
+
 
 
           </Row>

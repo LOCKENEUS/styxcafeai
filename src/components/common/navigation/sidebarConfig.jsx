@@ -12,9 +12,10 @@ import { SlCup } from 'react-icons/sl';
     name: "",
     title: "Dashboards",
     icon: BiHomeAlt,
+    // path: "/superadmin/dashboard",
     subItems: [
-      { title: "Default", path: "/superadmin/dashboard" },
-      { title: "Alternative", path: "/superadmin/dashboard/alternative" }
+      { title: "overview ", path: "/superadmin/dashboard" },
+      // { title: "Alternative", path: "/superadmin/dashboard/alternative" }
     ]
   },
   {
@@ -23,7 +24,7 @@ import { SlCup } from 'react-icons/sl';
     icon: CiLocationOn,
     subItems: [
       { title: "Create Location", path: "/superadmin/create-location" },
-      { title: "Location Details", path: "/superadmin/location-details" }
+      // { title: "Location Details", path: "/superadmin/location-details" }
     ]
   },
   {
@@ -32,18 +33,18 @@ import { SlCup } from 'react-icons/sl';
     icon: SlCup ,
     subItems: [
       { title: "Create Cafe", path: "/superadmin/cafeList" },
-      { title: "Cafe Information", path: "/superadmin/cafe-details" },
+      // { title: "Cafe Information", path: "/superadmin/cafe-details" },
     ]
   },
-  {
-    name :"Gaming Section",
-    title: "Games",
-    icon: IoGameControllerOutline,
-    subItems: [
-      { title: "Create Games", path: "/superadmin/create-games" },
-      { title: "Game Info", path: "/superadmin/game-info" },
-    ]
-  },
+  // {
+  //   name :"Gaming Section",
+  //   title: "Games",
+  //   icon: IoGameControllerOutline,
+  //   subItems: [
+  //     { title: "Create Games", path: "/superadmin/create-games" },
+  //     { title: "Game Info", path: "/superadmin/game-info" },
+  //   ]
+  // },
   {
     name :"subscription Section",
     title: "Subscription",

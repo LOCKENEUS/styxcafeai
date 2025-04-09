@@ -11,7 +11,7 @@ import {
 } from "../../../../store/slices/gameSlice";
 import GameDetails from "./GameDetails";
 import GameForm from "./GameForm";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import Add from "/assets/superAdmin/cafe/formkit_addWhite.png";
 
 const CafeGames = () => {
@@ -22,7 +22,7 @@ const CafeGames = () => {
   console.log("your cafe id game ",cafeId);
   const baseURL = import.meta.env.VITE_API_URL;
 
-  console.log("your cafe id game ",cafeId);
+  console.log("your cafe id game -- ",cafeId);
 
 
   const dispatch = useDispatch();
@@ -77,7 +77,12 @@ const CafeGames = () => {
     dispatch(setSelectedGame(null));
     dispatch(getGames(cafeId));
   };
-  
+  const navigate = useNavigate();
+  const handleOpenGameDetails = (gameId) => {
+    console.log("your game id", gameId);
+    navigate("/superadmin/Games/cafeGames", { state: { cafeId: gameId } });
+
+  };
   return (
     <Container fluid>
       <Row className="my-5">
@@ -92,7 +97,7 @@ const CafeGames = () => {
               <Breadcrumb.Item active style={{ fontSize: "16px", fontWeight: "500" }} > All Games </Breadcrumb.Item>
             </Breadcrumb>
 
-            {!selectedGame && (
+     
               <Button variant="primary" className="rounded-3" onClick={() => {
                 dispatch(setSelectedGame(null));
                 setFormData(null);
@@ -101,11 +106,11 @@ const CafeGames = () => {
                 <Image src={Add} alt="CafeCall" className="mx-1   " style={{ objectFit: "cover", width: "26.25px", height: "26.25px" }} />
                 Create  Game
               </Button>
-            )}
+            
           </div>
         </Card.Header>
 
-        {!selectedGame ? (
+       
           <Col sm={12} className="my-3">
             <Row className="g-3"> {/* Use Row for grid layout */}
               {gamesDetails?.games.length > 0 ? (
@@ -113,7 +118,9 @@ const CafeGames = () => {
                   <Col xs={12} sm={6} md={4} lg={3} key={index}> {/* 4 cards per row on large screens */}
                     <Card
                       className="game-card mx-2 rounded-4 shadow-sm shadow-lg p-2 flex-grow-1 h-100"
-                      onClick={() => dispatch(getGameById(game._id))}
+                    
+                      onClick={() => handleOpenGameDetails(game._id)}
+
                       style={{ cursor: "pointer"}}
 
                     >
@@ -184,15 +191,7 @@ const CafeGames = () => {
               )}
             </Row>
           </Col>
-        ) : (
-          <GameDetails
-            game={selectedGame.data}
-            gameId={selectedGame.data?._id}
-            onClose={() => dispatch(setSelectedGame(null))}
-            onEdit={() => handleEdit()}
-            cafeId={cafeId}
-          />
-        )}
+        
         <GameForm
           showCanvas={showCanvas}
           handleCloseCanvas={handleCloseCanvas}

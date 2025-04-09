@@ -108,6 +108,7 @@ import ParchaseBCreate from "../pages/Admin/Inventory/modal/ParchaseBCreate";
 import CafeManager from "../pages/SuperAdmin/cafe/CefeList";
 import CafeGames from "../pages/SuperAdmin/cafe/Games/CafeGames";
 import CreateMembership from "../pages/SuperAdmin/cafe/membership/CreateMembership";
+import GameDetailsCafe from "../pages/SuperAdmin/cafe/Games/GameDetails";
 
 
 
@@ -142,6 +143,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/superadmin/location-details" element={<LocationDetails locations={locations} />} />
           <Route path="/superadmin/cafeList" element={<CafeManager />} />
           <Route path="/superadmin/cafe-details" element={<CafeDetails />} />
+          <Route path="/superadmin/Games/cafeGames" element={<GameDetailsCafe />} />
           <Route path="/superadmin/create-games" element={<CreateGames />} />
           <Route path="/superadmin/games/create" element={<GameManager />} />
           <Route path="/superadmin/cafe/viewdetails/:cafeId" element={<ViewDetails />} />
