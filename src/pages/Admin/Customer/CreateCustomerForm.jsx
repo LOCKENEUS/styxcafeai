@@ -181,6 +181,10 @@ const CreateCustomerForm = () => {
             additionalNotes: customerData.additional_notes || '',
             customerProfile: null,
             existingImage: customerData.customerProfile || '',
+            creditEligibility: customerData.creditEligibility || '',
+            creditAmount : customerData.creditAmount || 0,
+            creditLimit : customerData.creditLimit || 0,
+            
             cafe: cafeId,
           });
         } catch (error) {

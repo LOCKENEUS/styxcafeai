@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Button, Table } from "react-bootstrap";
+import { Button, Table, Pagination, FormControl, InputGroup } from "react-bootstrap";
 import { IoAdd } from "react-icons/io5";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getUsers, deleteUser } from "../../../store/AdminSlice/UserSlice";
 import Loader from "../../../components/common/Loader/Loader";
 import { useNavigate } from "react-router-dom";
+import { BiSearch } from "react-icons/bi";
 
 const UserList = () => {
   const dispatch = useDispatch();
@@ -14,11 +15,18 @@ const UserList = () => {
   const [activeDropdownId, setActiveDropdownId] = useState(null);
   const editDropdownRef = useRef(null);
   const navigate = useNavigate();
+  
+  // Pagination state
+  const [activePage, setActivePage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Search state
+  const [searchTerm, setSearchTerm] = useState("");
+
   useEffect(() => {
     const user = JSON.parse(sessionStorage.getItem('user'));
     const cafeId = user?._id;
 
- 
     if (cafeId) {
       dispatch(getUsers(cafeId));
     }
@@ -43,6 +51,22 @@ const UserList = () => {
     };
   }, [editDropdownRef]);
 
+  // Pagination handling
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setActivePage(page);
+    }
+  };
+
+  
+  // Filter users based on search term
+  const filteredUsers = users.filter(user => 
+    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.contact_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+    const totalPages = Math.ceil(filteredUsers.length / itemsPerPage); // Calculate total pages based on filtered users
+
   if (loading) {
     return <Loader />;
   }
@@ -63,6 +87,20 @@ const UserList = () => {
         >
           User List
         </h4>
+
+          {/* Search Input */}
+          <InputGroup className="mb-3 w-50">
+          <div className="d-flex px-2 bg-white align-items-center">
+          <BiSearch size={20}/>
+          </div>
+        <FormControl
+        className="border-none "
+          placeholder="Search by Name, Contact, or Email"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </InputGroup>
+
         <Link to="/admin/users/create-user">
           <IoAdd
             style={{
@@ -78,32 +116,20 @@ const UserList = () => {
         </Link>
       </div>
 
-      {users.length === 0 ? (
+
+
+      {filteredUsers.length === 0 ? (
         <div style={{ overflowX: 'auto', width: '100%' }}>
-          <Table data-aos="fade-right" ata-aos-duration="1000"  striped bordered hover style={{ minWidth: '600px' }}>
+          <Table data-aos="fade-right" ata-aos-duration="1000" striped  hover style={{ minWidth: '600px' }}>
             <thead style={{ backgroundColor: '#0062FF0D' }}>
               <tr>
-                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  S/N
-                </th>
-                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  Name
-                </th>
-                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  Contact
-                </th>
-                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  Email
-                </th>
-                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  Department
-                </th>
-                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  Role
-                </th>
-                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  Actions
-                </th>
+                <th>S/N</th>
+                <th>Name</th>
+                <th>Contact</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Role</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -117,121 +143,70 @@ const UserList = () => {
         </div>
       ) : (
         <div style={{ overflowX: 'auto', width: '100%' }}>
-          <Table striped bordered hover style={{ minWidth: '600px' }}>
+          <Table striped  hover style={{ minWidth: '600px' }}>
             <thead style={{ backgroundColor: '#0062FF0D' }}>
               <tr>
-                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  S/N
-                </th>
-                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  Name
-                </th>
-                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  Contact
-                </th>
-                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  Email
-                </th>
-                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  Department
-                </th>
-                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  Role
-                </th>
-                <th style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                  Actions
-                </th>
+                <th>S/N</th>
+                <th>Name</th>
+                <th>Contact</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Role</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {users.map((user,index) => (
-                <tr key={user._id}>
-                  <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                    {index + 1}
-                  </td>
-                  <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', 
-                  color: 'blue',
-                  fontSize: 'clamp(14px, 3vw, 16px)' }} 
-                  onClick={() => navigate(`/admin/users/user-details/${user._id}`)}
-                  >
-                    {user.name}
-                  </td>
-                  <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                    {user.contact_no}
-                  </td>
-                  <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                    {user.email}
-                  </td>
-                  <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                    {user.department}
-                  </td>
-                  <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)' }}>
-                    {user.role}
-                  </td>
-                  <td style={{ padding: 'clamp(10px, 2vw, 15px)', border: 'none', fontSize: 'clamp(14px, 3vw, 16px)', position: 'relative' }}>
-                    <Button
-                      variant="link"
-                      className="text-primary"
-                      onClick={() => setActiveDropdownId(activeDropdownId === user._id ? null : user._id)}
-                    >
-                      <FaEdit style={{ color: '#0062FF', fontSize: '1.2rem' }} />
-                    </Button>
-
-                    {activeDropdownId === user._id && (
-                      <div
-                        ref={editDropdownRef}
-                        style={{
-                          position: 'absolute',
-                          right: '0',
-                          top: '100%',
-                          backgroundColor: 'white',
-                          boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-                          borderRadius: '4px',
-                          zIndex: 1000,
-                          minWidth: 'clamp(120px, 30vw, 150px)',
-                        }}
+              {filteredUsers
+                .slice((activePage - 1) * itemsPerPage, activePage * itemsPerPage) // Pagination logic
+                .map((user, index) => (
+                  <tr key={user._id}>
+                    <td>{(activePage - 1) * itemsPerPage + index + 1}</td>
+                    <td style={{ color: 'blue' }} onClick={() => navigate(`/admin/users/user-details/${user._id}`)}>
+                      {user.name}
+                    </td>
+                    <td>{user.contact_no}</td>
+                    <td>{user.email}</td>
+                    <td>{user.department}</td>
+                    <td>{user.role}</td>
+                    <td>
+                      <Button
+                        variant="link"
+                        className="text-primary"
+                        onClick={() => handleDeleteUser(user._id)}
                       >
-                        <Link 
-                          to={`/admin/users/create-user/${user._id}`}
-                          style={{ textDecoration: 'none' }}
-                        >
-                          <div
-                            style={{
-                              padding: 'clamp(8px, 2vw, 10px)',
-                              cursor: 'pointer',
-                              color: '#0062FF',
-                              borderBottom: '1px solid #eee',
-                            }}
-                          >
-                            Edit User
-                          </div>
-                        </Link>
-                        <div
-                          style={{
-                            padding: 'clamp(8px, 2vw, 10px)',
-                            cursor: 'pointer',
-                            color: '#FF0000',
-                          }}
-                          onClick={() => handleDeleteUser(user._id)}
-                        >
-                          Delete User
-                        </div>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                        <FaTrash style={{ color: 'red', fontSize: '1.2rem' }} />
+                      </Button>
+
+                     
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </Table>
         </div>
       )}
+
+      {/* Add pagination */}
+      <div className="d-flex justify-content-center mt-3 mb-3">
+        <div className="pagination-wrapper">
+          <Pagination size={window.innerWidth < 768 ? "sm" : ""}>
+            <Pagination.Prev onClick={() => handlePageChange(activePage - 1)} disabled={activePage === 1} />
+            {[...Array(totalPages)].map((_, index) => (
+              <Pagination.Item key={index + 1} active={index + 1 === activePage} onClick={() => handlePageChange(index + 1)}>
+                {index + 1}
+              </Pagination.Item>
+            ))}
+            <Pagination.Next onClick={() => handlePageChange(activePage + 1)} disabled={activePage === totalPages} />
+          </Pagination>
+        </div>
+      </div>
 
       <style jsx>{`
         @media (max-width: 768px) {
           .container {
             padding: 0 0.5rem;
           }
-    
+
           h4 {
             margin-bottom: 1rem;
           }

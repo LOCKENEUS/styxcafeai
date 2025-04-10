@@ -42,7 +42,7 @@ export const getCustomerById = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(`${BASE_URL}/admin/customer/${id}`);
-      return response.data.data;
+      return response.data;
     } catch (error) {
       toast.error('Error fetching customer by ID: ' + (error.response?.data?.message || 'Something went wrong'));
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
