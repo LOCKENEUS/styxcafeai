@@ -21,7 +21,6 @@ export const getslots = createAsyncThunk(
   }
 );
 
-
 // 24 hour format time
 export const getslots24 = createAsyncThunk(
   "slots/getslots24",
@@ -47,6 +46,23 @@ export const addslot = createAsyncThunk(
       const response = await axios.post(
         `${BASE_URL}/superadmin/slot`,
         slotData
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Something went wrong"
+      );
+    }
+  }
+);
+
+// Async thunk to copy slots
+export const copySlots = createAsyncThunk(
+  "slots/copySlots",
+  async ({ game_id, day }, thunkAPI) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/superadmin/slot/copy/${game_id}/${day}`
       );
       return response.data;
     } catch (error) {
@@ -164,9 +180,26 @@ const slotslice = createSlice({
       .addCase(addslot.fulfilled, (state, action) => {
         state.loading = false;
         state.slots.push(action.payload.data);
+        // refetchSlots(); // Refetch slots after adding
         toast.success("Slot added successfully");
       })
       .addCase(addslot.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        toast.error(action.payload.message || "Failed to add slot");
+      })
+
+      // Copy slots
+      .addCase(copySlots.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(copySlots.fulfilled, (state, action) => {
+        state.loading = false;
+        state.slots.push(action.payload.data);
+        toast.success("Slots copied successfully");
+      })
+      .addCase(copySlots.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         toast.error(action.payload.message || "Failed to add slot");

@@ -11,10 +11,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { getGameById } from "../../../store/slices/gameSlice";
 import CreateSlotModal from "./Modal/CreateSlotModal";
 import { TbMoodSad } from "react-icons/tb";
-import { deleteslot, getslots } from "../../../store/slices/slotsSlice";
+import { copySlots, deleteslot, getslots } from "../../../store/slices/slotsSlice";
 import { FaEdit } from "react-icons/fa";
-import { MdOutlineArrowOutward } from "react-icons/md";
 import { BiPen, BiPencil } from "react-icons/bi";
+import { AiOutlineClose } from "react-icons/ai";
 
 const GameDetails = () => {
     const { id } = useParams();
@@ -44,7 +44,7 @@ const GameDetails = () => {
         if (gameId) {
             dispatch(getslots(gameId));
         }
-    }, [gameId, dispatch]);
+    }, [gameId]);
 
     useEffect(() => {
         if (slots.length) {
@@ -56,6 +56,12 @@ const GameDetails = () => {
         }
     }, [slots]);
 
+    const refetchSlots = () => {
+        if (gameId) {
+            dispatch(getslots(gameId));
+        }
+    };
+
     const handleToggleStatus = (slot) => {
         const newStatus = !slotStatus[slot._id];
 
@@ -64,9 +70,8 @@ const GameDetails = () => {
             [slot._id]: newStatus
         }));
 
-        dispatch(deleteslot(slot._id)).then(() => {
-            dispatch(getslots(gameId));
-        });
+        dispatch(deleteslot(slot._id))
+        refetchSlots();
     };
 
     const generateWeekdays = () => {
@@ -78,6 +83,12 @@ const GameDetails = () => {
     const handleEditSlot = (slot) => {
         setSlotToEdit(slot);
         setShowSlotModal(true);
+    };
+
+    const handleCopySlots = async (day) => {
+        console.log("Copying slots for day:", day);
+        await dispatch(copySlots({ game_id: gameId, day }));
+        refetchSlots();
     };
 
     const filteredSlots = slots.filter(slot => slot.day === weekdays[activeDate.getDay()]);
@@ -133,7 +144,7 @@ const GameDetails = () => {
                                 cursor: "pointer",
                             }}
                         >
-                          <BiPencil  color="blue" />
+                            <BiPencil color="blue" />
                         </div>
                     </Col>
                     <Col
@@ -260,12 +271,17 @@ const GameDetails = () => {
                         <p style={{ fontSize: "1rem", color: "gray", fontWeight: "bold" }}>
                             Sorry! No Slots Available for Today
                         </p>
-                        <button onClick={() => setActiveDate(new Date(2025, 1, 17))} style={{ backgroundColor: "white", padding: "10px 20px", borderRadius: "10px", border: "2px solid blue", color: "blue" }}>
-                            Book For 17 Mon
-                        </button>
                     </div>
                 ) : (
                     <div className="booking-slots mt-5 p-3">
+                        <Button
+                            variant="primary"
+                            style={{ width: "128px", height: "37px" }}
+                            onClick={() => handleCopySlots(weekdays[activeDate.getDay()])} // Pass the active day
+                            className="mb-3"
+                        >
+                            Copy Slots
+                        </Button>
                         {/* {slots.map((slot, index) => ( */}
                         {filteredSlots.map((slot, index) => (
                             <div key={index} className="slot-row mb-2 border border-2 px-4 py-2">
@@ -321,6 +337,7 @@ const GameDetails = () => {
                     handleClose={() => setShowSlotModal(false)}
                     selectedGame={selectedGame}
                     slot={slotToEdit}
+                    refetchSlots={refetchSlots} // pass this down
                 />
             )}
         </div>

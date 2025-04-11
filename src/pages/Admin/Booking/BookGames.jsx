@@ -118,7 +118,7 @@ const BookGames = () => {
                     <Card.Title>{game.name}</Card.Title>
                     <Card.Text>
                       <small className="text-success">
-                        ● {game.type} ({game.size} players)
+                        ● {game.type} ({game.players} players) {game?.payLater && <span className="text-warning">Pay Later</span>}
                       </small>
                     </Card.Text>
                     <div className="d-flex justify-content-between align-items-center">
@@ -126,7 +126,7 @@ const BookGames = () => {
                         className="text-primary fw-bold px-3 py-2 rounded-pill"
                         style={{ backgroundColor: '#FAFAF4' }}
                       >
-                        ₹{game.price}/Person
+                        ₹{game.price}/Hour
                       </span>
                       <button
                         className="btn btn-primary rounded-circle"

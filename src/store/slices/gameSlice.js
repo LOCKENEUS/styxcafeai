@@ -48,7 +48,6 @@ export const addGame = createAsyncThunk(
           },
         }
       );
-      toast.success("Game added successfully!");
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(

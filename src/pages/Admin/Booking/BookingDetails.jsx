@@ -5,11 +5,10 @@ import {
   Col,
   Form,
   InputGroup,
-  Tab,
-  Nav,
   Button,
   Dropdown,
   ListGroup,
+  Card,
 } from "react-bootstrap";
 import { addCustomer, getCustomers, searchCustomers } from "../../../store/AdminSlice/CustomerSlice";
 import profile_pic from "/assets/profile/user_avatar.jpg";
@@ -20,17 +19,26 @@ import { getGameById } from "../../../store/slices/gameSlice";
 import { getSlotDetails } from "../../../store/slices/slotsSlice";
 import { addBooking, deleteBooking } from "../../../store/AdminSlice/BookingSlice";
 import ClientModel from "./Model/ClientModel";
-import { IoAdd } from "react-icons/io5";
-import { FaDeleteLeft } from "react-icons/fa6";
+import { FaDeleteLeft, FaRupeeSign } from "react-icons/fa6";
+import { getItems } from "../../../store/AdminSlice/Inventory/ItemsSlice";
+import { getTaxFields } from "../../../store/AdminSlice/TextFieldSlice";
+import { AiOutlineClose } from "react-icons/ai";
+import Select from "react-select";
 
 const BookingDetails = () => {
   const { customers, loading, error } = useSelector((state) => state.customers);
   const { selectedGame, status: gameStatus, error: gameError } = useSelector((state) => state.games);
-  const { slot, loading: slotLoading, error: slotError } = useSelector((state) => state.slots);
+  const { taxFields } = useSelector((state) => state.taxFieldSlice);
 
+  const { slot, loading: slotLoading, error: slotError } = useSelector((state) => state.slots);
+  const { items } = useSelector((state) => state.items);
+
+  const [selectedIds, setSelectedIds] = useState([]);
   const [searchedCustomers, setSearchedCustomers] = useState([]);
+  const [addOnTotal, setAddOnTotal] = useState(0);
   const [priceToPay, setPriceToPay] = useState(0);
   const [adjustment, setAdjustment] = useState("");
+  const [options, setOptions] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCustTerm, setSearchCustTerm] = useState([]);
@@ -45,6 +53,8 @@ const BookingDetails = () => {
   const [activeTab, setActiveTab] = useState("checkout");
   const [showClientModal, setShowClientModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Payment Options");
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedValue, setSelectedValue] = useState("");
 
   const backend_url = import.meta.env.VITE_API_URL;
   const dispatch = useDispatch();
@@ -66,6 +76,17 @@ const BookingDetails = () => {
   }).replace(",", "");
 
   useEffect(() => {
+    if (items.length > 0) {
+      setOptions(items.map((item) => ({ value: item._id, label: item.name })));
+    }
+  }, [items]);
+
+  useEffect(() => {
+    dispatch(getItems(cafeId));
+    dispatch(getTaxFields(cafeId));
+  }, [dispatch]);
+
+  useEffect(() => {
     if (cafeId) {
       dispatch(getCustomers(cafeId));
     }
@@ -80,24 +101,85 @@ const BookingDetails = () => {
     }
     if (gameId && slotId) {
       if (slot?.price) {
-        setPayableAmount(slot?.price)
-        setPriceToPay(slot?.price)
+        if(addOnTotal > 0) {
+          setPayableAmount(slot?.price + addOnTotal)
+          setPriceToPay(slot?.price + addOnTotal)
+        }else{
+          setPayableAmount(slot?.price)
+          setPriceToPay(slot?.price)
+        }
+
       } else {
-        setPayableAmount(selectedGame?.data?.price)
-        setPriceToPay(selectedGame?.data?.price)
+        if(addOnTotal > 0) {
+          setPayableAmount(selectedGame?.data?.price + addOnTotal)
+          setPriceToPay(selectedGame?.data?.price + addOnTotal)
+        }else{
+          setPayableAmount(selectedGame?.data?.price)
+          setPriceToPay(selectedGame?.data?.price)
+        }
       }
     }
-  }, [dispatch, gameId, slotId]);
+  }, [dispatch, gameId, slotId, addOnTotal]);
 
-  console.log("payableAmount", payableAmount);
+  useEffect(() => {
+    if (selectedItems.length > 0) {
+      let total = 0;
+      selectedItems.map((item) => {
+        total += item.total;
+      })
+      setAddOnTotal(total)
+    }
+  }, [selectedItems]);
+
+  const handleChange = (selectedOption) => {
+    let id = selectedOption.value;
+    if (!id || selectedIds.includes(id)) return;
+
+    setSelectedValue("");
+
+    const selected = items.find(item => item._id === id);
+    if (selected) {
+      setSelectedItems([...selectedItems, {
+        id: selected._id,
+        item: selected.name,
+        price: selected.sellingPrice,
+        quantity: 1,
+        tax: selected.tax || null,
+        total: selected.sellingPrice,
+        totalTax: 0
+      }]);
+      setSelectedIds([...selectedIds, selected._id]);
+    }
+  };
+
+  const updateProduct = (id, field, value) => {
+    const updatedItems = selectedItems.map((product) => {
+      if (product.id === id) {
+        const updatedQuantity = field === "quantity" ? parseInt(value.replace(/\D/g, ""), 10) || 0 : product.quantity; // Ensure only numeric input
+        const taxRate = product.tax?.tax_rate || 0;
+        const totalTax = Math.round((taxRate * product.price * updatedQuantity) / 100);
+        const total = product.price * updatedQuantity + totalTax;
+
+        return {
+          ...product,
+          [field]: updatedQuantity,
+          total,
+          totalTax,
+        };
+      }
+      return product;
+    });
+
+    setSelectedItems(updatedItems);
+  };
 
   const handleAddPlayer = async () => {
     const submittedData = new FormData();
     submittedData.append("cafe", cafeId);
     submittedData.append("name", newPlayer.name);
     submittedData.append("contact_no", newPlayer.contact_no);
-    submittedData.append("creditEligibility", "Yes");
-    submittedData.append("creditLimit", payableAmount);
+    submittedData.append("creditEligibility", "No");
+    submittedData.append("creditLimit", 0);
 
     const response = await dispatch(addCustomer(submittedData))
 
@@ -114,7 +196,7 @@ const BookingDetails = () => {
     }
   };
 
- const handleRemovePlayer = (playerId) => {
+  const handleRemovePlayer = (playerId) => {
     const updatedTeamMembers = teamMembers.filter(player => player.id !== playerId);
     setTeamMembers(updatedTeamMembers);
   };
@@ -134,43 +216,80 @@ const BookingDetails = () => {
     } else if (eventKey === "Offline") {
       handleCollectOffline()
     } else if (eventKey === "On Credit") {
+      if (selectedGame?.data?.type === "Single") {
+        if (selectedCustomer?.creditEligibility === "No") {
+          alert("Customer is not eligible for credit")
+          return
+        } else if (selectedCustomer?.creditLimit - selectedCustomer?.creditAmount < priceToPay) {
+          alert("Credit Limit Exceeded")
+          return
+        }
+      }
       setShowOnCredit(true);
       setCreditAmount(priceToPay);
     }
   };
 
   useEffect(() => {
-    if (creditAmount) {
-      setPayableAmount(priceToPay - creditAmount)
-    }
-  })
-
-  useEffect(() => {
     if (creditAmount > 0 && selectedCustomer) {
-      if (teamMembers.length > 0) {
-        // Case with team members
-        const totalPlayers = teamMembers.length + 1; // Including the customer
-        const splitAmount = Math.floor(creditAmount / totalPlayers); // Rounded value
-
-        const updatedCredits = teamMembers.map((player) => ({
-          id: player.id,
-          credit: splitAmount,
-        }));
-
-        // Include the customer
-        updatedCredits.push({
+      const allParticipants = [
+        ...teamMembers,
+        {
+          ...selectedCustomer,
           id: selectedCustomer._id,
-          credit: splitAmount,
-        });
+          isCustomer: true,
+        },
+      ];
 
-        setPlayerCredits(updatedCredits);
-      } else {
-        // Case with only selected customer (no team members)
-        setPlayerCredits([{
-          id: selectedCustomer._id,
-          credit: creditAmount // Full amount to customer
-        }]);
+      const customerRemainingLimit =
+        selectedCustomer.creditLimit - (selectedCustomer.creditAmount || 0);
+
+      let customerCredit = 0;
+      if (
+        selectedCustomer.creditEligibility === "Yes" &&
+        customerRemainingLimit > 0
+      ) {
+        customerCredit = Math.min(creditAmount, customerRemainingLimit);
       }
+
+      let remainingCredit = creditAmount - customerCredit;
+
+      // Filter eligible team members (excluding customer)
+      const eligibleTeamMembers = teamMembers.filter((member) => {
+        const remainingLimit = member.creditLimit - (member.creditAmount || 0);
+        return member.creditEligibility === "Yes" && remainingLimit > 0;
+      });
+
+      let totalAssignedToTeam = 0;
+      const teamCredits = eligibleTeamMembers.map((member) => {
+        const remainingLimit = member.creditLimit - (member.creditAmount || 0);
+        const splitAmount = Math.floor(remainingCredit / eligibleTeamMembers.length);
+        const creditToAssign = Math.min(splitAmount, remainingLimit);
+        totalAssignedToTeam += creditToAssign;
+        return {
+          id: member.id,
+          credit: creditToAssign,
+        };
+      });
+
+      const allCredits = [];
+
+      // Assign credit to selected customer first
+      if (customerCredit > 0) {
+        allCredits.push({
+          id: selectedCustomer._id,
+          credit: customerCredit,
+        });
+      }
+
+      // Add team credits
+      allCredits.push(...teamCredits);
+
+      setPlayerCredits(allCredits);
+
+      const totalAssignedCredit = customerCredit + totalAssignedToTeam;
+      const remainingPayable = priceToPay - totalAssignedCredit;
+      setPayableAmount(remainingPayable);
     }
   }, [creditAmount, teamMembers, selectedCustomer]);
 
@@ -191,15 +310,16 @@ const BookingDetails = () => {
         mode: "Offline",
         status: "Pending",
         total: priceToPay,
-        paid_amount:payableAmount,
+        paid_amount: payableAmount,
         slot_date: newdate,
         players: teamMembers,
-        playerCredits: playerCredits
+        playerCredits: playerCredits,
+        items: selectedItems
       };
-      if(showOnCredit){
+      if (showOnCredit) {
         let limit = selectedCustomer?.creditLimit - selectedCustomer?.creditAmount
-        
-        if(payableAmount > limit){
+
+        if (payableAmount > limit) {
           alert("Credit Limit Exceeded")
           return
         }
@@ -256,25 +376,56 @@ const BookingDetails = () => {
     isAlreadyAdded = selectedCustomer.contact_no === customer.contact_no
 
     if (!isAlreadyAdded) {
-      setTeamMembers([...teamMembers, { id: customer._id, name: customer.name, contact_no: customer.contact_no }]);
+      setTeamMembers([...teamMembers,
+      {
+        id: customer._id,
+        name: customer.name,
+        contact_no: customer.contact_no,
+        creditEligibility: customer.creditEligibility,
+        creditLimit: customer.creditLimit,
+        creditAmount: customer.creditAmount,
+      }]);
     } else {
       alert("Customer is already added!");
     }
   };
 
   const handlePayableAmountChange = (e) => {
-    const newPayableAmount = Math.round(parseFloat(e.target.value) || 0);
-    const difference = Math.round(priceToPay - newPayableAmount + adjustment);
+    const inputValue = parseFloat(e.target.value);
+
+    const newPayableAmount = Math.max(0, Math.min(priceToPay, inputValue || 0));
+    const newCreditAmount = priceToPay - newPayableAmount;
+
     setPayableAmount(newPayableAmount);
-    setCreditAmount(difference);
+    setCreditAmount(newCreditAmount);
   };
 
   const handleCreditChange = (id, newCredit) => {
-    setPlayerCredits((prevCredits) =>
-      prevCredits.map((player) =>
-        player.id === id ? { ...player, credit: Math.round(newCredit) } : player
-      )
-    );
+    const updatedCredit = Math.max(0, Math.round(parseFloat(newCredit) || 0));
+    setPlayerCredits((prevCredits) => {
+      // Combine all participants
+      const allParticipants = [
+        ...teamMembers,
+        {
+          ...selectedCustomer,
+          id: selectedCustomer._id,
+          isCustomer: true,
+        },
+      ];
+
+      // Find the matching participant
+      const member = allParticipants.find((m) => m.id === id);
+      if (!member) return prevCredits;
+
+      // Clamp the credit to their remaining credit limit
+      const remainingLimit = member.creditLimit - (member.creditAmount || 0);
+      const clampedCredit = Math.min(updatedCredit, remainingLimit);
+
+      // Update only this player's credit in the array
+      return prevCredits.map((player) =>
+        player.id === id ? { ...player, credit: clampedCredit } : player
+      );
+    });
   };
 
   const handleOnlinePayment = async () => {
@@ -296,13 +447,13 @@ const BookingDetails = () => {
           teamMembers: [],
         }),
       });
-  
+
       const data = await response.json();
       if (!data.success || !data.order) {
         console.error("Failed to create Razorpay order");
         return;
       }
-  
+
       // Step 2: Set up Razorpay Payment Options
       const options = {
         key: import.meta.env.VITE_RAZOR_LIVE_KEY,
@@ -322,14 +473,15 @@ const BookingDetails = () => {
               mode: "Online",
               status: "Paid",
               total: priceToPay,
-              paid_amount:payableAmount,
-              playerCredits:playerCredits,
+              paid_amount: payableAmount,
+              playerCredits: playerCredits,
               slot_date: newdate,
               players: teamMembers,
+              items: selectedItems
             };
-  
+
             const result = await dispatch(addBooking(bookingData)).unwrap();
-  
+
             // Step 4: Verify Payment
             const verifyResponse = await fetch(`${backend_url}/admin/booking/verify-payment`, {
               method: "POST",
@@ -345,7 +497,7 @@ const BookingDetails = () => {
                 amount: data.order.amount,
               }),
             });
-  
+
             const verifyData = await verifyResponse.json();
             if (verifyData.success) {
               alert("Payment Successful and Booking Confirmed!");
@@ -374,7 +526,7 @@ const BookingDetails = () => {
           },
         },
       };
-  
+
       // Step 5: Open Razorpay Payment Modal
       const razorpay = new window.Razorpay(options);
       razorpay.open();
@@ -382,7 +534,7 @@ const BookingDetails = () => {
       console.error("Payment error:", error);
     }
   };
-  
+
   return (
     <Container fluid className="p-4 ">
       <h6 className="mb-3 text-muted">
@@ -436,35 +588,36 @@ const BookingDetails = () => {
             handleClose={() => setShowClientModal(false)}
           />
 
-          <div className="bg-white rounded-3 p-3" style={{ height: "100vh" }}>
+          <div className="bg-white rounded-3 p-3" style={{ minHeight: "90vh" }}>
             <div className="customer-list">
               {!selectedCustomer ? (
-                filteredCustomers.map((customer, index) => (
-                  <div
-                    key={index}
-                    className={`d-flex align-items-center p-2 mb-2 cursor-pointer hover-bg-light rounded ${selectedCustomer === customer ? "bg-light" : ""
-                      }`}
-                    onClick={() => setSelectedCustomer(customer)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <img
-                      src={customer.customerProfile ? `${backend_url}/${customer.customerProfile}` : profile_pic}
-                      alt=""
-                      className="rounded-circle me-3"
-                      width="40"
-                      height="40"
-                    />
-                    <div>
-                      <h6 className="mb-0">{customer.name}</h6>
-                      <small className="text-muted">
-                        {customer.email || customer.phone}
-                      </small>
+                filteredCustomers.length > 0 ?
+                  filteredCustomers.map((customer, index) => (
+                    <div
+                      key={index}
+                      className={`d-flex align-items-center p-2 mb-2 cursor-pointer hover-bg-light rounded ${selectedCustomer === customer ? "bg-light" : ""
+                        }`}
+                      onClick={() => setSelectedCustomer(customer)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <img
+                        src={customer.customerProfile ? `${backend_url}/${customer.customerProfile}` : profile_pic}
+                        alt=""
+                        className="rounded-circle me-3"
+                        width="40"
+                        height="40"
+                      />
+                      <div>
+                        <h6 className="mb-0">{customer.name}</h6>
+                        <small className="text-muted">
+                          {customer.email || customer.phone}
+                        </small>
+                      </div>
                     </div>
-                  </div>
-                ))
+                  )) : <div className="text-center mt-4">No customers found</div>
               ) : (
                 <>
-                  <div className="d-flex align-items-center p-2 mb-2 rounded bg-light">
+                  <div className="d-flex align-items-center p-2 mb-2 rounded" style={{ background: "#F4F4F4" }}>
                     <img
                       src={
                         selectedCustomer.customerProfile
@@ -522,7 +675,7 @@ const BookingDetails = () => {
                   ) : (
                     selectedGame?.data?.type === "Multiplayer" ? <Button
                       variant="outline-primary"
-                      className="d-flex w-100 align-items-center justify-content-center p-3 border-dashed"
+                      className="d-flex w-100 align-items-center justify-content-center p-1 border-dashed"
                       style={{
                         border: "2px dashed #007bff",
                         borderRadius: "10px",
@@ -540,10 +693,10 @@ const BookingDetails = () => {
 
                   {teamMembers.length > 0 && (
                     <div className="mt-3 mx-2">
-                      <h5 className="fw-bold">No of Candidates  ({teamMembers.length+1})</h5>
+                      <h5 className="fw-bold">No of Candidates  ({teamMembers.length + 1})</h5>
                       {teamMembers.map((player, index) => (
                         <p key={index} className="mt-4">
-                          {player.name} - {player.contact_no} <><FaDeleteLeft size={20} className="text-danger" onClick={() => handleRemovePlayer(player.id)}/></>
+                          {player.name} - {player.contact_no} <><FaDeleteLeft size={20} className="text-danger" onClick={() => handleRemovePlayer(player.id)} /></>
                         </p>
                       ))}
                     </div>
@@ -555,200 +708,361 @@ const BookingDetails = () => {
         </Col>
 
         <Col md={8}>
-          <div
-            style={{ height: "315px" }}
-            className="bg-white rounded-3 p-4 mb-4 position-relative"
-          >
-            <div className="px-4">
-              <div className="d-flex justify-content-between align-items-center">
-                <div>
-                  <h3>Customer Details</h3>
-                </div>
-                <div>
-                  <div className="text-success"><span className="fw-bold float-end">Credit Limit: {selectedCustomer?.creditLimit || 0}</span></div>
-                  <div className="text-danger"><span className="fw-bold float-end">Remaining: {selectedCustomer?.creditLimit - selectedCustomer?.creditAmount || 0}</span></div>
-                </div>
-              </div>
-              {selectedCustomer ? (
-                <div className="d-flex justify-content-between align-items-center">
-                  <div className="mt-4">
-                    <div className="mb-4">
-                      <h5 className="text-muted">Customer Name</h5>
-                      <p className="text-black">{selectedCustomer.name}</p>
-                    </div>
+          <Row>
 
-                    <div className="mb-4">
-                      <h5 className="text-muted">Booked Game</h5>
-                      <p style={{ fontWeight: "bold" }} className="text-primary">
-                        {selectedGame?.data?.name} ({selectedGame?.data?.size})
-                      </p>
-                    </div>
-
-                    <div className="mb-4">
-                      <h5 className="text-muted">Day & Time</h5>
-                      <p className="">{formattedDate} - {convertTo12Hour(slot.start_time)}</p>
+            <Col md={6} className="p-1">
+              <div
+                style={{ height: "315px" }}
+                className="bg-white rounded-3 p-3 mb-4 position-relative"
+              >
+                <div className="px-3">
+                  <div className="d-flex justify-content-between mb-4 pb-2" style={{ borderBottom: "1px solid #ccc" }}>
+                    {/* <h3>Customer Details</h3> */}
+                    <div className="d-flex gap-6">
+                      <div className="text-dark">
+                        <span className="fw-bold">Credit Limit: {selectedCustomer?.creditLimit || 0}</span>
+                      </div>
+                      <div className="text-dark text-end">
+                        <span className="fw-bold">Remaining: {selectedCustomer?.creditLimit - selectedCustomer?.creditAmount || 0}</span>
+                      </div>
                     </div>
                   </div>
-                  <div className="top-4 end-4">
-                    <div className="bg-light d-flex flex-column justify-content-between align-items-center rounded-3 p-3">
-                      <h5 className=" text-black mb-1">No of Candidates</h5>
-                      <p className="text-primary  mb-0">{selectedGame?.data?.type === "Multiplayer" ? teamMembers.length + 1 : 1}</p>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-muted d-flex justify-content-center align-items-center h-100 w-100 mb-0">
-                  Select Customers
-                </p>
-              )}
-            </div>
-          </div>
 
-          <div className="bg-white rounded-3">
-            <Tab.Container activeKey={activeTab} onSelect={(key) => setActiveTab(key)}>
-              <Nav variant="tabs" className="border-0 px-4">
-                <Nav.Item>
-                  <Nav.Link eventKey="checkout" className="border-0 px-4 fs-2 text-dark">
-                    Checkout Details
-                  </Nav.Link>
-                </Nav.Item>
-              </Nav>
-              <Tab.Content className="p-4 py-2 h-100">
-                <Tab.Pane eventKey="checkout">
                   {selectedCustomer ? (
-                    <div className="px-4">
-                      <div className="mb-4">
-                        <h5 className="text-muted">Total Amount</h5>
-                        <p className="text-black">₹ {priceToPay}</p>
-                      </div>
-                      <div className="mb-4">
-                        <h5 className="text-muted">Extra Charge</h5>
-                        <p className="text-black">₹ 00.00</p>
-                      </div>
-                      <div className="mb-4">
-                        <h5 className="text-muted">GST</h5>
-                        <p className="text-black">₹ 00.00</p>
-                      </div>
-                      <div className="mb-4">
-                        <h5 className="text-muted">TOTAL</h5>
-                        <p className="text-primary" style={{ fontWeight: "bold" }}>₹ {slot.slot_price ? slot.slot_price : selectedGame?.data.price}</p>
-                      </div>
-                      <div className="mb-4">
+                    <div>
+                      <Row className="mb-3">
+                        <Col xs={4} className="text-muted">Customer Name:</Col>
+                        <Col xs={8} className="text-dark">{selectedCustomer.name}</Col>
+                      </Row>
 
-                        <Dropdown onSelect={handleSelect}>
-                          <Dropdown.Toggle variant="success" id="dropdown-basic">
-                            {selectedOption}
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu className="w-25">
-                            <Dropdown.Item eventKey="Online">Online</Dropdown.Item>
-                            <Dropdown.Item eventKey="Offline">Offline</Dropdown.Item>
-                            {selectedGame?.data?.payLater && <Dropdown.Item eventKey="Pay Later">Pay Later</Dropdown.Item>}
-                            {!selectedGame?.data?.payLater && <Dropdown.Item eventKey="On Credit">On Credit</Dropdown.Item>}
-                          </Dropdown.Menu>
-                        </Dropdown>
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="text-muted d-flex justify-content-center align-items-center h-100 w-100 mb-0">
-                      Select Customers
-                    </p>
-                  )}
-                </Tab.Pane>
-              </Tab.Content>
-            </Tab.Container>
-
-            {showOnCredit && (
-              <>
-                <Row className="p-4 py-2">
-                  <Col xs={6} className="d-flex align-items-center px-6">
-                    <p className="text-dark">Total Amount</p>
-                  </Col>
-                  <Col xs={6} className="">
-                    <span className="fw-bold text-dark">
-                      <Form.Control
-                        className="border border-1 border-dark"
-                        size="sm"
-                        type="text"
-                        placeholder="Disabled readonly input"
-                        aria-label="Disabled input example"
-                        readOnly
-                        value={priceToPay}
-                      />
-                    </span>
-                  </Col>
-                </Row>
-
-                <Row className="px-4">
-                  <Col xs={6} className="d-flex align-items-center px-6">
-                    <p className="text-dark">Payable Amount</p>
-                  </Col>
-                  <Col xs={6}>
-                    <Form.Control
-                      className="border border-1 border-dark"
-                      size="sm"
-                      type="text"
-                      value={payableAmount}
-                      onChange={handlePayableAmountChange}
-                    />
-                  </Col>
-                </Row>
-
-                <Row className="p-4 py-2">
-                  <Col xs={6} className="d-flex align-items-center px-6 py-2">
-                    <p className="text-dark">Credit Amount</p>
-                  </Col>
-                  <Col xs={6}>
-                    <Form.Control
-                      className="border border-1 border-dark"
-                      size="sm"
-                      type="text"
-                      placeholder="Input Credit Amount"
-                      readOnly
-                      value={creditAmount}
-                    />
-                  </Col>
-                </Row>
-
-                {creditAmount > 0 &&
-                  <Row className="p-4 pt-0">
-                    <h3 className="mb-3 px-4"> Credit Collection</h3>
-                    <Col md={12} xs={12} className="p-4 pt-0">
-                      <Row>
-                        <Col md={12} className="d-flex">
-                        <InputGroup className="mb-3 w-75" style={{ border: '1px solid #ccc', borderRadius: '5px' }}>
-                        <Form.Control aria-label="Text input with checkbox" value={selectedCustomer.name} readOnly />
-                        <Form.Control aria-label="Text input with checkbox" placeholder="Rs 0" value={playerCredits.find((p) => p.id === selectedCustomer._id)?.credit || 0}
-                          onChange={(e) => handleCreditChange(selectedCustomer._id, e.target.value)} />
-                      </InputGroup>
-                      {/* <IoAdd
-                        style={{
-                          fontSize: 'clamp(30px, 8vw, 40px)',
-                          cursor: 'pointer',
-                          backgroundColor: 'white',
-                          color: 'blue',
-                          border: '2px solid blue',
-                          borderRadius: '50%',
-                          padding: '0.2rem',
-                        }}
-                      /> */}
+                      <Row className="mb-3">
+                        <Col xs={4} className="text-muted">Booked Game:</Col>
+                        <Col xs={8}>
+                          <span className="text-primary fw-bold">
+                            {selectedGame?.data?.name} ({selectedGame?.data?.size})
+                          </span>
                         </Col>
                       </Row>
-                      {teamMembers.length > 0 && teamMembers.map((player, index) => (
-                          <InputGroup className="mb-3 w-75" style={{ border: '1px solid #ccc', borderRadius: '5px' }}>
-                          <Form.Control aria-label="Text input with checkbox" value={player.name} readOnly />
-                          <Form.Control aria-label="Text input with checkbox" placeholder="Rs 0" value={playerCredits.find((p) => p.id === player.id)?.credit || 0}
-                            onChange={(e) => handleCreditChange(player.id, e.target.value)} />
-                        </InputGroup>
-                      ))}
-                    </Col>
-                    <Col md={12} xs={12} className=" d-flex gap-4 p-4 pt-0">
-                      <Button className="w-25" onClick={handleOnlinePayment}>Online</Button>
-                      <Button className="w-25" onClick={handleCollectOffline}>Offline</Button>
-                    </Col>
-                  </Row>}
-              </>
-            )}
-          </div>
+
+                      <Row className="mb-3">
+                        <Col xs={4} className="text-muted">Day & Time:</Col>
+                        <Col xs={8} className="text-dark">
+                          {formattedDate} - {convertTo12Hour(slot.start_time)}
+                        </Col>
+                      </Row>
+
+                      <Row className="mb-3">
+                        <Col xs={4} className="text-muted">Contact:</Col>
+                        <Col xs={8} className="text-dark">
+                          {selectedCustomer.contact_no}
+                        </Col>
+                      </Row>
+
+                      <Row className="mb-3">
+                        <Col xs={4} className="text-muted">No of Candidates:</Col>
+                        <Col xs={8} className="text-dark">
+                          {selectedGame?.data?.type === "Multiplayer" ? teamMembers.length + 1 : 1}            </Col>
+                      </Row>
+                    </div>
+                  ) : (
+                    <div className="d-flex justify-content-center align-items-center h-100">
+                      <p className="text-muted mb-0">Select Customers</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Col>
+
+            {/* Add On's */}
+            <Col md={6} className="p-1">
+              <div className="bg-white rounded-3 p-0 d-flex flex-column" style={{ height: "315px" }}>
+                {/* Scrollable Content */}
+                <div
+                  style={{
+                    overflowY: "auto",
+                    flex: "1",
+                    padding: "16px",
+                    scrollbarWidth: "none",
+                    msOverflowStyle: "none", 
+                  }}
+                  className="hide-scrollbar"
+                >
+                  <Select
+                    options={options}
+                    onChange={handleChange}
+                    isSearchable
+                    placeholder="Select for add on's..."
+                    className="mb-2"
+                  />
+
+                  {selectedItems.map((product, index) => (
+                    <Card key={index} className="mb-2 shadow-sm fs-6" style={{ background: "#eeeaef", height: "20%" }}>
+                      <div
+                        style={{
+                          position: "absolute",
+                          bottom: "35px",
+                          right: "-6px",
+                          cursor: "pointer",
+                          borderRadius: "80%",
+                          padding: "3px",
+                          zIndex: 2,
+                        }}
+                        onClick={() => {
+                          const updatedProducts = selectedItems.filter((_, i) => i !== index);
+                          setSelectedItems(updatedProducts);
+                          const updatedSelectedIds = selectedIds.filter((id) => id !== product.id);
+                          setSelectedIds(updatedSelectedIds);
+                        }}
+                      >
+                        <AiOutlineClose size={12} color="red" />
+                      </div>
+                      <Card.Body className="py-2 px-3">
+                        <div className="d-flex justify-content-between align-items-start">
+                          <div style={{ flex: 1 }}>
+                            <div className="fw-semibold fs-6" 
+                            style={{
+                              maxHeight: "20px", overflowY: "auto", scrollbarWidth: "none",// Firefox
+                              msOverflowStyle: "none"
+                            }}
+                            onWheel={(e) => e.stopPropagation()}
+                            >{product.item}</div>
+                            <div className="text-muted small mb-1">₹{product.price} each</div>
+                          </div>
+
+                          <div style={{ flex: 1 }}>
+
+                            <Form.Control
+                              type="number"
+                              min="0"
+                              value={product.quantity}
+                              size="sm"
+                              style={{
+                                width: "60px",
+                                height: "28px",
+                                fontSize: "12px",
+                                marginLeft: "10px",
+                                padding: "2px 6px",
+                                border: "1px solid #ccc",
+                              }}
+                              placeholder="Qty"
+                              onChange={(e) => updateProduct(product.id, "quantity", e.target.value)}
+                            />
+                          </div>
+
+                          <div className="text-end ms-3" style={{ minWidth: "120px" }}>
+                            <div className="small">
+                              Tax ({product?.tax?.tax_rate || 0}%):{" "}
+                              <span className="fw-semibold">₹{product.totalTax}</span>
+                            </div>
+                            <div className="fw-semibold">Total: ₹{product.total}</div>
+                          </div>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  ))}
+                </div>
+
+                {/* Sticky Bottom */}
+                <div
+                  style={{
+                    padding: "8px 12px",
+                    borderTop: "1px solid #ddd",
+                    fontWeight: "600",
+                    textAlign: "right",
+                    background: "#fff",
+                    borderRadius: "0 0 10px 10px",
+                  }}
+                >
+                  <span>Total: ₹ {addOnTotal}</span>
+                </div>
+              </div>
+
+            </Col>
+          </Row>
+          <Col md={12}>
+                <div className="d-flex gap-0 rounded-2" style={{ minHeight: "50vh" }}>
+                  <div className="bg-white px-4 py-3 w-50 border-end border-2 rounded-3" style={{ minHeight: "57%" }}>
+                    {selectedCustomer ? (
+                      <>
+                        <div className="mb-5 d-flex justify-content-between">
+                          <span className="text-muted fw-semibold">Total Amount:</span>
+                          <span className="text-black">₹ {priceToPay}</span>
+                        </div>
+
+                        <div className="mb-5 d-flex justify-content-between">
+                          <span className="text-muted fw-semibold">Extra Charge:</span>
+                          <span className="text-black">₹ 00.00</span>
+                        </div>
+
+                        <div className="mb-5 d-flex justify-content-between">
+                          <span className="text-muted fw-semibold">GST:</span>
+                          <span className="text-black">₹ 00.00</span>
+                        </div>
+
+                        <div className="mb-5 d-flex justify-content-between">
+                          <span className="text-muted fw-semibold">TOTAL:</span>
+                          <span className="text-primary fw-bold">₹ {priceToPay}</span>
+                        </div>
+
+                        <div className="mb-4">
+                          <Dropdown onSelect={handleSelect}>
+                            <Dropdown.Toggle variant="success" id="dropdown-basic">
+                              {selectedOption}
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu className="w-25">
+                              <Dropdown.Item eventKey="Online">Online</Dropdown.Item>
+                              <Dropdown.Item eventKey="Offline">Offline</Dropdown.Item>
+                              {selectedGame?.data?.payLater && (
+                                <Dropdown.Item eventKey="Pay Later">Pay Later</Dropdown.Item>
+                              )}
+                              {!selectedGame?.data?.payLater && (
+                                <Dropdown.Item eventKey="On Credit">On Credit</Dropdown.Item>
+                              )}
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-muted d-flex justify-content-center align-items-center h-100 w-100 mb-0">
+                        Select Customers
+                      </p>
+                    )}
+
+                  </div>
+                  <div className="w-100 w-md-50 bg-body rounded-3 border p-3 shadow-sm">
+                    {showOnCredit && (
+                      <>
+                        {/* Total & Payable Amount */}
+                        <Row className="mb-3">
+                          <Col xs={6}>
+                            <p className="mb-1 fw-medium text-secondary">Total Amount</p>
+                          </Col>
+                          <Col xs={6}>
+                            <Form.Control
+                              size="sm"
+                              type="text"
+                              readOnly
+                              value={priceToPay}
+                              className="fw-bold border-secondary"
+                            />
+                          </Col>
+                        </Row>
+
+                        <Row className="mb-3">
+                          <Col xs={6}>
+                            <p className="mb-1 fw-medium text-secondary">Payable Amount</p>
+                          </Col>
+                          <Col xs={6}>
+                            <Form.Control
+                              size="sm"
+                              type="text"
+                              value={payableAmount}
+                              onChange={handlePayableAmountChange}
+                              className="border-secondary"
+                            />
+                          </Col>
+                        </Row>
+
+                        <Row className="mb-4">
+                          <Col xs={6}>
+                            <p className="mb-1 fw-medium text-secondary">Credit Amount</p>
+                          </Col>
+                          <Col xs={6}>
+                            <Form.Control
+                              size="sm"
+                              type="text"
+                              readOnly
+                              value={creditAmount}
+                              className="border-secondary"
+                            />
+                          </Col>
+                        </Row>
+
+                        {/* Credit Collection */}
+                        {creditAmount > 0 && (
+                          <div>
+                            <h5 className="mb-3 fw-semibold">Credit Collection</h5>
+                            <Card className="border-0">
+                              <Card.Body className="p-2">
+                                <InputGroup className="mb-2">
+                                  <Form.Control
+                                    size="sm"
+                                    value={selectedCustomer.name}
+                                    readOnly
+                                  />
+                                  <Form.Control
+                                    size="sm"
+                                    placeholder="Rs 0"
+                                    value={
+                                      playerCredits.find((p) => p.id === selectedCustomer._id)?.credit || ""
+                                    }
+                                    onChange={(e) => {
+                                      const enteredValue = parseFloat(e.target.value) || 0;
+                                      const limit = selectedCustomer.creditLimit - selectedCustomer.creditAmount;
+                                      if (enteredValue > limit) {
+                                        alert("Credit amount exceeds the limit");
+                                        return;
+                                      }
+                                      handleCreditChange(selectedCustomer._id, enteredValue);
+                                    }}
+                                  />
+                                </InputGroup>
+                                {Number(playerCredits.find((p) => p.id === selectedCustomer._id)?.credit) <= 0 && (
+                                  <div className="text-danger small">Credit amount should be greater than 0</div>
+                                )}
+                              </Card.Body>
+                            </Card>
+
+                            {teamMembers.length > 0 &&
+                              teamMembers.map((player, index) => {
+                                const credit = playerCredits.find((p) => p.id === player.id)?.credit || 0;
+                                return (
+                                  <Card key={index} className="mb-2 border-0">
+                                    <Card.Body className="p-2">
+                                      <InputGroup>
+                                        <Form.Control
+                                          size="sm"
+                                          value={player.name}
+                                          readOnly
+                                        />
+                                        <Form.Control
+                                          size="sm"
+                                          placeholder="Rs 0"
+                                          value={credit}
+                                          onChange={(e) => {
+                                            const enteredValue = parseFloat(e.target.value) || 0;
+                                            const limit = player.creditLimit - player.creditAmount;
+                                            if (enteredValue > limit) {
+                                              alert("Credit amount exceeds the limit");
+                                              return;
+                                            }
+                                            handleCreditChange(player.id, enteredValue);
+                                          }}
+                                        />
+                                      </InputGroup>
+                                      {Number(credit) <= 0 && (
+                                        <div className="text-danger small mt-1">Not eligible for credit</div>
+                                      )}
+                                    </Card.Body>
+                                  </Card>
+                                );
+                              })}
+
+                            <div className="d-flex gap-2 mt-3">
+                              <Button size="sm" variant="primary" className="w-50" onClick={handleOnlinePayment}>
+                                Online
+                              </Button>
+                              <Button size="sm" variant="outline-secondary" className="w-50" onClick={handleCollectOffline}>
+                                Offline
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+          </Col>
         </Col>
       </Row>
     </Container>

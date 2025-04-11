@@ -9,7 +9,7 @@ import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
 
 
-const CreateSlotModal = ({ show, handleClose, selectedGame, slot }) => {
+const CreateSlotModal = ({ show, handleClose, selectedGame, slot, refetchSlots }) => {
   const dispatch = useDispatch();
   const user = JSON.parse(sessionStorage.getItem("user"));
   const cafeId = user?._id;
@@ -70,8 +70,10 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot }) => {
         slot_price: "",
       });
       handleClose();
+      refetchSlots(); // Refetch slots after updating
     } else {
       dispatch(addslot(formData));
+      console.log("refetch_called");
       setFormData({
         game_id: selectedGame?.data?._id,
         day: "",
@@ -80,6 +82,7 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot }) => {
         slot_price: "",
       })
       handleClose();
+      refetchSlots(); // Refetch slots after updating
     }
   };
 

@@ -19,14 +19,12 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
   const user = JSON.parse(sessionStorage.getItem("user"));
   const backend_url = import.meta.env.VITE_API_URL
 
-  console.log("backend_url", backend_url);
-
   useEffect(() => {
-    if(user){
-      if(user.role === "superadmin"){
+    if (user) {
+      if (user.role === "superadmin") {
         setProfilePic(`assets/profile/user_avatar.jpg`);
-      }else{
-        setProfilePic(`${backend_url}/${user.cafeImage[0]}`);
+      } else {
+        setProfilePic(`${backend_url}/${user.cafeLogo}`);
       }
     }
   }, [user]);
@@ -61,6 +59,9 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
     });
   };
 
+  console.log("user", user);
+  console.log("profilePic", profilePic);
+
   return (
     <header id="header" className="navbar navbar-expand-lg  navbar-fixed navbar-height navbar-container navbar-bordered bg-white">
       <div style={{ width: "100%" }} className=" d-flex justify-content-between align-items-center">
@@ -77,19 +78,19 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
               <HiChevronDoubleLeft />
             )}
           </button>
-          <Link 
+          <Link
             ref={logoRef}
-            to="/admin/dashboard" 
-            style={{ 
-              textDecoration: "none", 
-           
-              display: "inline-block" 
+            to="/admin/dashboard"
+            style={{
+              textDecoration: "none",
+
+              display: "inline-block"
             }}
             className="nav-logo"
             onMouseMove={handleHover}
             onMouseLeave={handleHoverEnd}
           >
-        {user.cafe_name}
+            {user.cafe_name}
           </Link>
         </a>
         {/* Responsive View */}
@@ -225,7 +226,6 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                   <span className="btn-status btn-sm-status btn-status-danger"></span>
                 </button>
 
-                {/* Added Notification Dropdown for Mobile */}
                 <div className="dropdown-menu dropdown-menu-end dropdown-card navbar-dropdown-menu navbar-dropdown-menu-borderless"
                   aria-labelledby="navbarNotificationsDropdownMobile"
                   style={{ width: "300px", maxWidth: "90vw" }}>
@@ -242,7 +242,6 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                       <li className="list-group-item">
                         <span className="text-info">🔔 System Update 145</span>
                       </li>
-                      {/* ... other notification items ... */}
                     </ul>
 
                     <a className="card-footer text-center" href="#">
@@ -257,17 +256,23 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
               <div className="dropdown">
                 <a className="navbar-dropdown-account-wrapper justify-content-center align-items-center gap-4" id="accountNavbarDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" data-bs-dropdown-animation="">
                   <div className="avatar avatar-sm avatar-circle">
-                    <img className="avatar-img" src={profilePic} alt="Image Description" />
+                    <img className="avatar-img" src={profilePic} alt="Image Description" onError={(e) => {
+                      e.target.onerror = null; // prevents infinite loop if fallback also fails
+                      e.target.src = "/assets/profile/user_avatar.jpg"; // replace with your fallback path
+                    }} />
                     <span className="avatar-status avatar-sm-status avatar-status-success"></span>
                   </div>
                 </a>
 
-                {/* Added dropdown menu for mobile */}
                 <div className="dropdown-menu dropdown-menu-end navbar-dropdown-menu navbar-dropdown-menu-borderless navbar-dropdown-account" aria-labelledby="accountNavbarDropdown" style={{ width: "16rem" }}>
                   <div className="dropdown-item-text">
                     <div className="d-flex align-items-center">
                       <div className="avatar avatar-sm avatar-circle">
-                        <img className="avatar-img" src={profilePic} alt="Image Description" />
+                        {/* <img className="avatar-img" src={profilePic} alt="Image Description" /> */}
+                        <img className="avatar-img" src={profilePic} alt="Image Description" onError={(e) => {
+                      e.target.onerror = null; // prevents infinite loop if fallback also fails
+                      e.target.src = "/assets/profile/user_avatar.jpg"; // replace with your fallback path
+                    }} />
                       </div>
                       <div className="flex-grow-1 ms-3">
                         <h5 className="mb-0">{user?.name}</h5>
@@ -302,10 +307,6 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
           </ul>
         </div>
 
-        {/* Theme Toggle */}
-
-
-        {/* Notifications */}
         <div className="navbar-nav-wrap-content-end m-0">
 
           <ul className="navbar-nav" style={{ gap: "2rem" }}>
@@ -313,10 +314,10 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
             <li className="nav-item d-none d-md-block">
 
               <div className="dropdown">
-                <button type="button" className="btn btn-ghost-secondary btn-icon  rounded-circle" id="navbarNotificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" data-bs-dropdown-animation="">
+                {/* <button type="button" className="btn btn-ghost-secondary btn-icon  rounded-circle" id="navbarNotificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" data-bs-dropdown-animation="">
                   <BiBell style={{ fontSize: "1.3rem" }} />
                   <span className="btn-status btn-sm-status btn-status-danger"></span>
-                </button>
+                </button> */}
 
 
                 <div className="dropdown-menu dropdown-menu-end dropdown-card navbar-dropdown-menu navbar-dropdown-menu-borderless" aria-labelledby="navbarNotificationsDropdown" style={{ width: "25rem" }}>
@@ -395,7 +396,6 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
               </div>
 
             </li>
-            {/* Location */}
             <li className="nav-item d-none d-none d-md-block">
 
               <div className="dropdown">
@@ -407,14 +407,17 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
 
             </li>
 
-            {/* Profile */}
             <li className="nav-item d-none d-none d-md-block">
 
               <div className="dropdown">
                 <a className="navbar-dropdown-account-wrapper justify-content-center align-items-center gap-4" id="accountNavbarDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" data-bs-dropdown-animation="">
                   <p style={{ color: "#677788", fontWeight: "bold" }} className='m-0'>{user?.name}</p>
                   <div className="avatar avatar-sm avatar-circle">
-                    <img className="avatar-img" src={profilePic} alt="Image Description" />
+                    {/* <img className="avatar-img" src={profilePic} alt="Image Description" /> */}
+                    <img className="avatar-img" src={profilePic} alt="Image Description" onError={(e) => {
+                      e.target.onerror = null; // prevents infinite loop if fallback also fails
+                      e.target.src = "/assets/profile/user_avatar.jpg"; // replace with your fallback path
+                    }} />
                     <span className="avatar-status avatar-sm-status avatar-status-success"></span>
                   </div>
                 </a>
@@ -422,7 +425,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                 <div className="dropdown-menu dropdown-menu-end navbar-dropdown-menu navbar-dropdown-menu-borderless navbar-dropdown-account" aria-labelledby="accountNavbarDropdown" style={{ width: "16rem" }}>
                   <div className="dropdown-item-text">
                     <div className="d-flex align-items-center">
-       
+
                       <div className="flex-grow-1 ms-3">
                         <h5 className="mb-0">{user?.name}</h5>
                         <p className="card-text text-body">{user?.email}</p>
@@ -435,16 +438,11 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
 
 
                   <Link className="dropdown-item" to="/admin/profile">Profile &amp; account</Link>
-                  <a className="dropdown-item" href="#">Settings</a>
+                  {/* <a className="dropdown-item" href="#">Settings</a> */}
 
                   <div className="dropdown-divider"></div>
 
-
-
-                  {/* <div className="dropdown-divider"></div> */}
-
-
-                  <div className="dropdown">
+                  {/* <div className="dropdown">
                     <a className="navbar-dropdown-submenu-item dropdown-item dropdown-toggle" href="javascript:;" id="navSubmenuPagesAccountDropdown2" data-bs-toggle="dropdown" aria-expanded="false">Customization</a>
 
                     <div className="dropdown-menu dropdown-menu-end navbar-dropdown-menu navbar-dropdown-menu-borderless navbar-dropdown-sub-menu" aria-labelledby="navSubmenuPagesAccountDropdown2">
@@ -460,8 +458,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                         <i className="bi-box-arrow-in-up-right"></i>
                       </a>
                     </div>
-                  </div>
-
+                  </div> */}
 
                   <div className="dropdown-divider"></div>
 

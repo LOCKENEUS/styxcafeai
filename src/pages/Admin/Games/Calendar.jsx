@@ -7,6 +7,7 @@ import { getslots, getslots24 } from "../../../store/slices/slotsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { convertTo12Hour } from "../../../components/utils/utils";
 import { getBookingsByGame } from "../../../store/AdminSlice/BookingSlice";
+import CreateSlotModal from "./Modal/CreateSlotModal";
 
 const Calendar = ({ selectedGame }) => {
 
@@ -292,10 +293,11 @@ const Calendar = ({ selectedGame }) => {
 const BookingSlots = ({ date, selectedGame, gameId }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [showSlotModal, setShowSlotModal] = useState(false); // State to control the slot modal visibility
 
   const slots = useSelector((state) => state.slots?.slots || []);
   const bookings = useSelector((state) => state.bookings?.bookings || []);
-
+  
   useEffect(() => {
     if (gameId) {
       dispatch(getslots24(gameId));
@@ -321,6 +323,10 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
 
   const handleBookSlot = async (gameId, slotId, date) => {
     navigate(`/admin/bookings/booking-details/${gameId}/${slotId}/${date}`);
+  };
+
+  const handleSlotCreate = () => {
+    setShowSlotModal(true) // Navigate to the game details page to create slots
   };
 
   // return (
@@ -380,8 +386,8 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
           <p style={{ fontSize: "1rem", color: "gray", fontWeight: "bold" }}>
             Sorry! No Slots Available for Today
           </p>
-          <button onClick={() => setActiveDate(new Date(2025, 1, 17))} style={{ backgroundColor: "white", padding: "10px 20px", borderRadius: "10px", border: "2px solid blue", color: "blue" }}>
-            Book For 17 Mon
+          <button onClick={handleSlotCreate} style={{ backgroundColor: "white", padding: "10px 20px", borderRadius: "10px", border: "2px solid blue", color: "blue" }}>
+            Click to create new slots
           </button>
         </div>
       ) : (
@@ -428,6 +434,14 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
               </div>
             );
           })
+      )}
+
+      {showSlotModal && (
+        <CreateSlotModal
+          show={showSlotModal}
+          handleClose={() => setShowSlotModal(false)}
+          selectedGame={selectedGame}
+        />
       )}
     </div>
   );

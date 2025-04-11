@@ -279,7 +279,7 @@ const BookingList = () => {
             </Row>
 
             <div className="table-responsive">
-                <div>Collection: Rs. {collection}</div>
+                <div className="fs-1"><strong>Collection: ₹ </strong>{collection}</div>
                 <Table striped bordered hover>
                     <thead
                         className="text-lowercase"
