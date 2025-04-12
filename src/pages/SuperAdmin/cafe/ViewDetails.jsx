@@ -128,27 +128,18 @@ const ViewDetails = () => {
   // --------------------- Game ---------------------
 
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  // Number of cards to display per view
   const cardsPerPage = 3;
-  
-  // Pagination boundaries
   const maxIndex = Math.max(games.length - cardsPerPage, 0);
-  
-  
-  // Go to next page
   const handleNext = () => {
-    setCurrentIndex((prev) => Math.min(prev + cardsPerPage, maxIndex));
+    if (currentIndex < maxIndex) {
+      setCurrentIndex(prev => prev + cardsPerPage);
+    }
   };
-  
-  // Go to previous page
   const handlePrev = () => {
-    setCurrentIndex((prev) => Math.max(prev - cardsPerPage, 0));
+    if (currentIndex > 0) {
+      setCurrentIndex(prev => prev - cardsPerPage);
+    }
   };
-  
-
-
-
 
   // -------------- Membership --------------
   const { memberships, loading, error, selectedMembership } = useSelector((state) => state.memberships);
@@ -161,8 +152,6 @@ const ViewDetails = () => {
     }
   }, [cafeId, dispatch]);
 
-  // const membershipDetails = useSelector(state => state.memberships);
-  //  const { memberships, loading, error, selectedMembership } = useSelector((state) => state.memberships);
   console.log("membershipDetails -- ", memberships);
   const handleCreateNewMembership = () => {
     dispatch(setSelectedMembership(null));
@@ -171,13 +160,17 @@ const ViewDetails = () => {
 
 
   const handleMembershipNext = () => {
-    setCurrentIndexMembership((prev) => Math.min(prev + membershipCardsPerPage, membershipMaxIndex));
+    if (currentIndexMembership < membershipMaxIndex) {
+      setCurrentIndexMembership(prev => prev + membershipCardsPerPage);
+    }
   };
-
+  
   const handleMembershipPrev = () => {
-    setCurrentIndexMembership((prev) => Math.max(prev - membershipCardsPerPage, 0));
+    if (currentIndexMembership > 0) {
+      setCurrentIndexMembership(prev => prev - membershipCardsPerPage);
+    }
   };
-
+  
 
   const handleDelete = () => {
     setShowModal(true);
@@ -716,7 +709,7 @@ const ViewDetails = () => {
                   <Col className="px-0 ">
                     {memberships && memberships.length > 0 ? (
                       <Row className="d-flex flex-wrap justify-content-center">
-                        {[...memberships].reverse().slice(currentIndex, currentIndex + membershipCardsPerPage).map((membership, index, arr) => (
+                        {[...memberships].reverse().slice(currentIndexMembership, currentIndexMembership + membershipCardsPerPage).map((membership, index, arr) => (
                           <Col
                             sm={6}
                             xs={12}

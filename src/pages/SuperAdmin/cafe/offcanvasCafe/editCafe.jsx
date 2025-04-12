@@ -16,6 +16,9 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
   const baseURL = import.meta.env.VITE_API_URL;
 
 
+  const [removedExistingDocs, setRemovedExistingDocs] = useState([]);
+  const [removedDocuments, setRemovedDocuments] = useState([]);
+
 
   const [documentPreview, setDocumentPreview] = useState([]); // stores file names or objects
 
@@ -262,16 +265,33 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
     // Optionally, delete on the server too
     // fetch('your-api/delete-image', { method: 'POST', body: JSON.stringify({ img: filteredCafes[0].cafeImage[indexToRemove] }) })
   };
-  const handleRemoveDocument = (indexToRemove, type = "new") => {
+  const handleRemoveDocument = (index, type) => {
     if (type === "new") {
-      const updatedDocs = documentPreview.filter((_, index) => index !== indexToRemove);
-      setDocumentPreview(updatedDocs);
+      setDocumentPreview((prev) => prev.filter((_, i) => i !== index));
+  
+      setFormDataState((prev) => ({
+        ...prev,
+        document: prev.document.filter((_, i) => i !== index),
+      }));
     } else if (type === "existing") {
-      const updatedExisting = [...filteredCafes];
-      updatedExisting[0].document = updatedExisting[0].document.filter((_, index) => index !== indexToRemove);
-      setFilteredCafes(updatedExisting); 
+      const removedDoc = filteredCafes?.document[index];
+  
+      // Remove from existing list index
+      const updatedDocs = filteredCafes?.document.filter((doc) => doc !== removedDoc);
+      console.log("updatedDocs", updatedDocs);
+  
+      // Add to removedDocuments state
+      setRemovedDocuments((prev) => [...prev, removedDoc]);
+  
+      // Update formDataState with updated document list
+      setFormDataState((prev) => ({
+        ...prev,
+        document: updatedDocs,
+      }));
     }
   };
+  
+  
   
 
 
@@ -820,7 +840,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
               </div>
             </Col>
             <Col sm={6}>
-              {/* ✅ Existing Documents from DB */}
+             
               {filteredCafes[0]?.document?.length > 0 && (
                 <div className="d-flex flex-wrap gap-2">
                   {filteredCafes[0].document.map((doc, index) => (
@@ -852,7 +872,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                 </div>
               )}
 
-              {/* ✅ New Documents (just selected by user) */}
+            
               {documentPreview.length > 0 && (
                 <div className="d-flex flex-wrap gap-2 mt-4">
                   {documentPreview.map((doc, index) => (

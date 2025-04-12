@@ -48,6 +48,7 @@ const CafeGames = () => {
     }
   }, [cafeId, dispatch]);
   const gamesDetails = useSelector(state => state.games);
+  // compare gamesDetails
   console.log("Fetched games:", gamesDetails);
 
   const handleEdit = async () => {
@@ -80,7 +81,7 @@ const CafeGames = () => {
   const navigate = useNavigate();
   const handleOpenGameDetails = (gameId) => {
     console.log("your game id", gameId);
-    navigate("/superadmin/Games/cafeGames", { state: { cafeId: gameId } });
+    navigate("/superadmin/Games/cafeGames", { state: { gameId: gameId } });
 
   };
   return (
