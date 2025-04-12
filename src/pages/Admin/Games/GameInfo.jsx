@@ -7,6 +7,7 @@ import {
   Button,
   InputGroup,
   FormControl,
+  Pagination,
 } from "react-bootstrap";
 import {
   FaEdit,
@@ -43,6 +44,8 @@ const GameInfo = () => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [activeDropdownId, setActiveDropdownId] = useState(null);
   const editDropdownRef = useRef(null);
+  const [activePage, setActivePage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
     if (gameId) {
@@ -149,6 +152,9 @@ const GameInfo = () => {
   const filteredBookings = filterBookingsByDate(selectedFilter)
     .filter((booking) => booking?.customerName?.toLowerCase().includes(searchTerm.toLowerCase()))
     .filter((booking) => gameFilter === "All" || booking?.gameTitle === gameFilter);
+
+  const totalPages = Math.ceil(filteredBookings.length / itemsPerPage);
+  const currentBookings = filteredBookings.slice((activePage - 1) * itemsPerPage, activePage * itemsPerPage);
 
   const handleBookSlotClick = () => {
     setShowCalendar(true);
@@ -439,8 +445,8 @@ const GameInfo = () => {
                 </tr>
               </thead>
               <tbody style={{ minHeight: "200px", display: "table-row-group" }}>
-                {filteredBookings.length > 0 ?
-                  filteredBookings?.map((booking, index) => (
+                {currentBookings.length > 0 ? 
+                  currentBookings?.map((booking, index) => (
                     <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
                       <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
                         {index + 1}
@@ -544,20 +550,26 @@ const GameInfo = () => {
                         </Button>
                       </td>
                     </tr>
-                  )
-                  ) : (
-                    <tr >
+                  )) : (
+                    <tr>
                       <td colSpan="9" className="text-center">
-                        {/* No bookings found */}
-                        {/* <div style={{ fontSize: "1.5rem", color: "#6c757d" }}> */}
-
                         <img src={nobookings} className="w-50"/>
-                        {/* </div> */}
                       </td>
                     </tr>
                   )}
               </tbody>
             </Table>
+          </div>
+          <div className="d-flex justify-content-center mt-3 mb-3">
+            <Pagination>
+              <Pagination.Prev onClick={() => setActivePage(activePage - 1)} disabled={activePage === 1} />
+              {[...Array(totalPages)].map((_, index) => (
+                <Pagination.Item key={index + 1} active={index + 1 === activePage} onClick={() => setActivePage(index + 1)}>
+                  {index + 1}
+                </Pagination.Item>
+              ))}
+              <Pagination.Next onClick={() => setActivePage(activePage + 1)} disabled={activePage === totalPages} />
+            </Pagination>
           </div>
         </Card>
       )}

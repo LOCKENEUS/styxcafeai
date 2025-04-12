@@ -27,6 +27,8 @@ const PurchaseBillCreate = () => {
   const handleCloseCreateItem = () => setShowOffCanvasCreateItem(false);
   const [showPaymentTerms, setShowPaymentTerms] = useState(false);
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(false); 
+
 
   const [products, setProducts] = useState([
     { id: 1, item: "", quantity: 1, price: 0, tax: 0, total: 0, totalTax: 0 },
@@ -79,6 +81,15 @@ const PurchaseBillCreate = () => {
     }
   }, [dispatch]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1200;
+      setIsMobile(mobile);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   const handleShow = () => setShow(true);
   const handleClose = () => {
     setShow(false);
@@ -664,7 +675,7 @@ const PurchaseBillCreate = () => {
       <Card className="p-3 mt-3 shadow-sm">
         <Table responsive>
           <thead>
-            <tr>
+          <tr className={` ${isMobile && "d-flex"} `}>
               <th className="w-25">PRODUCT</th>
               <th className="w-15">QUANTITY</th>
               <th className="w-15">PRICE</th>
@@ -674,7 +685,7 @@ const PurchaseBillCreate = () => {
           </thead>
           <tbody>
             {products.map((product, index) => (
-              <tr key={product.id}>
+              <tr className={` ${isMobile && "d-flex flex-column"} `} key={product.id}>
                 <td>
                   <div className="d-flex gap-2">
                     <Form.Select

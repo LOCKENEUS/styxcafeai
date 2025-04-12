@@ -51,13 +51,18 @@ const SOCreate = () => {
   const { items, loading } = useSelector((state) => state.items);
   const user = JSON.parse(sessionStorage.getItem("user"));
   const cafeId = user?._id;
-  
-  // Filter payment terms from custom fields
-
-  // Add new state to track latest created items
   const [latestTax, setLatestTax] = useState(null);
+  const [isMobile, setIsMobile] = useState(false); 
 
-  
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1200;
+      setIsMobile(mobile);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Update the handleTaxCreated function in SOCreate component
   const handleTaxCreated = (newTax) => {
@@ -575,7 +580,7 @@ const SOCreate = () => {
       <Card className="p-3 mt-3 shadow-sm">
         <Table responsive>
           <thead>
-            <tr>
+          <tr className={` ${isMobile && "d-flex"} `}>
               <th className="w-25">PRODUCT</th>
               <th className="w-15">QUANTITY</th>
               <th className="w-15">PRICE</th>
@@ -585,7 +590,7 @@ const SOCreate = () => {
           </thead>
           <tbody>
             {products.map((product, index) => (
-              <tr key={product.id}>
+              <tr className={` ${isMobile && "d-flex flex-column"} `} key={product.id}>
                 <td>
                   <div className="d-flex gap-2 flex-column">
                     <div className="d-flex gap-2">

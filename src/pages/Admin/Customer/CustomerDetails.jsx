@@ -172,8 +172,6 @@ const CustomerDetails = () => {
             <Card className="p-3 mb-3">
               <div className="d-flex align-items-center justify-content-between">
               <h5>Booking History</h5>
-
-          
               <input
                 type="text"
                 placeholder="Search by Booking ID or Game"
@@ -182,40 +180,42 @@ const CustomerDetails = () => {
                 className="form-control shadow-lg  w-50 mb-3"
               />
               </div>
-              <Table className="table">
-                <thead style={{ backgroundColor: "#0062FF0D" }}>
-                <tr>
-                    <th style={{ fontWeight:"600" }}  >S/N</th>
-                    <th style={{ fontWeight:"600" }}  >Booking ID</th>
-                    <th style={{ fontWeight:"600" }}  >Game</th>
-                    <th style={{ fontWeight:"600" }}  >Slot Date</th>
-                    <th style={{ fontWeight:"600" }}  >Status</th>
-                    <th style={{ fontWeight:"600" }}  >Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentBookings.length > 0 ? (
-                    currentBookings.map((booking, index) => (
-                      <tr key={booking._id}>
-                        <td>{index + 1 + indexOfFirstBooking}</td>
-                        <td style={{fontWeight:"600" , color:"blue"}} onClick={()=> navigate(`/admin/booking/checkout/${booking._id}`)} >{booking.booking_id}</td>
-                        <td>{booking.game_id.name}</td>
-                        <td>{new Date(booking.slot_date).toLocaleDateString()}</td>
-                        <td>
-                          <span className={`badge ${booking.status === 'Pending' ? 'bg-warning' : 'bg-success'}`}>
-                            {booking.status}
-                          </span>
-                        </td>
-                        <td>{booking.total}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="6" className="text-center">No bookings available</td>
+              <div className="table-responsive">
+                <Table className="table">
+                  <thead style={{ backgroundColor: "#0062FF0D" }}>
+                  <tr>
+                      <th style={{ fontWeight:"600" }}  >S/N</th>
+                      <th style={{ fontWeight:"600" }}  >Booking ID</th>
+                      <th style={{ fontWeight:"600" }}  >Game</th>
+                      <th style={{ fontWeight:"600" }}  >Slot Date</th>
+                      <th style={{ fontWeight:"600" }}  >Status</th>
+                      <th style={{ fontWeight:"600" }}  >Total</th>
                     </tr>
-                  )}
-                </tbody>
-              </Table>
+                  </thead>
+                  <tbody>
+                    {currentBookings.length > 0 ? (
+                      currentBookings.map((booking, index) => (
+                        <tr key={booking._id}>
+                          <td>{index + 1 + indexOfFirstBooking}</td>
+                          <td style={{fontWeight:"600" , color:"blue"}} onClick={()=> navigate(`/admin/booking/checkout/${booking._id}`)} >{booking.booking_id}</td>
+                          <td>{booking.game_id.name}</td>
+                          <td>{new Date(booking.slot_date).toLocaleDateString()}</td>
+                          <td>
+                            <span className={`badge ${booking.status === 'Pending' ? 'bg-warning' : 'bg-success'}`}>
+                              {booking.status}
+                            </span>
+                          </td>
+                          <td>{booking.total}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="6" className="text-center">No bookings available</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </Table>
+              </div>
 
               {/* Pagination Controls */}
               <div className="d-flex justify-content-center align-items-center gap-3">

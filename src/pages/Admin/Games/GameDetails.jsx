@@ -26,8 +26,19 @@ const GameDetails = () => {
     const [activeDate, setActiveDate] = useState(new Date());
     const slots = useSelector((state) => state.slots?.slots || []);
     const [slotToEdit, setSlotToEdit] = useState(null);
-
+    const [isMobile, setIsMobile] = useState(false); 
     let gameId = id;
+
+
+    useEffect(() => {
+        const handleResize = () => {
+          const mobile = window.innerWidth < 1200;
+          setIsMobile(mobile);
+        };
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+      }, []);
 
     useEffect(() => {
         if (id) {
@@ -243,8 +254,9 @@ const GameDetails = () => {
                 <style jsx>{`
             .date-container {
                 display: flex;
-                justify-content: space-around;
+                justify-content: space-between;
                 width: 100%;
+                flex-wrap: nowrap;
             }
 
             .date-box {
@@ -255,12 +267,25 @@ const GameDetails = () => {
                 border-radius: 20px;
                 min-width: 100px;
                 background: #fff;
+                flex: 1;
+                margin: 5px;
             }
 
             .date-box.active {
                 background: #007bff;
                 color: white;
                 border-color: #007bff;
+            }
+
+            @media (max-width: 768px) {
+                .date-container {
+                    flex-wrap: wrap;
+                }
+
+                .date-box {
+                    flex: 1 1 45%;
+                    min-width: 0;
+                }
             }
         `}</style>
 
@@ -282,12 +307,14 @@ const GameDetails = () => {
                         >
                             Copy Slots
                         </Button>
+
+                        <div className={`${isMobile ? 'list-view' : ''} `}>
                         {/* {slots.map((slot, index) => ( */}
                         {filteredSlots.map((slot, index) => (
-                            <div key={index} className="slot-row mb-2 border border-2 px-4 py-2">
-                                <div className="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                            <Card key={index} className={`slot-row mb-2 ${isMobile ? 'list-item p-2' : 'border border-2 px-4 py-2'}`}>
+                                <div className={`d-flex flex-column ${isMobile ? '' : 'flex-md-row justify-content-between align-items-center'}`}>
                                     <span className="mb-2 mb-md-0">{slot.start_time} - {slot.end_time}</span>
-                                    <div className="d-flex flex-column flex-md-row align-items-center gap-3">
+                                    <div className={`d-flex ${isMobile ? '' : 'flex-md-row'} align-items-center gap-3`}>
                                         <span className={slot.is_active ? "text-success" : "text-danger"}>
                                             {slot.is_active ? "Available" : "Booked"}
                                         </span>
@@ -325,8 +352,9 @@ const GameDetails = () => {
 
                                     </div>
                                 </div>
-                            </div>
+                            </Card>
                         ))}
+                        </div>
                     </div>
                 )}
             </div>

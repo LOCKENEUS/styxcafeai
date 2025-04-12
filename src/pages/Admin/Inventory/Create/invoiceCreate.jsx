@@ -55,9 +55,20 @@ export const InvoiceCreate =()=>{
   const user = JSON.parse(sessionStorage.getItem("user"));
   const cafeId = user?._id;
   
+  const [isMobile, setIsMobile] = useState(false); 
 
   // Add this new state for validation errors
   const [validationErrors, setValidationErrors] = useState({});
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1200;
+      setIsMobile(mobile);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     dispatch(getCustomFields(cafeId));
@@ -605,7 +616,7 @@ export const InvoiceCreate =()=>{
     <Card className="p-3 mt-3 shadow-sm">
       <Table responsive>
         <thead>
-          <tr>
+        <tr className={` ${isMobile && "d-flex"} `}>
             <th className="w-25">PRODUCT</th>
             <th className="w-15">QUANTITY</th>
             <th className="w-15">PRICE</th>
@@ -615,7 +626,7 @@ export const InvoiceCreate =()=>{
         </thead>
         <tbody>
           {products.map((product, index) => (
-            <tr key={product.id}>
+            <tr className={` ${isMobile && "d-flex flex-column"} `} key={product.id}>
               <td>
                 <div className="d-flex gap-2 flex-column">
                   <div className="d-flex gap-2">

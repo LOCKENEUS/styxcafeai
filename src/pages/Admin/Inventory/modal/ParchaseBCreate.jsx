@@ -74,6 +74,7 @@ const ParchaseBCreate = () => {
   const UserContactN = user?.contact_no;
   const UserAddress = user?.address;
   const UesrPAN = user?.panNo;
+  const [isMobile, setIsMobile] = useState(false); 
 
   console.log("selectedItem", selectedItem);
   // Filter payment terms from custom fields
@@ -129,6 +130,16 @@ const ParchaseBCreate = () => {
       totalTax: Math.round(totalTax * 100) / 100,
     };
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1200;
+      setIsMobile(mobile);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const updateProduct = (id, field, value) => {
     const updatedProducts = products.map((product) => {
@@ -746,7 +757,7 @@ const ParchaseBCreate = () => {
       <Card className="p-3 mt-3 shadow-sm">
         <Table responsive>
           <thead>
-            <tr>
+          <tr className={` ${isMobile && "d-flex"} `}>
               <th className="w-25">PRODUCT</th>
               <th className="w-15">QUANTITY</th>
               <th className="w-15">PRICE</th>
@@ -756,7 +767,7 @@ const ParchaseBCreate = () => {
           </thead>
           <tbody>
             {products.map((product, index) => (
-              <tr key={product.id}>
+              <tr className={` ${isMobile && "d-flex flex-column"} `} key={product.id}>
                 <td>
                   <div className="d-flex gap-2">
                     <Form.Select

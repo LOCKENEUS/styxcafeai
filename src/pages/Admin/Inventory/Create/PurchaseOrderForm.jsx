@@ -65,6 +65,18 @@ const PurchaseOrderForm = () => {
   const lisgetCustomers = useSelector((state) => state.customers);
   const customersList = lisgetCustomers?.customers;
 
+  const [isMobile, setIsMobile] = useState(false); 
+
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1200;
+      setIsMobile(mobile);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   useEffect(() => {
     const user = JSON.parse(sessionStorage.getItem('user'));
     const cafeId = user?._id;
@@ -524,140 +536,144 @@ const PurchaseOrderForm = () => {
 
       {/* Product Details Card */}
       <Card className="p-3 mt-3 shadow-sm">
-        <Table responsive>
-          <thead>
-            <tr>
-              <th className="w-25">PRODUCT</th>
-              <th className="w-15">QUANTITY</th>
-              <th className="w-15">PRICE</th>
-              <th className="w-15">TAX</th>
-              <th className="w-30">TOTAL</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((product, index) => (
-              <tr key={product.id}>
-                <td>
-                  <div className="d-flex gap-2">
-                    <Form.Select
-                      className="flex-grow-1"
-                      style={{ border: "1px solid black", borderStyle: "dashed" }}
-                      value={product.item}
-                      onChange={(e) => updateProduct(product.id, "item", e.target.value)}
-                    >
-                      <option value="">Select Item</option>
-                      {items.map((item) => (
-                        <option key={item._id} value={item._id}>
-                          {item.name} (₹{item.costPrice})
-                        </option>
-                      ))}
-                    </Form.Select>
-                    <Button
-                      onClick={handleShowCreateItem}
-                      className="flex-shrink-0"
-                      style={{ width: "40px", border: "1px solid black", borderStyle: "dashed" }}
-                      variant="outline-secondary"
-                    >
-                      +
-                    </Button>
-                  </div>
-                </td>
-                <td>
-                  <Form.Control
-                    type="number"
-                    min="1"
-                    placeholder="QTY : 1"
-                    style={{ border: "1px solid black", width: "100%" }}
-                    value={product.quantity}
-                    onChange={(e) => updateProduct(product.id, "quantity", e.target.value)}
-                  />
-                </td>
-                <td>
-                  <div className="position-relative w-100">
-                    <span className="position-absolute" style={{ left: "10px", top: "50%", transform: "translateY(-50%)" }}>
-                      <FaRupeeSign />
-                    </span>
-                    <Form.Control
-                      type="number"
-                      placeholder="0.00"
-                      className="w-100"
-                      style={{ paddingLeft: "25px", border: "1px solid black" }}
-                      value={product.price}
-                      onChange={(e) => updateProduct(product.id, "price", e.target.value)}
-                    />
-                  </div>
-                </td>
-                <td>
-                  <div className="d-flex gap-2">
-                    <Form.Select
-                      className="flex-grow-1"
-                      style={{ border: "1px solid black" }}
-                      value={product.tax || ""}
-                      onChange={(e) => updateProduct(product.id, "tax", e.target.value)}
-                    >
-                      <option value="">Select Tax</option>
-                      {taxFields.map(tax => (
-                        <option key={tax._id} value={tax._id}>
-                          {tax.tax_name} ({tax.tax_rate}%)
-                        </option>
-                      ))}
-                    </Form.Select>
-                    <Button
-                      className="flex-shrink-0"
-                      style={{ width: "40px", border: "1px solid black", borderStyle: "dashed" }}
-                      variant="outline-secondary"
-                      onClick={() => setShowTaxModal(true)}
-                    >
-                      +
-                    </Button>
-                  </div>
-                  <div className="position-relative w-100 my-3">
-                    <span className="position-absolute" style={{ left: "10px", top: "50%", transform: "translateY(-50%)" }}>
-                      <FaRupeeSign />
-                    </span>
-                    <Form.Control
-                      type="text"
-                      className="text-end"
-                      value={product.totalTax?.toFixed(2) || "0.00"}
-                      readOnly
-                      style={{ paddingLeft: "25px", border: "1px solid black" }}
-                    />
-                  </div>
-                </td>
-                <td>
-                  <div className="position-relative w-100">
-                    <span className="position-absolute" style={{ left: "10px", top: "50%", transform: "translateY(-50%)" }}>
-                      <FaRupeeSign />
-                    </span>
-                    <Form.Control
-                      type="text"
-                      placeholder="PRICE : 0.00"
-                      className="text-end w-100"
-                      style={{ paddingLeft: "25px", border: "1px solid black" }}
-                      value={product.total}
-                      readOnly
-                    />
-                  </div>
-                </td>
-                {index > 0 && (
-                  <td>
-                    <Button
-                      onClick={() => {
-                        const updatedProducts = products.filter((_, i) => i !== index);
-                        setProducts(updatedProducts);
-                      }}
-                      className="flex-shrink-0 d-flex justify-content-center align-items-center"
-                      style={{ width: "40px", padding: "0px", height: "40px", border: "1px solid black", borderStyle: "dashed" }}
-                      variant="outline-danger"
-                    >
-                      <FaTrash style={{ fontSize: "15px" }} />
-                    </Button>
-                  </td>
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+        <div>
+          <div className="table-responsive">
+            <Table> 
+              <thead>
+                <tr className={` ${isMobile && "d-flex"} `}>
+                  <th className="w-25">PRODUCT</th>
+                  <th className="w-15">QUANTITY</th>
+                  <th className="w-15">PRICE</th>
+                  <th className="w-15">TAX</th>
+                  <th className="w-30">TOTAL</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map((product, index) => (
+                  <tr className={` ${isMobile && "d-flex flex-column"} `} key={product.id}>
+                    <td>
+                      <div className="d-flex gap-2">
+                        <Form.Select
+                          className="flex-grow-1"
+                          style={{ border: "1px solid black", borderStyle: "dashed" }}
+                          value={product.item}
+                          onChange={(e) => updateProduct(product.id, "item", e.target.value)}
+                        >
+                          <option value="">Select Item</option>
+                          {items.map((item) => (
+                            <option key={item._id} value={item._id}>
+                              {item.name} (₹{item.costPrice})
+                            </option>
+                          ))}
+                        </Form.Select>
+                        <Button
+                          onClick={handleShowCreateItem}
+                          className="flex-shrink-0"
+                          style={{ width: "40px", border: "1px solid black", borderStyle: "dashed" }}
+                          variant="outline-secondary"
+                        >
+                          +
+                        </Button>
+                      </div>
+                    </td>
+                    <td>
+                      <Form.Control
+                        type="number"
+                        min="1"
+                        placeholder="QTY : 1"
+                        style={{ border: "1px solid black", width: "100%" }}
+                        value={product.quantity}
+                        onChange={(e) => updateProduct(product.id, "quantity", e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <div className="position-relative w-100">
+                        <span className="position-absolute" style={{ left: "10px", top: "50%", transform: "translateY(-50%)" }}>
+                          <FaRupeeSign />
+                        </span>
+                        <Form.Control
+                          type="number"
+                          placeholder="0.00"
+                          className="w-100"
+                          style={{ paddingLeft: "25px", border: "1px solid black" }}
+                          value={product.price}
+                          onChange={(e) => updateProduct(product.id, "price", e.target.value)}
+                        />
+                      </div>
+                    </td>
+                    <td>
+                      <div className="d-flex gap-2">
+                        <Form.Select
+                          className="flex-grow-1"
+                          style={{ border: "1px solid black" }}
+                          value={product.tax || ""}
+                          onChange={(e) => updateProduct(product.id, "tax", e.target.value)}
+                        >
+                          <option value="">Select Tax</option>
+                          {taxFields.map(tax => (
+                            <option key={tax._id} value={tax._id}>
+                              {tax.tax_name} ({tax.tax_rate}%)
+                            </option>
+                          ))}
+                        </Form.Select>
+                        <Button
+                          className="flex-shrink-0"
+                          style={{ width: "40px", border: "1px solid black", borderStyle: "dashed" }}
+                          variant="outline-secondary"
+                          onClick={() => setShowTaxModal(true)}
+                        >
+                          +
+                        </Button>
+                      </div>
+                      <div className="position-relative w-100 my-3">
+                        <span className="position-absolute" style={{ left: "10px", top: "50%", transform: "translateY(-50%)" }}>
+                          <FaRupeeSign />
+                        </span>
+                        <Form.Control
+                          type="text"
+                          className="text-end"
+                          value={product.totalTax?.toFixed(2) || "0.00"}
+                          readOnly
+                          style={{ paddingLeft: "25px", border: "1px solid black" }}
+                        />
+                      </div>
+                    </td>
+                    <td>
+                      <div className="position-relative w-100">
+                        <span className="position-absolute" style={{ left: "10px", top: "50%", transform: "translateY(-50%)" }}>
+                          <FaRupeeSign />
+                        </span>
+                        <Form.Control
+                          type="text"
+                          placeholder="PRICE : 0.00"
+                          className="text-end w-100"
+                          style={{ paddingLeft: "25px", border: "1px solid black" }}
+                          value={product.total}
+                          readOnly
+                        />
+                      </div>
+                    </td>
+                    {index > 0 && (
+                      <td>
+                        <Button
+                          onClick={() => {
+                            const updatedProducts = products.filter((_, i) => i !== index);
+                            setProducts(updatedProducts);
+                          }}
+                          className="flex-shrink-0 d-flex justify-content-center align-items-center"
+                          style={{ width: "40px", padding: "0px", height: "40px", border: "1px solid black", borderStyle: "dashed" }}
+                          variant="outline-danger"
+                        >
+                          <FaTrash style={{ fontSize: "15px" }} />
+                        </Button>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        </div>
 
         <Button
           variant="outline-primary"

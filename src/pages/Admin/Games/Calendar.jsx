@@ -1,5 +1,5 @@
 import React, { use, useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
 import { TbMoodSad } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,11 +10,20 @@ import { getBookingsByGame } from "../../../store/AdminSlice/BookingSlice";
 import CreateSlotModal from "./Modal/CreateSlotModal";
 
 const Calendar = ({ selectedGame }) => {
-
+  const [isMobile, setIsMobile] = useState(false);
   const id = selectedGame?.data?._id;
   const [activeDate, setActiveDate] = useState(new Date());
   const [currentIndex, setCurrentIndex] = useState(0);
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1200;
+      setIsMobile(mobile);
+    };
 
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   const generateDates = () => {
     const dates = [];
     const today = new Date();
@@ -405,12 +414,12 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
             const booked = isSlotBooked(slot._id, date);
 
             return (
-              <div key={index} className="slot-row mb-2 border border-2 p-2">
-                <div className="d-flex flex-column flex-md-row justify-content-between align-items-center">
+              <Card key={index} className="slot-row mb-2 border border-2 p-2">
+                <div className="d-flex  flex-md-row justify-content-between align-items-center">
                   <span className="mb-2 mb-md-0">
                     {convertTo12Hour(slot.start_time)} - {convertTo12Hour(slot.end_time)}
                   </span>
-                  <div className="d-flex flex-column flex-md-row align-items-center gap-3">
+                  <div className="d-flex  flex-md-row align-items-center gap-3">
                     <span className={booked ? "text-danger" : slot.is_active ? "text-success" : "text-danger"}>
                       {booked ? "Booked" : slot.is_active ? "Available" : "Unavailable"}
                     </span>
@@ -431,7 +440,7 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
                     </Button>
                   </div>
                 </div>
-              </div>
+              </Card>
             );
           })
       )}

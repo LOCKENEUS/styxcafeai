@@ -7,6 +7,7 @@ import {
     Button,
     InputGroup,
     FormControl,
+    Pagination,
 } from "react-bootstrap";
 import {
     FaEdit,
@@ -22,6 +23,7 @@ import { getGameById, getGames } from "../../../store/slices/gameSlice";
 import { getBookings } from "../../../store/AdminSlice/BookingSlice";
 import profile from "/assets/profile/user_avatar.jpg";
 import { convertTo12Hour, formatDate } from "../../../components/utils/utils";
+import { MdOutlineDoNotDisturb } from "react-icons/md";
 
 const BookingList = () => {
     const { gameId } = useParams();
@@ -43,6 +45,8 @@ const BookingList = () => {
     const [activeDropdownId, setActiveDropdownId] = useState(null);
     const [selectedFilter, setSelectedFilter] = useState("All");
     const editDropdownRef = useRef(null);
+    const [activePage, setActivePage] = useState(1);
+    const itemsPerPage = 10;
 
     useEffect(() => {
         const user = JSON.parse(sessionStorage.getItem('user'));
@@ -79,10 +83,6 @@ const BookingList = () => {
         }
     };
 
-    // const filteredBookings = filterBookingsByDate(selectedFilter).filter((booking) =>
-    //     booking?.customerName?.toLowerCase().includes(searchTerm.toLowerCase())
-    // );
-
     const filteredBookings = filterBookingsByDate(selectedFilter)
         .filter((booking) => booking?.customerName?.toLowerCase().includes(searchTerm.toLowerCase()))
         .filter((booking) => gameFilter === "All" || booking?.gameTitle === gameFilter);
@@ -108,12 +108,10 @@ const BookingList = () => {
         }
     }, [dispatch, dropdownOpen]);
 
-
     const toggleFilterDropdown = () => {
         setFilterDropdownOpen(!filterDropdownOpen);
     };
 
-    // Effect to close dropdowns on outside click
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (
@@ -164,6 +162,15 @@ const BookingList = () => {
         setDropdownOpen(false);
     };
 
+    const totalPages = Math.ceil(filteredBookings.length / itemsPerPage);
+    const currentBookings = filteredBookings.slice((activePage - 1) * itemsPerPage, activePage * itemsPerPage);
+
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setActivePage(page);
+        }
+    };
+
     return (
         <div className="container-fluid min-vh-100">
             <Row>
@@ -207,8 +214,8 @@ const BookingList = () => {
                                         value={option}
                                         style={{ cursor: "pointer", padding: "10px" }}
                                         onClick={(e) => {
-                                            e.stopPropagation(); // Stop propagation for the item click
-                                            handleFilterChange(option, e); // Call the handler
+                                            e.stopPropagation();
+                                            handleFilterChange(option, e);
                                         }}
                                     >
                                         {option}
@@ -246,7 +253,6 @@ const BookingList = () => {
                             onClick={toggleFilterDropdown}
                             style={{ fontSize: "20px", color: "#0062FF" }}
                         />
-                        {/* <IoAdd style={{ fontSize: "20px", color: "#0062FF" }} /> */}
                     </div>
                     {filterDropdownOpen && (
                         <ul
@@ -265,8 +271,8 @@ const BookingList = () => {
                                     key={index}
                                     style={{ cursor: "pointer", padding: "10px" }}
                                     onClick={(e) => {
-                                        e.stopPropagation(); // Stop propagation for the item click
-                                        setGameFilter(sport?.name); // Call the handler
+                                        e.stopPropagation();
+                                        setGameFilter(sport?.name);
                                         setFilterDropdownOpen(false)
                                     }}
                                 >
@@ -329,8 +335,8 @@ const BookingList = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredBookings.length > 0 ?
-                            filteredBookings?.map((booking, index) => (
+                        {currentBookings.length > 0 ?
+                            currentBookings?.map((booking, index) => (
                                 <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
                                     <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
                                         {index + 1}
@@ -436,14 +442,25 @@ const BookingList = () => {
                                 </tr>
                             )) :
                             <tr>
-                                <td colSpan={8} className="text-center" style={{ border: "none" }}>
-                                    <img src={nobookings} alt="no bookings" className="img-fluid w-50" />
+                                <td colSpan={8} className="text-center " style={{ height:"40vh", border: "none" }}>
+                                    <h1>  <span>  <MdOutlineDoNotDisturb /> </span> No booking Available</h1>
                                 </td>
                             </tr>}
                     </tbody>
                 </Table>
             </div>
 
+            <div className="d-flex justify-content-center mt-3 mb-3">
+                <Pagination>
+                    <Pagination.Prev onClick={() => handlePageChange(activePage - 1)} disabled={activePage === 1} />
+                    {[...Array(totalPages)].map((_, index) => (
+                        <Pagination.Item key={index + 1} active={index + 1 === activePage} onClick={() => handlePageChange(index + 1)}>
+                            {index + 1}
+                        </Pagination.Item>
+                    ))}
+                    <Pagination.Next onClick={() => handlePageChange(activePage + 1)} disabled={activePage === totalPages} />
+                </Pagination>
+            </div>
         </div>
     );
 };
