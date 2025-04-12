@@ -13,6 +13,7 @@ import GameDetails from "./GameDetails";
 import GameForm from "./GameForm";
 import { Link, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import Add from "/assets/superAdmin/cafe/formkit_addWhite.png";
+import AddGamesOffcanvas from "../offcanvasCafe/addGames";
 
 const CafeGames = () => {
 
@@ -29,6 +30,7 @@ const CafeGames = () => {
   const { games, selectedGame } = useSelector((state) => state.games);
   const [showCanvas, setShowCanvas] = useState(false);
   const [formData, setFormData] = useState(null);
+  const [showModalAdd, setShowModalAdd] = useState(false);
   // const [idCafe, setIdCafe] = useState(cafeId);
 
   // useEffect(() => {
@@ -99,14 +101,21 @@ const CafeGames = () => {
             </Breadcrumb>
 
      
-              <Button variant="primary" className="rounded-3" onClick={() => {
-                dispatch(setSelectedGame(null));
-                setFormData(null);
-                setShowCanvas(true);
-              }}>
+              <Button variant="primary" className="rounded-3" 
+              
+              // onClick={() => {
+              //   dispatch(setSelectedGame(null));
+              //   setFormData(null);
+              //   setShowCanvas(true);
+              // }}
+              onClick={() => setShowModalAdd(true)}
+
+              >
                 <Image src={Add} alt="CafeCall" className="mx-1   " style={{ objectFit: "cover", width: "26.25px", height: "26.25px" }} />
-                Create  Game
+                Create  Game 
               </Button>
+              
+              
             
           </div>
         </Card.Header>
@@ -201,7 +210,11 @@ const CafeGames = () => {
           game={selectedGame}
           onGameAction={handleGameAction}
         />
+        
       </Row>
+
+      <AddGamesOffcanvas show={showModalAdd} handleClose={() => setShowModalAdd(false)} cafeId={cafeId} selectedGameDetails={gamesDetails} />
+
     </Container>
   );
 };

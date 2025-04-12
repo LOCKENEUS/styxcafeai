@@ -44,7 +44,7 @@ const ForwordPassword = ({ show, handleClose, cafeId }) => {
   return (
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Body>
-        <h2 className="text-center">Forword Password</h2>
+        <h2 className="text-center">Reset  Password</h2>
 
         <Row className="my-3">
           <Col sm={6}>
@@ -89,7 +89,7 @@ const ForwordPassword = ({ show, handleClose, cafeId }) => {
           <Col sm={12}>
             <Form.Group className="mb-3 position-relative">
               <Form.Label>
-                <span className="fw-bold">Confirm Password</span>
+                <span className="fw-bold">Reset  Password</span>
               </Form.Label>
               <Form.Control
                 type={showConfirmPassword ? "text" : "password"}

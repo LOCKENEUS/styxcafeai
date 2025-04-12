@@ -268,21 +268,21 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
   const handleRemoveDocument = (index, type) => {
     if (type === "new") {
       setDocumentPreview((prev) => prev.filter((_, i) => i !== index));
-  
+
       setFormDataState((prev) => ({
         ...prev,
         document: prev.document.filter((_, i) => i !== index),
       }));
     } else if (type === "existing") {
       const removedDoc = filteredCafes?.document[index];
-  
+
       // Remove from existing list index
       const updatedDocs = filteredCafes?.document.filter((doc) => doc !== removedDoc);
       console.log("updatedDocs", updatedDocs);
-  
+
       // Add to removedDocuments state
       setRemovedDocuments((prev) => [...prev, removedDoc]);
-  
+
       // Update formDataState with updated document list
       setFormDataState((prev) => ({
         ...prev,
@@ -290,9 +290,9 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
       }));
     }
   };
-  
-  
-  
+
+
+
 
 
 
@@ -469,7 +469,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
           </Row>
 
           <Row className="mb-2">
-            <Col md={6}>
+            {/* <Col md={6}>
               <Form.Group className="mb-2">
                 <Form.Label htmlFor="email" className="fw-bold text-secondary">
                   Email Address
@@ -486,6 +486,16 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                   className="py-2 border-2"
                   readOnly
                 />
+              </Form.Group>
+            </Col> */}
+            <Col md={6}>
+              <Form.Group className="my-4">
+                <Form.Label htmlFor="email" className="fw-bold text-secondary">
+                  Email Address
+
+                </Form.Label>
+
+                <h4 className='text-secondary my-2 mx-3' style={{ fontSize: "14px" }}>{formDataState.email || filteredCafes?.[0]?.email || ""}</h4>
               </Form.Group>
             </Col>
           </Row>
@@ -840,7 +850,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
               </div>
             </Col>
             <Col sm={6}>
-             
+
               {filteredCafes[0]?.document?.length > 0 && (
                 <div className="d-flex flex-wrap gap-2">
                   {filteredCafes[0].document.map((doc, index) => (
@@ -872,7 +882,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                 </div>
               )}
 
-            
+
               {documentPreview.length > 0 && (
                 <div className="d-flex flex-wrap gap-2 mt-4">
                   {documentPreview.map((doc, index) => (

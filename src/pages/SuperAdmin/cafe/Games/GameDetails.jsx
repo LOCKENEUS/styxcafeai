@@ -35,6 +35,7 @@ import AddSlotOffcanvas from "../offcanvasCafe/addSlot";
 import EditGameOffcanvas from "../offcanvasCafe/editGame";
 import Loader from "../../../../components/common/Loader/Loader";
 import gsap from "gsap";
+import GameDeleteModal from "../modal/gameDelete";
 
 const GameDetailsCafe = () => {
   const baseURL = import.meta.env.VITE_API_URL;
@@ -43,6 +44,7 @@ const GameDetailsCafe = () => {
   const { gameId } = location.state || {};
   const [showAddSlotOffcanvas,setShowAddSlotOffcanvas]=useState(false);
   const [showEditGameOffcanvas, setShowEditGameOffcanvas] = useState(false);
+  const [showGameDeleteModal, setShowGameDeleteModal] = useState(false);
 
 
   console.log("your cafe id game 99", gameId);
@@ -91,6 +93,7 @@ const GameDetailsCafe = () => {
     
 
     // const getDuration = 
+     
 
 
 // ---------------------------  gsap  -----------------------------
@@ -196,6 +199,7 @@ useEffect(() => {
                         fontWeight: "500",
                         borderRadius: "8px",
                       }}
+                      onClick={() => setShowGameDeleteModal(true)}
                     >
                       <Image
                         src={deleteIcon}
@@ -233,7 +237,7 @@ useEffect(() => {
 
                         {/* payLater are greater than 1 if single player else multi player */}
 
-                        {selectedGame?.data?.type == 'Single' ? 'Multi Player' : 'Single Player'}
+                        {selectedGame?.data?.type == 'Multiplayer' ? 'Multi Player' : 'Single Player'}
 
                       </span>
 
@@ -395,6 +399,12 @@ useEffect(() => {
       show={showEditGameOffcanvas}
       handleClose={() => setShowEditGameOffcanvas(false)}
       gameId={gameId}
+      />
+
+      <GameDeleteModal
+        show={showGameDeleteModal}
+        handleClose={() => setShowGameDeleteModal(false)}
+        gameId={gameId}
       />
     </Container>
   );

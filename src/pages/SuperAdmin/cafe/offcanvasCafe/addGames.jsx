@@ -2,12 +2,14 @@ import { useRef, useState } from "react";
 import { Button, Col, Form, Offcanvas, Row, Spinner } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { addGame, updateGame } from "../../../../store/slices/gameSlice";
+import { TiDeleteOutline } from "react-icons/ti";
 
 const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) => {
 
 
 
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
       console.log("Cafe ID offcanvas:", cafeId);
       const dispatch = useDispatch();
@@ -88,6 +90,41 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
     const handleInputChange = (e) => {
       const { name, value } = e.target;
       setFormData((prev) => ({ ...prev, [name]: value }));
+
+         // Validation for number of players
+  if (name === 'players' && formData.type === 'Multiplayer') {
+    const num = parseInt(value);
+    if (num <= 1 ) {
+      setErrors(prev => ({
+        ...prev,
+        players: 'Please enter more than 1 player for multiplayer games.'
+      }));
+    } else {
+      setErrors(prev => ({ ...prev, players: '' }));
+    }
+  }
+
+  // Optional: Reset players field if type is changed
+  if (name === 'type' && value === 'Single player') {
+    setFormData(prev => ({
+      ...prev,
+      players: ''
+    }));
+    setErrors(prev => ({ ...prev, players: '' }));
+  } 
+  
+  // size validation l*b ft format
+  if (name === 'size') {
+    const regex = /^[0-9]+x[0-9]+ ft$/;
+    if (!regex.test(value)) {
+      setErrors(prev => ({
+        ...prev,
+        size: 'Please enter size in format l*b ft'
+      }));
+    } else {
+      setErrors(prev => ({ ...prev, size: '' }));
+    }}
+
     };
 
     const handleFileChange = (e) => {
@@ -100,6 +137,15 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
         };
         reader.readAsDataURL(file);
       }
+    };
+    const handleRemoveImage = (e) => {
+      const updatedImagePreviews = imagePreview.filter((_, i) => i !== e);
+      setImagePreview(updatedImagePreviews);
+  
+      setFormData((prev) => ({
+        ...prev,
+        cafeImage: prev.imagePreview.filter((_, i) => i !== e),
+      }));
     };
 
   return (
@@ -154,6 +200,9 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
                     className="py-2 border-2"
                     placeholder="Enter number of players"
                   />
+                  {errors.players && (
+                  <div className="invalid-feedback d-block">{errors.players}</div>
+                )}
                 </Form.Group>
               )}
             </Col>
@@ -173,7 +222,7 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
               />
             </Col>
             <Col md={6}>
-              <Form.Label htmlFor="gameSize" className="fw-bold text-secondary">Size of Game
+              <Form.Label htmlFor="gameSize" className="fw-bold text-secondary">Area of dimensions
               <span className="text-danger">*</span>
               </Form.Label>
               <Form.Control
@@ -186,6 +235,11 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
                 className="py-2 border-2"
                 placeholder="Enter game size (e.g., 10x10 ft)"
               />
+               {errors.size && (
+                <div className="invalid-feedback d-block">{errors.size}</div>
+              )}
+             
+              
             </Col>
           </Row>
 
@@ -308,6 +362,32 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
                   )} */}
                 </div>
               </div>
+            </Col>
+            <Col md={6}>
+            {/* gameImage */}
+            <div className="d-flex flex-wrap gap-2">
+             {imagePreview && (
+                    <div className="position-relative">
+                      <img
+                        src={imagePreview }
+                        alt="Preview"
+                        className="img-thumbnail"
+                        style={{
+                          width: "100px",
+                          height: "100px",
+                          objectFit: "cover",
+                        }}
+                      />
+                      <div
+                        onClick={handleRemoveImage}
+                        className="position-absolute top-0 end-0 cursor-pointer"
+                        style={{ transform: "translate(25%, -25%)" }}
+                      >
+                        <TiDeleteOutline color="red" size={25} />
+                      </div>
+                    </div>
+                  )}
+            </div>
             </Col>
           </Row>
 

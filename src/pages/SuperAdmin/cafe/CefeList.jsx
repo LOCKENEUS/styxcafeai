@@ -52,10 +52,7 @@ const CafeManager = () => {
     officeContactNo: '',
   };
 
-  const [formDataState, setFormDataState] = useState(initialFormData);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  const indexOfLastItem = currentPage * itemsPerPage;
+
 
 
 
@@ -130,7 +127,15 @@ const CafeManager = () => {
 
     );
   });
-
+  const reversedCafes = [...filteredCafes].reverse();
+  const cafesPerPage = 10;
+  const [formDataState, setFormDataState] = useState(initialFormData);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentCafes = reversedCafes.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(reversedCafes.length / cafesPerPage);
   // Reset form should also clear images
   const resetForm = () => {
     setFormData({});
@@ -162,9 +167,7 @@ const CafeManager = () => {
     setShowCanvas(true);
   };
 
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentCafes = filteredCafes.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(filteredCafes.length / itemsPerPage);
+
 
   const handleEdit = () => {
     if (selectedCafe) {
@@ -198,6 +201,15 @@ const CafeManager = () => {
   console.log("data ", formDataState)
   // if (loading) return <p>Loading...</p>;
   // if (error) return <p>Error: {error}</p>;
+
+
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
 
   return (
     <div className="my-5">
@@ -313,43 +325,53 @@ const CafeManager = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {currentCafes.length ? (
-                        currentCafes.reverse().map((cafe, index) => (
-                          <tr key={index}>
-                            <td className="py-4">{indexOfFirstItem + index + 1}</td>
-                            <td
-                              className="py-4"
-                              style={{ fontWeight: "600", color: "#0062FF", cursor: "pointer" }}
-                              onClick={() => {
-                                setSelectedCafeState(cafe);
-                                setShowDetails(true);
-                              }}
-                            >
-                              {cafe.cafe_name}
+                      {
+                        currentCafes.length > 0 ? (
+                          currentCafes.map((cafe, index) => (
+                            <tr key={index}>
+                              <td className="py-4">{indexOfFirstItem + index + 1}</td>
+                              <td
+                                className="py-4"
+                                style={{ fontWeight: "600", color: "#0062FF", cursor: "pointer" }}
+                                onClick={() => {
+                                  setSelectedCafeState(cafe);
+                                  setShowDetails(true);
+                                }}
+                              >
+                                {cafe.cafe_name}
+                              </td>
+                              <td className="py-4" style={{ width: "20%" }}>{cafe.address}</td>
+                              <td className="py-4" style={{ width: "20%" }}>{cafe.contact_no}</td>
+                              <td className="py-4" style={{ width: "20%" }}>
+                                <Image
+                                  src={profile}
+                                  alt="owner"
+                                  className="rounded-circle mr-2"
+                                  style={{ width: "50px", height: "50px" }}
+                                />
+                                {cafe.name}
+                              </td>
+                              <td className="py-4" style={{ width: "20%" }}>{cafe.email}</td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="7" className="text-center fw-bold py-3">
+                              No Cafes Added Yet
                             </td>
-                            <td className="py-4" style={{ width: "20%" }}>{cafe.address}</td>
-                            <td className="py-4" style={{ width: "20%" }}>{cafe.contact_no}</td>
-                            <td className="py-4" style={{ width: "20%" }}>
-                              <Image src={profile} alt="owner" className="rounded-circle mr-2" style={{ width: "50px", height: "50px" }} />
-                              {cafe.name}
-                            </td>
-                            <td className="py-4" style={{ width: "20%" }}>{cafe.email}</td>
                           </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan="7" className="text-center fw-bold py-3">No Cafes Added Yet</td>
-                        </tr>
-                      )}
+                        )
+                      }
                     </tbody>
+
                   </Table>
                 </Col>
 
                 <Col sm={12} className="d-flex justify-content-center align-items-center mt-3">
                   <Button
-                    variant="primary"
+                    className="btn "
+                    onClick={handlePrev}
                     disabled={currentPage === 1}
-                    onClick={() => setCurrentPage((prev) => prev - 1)}
                   >
                     Previous
                   </Button>
@@ -359,9 +381,9 @@ const CafeManager = () => {
                   </span>
 
                   <Button
-                    variant="primary"
+                    className="btn "
+                    onClick={handleNext}
                     disabled={currentPage === totalPages}
-                    onClick={() => setCurrentPage((prev) => prev + 1)}
                   >
                     Next
                   </Button>

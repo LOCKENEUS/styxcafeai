@@ -168,6 +168,17 @@ const CafeForm = ({
           setErrors(prev => ({ ...prev, confirm_password: '' }));
         }
         break;
+      
+        case 'yearsOfContract':
+          if (value < 1 ) {
+            setErrors(prev => ({
+              ...prev,
+              yearsOfContract: 'Years of contract must be at least 1'
+            }));
+          } else {
+            setErrors(prev => ({ ...prev, yearsOfContract: '' }));
+          }
+          break;
 
       default:
         break;
@@ -385,7 +396,7 @@ const CafeForm = ({
       <Offcanvas.Header closeButton>
         <Offcanvas.Title>
           <h2 className="text-primary fw-bold">
-            {editingIndex === null ? "Add New Cafe " : "Edit Cafe"}
+            {editingIndex === null ? "Add New Cafe  " : "Edit Cafe"}
           </h2>
         </Offcanvas.Title>
       </Offcanvas.Header>
@@ -591,7 +602,7 @@ const CafeForm = ({
                   value={formDataState.location || ""}
                   onChange={handleChange}
                   className="py-2 border-2"
-                  // required
+                  required
                 >
                   <option value="">Select a location</option>
                   {locations.map((location) => (
@@ -609,7 +620,7 @@ const CafeForm = ({
                   className="fw-bold text-secondary"
                 >
                   Website URL
-                  <span className="text-danger">*</span>
+                  
                 </Form.Label>
                 <Form.Control
                   id="website"
@@ -620,7 +631,7 @@ const CafeForm = ({
                   onChange={handleChange}
                   pattern="https?://.+"
                   className="py-2 border-2"
-                  required
+                  
                 />
               </Form.Group>
             </Col>
@@ -642,15 +653,19 @@ const CafeForm = ({
               value={formDataState.description}
               onChange={handleChange}
               className="py-2 border-2"
+              multiple
             />
           </Form.Group>
 
           <Row className="mb-3">
-            <Col md={6}>
-              <Form.Label className="fw-bold text-secondary d-block">
-                Upload Images
-              </Form.Label>
-              <div className="border-2 rounded-3 p-3 bg-light">
+          <Form.Label className="fw-bold text-secondary d-block my-3">
+              Gallery Images
+              <span className="text-muted fs-6 fw-light ms-2">(You can upload multiple images)</span>
+            </Form.Label>
+
+            <Col md={5} className="mt-3">
+            
+              <div className="border-2 rounded-3 p-3 bg-light ">
                 <Form.Control
                   type="file"
                   onChange={handleFileChange}
@@ -671,7 +686,14 @@ const CafeForm = ({
                     </label>
                   </div>
 
-                  {imagePreview.length > 0 && (
+                  
+                </div>
+              </div>
+            </Col>
+
+            <Col md={7} className="mt-3">
+
+            {imagePreview.length > 0 && (
                     <div className="d-flex flex-wrap gap-2">
                       {imagePreview.map((preview, index) => (
                         <div key={index} className="position-relative">
@@ -696,8 +718,6 @@ const CafeForm = ({
                       ))}
                     </div>
                   )}
-                </div>
-              </div>
             </Col>
           </Row>
 
@@ -854,6 +874,7 @@ const CafeForm = ({
               <Form.Group className="mb-2">
                 <Form.Label htmlFor="yearsOfContract" className="fw-bold text-secondary">
                   Years of Contract
+                  <span className="text-danger">*</span>
                 </Form.Label>
                 <Form.Control
                   id="yearsOfContract"
@@ -863,14 +884,20 @@ const CafeForm = ({
                   value={formDataState.yearsOfContract || ''}
                   onChange={handleChange}
                   className="py-2 border-2"
+                  required
                 />
               </Form.Group>
+              {errors.yearsOfContract && (
+                  <Form.Text className="text-danger">
+                    {errors.yearsOfContract}
+                  </Form.Text>
+                )}
             </Col>
           </Row>
 
           {/* Document Upload Section */}
           <Row className="mb-3">
-            <Col md={6}>
+            <Col md={5}>
               <Form.Label className="fw-bold text-secondary d-block">
                 Upload Documents  <span className="text-danger m">(pdf, doc, docx)*</span>
               </Form.Label>
@@ -894,31 +921,46 @@ const CafeForm = ({
                     </label>
                   </div>
 
-                  {documentPreview.length > 0 && (
-                    <div className="d-flex flex-column gap-2">
-                      {documentPreview.map((doc, index) => (
-                        <div key={index} className="d-flex justify-content-between align-items-center p-2 border rounded">
-                          <a
-                            href={doc.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-decoration-none text-dark"
-                          >
-                            {doc.name}
-                          </a>
-                          <TiDeleteOutline
-                            color="red"
-                            size={20}
-                            onClick={() => handleRemoveDocument(index)}
-                            style={{ cursor: 'pointer' }}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  
                 </div>
               </div>
             </Col>
+            <Col md={7}>
+  {documentPreview.length > 0 && (
+    <div className="d-flex flex-wrap gap-2">
+      {documentPreview.map((doc, index) => (
+        <div
+          key={index}
+          className="p-2 border rounded bg-white d-flex justify-content-between align-items-center"
+          style={{ width: '48%' }}
+        >
+          <a
+            href={doc.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-decoration-none text-dark text-truncate"
+            style={{
+              maxWidth: "150px",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis"
+            }}
+            title={doc.name}
+          >
+            {doc.name}
+          </a>
+          <TiDeleteOutline
+            color="red"
+            size={20}
+            onClick={() => handleRemoveDocument(index)}
+            style={{ cursor: 'pointer', marginLeft: '8px' }}
+          />
+        </div>
+      ))}
+    </div>
+  )}
+</Col>
+
           </Row>
 
           <div className="mt-2 d-flex gap-2 justify-content-end">

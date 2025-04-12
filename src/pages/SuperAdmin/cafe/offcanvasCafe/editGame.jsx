@@ -7,6 +7,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { TiDeleteOutline } from "react-icons/ti";
 
 const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
+
+
+
+  const [errors, setErrors] = useState({});
+ 
   const baseURL = import.meta.env.VITE_API_URL;
   console.log("Offcanvas edit game id", gameId);
   const [formData, setFormData] = useState({
@@ -14,7 +19,7 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
     type: "Single player",
     price: "",
     zone: "Indoor",
-    size: "",
+    size: "", 
     players: "",
     commission: "",
     cancellation: "Yes",
@@ -69,6 +74,32 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
       ...prev,
       [name]: value
     }));
+   
+
+
+    // Validation for number of players
+  if (name === 'players' && formData.type === 'Multiplayer') {
+    const num = parseInt(value);
+    if (num <= 1 ) {
+      setErrors(prev => ({
+        ...prev,
+        players: 'Please enter more than 1 player for multiplayer games.'
+      }));
+    } else {
+      setErrors(prev => ({ ...prev, players: '' }));
+    }
+  }
+
+  // Optional: Reset players field if type is changed
+  if (name === 'type' && value === 'Single player') {
+    setFormData(prev => ({
+      ...prev,
+      players: ''
+    }));
+    setErrors(prev => ({ ...prev, players: '' }));
+  }  
+
+
   };
 
   // const handleFileChange = (e) => {
@@ -94,6 +125,13 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Updating Game:", formData);
+
+    if (formData.type === "Single player") {
+      // return 1 to the 'players' field if it's a single player game pass 1
+      formData.players = '1';
+
+    }
+    
 
   
     const formDataToSend = new FormData();
@@ -124,19 +162,19 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
       handleClose();
     }
   
-    setFormData({
-      name: "",
-      type: "Single player",
-      price: "",
-      zone: "Indoor",
-      size: "",
-      players: "",
-      commission: "",
-      cancellation: "Yes",
-      payLater: "Yes",
-      details: "",
-      image: ""
-    });
+    // setFormData({
+    //   name: "",
+    //   type: "Single player",
+    //   price: "",
+    //   zone: "Indoor",
+    //   size: "",
+    //   players: "",
+    //   commission: "",
+    //   cancellation: "Yes",
+    //   payLater: "Yes",
+    //   details: "",
+    //   image: ""
+    // });
   };
   
   return (
@@ -174,26 +212,31 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
                 required
                 className="form-select-lg border-2"
               >
-                <option>Single player</option>
-                <option>Multiplayer</option>
+                <option value="Single player">Single player</option>
+                <option value="Multiplayer">Multiplayer</option>
               </Form.Select>
 
               {formData.type === "Multiplayer" && (
                 <Form.Group className="mb-2 mt-2">
-                  <Form.Label htmlFor="players" className="fw-bold text-secondary">
-                    Number of Players <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    id="players"
-                    type="number"
-                    name="players"
-                    value={formData.players}
-                    onChange={handleChange}
-                    required
-                    className="py-2 border-2"
-                    placeholder="Enter number of players"
-                  />
-                </Form.Group>
+                <Form.Label htmlFor="players" className="fw-bold text-secondary">
+                  Number of Players <span className="text-danger">*</span>
+                </Form.Label>
+                <Form.Control
+                  id="players"
+                  type="number"
+                  name="players"
+                  value={formData.players}
+                  onChange={handleChange}
+                  required
+                  className={`py-2 border-2 ${errors.players ? 'is-invalid' : ''}`}
+                  placeholder="Enter number of players"
+                />
+                {errors.players && (
+                  <div className="invalid-feedback d-block">{errors.players}</div>
+                )}
+              </Form.Group>
+              
+                
               )}
 
             </Col>

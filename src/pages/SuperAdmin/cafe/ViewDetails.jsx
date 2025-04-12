@@ -377,7 +377,7 @@ const ViewDetails = () => {
               <div className="d-flex justify-content-center mt-3">
                 <h4 className="text-center " style={{ fontSize: "16px", fontWeight: "500" ,color: "#0062FF", cursor:"pointer" }}
                 onClick={() => setShowModalForwordPassword(true)}
-                >Forword Password ?
+                >Reset Password ?
                 </h4>
               </div>
             </Row>
@@ -581,7 +581,7 @@ const ViewDetails = () => {
                   {/* Cards in the Center */}
                   <Col className={`d-flex mx-0 ${games.length === 1 ? '' : ' justify-content-start '}`}>
                     <CardGroup className="w-100">
-                      <Row className="gx-3 gy-4 justify-content-center w-100">
+                      <Row className="gx-3 gy-4 justify-content-start w-100">
                         {games.length > 0 ? (
                           [...games].reverse().slice(currentIndex, currentIndex + cardsPerPage).map((game, index) => (
                             <Col key={index} xs={12} sm={12} md={4} lg={4}>
@@ -708,7 +708,7 @@ const ViewDetails = () => {
                   {/* Membership Cards */}
                   <Col className="px-0 ">
                     {memberships && memberships.length > 0 ? (
-                      <Row className="d-flex flex-wrap justify-content-center">
+                      <Row className="d-flex flex-wrap justify-content-start">
                         {[...memberships].reverse().slice(currentIndexMembership, currentIndexMembership + membershipCardsPerPage).map((membership, index, arr) => (
                           <Col
                             sm={6}
