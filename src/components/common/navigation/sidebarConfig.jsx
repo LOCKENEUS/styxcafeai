@@ -9,16 +9,6 @@ import { SlCup } from 'react-icons/sl';
 
  const navItems = [
   {
-    name: "",
-    title: "Dashboards",
-    icon: BiHomeAlt,
-    // path: "/superadmin/dashboard",
-    subItems: [
-      { title: "overview ", path: "/superadmin/dashboard" },
-      // { title: "Alternative", path: "/superadmin/dashboard/alternative" }
-    ]
-  },
-  {
     name:"Location Section",
     title: "Location",
     icon: CiLocationOn,

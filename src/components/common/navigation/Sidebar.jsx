@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { HiChevronDoubleLeft } from "react-icons/hi";
 import { GiHamburgerMenu } from "react-icons/gi";
 import navItems from "./sidebarConfig";
+import { BiHomeAlt } from "react-icons/bi";
 
 const Sidebar = ({ collapsed, toggleSidebar }) => {
   const [isMobile, setIsMobile] = useState(false);
@@ -48,7 +49,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
         position: "fixed",
         left: collapsed ? "-250px" : "0",
         width: "15rem",
-        top: "4rem",
+        top: "2rem",
         height: "100vh",
         transition: "left 0.3s ease-in-out, width 0.3s ease-in-out",
       }}
@@ -65,6 +66,22 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
           {/* Sidebar Content */}
           <div className="navbar-vertical-content">
     <div id="navbarVerticalMenu" className="nav nav-pills nav-vertical card-navbar-nav">
+    <div className="nav-item">
+            <div className="nav-item-wrapper">
+              <Link
+                className="nav-link rounded py-3 px-3"
+                to="/superadmin/dashboard"
+                style={{
+                  marginLeft: "20px",
+                  color: "#1e3a8a",
+                  transition: "all 0.2s",
+                }}
+              >
+                <BiHomeAlt className="flex-shrink-0 me-3" style={{ fontSize: "1.25rem" }} />                         
+                <span className="nav-link-text flex-grow-1">Dashboard</span>
+              </Link>
+            </div>
+          </div>
       {navItems.map((item, index) => {
         const collapseId = `collapse-${index}`;
         return (
