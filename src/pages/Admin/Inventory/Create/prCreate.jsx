@@ -177,7 +177,7 @@ export const PRCreate = () => {
             <Row className="mx-2">
                 {/* Breadcrumb Section */}
                 <Col sm={12} className="my-3">
-                    <div style={{ top: "186px", fontSize: "18px" }}>
+                    <div style={{ top: "186px", fontSize: "12px" }}>
                         <Breadcrumb>
                             <BreadcrumbItem href="#">Home</BreadcrumbItem>
                             <BreadcrumbItem> <Link to="/admin/inventory/purchaseReceived">Purchase Received List</Link></BreadcrumbItem>

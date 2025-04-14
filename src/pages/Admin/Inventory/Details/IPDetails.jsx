@@ -11,7 +11,7 @@ export const IPDetails = () => {
            <Row className="mx-2">
     {/* Breadcrumb Section */}
     <Col sm={12} className="my-3">
-    <div style={{ top: "186px", fontSize: "18px" }}>
+    <div style={{ top: "186px", fontSize: "10px" }}>
             <Breadcrumb>
               <BreadcrumbItem href="#">Home</BreadcrumbItem>
               <BreadcrumbItem href="#">Sales</BreadcrumbItem>

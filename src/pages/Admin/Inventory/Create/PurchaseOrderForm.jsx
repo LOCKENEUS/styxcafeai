@@ -327,7 +327,7 @@ const PurchaseOrderForm = () => {
   return (
     <Container fluid className="p-4">
       <Col sm={12} className="my-3">
-        <div style={{ top: "186px", fontSize: "18px" }}>
+        <div style={{ top: "186px", fontSize: "12px" }}>
           <Breadcrumb>
             <BreadcrumbItem >Home</BreadcrumbItem>
             <BreadcrumbItem><Link to="/admin/inventory/purchase-order-list">Purchase Order List</Link></BreadcrumbItem>

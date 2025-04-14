@@ -108,7 +108,7 @@ const ItemsList = () => {
     <Container fluid className="p-1">
       <Row>
         <Col xs={12} className="mx-2 mx-md-4 my-3">
-          <div style={{ fontSize: "16px" }}>
+          <div style={{ fontSize: "12px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>

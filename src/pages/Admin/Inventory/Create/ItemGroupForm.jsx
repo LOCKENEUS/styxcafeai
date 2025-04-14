@@ -292,12 +292,13 @@ const ItemGroupForm = () => {
 
   return (
     <Container className="p-4">
+      <div style={{ top: "186px", fontSize: "12px" }}>
       <Breadcrumb>
         <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
         <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
         <BreadcrumbItem ><Link to="/admin/inventory/item-group-list">Item Group List</Link></BreadcrumbItem>
         <BreadcrumbItem active>{isEditMode ? 'Edit Item Group' : 'Create New Item Group'}</BreadcrumbItem>
-      </Breadcrumb>
+      </Breadcrumb> </div>
       <Card className="shadow p-3">
       <div className="d-flex justify-content-start align-items-start">
         <h1>{isEditMode ? 'Edit Item Group' : 'Create New Item'}</h1>

@@ -2,13 +2,20 @@
 import { useState } from 'react';
 import { Navbar, Container, Button } from 'react-bootstrap';
 import { BiBell, BiChevronRight, BiDotsVertical, BiLeftArrow, BiRightArrow, BiSearch } from 'react-icons/bi';
+import { GiHamburgerMenu } from 'react-icons/gi';
+import { HiChevronDoubleLeft } from 'react-icons/hi';
 import { MdOutlineFitbit } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { TbLayoutSidebarLeftCollapse } from "react-icons/tb";
+
+
+
 // import { styxLogo } from '/assets/profile/Styx-logo.svg';
 
 
-const MainNavbar = ({ setIsAuthenticated }) => {
+const MainNavbar = ({ setIsAuthenticated ,toggleSidebar ,collapsed  }) => {
   const [profilePic, setProfilePic] = useState("/assets/profile/user_avatar.jpg");
   const user = JSON.parse(sessionStorage.getItem("user"));
   const navigate = useNavigate();
@@ -35,6 +42,20 @@ const MainNavbar = ({ setIsAuthenticated }) => {
         <a className="navbar-brand" aria-label="Front">
           <img className="navbar-brand-logo" src="/assets/profile/Styx-logo.svg" style={{ height: "30px", background: "none" }} alt="Logo" data-hs-theme-appearance="default" />
         </a>
+
+
+        <button
+            className="btn btn-ghost-secondary rounded-circle "
+            onClick={toggleSidebar}
+            style={{ width: "3rem", height: "3rem", borderRadius: "100%", cursor: "pointer", zIndex: 1000 }}
+          >
+            {!collapsed ? (
+              <BsThreeDotsVertical  size={20} />
+            ) : (
+              <TbLayoutSidebarLeftCollapse  size={20} />
+            )}
+          </button>
+
         <div className="navbar-nav-wrap-content-start">
           <button type="button" className="js-navbar-vertical-aside-toggle-invoker navbar-aside-toggler">
             <i className="bi-arrow-bar-left navbar-toggler-short-align" data-bs-template="&lt;div class=&quot;tooltip d-none d-md-block&quot; role=&quot;tooltip&quot;&gt;&lt;div class=&quot;arrow&quot;&gt;&lt;/div&gt;&lt;div class=&quot;tooltip-inner&quot;&gt;&lt;/div&gt;&lt;/div&gt;" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Collapse" data-bs-original-title="Collapse"><BiLeftArrow /></i>

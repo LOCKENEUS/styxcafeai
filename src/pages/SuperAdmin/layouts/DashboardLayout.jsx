@@ -29,7 +29,7 @@ const DashboardLayout = ({ setIsAuthenticated }) => {
     <div className="dashboard-container">
       <Sidebar collapsed={collapsed} isMobile={isMobile} toggleSidebar={toggleSidebar} />
       <main className={`main-content ${collapsed ? "collapsed" : ""}`}>
-        <Navbar setIsAuthenticated={setIsAuthenticated} toggleSidebar={toggleSidebar} isSidebarCollapsed={collapsed} />
+        <Navbar setIsAuthenticated={setIsAuthenticated} toggleSidebar={toggleSidebar} collapsed={collapsed} />
         <Container fluid className="content-wrapper p-1">
           <Outlet />
         </Container>

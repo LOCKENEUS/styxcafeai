@@ -147,7 +147,7 @@ export const PurchaseReceivedAdmin = () => {
     <Container data-aos="fade-right" data-aos-duration="1000" fluid className="mt-4 min-vh-100">
       <Row>
       <Col sm={12} className="mx-2 my-3">
-          <div style={{ top: "186px", fontSize: "15px" }}>
+          <div style={{ top: "186px", fontSize: "12px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>

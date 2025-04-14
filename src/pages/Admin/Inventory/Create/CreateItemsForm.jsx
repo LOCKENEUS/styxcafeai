@@ -18,7 +18,7 @@ const CreateItemsForm = () => {
     const navigate = useNavigate();
     const isEditMode = Boolean(id);
 
-    const [imagePreview, setImagePreview] = useState('https://fsm.lockene.net/assets/Web-Fsm/images/avtar/3.jpg');
+    const [imagePreview, setImagePreview] = useState('');
     const [showUnitModal, setShowUnitModal] = useState(false);
     const [showTaxModal, setShowTaxModal] = useState(false);
     const [showManufacturerModal, setShowManufacturerModal] = useState(false);
@@ -226,7 +226,7 @@ const CreateItemsForm = () => {
             };
             reader.readAsDataURL(file);
         } else {
-            setImagePreview('https://fsm.lockene.net/assets/Web-Fsm/images/avtar/3.jpg');
+            setImagePreview('');
             setFormData((prev) => ({ ...prev, image: null }));
         }
     };
@@ -335,7 +335,7 @@ const CreateItemsForm = () => {
         <Col sm={12} className="d-flex "  >
             {/* style={{top:"110px" , left:"700px"}} */}
 
-            <div style={{ top: "186px" }}>
+            <div style={{ top: "186px", fontSize: "12px" }}>
                 <Breadcrumb  >
                     <BreadcrumbItem  ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
                     <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
@@ -893,7 +893,7 @@ const CreateItemsForm = () => {
                             alt="product image"
                             fluid
                             style={{ width: '100px', aspectRatio: '1', objectFit: 'cover' }}
-                            onError={(e) => e.target.src = 'https://fsm.lockene.net/assets/Web-Fsm/images/avtar/3.jpg'}
+                            onError={(e) => e.target.src = ''}
                         />
                     </Col>
 

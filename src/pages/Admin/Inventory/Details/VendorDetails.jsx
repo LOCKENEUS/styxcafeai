@@ -33,13 +33,14 @@ const VendorDetails = () => {
 
   return (
     <Container className="mt-4">
-
+<div style={{ top: "186px", fontSize: "12px" }}>
       <Breadcrumb>
         <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
         <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
         <BreadcrumbItem ><Link to="/admin/inventory/vendors-list">Vendors List</Link></BreadcrumbItem>
         <BreadcrumbItem active>Vendor Details</BreadcrumbItem>
       </Breadcrumb>
+      </div>
       <Row data-aos="fade-up" data-aos-duration="500">
         {/* Sidebar with Profile */}
         <Col md={4}>

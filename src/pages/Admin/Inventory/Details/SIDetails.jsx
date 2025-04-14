@@ -196,7 +196,7 @@ export const SIDetails = () => {
         {/* Breadcrumb Section */}
 
         <Col sm={12} className="my-3">
-          <div style={{ top: "186px", fontSize: "18px" }}>
+          <div style={{ top: "186px", fontSize: "12px" }}>
             <Breadcrumb>
             <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>

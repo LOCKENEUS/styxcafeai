@@ -53,34 +53,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
         transition: "left 0.3s ease-in-out, width 0.3s ease-in-out",
       }}
     >
-       <button
-            ref={toggleButtonRef}
-            className="d-flex justify-content-center align-items-center"
-            onClick={toggleSidebar}
-            style={{
-              position: "absolute",
-              right: "-4rem",
-              top: "5px",
-              width: "3rem",
-              height: "3rem",
-              borderRadius: "100%",
-              cursor: "pointer",
-              transition: "transform 0.3s ease",
-              zIndex: 1000,
-              backgroundColor: "white",
-              border: "1px solid #ddd",
-              touchAction: "manipulation",
-            }}
-          >
-            {collapsed ? (
-              <GiHamburgerMenu size={24} style={{ pointerEvents: "none" }} />
-            ) : (
-              <HiChevronDoubleLeft
-                size={24}
-                style={{ pointerEvents: "none" }}
-              />
-            )}
-          </button>
+   
       <div className="navbar-vertical-container sidebar-scroll-container"
   style={{
     overflowY: "auto",

@@ -104,7 +104,7 @@ const PurchaseOrderList = () => {
     <Container>
       <Row>
       <Col sm={12} className="mx-2 my-3">
-          <div style={{ top: "186px", fontSize: "15px" }}>
+          <div style={{ top: "186px", fontSize: "12px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>

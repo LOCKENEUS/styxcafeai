@@ -202,7 +202,7 @@ export const SalesOrder = () => {
     <Container className="p-0">
       <Row>
         <Col sm={12} className="mx-2 my-3">
-          <div style={{ top: "186px", fontSize: "18px" }}>
+          <div style={{ top: "186px", fontSize: "12px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>

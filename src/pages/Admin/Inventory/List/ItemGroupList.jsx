@@ -92,7 +92,7 @@ const ItemGroupList = () => {
     <Container fluid className="px-3">
       <Row>
         <Col sm={12} className="mx-md-4 my-3">
-          <div style={{ top: "186px" }}>
+          <div style={{ top: "186px",  fontSize: "12px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>
