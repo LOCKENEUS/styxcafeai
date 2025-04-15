@@ -21,12 +21,12 @@ import { fetchCafesID } from "../../../../store/slices/cafeSlice";
 const CafeGames = () => {
 
   const location = useLocation();
-    const { cafeId } = location.state || {}; 
+  const { cafeId } = location.state || {};
 
-  console.log("your cafe id game ",cafeId);
+  console.log("your cafe id game ", cafeId);
   const baseURL = import.meta.env.VITE_API_URL;
 
-  console.log("your cafe id game -- ",cafeId);
+  console.log("your cafe id game -- ", cafeId);
 
   const [lodergames, setLodergames] = useState(true);
   const dispatch = useDispatch();
@@ -96,18 +96,18 @@ const CafeGames = () => {
 
 
 
-   useEffect(() => {
-      dispatch(fetchCafesID(cafeId));
-    }, [cafeId, dispatch]);
-  
-    const cafeDetails = useSelector((state) => state.cafes);
-    console.log("cafe details membership ==", cafeDetails);
-  
-    // compare cafeId with cafeDetails.cafeId
-    const isCafeIdMatch = cafeDetails.cafes?.find(cafe => cafe._id === cafeId);
-    console.log("isCafeIdMatch  cafe ==", isCafeIdMatch);
-  
-  
+  useEffect(() => {
+    dispatch(fetchCafesID(cafeId));
+  }, [cafeId, dispatch]);
+
+  const cafeDetails = useSelector((state) => state.cafes);
+  console.log("cafe details membership ==", cafeDetails);
+
+  // compare cafeId with cafeDetails.cafeId
+  const isCafeIdMatch = cafeDetails.cafes?.find(cafe => cafe._id === cafeId);
+  console.log("isCafeIdMatch  cafe ==", isCafeIdMatch);
+
+
 
 
   return (
@@ -118,18 +118,18 @@ const CafeGames = () => {
             <Breadcrumb>
               <Breadcrumb.Item href="#" style={{ fontSize: "16px", fontWeight: "500" }}>Home</Breadcrumb.Item>
               <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }}>
-                <Link   to="/superadmin/cafe/viewdetails" 
-                    state={{ cafeId: cafeId }}> 
-                    Games Details  
+                <Link to="/superadmin/cafe/viewdetails"
+                  state={{ cafeId: cafeId }}>
+                  Games Details
                 </Link>
                 {/* <Link to={`/superadmin/cafe/viewdetails/${cafeId}`}>Games Details</Link> */}
               </Breadcrumb.Item>
               <Breadcrumb.Item active style={{ fontSize: "16px", fontWeight: "500" }} > All Games </Breadcrumb.Item>
             </Breadcrumb>
 
-     
-              <Button variant="primary" className="rounded-3" 
-              
+
+            <Button variant="primary" className="rounded-3"
+
               // onClick={() => {
               //   dispatch(setSelectedGame(null));
               //   setFormData(null);
@@ -137,13 +137,13 @@ const CafeGames = () => {
               // }}
               onClick={() => setShowModalAdd(true)}
 
-              >
-                <Image src={Add} alt="CafeCall" className="mx-1   " style={{ objectFit: "cover", width: "26.25px", height: "26.25px" }} />
-                Create  Game 
-              </Button>
-              
-              
-            
+            >
+              <Image src={Add} alt="CafeCall" className="mx-1   " style={{ objectFit: "cover", width: "26.25px", height: "26.25px" }} />
+              Create  Game
+            </Button>
+
+
+
           </div>
         </Card.Header>
 
@@ -153,71 +153,71 @@ const CafeGames = () => {
             <div className="text-center py-5">
               <Loader />
             </div>
-          ):(
+          ) : (
             <Col sm={12} className="my-3">
-              
-  <Row>
-  <Col sm={4} className="mb-3">
-              <Card className="game-card mx-2 my-1 rounded-4  text-center text-sm-start">
-                <div className="d-flex flex-column flex-sm-row align-items-center">
-                  <Image
-                    src={Rectangle389}
-                    alt="CafeCall"
-                    className="rounded-circle img-fluid mb-2 mb-sm-0"
-                    style={{ objectFit: "cover", width: "50px", height: "50px" }}
-                  />
-                  <div className="ms-sm-3 ">
-                    <h5 className="text-primary " style={{ fontSize: "16px", fontWeight: "500" }}>{isCafeIdMatch?.cafe_name}</h5>
-                  </div>
-                </div>
-              </Card>
-            </Col>
 
-  </Row>
+              <Row>
+                <Col sm={4} className="mb-3">
+                  <Card className="game-card mx-2 my-1 rounded-4  text-center text-sm-start">
+                    <div className="d-flex flex-column flex-sm-row align-items-center">
+                      <Image
+                        src={Rectangle389}
+                        alt="CafeCall"
+                        className="rounded-circle img-fluid mb-2 mb-sm-0"
+                        style={{ objectFit: "cover", width: "50px", height: "50px" }}
+                      />
+                      <div className="ms-sm-3 ">
+                        <h5 className="text-primary " style={{ fontSize: "16px", fontWeight: "500" }}>{isCafeIdMatch?.cafe_name}</h5>
+                      </div>
+                    </div>
+                  </Card>
+                </Col>
 
-
-            <Row className="g-3"> {/* Use Row for grid layout */}
-              {gamesDetails?.games.length > 0 ? (
-                gamesDetails?.games.slice()?.reverse()?.map((game, index) => (
-
-                  <>
-                    
-
-                  <Col xs={12} sm={6} md={4} lg={3} key={index}> 
-
-                    
-
-                    <Card
-                      className="game-card mx-2 rounded-4 shadow-sm shadow-lg p-2 flex-grow-1 h-100"
-                    
-                      onClick={() => handleOpenGameDetails(game._id)}
-
-                      style={{ cursor: "pointer"}}
-
-                    >
-                      {/* Image with Correct Fallback */}
-                      <Card.Img
-  src={`${baseURL}/${game.gameImage}`}
-  onError={(e) => {
-    e.target.onerror = null; // Prevent loop if fallback fails
-    e.target.src = Rectangle389; // Must be a valid image URL string
-  }}
-  className="img-fluid rounded-4"
-  style={{
-    width: "100%",
-    height: "10rem",
-    objectFit: "cover",
-  }}
-  alt={game.name || "Game Image"}
-/>
+              </Row>
 
 
-                      <Card.Body >
-                        <Card.Title className=" " style={{ fontSize: "18.07px", fontWeight: "600" }}>{game.name || "Game Title"}</Card.Title>
-                        <Card.Text>
-                          <Row className="gap-2 mt-3">
-                            {/* Buttons Section */}
-                            {/* <Col xs={12} className="d-flex gap-2 justify-content-start mb-2">
+              <Row className="g-3"> {/* Use Row for grid layout */}
+                {gamesDetails?.games.length > 0 ? (
+                  gamesDetails?.games.slice()?.reverse()?.map((game, index) => (
+
+                    <>
+
+
+                      <Col xs={12} sm={6} md={4} lg={3} key={index}>
+
+
+
+                        <Card
+                          className="game-card mx-2 rounded-4 shadow-sm shadow-lg p-2 flex-grow-1 h-100"
+
+                          onClick={() => handleOpenGameDetails(game._id)}
+
+                          style={{ cursor: "pointer" }}
+
+                        >
+                          {/* Image with Correct Fallback */}
+                          <Card.Img
+                            src={`${baseURL}/${game.gameImage}`}
+                            onError={(e) => {
+                              e.target.onerror = null; // Prevent loop if fallback fails
+                              e.target.src = Rectangle389; // Must be a valid image URL string
+                            }}
+                            className="img-fluid rounded-4"
+                            style={{
+                              width: "100%",
+                              height: "10rem",
+                              objectFit: "cover",
+                            }}
+                            alt={game.name || "Game Image"}
+                          />
+
+
+                          <Card.Body >
+                            <Card.Title className=" " style={{ fontSize: "18.07px", fontWeight: "600" }}>{game.name || "Game Title"}</Card.Title>
+                            <Card.Text>
+                              <Row className="gap-2 mt-3">
+                                {/* Buttons Section */}
+                                {/* <Col xs={12} className="d-flex gap-2 justify-content-start mb-2">
                               <Button className="border-0 rounded-3" size="sm" style={{ backgroundColor: "#2C99FF" }}>
                                 Single
                               </Button>
@@ -226,48 +226,48 @@ const CafeGames = () => {
                               </Button>
                             </Col> */}
 
-                            {/* Price */}
-                            <Col xs={4}>
-                              <h6 className="text-primary fw-semibold" style={{ fontSize: "16px", fontWeight: "500" }}>Price:</h6>
-                            </Col>
-                            <Col xs={6}>
-                              <h6 className="fw-medium" style={{ fontSize: "15.81px", fontWeight: "500" }}>₹ {game.price || 1000}</h6>
-                            </Col>
+                                {/* Price */}
+                                <Col xs={4}>
+                                  <h6 className="text-primary fw-semibold" style={{ fontSize: "16px", fontWeight: "500" }}>Price:</h6>
+                                </Col>
+                                <Col xs={6}>
+                                  <h6 className="fw-medium" style={{ fontSize: "15.81px", fontWeight: "500" }}>₹ {game.price || 1000}</h6>
+                                </Col>
 
-                            {/* Zone */}
-                            <Col xs={4}>
-                              <h6 className="text-primary fw-semibold" style={{ fontSize: "16px", fontWeight: "500" }}>Zone:</h6>
-                            </Col>
-                            <Col xs={6}>
-                              <h6 className="fw-medium" style={{ fontSize: "15.81px", fontWeight: "500" }}>{game.zone || "A"}</h6>
-                            </Col>
+                                {/* Zone */}
+                                <Col xs={4}>
+                                  <h6 className="text-primary fw-semibold" style={{ fontSize: "16px", fontWeight: "500" }}>Zone:</h6>
+                                </Col>
+                                <Col xs={6}>
+                                  <h6 className="fw-medium" style={{ fontSize: "15.81px", fontWeight: "500" }}>{game.zone || "A"}</h6>
+                                </Col>
 
-                            {/* Size */}
-                            <Col xs={4}>
-                              <h6 className="text-primary fw-semibold" style={{ fontSize: "16px", fontWeight: "500" }}>Size:</h6>
-                            </Col>
-                            <Col xs={6}>
-                              <h6 className="fw-medium" style={{ fontSize: "15.81px", fontWeight: "500" }} >{game.size || 2}</h6>
-                            </Col>
-                          </Row>
-                        </Card.Text>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                  </>
-                ))
-              ) : (
-                <div className="col-12 text-center fw-bold py-3">
-                  No Data Available
-                </div>
-              )}
-            </Row>
-          </Col>
+                                {/* Size */}
+                                <Col xs={4}>
+                                  <h6 className="text-primary fw-semibold" style={{ fontSize: "16px", fontWeight: "500" }}>Size:</h6>
+                                </Col>
+                                <Col xs={6}>
+                                  <h6 className="fw-medium" style={{ fontSize: "15.81px", fontWeight: "500" }} >{game.size || 2}</h6>
+                                </Col>
+                              </Row>
+                            </Card.Text>
+                          </Card.Body>
+                        </Card>
+                      </Col>
+                    </>
+                  ))
+                ) : (
+                  <div className="col-12 text-center fw-bold py-3">
+                    No Data Available
+                  </div>
+                )}
+              </Row>
+            </Col>
           )
         }
-       
-          
-        
+
+
+
         <GameForm
           showCanvas={showCanvas}
           handleCloseCanvas={handleCloseCanvas}
@@ -276,7 +276,7 @@ const CafeGames = () => {
           game={selectedGame}
           onGameAction={handleGameAction}
         />
-        
+
       </Row>
 
       <AddGamesOffcanvas show={showModalAdd} handleClose={() => setShowModalAdd(false)} cafeId={cafeId} selectedGameDetails={gamesDetails} />

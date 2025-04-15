@@ -13,7 +13,6 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
 
   const [errors, setErrors] = useState({});
   const [previewImage, setPreviewImage] = useState(null);
-
   const baseURL = import.meta.env.VITE_API_URL;
   console.log("Offcanvas edit game id", gameId);
   const [formData, setFormData] = useState({
@@ -27,7 +26,10 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
     cancellation: "Yes",
     payLater: "Yes",
     details: "",
-    image: ""
+    image: "",
+    length: '',
+  breadth: '',
+  selectedArea: ''
 
   })
   const [saveLoading, setSaveLoading] = useState(false);
@@ -36,8 +38,35 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
   useEffect(() => {
     dispatch(getGameById(gameId));
   }, [gameId, dispatch]);
+  const [areaDimension, setAreaDimension] = useState({
+    length: '',
+    breadth: '',
+    selectedArea: ''
+  });
 
   console.log("selected game 11", selectedGame);
+  
+  useEffect(() => {
+    if (selectedGame?.data?._id === gameId) {
+      const sizeString = selectedGame?.data?.size; 
+    
+    if (sizeString) {
+      const sizeParts = sizeString.split(' '); 
+      
+      if (sizeParts.length === 4) {
+        setAreaDimension({
+          length: sizeParts[0],
+          breadth: sizeParts[2],
+          selectedArea: sizeParts[3]
+        });
+      }
+    }
+    }
+  }, [selectedGame]);
+  
+  console.log("area dimension === ", areaDimension);
+  
+  
 
 
 
@@ -60,6 +89,7 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
   }, [selectedGame]);
 
 
+  
 
   const formRef = useRef(null);
   useEffect(() => {
@@ -78,7 +108,13 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
       [name]: value
     }));
 
+    setAreaDimension(prev => ({
+      ...prev,
+      [name]: value
+    }));
 
+
+    
 
     // Validation for number of players
     if (name === 'players' && formData.type === 'Multiplayer') {
@@ -128,6 +164,11 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
     setSaveLoading(true);
     console.log("Updating Game:", formData);
 
+    const { length, breadth, selectedArea } = areaDimension;
+const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
+
+
+
     if (formData.type === "Single player") {
       // return 1 to the 'players' field if it's a single player game pass 1
       formData.players = '1';
@@ -140,7 +181,7 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
     formDataToSend.append('type', formData.type);
     formDataToSend.append('price', formData.price);
     formDataToSend.append('zone', formData.zone);
-    formDataToSend.append('size', formData.size);
+    formDataToSend.append('size', sizeFormatted);
     formDataToSend.append('players', formData.players);
     formDataToSend.append('commission', formData.commission);
     // formDataToSend.append('cancellation', formData.cancellation);
@@ -261,19 +302,49 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
               />
             </Col>
             <Col md={6}>
-              <Form.Label htmlFor="gameSize" className="fw-bold text-secondary">Size of Game
+            <Form.Label htmlFor="gamePrice" className="fw-bold text-secondary">Area of Game
                 <span className="text-danger">*</span>
               </Form.Label>
-              <Form.Control
-                id="gameSize"
-                type="text"
-                name="size"
-                value={formData.size}
-                onChange={handleChange}
-                required
-                className="py-2 border-2"
-                placeholder="Enter game size (e.g., 10x10 ft)"
-              />
+            <Row className="g-1">
+  <Col sm={4}>
+    <Form.Control
+      type="number"
+      name="length"
+      value={areaDimension.length}
+      onChange={handleChange}
+      placeholder="length"
+      required
+    />
+  </Col>
+
+  <Col sm={4}>
+    <Form.Control
+      type="number"
+      name="breadth"
+      value={areaDimension.breadth}
+      onChange={handleChange}
+      placeholder="breadth"
+      required
+    />
+  </Col>
+
+  <Col sm={4}>
+    <Form.Select
+      name="selectedArea"
+      value={areaDimension.selectedArea}
+      onChange={handleChange}
+      required
+    >
+      <option value="">Select Area</option>
+      <option value="ft">Feet (ft)</option>
+      <option value="in">Inches (in)</option>
+      <option value="yd">Yards (yd)</option>
+      <option value="m">Meters (m)</option>
+      <option value="cm">Centimeters (cm)</option>
+    </Form.Select>
+  </Col>
+</Row>
+
             </Col>
           </Row>
 
