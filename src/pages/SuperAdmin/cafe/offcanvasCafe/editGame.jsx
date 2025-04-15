@@ -1,17 +1,19 @@
 
 import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
-import { Button, Col, Form, Offcanvas, Row } from "react-bootstrap";
+import { Button, Col, Form, Offcanvas, Row, Spinner } from "react-bootstrap";
 import { getGameById, updateGame } from "../../../../store/slices/gameSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { TiDeleteOutline } from "react-icons/ti";
+import Rectangle389 from '/assets/superAdmin/cafe/Rectangle389.png';
 
 const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
 
 
 
   const [errors, setErrors] = useState({});
- 
+  const [previewImage, setPreviewImage] = useState(null);
+
   const baseURL = import.meta.env.VITE_API_URL;
   console.log("Offcanvas edit game id", gameId);
   const [formData, setFormData] = useState({
@@ -19,7 +21,7 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
     type: "Single player",
     price: "",
     zone: "Indoor",
-    size: "", 
+    size: "",
     players: "",
     commission: "",
     cancellation: "Yes",
@@ -28,13 +30,14 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
     image: ""
 
   })
+  const [saveLoading, setSaveLoading] = useState(false);
   const dispatch = useDispatch();
   const { selectedGame } = useSelector((state) => state.games);
   useEffect(() => {
     dispatch(getGameById(gameId));
   }, [gameId, dispatch]);
 
-  console.log("selected game", selectedGame);
+  console.log("selected game 11", selectedGame);
 
 
 
@@ -74,30 +77,30 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
       ...prev,
       [name]: value
     }));
-   
+
 
 
     // Validation for number of players
-  if (name === 'players' && formData.type === 'Multiplayer') {
-    const num = parseInt(value);
-    if (num <= 1 ) {
-      setErrors(prev => ({
+    if (name === 'players' && formData.type === 'Multiplayer') {
+      const num = parseInt(value);
+      if (num <= 1) {
+        setErrors(prev => ({
+          ...prev,
+          players: 'Please enter more than 1 player for multiplayer games.'
+        }));
+      } else {
+        setErrors(prev => ({ ...prev, players: '' }));
+      }
+    }
+
+    // Optional: Reset players field if type is changed
+    if (name === 'type' && value === 'Single player') {
+      setFormData(prev => ({
         ...prev,
-        players: 'Please enter more than 1 player for multiplayer games.'
+        players: ''
       }));
-    } else {
       setErrors(prev => ({ ...prev, players: '' }));
     }
-  }
-
-  // Optional: Reset players field if type is changed
-  if (name === 'type' && value === 'Single player') {
-    setFormData(prev => ({
-      ...prev,
-      players: ''
-    }));
-    setErrors(prev => ({ ...prev, players: '' }));
-  }  
 
 
   };
@@ -111,19 +114,18 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
   // };
 
   const handleFileChange = (e) => {
-    const file = Array.from(e.target.files);
+    const file = e.target.files[0];
     if (file) {
-      setImg(file);
-      setFormData((prev) => ({ ...prev, image: file }));
+      setPreviewImage(URL.createObjectURL(file)); // For image preview
+      setFormData((prev) => ({ ...prev, image: file })); // For backend submission
     }
   };
 
 
 
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSaveLoading(true);
     console.log("Updating Game:", formData);
 
     if (formData.type === "Single player") {
@@ -131,9 +133,7 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
       formData.players = '1';
 
     }
-    
 
-  
     const formDataToSend = new FormData();
     formDataToSend.append('_id', gameId);
     formDataToSend.append('name', formData.name);
@@ -148,11 +148,12 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
     formDataToSend.append('cancellation', formData.cancellation === "Yes" || formData.cancellation === true);
     // formDataToSend.append('payLater', formData.payLater);
     formDataToSend.append('details', formData.details);
-  
-    if (formData.image) {
+
+    if (formData.image && typeof formData.image !== 'string') {
       formDataToSend.append("image", formData.image);
     }
-  
+
+
     try {
       await dispatch(updateGame({ id: gameId, updatedData: formDataToSend }));
       handleClose();
@@ -160,8 +161,12 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
       console.error("Error submitting form:", error);
       toast.error("Failed to update game. Please try again.");
       handleClose();
+      // getGames(gameId);
     }
-  
+    finally {
+      setSaveLoading(false);
+    }
+
     // setFormData({
     //   name: "",
     //   type: "Single player",
@@ -176,7 +181,7 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
     //   image: ""
     // });
   };
-  
+
   return (
     <Offcanvas show={show} onHide={handleClose} placement="end" style={{ width: "700px" }}>
       <Offcanvas.Header closeButton>
@@ -218,25 +223,25 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
 
               {formData.type === "Multiplayer" && (
                 <Form.Group className="mb-2 mt-2">
-                <Form.Label htmlFor="players" className="fw-bold text-secondary">
-                  Number of Players <span className="text-danger">*</span>
-                </Form.Label>
-                <Form.Control
-                  id="players"
-                  type="number"
-                  name="players"
-                  value={formData.players}
-                  onChange={handleChange}
-                  required
-                  className={`py-2 border-2 ${errors.players ? 'is-invalid' : ''}`}
-                  placeholder="Enter number of players"
-                />
-                {errors.players && (
-                  <div className="invalid-feedback d-block">{errors.players}</div>
-                )}
-              </Form.Group>
-              
-                
+                  <Form.Label htmlFor="players" className="fw-bold text-secondary">
+                    Number of Players <span className="text-danger">*</span>
+                  </Form.Label>
+                  <Form.Control
+                    id="players"
+                    type="number"
+                    name="players"
+                    value={formData.players}
+                    onChange={handleChange}
+                    required
+                    className={`py-2 border-2 ${errors.players ? 'is-invalid' : ''}`}
+                    placeholder="Enter number of players"
+                  />
+                  {errors.players && (
+                    <div className="invalid-feedback d-block">{errors.players}</div>
+                  )}
+                </Form.Group>
+
+
               )}
 
             </Col>
@@ -342,6 +347,7 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
           </Row>
 
           <Row className="mb-2 g-4">
+
             <Col md={6}>
               <Form.Label className="fw-bold text-secondary d-block">
                 Upload Image <span className="text-danger">*</span>
@@ -354,11 +360,14 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
                   className="d-none"
                   id="fileUploadLocation"
                   onChange={handleFileChange}
+
                 />
+
+
                 <div className="d-flex justify-content-center align-items-center">
                   <label
-                    style={{ width: "10rem", height: "3rem" }}
                     htmlFor="fileUploadLocation"
+                    style={{ width: '10rem', height: '3rem' }}
                     className="btn btn-outline-primary d-flex justify-content-center align-items-center py-2"
                   >
                     Choose File
@@ -369,44 +378,32 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
 
             <Col md={6}>
               <div className="mt-3 d-flex flex-wrap gap-3">
+                {(previewImage || selectedGame?.data?.gameImage) && (
+                  <div className="position-relative">
+                    <img
+                      src={previewImage || `${baseURL}/${selectedGame.data.gameImage}`}
+                      alt="Selected"
+                      className="img-thumbnail"
+                      style={{ maxHeight: '100px', maxWidth: '100px' }}
 
-
-                <div className="position-relative">
-
-
-                  <img
-
-                    src={`${baseURL}/${selectedGame?.data?.gameImage}`}
-                    alt="selected"
-                    className="img-thumbnail"
-                    style={{ maxHeight: "100px", maxWidth: "100px" }}
-
-
-                  />
-
-
-
-                  <TiDeleteOutline
-                    className="text-danger position-absolute top-0 end-0 bg-white rounded-circle"
-                    onClick={() =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        image: "",
-                      }))
-                    }
-                    style={{ cursor: "pointer" }}
-                  />
-                </div>
-
-
-                {/* Display newly selected images */}
-
-
-
+                    />
+                    <TiDeleteOutline
+                      className="text-danger position-absolute top-0 end-0 bg-white rounded-circle"
+                      onClick={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          image: '',
+                        }))
+                      }
+                      style={{ cursor: 'pointer' }}
+                    />
+                  </div>
+                )}
               </div>
             </Col>
 
           </Row>
+
 
 
           <Form.Group className="mb-2">
@@ -430,7 +427,22 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
 
           <div className="d-flex justify-content-end gap-3 mt-4">
             <Button variant="success" type="submit" >
-              save Game
+              {
+                saveLoading ?(
+                  <>
+                  <Spinner
+                    animation="border"
+                    role="status"
+                    size="sm"
+                    className="me-2"
+                  />
+                  Saving...
+                </>
+            
+              ) : (
+              "Save Game"
+              )
+              }
             </Button>
             <Button variant="outline-secondary" onClick={handleClose} className="px-4 py-2 fw-bold">
               Cancel

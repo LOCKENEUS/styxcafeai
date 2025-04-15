@@ -91,6 +91,25 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
     setFormDataState((prev) => ({ ...prev, [name]: value }));
   };
   const [imagePreview, setImagePreview] = useState([]);
+
+ 
+
+
+  // -----------------------------------------------------
+
+
+
+
+  const [existingCafeImages, setExistingCafeImages] = useState([]);
+  const [removedCafeImages, setRemovedCafeImages] = useState([]); 
+
+
+  useEffect(() => {
+    if (filteredCafes?.[0]?.cafeImage) {
+      setExistingCafeImages(filteredCafes[0].cafeImage);
+    }
+  }, [filteredCafes]);
+
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     const previews = files.map((file) => URL.createObjectURL(file));
@@ -101,6 +120,31 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
       cafeImage: [...(prev.cafeImage || []), ...files],
     }));
   };
+
+  const handleRemoveImage = (index) => {
+    // Remove from new image preview and files
+    setImagePreview((prev) => {
+      const updated = [...prev];
+      URL.revokeObjectURL(updated[index]);
+      updated.splice(index, 1);
+      return updated;
+    });
+
+    setFormDataState((prev) => {
+      const updatedFiles = [...prev.cafeImage];
+      updatedFiles.splice(index, 1);
+      return { ...prev, cafeImage: updatedFiles };
+    });
+  };
+
+  const handleRemoveExistingImage = (imgPath) => {
+    setExistingCafeImages((prev) => prev.filter((img) => img !== imgPath));
+    setRemovedCafeImages((prev) => [...prev, imgPath]);
+  };
+
+
+
+  // ================================================
 
 
   const toggleConfirmPasswordVisibility = (e) => {
@@ -202,12 +246,18 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
 
 
     if (Array.isArray(formDataState.cafeImage)) {
-      formDataState.cafeImage.forEach((file) => {
-        formDataToSend.append("cafeImage", file);
+      formDataState.cafeImage.forEach((item) => {
+        if (typeof item === "string") {
+          // existing image path (only add if NOT removed)
+          if (!removedCafeImages.includes(item)) {
+            formDataToSend.append("cafeImage", item);
+          }
+        } else if (item instanceof File) {
+          // new uploaded file
+          formDataToSend.append("cafeImage", item);
+        }
       });
     }
-
-
 
     if (Array.isArray(formDataState.document)) {
       formDataState.document.forEach((file) => {
@@ -247,24 +297,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
       address: e.target.value
     }));
   };
-  const handleRemoveImage = (indexToRemove) => {
-    const updatedImages = imagePreview.filter((_, index) => index !== indexToRemove);
-    setImagePreview(updatedImages);
-  };
 
-  const handleRemoveExistingImage = (indexToRemove) => {
-    const updatedCafeImage = filteredCafes[0].cafeImage.filter((_, index) => index !== indexToRemove);
-
-    const updatedCafe = {
-      ...filteredCafes[0],
-      cafeImage: updatedCafeImage,
-    };
-
-    setFilteredCafes([updatedCafe]);
-
-    // Optionally, delete on the server too
-    // fetch('your-api/delete-image', { method: 'POST', body: JSON.stringify({ img: filteredCafes[0].cafeImage[indexToRemove] }) })
-  };
   const handleRemoveDocument = (index, type) => {
     if (type === "new") {
       setDocumentPreview((prev) => prev.filter((_, i) => i !== index));
@@ -574,77 +607,82 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
           </Form.Group>
 
           {/* <Row className="mb-3">
-            <Col md={6}>
-              <Form.Label className="fw-bold text-secondary d-block">
-                Upload Images
-              </Form.Label>
-              <div className="border-2 rounded-3 p-3 bg-light">
-                <Form.Control
-                  type="file"
-                  onChange={handleFileChange}
-                  accept="image/*"
-                  className="d-none"
-                  id="fileUploadLocation"
-                  multiple
+          <Col md={6}>
+      <Form.Label className="fw-bold text-secondary d-block">
+        Upload Images
+      </Form.Label>
+      <div className="border-2 rounded-3 p-3 bg-light">
+        <Form.Control
+          type="file"
+          onChange={handleFileChange}
+          accept="image/*"
+          className="d-none"
+          id="fileUploadLocation"
+          multiple
+        />
+        <div className="d-flex flex-column gap-3">
+          <div className="d-flex justify-content-center align-items-center">
+            <label
+              style={{ width: "10rem", height: "3rem" }}
+              htmlFor="fileUploadLocation"
+              className="btn btn-outline-primary d-flex justify-content-center align-items-center py-2"
+            >
+              Choose Files
+            </label>
+          </div>
+
+         
+          <div className="d-flex flex-wrap gap-2">
+            {imagePreview.map((img, index) => (
+              <div key={`new-${index}`} className="position-relative">
+                <img
+                  src={img}
+                  alt={`Preview ${index + 1}`}
+                  className="img-thumbnail"
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    objectFit: "cover",
+                  }}
                 />
-                <div className="d-flex flex-column gap-3">
-                  <div className="d-flex justify-content-center align-items-center">
-                    <label
-                      style={{ width: "10rem", height: "3rem" }}
-                      htmlFor="fileUploadLocation"
-                      className="btn btn-outline-primary d-flex justify-content-center align-items-center py-2"
-                    >
-                      Choose Files
-                    </label>
-                  </div>
-
-
-                  {imagePreview.map((img, index) => (
-                    <div key={`new-${index}`} className="position-relative gap-2">
-                      <img
-                        src={img}
-                        
-                        alt={`Preview ${index + 1}`}
-                        className="img-thumbnail"
-                        style={{ width: "100px", height: "100px", objectFit: "cover" }}
-                      />
-                      <div
-                        onClick={() => handleRemoveImage(index)}
-                        className="position-absolute top-0 end-0 cursor-pointer"
-                        style={{ transform: "translate(25%, -25%)" }}
-                      >
-                        <TiDeleteOutline color="red" size={25} />
-                      </div>
-                    </div>
-
-
-                  ))}
-
-
-                  <div className="d-flex flex-wrap gap-2">
-                    {filteredCafes?.[0]?.cafeImage?.map((img, index) => (
-                      <div key={`existing-${index}`} className="position-relative">
-                        <img
-                          src={`${baseURL}/${img}`}
-                          alt={`Existing ${index + 1}`}
-                          className="img-thumbnail"
-                          style={{ width: "100px", height: "100px", objectFit: "cover" }}
-                        />
-                        <div
-        onClick={() => handleRemoveExistingImage(img)}
-        className="position-absolute top-0 end-0 cursor-pointer"
-        style={{ transform: "translate(25%, -25%)" }}
-      >
-        <TiDeleteOutline color="red" size={25} />
-      </div>
-                      </div>
-                    ))}
-                  </div>
-
-
+                <div
+                  onClick={() => handleRemoveImage(index)}
+                  className="position-absolute top-0 end-0 cursor-pointer"
+                  style={{ transform: "translate(25%, -25%)" }}
+                >
+                  <TiDeleteOutline color="red" size={25} />
                 </div>
               </div>
-            </Col>
+            ))}
+          </div>
+
+         
+          <div className="d-flex flex-wrap gap-2">
+            {existingCafeImages.map((img, index) => (
+              <div key={`existing-${index}`} className="position-relative">
+                <img
+                  src={`${baseURL}/${img}`}
+                  alt={`Existing ${index + 1}`}
+                  className="img-thumbnail"
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    objectFit: "cover",
+                  }}
+                />
+                <div
+                  onClick={() => handleRemoveExistingImage(img)}
+                  className="position-absolute top-0 end-0 cursor-pointer"
+                  style={{ transform: "translate(25%, -25%)" }}
+                >
+                  <TiDeleteOutline color="red" size={25} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </Col>
 
           </Row> */}
 
@@ -782,6 +820,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
               <Form.Group className="mb-2">
                 <Form.Label htmlFor="depositAmount" className="fw-bold text-secondary">
                   Deposit Amount
+                  <span className="text-danger">*</span>
                 </Form.Label>
                 <Form.Control
                   id="depositAmount"
@@ -791,6 +830,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                   value={formDataState.depositAmount || filteredCafes[0]?.depositAmount || ''}
                   onChange={handleChange}
                   className="py-2 border-2"
+                  required
                 />
               </Form.Group>
             </Col>

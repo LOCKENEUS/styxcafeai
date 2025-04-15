@@ -3,11 +3,12 @@ import { Button, Col, Container, Form, Offcanvas, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { addslot, getslots } from "../../../../store/slices/slotsSlice";
 import TimePicker from "react-time-picker";
+import { getGameById } from "../../../../store/slices/gameSlice";
 
 const AddSlotOffcanvas = ({show, handleClose,gameId}) => {
     console.log("Offcanvas game id",gameId);
 
-
+    const [timeError, setTimeError] = useState(null);
     const [formState, setFormState] = useState({
       // game: '',
       slotName: '',
@@ -22,19 +23,54 @@ const AddSlotOffcanvas = ({show, handleClose,gameId}) => {
 
     const dispatch = useDispatch();
     const { slots  } = useSelector((state) => state.slots);
+
     const cafeId = slots[0]?._id;
     useEffect(() => {
       dispatch(getslots(gameId));
     }, [dispatch, gameId]);
 
 
+     const { selectedGame } = useSelector((state) => state.games);
+    useEffect(() => {
+        if (gameId ) {
+         
+          dispatch(getGameById(gameId));
+          
+          
+        }
+      }, [ gameId,dispatch]);
+    
+    
+      console.log("Form State slots selectedGame pppp:", selectedGame);
+
     // console.log("Form State slots:", slots);
     // console.log("Form State slot CafeID:", cafeId);
   
-    const handleChange = async (e) => {
+    const handleChange = (e) => {
       const { name, value } = e.target;
-      setFormState({ ...formState, [name]: value });
+    
+      setFormState((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+  
+      const newStart = name === 'startTime' ? value : formState.startTime;
+      const newEnd = name === 'endTime' ? value : formState.endTime;
+    
+      if (newStart && newEnd) {
+        const start = new Date(`01/01/2023 ${newStart}`);
+        const end = new Date(`01/01/2023 ${newEnd}`);
+    
+        if (end <= start) {
+          setTimeError("End time must be later than start time.");
+        } else {
+          setTimeError('');
+          
+        }
+      }
+      
     };
+    
   
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -56,13 +92,30 @@ const AddSlotOffcanvas = ({show, handleClose,gameId}) => {
       };
     
       try {
-        await dispatch(addslot(dataToSend)).unwrap(); // send as plain object
+        await dispatch(addslot(dataToSend)).unwrap(); 
         handleClose();
       } catch (error) {
         console.error("Error submitting form:", error);
         toast.error("Failed to update game. Please try again.");
         handleClose();
       }
+
+      // formdata  clear 
+      setFormState({ 
+
+        // game: '',
+      slotName: '',
+      // date: '',
+      day: '',
+      startTime: '',
+      endTime: '',
+      maxPlayers: '',
+      slotPrice: '',
+      adminNote: ''
+
+       });
+
+
     };
     
 
@@ -215,7 +268,7 @@ const AddSlotOffcanvas = ({show, handleClose,gameId}) => {
               <div className="bootstrap-timepicker-wrapper  mb-2  ">
 
               <TimePicker
-                name="startTime"
+                name="endTime"
                 value={formState.endTime}
                 onChange={(value) =>
                   handleChange({
@@ -232,13 +285,12 @@ const AddSlotOffcanvas = ({show, handleClose,gameId}) => {
                 
               />
               </div>
-              {/* <Form.Control
-                type="time"
-                name="endTime"
-                value={formState.endTime}
-                onChange={handleChange}
-                required
-              /> */}
+              {timeError && (
+                <small className="text-danger">
+                  {timeError}
+                </small>
+              )}
+
             </Form.Group>
           </Col>
         </Row>
@@ -250,7 +302,7 @@ const AddSlotOffcanvas = ({show, handleClose,gameId}) => {
               <Form.Control
                 type="number"
                 name="maxPlayers"
-                value={formState.maxPlayers}
+                value={formState.maxPlayers || selectedGame?.data?.players}
                 onChange={handleChange}
                 placeholder="Enter max players"
               />
@@ -262,7 +314,7 @@ const AddSlotOffcanvas = ({show, handleClose,gameId}) => {
               <Form.Control
                 type="number"
                 name="slotPrice"
-                value={formState.slotPrice}
+                value={formState.slotPrice || selectedGame?.data?.price}
                 onChange={handleChange}
                 placeholder="Enter slot price"
               />
@@ -283,7 +335,7 @@ const AddSlotOffcanvas = ({show, handleClose,gameId}) => {
           />
         </Form.Group>
 
-        <Button variant="primary" type="submit">
+        <Button variant="success" type="submit" className="rounded-2 float-end my-5">
           Submit 
         </Button>
       </Form>
