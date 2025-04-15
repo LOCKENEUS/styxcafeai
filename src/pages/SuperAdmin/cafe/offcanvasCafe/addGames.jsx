@@ -17,12 +17,17 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
       const [imagePreview, setImagePreview] = useState(null);
       const fileInputRef = useRef(null);
       const [width, setWidth] = useState(window.innerWidth < 768 ? "90%" : "50%");
+      const [areaDimension, setAreaDimension] = useState({
+        length: '',
+        breadth: '',
+        selectedArea: ''
+      });
       const initialFormData = {
         name: "",
         type: "Single",
         price: "",
         zone: "Indoor",
-        size: "",
+        areaDimension: areaDimension,
         players: "1",
         cancellation: true,
         details: "",
@@ -45,13 +50,16 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
       setIsLoading(true);
   
       const formDataToSend = new FormData();
+
+      const { length, breadth, selectedArea } = formData.areaDimension;
+      const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
   
       // Append fields directly instead of using a loop
       formDataToSend.append('name', formData.name);
       formDataToSend.append('type', formData.type);
       formDataToSend.append('price', formData.price);
       formDataToSend.append('zone', formData.zone);
-      formDataToSend.append('size', formData.size);
+      formDataToSend.append('size', sizeFormatted);
       formDataToSend.append('players', formData.players);
       formDataToSend.append('cancellation', formData.cancellation === "Yes" ? true : false);
       formDataToSend.append('details', formData.details);
@@ -91,6 +99,24 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
       const { name, value } = e.target;
       setFormData((prev) => ({ ...prev, [name]: value }));
 
+      if (['length', 'breadth', 'selectedArea'].includes(name)) {
+        setFormData((prev) => {
+          const updatedArea = {
+            ...prev.areaDimension,
+            [name]: value,
+          };
+          return {
+            ...prev,
+            areaDimension: updatedArea,
+          };
+        });
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
+
          // Validation for number of players
   if (name === 'players' && formData.type === 'Multiplayer') {
     const num = parseInt(value);
@@ -105,7 +131,7 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
   }
 
   // Optional: Reset players field if type is changed
-  if (name === 'type' && value === 'Single player') {
+  if (name === 'type' && value === 'Single') {
     setFormData(prev => ({
       ...prev,
       players: ''
@@ -182,8 +208,8 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
                 required
                 className="form-select-lg border-2"
               >
-                <option>Single player</option>
-                <option>Multiplayer</option>
+                <option  value='Single'>Single player</option>
+                <option > Multiplayer</option>
               </Form.Select>
               {formData.type === "Multiplayer" && (
                 <Form.Group className="mb-2 mt-2">
@@ -225,7 +251,7 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
               <Form.Label htmlFor="gameSize" className="fw-bold text-secondary">Area of dimensions
               <span className="text-danger">*</span>
               </Form.Label>
-              <Form.Control
+              {/* <Form.Control
                 id="gameSize"
                 type="text"
                 name="size"
@@ -237,7 +263,54 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
               />
                {errors.size && (
                 <div className="invalid-feedback d-block">{errors.size}</div>
-              )}
+              )} */}
+
+              <Row className="g-1">
+              <Col sm={4}>
+            
+              <Form.Control
+                type="number"
+                name="length"
+                value={formData.length}
+                onChange={handleInputChange}
+                placeholder="length"
+                required
+              />
+            
+          </Col>
+
+          <Col sm={4}>
+            
+              
+              <Form.Control
+                type="number"
+                name="breadth"
+                value={formData.breadth}
+                onChange={handleInputChange}
+                placeholder="breadth"
+                required
+              />
+            
+          </Col>
+
+          <Col sm={4}>
+              
+          <Form.Select
+      name="selectedArea"
+      value={formData.selectedArea}
+      onChange={handleInputChange}
+      required
+    >
+      <option value="">Select Area</option>
+  <option value="ft">Feet (ft)</option>
+  <option value="in">Inches (in)</option>
+  <option value="yd">Yards (yd)</option>
+  <option value="m">Meters (m)</option>
+  <option value="cm">Centimeters (cm)</option>
+    </Form.Select>
+            
+          </Col>
+              </Row>
              
               
             </Col>

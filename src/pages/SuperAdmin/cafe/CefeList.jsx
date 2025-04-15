@@ -225,7 +225,9 @@ const CafeManager = () => {
       {showDetails && selectedCafe ? (
 
 
-        <Navigate to={`/superadmin/cafe/viewdetails/${selectedCafe._id}`} />
+        <Navigate to={`/superadmin/cafe/viewdetails/`} 
+        state={{ cafeId: selectedCafe._id }} 
+        />
       ) : (
         loading ? <Loader /> : (
 

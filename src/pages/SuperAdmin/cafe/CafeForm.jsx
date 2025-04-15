@@ -190,15 +190,35 @@ const CafeForm = ({
     const newDocPreviews = files.map((file) => ({
       name: file.name,
       url: URL.createObjectURL(file),
-      isExisting: false
+      isExisting: false,
+      file: file, // include original file
     }));
 
+    const invalidFiles = files.some((file) => {
+    const fileName = file.name.toLowerCase();
+    return (
+      !fileName.endsWith('.png') &&
+      !fileName.endsWith('.doc') &&
+      !fileName.endsWith('.docx')
+    );
+  });
+
+  if (invalidFiles) {
+    setErrors((prev) => ({
+      ...prev,
+      document: 'Only .png, .doc, .docx files are allowed',
+    }));
+    return;
+  }
+  
     setDocumentPreview((prev) => [...prev, ...newDocPreviews]);
+  
     setFormDataState((prev) => ({
       ...prev,
       document: [...(prev.document || []), ...files],
     }));
   };
+  
 
   const handleRemoveDocument = (index) => {
     setDocumentPreview((prev) => prev.filter((_, i) => i !== index));
@@ -252,9 +272,16 @@ const CafeForm = ({
       });
     }
 
-    if (Array.isArray(formDataState.document)) { // Changed from documents to document
+    // if (Array.isArray(formDataState.documentPreview)) {
+    //   formDataState.documentPreview.forEach((file) => {
+       
+    //       formDataToSend.append("document[]", file.file); // Actual file object
+        
+    //   });
+    // }
+    if (Array.isArray(formDataState.document)) {
       formDataState.document.forEach((file) => {
-        formDataToSend.append("document", file); // Changed from documents to document
+        formDataToSend.append("document", file);
       });
     }
 
@@ -920,6 +947,9 @@ const CafeForm = ({
                       Upload Documents
                     </label>
                   </div>
+                  {errors.document && (
+    <Form.Text className="text-danger">{errors.document}</Form.Text>
+  )}
 
                   
                 </div>
