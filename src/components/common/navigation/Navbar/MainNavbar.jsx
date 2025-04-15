@@ -50,7 +50,7 @@ const MainNavbar = ({ setIsAuthenticated ,toggleSidebar ,collapsed  }) => {
             style={{ width: "3rem", height: "3rem", borderRadius: "100%", cursor: "pointer", zIndex: 1000 }}
           >
             {!collapsed ? (
-              <BsThreeDotsVertical  size={20} />
+              <GiHamburgerMenu  size={20} />
             ) : (
               <TbLayoutSidebarLeftCollapse  size={20} />
             )}
