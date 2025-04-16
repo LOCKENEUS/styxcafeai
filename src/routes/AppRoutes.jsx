@@ -5,7 +5,6 @@ import AdminRoute from "./AdminRoute";
 
 import Login from "../pages/SuperAdmin/authentication/Login";
 import Dashboard from "../pages/SuperAdmin/dashboard/Dashboard";
-import Alternative from "../pages/SuperAdmin/dashboard/Alternative";
 import ForgotPassword from "../pages/SuperAdmin/authentication/ForgotPassword";
 import Signup from "../pages/SuperAdmin/authentication/Signup";
 import CreateLocation from "../pages/SuperAdmin/location/CreateLocation";
@@ -138,7 +137,6 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
       <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
         <Route element={<DashboardLayout setIsAuthenticated={setIsAuthenticated} />}>
           <Route path="/superadmin/dashboard" element={<Dashboard />} />
-          <Route path="/superadmin/dashboard/alternative" element={<Alternative />} />
           <Route path="/superadmin/create-location" element={<CreateLocation locations={locations} setLocations={setLocations} />} />
           <Route path="/superadmin/location-details" element={<LocationDetails locations={locations} />} />
           <Route path="/superadmin/cafeList" element={<CafeManager />} />
