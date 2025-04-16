@@ -17,7 +17,7 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
   console.log("Offcanvas edit game id", gameId);
   const [formData, setFormData] = useState({
     name: "",
-    type: "Single player",
+    type: "Single ",
     price: "",
     zone: "Indoor",
     size: "",
@@ -130,7 +130,7 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
     }
 
     // Optional: Reset players field if type is changed
-    if (name === 'type' && value === 'Single player') {
+    if (name === 'type' && value === 'Single ') {
       setFormData(prev => ({
         ...prev,
         players: ''
@@ -169,7 +169,7 @@ const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
 
 
 
-    if (formData.type === "Single player") {
+    if (formData.type === "Single ") {
       // return 1 to the 'players' field if it's a single player game pass 1
       formData.players = '1';
 
@@ -191,7 +191,7 @@ const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
     formDataToSend.append('details', formData.details);
 
     if (formData.image && typeof formData.image !== 'string') {
-      formDataToSend.append("image", formData.image);
+      formDataToSend.append("gameImage", formData.image);
     }
 
 
@@ -258,7 +258,7 @@ const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
                 required
                 className="form-select-lg border-2"
               >
-                <option value="Single player">Single player</option>
+                <option value="Single">Single player</option>
                 <option value="Multiplayer">Multiplayer</option>
               </Form.Select>
 
@@ -458,7 +458,7 @@ const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
                       style={{ maxHeight: '100px', maxWidth: '100px' }}
 
                     />
-                    <TiDeleteOutline
+                    {/* <TiDeleteOutline
                       className="text-danger position-absolute top-0 end-0 bg-white rounded-circle"
                       onClick={() =>
                         setFormData((prev) => ({
@@ -467,7 +467,7 @@ const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
                         }))
                       }
                       style={{ cursor: 'pointer' }}
-                    />
+                    /> */}
                   </div>
                 )}
               </div>

@@ -12,7 +12,7 @@ import {
 import GameDetails from "./GameDetails";
 import GameForm from "./GameForm";
 import { Link, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
-import Add from "/assets/superAdmin/cafe/formkit_addWhite.png";
+import Add from "/assets/superAdmin/cafe/formkit_add.png";
 import AddGamesOffcanvas from "../offcanvasCafe/addGames";
 import Loader from "../../../../components/common/Loader/Loader";
 import Rectangle389 from '/assets/superAdmin/cafe/Rectangle389.png';
@@ -112,9 +112,10 @@ const CafeGames = () => {
 
   return (
     <Container fluid>
-      <Row className="my-5">
+      <Row className="">
         <Card.Header className="fw-bold">
-          <div className="d-flex justify-content-between align-items-center mb-3">
+          <Row className="d-flex justify-content-between align-items-center mb-3">
+            <Col sm={6}>
             <Breadcrumb>
               <Breadcrumb.Item href="#" style={{ fontSize: "16px", fontWeight: "500" }}>Home</Breadcrumb.Item>
               <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }}>
@@ -126,39 +127,11 @@ const CafeGames = () => {
               </Breadcrumb.Item>
               <Breadcrumb.Item active style={{ fontSize: "16px", fontWeight: "500" }} > All Games </Breadcrumb.Item>
             </Breadcrumb>
+            
+            </Col>
 
-
-            <Button variant="primary" className="rounded-3"
-
-              // onClick={() => {
-              //   dispatch(setSelectedGame(null));
-              //   setFormData(null);
-              //   setShowCanvas(true);
-              // }}
-              onClick={() => setShowModalAdd(true)}
-
-            >
-              <Image src={Add} alt="CafeCall" className="mx-1   " style={{ objectFit: "cover", width: "26.25px", height: "26.25px" }} />
-              Create  Game
-            </Button>
-
-
-
-          </div>
-        </Card.Header>
-
-
-        {
-          lodergames || !gamesDetails ? (
-            <div className="text-center py-5">
-              <Loader />
-            </div>
-          ) : (
-            <Col sm={12} className="my-3">
-
-              <Row>
-                <Col sm={4} className="mb-3">
-                  <Card className="game-card mx-2 my-1 rounded-4  text-center text-sm-start">
+            <Col sm={4} xs={12} className=" justify-content-end">
+                  <Card className=" mx-2 my-3 rounded-4  text-center text-sm-start">
                     <div className="d-flex flex-column flex-sm-row align-items-center">
                       <Image
                         src={Rectangle389}
@@ -172,8 +145,31 @@ const CafeGames = () => {
                     </div>
                   </Card>
                 </Col>
+            <Col sm={2} className="d-flex justify-content-center">
+            <h2  style={{ fontSize: "16px", fontWeight: "600" ,color: "#00AF0F",cursor:"pointer"}}>
+            <Image src={Add} alt="CafeCall" className="mx-1 cursor-pointer " style={{ objectFit: "cover", width: "26.25px", height: "26.25px"}} onClick={() => setShowModalAdd(true)}/>
+            Add
+            </h2>
+            </Col>
 
-              </Row>
+            
+
+
+
+
+          </Row>
+        </Card.Header>
+
+
+        {
+          lodergames || !gamesDetails ? (
+            <div className="text-center py-5">
+              <Loader />
+            </div>
+          ) : (
+            <Col sm={12} className="my-3">
+
+              
 
 
               <Row className="g-3"> {/* Use Row for grid layout */}

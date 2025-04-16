@@ -3,6 +3,10 @@ import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCafes, selectCafes } from "../../../../store/slices/cafeSlice";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { forwardPassword1 } from "../../../../store/slices/authSlice";
+
+
+
 
 const ForwordPassword = ({ show, handleClose, cafeId }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,6 +23,8 @@ const ForwordPassword = ({ show, handleClose, cafeId }) => {
   }, [dispatch]);
 
   const cafe = cafes.find((cafe) => cafe._id === cafeId);
+  const userEmail = cafe?.email;
+  console.log("cafe reset password userEmail ", userEmail);
 
   const validatePassword = (password) => {
     const regex =
@@ -26,25 +32,36 @@ const ForwordPassword = ({ show, handleClose, cafeId }) => {
     return regex.test(password);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!validatePassword(newPassword)) {
       setError(
         "Password must be at least 8 characters long and include 1 uppercase, 1 lowercase, 1 number, and 1 special character."
       );
-    } else if (newPassword !== confirmPassword) {
+      return;
+    }
+  
+    if (newPassword !== confirmPassword) {
       setError("Passwords do not match.");
-    } else {
-      setError("");
-      console.log("Password updated successfully!",newPassword,confirmPassword);
-     
+      return;
+    }
+  
+    setError("");
+  
+    try {
+      await dispatch(forwardPassword1({ email: userEmail, newPassword :confirmPassword }));
+      toast.success("Password reset successfully!");
       handleClose();
+    } catch (error) {
+      toast.error(error?.message || "Password reset failed.");
     }
   };
+  
+  
 
   return (
-    <Modal show={show} onHide={handleClose} centered>
+    <Modal show={show} onHide={handleClose} centered >
       <Modal.Body>
-        <h2 className="text-center">Reset  Password</h2>
+        <h2 className="text-center">Reset Password</h2>
 
         <Row className="my-3">
           <Col sm={6}>

@@ -133,22 +133,22 @@ const GameDetailsCafe = () => {
 
 
   // ---------------------------  gsap  -----------------------------
+  // useEffect(() => {
+  //   // if (selectedGame?.data) {
+  //   gsap.from(".game-detail-animate", {
+  //     y: 50,
+  //     delay: 3,
+  //     duration: 1,
+
+  //   }
+  //   );
+  //   // }
+  // }, [selectedGame]);
+
+
+
+
   useEffect(() => {
-    // if (selectedGame?.data) {
-    gsap.from(".game-detail-animate", {
-      y: 50,
-      delay: 3,
-      duration: 1,
-
-    }
-    );
-    // }
-  }, [selectedGame]);
-
-
-
-
-useEffect(() => {
     dispatch(fetchCafesID(cafeId));
   }, [cafeId, dispatch]);
 
@@ -161,12 +161,13 @@ useEffect(() => {
 
 
   return (
-    <Container fluid>
-      <Row className="my-5 game-detail-animate">
+    <Container fluid style={{ marginTop: "0px" }}>
+      <Row className=" game-detail-animate" >
 
 
         <Card.Header className="fw-bold">
-          <div className="d-flex justify-content-between align-items-center mb-3">
+          <Row className="d-flex justify-content-between align-items-center ">
+            <Col  sm={8} xs={12}>
             <Breadcrumb>
               <Breadcrumb.Item href="#" style={{ fontSize: "16px", fontWeight: "500" }}>Home</Breadcrumb.Item>
               <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }}>
@@ -190,6 +191,23 @@ useEffect(() => {
 
             </Breadcrumb>
 
+            </Col>
+
+            <Col sm={4} xs={12} className="mb-3">
+                    <Card className="game-card mx-2 my-1 rounded-4  text-center text-sm-start">
+                      <div className="d-flex flex-column flex-sm-row align-items-center">
+                        <Image
+                          src={Rectangle389}
+                          alt="CafeCall"
+                          className="rounded-circle img-fluid mb-2 mb-sm-0"
+                          style={{ objectFit: "cover", width: "50px", height: "50px" }}
+                        />
+                        <div className="ms-sm-3 ">
+                          <h5 className="text-primary " style={{ fontSize: "16px", fontWeight: "500" }}>{isCafeIdMatch?.cafe_name}</h5>
+                        </div>
+                      </div>
+                    </Card>
+                  </Col>
 
             {/* <Button variant="primary" className="rounded-3" onClick={() => {
                 dispatch(setSelectedGame(null));
@@ -200,7 +218,7 @@ useEffect(() => {
                 Create  Game
               </Button> */}
 
-          </div>
+          </Row>
         </Card.Header>
 
 
@@ -212,94 +230,77 @@ useEffect(() => {
               </div>
             ) : (
 
-<>
-<Row>
-<Col sm={4} className="mb-3">
-              <Card className="game-card mx-2 my-1 rounded-4  text-center text-sm-start">
-                <div className="d-flex flex-column flex-sm-row align-items-center">
-                  <Image
-                    src={Rectangle389}
-                    alt="CafeCall"
-                    className="rounded-circle img-fluid mb-2 mb-sm-0"
-                    style={{ objectFit: "cover", width: "50px", height: "50px" }}
-                  />
-                  <div className="ms-sm-3 ">
-                    <h5 className="text-primary " style={{ fontSize: "16px", fontWeight: "500" }}>{isCafeIdMatch?.cafe_name}</h5>
-                  </div>
-                </div>
-              </Card>
-            </Col>
-
-</Row>
+              <>
+                
 
 
-              <Card className=" ">
+                <Card className=" ">
 
-                <Row className="my-3 mx-1">
-                  <Col sm={4} my-3>
-                    {/* gameImage */}
-                    <Image src={`${baseURL}/${selectedGame?.data?.gameImage || Rectangle389}`}
-                      alt="CafeCall" className="mx-1  rounded-2 "
-                      style={{ objectFit: "cover", width: "297px", height: "312px" }}
-                      onError={(e) => {
-                        e.target.src = Rectangle389;
-                      }}
-                    />
-                  </Col>
-                  <Col sm={8}>
-                    <Row className="my-3">
-                      <Col sm={9}  >
+                  <Row className="my-3 mx-1">
+                    <Col sm={4} my-3>
+                      {/* gameImage */}
+                      <Image src={`${baseURL}/${selectedGame?.data?.gameImage || Rectangle389}`}
+                        alt="CafeCall" className="mx-1  rounded-2 "
+                        style={{ objectFit: "cover", width: "297px", height: "312px" }}
+                        onError={(e) => {
+                          e.target.src = Rectangle389;
+                        }}
+                      />
+                    </Col>
+                    <Col sm={8}>
+                      <Row className="my-3">
+                        <Col sm={9}  >
 
-                        <h5 style={{ fontSize: "24px", fontWeight: "700", color: "#0062FF" }}> {selectedGame?.data?.name || 'Game Name'}    </h5>
+                          <h5 style={{ fontSize: "24px", fontWeight: "700", color: "#0062FF" }}> {selectedGame?.data?.name || 'Game Name'}    </h5>
 
-                      </Col>
-                      <Col sm={3} className="d-flex justify-content-end">
-
-
-                        <Button
-                          onClick={() => setShowEditGameOffcanvas(true)}
-                          className="px-3  me-2"
-                          style={{
-                            border: "2px solid #00AF0F",
-                            color: "#00AF0F",
-                            backgroundColor: "transparent",
-                            fontWeight: "500",
-                            borderRadius: "8px",
-
-                          }}
-                        >
-                          Edit
-                        </Button>
+                        </Col>
+                        <Col sm={3} className="d-flex justify-content-end">
 
 
-                        <Button
+                          <Button
+                            onClick={() => setShowEditGameOffcanvas(true)}
+                            className="px-3  me-2"
+                            style={{
+                              border: "2px solid #00AF0F",
+                              color: "#00AF0F",
+                              backgroundColor: "transparent",
+                              fontWeight: "500",
+                              borderRadius: "8px",
 
-                          className="px-3 py-2 me-2"
-                          style={{
-                            border: "2px solid #F12727",
-                            color: "#00AF0F",
-                            backgroundColor: "transparent",
-                            fontWeight: "500",
-                            borderRadius: "8px",
-                          }}
-                          onClick={() => setShowGameDeleteModal(true)}
-                        >
-                          <Image
-                            src={deleteIcon}
-                            alt="Delete"
-                            style={{ objectFit: "cover", width: "12px", height: "13px" }}
-                          />
-                        </Button>
-
-                      </Col>
+                            }}
+                          >
+                            Edit
+                          </Button>
 
 
-                      <Col sm={12} className="my-5 " >
+                          <Button
 
-                        <Card className="border-2 rounded-2 ">
+                            className="px-3 py-2 me-2"
+                            style={{
+                              border: "2px solid #F12727",
+                              color: "#00AF0F",
+                              backgroundColor: "transparent",
+                              fontWeight: "500",
+                              borderRadius: "8px",
+                            }}
+                            onClick={() => setShowGameDeleteModal(true)}
+                          >
+                            <Image
+                              src={deleteIcon}
+                              alt="Delete"
+                              style={{ objectFit: "cover", width: "12px", height: "13px" }}
+                            />
+                          </Button>
 
-                          <p style={{ fontSize: "14px", fontWeight: "400", margin: "22px  22px  21px  15px" }}>
-                            {selectedGame?.message || `Pickleball is a fast-growing paddle sport that blends the best of tennis, badminton,
+                        </Col>
+
+
+                        <Col sm={12} className="my-5 " >
+
+                          <Card className="border-2 rounded-2 ">
+
+                            <p style={{ fontSize: "14px", fontWeight: "400", margin: "22px  22px  21px  15px" }}>
+                              {selectedGame?.message || `Pickleball is a fast-growing paddle sport that blends the best of tennis, badminton,
                         and table tennis. Played on a smaller court with a perforated plastic ball and solid paddles,
                         it's easy to learn, incredibly fun, and suitable for all ages and skill levels. Whether you're a
                         beginner or a seasoned athlete, pickleball offers a perfect mix of strategy, agility, and social interaction.
@@ -307,165 +308,165 @@ useEffect(() => {
                         clubs, and community centers around the world.`}
 
 
-                          </p>
+                            </p>
 
-                        </Card>
-                      </Col>
+                          </Card>
+                        </Col>
 
-                      <Col sm={12} className="my-3 mx-2" >
+                        <Col sm={12} className="my-3 mx-2" >
 
-                        <div className="d-flex flex-wrap align-items-start">
-                          <span className="d-flex align-items-center mb-4 me-4 " style={{ fontSize: "14px", fontWeight: "500" }}>
-                            <div
-                              className="d-flex justify-content-center align-items-center me-2"
-                              style={{
-                                width: "32px",
-                                height: "32px",
-                                borderRadius: "50%",
-                                border: "2px solid #C9C9C9",
-                              }}
-                            >
-                              <Image
-                                src={MultiPlayers}
-                                alt="MultiPlayers"
+                          <div className="d-flex flex-wrap align-items-start">
+                            <span className="d-flex align-items-center mb-4 me-4 " style={{ fontSize: "14px", fontWeight: "500" }}>
+                              <div
+                                className="d-flex justify-content-center align-items-center me-2"
                                 style={{
-                                  objectFit: "cover",
-                                  width: "20px",
-                                  height: "16px",
+                                  width: "32px",
+                                  height: "32px",
+                                  borderRadius: "50%",
+                                  border: "2px solid #C9C9C9",
                                 }}
-                              />
-                            </div>
+                              >
+                                <Image
+                                  src={MultiPlayers}
+                                  alt="MultiPlayers"
+                                  style={{
+                                    objectFit: "cover",
+                                    width: "20px",
+                                    height: "16px",
+                                  }}
+                                />
+                              </div>
 
-                            {selectedGame?.data?.type === "Multiplayer" ? "Multi Player" : "Single Player"}
-                          </span>
+                              {selectedGame?.data?.type === "Multiplayer" ? "Multi Player" : "Single Player"}
+                            </span>
 
-                          <span className="d-flex align-items-center mb-4 me-4 " style={{ fontSize: "14px", fontWeight: "500" ,}}>
-                          <div
-                              className="d-flex justify-content-center align-items-center me-2"
-                              style={{
-                                width: "32px",
-                                height: "32px",
-                                borderRadius: "50%",
-                                border: "2px solid #C9C9C9",
-                              }}
-                            >
-                            <Image src={RsHour} alt="RsHour" className="" style={{ objectFit: "cover", width: "19px", height: "20px" }} />
-                                </div>
-                            {/* 600 / Hour */}
-                            {selectedGame?.data?.price > 0 ? selectedGame?.data?.price + ' / Hour' : '---'}
-                          </span>
+                            <span className="d-flex align-items-center mb-4 me-4 " style={{ fontSize: "14px", fontWeight: "500", }}>
+                              <div
+                                className="d-flex justify-content-center align-items-center me-2"
+                                style={{
+                                  width: "32px",
+                                  height: "32px",
+                                  borderRadius: "50%",
+                                  border: "2px solid #C9C9C9",
+                                }}
+                              >
+                                <Image src={RsHour} alt="RsHour" className="" style={{ objectFit: "cover", width: "19px", height: "20px" }} />
+                              </div>
+                              {/* 600 / Hour */}
+                              {selectedGame?.data?.price > 0 ? selectedGame?.data?.price + ' / Hour' : '---'}
+                            </span>
 
-                          <span className="d-flex align-items-center mb-4 me-4 " style={{ fontSize: "14px", fontWeight: "500" }}>
-                          <div
-                              className="d-flex justify-content-center align-items-center me-2"
-                              style={{
-                                width: "32px",
-                                height: "32px",
-                                borderRadius: "50%",
-                                border: "2px solid #C9C9C9",
-                              }}
-                            >
-                            <Image src={Cancellation} alt="Cancellation" className="" style={{ objectFit: "cover", width: "20px", height: "20px" }} />
-                            </div>
-                            {/* Cancellation if true Yes  else No */}
-                            {selectedGame?.data?.cancellation === true ? 'Cancellation Yes' : 'Cancellation No'}
-                          </span>
+                            <span className="d-flex align-items-center mb-4 me-4 " style={{ fontSize: "14px", fontWeight: "500" }}>
+                              <div
+                                className="d-flex justify-content-center align-items-center me-2"
+                                style={{
+                                  width: "32px",
+                                  height: "32px",
+                                  borderRadius: "50%",
+                                  border: "2px solid #C9C9C9",
+                                }}
+                              >
+                                <Image src={Cancellation} alt="Cancellation" className="" style={{ objectFit: "cover", width: "20px", height: "20px" }} />
+                              </div>
+                              {/* Cancellation if true Yes  else No */}
+                              {selectedGame?.data?.cancellation === true ? 'Cancellation Yes' : 'Cancellation No'}
+                            </span>
 
-                          <span className="d-flex align-items-center mb-4 me-4 " style={{ fontSize: "14px", fontWeight: "500" }}>
-                          <div
-                              className="d-flex justify-content-center align-items-center me-2"
-                              style={{
-                                width: "32px",
-                                height: "32px",
-                                borderRadius: "50%",
-                                border: "2px solid #C9C9C9",
-                              }}
-                            >
-                            <Image src={discount} alt="discount" className="" style={{ objectFit: "cover", width: "22px", height: "22px" }} />
-                            </div>
-                            Discount Yes
-                          </span>
+                            <span className="d-flex align-items-center mb-4 me-4 " style={{ fontSize: "14px", fontWeight: "500" }}>
+                              <div
+                                className="d-flex justify-content-center align-items-center me-2"
+                                style={{
+                                  width: "32px",
+                                  height: "32px",
+                                  borderRadius: "50%",
+                                  border: "2px solid #C9C9C9",
+                                }}
+                              >
+                                <Image src={discount} alt="discount" className="" style={{ objectFit: "cover", width: "22px", height: "22px" }} />
+                              </div>
+                              Discount Yes
+                            </span>
 
-                          <span className="d-flex align-items-center mb-4 me-4 " style={{ fontSize: "14px", fontWeight: "500" }}>
-                          <div
-                              className="d-flex justify-content-center align-items-center me-2"
-                              style={{
-                                width: "32px",
-                                height: "32px",
-                                borderRadius: "50%",
-                                border: "2px solid #C9C9C9",
-                              }}
-                            >
-                            <Image src={Players} alt="Players" className="" style={{ objectFit: "cover", width: "23px", height: "16px" }} />
-                           
-                             </div>
-                            {selectedGame?.data?.players + ' Player' || '---'}
-                          </span>
+                            <span className="d-flex align-items-center mb-4 me-4 " style={{ fontSize: "14px", fontWeight: "500" }}>
+                              <div
+                                className="d-flex justify-content-center align-items-center me-2"
+                                style={{
+                                  width: "32px",
+                                  height: "32px",
+                                  borderRadius: "50%",
+                                  border: "2px solid #C9C9C9",
+                                }}
+                              >
+                                <Image src={Players} alt="Players" className="" style={{ objectFit: "cover", width: "23px", height: "16px" }} />
 
-                          {/* areaSize */}
+                              </div>
+                              {selectedGame?.data?.players + ' Player' || '---'}
+                            </span>
 
-                          <span className="d-flex align-items-center mb-4 me-4" style={{ fontSize: "14px", fontWeight: "500" }}>
-                          <div
-                              className="d-flex justify-content-center align-items-center me-2"
-                              style={{
-                                width: "32px",
-                                height: "32px",
-                                borderRadius: "50%",
-                                border: "2px solid #C9C9C9",
-                              }}
-                            >
-                            <Image src={areaSize} alt="Players" className="" style={{ objectFit: "cover", width:"15px", height: "11px" }} />
-                           
-                             </div>
-                            {selectedGame?.data?.size  || '---'}
-                          </span>
+                            {/* areaSize */}
 
+                            <span className="d-flex align-items-center mb-4 me-4" style={{ fontSize: "14px", fontWeight: "500" }}>
+                              <div
+                                className="d-flex justify-content-center align-items-center me-2"
+                                style={{
+                                  width: "32px",
+                                  height: "32px",
+                                  borderRadius: "50%",
+                                  border: "2px solid #C9C9C9",
+                                }}
+                              >
+                                <Image src={areaSize} alt="Players" className="" style={{ objectFit: "cover", width: "15px", height: "11px" }} />
 
-                          {/* payLater.png */}
-                          <span className="d-flex align-items-center mb-4 me-4" style={{ fontSize: "14px", fontWeight: "500" }}>
-                          <div
-                              className="d-flex justify-content-center align-items-center me-2"
-                              style={{
-                                width: "32px",
-                                height: "32px",
-                                borderRadius: "50%",
-                                border: "2px solid #C9C9C9",
-                              }}
-                            >
-                            <Image src={payLater} alt="Players" className="" style={{ objectFit: "cover", width:"15px", height: "11px" }} />
-                           
-                             </div>
-                            {selectedGame?.data?.payLater === true ? 'Pay Later Yes' : 'Pay Later No'}
-                          </span>
-
-                          {/* commission.png */}
-                          <span className="d-flex align-items-center mb-4 me-4" style={{ fontSize: "14px", fontWeight: "500" }}>
-                          <div
-                              className="d-flex justify-content-center align-items-center me-2"
-                              style={{
-                                width: "32px",
-                                height: "32px",
-                                borderRadius: "50%",
-                                border: "2px solid #C9C9C9",
-                              }}
-                            >
-                            <Image src={commission} alt="Players" className="" style={{ objectFit: "cover", width:"17px", height: "20px" }} />
-                           
-                             </div>
-                            {selectedGame?.data?.commission + ' Commission' || '---'}
-                          </span>
-
-                        </div>
+                              </div>
+                              {selectedGame?.data?.size || '---'}
+                            </span>
 
 
+                            {/* payLater.png */}
+                            <span className="d-flex align-items-center mb-4 me-4" style={{ fontSize: "14px", fontWeight: "500" }}>
+                              <div
+                                className="d-flex justify-content-center align-items-center me-2"
+                                style={{
+                                  width: "32px",
+                                  height: "32px",
+                                  borderRadius: "50%",
+                                  border: "2px solid #C9C9C9",
+                                }}
+                              >
+                                <Image src={payLater} alt="Players" className="" style={{ objectFit: "cover", width: "15px", height: "11px" }} />
 
-                      </Col>
-                    </Row>
-                  </Col>
-                </Row>
+                              </div>
+                              {selectedGame?.data?.payLater === true ? 'Pay Later Yes' : 'Pay Later No'}
+                            </span>
 
-              </Card>
-</>
+                            {/* commission.png */}
+                            <span className="d-flex align-items-center mb-4 me-4" style={{ fontSize: "14px", fontWeight: "500" }}>
+                              <div
+                                className="d-flex justify-content-center align-items-center me-2"
+                                style={{
+                                  width: "32px",
+                                  height: "32px",
+                                  borderRadius: "50%",
+                                  border: "2px solid #C9C9C9",
+                                }}
+                              >
+                                <Image src={commission} alt="Players" className="" style={{ objectFit: "cover", width: "17px", height: "20px" }} />
+
+                              </div>
+                              {selectedGame?.data?.commission + ' Commission' || '---'}
+                            </span>
+
+                          </div>
+
+
+
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
+
+                </Card>
+              </>
 
             )}
 
