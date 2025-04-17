@@ -7,16 +7,12 @@ import {
   Table,
   Button,
   Badge,
-  Form,
-  InputGroup,
-  Nav,
-  Dropdown,
+  OverlayTrigger,
+  Tooltip,
 } from "react-bootstrap";
 import {
   FaRegUser,
   FaChartLine,
-  FaBell,
-  FaCog,
   FaArrowUp,
   FaChartBar,
   FaCircle,
@@ -37,7 +33,6 @@ import {
   BarElement,
   ArcElement,
   Title,
-  Tooltip,
   Legend,
 } from "chart.js";
 import { Line, Bar, Doughnut } from "react-chartjs-2";
@@ -58,7 +53,6 @@ ChartJS.register(
   BarElement,
   ArcElement,
   Title,
-  Tooltip,
   Legend
 );
 
@@ -348,7 +342,14 @@ const barChartOptions = {
       },
     },
   };
-
+  useEffect(() => {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    
+    return () => {
+      tooltipList.forEach(tooltip => tooltip.dispose()); // Clean up tooltips on unmount
+    };
+  }, []);
 
   return (
     <div className="bg-light min-vh-100">
@@ -445,9 +446,21 @@ const barChartOptions = {
               <Card className="shadow mb-4 h-100">
                 <Card.Header className="py-3 d-flex flex-row align-items-center justify-content-between">
                   <h6 className="m-0 font-weight-bold text-primary">Customer Growth Overview</h6>
-                  <Button variant="link" onClick={() => setShowGrowthInfo(!showGrowthInfo)}>
-                    {!showGrowthInfo ? <MdQuestionMark /> : <FaChartLine />}
-                  </Button>
+                  <OverlayTrigger
+                    placement="top"
+                    overlay={
+                      <Tooltip id="tooltip-top">
+                        {showGrowthInfo ? "Hide Growth Info" : "Show Growth Info"}
+                      </Tooltip>
+                    }
+                  >
+                    <Button variant="link" onClick={() => setShowGrowthInfo(!showGrowthInfo)} 
+                      data-bs-toggle="tooltip" 
+                      data-bs-placement="top" 
+                      title="Toggle growth information">
+                      {!showGrowthInfo ? <MdQuestionMark /> : <FaChartLine />}
+                    </Button>
+                  </OverlayTrigger>
                 </Card.Header>
                 <Card.Body className={`${isMobile && "p-1"}`} style={{ height: '300px' }}>
                   {!showGrowthInfo ? (

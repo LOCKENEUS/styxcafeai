@@ -595,7 +595,7 @@ const BookingDetails = () => {
         <span className="text-primary">Purchase Order</span>
       </h6>
       <Row>
-        <Col style={{ height: "100%" }} md={3}>
+        <Col style={{ height: "100%" }} md={4} lg={3}>
           <div className="d-flex  gap-3">
             <InputGroup className="mb-3 ">
               <InputGroup.Text className="bg-white p-3 rounded-start">
@@ -762,13 +762,13 @@ const BookingDetails = () => {
         {/* <Col md={9}> */}
         {/* <Row> */}
 
-        <Col md={4} className="p-1">
+        <Col md={4} lg={4} className="p-1">
           <Row>
             <Col md={12} style={{ height: "9vh" }}></Col>
             <Col md={12}>
               <div
-                style={{ height: "40vh" }}
-                className="bg-white rounded-3 p-3 mb-4 position-relative"
+                style={{ height:selectedCustomer?"auto":"40vh" }}
+                className="bg-white rounded-3 p-1 mb-2 position-relative"
               >
                 <div className="px-3">
                   <div className="py-2">
@@ -1036,7 +1036,7 @@ const BookingDetails = () => {
         </Col>
 
         {/* Add On's */}
-        <Col md={5} className="p-1">
+        <Col md={4} lg={5} className="p-1">
           <Row>
             <Col md={12}>
               <Card className="mb-2">
