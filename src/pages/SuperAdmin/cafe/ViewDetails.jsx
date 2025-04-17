@@ -1,4 +1,4 @@
-import { Row, Col, Button, Card, Image, Modal, Container, CardGroup, Badge, Pagination, Table } from "react-bootstrap";
+import { Row, Col, Button, Card, Image, Modal, Container, CardGroup, Badge, Pagination, Table, Nav } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { deleteCafe, fetchCafes, selectCafes } from "../../../store/slices/cafeSlice";
@@ -26,6 +26,7 @@ import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import { MdOutlineNavigateNext } from "react-icons/md";
 import ForwordPassword from "./modal/forwordPassword";
 import Loader from "../../../components/common/Loader/Loader";
+import gsap from "gsap";
 
 
 
@@ -36,6 +37,7 @@ const ViewDetails = () => {
   const [loadingMain, setLoadingMain] = useState(true);
 
   const { games, selectedGame } = useSelector((state) => state.games);
+  console.log("games ID 55 here ====", games?.map(game => game._id), selectedGame?._id);
   const cafes = useSelector(selectCafes);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -54,8 +56,11 @@ const ViewDetails = () => {
   const [showModalAdd, setShowModalAdd] = useState(false);
   const [showMembershipAdd, setShowMembershipAdd] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  
-  
+  const [activeKey, setActiveKey] = useState('gallary');
+  const [lodergames, setLodergames] = useState(true);
+  const [lodermembership, setLodermembership] = useState(true);
+
+
 
 
   useEffect(() => {
@@ -87,7 +92,8 @@ const ViewDetails = () => {
   const { selectedGameDetails } = useSelector((state) => state.games);
   useEffect(() => {
     if (cafeId) {
-      dispatch(getGames(cafeId));
+      setLodergames(true);
+      dispatch(getGames(cafeId)).finally(() => setLodergames(false));
     }
   }, [cafeId, dispatch]);
   //   games  const POIdGet = useSelector(state => state.purchaseReceiveSlice);
@@ -150,14 +156,23 @@ const ViewDetails = () => {
     }
   };
 
+  const handleOpenGameDetails = (gameId) => {
+    navigate("/superadmin/Games/cafeGames", { state: { gameId: gameId } });
+
+    // console.log("your game id teri vali game id click ", gameId);
+    };
+
+    
+
   // -------------- Membership --------------
   const { memberships, loading, error, selectedMembership } = useSelector((state) => state.memberships);
   const membershipCardsPerPage = 2;
   const membershipMaxIndex = Math.max(memberships.length - membershipCardsPerPage, 0);
   const [currentIndexMembership, setCurrentIndexMembership] = useState(0);
   useEffect(() => {
+    setLoadingMain(true);
     if (cafeId) {
-      dispatch(getMembershipsByCafeId(cafeId));
+      dispatch(getMembershipsByCafeId(cafeId)).finally(() => setLodermembership(false));
     }
   }, [cafeId, dispatch]);
 
@@ -223,22 +238,22 @@ const ViewDetails = () => {
 
   // -----------------------    client Details -----------------------
   const itemsPerPage = 7;
-const clientData = [
-  { id: "B-25041202", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 9599 },
-  { id: "B-25041203", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 1199 },
-  { id: "B-25041204", game: "Volleyball", date: "4/13/2025", status: "Yes", total: 3399 },
-  { id: "B-25041211", game: "Pool Game", date: "4/13/2025", status: "No", total: 799 },
-  { id: "B-25041201", game: "Pool Game", date: "4/14/2025", status: "Yes", total: 3491 },
-  { id: "B-25041205", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 9599 },
-  { id: "B-25041206", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 1199 },
-  { id: "B-25041207", game: "Volleyball", date: "4/13/2025", status: "Yes", total: 3399 },
-  { id: "B-25041208", game: "Pool Game", date: "4/13/2025", status: "No", total: 799 },
-  { id: "B-25041209", game: "Pool Game", date: "4/14/2025", status: "Yes", total: 3491 },
-  { id: "B-25041210", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 1199 },
-  { id: "B-25041212", game: "Volleyball", date: "4/13/2025", status: "Yes", total: 3399 },
-  { id: "B-25041213", game: "Pool Game", date: "4/13/2025", status: "No", total: 799 },
-  { id: "B-25041214", game: "Pool Game", date: "4/14/2025", status: "Yes", total: 3491 },
-];
+  const clientData = [
+    { id: "B-25041202", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 9599 },
+    { id: "B-25041203", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 1199 },
+    { id: "B-25041204", game: "Volleyball", date: "4/13/2025", status: "Yes", total: 3399 },
+    { id: "B-25041211", game: "Pool Game", date: "4/13/2025", status: "No", total: 799 },
+    { id: "B-25041201", game: "Pool Game", date: "4/14/2025", status: "Yes", total: 3491 },
+    { id: "B-25041205", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 9599 },
+    { id: "B-25041206", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 1199 },
+    { id: "B-25041207", game: "Volleyball", date: "4/13/2025", status: "Yes", total: 3399 },
+    { id: "B-25041208", game: "Pool Game", date: "4/13/2025", status: "No", total: 799 },
+    { id: "B-25041209", game: "Pool Game", date: "4/14/2025", status: "Yes", total: 3491 },
+    { id: "B-25041210", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 1199 },
+    { id: "B-25041212", game: "Volleyball", date: "4/13/2025", status: "Yes", total: 3399 },
+    { id: "B-25041213", game: "Pool Game", date: "4/13/2025", status: "No", total: 799 },
+    { id: "B-25041214", game: "Pool Game", date: "4/14/2025", status: "Yes", total: 3491 },
+  ];
 
 
 
@@ -269,7 +284,7 @@ const clientData = [
 
       <Row className="my-5">
         <Col sm={4} className="pe-1">
-          <Card className="py-3 mx-2 rounded-4 my-3" style={{ backgroundColor: "white" }}>
+          <Card className="py-3 mx-2 rounded-4 my-3 h-100" style={{ backgroundColor: "white" }}>
             <div className="d-flex flex-column align-items-start mx-3">
               <h5 className="text-start " style={{ fontSize: "18px", fontWeight: "600" }}>Cafe Details</h5>
 
@@ -278,20 +293,21 @@ const clientData = [
 
               <Image src={Rectangle389} alt="Cafe Image" className="mb-3" style={{ width: "100%", objectFit: "cover" }} />
             </div>
-            <div className="d-flex justify-content-between align-items-center mx-3 my-1">
+            <div className="d-flex justify-content-between align-items-center mx-3 " style={{ marginBottom: '10px' }} >
               <h5
                 className="text-start"
                 style={{
-                  fontWeight: 700,
+                  fontWeight: 500,
                   fontSize: "21px",
                   lineHeight: "100%",
-                  letterSpacing: "0%"
+                  letterSpacing: "0%",
+                  color: "#333333"
                 }}
               >
                 {cafe.cafe_name}
               </h5>
 
-              <div className="d-flex flex-column align-items-end" onClick={() => setShowCanvasEditCafe(true)} style={{ objectFit: "cover" ,cursor:"pointer"}} >
+              <div className="d-flex flex-column align-items-end" onClick={() => setShowCanvasEditCafe(true)} style={{ objectFit: "cover", cursor: "pointer" }} >
                 <Image src={edit} alt="edit" className="mb-3" />
               </div>
 
@@ -302,108 +318,108 @@ const clientData = [
             <Row className="mx-2 d-flex justify-content-between flex-wrap">
 
               {/* name */}
-              <Col sm={4} xs={4} className="mb-1 ">
+              <Col sm={4} xs={4} className="my-2 ">
                 <h1 className="text-start" style={{ fontWeight: 600, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
                   Name :
                 </h1>
               </Col>
-              <Col sm={8} xs={8} className="mb-1 ">
+              <Col sm={8} xs={8} className="my-2 ">
                 <p className="text-start" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
                   {cafe?.name || '---'}
                 </p>
               </Col>
-              <Col sm={4} xs={4} className="mb-1">
+              <Col sm={4} xs={4} className="my-2">
                 <h1 className="text-start " style={{ fontWeight: 600, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
                   Owner  :
                 </h1>
               </Col>
-              <Col sm={8} xs={8} className="mb-1">
+              <Col sm={8} xs={8} className="my-2">
                 {/* <div className="d-flex align-items-center"> */}
-                  {/* <Image
+                {/* <Image
                     src={profile}
                     alt="Cafe Image"
                     className="me-1 "
                     style={{ width: "21%", objectFit: "cover", borderRadius: "50%" }}
                   /> */}
-                  <p
-                    className=" text-start"
-                    style={{ fontWeight: 500, fontSize: "16px", lineHeight: "100%", letterSpacing: "100%", color: "#0062FF" }}
-                  >
-                    {cafe?.name || '---'}
-                  </p>
+                <p
+                  className=" text-start"
+                  style={{ fontWeight: 500, fontSize: "16px", lineHeight: "100%", letterSpacing: "100%", color: "#0062FF" }}
+                >
+                  {cafe?.name || '---'}
+                </p>
                 {/* </div> */}
               </Col>
-              <Col sm={4} xs={4} className="mb-1 ">
+              <Col sm={4} xs={4} className="my-2 ">
                 <h1 className="text-start" style={{ fontWeight: 600, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
                   Address :
                 </h1>
               </Col>
-              <Col sm={8} xs={8} className="mb-1  ">
-                <p className="text-start " style={{ fontWeight: 400, fontSize: "16px" ,lineHeight:"20px"}}>
+              <Col sm={8} xs={8} className="my-2  ">
+                <p className="text-start " style={{ fontWeight: 400, fontSize: "16px", lineHeight: "20px" }}>
                   {cafe?.address || '---'}
                 </p>
               </Col>
-              <Col sm={4} xs={4} className="mb-3">
+              <Col sm={4} xs={4} className="my-2">
                 <h1 className="text-start" style={{ fontWeight: 600, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
                   Contact :
                 </h1>
               </Col>
-              <Col sm={8} xs={8} className="mb-3">
+              <Col sm={8} xs={8} className="my-2">
                 <p className="text-start" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
                   {cafe?.contact_no || '---'}
                 </p>
               </Col>
-              <Col sm={4} xs={4} className="mb-3">
+              <Col sm={4} xs={4} className="my-2">
                 <h1 className="text-start" style={{ fontWeight: 600, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
                   Office Contact  :
                 </h1>
               </Col>
-              <Col sm={8} xs={8} className="mb-3">
+              <Col sm={8} xs={8} className="my-2">
                 <p className="text-start" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
                   {cafe?.officeContactNo || '---'}
                 </p>
               </Col>
-              <Col sm={4} xs={4} className="mb-3">
+              <Col sm={4} xs={4} className="my-2">
                 <h1 className="text-start" style={{ fontWeight: 600, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
                   GST No :
                 </h1>
               </Col>
-              <Col sm={8} xs={8} className="mb-3">
+              <Col sm={8} xs={8} className="my-2">
                 <p className="text-start" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
                   {cafe?.gstNo || '---'}
                 </p>
               </Col>
 
               {/* panNo */}
-              <Col sm={4} xs={4} className="mb-3">
+              <Col sm={4} xs={4} className="my-2">
                 <h1 className="text-start" style={{ fontWeight: 600, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
                   PAN No :
                 </h1>
               </Col>
-              <Col sm={8} xs={8} className="mb-3">
+              <Col sm={8} xs={8} className="my-2">
                 <p className="text-start" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
                   {cafe?.panNo || '---'}
                 </p>
               </Col>
 
-              <Col sm={4} xs={4} className="mb-3">
+              <Col sm={4} xs={4} className="my-2">
                 <h1 className="text-start" style={{ fontWeight: 600, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
                   EMAIL  :
                 </h1>
               </Col>
-              <Col sm={8} xs={8} className="mb-3">
+              <Col sm={8} xs={8} className="my-2">
                 <p className="text-start" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
                   {cafe?.email || '---'}
                 </p>
               </Col>
 
-              <Col sm={4} xs={4} className="mb-3">
+              <Col sm={4} xs={4} className="my-2">
                 <h1 className="text-start" style={{ fontWeight: 600, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
                   WEBSITE  :
                 </h1>
               </Col>
-              <Col sm={8} xs={8} className="mb-3">
-                <p className="text-start" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
+              <Col sm={8} xs={8} className="my-2">
+                <p className="text-start" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "20px", letterSpacing: "0%" }}>
                   {cafe?.website_url || '---'}
                 </p>
               </Col>
@@ -413,32 +429,32 @@ const clientData = [
 
 
 
-            <Row className="mx-2 d-flex  justify-content-between flex-wrap" style={{ marginTop: "110px", marginBottom: "20px" }}>
-              <Col xs="auto" sm={4} className="my-1">
+            <Row className="justify-content-center align-items-center text-center " style={{ marginTop: "110px", marginBottom: "20px" }}>
+              <Col xs="2" sm={4} className="my-1">
                 <Button className=" rounded-circle border-0" style={{ backgroundColor: "#F2F2F2" }} >
                   <Image src={call} alt="CafeCall" className="mx-1 my-2 " style={{ objectFit: "cover", width: "19.65px", height: "19.65px" }} />
                 </Button>
 
               </Col>
-              <Col xs="auto" sm={4} className="my-1">
+              <Col xs="2" sm={4} className="my-1">
                 <Button className=" rounded-circle border-0" style={{ backgroundColor: "#F2F2F2" }} >
                   <Image src={Notification} alt="CafeCall" className="mx-1 my-2 " style={{ objectFit: "cover", width: "19.65px", height: "19.65px" }} />
                 </Button>
 
               </Col>
-              <Col xs="auto" sm={4} className="my-1">
+              <Col xs="2" sm={4} className="my-1">
                 <Button className=" rounded-circle border-0" style={{ backgroundColor: "#F2F2F2" }} >
                   <Image src={Message} alt="CafeCall" className="mx-0 my-2 " style={{ objectFit: "cover", width: "23.63px", height: "18.38px" }} />
                 </Button>
 
               </Col>
 
-              <div className="d-flex justify-content-center mt-3">
+              <Col sm={12} className="d-flex justify-content-center mt-3 ">
                 <h4 className="text-center " style={{ fontSize: "16px", fontWeight: "500", color: "#0062FF", cursor: "pointer" }}
                   onClick={() => setShowModalForwordPassword(true)}
                 >Reset Password ?
                 </h4>
-              </div>
+              </Col >
             </Row>
 
 
@@ -447,272 +463,336 @@ const clientData = [
 
 
 
-        <Col sm={8}>
+        <Col sm={8} className="">
 
 
+          <Card className="my-2 mx-0 rounded-4 my-3" style={{ backgroundColor: "white" }}>
 
-          {/* -------------    Gallery details ------------- */}
-          <Card className="py-3 mx-2 rounded-4 my-3" style={{ backgroundColor: "white" }}>
-            <Row className="justify-content-between mx-3">
-              <Col sm={6} className=" alingn-items-start">
-                <h5 className="text-start " style={{ fontSize: "18px", fontWeight: "600" }}>Gallery </h5>
+            <Nav
+              variant="tabs"
+              activeKey={activeKey}
+              onSelect={(selectedKey) => setActiveKey(selectedKey)}
+              className="mx-3 border-0"
+              style={{ borderBottom: 'none' }}
+            >
+              <Nav.Item style={{ textAlign: 'center' }}>
+                <Nav.Link
+                  eventKey="gallary"
+                  style={{
+                    padding: 0,
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontWeight: activeKey === 'gallary' ? '600' : '400',
+                      fontSize: '16px',
+                      color: activeKey === 'gallary' ? '#0d6efd' : '#6c757d',
+                      padding: '1rem 1rem',
 
-              </Col>
-              <Col sm={6} className=" alingn-items-end ">
-                <div className="d-flex justify-content-end">
-                  <h5 className="text-end mx-3" style={{ fontSize: "16px", fontWeight: "600", cursor: "pointer", color: "#00AF0F" }}
-                  // onClick={() => setShowModalAdd(true)}
+                    }}
                   >
-                    <Image src={Add} alt="CafeCall" className="mx-1  " style={{ objectFit: "cover", width: "26.25px", height: "26.25px" }} />
-                    ADD</h5>
+                    Gallary Image
+                  </div>
+                </Nav.Link>
+                {activeKey === 'gallary' && (
+                  <div
 
+                    style={{
+                      margin: '0 15px ',
+                      width: '40%',
+                      height: '2px',
+                      backgroundColor: '#0d6efd',
+                      borderRadius: '3px',
 
-                  {/* <AddGamesOffcanvas show={showModalAdd} handleClose={() => setShowModalAdd(false)} cafeId={cafeId} selectedGameDetails={selectedGameDetails} /> */}
+                    }}
+                  />
+                )}
+              </Nav.Item>
 
+              <Nav.Item style={{ textAlign: 'center' }}>
+                <Nav.Link
+                  eventKey="Game"
+                  style={{
+                    padding: 0,
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontWeight: activeKey === 'Game' ? '600' : '400',
+                      fontSize: '16px',
+                      color: activeKey === 'Game' ? '#0d6efd' : '#6c757d',
+                      padding: '1rem 1rem',
+                    }}
+                  >
+                    Game Details
+                  </div>
+                </Nav.Link>
+                {activeKey === 'Game' && (
+                  <div
 
+                    style={{
+                      margin: '0 15px ',
+                      width: '40%',
+                      height: '2px',
+                      backgroundColor: '#0d6efd',
+                      borderRadius: '2px',
 
-                  {/* <h5 className="text-end mx-3 " style={{ fontSize: "16px", fontWeight: "600", cursor: "pointer", color: "#0065FF", marginTop: "3.5px" }} > */}
-                  {/* pass cafeid */}
-                  {/* <Link to={`/superadmin/CafeGames/${cafeId}`}> */}
+                    }}
+                  />
+                )}
+              </Nav.Item>
 
-                  {/* <Link to={{ pathname: '/superadmin/CafeGames', state: { cafeId } }}> */}
+              <Nav.Item style={{ textAlign: 'center' }}>
+                <Nav.Link
+                  eventKey="Membership"
+                  style={{
+                    padding: 0,
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontWeight: activeKey === 'Membership' ? '600' : '400',
+                      fontSize: '16px',
+                      color: activeKey === 'Membership' ? '#0d6efd' : '#6c757d',
+                      padding: '1rem 1rem',
+                    }}
+                  >
+                    Membership
+                  </div>
+                </Nav.Link>
+                {activeKey === 'Membership' && (
+                  <div
 
-                  {/* View All */}
-                  {/* </Link> */}
+                    style={{
+                      margin: '0 15px ',
+                      width: '30%',
+                      height: '2px',
+                      backgroundColor: '#0d6efd',
+                      borderRadius: '2px',
 
-                  {/* </h5> */}
+                    }}
+                  />
+                )}
+              </Nav.Item>
 
+              {/* Client List */}
+              <Nav.Item style={{ textAlign: 'center' }}>
+                <Nav.Link
+                  eventKey="Client"
+                  style={{
+                    padding: 0,
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontWeight: activeKey === 'Client' ? '600' : '400',
+                      fontSize: '16px',
+                      color: activeKey === 'Client' ? '#0d6efd' : '#6c757d',
+                      padding: '1rem 1rem',
+                    }}
+                  >
+                    Client List
+                  </div>
+                </Nav.Link>
+                {activeKey === 'Client' && (
+                  <div
 
+                    style={{
+                      margin: '0 18px ',
+                      width: '40%',
+                      height: '2px',
+                      backgroundColor: '#0d6efd',
+                      borderRadius: '2px',
 
+                    }}
+                  />
+                )}
+              </Nav.Item>
+            </Nav>
 
-                </div>
-              </Col>
-              <Col sm={12} className="my-3">
-                {/* Buttons Row for Small Screens */}
-                <Row className="d-sm-none mb-2 justify-content-between">
-                  <Col xs="2" className="mx-1">
-                    <div
-                      onClick={currentIndexGallery === 0 ? null : handlePrevGallery}
-                      style={{
-                        cursor: currentIndexGallery === 0 ? "not-allowed" : "pointer",
-                        fontWeight: "600",
-                        fontSize: "30px",
-                        opacity: currentIndexGallery === 0 ? 0.3 : 1,
-                      }}
-                    >
-                      <GrFormPrevious />
-                    </div>
-                  </Col>
-                  <Col xs="2">
-                    <div
-                      onClick={
-                        currentIndexGallery + cardsPerPageGallery >= cafe.cafeImage.length
-                          ? null
-                          : handleNextGallery
-                      }
-                      style={{
-                        cursor:
-                          currentIndexGallery + cardsPerPageGallery >= cafe.cafeImage.length
-                            ? "not-allowed"
-                            : "pointer",
-                        fontWeight: "600",
-                        fontSize: "30px",
-                        opacity:
-                          currentIndexGallery + cardsPerPageGallery >= cafe.cafeImage.length
-                            ? 0.3
-                            : 1,
-                      }}
-                    >
-                      <GrFormNext />
-                    </div>
-                  </Col>
-                </Row>
-
-                {/* Main Row for md and up */}
-                <Row className="align-items-center d-none d-sm-flex">
-                  {/* Prev Button */}
-                  {cafe?.cafeImage?.length > cardsPerPageGallery && (
-                    <Col xs="auto">
-                      <div
-                        onClick={currentIndexGallery === 0 ? null : handlePrevGallery}
-                        style={{
-                          cursor: currentIndexGallery === 0 ? "not-allowed" : "pointer",
-                          fontWeight: "600",
-                          fontSize: "30px",
-                          opacity: currentIndexGallery === 0 ? 0.3 : 1,
-                        }}
-                      >
-                        <GrFormPrevious />
-                      </div>
-                    </Col>
-                  )}
-
-                  {/* Gallery */}
-                  <Col className="px-0">
-                    <Row className="g-4 justify-content-center flex-wrap">
-                      {cafe?.cafeImage?.length > 0 ? (
-                        cafe.cafeImage
-                          .slice(currentIndexGallery, currentIndexGallery + cardsPerPageGallery)
-                          .reverse()
-                          .map((img, index) => (
-                            <Col key={index} xs={12} sm={6} md={3}>
-                              <Card className=" " style={{ borderColor: "#E4E4E4" }}>
-                                <Card.Img
-                                  src={`${baseURL}/${img}`}
-                                  onError={(e) => (e.target.src = Rectangle389)}
-                                  className=" w-100 rounded-0"
-                                  style={{
-                                    // width: "20rem",
-                                    height: "10rem",
-                                    objectFit: "cover",
-
-                                  }}
-                                  alt={`Gallery ${index + 1}`}
-                                />
-                              </Card>
-                            </Col>
-                          ))
-                      ) : (
-                        <p className="text-center">No gallery images found.</p>
-                      )}
-                    </Row>
-                  </Col>
-
-
-                  {/* Next Button */}
-                  {cafe?.cafeImage?.length > cardsPerPageGallery && (
-                    <Col xs="auto">
-                      <div
-                        onClick={
-                          currentIndexGallery + cardsPerPageGallery >= cafe.cafeImage.length
-                            ? null
-                            : handleNextGallery
-                        }
-                        style={{
-                          cursor:
-                            currentIndexGallery + cardsPerPageGallery >= cafe.cafeImage.length
-                              ? "not-allowed"
-                              : "pointer",
-                          fontWeight: "600",
-                          fontSize: "30px",
-                          opacity:
-                            currentIndexGallery + cardsPerPageGallery >= cafe.cafeImage.length
-                              ? 0.3
-                              : 1,
-                        }}
-                      >
-                        <GrFormNext />
-                      </div>
-                    </Col>
-                  )}
-                </Row>
-              </Col>
-
-
-            </Row>
           </Card>
 
-          {/* -------------    game details ------------- */}
-          <Card className="py-3 px-1  rounded-4 my-3 mx-2" style={{ backgroundColor: "white" }}>
-            <Row className="justify-content-between ">
-              <Col sm={6} className=" alingn-items-start ">
-                <h5 className="text-start mx-3 " style={{ fontSize: "18px", fontWeight: "600" }}>Game Details</h5>
 
-              </Col>
-              <Col sm={6} className=" alingn-items-end ">
-                <div className="d-flex justify-content-end mx-3">
-                  <h5 className="text-end mx-3" style={{ fontSize: "16px", fontWeight: "600", cursor: "pointer", color: "#00AF0F" }}
-                    onClick={() => setShowModalAdd(true)}
-                  >
-                    <Image src={Add} alt="CafeCall" className="mx-1  " style={{ objectFit: "cover", width: "26.25px", height: "26.25px" }} />
-                    ADD</h5>
+          <Card className="my-2 rounded-4 my-3 h-100" style={{ backgroundColor: "white" }} >
 
 
-                  <AddGamesOffcanvas show={showModalAdd} handleClose={() => setShowModalAdd(false)} cafeId={cafeId} selectedGameDetails={selectedGameDetails} />
+            {/* gallary Image  */}
 
+            <div className="mx-2">
+              {activeKey === 'gallary' && (
+                <Col sm={12} className="my-3 mx-3">
 
-
-                  <h5 className="text-end mx-3 " style={{ fontSize: "16px", fontWeight: "600", cursor: "pointer", color: "#0065FF", marginTop: "3.5px" }} >
-                    {/* pass cafeid */}
-                    {/* <Link to={`/superadmin/CafeGames/${cafeId}`}> */}
-
-                    <Link
-                      to={{
-                        pathname: '/superadmin/CafeGames',
-                      }}
-                      state={{ cafeId }}
-                    >
-                      View All
-                    </Link>
-                    {/* 
-                    <Link
-                      to="/superadmin/CafeGames"
-                      state={{ cafeId }}
-                    >
-                      View All
-                    </Link> */}
-
-                  </h5>
-
-
-
-
-                </div>
-              </Col>
-              <Col sm={12} className="my-3">
-                <Row className="align-items-center justify-content-center flex-nowrap">
-                  {/* Prev Button - Left Side */}
-                  {games.length > cardsPerPage && (
-                    <Col xs="auto" className="px-1">
-                      <div
-                        onClick={currentIndex === 0 ? null : handlePrev}
-                        style={{
-                          cursor: currentIndex === 0 ? "not-allowed" : "pointer",
-                          fontWeight: "600",
-                          fontSize: "30px",
-                          opacity: currentIndex === 0 ? 0.3 : 1,
-                        }}
-                      >
-                        <GrFormPrevious />
+                  {
+                    loadingMain || !cafe ? (
+                      <div className="text-center py-5">
+                        <Loader />
                       </div>
-                    </Col>
-                  )}
+                    ) : (
 
-                  {/* Cards in the Center */}
-                  <Col className="px-2" xs={10}>
-                    <CardGroup className="w-100">
-                      <Row className="gx-3 gy-4 justify-content-start w-100">
+                      <Row className="align-items-center ">
+
+
+                        <Col sm={6}></Col>
+                        <Col sm={6} className="d-flex justify-content-sm-end justify-content-end ">
+                          <h5
+                            className="d-flex align-items-center fw-semibold mx-3"
+                            style={{
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              color: "#00AF0F",
+                            }}
+                          // onClick={() => setShowModalAdd(true)}
+                          >
+                            <Image
+                              src={Add}
+                              alt="CafeCall"
+                              className="me-2"
+                              style={{ objectFit: "cover", width: "26.25px", height: "26.25px" }}
+                            />
+                            ADD
+                          </h5>
+                          <span className="mx-2"></span>
+                        </Col>
+                        {/* Gallery */}
+                        <Col sm={12} className="">
+                          <Row className="g-3 mx-1">
+                            {cafe?.cafeImage?.length > 0 ? (
+                              cafe.cafeImage
+                                .slice(currentIndexGallery, currentIndexGallery + cardsPerPageGallery)
+                                .reverse()
+                                .map((img, index) => (
+                                  <Col key={index} xs={6} sm={4} md={3} lg={3}>
+                                    <div className="w-100 h-100 d-flex justify-content-center">
+                                      <Image
+                                        src={`${baseURL}/${img}`}
+                                        onError={(e) => (e.target.src = Rectangle389)}
+                                        className="rounded-0 img-fluid"
+                                        style={{
+                                          objectFit: "cover",
+                                          height: "10rem",
+                                          width: "100%",
+                                        }}
+                                        alt={`Gallery ${index + 1}`}
+                                      />
+                                    </div>
+                                  </Col>
+                                ))
+                            ) : (
+                              <Col xs={12}>
+                                <p className="text-center">No gallery images found.</p>
+                              </Col>
+                            )}
+
+                            {/* Dotted Add Image Box */}
+                            {/* <Col xs={6} sm={2} md={3} lg={2} className="">
+                          <div
+                            className="h-100 d-flex justify-content-center align-items-center"
+                            style={{
+                              border: "2px dotted #00AF0F",
+                              borderRadius: "8px",
+                              minHeight: "10rem",
+                              backgroundColor: "#f8f9fa",
+                            }}
+                          >
+                            <Image
+                              src={Add}
+                              alt="Add"
+                              className="img-fluid"
+                              style={{ maxWidth: "50%", height: "auto" }}
+                            />
+                          </div>
+                        </Col> */}
+                          </Row>
+                        </Col>
+                      </Row>
+
+
+                    )}
+
+                </Col>
+              )}
+
+
+              {/* Game  */}
+
+              {activeKey === 'Game' && (
+                <Row className=" justify-content-start w-100 my-3 mx-1">
+                  <Col sm={12} className="d-flex justify-content-sm-end justify-content-end  ">
+
+                    <h5
+                      className="d-flex align-items-end fw-semibold mx-3 "
+                      style={{
+                        fontSize: "16px",
+                        cursor: "pointer",
+                        color: "#00AF0F",
+                      }}
+                      onClick={() => setShowModalAdd(true)}
+                    >
+                      <Image
+                        src={Add}
+                        alt="CafeCall"
+                        className="me-1"
+                        style={{ objectFit: "cover", width: "26.25px", height: "26.25px" }}
+                      />
+                      <span className="align-self-end mb-1">ADD</span>
+                    </h5>
+                    <AddGamesOffcanvas show={showModalAdd} handleClose={() => setShowModalAdd(false)} cafeId={cafeId} selectedGameDetails={selectedGameDetails} />
+
+                    
+                  </Col>
+                  {
+                    lodergames || !games ? (
+                      <div className="text-center py-5">
+                        <Loader />
+                      </div>
+                    ) : (
+
+                      <>
+
                         {games.length > 0 ? (
                           [...games].reverse().slice(currentIndex, currentIndex + cardsPerPage).map((game, index) => (
-                            <Col key={index} xs={12} sm={12} md={4} lg={4}>
-                              <Card className="rounded-4 h-100" style={{ borderColor: "#E4E4E4", borderWidth: "2px" }}>
+                            <Col className="my-2 " key={index} xs={12} sm={6} md={6} lg={6}>
+                              <Card className="rounded-4 h-100 " style={{ borderColor: "#E4E4E4", borderWidth: "2px" }} onClick={() => handleOpenGameDetails(game?._id)}>
                                 <Card.Img
                                   src={`${baseURL}/${game.gameImage || Rectangle389}`}
                                   onError={(e) => (e.target.src = Rectangle389)}
                                   className="img-fluid rounded-4 my-2 mx-auto d-block"
-                                  style={{ width: "90%", height: "8rem", objectFit: "cover" }}
+                                  style={{
+                                    width: "90%",
+                                    height: "auto",
+                                    maxHeight: "200px",
+                                    objectFit: "cover",
+                                  }}
                                   alt="Game Image"
                                 />
                                 <Card.Body>
-                                  <Card.Title className="fs-6 fw-semibold">{game.name || "Game Title"}</Card.Title>
+                                  <Card.Title style={{ fontSize: "16px", fontWeight: "600", marginBottom: "20px" }}>{game.name || "Game Title"}</Card.Title>
                                   <Card.Text>
-                                    <Row className="gap-2 mt-3">
+                                    <Row className="my-2">
                                       {/* <Col xs={12} className="d-flex gap-2 justify-content-center mb-3">
-                                        <Button className="border-0 rounded-3" size="sm" style={{ backgroundColor: "#2C99FF" }}>Single</Button>
-                                        <Button className="border-0 rounded-3" size="sm" style={{ backgroundColor: "#00C110" }}>Refundable</Button>
-                                      </Col> */}
-                                      <Col xs={5}><h6 className="text-primary fw-semibold">Price:</h6></Col>
-                                      <Col xs={6}><h6 className="fw-medium text-end">₹ {game?.price || 1000}</h6></Col>
-                                      <Col xs={5}><h6 className="text-primary fw-semibold">Zone:</h6></Col>
-                                      <Col xs={6}><h6 className="fw-medium text-end">{game?.zone || "A"}</h6></Col>
-                                      <Col xs={5}><h6 className="text-primary fw-semibold">Size:</h6></Col>
-                                      <Col xs={6}><h6 className="fw-medium text-end">{game?.size || 2}</h6></Col>
-                                      <Col xs={6}><h6 className="text-primary fw-semibold">Players:</h6></Col>
-                                      <Col xs={4}><h6 className="fw-medium text-end">{game?.players || 2}</h6></Col>
-                                      <Col xs={7}><h6 className="text-primary fw-semibold">Playlater:</h6></Col>
-                                      <Col xs={4}><h6 className="fw-medium text-start">{game?.payLater ? "Yes" : "No"}</h6></Col>
-                                      <Col xs={7}><h6 className="text-primary fw-semibold">Cancellation:</h6></Col>
-                                      <Col xs={4}><h6 className="fw-medium text-start">{game?.cancellation ? "Yes" : "No"}</h6></Col>
+                                            <Button className="border-0 rounded-3" size="sm" style={{ backgroundColor: "#2C99FF" }}>Single</Button>
+                                            <Button className="border-0 rounded-3" size="sm" style={{ backgroundColor: "#00C110" }}>Refundable</Button>
+                                          </Col> */}
+                                      <Col sm={6} className="my-1"><h6 className="text-primary fw-semibold" style={{ fontSize: "14px", fontWeight: "600" }}>Price:</h6></Col>
+                                      <Col sm={6} className="my-1"><h6 className="fw-medium text-start" style={{ fontSize: "14px", fontWeight: "500" }}>₹ {game?.price || 1000}</h6></Col>
+                                      <Col sm={6} className="my-1"><h6 className="text-primary fw-semibold" style={{ fontSize: "14px", fontWeight: "600" }}>Zone:</h6></Col>
+                                      <Col sm={6} className="my-1"><h6 className="fw-medium text-start" style={{ fontSize: "14px", fontWeight: "500" }}>{game?.zone || "A"}</h6></Col>
+                                      <Col sm={6} className="my-1"><h6 className="text-primary fw-semibold" style={{ fontSize: "14px", fontWeight: "600" }}>Size:</h6></Col>
+                                      <Col sm={6} className="my-1"><h6 className="fw-medium text-start" style={{ fontSize: "14px", fontWeight: "500" }}>{game?.size || 2}</h6></Col>
+                                      <Col sm={6} className="my-1"><h6 className="text-primary fw-semibold" style={{ fontSize: "14px", fontWeight: "600" }}>Players:</h6></Col>
+                                      <Col sm={6} className="my-1"><h6 className="fw-medium text-start" style={{ fontSize: "14px", fontWeight: "500" }}>{game?.players || 2}</h6></Col>
+                                      <Col sm={6} className="my-1"><h6 className="text-primary fw-semibold" style={{ fontSize: "14px", fontWeight: "600" }}>Playlater:</h6></Col>
+                                      <Col sm={6} className="my-1"><h6 className="fw-medium text-start" style={{ fontSize: "14px", fontWeight: "500" }}>{game?.payLater ? "Yes" : "No"}</h6></Col>
+                                      <Col sm={6} className="my-1"><h6 className="text-primary fw-semibold" style={{ fontSize: "14px", fontWeight: "600" }}>Cancellation:</h6></Col>
+                                      <Col sm={6} className="my-1"><h6 className="fw-medium text-start" style={{ fontSize: "14px", fontWeight: "500" }}>{game?.cancellation ? "Yes" : "No"}</h6></Col>
                                     </Row>
                                   </Card.Text>
                                 </Card.Body>
@@ -722,250 +802,262 @@ const clientData = [
                         ) : (
                           <p className="text-center">No games available</p>
                         )}
-                      </Row>
-                    </CardGroup>
-                  </Col>
 
-                  {/* Next Button - Right Side */}
-                  {games.length > cardsPerPage && (
-                    <Col xs="auto" className="px-1">
-                      <div
-                        onClick={currentIndex >= maxIndex ? null : handleNext}
-                        style={{
-                          cursor: currentIndex >= maxIndex ? "not-allowed" : "pointer",
-                          fontWeight: "600",
-                          fontSize: "30px",
-                          opacity: currentIndex >= maxIndex ? 0.3 : 1,
-                        }}
-                      >
-                        <MdOutlineNavigateNext />
-                      </div>
-                    </Col>
-                  )}
-                </Row>
-              </Col>
+                      </>
 
 
-            </Row>
-          </Card>
-
-
-
-          {/* -------------    members ------------- */}
-
-
-          <Card className="py-3 mx-2 rounded-4 my-3" style={{ backgroundColor: "white" }}>
-            <Row className="justify-content-between mx-3">
-              <Col sm={6} className=" alingn-items-start">
-                <h5 className="text-start " style={{ fontSize: "18px", fontWeight: "600" }}>Membership Details</h5>
-              </Col>
-              <Col sm={6} className=" alingn-items-end ">
-                <div className="d-flex justify-content-end">
-                  <h5 className="text-end mx-3" style={{ fontSize: "16px", fontWeight: "600", cursor: "pointer", color: "#00AF0F" }}
-                    onClick={() => setShowMembershipAdd(true)}
-                  >
-                    <Image src={Add} alt="CafeCall" className="mx-1  " style={{ objectFit: "cover", width: "26.25px", height: "26.25px" }} />
-                    ADD</h5>
-
-                  <AddMembershipOffcanvas show={showMembershipAdd} handleClose={() => setShowMembershipAdd(false)} cafeId={cafeId} selectedMembership={selectedMembership} />
-
-
-                  <h5 className="text-end mx-3 " style={{ fontSize: "16px", fontWeight: "600", cursor: "pointer", color: "#0065FF", marginTop: "3.5px" }} >
-                    {/* pass cafeid */}
-                    <Link
-                      to="/superadmin/CreateMembership/"
-                      state={{ cafeId }}
-                    >
-                      View All
-                    </Link>
-                  </h5>
-
-                </div>
-              </Col>
-
-              <Col sm={12} className="my-3">
-                <Row className="align-items-center">
-                  {/* Prev Button - Left Side */}
-                  {memberships.length > membershipCardsPerPage && (
-                    <Col xs="auto">
-                      <div
-                        className="mx-0"
-                        onClick={currentIndexMembership === 0 ? null : handleMembershipPrev}
-                        style={{
-                          cursor: currentIndexMembership === 0 ? "not-allowed" : "pointer",
-                          fontWeight: "600",
-                          fontSize: "30px",
-                          opacity: currentIndexMembership === 0 ? 0.3 : 1,
-                        }}
-                      >
-                        <GrFormPrevious />
-                      </div>
-                    </Col>
-                  )}
-
-                  {/* Membership Cards */}
-                  <Col className="px-0 ">
-                    {memberships && memberships.length > 0 ? (
-                      <Row className="d-flex flex-wrap justify-content-start">
-                        {[...memberships].reverse().slice(currentIndexMembership, currentIndexMembership + membershipCardsPerPage).map((membership, index, arr) => (
-                          <Col
-                            sm={6}
-                            xs={12}
-                            key={index}
-                            // className={`d-flex mx-0 ${games.length === 1 ? 'col-4' : ' justify-content-start'}`}
-                            className={`d-flex my-3 ${index !== arr.length - 1 ? 'justify-content-start' : 'justify-content-end'} ${arr.length === 1 ? 'col-12' : 'col-6'}`}
-                          >
-
-                            <Card className="mx-2 p-3 w-100">
-                              <Row>
-                                {/* Image Section */}
-                                <Col xs={12} sm={5} className="text-center mb-3 mb-sm-0">
-                                  <Image
-                                    src={FrameKing}
-                                    alt="CafeCall"
-                                    className="rounded-circle"
-                                    style={{ objectFit: "cover", width: "68px", height: "68px" }}
-                                  />
-                                </Col>
-
-                                {/* Membership Name & Button */}
-                                <Col xs={12} sm={7} className="text-sm-start text-center mb-3 mb-sm-0">
-                                  <h5 className="mb-2" style={{ fontSize: "16px", fontWeight: "500" }}>
-                                    {membership?.name || "Gold Membership"}
-                                  </h5>
-                                  <Button
-                                    className="border-0 rounded-3 text-white"
-                                    size="sm"
-                                    style={{ backgroundColor: "#2C99FF" }}
-                                  >
-                                    Expire in {membership?.validity || "1 Month"}
-                                  </Button>
-                                </Col>
-
-                                {/* Membership Details */}
-                                <Col xs={12}>
-                                  <h6 className="mt-4" style={{ fontSize: "16px", fontWeight: "500" }}>
-                                    Membership Details
-                                  </h6>
-                                  <ul className="text-muted mb-2 ps-3" style={{ fontSize: "14px", fontWeight: "400" }}>
-                                    {membership?.details?.map((detail, i) => (
-                                      <li key={i}>{detail}</li>
-                                    ))}
-                                  </ul>
-
-                                  <h6 className="mt-4" style={{ fontSize: "16px", color: "#00C843", fontWeight: "600" }}>
-                                    Price: ₹ {membership?.price || 1000}
-                                  </h6>
-                                </Col>
-                              </Row>
-                            </Card>
-
-
-                          </Col>
-                        ))}
-                      </Row>
-                    ) : (
-                      <p className="text-center"> No members available</p>
                     )}
-                  </Col>
-
-                  {/* Next Button - Right Side */}
-                  {memberships.length > membershipCardsPerPage && (
-                    <Col xs="auto">
-                      <div
-                        className="mx-0"
-                        onClick={currentIndexMembership >= membershipMaxIndex ? null : handleMembershipNext}
-                        style={{
-                          cursor: currentIndexMembership >= membershipMaxIndex ? "not-allowed" : "pointer",
-                          fontWeight: "600",
-                          fontSize: "30px",
-                          opacity: currentIndexMembership >= membershipMaxIndex ? 0.3 : 1,
-                        }}
-                      >
-                        <MdOutlineNavigateNext />
-                      </div>
-                    </Col>
-                  )}
                 </Row>
-              </Col>
+              )}
+
+                {/* Membership Cards */}
+
+              {activeKey === "Membership" && (
+                <Row className=" d-flex flex-wrap justify-content-center p-2">
+
+                  <Col sm={6} className=" alingn-items-start">
+
+                  </Col>
+                  <Col sm={6} className=" alingn-items-end my-2 ">
+                    <div className="d-flex justify-content-end">
+                      <h5 className="text-end mx-3" style={{ fontSize: "16px", fontWeight: "600", cursor: "pointer", color: "#00AF0F" }}
+                        onClick={() => setShowMembershipAdd(true)}
+                      >
+                        <Image src={Add} alt="CafeCall" className="mx-1  " style={{ objectFit: "cover", width: "26.25px", height: "26.25px" }} />
+                        ADD</h5>
+
+                      <AddMembershipOffcanvas show={showMembershipAdd} handleClose={() => setShowMembershipAdd(false)} cafeId={cafeId} selectedMembership={selectedMembership} />
 
 
 
 
 
+                    </div>
+                  </Col> 
+                  {
+                    lodermembership || !memberships ? (
+
+                      <div className="text-center py-5">
+                        <Loader />
+                      </div>
+
+                    ) : (
+                      <>
+                        {memberships && memberships.length > 0 ? (
+                          <Row className="d-flex flex-wrap justify-content-start mx-2 ">
+                            {[...memberships].reverse().slice(currentIndexMembership, currentIndexMembership + membershipCardsPerPage).map((membership, index, arr) => (
+                              <Col
+                                sm={6}
+                                xs={12}
+                                key={index}
+                              >
+
+                                <Card className="py-3 px-2 w-100 my-3">
+                                  <Row>
+                                    {/* Image Section */}
+                                    <Col xs={6} sm={5} className="text-center mb-3 mb-sm-0">
+                                      <Image
+                                        src={FrameKing}
+                                        alt="CafeCall"
+                                        className="rounded-circle"
+                                        style={{ objectFit: "cover", width: "68px", height: "68px" }}
+                                      />
+                                    </Col>
+
+                                    {/* Membership Name & Button */}
+                                    <Col xs={6} sm={7} className="text-sm-start text-center mb-3 mb-sm-0">
+                                      <h5 className="mb-2" style={{ fontSize: "16px", fontWeight: "500" }}>
+                                        {membership?.name || "Gold Membership"}
+                                      </h5>
+                                      <Button
+                                        className="border-0 rounded-3 text-white"
+                                        size="sm"
+                                        style={{ backgroundColor: "#2C99FF" }}
+                                      >
+                                        Expire in {membership?.validity || "1 Month"}
+                                      </Button>
+                                    </Col>
+
+                                    {/* Membership Details */}
+                                    <Col xs={12}>
+                                      <h6 className="mt-4" style={{ fontSize: "16px", fontWeight: "500" }}>
+                                        Membership Details
+                                      </h6>
+                                      <ul className="text-muted mb-2 ps-3" style={{ fontSize: "14px", fontWeight: "400" }}>
+                                        {membership?.details?.map((detail, i) => (
+                                          <li key={i}>{detail}</li>
+                                        ))}
+                                      </ul>
+
+                                      <h6 className="mt-4" style={{ fontSize: "16px", color: "#00C843", fontWeight: "600" }}>
+                                        Price: ₹ {membership?.price || 1000}
+                                      </h6>
+                                    </Col>
+                                  </Row>
+                                </Card>
+
+
+                              </Col>
+                            ))}
+                          </Row>
+                        ) : (
+                          <p className="text-center"> No members available</p>
+                        )}
+                      </>
+                    )
+                  }
 
 
 
 
 
-            </Row>
+                </Row>
+              )}
+
+              {activeKey === "Client" && (
+
+
+                <Row className="d-flex flex-wrap justify-content-center p-2 mx-1">
+                  <Col sm={6} className=" alingn-items-start">
+                    {/* <h5 className="text-start " style={{ fontSize: "18px", fontWeight: "600" }}>Client List</h5> */}
+                  </Col>
+                  <Col sm={6} className=" alingn-items-end ">
+                    <div className="d-flex justify-content-end">
+                      <input
+                        type="search"
+                        className="form-control me-2"
+                        placeholder="Search"
+                        aria-label="Search"
+                      // value={searchQuery}
+                      // onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+
+                    </div>
+                  </Col>
+                  <Col sm={12} className="my-3 alingn-items-end">
+
+                    <Table hover responsive >
+                      <thead className="table-light ">
+                        <tr>
+                          <th className="fw-bold">S/N</th>
+                          <th className="fw-bold"> Name </th>
+                          <th className="fw-bold">Contact Number</th>
+                          <th className="fw-bold">Email</th>
+                          <th className="fw-bold">Creadit Limit</th>
+                          <th className="fw-bold">Membership</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(paginatedData.length > 0 ? paginatedData : clientData).map((booking, idx) => (
+                          <tr key={idx}>
+                            <td>{idx + 1}</td>
+                            <td><a href="#" className="text-primary fw-bold">{booking.id}</a></td>
+                            <td>{booking.game}</td>
+                            <td>{booking.date}</td>
+                            <td>{booking.total}</td>
+                            <td>{statusBadge(booking.status)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+
+                    {/* <div className="d-flex justify-content-end align-items-center my-4">
+                      <Button style={{ backgroundColor:'white'}} onClick={handlePrevclient} disabled={currentPage === 1}>
+                        <GrFormPrevious style={{ color: "black", fontSize: "20px" }} />
+                      </Button>
+
+                      <span className="mx-3">
+                         {currentPage} ... {totalPages}
+                      </span>
+
+                      <Button style={{ backgroundColor:'white' }} onClick={handleNextclient} disabled={currentPage === totalPages}>
+                        <MdOutlineNavigateNext style={{ color: "black", fontSize: "20px" }}  />
+                      </Button>
+                    </div> */}
+
+
+
+                    <div className="d-flex justify-content-end align-items-center my-4">
+                      {/* Previous Button */}
+                      <Button
+                        style={{
+                          backgroundColor: "white",
+                          border: "1px solid #dee2e6",
+                          padding: "0.25rem 0.5rem",
+                          borderRadius: "0.375rem",
+                        }}
+                        onClick={handlePrevclient}
+                        disabled={currentPage === 1}
+                      >
+                        <GrFormPrevious style={{ color: "black", fontSize: "20px" }} />
+                      </Button>
+
+                      {/* Page Numbers */}
+                      <span className="d-flex align-items-center mx-2 gap-2">
+                        <Button
+                          style={{
+                            backgroundColor: currentPage === 1 ? "#0062ff" : "white",
+                            color: currentPage === 1 ? "white" : "black",
+                            border: "1px solid #dee2e6",
+                            borderRadius: "0.375rem",
+                            padding: "0.25rem 0.6rem",
+                          }}
+                        >
+                          1
+                        </Button>
+
+                        <Button
+                          style={{
+                            backgroundColor: currentPage === 2 ? "#0062ff" : "white",
+                            color: currentPage === 2 ? "white" : "black",
+                            border: "1px solid #dee2e6",
+                            borderRadius: "0.375rem",
+                            padding: "0.25rem 0.6rem",
+                          }}
+                        >
+                          2
+                        </Button>
+
+                        <span style={{ fontSize: "16px", fontWeight: "500" }}>...</span>
+
+                        <Button
+                          style={{
+                            backgroundColor: currentPage === totalPages ? "#0062ff" : "white",
+                            color: currentPage === totalPages ? "white" : "black",
+                            border: "1px solid #dee2e6",
+                            borderRadius: "0.375rem",
+                            padding: "0.25rem 0.6rem",
+                          }}
+                        >
+                          {totalPages}
+                        </Button>
+                      </span>
+
+                      {/* Next Button */}
+                      <Button
+                        style={{
+                          backgroundColor: "white",
+                          border: "1px solid #dee2e6",
+                          padding: "0.25rem 0.5rem",
+                          borderRadius: "0.375rem",
+                        }}
+                        onClick={handleNextclient}
+                        disabled={currentPage === totalPages}
+                      >
+                        <MdOutlineNavigateNext style={{ color: "black", fontSize: "20px" }} />
+                      </Button>
+                    </div>
+
+                  </Col>
+                </Row>
+
+
+
+              )}
+            </div>
+
           </Card>
 
-
-          <Card className="py-3 mx-2 rounded-4 my-3">
-
-          <Row className="justify-content-between mx-3">
-              <Col sm={6} className=" alingn-items-start">
-                <h5 className="text-start " style={{ fontSize: "18px", fontWeight: "600" }}>Client List</h5>
-              </Col>
-              <Col sm={6} className=" alingn-items-end ">
-                <div className="d-flex justify-content-end">
-                  <input
-                    type="search"
-                    className="form-control me-2"
-                    placeholder="Search"
-                    aria-label="Search"
-                    // value={searchQuery}
-                    // onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-
-                </div>
-              </Col>
-              <Col sm={12} className="my-3 alingn-items-end">
-
-              <Table hover responsive >
-            <thead className="table-light ">
-              <tr>
-                <th className="fw-bold">S/N</th>
-                <th className="fw-bold"> Name </th>
-                <th className="fw-bold">Contact Number</th>
-                <th className="fw-bold">Email</th>
-                <th className="fw-bold">Creadit Limit</th>
-                <th className="fw-bold">Membership</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(paginatedData.length > 0 ? paginatedData : clientData).map((booking, idx) => (
-                <tr key={idx}>
-                  <td>{idx + 1}</td>
-                  <td><a href="#" className="text-primary fw-bold">{booking.id}</a></td>
-                  <td>{booking.game}</td>
-                  <td>{booking.date}</td>
-                  <td>{booking.total}</td>
-                  <td>{statusBadge(booking.status)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-
-          <div className="d-flex justify-content-center align-items-center my-3">
-          <Button onClick={handlePrevclient} disabled={currentPage === 1}>
-          <GrFormPrevious />
-        </Button>
-
-        <span className="mx-3">
-          Page {currentPage} of {totalPages}
-        </span>
-
-        <Button onClick={handleNextclient} disabled={currentPage === totalPages}>
-          <MdOutlineNavigateNext /> 
-        </Button>
-          </div>
-              </Col>
-              </Row>    
-          
-          
-          </Card>
         </Col>
       </Row>
 
@@ -983,12 +1075,7 @@ const clientData = [
         handleClose={() => setShowModalForwordPassword(false)}
         cafeId={cafeId}
       />
-
-
     </Container>
-
-
-
   );
 };
 

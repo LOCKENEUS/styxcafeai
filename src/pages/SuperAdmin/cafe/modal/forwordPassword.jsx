@@ -59,7 +59,7 @@ const ForwordPassword = ({ show, handleClose, cafeId }) => {
   
 
   return (
-    <Modal show={show} onHide={handleClose} centered >
+    <Modal show={show} onHide={handleClose} centered  >
       <Modal.Body>
         <h2 className="text-center">Reset Password</h2>
 

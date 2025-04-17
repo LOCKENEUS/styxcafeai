@@ -5,7 +5,9 @@ const GameDeleteModal = ({ show, handleClose, gameId }) => {
 
     console.log("gameId delete  ",gameId);
   return (
-    <Modal show={show} onHide={handleClose} centered>
+    <Modal show={show} onHide={handleClose}  
+    className='size-xs'
+    centered>
       <Modal.Header closeButton>
         <Modal.Title><h2 className="text-primary fw-bold">Game Delete</h2></Modal.Title>
       </Modal.Header>

@@ -171,22 +171,18 @@ const GameDetailsCafe = () => {
             <Breadcrumb>
               <Breadcrumb.Item href="#" style={{ fontSize: "16px", fontWeight: "500" }}>Home</Breadcrumb.Item>
               <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }}>
-                {/* <Link to="/superadmin/cafe/viewdetails/" > Games Details</Link> */}
+                
                 <Link to="/superadmin/cafe/viewdetails"
                   state={{ cafeId: cafeId }}>
                   Games Details
                 </Link>
               </Breadcrumb.Item>
-              <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }} >
-                {/* <Link to={`/superadmin/CafeGames`}>
-                  All Games
-                </Link> */}
-
+              {/* <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }} >
                 <Link to="/superadmin/CafeGames"
                   state={{ cafeId: cafeId }}>
                   All Games
                 </Link>
-              </Breadcrumb.Item>
+              </Breadcrumb.Item> */}
               <Breadcrumb.Item active style={{ fontSize: "16px", fontWeight: "500" }} > Game</Breadcrumb.Item>
 
             </Breadcrumb>
