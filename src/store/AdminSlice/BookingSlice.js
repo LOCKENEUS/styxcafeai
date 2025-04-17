@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -76,6 +77,23 @@ export const updateBooking = createAsyncThunk(
     try {
       const response = await axios.put(
         `${BASE_URL}/admin/booking/${id}`,
+        updatedData
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Something went wrong"
+      );
+    }
+  }
+);
+
+export const addToCart = createAsyncThunk(
+  "bookings/addToCart",
+  async ({ id, updatedData }, thunkAPI) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/admin/booking/add-to-cart/${id}`,
         updatedData
       );
       return response.data;
@@ -300,6 +318,23 @@ const bookingslice = createSlice({
       .addCase(addBooking.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      
+      // AddToCart
+      .addCase(addToCart.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addToCart.fulfilled, (state, action) => {
+        state.loading = false;
+        // state.bookings.push(action.payload.data);
+        toast.success("Item added to cart successfully");
+      })
+      .addCase(addToCart.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        toast.error("Failed to add item to cart");
       })
 
       // Update booking

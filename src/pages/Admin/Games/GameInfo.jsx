@@ -285,7 +285,7 @@ const GameInfo = () => {
               style={{ width: "128px", height: "37px" }}
               onClick={handleBookSlotClick}
             >
-              Book Slot Now
+              Book Slot
             </Button>
           </Col>
         </Row>

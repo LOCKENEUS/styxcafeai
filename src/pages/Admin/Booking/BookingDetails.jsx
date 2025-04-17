@@ -24,6 +24,10 @@ import { getItems } from "../../../store/AdminSlice/Inventory/ItemsSlice";
 import { getTaxFields } from "../../../store/AdminSlice/TextFieldSlice";
 import { AiOutlineClose } from "react-icons/ai";
 import Select from "react-select";
+import { LiaCoinsSolid } from "react-icons/lia";
+import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
+import CreditSplit from "./Model/CreditSplit";
+import { RxCross2 } from "react-icons/rx";
 
 const BookingDetails = () => {
   const { customers, loading, error } = useSelector((state) => state.customers);
@@ -40,6 +44,7 @@ const BookingDetails = () => {
   const [adjustment, setAdjustment] = useState("");
   const [options, setOptions] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [showCreditModal, setShowCreditModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCustTerm, setSearchCustTerm] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
@@ -53,6 +58,7 @@ const BookingDetails = () => {
   const [activeTab, setActiveTab] = useState("checkout");
   const [showClientModal, setShowClientModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Payment Options");
+  const [selectedMethod, setSelectedMethod] = useState("Payment Options");
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
 
@@ -77,7 +83,7 @@ const BookingDetails = () => {
 
   useEffect(() => {
     if (items.length > 0) {
-      setOptions(items.map((item) => ({ value: item._id, label: item.name })));
+      setOptions(items.map((item) => ({ value: item._id, label: `${item.name} (₹ ${item.sellingPrice})` })));
     }
   }, [items]);
 
@@ -101,19 +107,19 @@ const BookingDetails = () => {
     }
     if (gameId && slotId) {
       if (slot?.price) {
-        if(addOnTotal > 0) {
+        if (addOnTotal > 0) {
           setPayableAmount(slot?.price + addOnTotal)
           setPriceToPay(slot?.price + addOnTotal)
-        }else{
+        } else {
           setPayableAmount(slot?.price)
           setPriceToPay(slot?.price)
         }
 
       } else {
-        if(addOnTotal > 0) {
+        if (addOnTotal > 0) {
           setPayableAmount(selectedGame?.data?.price + addOnTotal)
           setPriceToPay(selectedGame?.data?.price + addOnTotal)
-        }else{
+        } else {
           setPayableAmount(selectedGame?.data?.price)
           setPriceToPay(selectedGame?.data?.price)
         }
@@ -149,13 +155,18 @@ const BookingDetails = () => {
         totalTax: 0
       }]);
       setSelectedIds([...selectedIds, selected._id]);
+      setSelectedOption(null)
     }
   };
 
   const updateProduct = (id, field, value) => {
     const updatedItems = selectedItems.map((product) => {
       if (product.id === id) {
-        const updatedQuantity = field === "quantity" ? parseInt(value.replace(/\D/g, ""), 10) || 0 : product.quantity; // Ensure only numeric input
+        // const updatedQuantity = field === "quantity" ? parseInt(value.replace(/\D/g, ""), 10) || 0 : product.quantity; // Ensure only numeric input
+        const updatedQuantity = field === "quantity"
+          ? parseInt(String(value).replace(/\D/g, ""), 10) || 0
+          : product.quantity;
+
         const taxRate = product.tax?.tax_rate || 0;
         const totalTax = Math.round((taxRate * product.price * updatedQuantity) / 100);
         const total = product.price * updatedQuantity + totalTax;
@@ -206,6 +217,7 @@ const BookingDetails = () => {
   );
 
   const handleSelect = (eventKey) => {
+    setShowCreditModal(true)
     setSelectedOption(eventKey);
     if (eventKey === "Pay Later") {
       handlePayLater()
@@ -301,6 +313,11 @@ const BookingDetails = () => {
   }
 
   const handleCollectOffline = async () => {
+    if(selectedGame?.data?.type === "Multiplayer" && selectedCustomer && teamMembers.length < 1) {
+      window.alert("Please add at least 2 players")
+      return
+    }
+
     try {
       const bookingData = {
         cafe: cafeId,
@@ -331,6 +348,12 @@ const BookingDetails = () => {
 
   const handlePayLater = async () => {
     try {
+      if(selectedGame?.data?.type === "Multiplayer" && selectedCustomer && teamMembers.length < 1) {
+        console.log("reached here")
+        window.alert("Please add at least 2 players")
+        return
+      }
+  
       const bookingData = {
         cafe: cafeId,
         customer_id: selectedCustomer?._id,
@@ -340,7 +363,8 @@ const BookingDetails = () => {
         status: "Pending",
         total: selectedGame?.data?.price,
         slot_date: newdate,
-        players: teamMembers
+        players: teamMembers,
+        items: selectedItems
       };
       const response = await dispatch(addBooking(bookingData)).unwrap()
 
@@ -369,11 +393,18 @@ const BookingDetails = () => {
     setSearchCustTerm("");
     setSearchedCustomers([]);
 
+    console.log("customer", customer);
+    console.log("teamMembers", teamMembers);
+
     let isAlreadyAdded = teamMembers.some(
-      (member) => member.contact_no === customer.contact_no
+      (member) => member.id === customer._id
     );
 
-    isAlreadyAdded = selectedCustomer.contact_no === customer.contact_no
+    console.log("isAlreadyAdded", isAlreadyAdded);
+
+    // isAlreadyAdded = selectedCustomer._id === customer._id
+
+    console.log("isAlreadyAdded", isAlreadyAdded);
 
     if (!isAlreadyAdded) {
       setTeamMembers([...teamMembers,
@@ -430,6 +461,12 @@ const BookingDetails = () => {
 
   const handleOnlinePayment = async () => {
     try {
+      if(selectedGame?.data?.type === "Multiplayer" && selectedCustomer && teamMembers.length < 1) {
+        console.log("reached here")
+        window.alert("Please add at least 2 players")
+        return
+      }
+  
       // Step 1: Create Razorpay Order FIRST (before creating booking)
       const response = await fetch(`${backend_url}/admin/booking/payment`, {
         method: "POST",
@@ -535,6 +572,22 @@ const BookingDetails = () => {
     }
   };
 
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      border: 'none',
+      borderRadius: '16px',
+      padding: '2%',
+      boxShadow: 'none',
+      '&:hover': {
+        border: 'none'
+      }
+    }),
+    // Optional: adjust dropdown indicator and other parts if needed
+  };
+
+  console.log("players", playerCredits);
+
   return (
     <Container fluid className="p-4 ">
       <h6 className="mb-3 text-muted">
@@ -542,7 +595,7 @@ const BookingDetails = () => {
         <span className="text-primary">Purchase Order</span>
       </h6>
       <Row>
-        <Col style={{ height: "100%" }} md={4}>
+        <Col style={{ height: "100%" }} md={3}>
           <div className="d-flex  gap-3">
             <InputGroup className="mb-3 ">
               <InputGroup.Text className="bg-white p-3 rounded-start">
@@ -554,7 +607,6 @@ const BookingDetails = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-
             </InputGroup>
 
             <Button
@@ -577,7 +629,7 @@ const BookingDetails = () => {
                     setSearchTerm('')
                   }}
                 >
-                  {customer.name}
+                  {customer.name} - {customer.contact_no}
                 </ListGroup.Item>
               ))}
             </ListGroup>
@@ -657,7 +709,7 @@ const BookingDetails = () => {
                               onClick={() => handleSelectCustomer(customer)}
                               className="p-2 hover:bg-blue-500 hover:text-white cursor-pointer"
                             >
-                              {customer?.name}
+                              {customer?.name} - {customer?.contact_no}
                             </li>
                           ))}
                         </ul>
@@ -696,7 +748,7 @@ const BookingDetails = () => {
                       <h5 className="fw-bold">No of Candidates  ({teamMembers.length + 1})</h5>
                       {teamMembers.map((player, index) => (
                         <p key={index} className="mt-4">
-                          {player.name} - {player.contact_no} <><FaDeleteLeft size={20} className="text-danger" onClick={() => handleRemovePlayer(player.id)} /></>
+                          {player.name} - {player.contact_no} <span className="float-end"><RxCross2 size={20} className="text-danger" onClick={() => handleRemovePlayer(player.id)} /></span>
                         </p>
                       ))}
                     </div>
@@ -707,37 +759,43 @@ const BookingDetails = () => {
           </div>
         </Col>
 
-        <Col md={8}>
-          <Row>
+        {/* <Col md={9}> */}
+        {/* <Row> */}
 
-            <Col md={6} className="p-1">
+        <Col md={4} className="p-1">
+          <Row>
+            <Col md={12} style={{ height: "9vh" }}></Col>
+            <Col md={12}>
               <div
-                style={{ height: "315px" }}
+                style={{ height: "40vh" }}
                 className="bg-white rounded-3 p-3 mb-4 position-relative"
               >
                 <div className="px-3">
-                  <div className="d-flex justify-content-between mb-4 pb-2" style={{ borderBottom: "1px solid #ccc" }}>
-                    {/* <h3>Customer Details</h3> */}
-                    <div className="d-flex gap-6">
-                      <div className="text-dark">
-                        <span className="fw-bold">Credit Limit: {selectedCustomer?.creditLimit || 0}</span>
-                      </div>
-                      <div className="text-dark text-end">
-                        <span className="fw-bold">Remaining: {selectedCustomer?.creditLimit - selectedCustomer?.creditAmount || 0}</span>
-                      </div>
-                    </div>
+                  <div className="py-2">
+                    <span className="text-color">Credit Limit</span>
+                    <span
+                      style={{ background: "#03D41414", color: "#00AF0F" }}
+                      className="float-end rounded-pill px-2 py-1"
+                    >
+                      <LiaCoinsSolid size={25} />
+                      {selectedCustomer?.creditLimit - selectedCustomer?.creditAmount || 0}/{selectedCustomer?.creditLimit || 0}
+                    </span>
                   </div>
 
                   {selectedCustomer ? (
-                    <div>
+                    <>
+                      <Row className="mb-5">
+                        <Col xs={6} className="text-muted"></Col>
+                        <Col xs={6} className="text-dark"></Col>
+                      </Row>
                       <Row className="mb-3">
-                        <Col xs={4} className="text-muted">Customer Name:</Col>
-                        <Col xs={8} className="text-dark">{selectedCustomer.name}</Col>
+                        <Col xs={6} className="text-color">Customer Name:</Col>
+                        <Col xs={6} className="muted-text">{selectedCustomer.name}</Col>
                       </Row>
 
                       <Row className="mb-3">
-                        <Col xs={4} className="text-muted">Booked Game:</Col>
-                        <Col xs={8}>
+                        <Col xs={6} className="text-color">Booked Game:</Col>
+                        <Col xs={6}>
                           <span className="text-primary fw-bold">
                             {selectedGame?.data?.name} ({selectedGame?.data?.size})
                           </span>
@@ -745,108 +803,322 @@ const BookingDetails = () => {
                       </Row>
 
                       <Row className="mb-3">
-                        <Col xs={4} className="text-muted">Day & Time:</Col>
-                        <Col xs={8} className="text-dark">
+                        <Col xs={6} className="text-color">Day & Time:</Col>
+                        <Col xs={6} className="muted-text">
                           {formattedDate} - {convertTo12Hour(slot.start_time)}
                         </Col>
                       </Row>
 
                       <Row className="mb-3">
-                        <Col xs={4} className="text-muted">Contact:</Col>
-                        <Col xs={8} className="text-dark">
+                        <Col xs={6} className="text-color">Contact:</Col>
+                        <Col xs={6} className="muted-text">
                           {selectedCustomer.contact_no}
                         </Col>
                       </Row>
 
                       <Row className="mb-3">
-                        <Col xs={4} className="text-muted">No of Candidates:</Col>
-                        <Col xs={8} className="text-dark">
+                        <Col xs={6} className="text-color">No of Candidates:</Col>
+                        <Col xs={6} className="muted-text">
                           {selectedGame?.data?.type === "Multiplayer" ? teamMembers.length + 1 : 1}            </Col>
                       </Row>
-                    </div>
+                    </>
                   ) : (
-                    <div className="d-flex justify-content-center align-items-center h-100">
+                    <div className="d-flex justify-content-center mt-6 align-items-center h-100">
                       <p className="text-muted mb-0">Select Customers</p>
                     </div>
                   )}
                 </div>
               </div>
             </Col>
+            <Col md={12}>
+              <div className="d-flex gap-0 rounded-2" style={{ minHeight: "46vh" }}>
+                <div className="bg-white p-4 w-100 border-end border-2 rounded-3" style={{ minHeight: "57%" }}>
+                  {selectedCustomer ? (
+                    <>
+                      <div className="mb-5 d-flex justify-content-between">
+                        <span className="text-color">Game Price:</span>
+                        <span className="muted-text">₹ {slot?.price ? slot.price : selectedGame?.data?.price}</span>
+                      </div>
 
-            {/* Add On's */}
-            <Col md={6} className="p-1">
-              <div className="bg-white rounded-3 p-0 d-flex flex-column" style={{ height: "315px" }}>
+                      {/* <div className="mb-5 d-flex justify-content-between">
+                        <span className="text-color">Total Amount:</span>
+                        <span className="muted-text">₹ {priceToPay}</span>
+                      </div> */}
+
+                      <div className="mb-5 d-flex justify-content-between">
+                        <span className="text-color">Items Total:</span>
+                        <span className="muted-text">₹ {addOnTotal}</span>
+                      </div>
+
+                      <div className="mb-5 d-flex justify-content-between">
+                        <span className="text-color">Extra Charge:</span>
+                        <span className="muted-text">₹ 00.00</span>
+                      </div>
+                      {/* 
+                      <div className="mb-5 d-flex justify-content-between">
+                        <span className="text-color">GST:</span>
+                        <span className="muted-text">₹ 00.00</span>
+                      </div> */}
+
+                      <div className="mb-5 d-flex justify-content-between">
+                        <span className="text-color">TOTAL:</span>
+                        <span className="text-primary fw-bold">₹ {priceToPay}</span>
+                      </div>
+
+                      <div className="mb-4">
+                        <Dropdown onSelect={handleSelect} className="w-100">
+                          <Dropdown.Toggle style={{ background: "#00B72BCC", color: "white", border: "none" }} id="dropdown-basic" className="w-100 text-center">
+                            {selectedMethod}
+                          </Dropdown.Toggle>
+                          <Dropdown.Menu className="w-100" style={{ background: "e6e3e7", color: "white", border: "none" }}>
+                            <Dropdown.Item eventKey="Online">Online</Dropdown.Item>
+                            <Dropdown.Item eventKey="Offline">Offline</Dropdown.Item>
+                            {selectedGame?.data?.payLater && (
+                              <Dropdown.Item eventKey="Pay Later">Pay Later</Dropdown.Item>
+                            )}
+                            {/* {!selectedGame?.data?.payLater && (
+                              <Dropdown.Item eventKey="On Credit">On Credit</Dropdown.Item>
+                            )} */}
+                          </Dropdown.Menu>
+                        </Dropdown>
+                        {/* <Button style={{background: "#00B72BCC", color: "#fff"}} className="btn border-0 w-100" onClick={() => setShowCreditModal(!showCreditModal)}>Payment Options</Button> */}
+                      </div>
+                      {/* 
+                      {showCreditModal &&
+                        <CreditSplit
+                          show={showCreditModal}
+                          handleClose={() => setShowCreditModal(false)}
+                          totalAmount={priceToPay}
+                          players={teamMembers}
+                          customer={selectedCustomer}
+                        />} */}
+                    </>
+                  ) : (
+                    <p className="text-muted d-flex justify-content-center align-items-center h-100 w-100 mb-0">
+                      Select Customers
+                    </p>
+                  )}
+
+                </div>
+                {/* <div className="w-100 w-md-50 bg-body rounded-3 border p-3 shadow-sm">
+                  {showOnCredit && (
+                    <>
+                      <Row className="mb-3">
+                        <Col xs={6}>
+                          <p className="mb-1 fw-medium text-secondary">Total Amount</p>
+                        </Col>
+                        <Col xs={6}>
+                          <Form.Control
+                            size="sm"
+                            type="text"
+                            readOnly
+                            value={priceToPay}
+                            className="fw-bold border-secondary"
+                          />
+                        </Col>
+                      </Row>
+
+                      <Row className="mb-3">
+                        <Col xs={6}>
+                          <p className="mb-1 fw-medium text-secondary">Payable Amount</p>
+                        </Col>
+                        <Col xs={6}>
+                          <Form.Control
+                            size="sm"
+                            type="text"
+                            value={payableAmount}
+                            onChange={handlePayableAmountChange}
+                            className="border-secondary"
+                          />
+                        </Col>
+                      </Row>
+
+                      <Row className="mb-4">
+                        <Col xs={6}>
+                          <p className="mb-1 fw-medium text-secondary">Credit Amount</p>
+                        </Col>
+                        <Col xs={6}>
+                          <Form.Control
+                            size="sm"
+                            type="text"
+                            readOnly
+                            value={creditAmount}
+                            className="border-secondary"
+                          />
+                        </Col>
+                      </Row>
+
+                      {creditAmount > 0 && (
+                        <div>
+                          <h5 className="mb-3 fw-semibold">Credit Collection</h5>
+                          <Card className="border-0">
+                            <Card.Body className="p-2">
+                              <InputGroup className="mb-2">
+                                <Form.Control
+                                  size="sm"
+                                  value={selectedCustomer.name}
+                                  readOnly
+                                />
+                                <Form.Control
+                                  size="sm"
+                                  placeholder="Rs 0"
+                                  value={
+                                    playerCredits.find((p) => p.id === selectedCustomer._id)?.credit || ""
+                                  }
+                                  onChange={(e) => {
+                                    const enteredValue = parseFloat(e.target.value) || 0;
+                                    const limit = selectedCustomer.creditLimit - selectedCustomer.creditAmount;
+                                    if (enteredValue > limit) {
+                                      alert("Credit amount exceeds the limit");
+                                      return;
+                                    }
+                                    handleCreditChange(selectedCustomer._id, enteredValue);
+                                  }}
+                                />
+                              </InputGroup>
+                              {Number(playerCredits.find((p) => p.id === selectedCustomer._id)?.credit) <= 0 && (
+                                <div className="text-danger small">Credit amount should be greater than 0</div>
+                              )}
+                            </Card.Body>
+                          </Card>
+
+                          {teamMembers.length > 0 &&
+                            teamMembers.map((player, index) => {
+                              const credit = playerCredits.find((p) => p.id === player.id)?.credit || 0;
+                              return (
+                                <Card key={index} className="mb-2 border-0">
+                                  <Card.Body className="p-2">
+                                    <InputGroup>
+                                      <Form.Control
+                                        size="sm"
+                                        value={player.name}
+                                        readOnly
+                                      />
+                                      <Form.Control
+                                        size="sm"
+                                        placeholder="Rs 0"
+                                        value={credit}
+                                        onChange={(e) => {
+                                          const enteredValue = parseFloat(e.target.value) || 0;
+                                          const limit = player.creditLimit - player.creditAmount;
+                                          if (enteredValue > limit) {
+                                            alert("Credit amount exceeds the limit");
+                                            return;
+                                          }
+                                          handleCreditChange(player.id, enteredValue);
+                                        }}
+                                      />
+                                    </InputGroup>
+                                    {Number(credit) <= 0 && (
+                                      <div className="text-danger small mt-1">Not eligible for credit</div>
+                                    )}
+                                  </Card.Body>
+                                </Card>
+                              );
+                            })}
+
+                          <div className="d-flex gap-2 mt-3">
+                            <Button size="sm" variant="primary" className="w-50" onClick={handleOnlinePayment}>
+                              Online
+                            </Button>
+                            <Button size="sm" variant="outline-secondary" className="w-50" onClick={handleCollectOffline}>
+                              Offline
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div> */}
+              </div>
+            </Col>
+          </Row>
+        </Col>
+
+        {/* Add On's */}
+        <Col md={5} className="p-1">
+          <Row>
+            <Col md={12}>
+              <Card className="mb-2">
+                <Select
+                  options={options}
+                  onChange={handleChange}
+                  isSearchable
+                  value={selectedOption}
+                  placeholder="Select for add on's..."
+                  styles={customStyles}
+                />
+              </Card>
+            </Col>
+
+            <Col md={12}>
+              <div className="bg-white rounded-3 p-0 d-flex flex-column" style={{ height: "89vh" }}>
                 {/* Scrollable Content */}
                 <div
                   style={{
                     overflowY: "auto",
                     flex: "1",
-                    padding: "16px",
+                    padding: "12px",
                     scrollbarWidth: "none",
-                    msOverflowStyle: "none", 
+                    msOverflowStyle: "none",
                   }}
                   className="hide-scrollbar"
                 >
-                  <Select
-                    options={options}
-                    onChange={handleChange}
-                    isSearchable
-                    placeholder="Select for add on's..."
-                    className="mb-2"
-                  />
-
-                  {selectedItems.map((product, index) => (
-                    <Card key={index} className="mb-2 shadow-sm fs-6" style={{ background: "#eeeaef", height: "20%" }}>
-                      <div
-                        style={{
-                          position: "absolute",
-                          bottom: "35px",
-                          right: "-6px",
-                          cursor: "pointer",
-                          borderRadius: "80%",
-                          padding: "3px",
-                          zIndex: 2,
-                        }}
-                        onClick={() => {
-                          const updatedProducts = selectedItems.filter((_, i) => i !== index);
-                          setSelectedItems(updatedProducts);
-                          const updatedSelectedIds = selectedIds.filter((id) => id !== product.id);
-                          setSelectedIds(updatedSelectedIds);
-                        }}
-                      >
-                        <AiOutlineClose size={12} color="red" />
-                      </div>
-                      <Card.Body className="py-2 px-3">
-                        <div className="d-flex justify-content-between align-items-start">
+                  <div className="fs-4 text-color mx-2">Items ({selectedItems?.length})</div>
+                  {/* {selectedItems.map((product, index) => (
+                    <div key={index} className="mb-2 shadow-lg fs-6"
+                      style={{ background: "#F9F9F9", width: "90%", height: "10%" }}
+                    >
+                        <div className="d-flex justify-content-between align-items-center p-2">
                           <div style={{ flex: 1 }}>
-                            <div className="fw-semibold fs-6" 
-                            style={{
-                              maxHeight: "20px", overflowY: "auto", scrollbarWidth: "none",// Firefox
-                              msOverflowStyle: "none"
-                            }}
-                            onWheel={(e) => e.stopPropagation()}
+                            <div className="fw-semibold fs-6"
+                              style={{
+                                maxHeight: "20px", overflowY: "auto", scrollbarWidth: "none",// Firefox
+                                msOverflowStyle: "none"
+                              }}
+                              onWheel={(e) => e.stopPropagation()}
                             >{product.item}</div>
                             <div className="text-muted small mb-1">₹{product.price} each</div>
                           </div>
 
                           <div style={{ flex: 1 }}>
+                            <div className="d-flex align-items-center gap-1">
+                              <Button
+                                variant="light"
+                                size="sm"
+                                onClick={() =>
+                                  updateProduct(product.id, "quantity", Math.max(0, Number(product.quantity) - 1))
+                                }
+                              >
+                                −
+                              </Button>
 
-                            <Form.Control
-                              type="number"
-                              min="0"
-                              value={product.quantity}
-                              size="sm"
-                              style={{
-                                width: "60px",
-                                height: "28px",
-                                fontSize: "12px",
-                                marginLeft: "10px",
-                                padding: "2px 6px",
-                                border: "1px solid #ccc",
-                              }}
-                              placeholder="Qty"
-                              onChange={(e) => updateProduct(product.id, "quantity", e.target.value)}
-                            />
+                              <input
+                                type="number"
+                                min="0"
+                                value={product.quantity}
+                                style={{
+                                  width: "50px",
+                                  height: "28px",
+                                  fontSize: "12px",
+                                  textAlign: "center",
+                                  padding: "2px 4px",
+                                  border: "1px solid #ccc",
+                                }}
+                                onChange={(e) => updateProduct(product.id, "quantity", Number(e.target.value))}
+                              />
+
+                              <Button
+                                variant="light"
+                                size="sm"
+                                onClick={() =>
+                                  updateProduct(product.id, "quantity", Number(product.quantity) + 1)
+                                }
+                              >
+                                +
+                              </Button>
+                            </div>
+
                           </div>
 
                           <div className="text-end ms-3" style={{ minWidth: "120px" }}>
@@ -857,9 +1129,134 @@ const BookingDetails = () => {
                             <div className="fw-semibold">Total: ₹{product.total}</div>
                           </div>
                         </div>
-                      </Card.Body>
-                    </Card>
-                  ))}
+                    </div>
+                  ))} */}
+                  <div>
+                    {selectedItems.map((product, index) => (
+                      <div
+                        key={index}
+                        className="position-relative d-flex mb-2 border-bottom border-2"
+                        style={{ width: "100%" }}
+                      >
+                        {/* Trash Icon */}
+                        <span
+                          className="position-absolute bg-transparent border-0 color-red"
+                          style={{
+                            top: "20px",
+                            right: "10px",
+                            color: "red",
+                            // zIndex: 2,
+                          }}
+                          onClick={() => {
+                            const updatedProducts = selectedItems.filter((_, i) => i !== index);
+                            setSelectedItems(updatedProducts);
+
+                            const updatedSelectedIds = selectedIds.filter((id) => id !== product.id);
+                            setSelectedIds(updatedSelectedIds);
+
+                            // Recalculate the addOnTotal
+                            const newTotal = updatedProducts.reduce((sum, item) => sum + item.total, 0);
+                            setAddOnTotal(newTotal);
+
+                            // Update the payable amount if needed
+                            setPayableAmount((prevPayable) => prevPayable - product.total);
+                          }}
+                        >
+                          <FaTrash style={{
+                            top: "10px",
+                            right: "-30px",
+                            zIndex: 2,
+                          }} size={12} />
+                        </span>
+
+                        {/* Product Card */}
+                        <div
+                          className="fs-6"
+                          style={{ background: "#F9F9F9", width: "90%", padding: "12px", height: "10%" }}
+                        >
+                          <div className="d-flex justify-content-between align-items-center p-2">
+                            {/* Product Info */}
+                            <div style={{ flex: 1 }}>
+                              <div
+                                style={{
+                                  maxHeight: "20px",
+                                  overflowY: "auto",
+                                  scrollbarWidth: "none", // Firefox
+                                  msOverflowStyle: "none", // IE
+                                  color: "#333333",
+                                  fontWeight: "500",
+                                  fontSize: "14px",
+                                }}
+                                onWheel={(e) => e.stopPropagation()}
+                              >
+                                {product.item}
+                              </div>
+                              <div className="text-muted small mb-1">₹{product.price} each</div>
+                            </div>
+
+                            {/* Quantity Controls */}
+                            <div style={{ flex: 1 }}>
+                              <div className="d-flex align-items-center gap-1">
+                                <Button
+                                  variant="light"
+                                  size="sm"
+                                  onClick={() =>
+                                    updateProduct(
+                                      product.id,
+                                      "quantity",
+                                      Math.max(0, Number(product.quantity) - 1)
+                                    )
+                                  }
+                                >
+                                  −
+                                </Button>
+
+                                <input
+                                  type="number"
+                                  min="0"
+                                  value={product.quantity}
+                                  style={{
+                                    width: "50px",
+                                    height: "28px",
+                                    fontSize: "12px",
+                                    textAlign: "center",
+                                    padding: "2px 4px",
+                                    border: "1px solid #ccc",
+                                  }}
+                                  onChange={(e) =>
+                                    updateProduct(product.id, "quantity", Number(e.target.value))
+                                  }
+                                />
+
+                                <Button
+                                  variant="light"
+                                  size="sm"
+                                  onClick={() =>
+                                    updateProduct(
+                                      product.id,
+                                      "quantity",
+                                      Number(product.quantity) + 1
+                                    )
+                                  }
+                                >
+                                  +
+                                </Button>
+                              </div>
+                            </div>
+
+                            {/* Tax & Total */}
+                            <div className="text-end ms-3" style={{ minWidth: "120px" }}>
+                              <div className="">
+                                Tax ({product?.tax?.tax_rate || 0}%):{" "}
+                                <span className="fw-semibold">₹{product.totalTax}</span>
+                              </div>
+                              <div className="fw-semibold">Total: ₹{product.total}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Sticky Bottom */}
@@ -876,193 +1273,8 @@ const BookingDetails = () => {
                   <span>Total: ₹ {addOnTotal}</span>
                 </div>
               </div>
-
             </Col>
           </Row>
-          <Col md={12}>
-                <div className="d-flex gap-0 rounded-2" style={{ minHeight: "50vh" }}>
-                  <div className="bg-white px-4 py-3 w-50 border-end border-2 rounded-3" style={{ minHeight: "57%" }}>
-                    {selectedCustomer ? (
-                      <>
-                        <div className="mb-5 d-flex justify-content-between">
-                          <span className="text-muted fw-semibold">Total Amount:</span>
-                          <span className="text-black">₹ {priceToPay}</span>
-                        </div>
-
-                        <div className="mb-5 d-flex justify-content-between">
-                          <span className="text-muted fw-semibold">Extra Charge:</span>
-                          <span className="text-black">₹ 00.00</span>
-                        </div>
-
-                        <div className="mb-5 d-flex justify-content-between">
-                          <span className="text-muted fw-semibold">GST:</span>
-                          <span className="text-black">₹ 00.00</span>
-                        </div>
-
-                        <div className="mb-5 d-flex justify-content-between">
-                          <span className="text-muted fw-semibold">TOTAL:</span>
-                          <span className="text-primary fw-bold">₹ {priceToPay}</span>
-                        </div>
-
-                        <div className="mb-4">
-                          <Dropdown onSelect={handleSelect}>
-                            <Dropdown.Toggle variant="success" id="dropdown-basic">
-                              {selectedOption}
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu className="w-25">
-                              <Dropdown.Item eventKey="Online">Online</Dropdown.Item>
-                              <Dropdown.Item eventKey="Offline">Offline</Dropdown.Item>
-                              {selectedGame?.data?.payLater && (
-                                <Dropdown.Item eventKey="Pay Later">Pay Later</Dropdown.Item>
-                              )}
-                              {!selectedGame?.data?.payLater && (
-                                <Dropdown.Item eventKey="On Credit">On Credit</Dropdown.Item>
-                              )}
-                            </Dropdown.Menu>
-                          </Dropdown>
-                        </div>
-                      </>
-                    ) : (
-                      <p className="text-muted d-flex justify-content-center align-items-center h-100 w-100 mb-0">
-                        Select Customers
-                      </p>
-                    )}
-
-                  </div>
-                  <div className="w-100 w-md-50 bg-body rounded-3 border p-3 shadow-sm">
-                    {showOnCredit && (
-                      <>
-                        {/* Total & Payable Amount */}
-                        <Row className="mb-3">
-                          <Col xs={6}>
-                            <p className="mb-1 fw-medium text-secondary">Total Amount</p>
-                          </Col>
-                          <Col xs={6}>
-                            <Form.Control
-                              size="sm"
-                              type="text"
-                              readOnly
-                              value={priceToPay}
-                              className="fw-bold border-secondary"
-                            />
-                          </Col>
-                        </Row>
-
-                        <Row className="mb-3">
-                          <Col xs={6}>
-                            <p className="mb-1 fw-medium text-secondary">Payable Amount</p>
-                          </Col>
-                          <Col xs={6}>
-                            <Form.Control
-                              size="sm"
-                              type="text"
-                              value={payableAmount}
-                              onChange={handlePayableAmountChange}
-                              className="border-secondary"
-                            />
-                          </Col>
-                        </Row>
-
-                        <Row className="mb-4">
-                          <Col xs={6}>
-                            <p className="mb-1 fw-medium text-secondary">Credit Amount</p>
-                          </Col>
-                          <Col xs={6}>
-                            <Form.Control
-                              size="sm"
-                              type="text"
-                              readOnly
-                              value={creditAmount}
-                              className="border-secondary"
-                            />
-                          </Col>
-                        </Row>
-
-                        {/* Credit Collection */}
-                        {creditAmount > 0 && (
-                          <div>
-                            <h5 className="mb-3 fw-semibold">Credit Collection</h5>
-                            <Card className="border-0">
-                              <Card.Body className="p-2">
-                                <InputGroup className="mb-2">
-                                  <Form.Control
-                                    size="sm"
-                                    value={selectedCustomer.name}
-                                    readOnly
-                                  />
-                                  <Form.Control
-                                    size="sm"
-                                    placeholder="Rs 0"
-                                    value={
-                                      playerCredits.find((p) => p.id === selectedCustomer._id)?.credit || ""
-                                    }
-                                    onChange={(e) => {
-                                      const enteredValue = parseFloat(e.target.value) || 0;
-                                      const limit = selectedCustomer.creditLimit - selectedCustomer.creditAmount;
-                                      if (enteredValue > limit) {
-                                        alert("Credit amount exceeds the limit");
-                                        return;
-                                      }
-                                      handleCreditChange(selectedCustomer._id, enteredValue);
-                                    }}
-                                  />
-                                </InputGroup>
-                                {Number(playerCredits.find((p) => p.id === selectedCustomer._id)?.credit) <= 0 && (
-                                  <div className="text-danger small">Credit amount should be greater than 0</div>
-                                )}
-                              </Card.Body>
-                            </Card>
-
-                            {teamMembers.length > 0 &&
-                              teamMembers.map((player, index) => {
-                                const credit = playerCredits.find((p) => p.id === player.id)?.credit || 0;
-                                return (
-                                  <Card key={index} className="mb-2 border-0">
-                                    <Card.Body className="p-2">
-                                      <InputGroup>
-                                        <Form.Control
-                                          size="sm"
-                                          value={player.name}
-                                          readOnly
-                                        />
-                                        <Form.Control
-                                          size="sm"
-                                          placeholder="Rs 0"
-                                          value={credit}
-                                          onChange={(e) => {
-                                            const enteredValue = parseFloat(e.target.value) || 0;
-                                            const limit = player.creditLimit - player.creditAmount;
-                                            if (enteredValue > limit) {
-                                              alert("Credit amount exceeds the limit");
-                                              return;
-                                            }
-                                            handleCreditChange(player.id, enteredValue);
-                                          }}
-                                        />
-                                      </InputGroup>
-                                      {Number(credit) <= 0 && (
-                                        <div className="text-danger small mt-1">Not eligible for credit</div>
-                                      )}
-                                    </Card.Body>
-                                  </Card>
-                                );
-                              })}
-
-                            <div className="d-flex gap-2 mt-3">
-                              <Button size="sm" variant="primary" className="w-50" onClick={handleOnlinePayment}>
-                                Online
-                              </Button>
-                              <Button size="sm" variant="outline-secondary" className="w-50" onClick={handleCollectOffline}>
-                                Offline
-                              </Button>
-                            </div>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                </div>
-          </Col>
         </Col>
       </Row>
     </Container>

@@ -64,3 +64,13 @@
   box-shadow: 0 0 0 1000px white inset !important;
   -webkit-text-fill-color: #000 !important;
 }
+
+.text-color{
+  color: #333333;
+  font-weight:600;
+}
+
+.muted-text{
+  color: #666666;
+  font-weight:400;
+}
