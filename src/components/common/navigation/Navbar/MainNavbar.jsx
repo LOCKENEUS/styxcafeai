@@ -40,19 +40,19 @@ const MainNavbar = ({ setIsAuthenticated ,toggleSidebar ,collapsed  }) => {
     <header id="header" className="navbar navbar-expand-lg navbar-fixed navbar-height navbar-container navbar-bordered bg-white">
       <div className="navbar-nav-wrap">
         <a className="navbar-brand" aria-label="Front">
-          <img className="navbar-brand-logo" src="/assets/profile/Styx-logo.svg" style={{ height: "30px", background: "none" }} alt="Logo" data-hs-theme-appearance="default" />
+      <h1 style={{fontSize:"30px"}} className='nav-Logo-sp'>StyxCafe</h1>
         </a>
 
 
         <button
-            className="btn btn-ghost-secondary rounded-circle "
+            className="btn  rounded-circle "
             onClick={toggleSidebar}
             style={{ width: "3rem", height: "3rem", borderRadius: "100%", cursor: "pointer", zIndex: 1000 }}
           >
             {!collapsed ? (
-              <GiHamburgerMenu  size={20} />
+              <GiHamburgerMenu  color='black' size={25} />
             ) : (
-              <TbLayoutSidebarLeftCollapse  size={20} />
+              <TbLayoutSidebarLeftCollapse color='black'  size={25} />
             )}
           </button>
 

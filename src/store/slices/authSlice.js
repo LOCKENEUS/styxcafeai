@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 
 
 const BASE_URL = import.meta.env.VITE_API_URL;
+const API_URL = `${BASE_URL}/superadmin/cafe`;
 
 const initialState = {
   isAuthenticated: false,
@@ -121,6 +122,59 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
+// export const forwardPassword = createAsyncThunk(
+//   'auth/forwardPassword',
+//   async ({ email, newPassword }, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.post(
+//         "/superadmin/cafe/reset-password",
+//         { email, newPassword }
+//         {
+//           headers: {
+//             'Content-Type': 'application/json',
+//           },
+//         }
+//       );
+
+//       toast.success('Password reset successful'); 
+
+//       return response.data;
+//     } catch (error) {
+//       toast.error('Password reset failed'); 
+
+//       return rejectWithValue(
+//         error.response?.data?.message ||
+//           error.message ||
+//           'Password reset failed'
+//       );
+//       }
+//     }
+//   );
+
+
+export const forwardPassword1 = createAsyncThunk(
+  "cafes/forwardPassword1",
+  async ({ email, newPassword }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${API_URL}/reset-password`, { email, newPassword }, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.data.status) {
+        toast.success("Password reset successfully!");
+        return response.data.data;
+      } else {
+        throw new Error(response.data.message || "Failed to reset password");
+      }
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+
+    
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -171,7 +225,18 @@ const authSlice = createSlice({
       })
       .addCase(Adminlogin.rejected, (state, action) => {
         state.error = action.payload; // Handle error case
+      })
+      // forwardPassword
+      .addCase(forwardPassword1.fulfilled, (state, action) => {
+        state.error = null;
+        state.success = true;
+      })
+      .addCase(forwardPassword1.rejected, (state, action) => {
+        state.error = action.payload;
+        state.success = false;
       });
+      
+      
   },
 });
 

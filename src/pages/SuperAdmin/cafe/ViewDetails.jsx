@@ -1,4 +1,4 @@
-import { Row, Col, Button, Card, Image, Modal, Container, CardGroup, Badge } from "react-bootstrap";
+import { Row, Col, Button, Card, Image, Modal, Container, CardGroup, Badge, Pagination, Table } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { deleteCafe, fetchCafes, selectCafes } from "../../../store/slices/cafeSlice";
@@ -33,7 +33,7 @@ import Loader from "../../../components/common/Loader/Loader";
 const ViewDetails = () => {
 
 
-const [loadingMain, setLoadingMain] = useState(true);
+  const [loadingMain, setLoadingMain] = useState(true);
 
   const { games, selectedGame } = useSelector((state) => state.games);
   const cafes = useSelector(selectCafes);
@@ -53,11 +53,14 @@ const [loadingMain, setLoadingMain] = useState(true);
   const fileInputRef = React.useRef(null);
   const [showModalAdd, setShowModalAdd] = useState(false);
   const [showMembershipAdd, setShowMembershipAdd] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  
+  
 
 
   useEffect(() => {
     setLoadingMain(true);
-   
+
     dispatch(fetchCafes()).finally(() => setLoadingMain(false));
 
   }, [dispatch]);
@@ -216,10 +219,54 @@ const [loadingMain, setLoadingMain] = useState(true);
   const baseURL = import.meta.env.VITE_API_URL;
   const imagePaths = cafe.cafeImage ? cafe.cafeImage.map(path => baseURL + "/" + path.trim()) : [];
 
+
+
+  // -----------------------    client Details -----------------------
+  const itemsPerPage = 7;
+const clientData = [
+  { id: "B-25041202", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 9599 },
+  { id: "B-25041203", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 1199 },
+  { id: "B-25041204", game: "Volleyball", date: "4/13/2025", status: "Yes", total: 3399 },
+  { id: "B-25041211", game: "Pool Game", date: "4/13/2025", status: "No", total: 799 },
+  { id: "B-25041201", game: "Pool Game", date: "4/14/2025", status: "Yes", total: 3491 },
+  { id: "B-25041205", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 9599 },
+  { id: "B-25041206", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 1199 },
+  { id: "B-25041207", game: "Volleyball", date: "4/13/2025", status: "Yes", total: 3399 },
+  { id: "B-25041208", game: "Pool Game", date: "4/13/2025", status: "No", total: 799 },
+  { id: "B-25041209", game: "Pool Game", date: "4/14/2025", status: "Yes", total: 3491 },
+  { id: "B-25041210", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 1199 },
+  { id: "B-25041212", game: "Volleyball", date: "4/13/2025", status: "Yes", total: 3399 },
+  { id: "B-25041213", game: "Pool Game", date: "4/13/2025", status: "No", total: 799 },
+  { id: "B-25041214", game: "Pool Game", date: "4/14/2025", status: "Yes", total: 3491 },
+];
+
+
+
+  const totalPages = Math.ceil(clientData.length / itemsPerPage);
+
+  const handleNextclient = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const handlePrevclient = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const statusBadge = (status) => (
+    <Badge bg={status === "Yes" ? "success" : "warning"} text={status === "Yes" ? "light" : "dark"}>
+      {status}
+    </Badge>
+  );
+
+  const paginatedData = clientData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <Container fluid>
 
-   
+
       <Row className="my-5">
         <Col sm={4} className="pe-1">
           <Card className="py-3 mx-2 rounded-4 my-3" style={{ backgroundColor: "white" }}>
@@ -244,7 +291,7 @@ const [loadingMain, setLoadingMain] = useState(true);
                 {cafe.cafe_name}
               </h5>
 
-              <div className="d-flex flex-column align-items-end" onClick={() => setShowCanvasEditCafe(true)} style={{ objectFit: "cover" }} >
+              <div className="d-flex flex-column align-items-end" onClick={() => setShowCanvasEditCafe(true)} style={{ objectFit: "cover" ,cursor:"pointer"}} >
                 <Image src={edit} alt="edit" className="mb-3" />
               </div>
 
@@ -265,34 +312,34 @@ const [loadingMain, setLoadingMain] = useState(true);
                   {cafe?.name || '---'}
                 </p>
               </Col>
-              <Col sm={4} xs={4} className="mb-3">
-                <h1 className="text-start mt-3" style={{ fontWeight: 600, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
+              <Col sm={4} xs={4} className="mb-1">
+                <h1 className="text-start " style={{ fontWeight: 600, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
                   Owner  :
                 </h1>
               </Col>
-              <Col sm={8} xs={8} className="mb-3">
-                <div className="d-flex align-items-center">
-                  <Image
+              <Col sm={8} xs={8} className="mb-1">
+                {/* <div className="d-flex align-items-center"> */}
+                  {/* <Image
                     src={profile}
                     alt="Cafe Image"
                     className="me-1 "
                     style={{ width: "21%", objectFit: "cover", borderRadius: "50%" }}
-                  />
+                  /> */}
                   <p
-                    className="mb-0 text-start"
-                    style={{ fontWeight: 500, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%", color: "#0062FF" }}
+                    className=" text-start"
+                    style={{ fontWeight: 500, fontSize: "16px", lineHeight: "100%", letterSpacing: "100%", color: "#0062FF" }}
                   >
                     {cafe?.name || '---'}
                   </p>
-                </div>
+                {/* </div> */}
               </Col>
               <Col sm={4} xs={4} className="mb-1 ">
                 <h1 className="text-start" style={{ fontWeight: 600, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
                   Address :
                 </h1>
               </Col>
-              <Col sm={8} xs={8} className="mb-1 ">
-                <p className="text-start" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
+              <Col sm={8} xs={8} className="mb-1  ">
+                <p className="text-start " style={{ fontWeight: 400, fontSize: "16px" ,lineHeight:"20px"}}>
                   {cafe?.address || '---'}
                 </p>
               </Col>
@@ -408,7 +455,7 @@ const [loadingMain, setLoadingMain] = useState(true);
           <Card className="py-3 mx-2 rounded-4 my-3" style={{ backgroundColor: "white" }}>
             <Row className="justify-content-between mx-3">
               <Col sm={6} className=" alingn-items-start">
-                <h5 className="text-start " style={{ fontSize: "18px", fontWeight: "600" }}>Gallery Details</h5>
+                <h5 className="text-start " style={{ fontSize: "18px", fontWeight: "600" }}>Gallery </h5>
 
               </Col>
               <Col sm={6} className=" alingn-items-end ">
@@ -424,16 +471,16 @@ const [loadingMain, setLoadingMain] = useState(true);
 
 
 
-                  <h5 className="text-end mx-3 " style={{ fontSize: "16px", fontWeight: "600", cursor: "pointer", color: "#0065FF", marginTop: "3.5px" }} >
-                    {/* pass cafeid */}
-                    {/* <Link to={`/superadmin/CafeGames/${cafeId}`}> */}
+                  {/* <h5 className="text-end mx-3 " style={{ fontSize: "16px", fontWeight: "600", cursor: "pointer", color: "#0065FF", marginTop: "3.5px" }} > */}
+                  {/* pass cafeid */}
+                  {/* <Link to={`/superadmin/CafeGames/${cafeId}`}> */}
 
-                    {/* <Link to={{ pathname: '/superadmin/CafeGames', state: { cafeId } }}> */}
+                  {/* <Link to={{ pathname: '/superadmin/CafeGames', state: { cafeId } }}> */}
 
-                    View All
-                    {/* </Link> */}
+                  {/* View All */}
+                  {/* </Link> */}
 
-                  </h5>
+                  {/* </h5> */}
 
 
 
@@ -443,7 +490,7 @@ const [loadingMain, setLoadingMain] = useState(true);
               <Col sm={12} className="my-3">
                 {/* Buttons Row for Small Screens */}
                 <Row className="d-sm-none mb-2 justify-content-between">
-                  <Col xs="auto">
+                  <Col xs="2" className="mx-1">
                     <div
                       onClick={currentIndexGallery === 0 ? null : handlePrevGallery}
                       style={{
@@ -456,7 +503,7 @@ const [loadingMain, setLoadingMain] = useState(true);
                       <GrFormPrevious />
                     </div>
                   </Col>
-                  <Col xs="auto">
+                  <Col xs="2">
                     <div
                       onClick={
                         currentIndexGallery + cardsPerPageGallery >= cafe.cafeImage.length
@@ -502,32 +549,34 @@ const [loadingMain, setLoadingMain] = useState(true);
 
                   {/* Gallery */}
                   <Col className="px-0">
-  <Row className="g-3 justify-content-center flex-wrap">
-    {cafe?.cafeImage?.length > 0 ? (
-      cafe.cafeImage
-        .slice(currentIndexGallery, currentIndexGallery + cardsPerPageGallery)
-        .reverse()
-        .map((img, index) => (
-          <Col key={index} xs={12} sm={6} md={3}>
-            <Card className="rounded-4 border-2" style={{ borderColor: "#E4E4E4" }}>
-              <Card.Img
-                src={`${baseURL}/${img}`}
-                onError={(e) => (e.target.src = Rectangle389)}
-                className="rounded-4 w-100"
-                style={{
-                  height: "8rem",
-                  objectFit: "cover",
-                }}
-                alt={`Gallery ${index + 1}`}
-              />
-            </Card>
-          </Col>
-        ))
-    ) : (
-      <p className="text-center">No gallery images found.</p>
-    )}
-  </Row>
-</Col>
+                    <Row className="g-4 justify-content-center flex-wrap">
+                      {cafe?.cafeImage?.length > 0 ? (
+                        cafe.cafeImage
+                          .slice(currentIndexGallery, currentIndexGallery + cardsPerPageGallery)
+                          .reverse()
+                          .map((img, index) => (
+                            <Col key={index} xs={12} sm={6} md={3}>
+                              <Card className=" " style={{ borderColor: "#E4E4E4" }}>
+                                <Card.Img
+                                  src={`${baseURL}/${img}`}
+                                  onError={(e) => (e.target.src = Rectangle389)}
+                                  className=" w-100 rounded-0"
+                                  style={{
+                                    // width: "20rem",
+                                    height: "10rem",
+                                    objectFit: "cover",
+
+                                  }}
+                                  alt={`Gallery ${index + 1}`}
+                                />
+                              </Card>
+                            </Col>
+                          ))
+                      ) : (
+                        <p className="text-center">No gallery images found.</p>
+                      )}
+                    </Row>
+                  </Col>
 
 
                   {/* Next Button */}
@@ -766,51 +815,51 @@ const [loadingMain, setLoadingMain] = useState(true);
                             // className={`d-flex mx-0 ${games.length === 1 ? 'col-4' : ' justify-content-start'}`}
                             className={`d-flex my-3 ${index !== arr.length - 1 ? 'justify-content-start' : 'justify-content-end'} ${arr.length === 1 ? 'col-12' : 'col-6'}`}
                           >
-                       
-                              <Card className="mx-2 p-3 w-100">
-                                <Row>
-                                  {/* Image Section */}
-                                  <Col xs={12} sm={4} className="text-center mb-3 mb-sm-0">
-                                    <Image
-                                      src={FrameKing}
-                                      alt="CafeCall"
-                                      className="rounded-circle"
-                                      style={{ objectFit: "cover", width: "68px", height: "68px" }}
-                                    />
-                                  </Col>
 
-                                  {/* Membership Name & Button */}
-                                  <Col xs={12} sm={8} className="text-sm-start text-center mb-3 mb-sm-0">
-                                    <h5 className="mb-2" style={{ fontSize: "16px", fontWeight: "500" }}>
-                                      {membership?.name || "Gold Membership"}
-                                    </h5>
-                                    <Button
-                                      className="border-0 rounded-3 text-white"
-                                      size="sm"
-                                      style={{ backgroundColor: "#2C99FF" }}
-                                    >
-                                      Expire in {membership?.validity || "1 Month"}
-                                    </Button>
-                                  </Col>
+                            <Card className="mx-2 p-3 w-100">
+                              <Row>
+                                {/* Image Section */}
+                                <Col xs={12} sm={5} className="text-center mb-3 mb-sm-0">
+                                  <Image
+                                    src={FrameKing}
+                                    alt="CafeCall"
+                                    className="rounded-circle"
+                                    style={{ objectFit: "cover", width: "68px", height: "68px" }}
+                                  />
+                                </Col>
 
-                                  {/* Membership Details */}
-                                  <Col xs={12}>
-                                    <h6 className="mt-4" style={{ fontSize: "16px", fontWeight: "500" }}>
-                                      Membership Details
-                                    </h6>
-                                    <ul className="text-muted mb-2 ps-3" style={{ fontSize: "14px", fontWeight: "400" }}>
-                                      {membership?.details?.map((detail, i) => (
-                                        <li key={i}>{detail}</li>
-                                      ))}
-                                    </ul>
+                                {/* Membership Name & Button */}
+                                <Col xs={12} sm={7} className="text-sm-start text-center mb-3 mb-sm-0">
+                                  <h5 className="mb-2" style={{ fontSize: "16px", fontWeight: "500" }}>
+                                    {membership?.name || "Gold Membership"}
+                                  </h5>
+                                  <Button
+                                    className="border-0 rounded-3 text-white"
+                                    size="sm"
+                                    style={{ backgroundColor: "#2C99FF" }}
+                                  >
+                                    Expire in {membership?.validity || "1 Month"}
+                                  </Button>
+                                </Col>
 
-                                    <h6 className="mt-4" style={{ fontSize: "16px", color: "#00C843", fontWeight: "600" }}>
-                                      Price: ₹ {membership?.price || 1000}
-                                    </h6>
-                                  </Col>
-                                </Row>
-                              </Card>
-                            
+                                {/* Membership Details */}
+                                <Col xs={12}>
+                                  <h6 className="mt-4" style={{ fontSize: "16px", fontWeight: "500" }}>
+                                    Membership Details
+                                  </h6>
+                                  <ul className="text-muted mb-2 ps-3" style={{ fontSize: "14px", fontWeight: "400" }}>
+                                    {membership?.details?.map((detail, i) => (
+                                      <li key={i}>{detail}</li>
+                                    ))}
+                                  </ul>
+
+                                  <h6 className="mt-4" style={{ fontSize: "16px", color: "#00C843", fontWeight: "600" }}>
+                                    Price: ₹ {membership?.price || 1000}
+                                  </h6>
+                                </Col>
+                              </Row>
+                            </Card>
+
 
                           </Col>
                         ))}
@@ -851,11 +900,77 @@ const [loadingMain, setLoadingMain] = useState(true);
 
             </Row>
           </Card>
+
+
+          <Card className="py-3 mx-2 rounded-4 my-3">
+
+          <Row className="justify-content-between mx-3">
+              <Col sm={6} className=" alingn-items-start">
+                <h5 className="text-start " style={{ fontSize: "18px", fontWeight: "600" }}>Client List</h5>
+              </Col>
+              <Col sm={6} className=" alingn-items-end ">
+                <div className="d-flex justify-content-end">
+                  <input
+                    type="search"
+                    className="form-control me-2"
+                    placeholder="Search"
+                    aria-label="Search"
+                    // value={searchQuery}
+                    // onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+
+                </div>
+              </Col>
+              <Col sm={12} className="my-3 alingn-items-end">
+
+              <Table hover responsive >
+            <thead className="table-light ">
+              <tr>
+                <th className="fw-bold">S/N</th>
+                <th className="fw-bold"> Name </th>
+                <th className="fw-bold">Contact Number</th>
+                <th className="fw-bold">Email</th>
+                <th className="fw-bold">Creadit Limit</th>
+                <th className="fw-bold">Membership</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(paginatedData.length > 0 ? paginatedData : clientData).map((booking, idx) => (
+                <tr key={idx}>
+                  <td>{idx + 1}</td>
+                  <td><a href="#" className="text-primary fw-bold">{booking.id}</a></td>
+                  <td>{booking.game}</td>
+                  <td>{booking.date}</td>
+                  <td>{booking.total}</td>
+                  <td>{statusBadge(booking.status)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+
+          <div className="d-flex justify-content-center align-items-center my-3">
+          <Button onClick={handlePrevclient} disabled={currentPage === 1}>
+          <GrFormPrevious />
+        </Button>
+
+        <span className="mx-3">
+          Page {currentPage} of {totalPages}
+        </span>
+
+        <Button onClick={handleNextclient} disabled={currentPage === totalPages}>
+          <MdOutlineNavigateNext /> 
+        </Button>
+          </div>
+              </Col>
+              </Row>    
+          
+          
+          </Card>
         </Col>
       </Row>
-      
 
-      
+
+
 
       <EditCafeOffcanvas
         show={showCanvasEditCafe}
