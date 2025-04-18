@@ -294,8 +294,8 @@ const ViewDetails = () => {
 
 
       <Row className="my-5">
-        <Col sm={4} className="pe-1">
-          <Card className="py-3 mx-2 rounded-4 my-3 h-100" style={{ backgroundColor: "white" }}>
+        <Col sm={4} className="pe-1 mb-4">
+          <Card className="py-3 mx-2 rounded-4 my-3 h-100" style={{ backgroundColor: "white"}}>
             <div className="d-flex flex-column align-items-start mx-3">
               <h5 className="text-start " style={{ fontSize: "18px", fontWeight: "600" }}>Cafe Details</h5>
 
@@ -474,10 +474,10 @@ const ViewDetails = () => {
 
 
 
-        <Col sm={8} className="">
+        <Col sm={8} className="mb-4">
 
 
-          <Card className="my-2 mx-0 rounded-4 my-3" style={{ backgroundColor: "white" }}>
+          <Card className="my-2 mx-0 rounded-4 my-3 " style={{ backgroundColor: "white" }}>
 
             <Nav
               variant="tabs"
@@ -504,7 +504,7 @@ const ViewDetails = () => {
 
                     }}
                   >
-                    Gallary Image
+                    Image
                   </div>
                 </Nav.Link>
                 {activeKey === 'gallary' && (
@@ -539,7 +539,7 @@ const ViewDetails = () => {
                       padding: '1rem 1rem',
                     }}
                   >
-                    Game Details
+                    Game
                   </div>
                 </Nav.Link>
                 {activeKey === 'Game' && (
@@ -627,12 +627,46 @@ const ViewDetails = () => {
                   />
                 )}
               </Nav.Item>
+              <Nav.Item style={{ textAlign: 'center' }}>
+                <Nav.Link
+                  eventKey="Booking"
+                  style={{
+                    padding: 0,
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontWeight: activeKey === 'Booking' ? '600' : '400',
+                      fontSize: '16px',
+                      color: activeKey === 'Booking' ? '#0d6efd' : '#6c757d',
+                      padding: '1rem 1rem',
+                    }}
+                  >
+                    Booking
+                  </div>
+                </Nav.Link>
+                {activeKey === 'Booking' && (
+                  <div
+
+                    style={{
+                      margin: '0 18px ',
+                      width: '40%',
+                      height: '2px',
+                      backgroundColor: '#0d6efd',
+                      borderRadius: '2px',
+
+                    }}
+                  />
+                )}
+              </Nav.Item>
             </Nav>
 
           </Card>
 
 
-          <Card className="my-2 rounded-4 my-3 h-100" style={{ backgroundColor: "white" }} >
+          <Card className="my-2 rounded-4 my-3 " style={{ backgroundColor: "white" ,height:"93%"}} >
 
 
             {/* gallary Image  */}
@@ -651,16 +685,16 @@ const ViewDetails = () => {
                       <Row className="align-items-center ">
 
 
-                        <Col sm={6}></Col>
-                        <Col sm={6} className="d-flex justify-content-sm-end justify-content-end ">
-                          <h5
+                        <Col sm={6} className="my-2"></Col>
+                        <Col sm={6} className="d-flex justify-content-sm-end justify-content-end my-2 ">
+                          {/* <h5
                             className="d-flex align-items-center fw-semibold mx-3"
                             style={{
                               fontSize: "16px",
                               cursor: "pointer",
                               color: "#00AF0F",
                             }}
-                          // onClick={() => setShowModalAdd(true)}
+                        
                           >
                             <Image
                               src={Add}
@@ -669,7 +703,7 @@ const ViewDetails = () => {
                               style={{ objectFit: "cover", width: "26.25px", height: "26.25px" }}
                             />
                             ADD
-                          </h5>
+                          </h5> */}
                           <span className="mx-2"></span>
                         </Col>
                         {/* Gallery */}
@@ -922,6 +956,8 @@ const ViewDetails = () => {
                 </Row>
               )}
 
+
+
               {activeKey === "Client" && (
 
 
@@ -1057,6 +1093,22 @@ const ViewDetails = () => {
                     </div>
 
                   </Col>
+                </Row>
+
+
+
+              )}
+
+
+
+              {activeKey === "Booking" && (
+
+
+                <Row className="d-flex flex-wrap justify-content-center p-2 mx-1">
+                  <Col sm={6} className=" alingn-items-start">
+                    <h5 className="text-start " style={{ fontSize: "18px", fontWeight: "600" }}>Booking List</h5>
+                  </Col>
+
                 </Row>
 
 

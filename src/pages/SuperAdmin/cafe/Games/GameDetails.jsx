@@ -60,6 +60,7 @@ const GameDetailsCafe = () => {
   const [showGameDeleteModal, setShowGameDeleteModal] = useState(false);
   const [showEditSlotOffcanvas, setShowEditSlotOffcanvas] = useState(false);
   const [activeDay, setActiveDay] = useState("Sunday");
+  const [slotID, setSlotID] = useState(false);
   const dispatch = useDispatch();
 
 
@@ -114,25 +115,6 @@ const GameDetailsCafe = () => {
 
   console.log("Form State slots Game Details 00:", slots);
 
-  // duration map calulate using start and end time in mm
-
-  // const duration = slots?.end_time - slots?.start_time;
-
-  // console.log("duration", duration);
-
-  // const getDuration = (start, end) => {
-  //   if (!start || !end) return '';
-
-  //   const startTime = new Date(start);
-  //   const endTime = new Date(end);
-
-  //   const diffMs = endTime - startTime;
-  //   const diffMins = Math.floor(diffMs / 60000);
-  //   const hours = Math.floor(diffMins / 60);
-  //   const minutes = diffMins % 60;
-
-  //   return `${hours}h ${minutes}m`;
-  // };
 
 
   // const getDuration = 
@@ -172,6 +154,26 @@ const GameDetailsCafe = () => {
   };
 
   const weekdays = generateWeekdays();
+
+  const handleEditClick = (slot_id) => {
+    setShowEditSlotOffcanvas(true);
+    setSlotID(slot_id);
+  };
+
+
+  const [isActive, setIsActive] = useState(true); // Default: active
+
+  const handleToggleActive = async (slot_id) => {
+    // if (!isActive) return; 
+    try {
+      await dispatch(deleteslot(slot_id)).unwrap();
+      // slots();
+      dispatch(getslots(gameId));
+    } catch (err) {
+      console.error("Delete failed", err);
+    }
+  
+  };
 
 
   return (
@@ -484,7 +486,7 @@ const GameDetailsCafe = () => {
 
         <Col sm={12}  >
 
-          <Card className="my-4 h-100" style={{ maxHeight: "600px"}}>
+          <Card className="my-4 h-100" style={{ maxHeight: "600px" }}>
 
             <Row className="my-3 mx-1 align-items-center">
               <Col xs={6} sm={8} className="my-2">
@@ -540,8 +542,8 @@ const GameDetailsCafe = () => {
                                       </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
-                                          <span className={slot.availability === true ? "text-success fw-semibold" : "text-danger"}>
-                                            {slot.availability === true ? "Available" : "Not Available"}
+                                          <span className={slot.is_deleted === false ? "text-success fw-semibold" : "text-danger"}>
+                                            {slot.is_deleted === false ? "Available" : "Not Available"}
                                           </span>
                                         </div>
                                       </td>
@@ -552,25 +554,32 @@ const GameDetailsCafe = () => {
                                       </td>
 
                                       <td style={{ width: '45px' }}>
-                                        <div className="d-flex align-items-center " 
-                                        style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}
-                                        onClick={() => setShowEditSlotOffcanvas(true)}
+                                        <div className="d-flex align-items-center "
+                                          style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}
+                                          onClick={() => handleEditClick(slot?._id)}
                                         >
                                           <Image
                                             src={mdiEdit}
                                             alt="Delete"
                                             style={{ objectFit: "cover", width: "12px", height: "14px" }}
                                             className="mx-3"
-                                           
+
                                           />
                                         </div>
-                                        <EditSlotOffcanvas show={showEditSlotOffcanvas} handleClose={() => setShowEditSlotOffcanvas(false)} />
+                                        <EditSlotOffcanvas show={showEditSlotOffcanvas} handleClose={() => setShowEditSlotOffcanvas(false)} slotID={slotID} />
 
                                       </td>
 
                                       <td style={{ width: '145px' }}>
-                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2" style={{ backgroundColor: "rgba(15, 111, 8, 0.88)" }} >
-                                          Active
+                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2"
+                                          style={{
+                                            backgroundColor: slot?.is_active
+                                              ? "rgba(15, 111, 8, 0.88)"
+                                              : "rgba(255, 0, 0, 0.75)",
+                                          }}
+                                          onClick={() => handleToggleActive(slot?._id)}
+                                        >
+                                          {slot?.is_active  ? "Active" : "Deactivate"}
                                         </Button>
                                       </td>
                                     </tr>
@@ -601,8 +610,8 @@ const GameDetailsCafe = () => {
                                       </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
-                                          <span className={slot.availability === true ? "text-success fw-semibold" : "text-danger"}>
-                                            {slot.availability === true ? "Available" : "Not Available"}
+                                          <span className={slot.is_deleted === false ? "text-success fw-semibold" : "text-danger"}>
+                                            {slot.is_deleted === false ? "Available" : "Not Available"}
                                           </span>
                                         </div>
                                       </td>
@@ -613,20 +622,32 @@ const GameDetailsCafe = () => {
                                       </td>
 
                                       <td style={{ width: '45px' }}>
-                                        <div className="d-flex align-items-center " style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}>
+                                        <div className="d-flex align-items-center "
+                                          style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}
+                                          onClick={() => handleEditClick(slot?._id)}
+                                        >
                                           <Image
                                             src={mdiEdit}
                                             alt="Delete"
                                             style={{ objectFit: "cover", width: "12px", height: "14px" }}
                                             className="mx-3"
+
                                           />
                                         </div>
+                                        <EditSlotOffcanvas show={showEditSlotOffcanvas} handleClose={() => setShowEditSlotOffcanvas(false)} slotID={slotID} />
 
                                       </td>
 
                                       <td style={{ width: '145px' }}>
-                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2" style={{ backgroundColor: "rgba(15, 111, 8, 0.88)" }} >
-                                          Active
+                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2"
+                                          style={{
+                                            backgroundColor: slot?.is_active
+                                              ? "rgba(15, 111, 8, 0.88)"
+                                              : "rgba(255, 0, 0, 0.75)",
+                                          }}
+                                          onClick={() => handleToggleActive(slot?._id)}
+                                        >
+                                          {slot?.is_active ? "Active" : "Deactivate"}
                                         </Button>
                                       </td>
                                     </tr>
@@ -658,8 +679,8 @@ const GameDetailsCafe = () => {
                                       </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
-                                          <span className={slot.availability === true ? "text-success fw-semibold" : "text-danger"}>
-                                            {slot.availability === true ? "Available" : "Not Available"}
+                                          <span className={slot.is_deleted === false ? "text-success fw-semibold" : "text-danger"}>
+                                            {slot.is_deleted === false ? "Available" : "Not Available"}
                                           </span>
                                         </div>
                                       </td>
@@ -670,20 +691,32 @@ const GameDetailsCafe = () => {
                                       </td>
 
                                       <td style={{ width: '45px' }}>
-                                        <div className="d-flex align-items-center " style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}>
+                                        <div className="d-flex align-items-center "
+                                          style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}
+                                          onClick={() => handleEditClick(slot?._id)}
+                                        >
                                           <Image
                                             src={mdiEdit}
                                             alt="Delete"
                                             style={{ objectFit: "cover", width: "12px", height: "14px" }}
                                             className="mx-3"
+
                                           />
                                         </div>
+                                        <EditSlotOffcanvas show={showEditSlotOffcanvas} handleClose={() => setShowEditSlotOffcanvas(false)} slotID={slotID} />
 
                                       </td>
 
                                       <td style={{ width: '145px' }}>
-                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2" style={{ backgroundColor: "rgba(15, 111, 8, 0.88)" }} >
-                                          Active
+                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2"
+                                          style={{
+                                            backgroundColor: slot?.is_active
+                                              ? "rgba(15, 111, 8, 0.88)"
+                                              : "rgba(255, 0, 0, 0.75)",
+                                          }}
+                                          onClick={() => handleToggleActive(slot?._id)}
+                                        >
+                                          {slot?.is_active ? "Active" : "Deactivate"}
                                         </Button>
                                       </td>
                                     </tr>
@@ -714,8 +747,8 @@ const GameDetailsCafe = () => {
                                       </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
-                                          <span className={slot.availability === true ? "text-success fw-semibold" : "text-danger"}>
-                                            {slot.availability === true ? "Available" : "Not Available"}
+                                          <span className={slot.is_deleted === false ? "text-success fw-semibold" : "text-danger"}>
+                                            {slot.is_deleted === false ? "Available" : "Not Available"}
                                           </span>
                                         </div>
                                       </td>
@@ -726,20 +759,32 @@ const GameDetailsCafe = () => {
                                       </td>
 
                                       <td style={{ width: '45px' }}>
-                                        <div className="d-flex align-items-center " style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}>
+                                        <div className="d-flex align-items-center "
+                                          style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}
+                                          onClick={() => handleEditClick(slot?._id)}
+                                        >
                                           <Image
                                             src={mdiEdit}
                                             alt="Delete"
                                             style={{ objectFit: "cover", width: "12px", height: "14px" }}
                                             className="mx-3"
+
                                           />
                                         </div>
+                                        <EditSlotOffcanvas show={showEditSlotOffcanvas} handleClose={() => setShowEditSlotOffcanvas(false)} slotID={slotID} />
 
                                       </td>
 
                                       <td style={{ width: '145px' }}>
-                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2" style={{ backgroundColor: "rgba(15, 111, 8, 0.88)" }} >
-                                          Active
+                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2"
+                                          style={{
+                                            backgroundColor: slot?.is_active
+                                              ? "rgba(15, 111, 8, 0.88)"
+                                              : "rgba(255, 0, 0, 0.75)",
+                                          }}
+                                          onClick={() => handleToggleActive(slot?._id)}
+                                        >
+                                          {slot?.is_active ? "Active" : "Deactivate"}
                                         </Button>
                                       </td>
                                     </tr>
@@ -770,8 +815,8 @@ const GameDetailsCafe = () => {
                                       </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
-                                          <span className={slot.availability === true ? "text-success fw-semibold" : "text-danger"}>
-                                            {slot.availability === true ? "Available" : "Not Available"}
+                                          <span className={slot.is_deleted === false ? "text-success fw-semibold" : "text-danger"}>
+                                            {slot.is_deleted === false ? "Available" : "Not Available"}
                                           </span>
                                         </div>
                                       </td>
@@ -782,20 +827,32 @@ const GameDetailsCafe = () => {
                                       </td>
 
                                       <td style={{ width: '45px' }}>
-                                        <div className="d-flex align-items-center " style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}>
+                                        <div className="d-flex align-items-center "
+                                          style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}
+                                          onClick={() => handleEditClick(slot?._id)}
+                                        >
                                           <Image
                                             src={mdiEdit}
                                             alt="Delete"
                                             style={{ objectFit: "cover", width: "12px", height: "14px" }}
                                             className="mx-3"
+
                                           />
                                         </div>
+                                        <EditSlotOffcanvas show={showEditSlotOffcanvas} handleClose={() => setShowEditSlotOffcanvas(false)} slotID={slotID} />
 
                                       </td>
 
                                       <td style={{ width: '145px' }}>
-                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2" style={{ backgroundColor: "rgba(15, 111, 8, 0.88)" }} >
-                                          Active
+                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2"
+                                          style={{
+                                            backgroundColor: slot?.is_active
+                                              ? "rgba(15, 111, 8, 0.88)"
+                                              : "rgba(255, 0, 0, 0.75)",
+                                          }}
+                                          onClick={() => handleToggleActive(slot?._id)}
+                                        >
+                                          {slot?.is_active === true ? "Active" : "Deactivate"}
                                         </Button>
                                       </td>
                                     </tr>
@@ -826,8 +883,8 @@ const GameDetailsCafe = () => {
                                       </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
-                                          <span className={slot.availability === true ? "text-success fw-semibold" : "text-danger"}>
-                                            {slot.availability === true ? "Available" : "Not Available"}
+                                          <span className={slot.is_deleted === false ? "text-success fw-semibold" : "text-danger"}>
+                                            {slot.is_deleted === false ? "Available" : "Not Available"}
                                           </span>
                                         </div>
                                       </td>
@@ -838,21 +895,35 @@ const GameDetailsCafe = () => {
                                       </td>
 
                                       <td style={{ width: '45px' }}>
-                                        <div className="d-flex align-items-center " style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}>
+                                        <div className="d-flex align-items-center "
+                                          style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}
+                                          onClick={() => handleEditClick(slot?._id)}
+                                        >
                                           <Image
                                             src={mdiEdit}
                                             alt="Delete"
                                             style={{ objectFit: "cover", width: "12px", height: "14px" }}
                                             className="mx-3"
+
                                           />
                                         </div>
+                                        <EditSlotOffcanvas show={showEditSlotOffcanvas} handleClose={() => setShowEditSlotOffcanvas(false)} slotID={slotID} />
 
                                       </td>
 
                                       <td style={{ width: '145px' }}>
-                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2" style={{ backgroundColor: "rgba(15, 111, 8, 0.88)" }} >
-                                          Active
+                                        <Button
+                                          className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2"
+                                          style={{
+                                            backgroundColor: slot?.is_active
+                                              ? "rgba(15, 111, 8, 0.88)"
+                                              : "rgba(255, 0, 0, 0.75)",
+                                          }}
+                                          onClick={() => handleToggleActive(slot?._id)}
+                                        >
+                                          {slot?.is_active ? "Active" : "Deactivate"}
                                         </Button>
+
                                       </td>
                                     </tr>
 
@@ -881,8 +952,8 @@ const GameDetailsCafe = () => {
                                       </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
-                                          <span className={slot.availability === true ? "text-success fw-semibold" : "text-danger"}>
-                                            {slot.availability === true ? "Available" : "Not Available"}
+                                          <span className={slot.availability === false ? "text-success fw-semibold" : "text-danger"}>
+                                            {slot.availability === false ? "Available" : "Not Available"}
                                           </span>
                                         </div>
                                       </td>
@@ -893,20 +964,32 @@ const GameDetailsCafe = () => {
                                       </td>
 
                                       <td style={{ width: '45px' }}>
-                                        <div className="d-flex align-items-center " style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}>
+                                        <div className="d-flex align-items-center "
+                                          style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}
+                                          onClick={() => handleEditClick(slot?._id)}
+                                        >
                                           <Image
                                             src={mdiEdit}
                                             alt="Delete"
                                             style={{ objectFit: "cover", width: "12px", height: "14px" }}
                                             className="mx-3"
+
                                           />
                                         </div>
+                                        <EditSlotOffcanvas show={showEditSlotOffcanvas} handleClose={() => setShowEditSlotOffcanvas(false)} slotID={slotID} />
 
                                       </td>
 
                                       <td style={{ width: '145px' }}>
-                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2" style={{ backgroundColor: "rgba(15, 111, 8, 0.88)" }} >
-                                          Active
+                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2"
+                                          style={{
+                                            backgroundColor: slot?.is_active
+                                              ? "rgba(15, 111, 8, 0.88)"
+                                              : "rgba(255, 0, 0, 0.75)",
+                                          }}
+                                          onClick={() => handleToggleActive(slot?._id)}
+                                        >
+                                          {slot?.is_active ? "Active" : "Deactivate"}
                                         </Button>
                                       </td>
                                     </tr>

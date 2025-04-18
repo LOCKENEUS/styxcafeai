@@ -1,8 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { Offcanvas, Form, Row, Col, Button } from "react-bootstrap";
 import TimePicker from "react-time-picker"; // Assuming you're using 'react-time-picker'
+import { getSlotDetails, getslots, updateslot } from "../../../../store/slices/slotsSlice";
+import { useDispatch, useSelector } from "react-redux";
 
-const EditSlotOffcanvas = ({ show, handleClose, editData }) => {
+const EditSlotOffcanvas = ({ show, handleClose, slotID }) => {
+
+
+  console.log("slotID ---", slotID);
+  const dispatch = useDispatch();
+  const slotList = useSelector((state) => state.slots.slots || []);
+
+  // map slotList _id to slotID
+  const shortlistedSlot = slotList.find((slot) => slot._id === slotID);
+  console.log("shortlistedSlot finaly got week  ---", shortlistedSlot);
+
+    // const slotList = useSelector((state) => state.slots.slotList || []);
+
+    useEffect(() => {
+
+      
+      dispatch(getSlotDetails(slotID));
+    }, [dispatch, slotID]);
+
+    console.log("slots ---", slotList);
+    
+  
   const [formState, setFormState] = useState({
     slotName: "",
     day: "",
@@ -12,49 +35,63 @@ const EditSlotOffcanvas = ({ show, handleClose, editData }) => {
     slotPrice: "",
     adminNote: ""
   });
+  useEffect(() => {
+    if (shortlistedSlot) {
+      setFormState({
+        slotName: shortlistedSlot.slot_name || "",
+        day: shortlistedSlot.day || "",
+        startTime: shortlistedSlot.start_time || "",
+        endTime: shortlistedSlot.end_time || "",
+        maxPlayers: shortlistedSlot.maxPlayers || "",
+        slotPrice: shortlistedSlot.slot_price || "",
+        adminNote: shortlistedSlot.adminNote || ""
+      });
+    }
+  }, [shortlistedSlot]);
+
+  // game_id 
+  const GameID= shortlistedSlot?.game_id;
+
+  console.log("GameID find ---", GameID);
   
 
-  const [selectedGame, setSelectedGame] = useState(null);
-  const [timeError, setTimeError] = useState("");
-
-  useEffect(() => {
-    if (editData) {
-      setFormState({
-        slotName: editData.slotName || "",
-        day: editData.day || "",
-        startTime: editData.startTime || "",
-        endTime: editData.endTime || "",
-        maxPlayers: editData.maxPlayers || "",
-        slotPrice: editData.slotPrice || "",
-        adminNote: editData.adminNote || "",
-      });
-      setSelectedGame(editData.selectedGame || null);
-    }
-  }, [editData]);
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormState((prevState) => ({
-      ...prevState,
-      [name]: value
-    }));
+    setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formState.startTime >= formState.endTime) {
-      setTimeError("End time must be after start time");
-      return;
+   
+
+    const formDataToSend = {
+      _id: slotID,
+      game_id: GameID,
+      start_time: formState.startTime,
+      end_time: formState.endTime,
+      day: formState.day,
+      maxPlayers: formState.maxPlayers,
+      slot_price: formState.slotPrice,
+      slot_name: formState.slotName,
+      adminNote: formState.adminNote
+    };
+    
+   
+    
+    try {
+      await dispatch(updateslot({ id: slotID, updatedData: formDataToSend })).unwrap();
+      handleClose();
+    } catch (error) {
+      console.error("Error updating slot:", error);
     }
-    setTimeError("");
-    console.log("Submitted Data:", formState);
-    // handleClose(); // Optional: close the offcanvas after submit
   };
+   
 
   return (
-    <Offcanvas show={show} onHide={handleClose} placement="end">
+    <Offcanvas show={show} onHide={handleClose} placement="end" style={{ width: "600px" }}>
       <Offcanvas.Header closeButton>
-        <Offcanvas.Title>Edit Slot</Offcanvas.Title>
+        <Offcanvas.Title><h2 className="text-primary fw-bold">Edit Slot</h2></Offcanvas.Title>
       </Offcanvas.Header>
       <Offcanvas.Body>
         <Form onSubmit={handleSubmit} className="rounded-3 bg-white">
@@ -124,7 +161,7 @@ const EditSlotOffcanvas = ({ show, handleClose, editData }) => {
                     required
                   />
                 </div>
-                {timeError && <small className="text-danger">{timeError}</small>}
+                
               </Form.Group>
             </Col>
           </Row>
@@ -136,7 +173,7 @@ const EditSlotOffcanvas = ({ show, handleClose, editData }) => {
                 <Form.Control
                   type="number"
                   name="maxPlayers"
-                  value={formState.maxPlayers || selectedGame?.data?.players || ""}
+                  value={formState.maxPlayers  || ""}
                   onChange={handleChange}
                   placeholder="Enter max players"
                 />
@@ -148,7 +185,7 @@ const EditSlotOffcanvas = ({ show, handleClose, editData }) => {
                 <Form.Control
                   type="number"
                   name="slotPrice"
-                  value={formState.slotPrice || selectedGame?.data?.price || ""}
+                  value={formState.slotPrice ||  ""}
                   onChange={handleChange}
                   placeholder="Enter slot price"
                 />
@@ -169,8 +206,9 @@ const EditSlotOffcanvas = ({ show, handleClose, editData }) => {
             />
           </Form.Group>
 
-          <Button variant="success" type="submit" className="rounded-2 float-end my-5">
-            Submit
+          <Button variant="success" type="submit" className="rounded-2 float-end my-5" >
+          Save Cafe
+            
           </Button>
         </Form>
       </Offcanvas.Body>

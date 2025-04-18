@@ -177,7 +177,7 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
   return (
     <Offcanvas show={show} onHide={handleClose} placement="end"  style={{ width: "600px" }}>
       <Offcanvas.Header closeButton>
-        <Offcanvas.Title><h2 className="text-primary fw-bold">Add Game</h2></Offcanvas.Title>
+        <Offcanvas.Title><h2 className="text-primary fw-bold">Add Game </h2></Offcanvas.Title>
       </Offcanvas.Header>
       <Offcanvas.Body style={{ padding: "1.4rem" }}>
         <Form onSubmit={handleSubmit} className="rounded-3 bg-white">
