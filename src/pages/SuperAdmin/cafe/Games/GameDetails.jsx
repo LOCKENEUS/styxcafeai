@@ -10,6 +10,7 @@ import {
   Modal,
   Container,
   Breadcrumb,
+  ButtonGroup,
 } from "react-bootstrap";
 import { BiEdit, BiTrash } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
@@ -31,6 +32,7 @@ import Cancellation from '/assets/superAdmin/cafe/Cancellation.png';
 import discount from '/assets/superAdmin/cafe/discount.png';
 import Players from '/assets/superAdmin/cafe/Players.png';
 import Add from "/assets/superAdmin/cafe/formkit_addWhite.png";
+import AddGreen from "/assets/superAdmin/cafe/formkit_add.png";
 import mdiEdit from "/assets/superAdmin/cafe/mdi_edit.png";
 import AddSlotOffcanvas from "../offcanvasCafe/addSlot";
 import EditGameOffcanvas from "../offcanvasCafe/editGame";
@@ -41,6 +43,9 @@ import areaSize from '/assets/superAdmin/cafe/areaSize.png';
 import payLater from '/assets/superAdmin/cafe/payLater.png';
 import commission from '/assets/superAdmin/cafe/commission.png';
 import { fetchCafesID } from "../../../../store/slices/cafeSlice";
+import { FaPlus } from "react-icons/fa";
+import { GoPlus } from "react-icons/go";
+import EditSlotOffcanvas from "../offcanvasCafe/editSlot";
 
 const GameDetailsCafe = () => {
   const baseURL = import.meta.env.VITE_API_URL;
@@ -53,6 +58,8 @@ const GameDetailsCafe = () => {
   const [showAddSlotOffcanvas, setShowAddSlotOffcanvas] = useState(false);
   const [showEditGameOffcanvas, setShowEditGameOffcanvas] = useState(false);
   const [showGameDeleteModal, setShowGameDeleteModal] = useState(false);
+  const [showEditSlotOffcanvas, setShowEditSlotOffcanvas] = useState(false);
+  const [activeDay, setActiveDay] = useState("Sunday");
   const dispatch = useDispatch();
 
 
@@ -160,50 +167,57 @@ const GameDetailsCafe = () => {
   console.log("isCafeIdMatch membership ==", isCafeIdMatch);
 
 
+  const generateWeekdays = () => {
+    return ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  };
+
+  const weekdays = generateWeekdays();
+
+
   return (
     <Container fluid style={{ marginTop: "0px" }}>
-      <Row className=" game-detail-animate" >
+      <Row className=" game-detail-animate " >
 
 
         <Card.Header className="fw-bold">
-          <Row className="d-flex justify-content-between align-items-center ">
-            <Col  sm={8} xs={12}>
-            <Breadcrumb>
-              <Breadcrumb.Item href="#" style={{ fontSize: "16px", fontWeight: "500" }}>Home</Breadcrumb.Item>
-              <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }}>
-                
-                <Link to="/superadmin/cafe/viewdetails"
-                  state={{ cafeId: cafeId }}>
-                  Games Details
-                </Link>
-              </Breadcrumb.Item>
-              {/* <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }} >
+          <Row className="d-flex justify-content-between align-items-center  ">
+            <Col sm={8} xs={12}>
+              <Breadcrumb>
+                <Breadcrumb.Item href="#" style={{ fontSize: "16px", fontWeight: "500" }}>Home</Breadcrumb.Item>
+                <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }}>
+
+                  <Link to="/superadmin/cafe/viewdetails"
+                    state={{ cafeId: cafeId }}>
+                    Games Details
+                  </Link>
+                </Breadcrumb.Item>
+                {/* <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }} >
                 <Link to="/superadmin/CafeGames"
                   state={{ cafeId: cafeId }}>
                   All Games
                 </Link>
               </Breadcrumb.Item> */}
-              <Breadcrumb.Item active style={{ fontSize: "16px", fontWeight: "500" }} > Game</Breadcrumb.Item>
+                <Breadcrumb.Item active style={{ fontSize: "16px", fontWeight: "500" }} > Game</Breadcrumb.Item>
 
-            </Breadcrumb>
+              </Breadcrumb>
 
             </Col>
 
             <Col sm={4} xs={12} className="mb-3">
-                    <Card className="game-card mx-2 my-1 rounded-4  text-center text-sm-start">
-                      <div className="d-flex flex-column flex-sm-row align-items-center">
-                        <Image
-                          src={Rectangle389}
-                          alt="CafeCall"
-                          className="rounded-circle img-fluid mb-2 mb-sm-0"
-                          style={{ objectFit: "cover", width: "50px", height: "50px" }}
-                        />
-                        <div className="ms-sm-3 ">
-                          <h5 className="text-primary " style={{ fontSize: "16px", fontWeight: "500" }}>{isCafeIdMatch?.cafe_name}</h5>
-                        </div>
-                      </div>
-                    </Card>
-                  </Col>
+              <Card className="game-card mx-2 my-1 rounded-4  text-center text-sm-start">
+                <div className="d-flex flex-column flex-sm-row align-items-center">
+                  <Image
+                    src={Rectangle389}
+                    alt="CafeCall"
+                    className="rounded-circle img-fluid mb-2 mb-sm-0"
+                    style={{ objectFit: "cover", width: "50px", height: "50px" }}
+                  />
+                  <div className="ms-sm-3 ">
+                    <h5 className="text-primary " style={{ fontSize: "16px", fontWeight: "500" }}>{isCafeIdMatch?.cafe_name}</h5>
+                  </div>
+                </div>
+              </Card>
+            </Col>
 
             {/* <Button variant="primary" className="rounded-3" onClick={() => {
                 dispatch(setSelectedGame(null));
@@ -227,7 +241,7 @@ const GameDetailsCafe = () => {
             ) : (
 
               <>
-                
+
 
 
                 <Card className=" ">
@@ -468,23 +482,23 @@ const GameDetailsCafe = () => {
 
         </Col>
 
-        <Col sm={12} className="my-2">
+        <Col sm={12}  >
 
-          <Card className="my-3">
+          <Card className="my-4 h-100" style={{ maxHeight: "600px"}}>
 
             <Row className="my-3 mx-1 align-items-center">
               <Col xs={6} sm={8} className="my-2">
                 <h4 className="mx-2 my-1" style={{ fontSize: "20px", fontWeight: "600" }}>TIME SLOTS</h4>
               </Col>
               <Col xs={6} sm={4} className="text-sm-end">
-                <Button variant="primary"
-                  onClick={() => setShowAddSlotOffcanvas(true)}
-                  className=" w-sm-auto py-2" style={{ fontSize: "14px", fontWeight: "500" }}>
-                  <Image src={Add} alt="+" className="me-2" style={{ objectFit: "cover", width: "20px", height: "20px" }} />
-                  ADD TIME SLOT
-                </Button>
-              </Col>
 
+                <h5 className="text-end mx-3" style={{ fontSize: "16px", fontWeight: "600", cursor: "pointer", color: "#00AF0F" }}
+                  onClick={() => setShowAddSlotOffcanvas(true)}
+                >
+                  <Image src={AddGreen} alt="CafeCall" className="mx-1  " style={{ objectFit: "cover", width: "26.25px", height: "26.25px" }} />
+                  ADD</h5>
+
+              </Col>
 
               <Col sm={12} className="my-3 ">
 
@@ -495,102 +509,426 @@ const GameDetailsCafe = () => {
                     </div>
                   ) : (
 
-                    <Table hover responsive className="my-3">
-                      <thead style={{ backgroundColor: "#e9f5f8" }}>
-                        <tr className="rounded-4">
+                    <>
 
-                          <th style={{
-                            fontWeight: "500",
-                            fontSize: "clamp(14px, 3vw, 16px)",
-                            padding: "clamp(10px, 2vw, 15px)",
-                            border: "none",
-                            color: "black",
-                            borderTopLeftRadius: "10px",
-                            borderBottomLeftRadius: "10px",
-                          }}>Start Time</th>
-                          <th style={{
-                            fontWeight: "500",
-                            fontSize: "clamp(14px, 3vw, 16px)",
-                            padding: "clamp(10px, 2vw, 15px)",
-                            border: "none",
-                            color: "black",
-                          }}>End Time</th>
-                          <th style={{
-                            fontWeight: "500",
-                            fontSize: "clamp(14px, 3vw, 16px)",
-                            padding: "clamp(10px, 2vw, 15px)",
-                            border: "none",
-                            color: "black",
-                          }}>Duration</th>
-                          <th style={{
-                            fontWeight: "500",
-                            fontSize: "clamp(14px, 3vw, 16px)",
-                            padding: "clamp(10px, 2vw, 15px)",
-                            border: "none",
-                            color: "black",
-                          }}>Actin</th>
-                          <th style={{
-                            fontWeight: "500",
-                            fontSize: "clamp(14px, 3vw, 16px)",
-                            padding: "clamp(10px, 2vw, 15px)",
-                            border: "none",
-                            color: "black",
-                            borderTopRightRadius: "10px",
-                            borderBottomRightRadius: "10px"
-                          }}>Edit Time </th>
-                        </tr>
-                      </thead>
-                      {/* map slots */}
-                      {slots?.map((slot, index) => (
-                        <tbody>
-                          <tr>
-                            <td className="py-4" style={{ fontWeight: '500', fontSize: '16px' }}>{slot?.start_time} </td>
-                            <td className="py-4" style={{ fontWeight: '500', fontSize: '16px' }}>{slot?.end_time} </td>
-                            <td className="py-4" style={{ color: "#0062FF", fontWeight: '700', fontSize: '16px' }}>
+                      <ButtonGroup className="d-flex flex-wrap justify-content-center gap-2">
+                        {weekdays.map((day) => (
+                          <Button
+                            key={day}
+                            variant={activeDay === day ? "primary" : "outline-secondary"}
+                            className="rounded-pill px-4 fw-semibold"
+                            onClick={() => setActiveDay(day)}
+                          >
+                            {day}
+                          </Button>
+                        ))}
+                      </ButtonGroup>
 
-                              {(() => {
-                                const start = new Date(`01/01/2023 ${slot?.start_time}`);
-                                const end = new Date(`01/01/2023 ${slot?.end_time}`);
-                                const durationInMinutes = Math.floor((end - start) / 60000);
-                                return `${durationInMinutes} MIN`;
-                              })()}
-                            </td>
+                      {activeDay === "Sunday" && (
+                        <Row className="my-1">
+                          <Col sm={12} className="my-2 ">
+                            {slots.filter((slot) => slot.day === "Sunday").map((slot) => (
+                              <Card className=" mx-1  my-3">
+                                <Table responsive className="my-0">
+                                  <tbody>
 
-                            <td className="py-4">
-                              <div className="d-flex align-items-center " style={{ backgroundColor: "rgba(255, 0, 0, 0.06)", width: "46px", height: "46px", borderRadius: "50%" }}>
-                                <Image
-                                  src={deleteIcon}
-                                  alt="Delete"
-                                  style={{ objectFit: "cover", width: "14px", height: "16px" }}
-                                  className="mx-3"
-                                />
-                              </div>
-                            </td>
-                            <td className="py-4">
-                              {/* mdiEdit */}
-                              <div className="d-flex align-items-center " style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "46px", height: "46px", borderRadius: "50%" }}>
-                                <Image
-                                  src={mdiEdit}
-                                  alt="Delete"
-                                  style={{ objectFit: "cover", width: "18px", height: "18px" }}
-                                  className="mx-3"
-                                />
-                              </div>
+                                    <tr key={slot._id}>
+                                      <td>
+                                        <div className="my-2">
+                                          {slot.start_time} - {slot.end_time}
+                                        </div>
+                                      </td>
+                                      <td style={{ width: '160px' }}>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          <span className={slot.availability === true ? "text-success fw-semibold" : "text-danger"}>
+                                            {slot.availability === true ? "Available" : "Not Available"}
+                                          </span>
+                                        </div>
+                                      </td>
+                                      <td style={{ width: '110px' }}>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          ₹ {slot.slot_price}
+                                        </div>
+                                      </td>
 
-                            </td>
-                          </tr>
-                        </tbody>
+                                      <td style={{ width: '45px' }}>
+                                        <div className="d-flex align-items-center " 
+                                        style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}
+                                        onClick={() => setShowEditSlotOffcanvas(true)}
+                                        >
+                                          <Image
+                                            src={mdiEdit}
+                                            alt="Delete"
+                                            style={{ objectFit: "cover", width: "12px", height: "14px" }}
+                                            className="mx-3"
+                                           
+                                          />
+                                        </div>
+                                        <EditSlotOffcanvas show={showEditSlotOffcanvas} handleClose={() => setShowEditSlotOffcanvas(false)} />
 
-                      ))}
+                                      </td>
 
-                    </Table>
+                                      <td style={{ width: '145px' }}>
+                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2" style={{ backgroundColor: "rgba(15, 111, 8, 0.88)" }} >
+                                          Active
+                                        </Button>
+                                      </td>
+                                    </tr>
+
+                                  </tbody>
+                                </Table>
+                              </Card>
+                            ))}
+
+                          </Col>
+                        </Row>
+
+                      )}
+
+                      {activeDay === "Monday" && (
+                        <Row className="my-1">
+                          <Col sm={12} className="my-2 ">
+                            {slots.filter((slot) => slot.day === "Monday").map((slot) => (
+                              <Card className=" mx-1  my-3">
+                                <Table responsive className="my-0">
+                                  <tbody>
+
+                                    <tr key={slot._id}>
+                                      <td>
+                                        <div className="my-2">
+                                          {slot.start_time} - {slot.end_time}
+                                        </div>
+                                      </td>
+                                      <td style={{ width: '160px' }}>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          <span className={slot.availability === true ? "text-success fw-semibold" : "text-danger"}>
+                                            {slot.availability === true ? "Available" : "Not Available"}
+                                          </span>
+                                        </div>
+                                      </td>
+                                      <td style={{ width: '110px' }}>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          ₹ {slot.slot_price}
+                                        </div>
+                                      </td>
+
+                                      <td style={{ width: '45px' }}>
+                                        <div className="d-flex align-items-center " style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}>
+                                          <Image
+                                            src={mdiEdit}
+                                            alt="Delete"
+                                            style={{ objectFit: "cover", width: "12px", height: "14px" }}
+                                            className="mx-3"
+                                          />
+                                        </div>
+
+                                      </td>
+
+                                      <td style={{ width: '145px' }}>
+                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2" style={{ backgroundColor: "rgba(15, 111, 8, 0.88)" }} >
+                                          Active
+                                        </Button>
+                                      </td>
+                                    </tr>
+
+                                  </tbody>
+                                </Table>
+                              </Card>
+                            ))}
+
+                          </Col>
+                        </Row>
+
+                      )}
+
+
+                      {activeDay === "Tuesday" && (
+                        <Row className="my-1">
+                          <Col sm={12} className="my-2 ">
+                            {slots.filter((slot) => slot.day === "Tuesday").map((slot) => (
+                              <Card className=" mx-1  my-3">
+                                <Table responsive className="my-0">
+                                  <tbody>
+
+                                    <tr key={slot._id}>
+                                      <td>
+                                        <div className="my-2">
+                                          {slot.start_time} - {slot.end_time}
+                                        </div>
+                                      </td>
+                                      <td style={{ width: '160px' }}>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          <span className={slot.availability === true ? "text-success fw-semibold" : "text-danger"}>
+                                            {slot.availability === true ? "Available" : "Not Available"}
+                                          </span>
+                                        </div>
+                                      </td>
+                                      <td style={{ width: '110px' }}>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          ₹ {slot.slot_price}
+                                        </div>
+                                      </td>
+
+                                      <td style={{ width: '45px' }}>
+                                        <div className="d-flex align-items-center " style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}>
+                                          <Image
+                                            src={mdiEdit}
+                                            alt="Delete"
+                                            style={{ objectFit: "cover", width: "12px", height: "14px" }}
+                                            className="mx-3"
+                                          />
+                                        </div>
+
+                                      </td>
+
+                                      <td style={{ width: '145px' }}>
+                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2" style={{ backgroundColor: "rgba(15, 111, 8, 0.88)" }} >
+                                          Active
+                                        </Button>
+                                      </td>
+                                    </tr>
+
+                                  </tbody>
+                                </Table>
+                              </Card>
+                            ))}
+
+                          </Col>
+                        </Row>
+
+                      )}
+
+                      {activeDay === "Wednesday" && (
+                        <Row className="my-1">
+                          <Col sm={12} className="my-2 ">
+                            {slots.filter((slot) => slot.day === "Wednesday").map((slot) => (
+                              <Card className=" mx-1  my-3">
+                                <Table responsive className="my-0">
+                                  <tbody>
+
+                                    <tr key={slot._id}>
+                                      <td>
+                                        <div className="my-2">
+                                          {slot.start_time} - {slot.end_time}
+                                        </div>
+                                      </td>
+                                      <td style={{ width: '160px' }}>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          <span className={slot.availability === true ? "text-success fw-semibold" : "text-danger"}>
+                                            {slot.availability === true ? "Available" : "Not Available"}
+                                          </span>
+                                        </div>
+                                      </td>
+                                      <td style={{ width: '110px' }}>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          ₹ {slot.slot_price}
+                                        </div>
+                                      </td>
+
+                                      <td style={{ width: '45px' }}>
+                                        <div className="d-flex align-items-center " style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}>
+                                          <Image
+                                            src={mdiEdit}
+                                            alt="Delete"
+                                            style={{ objectFit: "cover", width: "12px", height: "14px" }}
+                                            className="mx-3"
+                                          />
+                                        </div>
+
+                                      </td>
+
+                                      <td style={{ width: '145px' }}>
+                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2" style={{ backgroundColor: "rgba(15, 111, 8, 0.88)" }} >
+                                          Active
+                                        </Button>
+                                      </td>
+                                    </tr>
+
+                                  </tbody>
+                                </Table>
+                              </Card>
+                            ))}
+
+                          </Col>
+                        </Row>
+
+                      )}
+
+                      {activeDay === "Thursday" && (
+                        <Row className="my-1">
+                          <Col sm={12} className="my-2 ">
+                            {slots.filter((slot) => slot.day === "Thursday").map((slot) => (
+                              <Card className=" mx-1  my-3">
+                                <Table responsive className="my-0">
+                                  <tbody>
+
+                                    <tr key={slot._id}>
+                                      <td>
+                                        <div className="my-2">
+                                          {slot.start_time} - {slot.end_time}
+                                        </div>
+                                      </td>
+                                      <td style={{ width: '160px' }}>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          <span className={slot.availability === true ? "text-success fw-semibold" : "text-danger"}>
+                                            {slot.availability === true ? "Available" : "Not Available"}
+                                          </span>
+                                        </div>
+                                      </td>
+                                      <td style={{ width: '110px' }}>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          ₹ {slot.slot_price}
+                                        </div>
+                                      </td>
+
+                                      <td style={{ width: '45px' }}>
+                                        <div className="d-flex align-items-center " style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}>
+                                          <Image
+                                            src={mdiEdit}
+                                            alt="Delete"
+                                            style={{ objectFit: "cover", width: "12px", height: "14px" }}
+                                            className="mx-3"
+                                          />
+                                        </div>
+
+                                      </td>
+
+                                      <td style={{ width: '145px' }}>
+                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2" style={{ backgroundColor: "rgba(15, 111, 8, 0.88)" }} >
+                                          Active
+                                        </Button>
+                                      </td>
+                                    </tr>
+
+                                  </tbody>
+                                </Table>
+                              </Card>
+                            ))}
+
+                          </Col>
+                        </Row>
+
+                      )}
+
+                      {activeDay === "Friday" && (
+                        <Row className="my-1">
+                          <Col sm={12} className="my-2 ">
+                            {slots.filter((slot) => slot.day === "Friday").map((slot) => (
+                              <Card className=" mx-1  my-3">
+                                <Table responsive className="my-0">
+                                  <tbody>
+
+                                    <tr key={slot._id}>
+                                      <td>
+                                        <div className="my-2">
+                                          {slot.start_time} - {slot.end_time}
+                                        </div>
+                                      </td>
+                                      <td style={{ width: '160px' }}>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          <span className={slot.availability === true ? "text-success fw-semibold" : "text-danger"}>
+                                            {slot.availability === true ? "Available" : "Not Available"}
+                                          </span>
+                                        </div>
+                                      </td>
+                                      <td style={{ width: '110px' }}>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          ₹ {slot.slot_price}
+                                        </div>
+                                      </td>
+
+                                      <td style={{ width: '45px' }}>
+                                        <div className="d-flex align-items-center " style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}>
+                                          <Image
+                                            src={mdiEdit}
+                                            alt="Delete"
+                                            style={{ objectFit: "cover", width: "12px", height: "14px" }}
+                                            className="mx-3"
+                                          />
+                                        </div>
+
+                                      </td>
+
+                                      <td style={{ width: '145px' }}>
+                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2" style={{ backgroundColor: "rgba(15, 111, 8, 0.88)" }} >
+                                          Active
+                                        </Button>
+                                      </td>
+                                    </tr>
+
+                                  </tbody>
+                                </Table>
+                              </Card>
+                            ))}
+
+                          </Col>
+                        </Row>
+
+                      )}
+                      {activeDay === "Saturday" && (
+                        <Row className="my-1">
+                          <Col sm={12} className="my-2 ">
+                            {slots.filter((slot) => slot.day === "Saturday").map((slot) => (
+                              <Card className=" mx-1  my-3">
+                                <Table responsive className="my-0">
+                                  <tbody>
+
+                                    <tr key={slot._id}>
+                                      <td>
+                                        <div className="my-2">
+                                          {slot.start_time} - {slot.end_time}
+                                        </div>
+                                      </td>
+                                      <td style={{ width: '160px' }}>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          <span className={slot.availability === true ? "text-success fw-semibold" : "text-danger"}>
+                                            {slot.availability === true ? "Available" : "Not Available"}
+                                          </span>
+                                        </div>
+                                      </td>
+                                      <td style={{ width: '110px' }}>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          ₹ {slot.slot_price}
+                                        </div>
+                                      </td>
+
+                                      <td style={{ width: '45px' }}>
+                                        <div className="d-flex align-items-center " style={{ backgroundColor: "rgba(21, 255, 0, 0.16)", width: "41px", height: "40px", borderRadius: "50%", cursor: 'pointer' }}>
+                                          <Image
+                                            src={mdiEdit}
+                                            alt="Delete"
+                                            style={{ objectFit: "cover", width: "12px", height: "14px" }}
+                                            className="mx-3"
+                                          />
+                                        </div>
+
+                                      </td>
+
+                                      <td style={{ width: '145px' }}>
+                                        <Button className="d-flex align-items-center border-0 p-1 px-4 rounded-pill my-2" style={{ backgroundColor: "rgba(15, 111, 8, 0.88)" }} >
+                                          Active
+                                        </Button>
+                                      </td>
+                                    </tr>
+
+                                  </tbody>
+                                </Table>
+                              </Card>
+                            ))}
+
+                          </Col>
+                        </Row>
+
+                      )}
+                    </>
 
                   )
-
-
-
-
                 }
+
+
+
+
+
 
 
               </Col>

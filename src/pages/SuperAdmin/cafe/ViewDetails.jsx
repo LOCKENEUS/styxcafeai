@@ -160,9 +160,20 @@ const ViewDetails = () => {
     navigate("/superadmin/Games/cafeGames", { state: { gameId: gameId } });
 
     // console.log("your game id teri vali game id click ", gameId);
-    };
+  };
 
-    
+  useEffect(() => {
+    const tl = gsap.timeline({ delay: 1 }); // Optional delay before all starts
+
+    tl.from(".gsap-card", {
+      x: -50,
+      opacity: 0,
+      duration: 1,
+      stagger: 0.7,
+      ease: "power3.out",
+    });
+  }, []);
+
 
   // -------------- Membership --------------
   const { memberships, loading, error, selectedMembership } = useSelector((state) => state.memberships);
@@ -665,26 +676,23 @@ const ViewDetails = () => {
                         <Col sm={12} className="">
                           <Row className="g-3 mx-1">
                             {cafe?.cafeImage?.length > 0 ? (
-                              cafe.cafeImage
-                                .slice(currentIndexGallery, currentIndexGallery + cardsPerPageGallery)
-                                .reverse()
-                                .map((img, index) => (
-                                  <Col key={index} xs={6} sm={4} md={3} lg={3}>
-                                    <div className="w-100 h-100 d-flex justify-content-center">
-                                      <Image
-                                        src={`${baseURL}/${img}`}
-                                        onError={(e) => (e.target.src = Rectangle389)}
-                                        className="rounded-0 img-fluid"
-                                        style={{
-                                          objectFit: "cover",
-                                          height: "10rem",
-                                          width: "100%",
-                                        }}
-                                        alt={`Gallery ${index + 1}`}
-                                      />
-                                    </div>
-                                  </Col>
-                                ))
+                              [...cafe.cafeImage].reverse().map((img, index) => (
+                                <Col key={index} xs={6} sm={4} md={3} lg={3}>
+                                  <div className="w-100 h-100 d-flex justify-content-center">
+                                    <Image
+                                      src={`${baseURL}/${img}`}
+                                      onError={(e) => (e.target.src = Rectangle389)}
+                                      className="rounded-0 img-fluid"
+                                      style={{
+                                        objectFit: "cover",
+                                        height: "10rem",
+                                        width: "100%",
+                                      }}
+                                      alt={`Gallery ${index + 1}`}
+                                    />
+                                  </div>
+                                </Col>
+                              ))
                             ) : (
                               <Col xs={12}>
                                 <p className="text-center">No gallery images found.</p>
@@ -746,7 +754,7 @@ const ViewDetails = () => {
                     </h5>
                     <AddGamesOffcanvas show={showModalAdd} handleClose={() => setShowModalAdd(false)} cafeId={cafeId} selectedGameDetails={selectedGameDetails} />
 
-                    
+
                   </Col>
                   {
                     lodergames || !games ? (
@@ -758,9 +766,9 @@ const ViewDetails = () => {
                       <>
 
                         {games.length > 0 ? (
-                          [...games].reverse().slice(currentIndex, currentIndex + cardsPerPage).map((game, index) => (
+                          [...games].reverse().map((game, index) => (
                             <Col className="my-2 " key={index} xs={12} sm={6} md={6} lg={6}>
-                              <Card className="rounded-4 h-100 " style={{ borderColor: "#E4E4E4", borderWidth: "2px" }} onClick={() => handleOpenGameDetails(game?._id)}>
+                              <Card className="rounded-4 h-100 gsap-card" style={{ borderColor: "#E4E4E4", borderWidth: "2px" }} onClick={() => handleOpenGameDetails(game?._id)}>
                                 <Card.Img
                                   src={`${baseURL}/${game.gameImage || Rectangle389}`}
                                   onError={(e) => (e.target.src = Rectangle389)}
@@ -810,7 +818,7 @@ const ViewDetails = () => {
                 </Row>
               )}
 
-                {/* Membership Cards */}
+              {/* Membership Cards */}
 
               {activeKey === "Membership" && (
                 <Row className=" d-flex flex-wrap justify-content-center p-2">
@@ -833,7 +841,7 @@ const ViewDetails = () => {
 
 
                     </div>
-                  </Col> 
+                  </Col>
                   {
                     lodermembership || !memberships ? (
 
@@ -845,7 +853,7 @@ const ViewDetails = () => {
                       <>
                         {memberships && memberships.length > 0 ? (
                           <Row className="d-flex flex-wrap justify-content-start mx-2 ">
-                            {[...memberships].reverse().slice(currentIndexMembership, currentIndexMembership + membershipCardsPerPage).map((membership, index, arr) => (
+                            {[...memberships].reverse().map((membership, index, arr) => (
                               <Col
                                 sm={6}
                                 xs={12}
@@ -1060,10 +1068,6 @@ const ViewDetails = () => {
 
         </Col>
       </Row>
-
-
-
-
       <EditCafeOffcanvas
         show={showCanvasEditCafe}
         handleClose={() => setShowCanvasEditCafe(false)}
