@@ -2,18 +2,34 @@ import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { deleteGame } from '../../../../store/slices/gameSlice';
+import { useNavigate } from 'react-router-dom';
 
-const GameDeleteModal = ({ show, handleClose, gameId }) => {
+const GameDeleteModal = ({ show, handleClose, gameId ,cafeId}) => {
 
     console.log("gameId delete  ",gameId);
+    const navigate = useNavigate();
 
     const dispatch = useDispatch();
     
 
-    const handaleDelete = () => {
-        dispatch(deleteGame(gameId));
-        handleClose();
-      };
+    const handaleDelete = async () => {
+      try {
+        const result = await dispatch(deleteGame(gameId));
+    
+        // Optional: Check for success
+        if (deleteGame.fulfilled.match(result)) {
+          handleClose(); // close modal
+          navigate("/superadmin/cafe/viewdetails", {
+            state: { cafeId: cafeId },
+          });
+        } else {
+          console.error("Failed to delete game", result);
+        }
+      } catch (error) {
+        console.error("Error deleting game", error);
+      }
+    };
+    
   return (
     <Modal show={show} onHide={handleClose}  
     className='size-xs'

@@ -34,7 +34,7 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
         gameImage: null,
         cafe: cafeId,
         commission: 0,
-        payLater: false,
+        payLater: true,
       };
 
       const [formData, setFormData] = useState(initialFormData);
@@ -61,11 +61,11 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
       formDataToSend.append('zone', formData.zone);
       formDataToSend.append('size', sizeFormatted);
       formDataToSend.append('players', formData.players);
-      formDataToSend.append('cancellation', formData.cancellation === "Yes" ? true : false);
+      formDataToSend.append('cancellation', formData.cancellation);
       formDataToSend.append('details', formData.details);
       formDataToSend.append('cafe', formData.cafe);
       formDataToSend.append('commission', formData.commission);
-      formDataToSend.append('payLater', formData.payLater === "Yes" ? true : false);
+      formDataToSend.append('payLater', formData.payLater);
   
       // Append image file if exists
       if (formData.gameImage instanceof File) {
@@ -345,11 +345,17 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
                   placeholder="Enter commission percentage"
                 />
                 {/* Display calculated commission */}
-                {formData.price && formData.commission && (
+                {/* {formData.price && formData.commission && (
                   <div className="mt-2 text-secondary">
                     Calculated Commission: ${(formData.price * (formData.commission / 100)).toFixed(2)}
                   </div>
+                )} */}
+                {formData.price !== '' && formData.commission !== '' && !isNaN(formData.price) && !isNaN(formData.commission) && (
+                  <div className="mt-2 text-secondary">
+                    Calculated Commission: ${((Number(formData.price) * (Number(formData.commission) / 100)).toFixed(2))}
+                  </div>
                 )}
+
               </Form.Group>
             </Col>
 
@@ -367,8 +373,8 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
                 required
                 className="form-select-lg border-2"
               >
-                <option>Yes</option>
-                <option>No</option>
+                 <option value={true}>Yes</option>
+                 <option value={false}>No</option>
               </Form.Select>
             </Col>
             <Col md={6}>
@@ -381,8 +387,8 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
                 required
                 className="form-select-lg border-2"
               >
-                <option>Yes</option>
-                <option>No</option>
+                 <option value={true}>Yes</option>
+                 <option value={false}>No</option>
               </Form.Select>
             </Col>
           </Row>

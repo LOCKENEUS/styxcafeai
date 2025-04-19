@@ -9,6 +9,7 @@ const AddSlotOffcanvas = ({show, handleClose,gameId}) => {
     console.log("Offcanvas game id",gameId);
 
     const [timeError, setTimeError] = useState(null);
+    const [errors, setErrors] = useState({});
     const [formState, setFormState] = useState({
       // game: '',
       slotName: '',
@@ -20,6 +21,16 @@ const AddSlotOffcanvas = ({show, handleClose,gameId}) => {
       slotPrice: '',
       adminNote: ''
     });
+
+    useEffect(() => {
+      setFormState({
+    
+
+        maxPlayers: selectedGame?.data?.players,
+        slotPrice: selectedGame?.data?.price,
+    
+      });
+    }, [show]);
 
     const dispatch = useDispatch();
     const { slots  } = useSelector((state) => state.slots);
@@ -68,6 +79,22 @@ const AddSlotOffcanvas = ({show, handleClose,gameId}) => {
           
         }
       }
+
+      // atach validation players are not greater than maxPlayers
+      if (name === 'maxPlayers') {
+        if (value > selectedGame?.data?.players) {
+          setErrors((prev) => ({
+            ...prev,
+            maxPlayers: 'Max players cannot be greater than available players.'
+          }));
+        } else {
+          setErrors((prev) => ({
+            ...prev,
+            maxPlayers: ''
+          }));
+        }
+      }
+      
       
     };
     
@@ -86,7 +113,7 @@ const AddSlotOffcanvas = ({show, handleClose,gameId}) => {
         day: formState.day,
         start_time: formState.startTime,
         end_time: formState.endTime,
-        maxPlayers: formState.maxPlayers,
+        players: formState.maxPlayers,
         slot_price: formState.slotPrice,
         adminNote: formState.adminNote
       };
@@ -302,10 +329,13 @@ const AddSlotOffcanvas = ({show, handleClose,gameId}) => {
               <Form.Control
                 type="number"
                 name="maxPlayers"
-                value={formState.maxPlayers || selectedGame?.data?.players}
+                value={formState.maxPlayers  || ''}
                 onChange={handleChange}
                 placeholder="Enter max players"
               />
+              {
+                errors.maxPlayers && <small className="text-danger">{errors.maxPlayers}</small>
+              }
             </Form.Group>
           </Col>
           <Col md={6}>
@@ -314,7 +344,7 @@ const AddSlotOffcanvas = ({show, handleClose,gameId}) => {
               <Form.Control
                 type="number"
                 name="slotPrice"
-                value={formState.slotPrice || selectedGame?.data?.price}
+                value={formState.slotPrice || ''}
                 onChange={handleChange}
                 placeholder="Enter slot price"
               />

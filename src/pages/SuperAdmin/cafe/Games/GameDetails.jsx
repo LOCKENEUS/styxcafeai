@@ -312,7 +312,7 @@ const GameDetailsCafe = () => {
                           <Card className="border-2 rounded-2 ">
 
                             <p style={{ fontSize: "14px", fontWeight: "400", margin: "22px  22px  21px  15px" }}>
-                              {selectedGame?.message || `Pickleball is a fast-growing paddle sport that blends the best of tennis, badminton,
+                              {selectedGame?.data?.details || `Pickleball is a fast-growing paddle sport that blends the best of tennis, badminton,
                         and table tennis. Played on a smaller court with a perforated plastic ball and solid paddles,
                         it's easy to learn, incredibly fun, and suitable for all ages and skill levels. Whether you're a
                         beginner or a seasoned athlete, pickleball offers a perfect mix of strategy, agility, and social interaction.
@@ -535,10 +535,15 @@ const GameDetailsCafe = () => {
                                   <tbody>
 
                                     <tr key={slot._id}>
-                                      <td>
+                                      <td style={{ width: '160px' }}>
                                         <div className="my-2">
                                           {slot.start_time} - {slot.end_time}
                                         </div>
+                                      </td>
+                                      <td style={{ width: '160px' }}>
+                                      <div className="my-2">
+                                        {slot.slot_name}
+                                      </div>
                                       </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
@@ -603,10 +608,15 @@ const GameDetailsCafe = () => {
                                   <tbody>
 
                                     <tr key={slot._id}>
-                                      <td>
+                                      <td style={{ width: '160px' }}>
                                         <div className="my-2">
                                           {slot.start_time} - {slot.end_time}
                                         </div>
+                                      </td>
+                                      <td style={{ width: '160px' }}>
+                                      <div className="my-2">
+                                        {slot.slot_name}
+                                      </div>
                                       </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
@@ -672,10 +682,15 @@ const GameDetailsCafe = () => {
                                   <tbody>
 
                                     <tr key={slot._id}>
-                                      <td>
-                                        <div className="my-2">
+                                      <td style={{ width: '160px' }}>
+                                        <div className="my-2" >
                                           {slot.start_time} - {slot.end_time}
                                         </div>
+                                      </td>
+                                      <td style={{ width: '160px' }}>
+                                      <div className="my-2">
+                                        {slot.slot_name}
+                                      </div>
                                       </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
@@ -740,10 +755,15 @@ const GameDetailsCafe = () => {
                                   <tbody>
 
                                     <tr key={slot._id}>
-                                      <td>
+                                      <td style={{ width: '160px' }}>
                                         <div className="my-2">
                                           {slot.start_time} - {slot.end_time}
                                         </div>
+                                      </td>
+                                      <td style={{ width: '160px' }}>
+                                      <div className="my-2">
+                                        {slot.slot_name}
+                                      </div>
                                       </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
@@ -808,10 +828,15 @@ const GameDetailsCafe = () => {
                                   <tbody>
 
                                     <tr key={slot._id}>
-                                      <td>
+                                      <td style={{ width: '160px' }}>
                                         <div className="my-2">
                                           {slot.start_time} - {slot.end_time}
                                         </div>
+                                      </td>
+                                      <td style={{ width: '160px' }}>
+                                      <div className="my-2">
+                                        {slot.slot_name}
+                                      </div>
                                       </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
@@ -876,10 +901,15 @@ const GameDetailsCafe = () => {
                                   <tbody>
 
                                     <tr key={slot._id}>
-                                      <td>
+                                      <td style={{ width: '160px' }}>
                                         <div className="my-2">
                                           {slot.start_time} - {slot.end_time}
                                         </div>
+                                      </td>
+                                      <td style={{ width: '160px' }}>
+                                      <div className="my-2">
+                                        {slot.slot_name}
+                                      </div>
                                       </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
@@ -945,15 +975,20 @@ const GameDetailsCafe = () => {
                                   <tbody>
 
                                     <tr key={slot._id}>
-                                      <td>
+                                      <td style={{ width: '160px' }}>
                                         <div className="my-2">
                                           {slot.start_time} - {slot.end_time}
                                         </div>
                                       </td>
                                       <td style={{ width: '160px' }}>
+                                      <div className="my-2">
+                                        {slot.slot_name}
+                                      </div>
+                                      </td>
+                                      <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
-                                          <span className={slot.availability === false ? "text-success fw-semibold" : "text-danger"}>
-                                            {slot.availability === false ? "Available" : "Not Available"}
+                                          <span className={slot.is_deleted  === false ? "text-success fw-semibold" : "text-danger"}>
+                                            {slot.is_deleted  === false ? "Available" : "Not Available"}
                                           </span>
                                         </div>
                                       </td>
@@ -1041,6 +1076,7 @@ const GameDetailsCafe = () => {
         show={showGameDeleteModal}
         handleClose={() => setShowGameDeleteModal(false)}
         gameId={gameId}
+        cafeId={cafeId}
       />
     </Container>
   );

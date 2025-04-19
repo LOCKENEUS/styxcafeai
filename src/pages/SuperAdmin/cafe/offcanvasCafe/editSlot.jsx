@@ -6,11 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 
 const EditSlotOffcanvas = ({ show, handleClose, slotID }) => {
 
-
+  const [errors, setErrors] = useState({});
   console.log("slotID ---", slotID);
   const dispatch = useDispatch();
   const slotList = useSelector((state) => state.slots.slots || []);
-
+  const [timeError, setTimeError] = useState({});
   // map slotList _id to slotID
   const shortlistedSlot = slotList.find((slot) => slot._id === slotID);
   console.log("shortlistedSlot finaly got week  ---", shortlistedSlot);
@@ -23,7 +23,7 @@ const EditSlotOffcanvas = ({ show, handleClose, slotID }) => {
       dispatch(getSlotDetails(slotID));
     }, [dispatch, slotID]);
 
-    console.log("slots ---", slotList);
+    console.log("slots 44---", slotList);
     
   
   const [formState, setFormState] = useState({
@@ -40,9 +40,9 @@ const EditSlotOffcanvas = ({ show, handleClose, slotID }) => {
       setFormState({
         slotName: shortlistedSlot.slot_name || "",
         day: shortlistedSlot.day || "",
-        startTime: shortlistedSlot.start_time || "",
-        endTime: shortlistedSlot.end_time || "",
-        maxPlayers: shortlistedSlot.maxPlayers || "",
+        startTime: convertTo24HourFormat(shortlistedSlot.start_time )|| "",
+        endTime: convertTo24HourFormat(shortlistedSlot.end_time)  || "",
+        maxPlayers: shortlistedSlot.players || "",
         slotPrice: shortlistedSlot.slot_price || "",
         adminNote: shortlistedSlot.adminNote || ""
       });
@@ -54,31 +54,66 @@ const EditSlotOffcanvas = ({ show, handleClose, slotID }) => {
 
   console.log("GameID find ---", GameID);
   
-
+  const convertTo24HourFormat = (time12h) => {
+    if (!time12h) return ""; // Handle empty case
+    const [time, modifier] = time12h.split(" ");
+    let [hours, minutes] = time.split(":");
+    if (modifier === "PM" && hours !== "12") {
+      hours = String(parseInt(hours, 10) + 12);
+    }
+    if (modifier === "AM" && hours === "12") {
+      hours = "00";
+    }
+    return `${hours}:${minutes}`;
+  };
   
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormState((prev) => ({ ...prev, [name]: value }));
+
+    const start = convertTo24HourFormat(updatedFormState.startTime);
+  const end = convertTo24HourFormat(updatedFormState.endTime);
+
+  if (start && end && end <= start) {
+    setTimeError({ endTime: 'End time must be after start time.' });
+  } else {
+    setTimeError({});
+    setFormState(updatedFormState);
+  }
+  
+    // atach validation players are not greater than maxPlayers
+    if (name === 'maxPlayers') {
+      if (value > shortlistedSlot.players) {
+        setErrors((prev) => ({
+          ...prev,
+          maxPlayers: 'Max players cannot be greater than available players.'
+        }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          maxPlayers: ''
+        }));
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-   
 
+    
+    
     const formDataToSend = {
       _id: slotID,
       game_id: GameID,
-      start_time: formState.startTime,
-      end_time: formState.endTime,
+      start_time: convertTo24HourFormat(formState.startTime),
+    end_time: convertTo24HourFormat(formState.endTime),
       day: formState.day,
       maxPlayers: formState.maxPlayers,
       slot_price: formState.slotPrice,
       slot_name: formState.slotName,
       adminNote: formState.adminNote
     };
-    
-   
-    
+
     try {
       await dispatch(updateslot({ id: slotID, updatedData: formDataToSend })).unwrap();
       handleClose();
@@ -102,7 +137,7 @@ const EditSlotOffcanvas = ({ show, handleClose, slotID }) => {
                 <Form.Control
                   type="text"
                   name="slotName"
-                  value={formState.slotName}
+                  value={formState.slotName || ""}
                   onChange={handleChange}
                   placeholder="Enter slot name"
                 />
@@ -162,6 +197,8 @@ const EditSlotOffcanvas = ({ show, handleClose, slotID }) => {
                   />
                 </div>
                 
+                {timeError.endTime && <small className="text-danger">{timeError.endTime}</small>}
+
               </Form.Group>
             </Col>
           </Row>
@@ -177,6 +214,9 @@ const EditSlotOffcanvas = ({ show, handleClose, slotID }) => {
                   onChange={handleChange}
                   placeholder="Enter max players"
                 />
+                {
+                errors.maxPlayers && <small className="text-danger">{errors.maxPlayers}</small>
+              }
               </Form.Group>
             </Col>
             <Col md={6}>

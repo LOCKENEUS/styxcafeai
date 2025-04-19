@@ -84,6 +84,7 @@ const AddMembershipOffcanvas = ({ show ,handleClose , cafeId , selectedGameDetai
             <Form.Control
               type="text"
               name="name"
+              placeholder="name"
               value={formData.name}
               onChange={handleInputChange}
               required
@@ -112,6 +113,7 @@ const AddMembershipOffcanvas = ({ show ,handleClose , cafeId , selectedGameDetai
             </Form.Label>
             <Form.Control
               type="number"
+              placeholder="limit"
               name="limit"
               value={formData.limit}
               onChange={handleInputChange}
@@ -126,6 +128,7 @@ const AddMembershipOffcanvas = ({ show ,handleClose , cafeId , selectedGameDetai
             <Form.Control
               type="number"
               name="price"
+              placeholder="price"
               value={formData.price}
               onChange={handleInputChange}
               required

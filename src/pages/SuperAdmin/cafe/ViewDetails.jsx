@@ -27,11 +27,14 @@ import { MdOutlineNavigateNext } from "react-icons/md";
 import ForwordPassword from "./modal/forwordPassword";
 import Loader from "../../../components/common/Loader/Loader";
 import gsap from "gsap";
+import { getCustomers } from "../../../store/AdminSlice/CustomerSlice";
 
 
 
 
 const ViewDetails = () => {
+
+  
 
 
   const [loadingMain, setLoadingMain] = useState(true);
@@ -101,6 +104,16 @@ const ViewDetails = () => {
 
 
   console.log("games -- ", gamesDetails);
+  
+  useEffect(() => {
+    if (cafeId) {
+    dispatch(getCustomers(cafeId));
+    }
+  },[dispatch, cafeId]);
+  // const clientList= useSelector(state => state.        state.customers = action.payload;
+const  clientList  = useSelector((state) => state.customers.customers);
+  console.log("clientList :--", clientList);
+
 
 
 
@@ -284,7 +297,10 @@ const ViewDetails = () => {
     </Badge>
   );
 
-  const paginatedData = clientData.slice(
+  // -----------------------    client Details -----------------------
+
+
+  const paginatedData = clientList.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -992,14 +1008,14 @@ const ViewDetails = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {(paginatedData.length > 0 ? paginatedData : clientData).map((booking, idx) => (
+                        {(paginatedData.length > 0 ? paginatedData : clientList).map((client, idx) => (
                           <tr key={idx}>
                             <td>{idx + 1}</td>
-                            <td><a href="#" className="text-primary fw-bold">{booking.id}</a></td>
-                            <td>{booking.game}</td>
-                            <td>{booking.date}</td>
-                            <td>{booking.total}</td>
-                            <td>{statusBadge(booking.status)}</td>
+                            <td><a href="#" className="text-primary fw-bold">{client.name}</a></td>
+                            <td>{client.contact_no}</td>
+                            <td>{client.email || "---"}</td>
+                            <td>{client.creditLimit}</td>
+                            <td>{client.membership || "---"}</td>
                           </tr>
                         ))}
                       </tbody>
