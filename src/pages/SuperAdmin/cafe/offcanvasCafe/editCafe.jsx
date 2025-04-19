@@ -12,13 +12,10 @@ import { toast } from "react-toastify";
 function EditCafeOffcanvas({ show, handleClose, cafeId }) {
 
   console.log("selectedCafe offcanvas 99===", cafeId);
-  const BASE_URL = 'http://localhost:5000/';
   const baseURL = import.meta.env.VITE_API_URL;
-
 
   const [removedExistingDocs, setRemovedExistingDocs] = useState([]);
   const [removedDocuments, setRemovedDocuments] = useState([]);
-
 
   const [documentPreview, setDocumentPreview] = useState([]); // stores file names or objects
 
@@ -900,7 +897,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                       style={{ width: '48%' }}
                     >
                       <a
-                        href={`${BASE_URL}${doc}`}
+                        // href={`${BASE_URL}${doc}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-decoration-none text-dark text-truncate d-block"

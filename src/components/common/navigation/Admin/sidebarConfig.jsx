@@ -58,7 +58,7 @@ const navItems = [
         label: "",
         sub: [
           { title: "Recommended Games", path: "/admin/games/recommended" },
-          { title: "Create Slots", path: "/admin/bookings/create-slots" }
+          // { title: "Create Slots", path: "/admin/bookings/create-slots" }
            
         ]
       },

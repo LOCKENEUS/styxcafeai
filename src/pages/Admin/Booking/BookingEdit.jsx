@@ -23,6 +23,7 @@ import { addBooking, deleteBooking, getBookingDetails, getBookingsByDate, update
 import ClientModel from "./Model/ClientModel";
 import { IoAdd } from "react-icons/io5";
 import { FaDeleteLeft } from "react-icons/fa6";
+import { RxCross2 } from "react-icons/rx";
 
 const BookingEdit = () => {
 
@@ -99,14 +100,26 @@ const BookingEdit = () => {
 
     useEffect(() => {
         if (booking) {
+            const mappedPlayers = booking.players.map((player) => ({ 
+                id: player._id, 
+                name: player.name, 
+                contact_no: player.contact_no, 
+                creditEligibility: player.creditEligibility, 
+                creditLimit: player.creditLimit, 
+                creditAmount: player.creditAmount, 
+            }));
+            const isoDate = booking?.slot_date;
+            const dateOnly = new Date(isoDate).toISOString().split("T")[0];
             setSelectedGame(booking?.game_id);
-            setDate(booking?.slot_date);
+            setDate(dateOnly);
             setSelectedCustomer(booking?.customer_id);
             setSlot(booking?.slot_id);
-            setTeamMembers(booking?.players);
+            setTeamMembers(mappedPlayers);
 
         }
     }, [booking]);
+
+    console.log("teamMembers", teamMembers);
 
     useEffect(() => {
         if (cafeId) {
@@ -225,11 +238,11 @@ const BookingEdit = () => {
 
         }
     }
-
+    console.log("slot", slot);
 
     return (
         <Container fluid className="p-4 ">
-            <h6 className="mb-3 text-muted">
+            <h6 className="mb-3 muted-text">
                 Home / Purchase / Vendor List/{" "}
                 <span className="text-primary">Purchase Order</span>
             </h6>
@@ -300,7 +313,7 @@ const BookingEdit = () => {
                                         />
                                         <div>
                                             <h6 className="mb-0">{customer.name}</h6>
-                                            <small className="text-muted">
+                                            <small className="muted-text">
                                                 {customer.email || customer.phone}
                                             </small>
                                         </div>
@@ -322,7 +335,7 @@ const BookingEdit = () => {
                                         />
                                         <div>
                                             <h6 className="mb-0">{selectedCustomer.name}</h6>
-                                            <small className="text-muted">
+                                            <small className="muted-text">
                                                 {selectedCustomer.email || selectedCustomer.phone}
                                             </small>
                                         </div>
@@ -366,7 +379,7 @@ const BookingEdit = () => {
                                     ) : (
                                         selectedGame?.type === "Multiplayer" ? <Button
                                             variant="outline-primary"
-                                            className="d-flex w-100 align-items-center justify-content-center p-3 border-dashed"
+                                            className="d-flex w-100 align-items-center justify-content-center p-1 border-dashed"
                                             style={{
                                                 border: "2px dashed #007bff",
                                                 borderRadius: "10px",
@@ -384,10 +397,10 @@ const BookingEdit = () => {
 
                                     {teamMembers.length > 0 && (
                                         <div className="mt-3 mx-2">
-                                            <h5 className="fw-bold">No of Candidates  ({teamMembers.length + 1})</h5>
+                                            <h5 className="text-color">No of Candidates  ({teamMembers.length + 1})</h5>
                                             {teamMembers.map((player, index) => (
                                                 <p key={index} className="mt-4">
-                                                    {player.name} - {player.contact_no} <><FaDeleteLeft size={20} className="text-danger" onClick={() => handleRemovePlayer(player.id)} /></>
+                                                    {player.name} - {player.contact_no} <span className="float-end"><RxCross2 size={20} className="text-danger" onClick={() => handleRemovePlayer(player.id)} /></span>
                                                 </p>
                                             ))}
                                         </div>
@@ -406,23 +419,23 @@ const BookingEdit = () => {
                         <div className="px-4">
                             <div className="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h3>Customer Details</h3>
+                                    <h3 className="text-color">Customer Details</h3>
                                 </div>
                                 <div>
-                                    <div className="text-success"><span className="fw-bold float-end">Credit Limit: {selectedCustomer?.creditLimit || 0}</span></div>
-                                    <div className="text-danger"><span className="fw-bold float-end">Remaining: {selectedCustomer?.creditLimit - selectedCustomer?.creditAmount || 0}</span></div>
+                                    <div><span className="text-color float-end">Credit Limit: {selectedCustomer?.creditLimit || 0}</span></div>
+                                    <div><span className="text-color float-end">Remaining: {selectedCustomer?.creditLimit - selectedCustomer?.creditAmount || 0}</span></div>
                                 </div>
                             </div>
                             {selectedCustomer ? (
                                 // <Row>
                                 //     <Col md={6}>
                                 //         <div className="mb-4">
-                                //             <h5 className="text-muted">Customer Name</h5>
+                                //             <h5 className="muted-text">Customer Name</h5>
                                 //             <p className="text-black">{selectedCustomer.name}</p>
                                 //         </div>
                                 //     </Col>
                                 //     <Col md={6}>
-                                //         <Form.Label className="fw-bold" htmlFor="game">Select Game</Form.Label>
+                                //         <Form.Label className="text-color" htmlFor="game">Select Game</Form.Label>
                                 //         <Form.Control
                                 //             as="select"
                                 //             size="sm"
@@ -441,7 +454,7 @@ const BookingEdit = () => {
                                 //     <Col md={6}>
 
                                 //         <div className="mb-4">
-                                //             <h5 className="text-muted">Booked Game</h5>
+                                //             <h5 className="muted-text">Booked Game</h5>
                                 //             <p style={{ fontWeight: "bold" }} className="text-primary">
                                 //                 {selectedGame?.name} ({selectedGame?.size})
                                 //             </p>
@@ -450,7 +463,7 @@ const BookingEdit = () => {
 
                                 //     <Col md={6}>
                                 //         <div className="mb-4">
-                                //             <h5 className="text-muted">Day & Time</h5>
+                                //             <h5 className="muted-text">Day & Time</h5>
                                 //             <p className="">{formattedDate} - {convertTo12Hour(slot.start_time)}</p>
                                 //         </div>
                                 //     </Col>
@@ -494,69 +507,69 @@ const BookingEdit = () => {
                                 // </Row>
 
                                 <Card className="p-2 shadow-sm border-0">
-                                <Row className="g-4">
-                                    <Col md={6}>
-                                        <Card className="p-3 bg-light">
-                                            <h6 className="text-muted">Customer Name</h6>
-                                            <p className="text-dark fw-bold mb-0">{selectedCustomer.name}</p>
-                                        </Card>
-                                    </Col>
-                    
-                                    <Col md={6}>
+                                    <Row className="g-4">
+                                        <Col md={6}>
+                                            <Card className="p-3 bg-light">
+                                                <h6 className="muted-text">Customer Name</h6>
+                                                <p className="text-color mb-0">{selectedCustomer.name}</p>
+                                            </Card>
+                                        </Col>
+
+                                        <Col md={6}>
+                                            <Form.Group>
+                                                <Form.Label className="text-color">Select Game</Form.Label>
+                                                <Form.Select
+                                                    size="sm"
+                                                    className="border-2"
+                                                    value={selectedGame ? JSON.stringify(selectedGame) : ""}
+                                                    onChange={(e) => setSelectedGame(JSON.parse(e.target.value))}
+                                                >
+                                                    <option value="">Select Game</option>
+                                                    {games.map((game, index) => (
+                                                        <option key={index} value={JSON.stringify(game)}>
+                                                            {game.name}
+                                                        </option>
+                                                    ))}
+                                                </Form.Select>
+                                            </Form.Group>
+                                        </Col>
+
+                                        {/* Booked Game */}
+                                        <Col md={6}>
+                                            <Card className="p-3 bg-light">
+                                                <h6 className="muted-text">Booked Game</h6>
+                                                <p className="text-primary text-color mb-0">
+                                                    {selectedGame?.name} ({selectedGame?.size})
+                                                </p>
+                                            </Card>
+                                        </Col>
+
+                                        {/* Date & Time */}
+                                        <Col md={6}>
+                                            <Card className="p-3 bg-light">
+                                                <h6 className="muted-text">Day & Time</h6>
+                                                <p className="text-color mb-0">
+                                                    {formattedDate} - {convertTo12Hour(slot.start_time)}
+                                                </p>
+                                            </Card>
+                                        </Col>
+
+                                        {/* Date Picker */}
+                                        <Col md={6}>
+                                            <Form.Group>
+                                                <Form.Label className="text-color">Select Date</Form.Label>
+                                                <Form.Control
+                                                    type="date"
+                                                    value={date}
+                                                    onChange={(e) => setDate(e.target.value)}
+                                                />
+                                            </Form.Group>
+                                        </Col>
+
+                                        {/* Slot Selection */}
+                                        {/* <Col md={6}>
                                         <Form.Group>
-                                            <Form.Label className="fw-bold">Select Game</Form.Label>
-                                            <Form.Select
-                                                size="sm"
-                                                className="border-2"
-                                                value={selectedGame ? JSON.stringify(selectedGame) : ""}
-                                                onChange={(e) => setSelectedGame(JSON.parse(e.target.value))}
-                                            >
-                                                <option value="">Select Game</option>
-                                                {games.map((game, index) => (
-                                                    <option key={index} value={JSON.stringify(game)}>
-                                                        {game.name}
-                                                    </option>
-                                                ))}
-                                            </Form.Select>
-                                        </Form.Group>
-                                    </Col>
-                                    
-                                    {/* Booked Game */}
-                                    <Col md={6}>
-                                        <Card className="p-3 bg-light">
-                                            <h6 className="text-muted">Booked Game</h6>
-                                            <p className="text-primary fw-bold mb-0">
-                                                {selectedGame?.name} ({selectedGame?.size})
-                                            </p>
-                                        </Card>
-                                    </Col>
-                    
-                                    {/* Date & Time */}
-                                    <Col md={6}>
-                                        <Card className="p-3 bg-light">
-                                            <h6 className="text-muted">Day & Time</h6>
-                                            <p className="fw-bold mb-0">
-                                                {formattedDate} - {convertTo12Hour(slot.start_time)}
-                                            </p>
-                                        </Card>
-                                    </Col>
-                    
-                                    {/* Date Picker */}
-                                    <Col md={6}>
-                                        <Form.Group>
-                                            <Form.Label className="fw-bold">Select Date</Form.Label>
-                                            <Form.Control
-                                                type="date"
-                                                value={date}
-                                                onChange={(e) => setDate(e.target.value)}
-                                            />
-                                        </Form.Group>
-                                    </Col>
-                    
-                                    {/* Slot Selection */}
-                                    <Col md={6}>
-                                        <Form.Group>
-                                            <Form.Label className="fw-bold">Select Slot</Form.Label>
+                                            <Form.Label className="text-color">Select Slot</Form.Label>
                                             <Form.Select
                                                 size="sm"
                                                 className="border-2"
@@ -576,11 +589,41 @@ const BookingEdit = () => {
                                                 })}
                                             </Form.Select>
                                         </Form.Group>
-                                    </Col>
-                                </Row>
-                            </Card>
+                                    </Col> */}
+
+                                        <Col md={6}>
+                                            <Form.Group>
+                                                <Form.Label className="text-color">Select Slot</Form.Label>
+                                                <Form.Select
+                                                    size="sm"
+                                                    className="border-2"
+                                                    value={slot ? slot._id : ""}
+                                                    onChange={(e) => {
+                                                        const selectedSlot = slots.find(s => s._id === e.target.value);
+                                                        setSlot(selectedSlot);
+                                                    }}
+                                                >
+                                                    <option value="">Select Slot</option>
+                                                    {slots.map((slot, index) => {
+                                                        const isBooked = bookings.some(
+                                                            (booking) =>
+                                                                booking.slot_id._id === slot._id &&
+                                                                booking.slot_date.startsWith(date)
+                                                        );
+                                                        return (
+                                                            <option key={index} value={slot._id} disabled={isBooked}>
+                                                                {slot.start_time} - {slot.end_time} {isBooked ? "(Booked)" : ""}
+                                                            </option>
+                                                        );
+                                                    })}
+                                                </Form.Select>
+                                            </Form.Group>
+                                        </Col>
+
+                                    </Row>
+                                </Card>
                             ) : (
-                                <p className="text-muted d-flex justify-content-center align-items-center h-100 w-100 mb-0">
+                                <p className="muted-text d-flex justify-content-center align-items-center h-100 w-100 mb-0">
                                     Select Customers
                                 </p>
                             )}
@@ -588,45 +631,45 @@ const BookingEdit = () => {
                     </div>
 
                     <div className="bg-white rounded-3">
-                                    <div className="p-3 fw-bold fs-1 text-dark">
-                                        Checkout Details
+                        <div className="p-3 text-color fs-1 ">
+                            Checkout Details
+                        </div>
+
+                        <div>
+                            {selectedCustomer ? (
+                                <div className="px-4">
+                                    <div className="mb-4">
+                                        <h5 className="muted-text">Total Amount</h5>
+                                        <p className="text-black">₹ {priceToPay}</p>
                                     </div>
-   
-                                <div>
-                                    {selectedCustomer ? (
-                                        <div className="px-4">
-                                            <div className="mb-4">
-                                                <h5 className="text-muted">Total Amount</h5>
-                                                <p className="text-black">₹ {priceToPay}</p>
-                                            </div>
-                                            <div className="mb-4">
-                                                <h5 className="text-muted">Extra Charge</h5>
-                                                <p className="text-black">₹ 00.00</p>
-                                            </div>
-                                            <div className="mb-4">
-                                                <h5 className="text-muted">GST</h5>
-                                                <p className="text-black">₹ 00.00</p>
-                                            </div>
-                                            <div className="mb-4">
-                                                <h5 className="text-muted">TOTAL</h5>
-                                                <p className="text-primary" style={{ fontWeight: "bold" }}>₹ {slot.slot_price ? slot.slot_price : selectedGame?.price}</p>
-                                            </div>
-                                            <div className="mb-4">
-                                                <Button
-                                                    variant="success"
-                                                    className="w-25 mb-4"
-                                                    onClick={handleUpdateSlot}
-                                                >
-                                                    Save
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <p className="text-muted d-flex justify-content-center align-items-center h-100 w-100 mb-0">
-                                            Select Customers
-                                        </p>
-                                    )}
+                                    <div className="mb-4">
+                                        <h5 className="muted-text">Extra Charge</h5>
+                                        <p className="text-black">₹ 00.00</p>
+                                    </div>
+                                    <div className="mb-4">
+                                        <h5 className="muted-text">GST</h5>
+                                        <p className="text-black">₹ 00.00</p>
+                                    </div>
+                                    <div className="mb-4">
+                                        <h5 className="muted-text">TOTAL</h5>
+                                        <p className="text-primary" style={{ fontWeight: "bold" }}>₹ {slot.slot_price ? slot.slot_price : selectedGame?.price}</p>
+                                    </div>
+                                    <div className="mb-4">
+                                        <Button
+                                            variant="success"
+                                            className="w-25 mb-4"
+                                            onClick={handleUpdateSlot}
+                                        >
+                                            Save
+                                        </Button>
+                                    </div>
                                 </div>
+                            ) : (
+                                <p className="muted-text d-flex justify-content-center align-items-center h-100 w-100 mb-0">
+                                    Select Customers
+                                </p>
+                            )}
+                        </div>
                     </div>
                 </Col>
             </Row>

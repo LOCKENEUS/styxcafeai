@@ -28,6 +28,7 @@ import { LiaCoinsSolid } from "react-icons/lia";
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
 import CreditSplit from "./Model/CreditSplit";
 import { RxCross2 } from "react-icons/rx";
+import { TbTrash } from "react-icons/tb";
 
 const BookingDetails = () => {
   const { customers, loading, error } = useSelector((state) => state.customers);
@@ -145,14 +146,16 @@ const BookingDetails = () => {
 
     const selected = items.find(item => item._id === id);
     if (selected) {
+      const totalTax = Math.round((selected.tax?.tax_rate * selected.sellingPrice) / 100) || 0;
+      const total = selected.sellingPrice + totalTax || 0;
       setSelectedItems([...selectedItems, {
         id: selected._id,
         item: selected.name,
         price: selected.sellingPrice,
         quantity: 1,
         tax: selected.tax || null,
-        total: selected.sellingPrice,
-        totalTax: 0
+        total: total,
+        totalTax: totalTax
       }]);
       setSelectedIds([...selectedIds, selected._id]);
       setSelectedOption(null)
@@ -318,6 +321,11 @@ const BookingDetails = () => {
       return
     }
 
+    const mappedItems = selectedItems.map((item) => ({
+      ...item,
+      tax_amt: item.totalTax
+    }))
+
     try {
       const bookingData = {
         cafe: cafeId,
@@ -331,7 +339,7 @@ const BookingDetails = () => {
         slot_date: newdate,
         players: teamMembers,
         playerCredits: playerCredits,
-        items: selectedItems
+        items: mappedItems
       };
       if (showOnCredit) {
         let limit = selectedCustomer?.creditLimit - selectedCustomer?.creditAmount
@@ -349,10 +357,14 @@ const BookingDetails = () => {
   const handlePayLater = async () => {
     try {
       if(selectedGame?.data?.type === "Multiplayer" && selectedCustomer && teamMembers.length < 1) {
-        console.log("reached here")
         window.alert("Please add at least 2 players")
         return
       }
+
+      const mappedItems = selectedItems.map((item) => ({
+        ...item,
+        tax_amt: item.totalTax
+      }))
   
       const bookingData = {
         cafe: cafeId,
@@ -364,7 +376,7 @@ const BookingDetails = () => {
         total: selectedGame?.data?.price,
         slot_date: newdate,
         players: teamMembers,
-        items: selectedItems
+        items: mappedItems
       };
       const response = await dispatch(addBooking(bookingData)).unwrap()
 
@@ -393,18 +405,11 @@ const BookingDetails = () => {
     setSearchCustTerm("");
     setSearchedCustomers([]);
 
-    console.log("customer", customer);
-    console.log("teamMembers", teamMembers);
-
     let isAlreadyAdded = teamMembers.some(
       (member) => member.id === customer._id
-    );
-
-    console.log("isAlreadyAdded", isAlreadyAdded);
+    ) || selectedCustomer?._id === customer._id;
 
     // isAlreadyAdded = selectedCustomer._id === customer._id
-
-    console.log("isAlreadyAdded", isAlreadyAdded);
 
     if (!isAlreadyAdded) {
       setTeamMembers([...teamMembers,
@@ -462,10 +467,14 @@ const BookingDetails = () => {
   const handleOnlinePayment = async () => {
     try {
       if(selectedGame?.data?.type === "Multiplayer" && selectedCustomer && teamMembers.length < 1) {
-        console.log("reached here")
         window.alert("Please add at least 2 players")
         return
       }
+
+      const mappedItems = selectedItems.map((item) => ({
+        ...item,
+        tax_amt: item.totalTax
+      }))
   
       // Step 1: Create Razorpay Order FIRST (before creating booking)
       const response = await fetch(`${backend_url}/admin/booking/payment`, {
@@ -514,7 +523,7 @@ const BookingDetails = () => {
               playerCredits: playerCredits,
               slot_date: newdate,
               players: teamMembers,
-              items: selectedItems
+              items: mappedItems
             };
 
             const result = await dispatch(addBooking(bookingData)).unwrap();
@@ -586,11 +595,9 @@ const BookingDetails = () => {
     // Optional: adjust dropdown indicator and other parts if needed
   };
 
-  console.log("players", playerCredits);
-
   return (
     <Container fluid className="p-4 ">
-      <h6 className="mb-3 text-muted">
+      <h6 className="mb-3 muted-text">
         Home / Purchase / Vendor List/{" "}
         <span className="text-primary">Purchase Order</span>
       </h6>
@@ -661,7 +668,7 @@ const BookingDetails = () => {
                       />
                       <div>
                         <h6 className="mb-0">{customer.name}</h6>
-                        <small className="text-muted">
+                        <small className="muted-text">
                           {customer.email || customer.phone}
                         </small>
                       </div>
@@ -683,7 +690,7 @@ const BookingDetails = () => {
                     />
                     <div>
                       <h6 className="mb-0">{selectedCustomer.name}</h6>
-                      <small className="text-muted">
+                      <small className="muted-text">
                         {selectedCustomer.email || selectedCustomer.phone}
                       </small>
                     </div>
@@ -691,13 +698,18 @@ const BookingDetails = () => {
 
                   {showInput ? (
                     <div className="mb-2 d-flex flex-column gap-2">
-                      <Form.Control
+                        <Form.Control
                         type="text"
                         placeholder="Enter player name"
                         value={searchCustTerm}
+                        // onChange={(e) => {
+                        //   setNewPlayer({ ...newPlayer, name: e.target.value });
+                        //   setSearchCustTerm(e.target.value);
+                        // }}
                         onChange={(e) => {
-                          setNewPlayer({ ...newPlayer, name: e.target.value });
-                          setSearchCustTerm(e.target.value);
+                          const name = e.target.value.replace(/[^a-zA-Z\s]/g, ""); // Allow only letters and spaces
+                          setNewPlayer({ ...newPlayer, name });
+                          setSearchCustTerm(name);
                         }}
                       />
 
@@ -714,11 +726,18 @@ const BookingDetails = () => {
                           ))}
                         </ul>
                       )}
-                      <Form.Control
-                        type="text"
+                       <Form.Control
+                         type="text"
+                         inputMode="numeric"
+                         pattern="[0-9]*"
                         placeholder="Enter contact number"
+                        maxLength={10}
                         value={newPlayer.contact_no}
-                        onChange={(e) => setNewPlayer({ ...newPlayer, contact_no: e.target.value })}
+                        // onChange={(e) => setNewPlayer({ ...newPlayer, contact_no: e.target.value })}
+                        onChange={(e) => {
+                          const contact_no = e.target.value.replace(/\D/g, ""); // Allow only numeric input
+                          setNewPlayer({ ...newPlayer, contact_no });
+                        }}
                       />
                       <Button variant="primary" onClick={handleAddPlayer}>
                         Add
@@ -745,7 +764,7 @@ const BookingDetails = () => {
 
                   {teamMembers.length > 0 && (
                     <div className="mt-3 mx-2">
-                      <h5 className="fw-bold">No of Candidates  ({teamMembers.length + 1})</h5>
+                      <h5 className="text-color">No of Candidates  ({teamMembers.length + 1})</h5>
                       {teamMembers.map((player, index) => (
                         <p key={index} className="mt-4">
                           {player.name} - {player.contact_no} <span className="float-end"><RxCross2 size={20} className="text-danger" onClick={() => handleRemovePlayer(player.id)} /></span>
@@ -785,8 +804,8 @@ const BookingDetails = () => {
                   {selectedCustomer ? (
                     <>
                       <Row className="mb-5">
-                        <Col xs={6} className="text-muted"></Col>
-                        <Col xs={6} className="text-dark"></Col>
+                        <Col xs={6} className="muted-text"></Col>
+                        <Col xs={6} className="text-color"></Col>
                       </Row>
                       <Row className="mb-3">
                         <Col xs={6} className="text-color">Customer Name:</Col>
@@ -824,7 +843,7 @@ const BookingDetails = () => {
                     </>
                   ) : (
                     <div className="d-flex justify-content-center mt-6 align-items-center h-100">
-                      <p className="text-muted mb-0">Select Customers</p>
+                      <p className="muted-text mb-0">Select Customers</p>
                     </div>
                   )}
                 </div>
@@ -894,7 +913,7 @@ const BookingDetails = () => {
                         />} */}
                     </>
                   ) : (
-                    <p className="text-muted d-flex justify-content-center align-items-center h-100 w-100 mb-0">
+                    <p className="muted-text d-flex justify-content-center align-items-center h-100 w-100 mb-0">
                       Select Customers
                     </p>
                   )}
@@ -1078,7 +1097,7 @@ const BookingDetails = () => {
                               }}
                               onWheel={(e) => e.stopPropagation()}
                             >{product.item}</div>
-                            <div className="text-muted small mb-1">₹{product.price} each</div>
+                            <div className="muted-text small mb-1">₹{product.price} each</div>
                           </div>
 
                           <div style={{ flex: 1 }}>
@@ -1162,11 +1181,11 @@ const BookingDetails = () => {
                             setPayableAmount((prevPayable) => prevPayable - product.total);
                           }}
                         >
-                          <FaTrash style={{
-                            top: "10px",
+                          <TbTrash style={{
+                            top: "15px",
                             right: "-30px",
                             zIndex: 2,
-                          }} size={12} />
+                          }} size={20} />
                         </span>
 
                         {/* Product Card */}
@@ -1191,7 +1210,7 @@ const BookingDetails = () => {
                               >
                                 {product.item}
                               </div>
-                              <div className="text-muted small mb-1">₹{product.price} each</div>
+                              <div className="muted-text small mb-1">₹{product.price} each</div>
                             </div>
 
                             {/* Quantity Controls */}

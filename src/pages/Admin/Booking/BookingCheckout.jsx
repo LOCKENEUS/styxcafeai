@@ -398,32 +398,32 @@
 //               </Col>
 //               <Col className="p-0">
 //                 <h5 className="mb-0">{selectedCustomer?.name}</h5>
-//                 <small className="text-muted">Booking ID : {booking?.booking_id}</small>
+//                 <small className="muted-text">Booking ID : {booking?.booking_id}</small>
 //               </Col>
 //             </Row>
 //             <hr />
 //             <div>
 //               <p className="d-flex justify-content-between">
-//                 <strong className="text-dark">Full Name:</strong> <span>{selectedCustomer?.name}</span>
+//                 <strong className="text-color">Full Name:</strong> <span>{selectedCustomer?.name}</span>
 //               </p>
 //               <p className="d-flex justify-content-between">
-//                 <strong className="text-dark">Email Id:</strong> <span>{selectedCustomer?.email}</span>
+//                 <strong className="text-color">Email Id:</strong> <span>{selectedCustomer?.email}</span>
 //               </p>
 //               <p className="d-flex justify-content-between">
-//                 <strong className="text-dark">Phone Number:</strong> <span>{selectedCustomer?.contact_no}</span>
+//                 <strong className="text-color">Phone Number:</strong> <span>{selectedCustomer?.contact_no}</span>
 //               </p>
 //               <p className="d-flex justify-content-between">
-//                 <strong className="text-dark">Payment Status:</strong>
+//                 <strong className="text-color">Payment Status:</strong>
 //                 <span className="text-success">{booking?.status}</span>
 //               </p>
 //               <p className="d-flex justify-content-between">
-//                 <strong className="text-dark">Credit:</strong> <span className="text-warning">₹ {selectedCustomer?.creditLimit - selectedCustomer?.creditAmount} Remaining</span>
+//                 <strong className="text-color">Credit:</strong> <span className="text-warning">₹ {selectedCustomer?.creditLimit - selectedCustomer?.creditAmount} Remaining</span>
 //               </p>
 //               <p className="d-flex justify-content-between">
-//                 <strong className="text-dark">Location:</strong> <span>{selectedCustomer?.address || "-"}</span>
+//                 <strong className="text-color">Location:</strong> <span>{selectedCustomer?.address || "-"}</span>
 //               </p>
 //               <p className="d-flex justify-content-between">
-//                 <strong className="text-dark">Played Games:</strong> <span>{booking?.totalGamesPlayed}</span>
+//                 <strong className="text-color">Played Games:</strong> <span>{booking?.totalGamesPlayed}</span>
 //               </p>
 //             </div>
 
@@ -466,11 +466,11 @@
 //                 </h5>
 //                 <Row>
 //                   <Col xs={6}>
-//                     <p className="text-muted m-0">Selected Game</p>
+//                     <p className="muted-text m-0">Selected Game</p>
 //                   </Col>
 //                   <Col xs={6}>
-//                     <p className="text-muted m-0">
-//                       <span className="fw-bold text-dark">{selectedGame?.name}({selectedGame?.size})</span>
+//                     <p className="muted-text m-0">
+//                       <span className="fw-bold text-color">{selectedGame?.name}({selectedGame?.size})</span>
 //                       <span>
 //                         <Button
 //                           variant="success"
@@ -489,42 +489,42 @@
 //                 </Row>
 //                 <Row className="mb-1">
 //                   <Col xs={6}>
-//                     <p className="text-muted">No. of Candidates</p>
+//                     <p className="muted-text">No. of Candidates</p>
 //                   </Col>
 //                   <Col xs={6}>
-//                     <p className="text-muted"><span className="fw-bold text-dark">{booking?.players?.length + 1}</span></p>
-//                   </Col>
-//                 </Row>
-//                 <Row className="mb-1">
-//                   <Col xs={6}>
-//                     <p className="text-muted">Slot Details</p>
-//                   </Col>
-//                   <Col xs={6}>
-//                     <span className="fw-bold text-dark">{selectedGame?.name} {slot?.name}</span>
+//                     <p className="muted-text"><span className="fw-bold text-color">{booking?.players?.length + 1}</span></p>
 //                   </Col>
 //                 </Row>
 //                 <Row className="mb-1">
 //                   <Col xs={6}>
-//                     <p className="text-muted">Time Slot</p>
+//                     <p className="muted-text">Slot Details</p>
 //                   </Col>
 //                   <Col xs={6}>
-//                     <span className="fw-bold text-dark">{slot?.start_time && convertTo12Hour(slot?.start_time)} - {slot?.end_time && convertTo12Hour(slot.end_time)}</span>
-//                   </Col>
-//                 </Row>
-//                 <Row className="mb-1">
-//                   <Col xs={6}>
-//                     <p className="text-muted">Day/Date</p>
-//                   </Col>
-//                   <Col xs={6}>
-//                     <span className="fw-bold text-dark">{formatDate(booking?.slot_date)}</span>
+//                     <span className="fw-bold text-color">{selectedGame?.name} {slot?.name}</span>
 //                   </Col>
 //                 </Row>
 //                 <Row className="mb-1">
 //                   <Col xs={6}>
-//                     <p className="text-muted">Booking ID</p>
+//                     <p className="muted-text">Time Slot</p>
 //                   </Col>
 //                   <Col xs={6}>
-//                     <span className="fw-bold text-dark">{booking?.booking_id}</span>
+//                     <span className="fw-bold text-color">{slot?.start_time && convertTo12Hour(slot?.start_time)} - {slot?.end_time && convertTo12Hour(slot.end_time)}</span>
+//                   </Col>
+//                 </Row>
+//                 <Row className="mb-1">
+//                   <Col xs={6}>
+//                     <p className="muted-text">Day/Date</p>
+//                   </Col>
+//                   <Col xs={6}>
+//                     <span className="fw-bold text-color">{formatDate(booking?.slot_date)}</span>
+//                   </Col>
+//                 </Row>
+//                 <Row className="mb-1">
+//                   <Col xs={6}>
+//                     <p className="muted-text">Booking ID</p>
+//                   </Col>
+//                   <Col xs={6}>
+//                     <span className="fw-bold text-color">{booking?.booking_id}</span>
 //                   </Col>
 //                 </Row>
 //               </Card>
@@ -607,7 +607,7 @@
 //                                   >
 //                                     {product.item}
 //                                   </div>
-//                                   <div className="text-muted small mb-1">₹{product.price} each</div>
+//                                   <div className="muted-text small mb-1">₹{product.price} each</div>
 //                                 </div>
 
 //                                 <div style={{ flex: 1 }}>
@@ -683,11 +683,11 @@
 
 //                   <Col md={3} className="p-0">
 //                     <div className="">
-//                       <p className="mb-0 text-muted">
+//                       <p className="mb-0 muted-text">
 //                         <strong>Start Time:</strong>
 //                         <span className="ms-2">{booking?.start_time ? new Date(booking?.start_time).toLocaleTimeString() : new Date().toLocaleTimeString()}</span>
 //                       </p>
-//                       <p className="mb-0 text-muted">
+//                       <p className="mb-0 muted-text">
 //                         <strong>End Time:</strong>
 //                         <span className="ms-2"> {booking?.end_time ? new Date(booking?.end_time).toLocaleTimeString() : "-"}</span>
 //                       </p>
@@ -811,10 +811,10 @@
 
 //                     <Col md={4} className="p-0">
 //                       <div className="ms-3">
-//                         <p className="mb-0 text-muted">
+//                         <p className="mb-0 muted-text">
 //                           <strong>Start Time:</strong> {new Date(booking?.start_time).toLocaleTimeString()}
 //                         </p>
-//                         <p className="mb-0 text-muted">
+//                         <p className="mb-0 muted-text">
 //                           <strong>End Time:</strong> {booking?.end_time ? new Date(booking?.end_time).toLocaleTimeString() : "-"}
 //                         </p>
 //                       </div>
@@ -880,7 +880,7 @@
 //                                   </li>
 //                                 ))
 //                               ) : (
-//                                 <li className="text-muted">No Players</li>
+//                                 <li className="muted-text">No Players</li>
 //                               )}
 //                             </ul>
 //                           </Tooltip>
@@ -907,7 +907,7 @@
 //                                 />
 //                               ))}
 //                             {players?.length > maxVisiblePlayers && (
-//                               <span className="fw-bold text-muted ms-2">+{players.length - maxVisiblePlayers}</span>
+//                               <span className="fw-bold muted-text ms-2">+{players.length - maxVisiblePlayers}</span>
 //                             )}
 //                           </div>
 //                         </Stack>
@@ -925,17 +925,17 @@
 //               <h5 className="fs-3">Payment Details</h5>
 //               <Row className="mt-1">
 //                 <Col xs={6} className="text-primary fw-semibold">{selectedGame?.name} ({selectedGame?.size})</Col>
-//                 <Col xs={3} className="text-muted">{booking?.players?.length + 1} Candidates</Col>
+//                 <Col xs={3} className="muted-text">{booking?.players?.length + 1} Candidates</Col>
 //                 <Col xs={3} className="text-end">{(booking?.total - booking?.paid_amount) > 0 && <span className="text-danger">₹ {booking?.total - booking?.paid_amount} Pending</span>} </Col>
 //               </Row>
 //               <hr className="m-1" />
 
 //               <Row className="mt-1">
 //                 <Col xs={6} className="d-flex align-items-center">
-//                   <p className="text-muted">Total Amount</p>
+//                   <p className="muted-text">Total Amount</p>
 //                 </Col>
 //                 <Col xs={6} className="mb-2">
-//                   <span className="fw-bold text-dark">
+//                   <span className="fw-bold text-color">
 //                     <Form.Control
 //                       size="sm"
 //                       type="text"
@@ -950,7 +950,7 @@
 
 //               <Row>
 //                 <Col xs={6} className="d-flex align-items-center">
-//                   <p className="text-muted">Adjustment</p>
+//                   <p className="muted-text">Adjustment</p>
 //                 </Col>
 //                 <Col xs={6} className="mb-2">
 //                   <Form.Control
@@ -965,7 +965,7 @@
 
 //               <Row className="mb-2">
 //                 <Col xs={6}>
-//                   <p className="text-muted">Payable Amount</p>
+//                   <p className="muted-text">Payable Amount</p>
 //                 </Col>
 //                 <Col xs={6}>
 //                   <Form.Control
@@ -979,7 +979,7 @@
 
 //               <Row className="mb-2">
 //                 <Col xs={6}>
-//                   <p className="text-muted">Credit Amount</p>
+//                   <p className="muted-text">Credit Amount</p>
 //                 </Col>
 //                 <Col xs={6}>
 //                   <Form.Control
@@ -994,7 +994,7 @@
 
 //               {creditAmount > 0 && <div className="mt-4">
 //                 <h4>Credit Collection
-//                   {/* <Button size="sm" className="btn btn-primary bg-body text-dark" onClick={handleSplitCredit}>Split Credit</Button> */}
+//                   {/* <Button size="sm" className="btn btn-primary bg-body text-color" onClick={handleSplitCredit}>Split Credit</Button> */}
 //                 </h4>
 //                 <Table bordered hover responsive size="sm" className="mt-2">
 //                   <thead className="bg-light">
@@ -1072,7 +1072,7 @@
 //               <h5 className="fs-3">Payment Details</h5>
 //               <Row className="mt-1">
 //                 <Col xs={6} className="text-primary fw-semibold">{selectedGame?.name} ({selectedGame?.size})</Col>
-//                 <Col xs={3} className="text-dark">
+//                 <Col xs={3} className="text-color">
 //                   {/* {booking?.players?.length + 1} <span>Candidates</span> */}
 //                   <OverlayTrigger
 //                     placement="right"
@@ -1090,7 +1090,7 @@
 //                               <li key={index} className="p-1">{player.name}</li>
 //                             ))
 //                           ) : (
-//                             <li className="text-muted">No Players</li>
+//                             <li className="muted-text">No Players</li>
 //                           )}
 //                         </ul>
 //                       </Tooltip>
@@ -1101,15 +1101,15 @@
 //                     </span>
 //                   </OverlayTrigger>
 //                 </Col>
-//                 {/* <Col xs={3} className="text-end text-muted">₹ {booking?.total - booking?.paid_amount} Balance</Col> */}
+//                 {/* <Col xs={3} className="text-end muted-text">₹ {booking?.total - booking?.paid_amount} Balance</Col> */}
 //                 {/* <Col xs={3} className="text-end">{(booking?.total - booking?.paid_amount) > 0 && <span className="fs-3 text-danger">₹ { booking?.total - booking?.paid_amount} Pending</span>} </Col> */}
 
 //               </Row>
 //               <hr className="m-1" />
 
 //               <Row className="mt-4">
-//                 <Col xs={6} className="text-dark fw-semibold">Payment Mode</Col>
-//                 <Col xs={6} className="text-muted">
+//                 <Col xs={6} className="text-color fw-semibold">Payment Mode</Col>
+//                 <Col xs={6} className="muted-text">
 //                   <span
 //                     className="d-flex align-items-center w-25"
 //                     style={{
@@ -1142,23 +1142,23 @@
 //               </Row>
 
 //               <Row className="mt-4">
-//                 <Col xs={6} className="text-dark fw-semibold">Amount Paid</Col>
-//                 <Col xs={6} className="text-muted">₹ {booking?.paid_amount}</Col>
+//                 <Col xs={6} className="text-color fw-semibold">Amount Paid</Col>
+//                 <Col xs={6} className="muted-text">₹ {booking?.paid_amount}</Col>
 //               </Row>
 
 //               <Row className="mt-4">
-//                 <Col xs={6} className="text-dark fw-semibold">Credit Amount</Col>
-//                 <Col xs={6} className="text-muted">₹ {booking?.paid_amount}</Col>
+//                 <Col xs={6} className="text-color fw-semibold">Credit Amount</Col>
+//                 <Col xs={6} className="muted-text">₹ {booking?.paid_amount}</Col>
 //               </Row>
 
 //               <Row className="mt-4">
-//                 <Col xs={6} className="text-dark fw-semibold">Transaction ID</Col>
-//                 <Col xs={6} className="text-muted">{booking?.transaction?.razorpay_payment_id || "-"}</Col>
+//                 <Col xs={6} className="text-color fw-semibold">Transaction ID</Col>
+//                 <Col xs={6} className="muted-text">{booking?.transaction?.razorpay_payment_id || "-"}</Col>
 //               </Row>
 
 //               <Row className="mt-4">
-//                 <Col xs={6} className="text-dark fw-semibold">Date/Time</Col>
-//                 <Col xs={6} className="text-muted">
+//                 <Col xs={6} className="text-color fw-semibold">Date/Time</Col>
+//                 <Col xs={6} className="muted-text">
 //                   {booking?.mode === "Online" ? formatDateAndTime(booking?.transaction?.createdAt) : formatDateAndTime(booking?.createdAt)}
 //                 </Col>
 //               </Row>
@@ -1274,6 +1274,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { getTaxFields } from "../../../store/AdminSlice/TextFieldSlice";
 import CreditSplit from "./Model/CreditSplit";
 import { FaTrash } from "react-icons/fa6";
+import { TbTrash } from "react-icons/tb";
 
 const BookingCheckout = () => {
 
@@ -1312,6 +1313,7 @@ const BookingCheckout = () => {
   const [paused, setPaused] = useState(false);
   const [isStopped, setIsStopped] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [total, setTotal] = useState(0);
   const [totals, setTotals] = useState({
     subtotal: 0,
     discount: 0,
@@ -1352,9 +1354,9 @@ const BookingCheckout = () => {
 
       if (booking?.so_id) {
         setShowInventory(true)
-        const mappedItems = booking.so_id.items.map((item) => ({ id: item.item_id, item: item.item, price: item.price, quantity: item.quantity, tax: item.tax, total: item.total, totalTax: item.totalTax }));
+        const mappedItems = booking.so_id.items.map((item) => ({ id: item.item_id._id, item: item.item, price: item.price, quantity: item.quantity, tax: item.tax, total: item.total, totalTax: item.tax_amt }));
         setSelectedItems(mappedItems)
-        setSelectedIds(mappedItems.map((item) =>item.id._id));
+        setSelectedIds(mappedItems.map((item) => item.id._id));
       }
 
       dispatch(initializeTimer(booking))
@@ -1389,12 +1391,13 @@ const BookingCheckout = () => {
   useEffect(() => {
     const secondsElapsed = currentTime;
     setPriceToPay(Math.round(secondsElapsed * pricePerSecond));
-    if (addOnTotal > 0) {
-      setPriceToPay(Math.round((secondsElapsed * pricePerSecond) + addOnTotal));
-    }
-    if (adjustment > 0) {
-      setPriceToPay(Math.round((secondsElapsed * pricePerSecond) + addOnTotal - adjustment));
-    }
+    setTotal(Math.round(secondsElapsed * pricePerSecond) + addOnTotal - adjustment);
+    // if (addOnTotal > 0) {
+    //   setPriceToPay(Math.round((secondsElapsed * pricePerSecond) + addOnTotal));
+    // }
+    // if (adjustment > 0) {
+    //   setPriceToPay(Math.round((secondsElapsed * pricePerSecond) + addOnTotal - adjustment));
+    // }
   }, [currentTime, pricePerSecond, addOnTotal, adjustment]);
 
   useEffect(() => {
@@ -1408,6 +1411,8 @@ const BookingCheckout = () => {
   }, [selectedItems]);
 
   const handleChange = (selectedOption) => {
+    console.log("selectedOption", selectedOption)
+    console.log("selectedIds", selectedIds)
     let id = selectedOption.value;
     if (!id || selectedIds.includes(id)) return;
     // if (!id || selectedIds.includes(_id)) return;
@@ -1436,9 +1441,9 @@ const BookingCheckout = () => {
       if (product.id === id) {
         // const updatedQuantity = field === "quantity" ? parseInt(value.replace(/\D/g, ""), 10) || 0 : product.quantity; // Ensure only numeric input
         const updatedQuantity = field === "quantity"
-        ? parseInt(String(value).replace(/\D/g, ""), 10) || 0
-        : product.quantity;
-        
+          ? parseInt(String(value).replace(/\D/g, ""), 10) || 0
+          : product.quantity;
+
         const taxRate = product.tax?.tax_rate || 0;
         const totalTax = Math.round((taxRate * product.price * updatedQuantity) / 100);
         const total = product.price * updatedQuantity + totalTax;
@@ -1506,6 +1511,11 @@ const BookingCheckout = () => {
         ...rest,
       }));
 
+      if (payableAmount <= 0) {
+        alert("Amount must be greater than 0")
+        return
+      }
+
       const response = await dispatch(
         processOnlinePayment({
           selectedGame,
@@ -1513,10 +1523,11 @@ const BookingCheckout = () => {
           slot,
           payableAmount,
           paid_amount: payableAmount,
-          total: priceToPay,
+          total: total,
           looserPlayer: looserPlayer,
           bookingId: booking?._id,
           playerCredits: formattedPlayers,
+          adjustment
         })
       );
 
@@ -1528,7 +1539,7 @@ const BookingCheckout = () => {
     }
   };
 
-  const handleCollectOffline = async (finalPlayers,currentTotal) => {
+  const handleCollectOffline = async (finalPlayers, currentTotal) => {
     const formattedPlayers = finalPlayers.map(({ _id, ...rest }) => ({
       id: _id,
       ...rest,
@@ -1550,10 +1561,11 @@ const BookingCheckout = () => {
       const bookingData = {
         mode: "Offline",
         status: "Paid",
-        total: priceToPay,
+        total: total,
         paid_amount: currentTotal,
         playerCredits: formattedPlayers,
-        looserPlayer: looserPlayer
+        looserPlayer: looserPlayer,
+        adjustment
       };
       await dispatch(updateBooking({ id: booking?._id, updatedData: bookingData })).unwrap()
     } catch (error) { }
@@ -1563,6 +1575,8 @@ const BookingCheckout = () => {
     setLooserPlayer(player);
   };
 
+  console.log("playerCredits", booking?.playerCredits);
+
   return (
     <Container className="mt-4">
       <Row>
@@ -1571,15 +1585,15 @@ const BookingCheckout = () => {
             {"Bookings/Checkout"}
           </span>
         </h5>
-        <div>
+        {/* <div>
           <IoFastFoodOutline className="me-2 float-end fs-1 m-2" onClick={() => setShowInventory(!showInventory)}
           />
-        </div>
+        </div> */}
 
       </Row>
 
       <Row>
-        <Col md={3} className="border-0">
+        <Col md={3} className="border-0 p-0">
           <Card className="p-3">
             <Card.Img
               variant="top"
@@ -1597,32 +1611,32 @@ const BookingCheckout = () => {
               </Col>
               <Col className="p-0">
                 <h5 className="mb-0">{selectedCustomer?.name}</h5>
-                <small className="text-muted">Booking ID : {booking?.booking_id}</small>
+                <small className="muted-text">Booking ID : {booking?.booking_id}</small>
               </Col>
             </Row>
             <hr />
-            <div>
+            <div className="w-100">
               <p className="d-flex justify-content-between">
-                <strong className="text-dark">Full Name:</strong> <span>{selectedCustomer?.name}</span>
+                <strong className="text-color">Full Name:</strong> <span>{selectedCustomer?.name}</span>
               </p>
               <p className="d-flex justify-content-between">
-                <strong className="text-dark">Email Id:</strong> <span>{selectedCustomer?.email}</span>
+                <strong className="text-color">Email:</strong> <span>{selectedCustomer?.email}</span>
               </p>
               <p className="d-flex justify-content-between">
-                <strong className="text-dark">Phone Number:</strong> <span>{selectedCustomer?.contact_no}</span>
+                <strong className="text-color">Phone Number:</strong> <span>{selectedCustomer?.contact_no}</span>
               </p>
               <p className="d-flex justify-content-between">
-                <strong className="text-dark">Payment Status:</strong>
+                <strong className="text-color">Payment Status:</strong>
                 <span className="text-success">{booking?.status}</span>
               </p>
               <p className="d-flex justify-content-between">
-                <strong className="text-dark">Credit:</strong> <span className="text-warning">₹ {selectedCustomer?.creditLimit - selectedCustomer?.creditAmount} Remaining</span>
+                <strong className="text-color">Credit:</strong> <span className="text-warning">₹ {selectedCustomer?.creditLimit - selectedCustomer?.creditAmount} Remaining</span>
               </p>
               <p className="d-flex justify-content-between">
-                <strong className="text-dark">Location:</strong> <span>{selectedCustomer?.address || "-"}</span>
+                <strong className="text-color">Location:</strong> <span>{selectedCustomer?.address || "-"}</span>
               </p>
               <p className="d-flex justify-content-between">
-                <strong className="text-dark">Played Games:</strong> <span>{booking?.totalGamesPlayed}</span>
+                <strong className="text-color">Played Games:</strong> <span>{booking?.totalGamesPlayed}</span>
               </p>
             </div>
 
@@ -1639,14 +1653,14 @@ const BookingCheckout = () => {
               </Col>
             </Row>
           </Card>
-          <Button
+          {booking?.status !== "Pending" ? <></>:<Button
             variant="success"
             className="w-100 mt-3"
             style={{ backgroundColor: "#03D41414", color: "#00AF0F" }}
             onClick={() => navigate(`/admin/booking/edit/${booking?._id}`)}
           >
             Edit Booking
-          </Button>
+          </Button>}
         </Col>
 
         <Col md={9} className="d-flex flex-column gap-1 justify-content-between">
@@ -1655,75 +1669,65 @@ const BookingCheckout = () => {
               md={6}
               className={`d-flex flex-column p-0 justify-content-between transition-col`}
             >
-              <Card className="p-3 h-100" >
-                <h5 className="mb-3 font-inter fs-3">Booking Details
+              <Card className="p-3 h-100" style={{marginLeft:"10px"}}>
+                <h5 className="font-inter mb-3 pb-3 fs-3 text-color" style={{ borderBottom: "1px solid #ccc" }}>Booking Details
                   {selectedGame?.payLater ?
-                    <span className="fw-bold text-info float-end">Amount : ₹ {slot?.slot_price ? slot?.slot_price : selectedGame?.price}/Hour</span>
+                    <span className="fw-bold text-info float-end">Amount : ₹ {slot?.slot_price ? slot?.slot_price : selectedGame?.price}/Hr</span>
                     :
                     <span className="fw-bold text-info float-end">Amount : ₹ {booking?.total}</span>
                   }
                 </h5>
                 <Row>
                   <Col xs={6}>
-                    <p className="text-muted m-0">Selected Game</p>
+                    <p className="text-color m-0">Selected Game</p>
                   </Col>
                   <Col xs={6}>
-                    <p className="text-muted m-0">
-                      <span className="fw-bold text-dark">{selectedGame?.name}({selectedGame?.size})</span>
-                      <span>
-                        <Button
-                          variant="success"
-                          className="mx-2 mb-0 rounded-pill"
-                          style={{
-                            backgroundColor: "#03D41414",
-                            color: "#00AF0F",
-                            border: "none",
-                          }}
-                        >
-                          {selectedGame?.type}
-                        </Button>
+                    <p className="muted-text mb-3">
+                      <span className="muted-text">{selectedGame?.name}({selectedGame?.size})</span>
+                      <span
+                        style={{
+                          backgroundColor: "#03D41414",
+                          color: "#00AF0F",
+                          border: "none",
+                          fontSize: "12px",
+                          marginLeft: "5px",
+                        }}
+                      >
+                        {selectedGame?.type}
                       </span>
                     </p>
                   </Col>
                 </Row>
                 <Row className="mb-1">
                   <Col xs={6}>
-                    <p className="text-muted">No. of Candidates</p>
+                    <p className="text-color">No. of Candidates</p>
                   </Col>
                   <Col xs={6}>
-                    <p className="text-muted"><span className="fw-bold text-dark">{booking?.players?.length + 1}</span></p>
-                  </Col>
-                </Row>
-                <Row className="mb-1">
-                  <Col xs={6}>
-                    <p className="text-muted">Slot Details</p>
-                  </Col>
-                  <Col xs={6}>
-                    <span className="fw-bold text-dark">{selectedGame?.name} {slot?.name}</span>
+                    <p className="muted-text"><span className="muted-text">{booking?.players?.length + 1}</span></p>
                   </Col>
                 </Row>
                 <Row className="mb-1">
                   <Col xs={6}>
-                    <p className="text-muted">Time Slot</p>
+                    <p className="text-color">Time Slot</p>
                   </Col>
                   <Col xs={6}>
-                    <span className="fw-bold text-dark">{slot?.start_time && convertTo12Hour(slot?.start_time)} - {slot?.end_time && convertTo12Hour(slot.end_time)}</span>
-                  </Col>
-                </Row>
-                <Row className="mb-1">
-                  <Col xs={6}>
-                    <p className="text-muted">Day/Date</p>
-                  </Col>
-                  <Col xs={6}>
-                    <span className="fw-bold text-dark">{formatDate(booking?.slot_date)}</span>
+                    <span className="muted-text">{slot?.start_time && convertTo12Hour(slot?.start_time)} - {slot?.end_time && convertTo12Hour(slot.end_time)}</span>
                   </Col>
                 </Row>
                 <Row className="mb-1">
                   <Col xs={6}>
-                    <p className="text-muted">Booking ID</p>
+                    <p className="text-color">Day/Date</p>
                   </Col>
                   <Col xs={6}>
-                    <span className="fw-bold text-dark">{booking?.booking_id}</span>
+                    <span className="muted-text">{formatDate(booking?.slot_date)}</span>
+                  </Col>
+                </Row>
+                <Row className="mb-1">
+                  <Col xs={6}>
+                    <p className="text-color">Booking ID</p>
+                  </Col>
+                  <Col xs={6}>
+                    <span className="muted-text">{booking?.booking_id}</span>
                   </Col>
                 </Row>
               </Card>
@@ -1732,10 +1736,10 @@ const BookingCheckout = () => {
             {showInventory && (
               <Col
                 md={6}
-                className={`transition-col ${showInventory ? "visible" : "hidden"} p-1`}
+                className={`transition-col ${showInventory ? "visible" : "hidden"}`}
                 style={{ display: showInventory ? "block" : "none" }}
               >
-                <Card className="p-1">
+                <Card className="">
                   <div className="bg-white rounded-3 p-0 d-flex flex-column" style={{ height: "350px" }}>
 
                     {/* Sticky Top Input */}
@@ -1746,17 +1750,21 @@ const BookingCheckout = () => {
                         background: "#fff",
                         zIndex: 10,
                         position: "sticky",
+                        borderRadius: "16px",
                         top: 0,
                       }}
                     >
-                      <Select
-                        options={options}
-                        onChange={handleChange}
-                        value={selectedOption}
-                        isSearchable
-                        placeholder="Select for add on's..."
-                        className="mb-1"
-                      />
+                      {booking?.status !== "Pending" ? <span className="text-color fs-4">Selected Items</span> :
+                        <Select
+                          options={options}
+                          onChange={handleChange}
+                          value={selectedOption}
+                          isSearchable
+                          placeholder="Select for add on's..."
+                          className="mb-1"
+                        />
+                      }
+
                     </div>
 
                     {/* Scrollable Content */}
@@ -1807,7 +1815,7 @@ const BookingCheckout = () => {
                         //           >
                         //             {product.item}
                         //           </div>
-                        //           <div className="text-muted small mb-1">₹{product.price} each</div>
+                        //           <div className="muted-text small mb-1">₹{product.price} each</div>
                         //         </div>
 
                         //         <div style={{ flex: 1 }}>
@@ -1864,24 +1872,24 @@ const BookingCheckout = () => {
                               setSelectedItems(updatedProducts);
                               const updatedSelectedIds = selectedIds.filter((id) => id !== product.id);
                               setSelectedIds(updatedSelectedIds);
-                            }}                        >
-                            <FaTrash style={{
-                              top: "10px",
+                            }}                        
+                            >
+                            {booking?.status === "Pending" && <TbTrash style={{
+                              top: "15px",
                               right: "-30px",
                               zIndex: 2,
-                            }} size={12} />
+                            }} size={12} />}
                           </span>
 
                           {/* Product Card */}
                           <div
-                            className="shadow-lg fs-6"
+                            className="fs-6"
                             style={{ background: "#F9F9F9", width: "90%", height: "10%" }}
                           >
                             <div className="d-flex justify-content-between align-items-center p-2">
-                              {/* Product Info */}
                               <div style={{ flex: 1 }}>
                                 <div
-                                  className="fw-semibold fs-6"
+                                  className="fs-6 text-color"
                                   style={{
                                     maxHeight: "20px",
                                     overflowY: "auto",
@@ -1892,14 +1900,14 @@ const BookingCheckout = () => {
                                 >
                                   {product.item}
                                 </div>
-                                <div className="text-muted small mb-1">₹{product.price} each</div>
+                                <div className="muted-text small mb-1">₹{product.price} /each</div>
                               </div>
 
-                              {/* Quantity Controls */}
-                              <div style={{ flex: 1 }}>
-                                <div className="d-flex align-items-center gap-1">
+                              <div style={{ flex: 2 }}>
+                                {booking?.status === "Pending" ? <div className="d-flex align-items-center gap-1">
                                   <Button
                                     variant="light"
+                                    disabled={product.quantity <= 1}
                                     size="sm"
                                     onClick={() =>
                                       updateProduct(
@@ -1929,29 +1937,28 @@ const BookingCheckout = () => {
                                     }
                                   />
 
-                                  <Button
-                                    variant="light"
-                                    size="sm"
-                                    onClick={() =>
-                                      updateProduct(
-                                        product.id,
-                                        "quantity",
-                                        Number(product.quantity) + 1
-                                      )
-                                    }
-                                  >
-                                    +
-                                  </Button>
-                                </div>
+                                <Button
+                                  variant="light"
+                                  size="sm"
+                                  onClick={() =>
+                                    updateProduct(
+                                      product.id,
+                                      "quantity",
+                                      Number(product.quantity) + 1
+                                    )
+                                  }
+                                >
+                                  +
+                                </Button>
+                                </div>: <div className="text-color">Qty: {product.quantity}</div>}
                               </div>
 
-                              {/* Tax & Total */}
                               <div className="text-end ms-3" style={{ minWidth: "120px" }}>
                                 <div className="small">
-                                  Tax ({product?.tax?.tax_rate || 0}%):{" "}
-                                  <span className="fw-semibold">₹{product.totalTax}</span>
+                                  <span className="text-color">Tax</span> (<span className="muted-text">{product?.tax?.tax_rate || 0}% {product?.tax?.tax_name}</span>):{" "}
+                                  <span className="text-color">₹{product.totalTax}</span>
                                 </div>
-                                <div className="fw-semibold">Total: ₹{product.total}</div>
+                                <div className="text-color">Total: ₹{product.total}</div>
                               </div>
                             </div>
                           </div>
@@ -1964,14 +1971,14 @@ const BookingCheckout = () => {
                       style={{
                         padding: "8px 12px",
                         borderTop: "1px solid #ddd",
-                        fontWeight: "600",
+                        // fontWeight: "600",
                         // textAlign: "right",
                         background: "#fff",
                         borderRadius: "0 0 10px 10px",
                       }}
                     >
-                      <span>Total: ₹ {addOnTotal}</span>
-                      <span className="float-end bg-secondary text-white px-2 py-1 rounded" style={{ cursor: "pointer" }} onClick={handleSaveItems}>Save</span>
+                      <span className="text-color">Total: ₹ {addOnTotal}</span>
+                      {booking?.status === "Pending" && <span className="float-end bg-secondary text-white px-2 py-1 rounded" style={{ cursor: "pointer" }} onClick={handleSaveItems}>Save</span>}
                     </div>
                   </div>
                 </Card>
@@ -1994,23 +2001,23 @@ const BookingCheckout = () => {
 
                   <Col md={3} className="p-0">
                     <div className="">
-                      <p className="mb-0 text-muted">
-                        <strong>Start Time:</strong>
-                        <span className="ms-2">{booking?.start_time ? new Date(booking?.start_time).toLocaleTimeString() : new Date().toLocaleTimeString()}</span>
+                      <p className="mb-0 text-color">
+                        Start Time:
+                        <span className="ms-2 muted-text">{booking?.start_time ? new Date(booking?.start_time).toLocaleTimeString() : new Date().toLocaleTimeString()}</span>
                       </p>
-                      <p className="mb-0 text-muted">
-                        <strong>End Time:</strong>
-                        <span className="ms-2"> {booking?.end_time ? new Date(booking?.end_time).toLocaleTimeString() : "-"}</span>
+                      <p className="mb-0 text-color">
+                        End Time:
+                        <span className="ms-2 muted-text"> {booking?.end_time ? new Date(booking?.end_time).toLocaleTimeString() : "-"}</span>
                       </p>
                     </div>
                   </Col>
 
                   <Col md={2} className="p-0">
-                    <h3 className="fw-bold pt-2"> ₹ {priceToPay}</h3>
+                    <h3 className="text-color pt-2"> ₹ {priceToPay}</h3>
                   </Col>
 
                   <Col md={3} className="p-0">
-                    Player Lost : {booking?.looserPlayer?.name}
+                    Player Lost : {booking?.looserPlayer?.name || "-"}
                   </Col>
 
                 </Row>
@@ -2122,10 +2129,10 @@ const BookingCheckout = () => {
 
                     <Col md={4} className="p-0">
                       <div className="ms-3">
-                        <p className="mb-0 text-muted">
+                        <p className="mb-0 muted-text">
                           <strong>Start Time:</strong> {new Date(booking?.start_time).toLocaleTimeString()}
                         </p>
-                        <p className="mb-0 text-muted">
+                        <p className="mb-0 muted-text">
                           <strong>End Time:</strong> {booking?.end_time ? new Date(booking?.end_time).toLocaleTimeString() : "-"}
                         </p>
                       </div>
@@ -2190,7 +2197,7 @@ const BookingCheckout = () => {
                                   </li>
                                 ))
                               ) : (
-                                <li className="text-muted">No Players</li>
+                                <li className="muted-text">No Players</li>
                               )}
                             </ul>
                           </Tooltip>
@@ -2217,7 +2224,7 @@ const BookingCheckout = () => {
                                 />
                               ))}
                             {players?.length > maxVisiblePlayers && (
-                              <span className="fw-bold text-muted ms-2">+{players.length - maxVisiblePlayers}</span>
+                              <span className="fw-bold muted-text ms-2">+{players.length - maxVisiblePlayers}</span>
                             )}
                           </div>
                         </Stack>
@@ -2232,27 +2239,27 @@ const BookingCheckout = () => {
 
           {booking?.status === "Pending" ?
             <Card className="p-3 rounded-3">
-              <h5 className="fs-3">Payment Details</h5>
+              <h5 className="fs-3 text-color">Payment Details</h5>
               <Row className="mt-1">
-                <Col xs={6} className="text-primary fw-semibold">{selectedGame?.name} ({selectedGame?.size})</Col>
-                <Col xs={3} className="text-muted">{booking?.players?.length + 1} Candidates</Col>
+                <Col xs={6} className="text-primary fw-semibold">{selectedGame?.name} ({selectedGame?.size}) </Col>
+                <Col xs={3} className="muted-text">{booking?.players?.length + 1} Candidates</Col>
                 <Col xs={3} className="text-end">{(booking?.total - booking?.paid_amount) > 0 && <span className="text-danger">₹ {booking?.total - booking?.paid_amount} Pending</span>} </Col>
               </Row>
               <hr className="m-1" />
 
               <Row className="mt-1">
                 <Col xs={6} className="d-flex align-items-center">
-                  <p className="text-muted">Total Amount</p>
+                  <p className="text-color">Total Amount</p>
                 </Col>
                 <Col xs={6} className="mb-2">
-                  <span className="fw-bold text-dark">
+                  <span className="fw-bold text-color">
                     <Form.Control
                       size="sm"
                       type="text"
                       placeholder="Disabled readonly input"
                       aria-label="Disabled input example"
                       readOnly
-                      value={priceToPay}
+                      value={total}
                     />
                   </span>
                 </Col>
@@ -2260,7 +2267,7 @@ const BookingCheckout = () => {
 
               <Row>
                 <Col xs={6} className="d-flex align-items-center">
-                  <p className="text-muted">Adjustment </p>
+                  <p className="text-color">Adjustment </p>
                 </Col>
                 <Col xs={6} className="mb-2">
                   <Form.Control
@@ -2316,7 +2323,7 @@ const BookingCheckout = () => {
 
               {/* <Row className="mb-2">
                 <Col xs={6}>
-                  <p className="text-muted">Payable Amount</p>
+                  <p className="muted-text">Payable Amount</p>
                 </Col>
                 <Col xs={6}>
                   <Form.Control
@@ -2330,7 +2337,7 @@ const BookingCheckout = () => {
 
               {/* <Row className="mb-2">
                 <Col xs={6}>
-                  <p className="text-muted">Credit Amount</p>
+                  <p className="muted-text">Credit Amount</p>
                 </Col>
                 <Col xs={6}>
                   <Form.Control
@@ -2345,7 +2352,7 @@ const BookingCheckout = () => {
 
               {creditAmount > 0 && <div className="mt-4">
                 <h4>Credit Collection
-                  {/* <Button size="sm" className="btn btn-primary bg-body text-dark" onClick={handleSplitCredit}>Split Credit</Button> */}
+                  {/* <Button size="sm" className="btn btn-primary bg-body text-color" onClick={handleSplitCredit}>Split Credit</Button> */}
                 </h4>
                 <Table bordered hover responsive size="sm" className="mt-2">
                   <thead className="bg-light">
@@ -2431,7 +2438,7 @@ const BookingCheckout = () => {
                     handleClose={() => setShowCreditModal(false)}
                     handleCollectOffline={handleCollectOffline}
                     handleOnlinePayment={handleOnlinePayment}
-                    totalAmount={priceToPay}
+                    totalAmount={total}
                     players={players}
                     customer={selectedCustomer}
                   />}
@@ -2441,8 +2448,8 @@ const BookingCheckout = () => {
             <Card className="p-3 rounded-3 h-100">
               <h5 className="fs-3">Payment Details</h5>
               <Row className="mt-1">
-                <Col xs={6} className="text-primary fw-semibold">{selectedGame?.name} ({selectedGame?.size})</Col>
-                <Col xs={3} className="text-dark">
+                <Col xs={6} className="text-primary fw-semibold">{selectedGame?.name} ({selectedGame?.size}) </Col>
+                <Col xs={3} className="text-color">
                   {/* {booking?.players?.length + 1} <span>Candidates</span> */}
                   <OverlayTrigger
                     placement="right"
@@ -2460,7 +2467,7 @@ const BookingCheckout = () => {
                               <li key={index} className="p-1">{player.name}</li>
                             ))
                           ) : (
-                            <li className="text-muted">No Players</li>
+                            <li className="muted-text">No Players</li>
                           )}
                         </ul>
                       </Tooltip>
@@ -2471,15 +2478,15 @@ const BookingCheckout = () => {
                     </span>
                   </OverlayTrigger>
                 </Col>
-                {/* <Col xs={3} className="text-end text-muted">₹ {booking?.total - booking?.paid_amount} Balance</Col> */}
+                <Col xs={3} className="text-end text-color">₹ {booking?.total + booking?.adjustment} Total</Col>
+                {/* <Col xs={3} className="text-end muted-text">₹ {booking?.total - booking?.paid_amount} Balance</Col> */}
                 {/* <Col xs={3} className="text-end">{(booking?.total - booking?.paid_amount) > 0 && <span className="fs-3 text-danger">₹ { booking?.total - booking?.paid_amount} Pending</span>} </Col> */}
-
               </Row>
               <hr className="m-1" />
 
-              <Row className="mt-4">
-                <Col xs={6} className="text-dark fw-semibold">Payment Mode</Col>
-                <Col xs={6} className="text-muted">
+              <Row className="mt-2">
+                <Col xs={6} className="text-color fw-semibold">Payment Mode</Col>
+                <Col xs={6} className="muted-text">
                   <span
                     className="d-flex align-items-center w-25"
                     style={{
@@ -2488,6 +2495,7 @@ const BookingCheckout = () => {
                           ? "#03D41414"
                           : "#FF00000D",
                       borderRadius: "20px",
+                      fontSize: "12px",
                       padding: "5px 10px",
                       marginLeft: "-10px",
                       color:
@@ -2496,8 +2504,8 @@ const BookingCheckout = () => {
                   >
                     <div
                       style={{
-                        width: "10px",
-                        height: "10px",
+                        width: "8px",
+                        height: "8px",
                         borderRadius: "50%",
                         backgroundColor:
                           booking?.mode === "Online"
@@ -2511,24 +2519,29 @@ const BookingCheckout = () => {
                 </Col>
               </Row>
 
-              <Row className="mt-4">
-                <Col xs={6} className="text-dark fw-semibold">Amount Paid</Col>
-                <Col xs={6} className="text-muted">₹ {booking?.paid_amount}</Col>
+              <Row className="mt-1">
+                <Col xs={6} className="text-color fw-semibold">Amount Paid</Col>
+                <Col xs={6} className="muted-text">₹ {booking?.paid_amount}</Col>
+              </Row>
+              
+              <Row className="mt-1">
+                <Col xs={6} className="text-color fw-semibold">Adjustment</Col>
+                <Col xs={6} className="muted-text">₹ {booking?.adjustment}</Col>
               </Row>
 
-              <Row className="mt-4">
-                <Col xs={6} className="text-dark fw-semibold">Credit Amount</Col>
-                <Col xs={6} className="text-muted">₹ {booking?.total - booking?.paid_amount}</Col>
+              <Row className="mt-2">
+                <Col xs={6} className="text-color fw-semibold">Credit Amount</Col>
+                <Col xs={6} className="muted-text">₹ {booking?.total - booking?.paid_amount}</Col>
               </Row>
 
-              <Row className="mt-4">
-                <Col xs={6} className="text-dark fw-semibold">Transaction ID</Col>
-                <Col xs={6} className="text-muted">{booking?.transaction?.razorpay_payment_id || "-"}</Col>
+              <Row className="mt-2">
+                <Col xs={6} className="text-color fw-semibold">Transaction ID</Col>
+                <Col xs={6} className="muted-text">{booking?.transaction?.razorpay_payment_id || "-"}</Col>
               </Row>
 
-              <Row className="mt-4">
-                <Col xs={6} className="text-dark fw-semibold">Date/Time</Col>
-                <Col xs={6} className="text-muted">
+              <Row className="mt-2">
+                <Col xs={6} className="text-color fw-semibold">Date/Time</Col>
+                <Col xs={6} className="muted-text">
                   {booking?.mode === "Online" ? formatDateAndTime(booking?.transaction?.createdAt) : formatDateAndTime(booking?.createdAt)}
                 </Col>
               </Row>

@@ -69,14 +69,14 @@ const CreateCustomerForm = () => {
     }
 
     // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-      isValid = false;
-    } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-      isValid = false;
-    }
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // if (!formData.email.trim()) {
+    //   newErrors.email = 'Email is required';
+    //   isValid = false;
+    // } else if (!emailRegex.test(formData.email)) {
+    //   newErrors.email = 'Please enter a valid email address';
+    //   isValid = false;
+    // }
 
     // Contact number validation
     const phoneRegex = /^\d{10}$/;
@@ -331,7 +331,7 @@ const CreateCustomerForm = () => {
             className={`rounded-2 ${errors.email ? 'is-invalid' : ''}`}
             style={{ padding: '10px', fontSize: '0.9rem', borderColor: errors.email ? '#dc3545' : '#ced4da' }}
           />
-          {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+          {/* {errors.email && <div className="invalid-feedback">{errors.email}</div>} */}
         </Form.Group>
       </Col>
       <Col md={6}>

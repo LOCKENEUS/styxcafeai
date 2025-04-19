@@ -41,47 +41,102 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
     setAllPlayers(updatedPlayers);
   };
 
+  // const handleAssignCredit = (index) => {
+  //   const updatedPlayers = [...allPlayers];
+  //   const player = updatedPlayers[index];
+  //   const shareAmount = parseFloat(player.share) || 0;
+
+  //   const availableCredit = player.creditLimit - player.creditAmount;
+
+  //   if (shareAmount > availableCredit) {
+  //     alert(`Insufficient credit for ${player.name}. Available: ₹${availableCredit}`);
+  //     return;
+  //   }
+
+  //   player.credit = shareAmount;
+  //   player.creditAssigned = true;
+
+  //   setCurrentTotal((prevTotal) => prevTotal - shareAmount);
+  //   setAllPlayers(updatedPlayers);
+  // };
+
+  // const handleAssignCredit = (index) => {
+  //   const updatedPlayers = [...allPlayers];
+  //   const player = updatedPlayers[index];
+  //   const shareAmount = parseFloat(player.share) || 0;
+
+  //   const availableCredit = player.creditLimit - player.creditAmount;
+
+  //   if (player.creditAssigned) {
+  //     // Unassign the credit
+  //     player.credit = 0;
+  //     player.creditAssigned = false;
+  //     setCurrentTotal((prevTotal) => prevTotal + shareAmount);
+  //   } else {
+  //     // Assign the credit
+  //     if (shareAmount > availableCredit) {
+  //       alert(`Insufficient credit for ${player.name}. Available: ₹${availableCredit}`);
+  //       return;
+  //     }
+
+  //     player.credit = shareAmount;
+  //     player.creditAssigned = true;
+  //     setCurrentTotal((prevTotal) => prevTotal - shareAmount);
+  //   }
+
+  //   setAllPlayers(updatedPlayers);
+  // };
+
   const handleAssignCredit = (index) => {
     const updatedPlayers = [...allPlayers];
     const player = updatedPlayers[index];
     const shareAmount = parseFloat(player.share) || 0;
-
+  
     const availableCredit = player.creditLimit - player.creditAmount;
-
-    if (shareAmount > availableCredit) {
-      alert(`Insufficient credit for ${player.name}. Available: ₹${availableCredit}`);
-      return;
+  
+    if (player.creditAssigned) {
+      // Unassign the credit
+      player.creditAmount -= player.credit; // Reduce the assigned credit from the creditAmount
+      player.credit = 0;
+      player.creditAssigned = false;
+      setCurrentTotal((prevTotal) => prevTotal + shareAmount);
+    } else {
+      // Assign the credit
+      if (shareAmount > availableCredit) {
+        alert(`Insufficient credit for ${player.name}. Available: ₹${availableCredit}`);
+        return;
+      }
+  
+      player.credit = shareAmount;
+      player.creditAmount += shareAmount; // Add the assigned credit to the creditAmount
+      player.creditAssigned = true;
+      setCurrentTotal((prevTotal) => prevTotal - shareAmount);
     }
-
-    player.credit = shareAmount;
-    player.creditAssigned = true;
-
-    setCurrentTotal((prevTotal) => prevTotal - shareAmount);
+  
     setAllPlayers(updatedPlayers);
   };
 
   return (
     <Modal show={show} onHide={handleClose}>
       <div className="modal-content rounded-2">
-        <Modal.Header style={{ backgroundColor: "", padding: "20px" }} className="d-flex align-items-center">
+        <Modal.Header style={{ backgroundColor: "", padding: "20px" }} className="d-flex ">
           <Modal.Title>
-            <Button variant="primary" className="fw-bold" onClick={handleSplitAmount}>
+            {allPlayers?.length > 2 && <Button variant="primary" className="fw-bold" onClick={handleSplitAmount}>
               <LuSplit size={16} className="" /> Split Expenses
             </Button>
-
-            <Button
+            }
+            {allPlayers?.length === 2 && <Button
               variant="primary"
               className="mx-3"
               onClick={handleSplitAmount}
             >
               <BsSquareHalf /> 50-50
-            </Button>
-            <span style={{ background: "#FF00000D", color: "#FF0000", padding: "12px" }} className="rounded-2"> <BsCurrencyRupee /> <span className="fw-bold ms-1">{currentTotal}</span></span>
-
+            </Button>}
+            <span style={{ background: "#FF00000D", color: "#FF0000", padding: "12px", marginLeft: "190px" }} className="rounded-2"> <BsCurrencyRupee /> <span className="fw-bold ms-1">{currentTotal}</span></span>
           </Modal.Title>
           <Button variant="close" onClick={handleClose} className="ms-auto"></Button>
         </Modal.Header>
-        <Modal.Body className="p-3 text-dark fs-4">
+        <Modal.Body className="p-3 text-dark fs-6">
           <Container className="bg-white rounded-4 shadow" style={{ maxWidth: '600px' }}>
             {allPlayers?.map((player, index) => (
               <Row key={index} className="align-items-center my-5">
@@ -93,7 +148,7 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
                     </div>
                   ) : null}
                 </Col>
-                <Col xs={2} className="text-center">
+                <Col xs={3} className="text-center">
                   <input
                     type="number"
                     className="form-control text-center"
@@ -117,7 +172,7 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
                     <LiaCoinsSolid size={25} /> {player.creditLimit - player.creditAmount}/{player.creditLimit}
                   </span>
                 </Col>
-                <Col xs={2} className="text-end">
+                {/* <Col xs={2} className="text-end">
                   {!player.creditAssigned ? <Button variant="light" className="rounded-circle p-1 border" onClick={() => handleAssignCredit(index)}
                   >
                     <BsFillPlusSquareFill className="rounded-1" size={20} />
@@ -125,6 +180,19 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
                   >
                     <LuBadgeCheck className="rounded-1" size={20} />
                   </Button>}
+                </Col> */}
+                <Col xs={1} className="text-end">
+                  <Button
+                    variant="light"
+                    className="rounded-circle p-1 border"
+                    onClick={() => handleAssignCredit(index)}
+                  >
+                    {player.creditAssigned ? (
+                      <LuBadgeCheck className="rounded-1 text-success" size={20} />
+                    ) : (
+                      <BsFillPlusSquareFill className="rounded-1 text-primary" size={20} />
+                    )}
+                  </Button>
                 </Col>
               </Row>
             ))}

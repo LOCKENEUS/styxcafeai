@@ -78,6 +78,8 @@ const BookingList = () => {
                 return bookings?.filter((booking) =>
                     moment(booking.slot_date).format("dddd") === filter
                 );
+            case "All Bookings":
+
             default:
                 return bookings
         }
@@ -147,6 +149,7 @@ const BookingList = () => {
     }, [dispatch, gameId]);
 
     const bookingOptions = [
+        "All Bookings",
         "Tomorrow",
         "Today",
         "Yesterday",

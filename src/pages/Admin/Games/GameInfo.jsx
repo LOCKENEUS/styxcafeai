@@ -112,6 +112,7 @@ const GameInfo = () => {
   }, [dispatch, gameId]);
 
   const bookingOptions = [
+    "All Bookings",
     "Tomorrow",
     "Today",
     "Yesterday",
@@ -144,6 +145,7 @@ const GameInfo = () => {
         return bookings?.filter((booking) =>
           moment(booking.slot_date).format("dddd") === filter
         );
+      case "All Bookings": // Handle the new option
       default:
         return bookings
     }
@@ -540,6 +542,7 @@ const GameInfo = () => {
                         <Button
                           variant="link"
                           className="text-primary"
+                          disabled={booking?.status !== "Pending"}
                           onClick={() =>
                             navigate(`/admin/booking/edit/${booking._id}`)
                           }

@@ -147,6 +147,7 @@ export const processOnlinePayment = createAsyncThunk(
       total,
       looser,
       playerCredits,
+      adjustment
     },
     thunkAPI
   ) => {
@@ -194,6 +195,7 @@ export const processOnlinePayment = createAsyncThunk(
                   total,
                   looser,
                   playerCredits,
+                  adjustment
                 },
                 {
                   headers: {
