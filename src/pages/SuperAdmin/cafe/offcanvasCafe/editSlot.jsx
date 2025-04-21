@@ -74,8 +74,8 @@ const EditSlotOffcanvas = ({ show, handleClose, slotID }) => {
     const start = convertTo24HourFormat(updatedFormState.startTime);
   const end = convertTo24HourFormat(updatedFormState.endTime);
 
-  if (start && end && end <= start) {
-    setTimeError({ endTime: 'End time must be after start time.' });
+  if (end <= start) {
+    setErrors({ endTime: 'End time must be after start time.' });
   } else {
     setTimeError({});
     setFormState(updatedFormState);
@@ -247,7 +247,7 @@ const EditSlotOffcanvas = ({ show, handleClose, slotID }) => {
           </Form.Group>
 
           <Button variant="success" type="submit" className="rounded-2 float-end my-5" >
-          Save Cafe
+          Save Slot
             
           </Button>
         </Form>

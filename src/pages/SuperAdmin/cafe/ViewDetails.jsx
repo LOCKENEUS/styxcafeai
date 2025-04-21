@@ -28,13 +28,15 @@ import ForwordPassword from "./modal/forwordPassword";
 import Loader from "../../../components/common/Loader/Loader";
 import gsap from "gsap";
 import { getCustomers } from "../../../store/AdminSlice/CustomerSlice";
+import { getBookings } from "../../../store/AdminSlice/BookingSlice";
+import { convertTo12Hour, formatDate } from "../../../components/utils/utils";
 
 
 
 
 const ViewDetails = () => {
 
-  
+
 
 
   const [loadingMain, setLoadingMain] = useState(true);
@@ -62,8 +64,15 @@ const ViewDetails = () => {
   const [activeKey, setActiveKey] = useState('gallary');
   const [lodergames, setLodergames] = useState(true);
   const [lodermembership, setLodermembership] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPagebooking, setCurrentPagebooking] = useState(1);
 
 
+  useEffect(() => {
+    dispatch(getBookings(cafeId));
+  }, [dispatch, cafeId]);
+  const bookings = useSelector((state) => state.bookings.bookings);
+  console.log("booking details -- ", bookings);
 
 
   useEffect(() => {
@@ -104,16 +113,26 @@ const ViewDetails = () => {
 
 
   console.log("games -- ", gamesDetails);
-  
+
   useEffect(() => {
     if (cafeId) {
-    dispatch(getCustomers(cafeId));
+      dispatch(getCustomers(cafeId));
     }
-  },[dispatch, cafeId]);
+  }, [dispatch, cafeId]);
   // const clientList= useSelector(state => state.        state.customers = action.payload;
-const  clientList  = useSelector((state) => state.customers.customers);
+  const clientList = useSelector((state) => state.customers.customers);
   console.log("clientList :--", clientList);
 
+  const filteredData = clientList.filter((client) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      client.name?.toLowerCase().includes(query) ||
+      client.contact_no?.toString().includes(query) ||
+      client.email?.toLowerCase().includes(query) ||
+      client.membership?.toLowerCase().includes(query) ||
+      client.creditLimit?.toString().includes(query)
+    );
+  });
 
 
 
@@ -185,6 +204,40 @@ const  clientList  = useSelector((state) => state.customers.customers);
       stagger: 0.7,
       ease: "power3.out",
     });
+
+
+    const cards = document.querySelectorAll(".gsap-card-move");
+
+    cards.forEach((card) => {
+      card.addEventListener("mouseenter", () => {
+        gsap.to(card, {
+          scale: 1.03,
+          borderColor: "#000",
+          duration: 0.3,
+          ease: "power2.out",
+        });
+      });
+
+      card.addEventListener("mouseleave", () => {
+        gsap.to(card, {
+          scale: 1,
+          borderColor: "#E4E4E4",
+          duration: 0.3,
+          ease: "power2.out",
+        });
+      });
+    });
+
+    // Optional cleanup if needed
+    return () => {
+      cards.forEach((card) => {
+        card.replaceWith(card.cloneNode(true));
+      });
+    };
+
+
+
+
   }, []);
 
 
@@ -262,26 +315,10 @@ const  clientList  = useSelector((state) => state.customers.customers);
 
   // -----------------------    client Details -----------------------
   const itemsPerPage = 7;
-  const clientData = [
-    { id: "B-25041202", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 9599 },
-    { id: "B-25041203", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 1199 },
-    { id: "B-25041204", game: "Volleyball", date: "4/13/2025", status: "Yes", total: 3399 },
-    { id: "B-25041211", game: "Pool Game", date: "4/13/2025", status: "No", total: 799 },
-    { id: "B-25041201", game: "Pool Game", date: "4/14/2025", status: "Yes", total: 3491 },
-    { id: "B-25041205", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 9599 },
-    { id: "B-25041206", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 1199 },
-    { id: "B-25041207", game: "Volleyball", date: "4/13/2025", status: "Yes", total: 3399 },
-    { id: "B-25041208", game: "Pool Game", date: "4/13/2025", status: "No", total: 799 },
-    { id: "B-25041209", game: "Pool Game", date: "4/14/2025", status: "Yes", total: 3491 },
-    { id: "B-25041210", game: "Computer Game", date: "4/13/2025", status: "Yes", total: 1199 },
-    { id: "B-25041212", game: "Volleyball", date: "4/13/2025", status: "Yes", total: 3399 },
-    { id: "B-25041213", game: "Pool Game", date: "4/13/2025", status: "No", total: 799 },
-    { id: "B-25041214", game: "Pool Game", date: "4/14/2025", status: "Yes", total: 3491 },
-  ];
 
 
 
-  const totalPages = Math.ceil(clientData.length / itemsPerPage);
+  const totalPages = Math.ceil(clientList.length / itemsPerPage);
 
   const handleNextclient = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -298,12 +335,53 @@ const  clientList  = useSelector((state) => state.customers.customers);
   );
 
   // -----------------------    client Details -----------------------
+ 
+  // const itemsPerPage = 5; // You can change this as needed
+  
 
-
-  const paginatedData = clientList.slice(
+  const paginatedData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  // -------------------  Booking -------------------
+  const totalPagesboking = Math.ceil(bookings.length / itemsPerPage);
+
+  // Calculate paginated data
+  // const paginatedDataBooking = bookings.slice(
+  //   (currentPagebooking - 1) * itemsPerPage,
+  //   currentPagebooking * itemsPerPage
+  // );
+  
+  // const clientList = useSelector((state) => state.customers.customers);
+  const filteredBookings = bookings.filter((booking) => {
+    const searchValue = searchQuery.toLowerCase();
+    return (
+      booking.booking_id?.toString().toLowerCase().includes(searchValue) ||
+      booking.game_id?.name?.toLowerCase().includes(searchValue) ||
+      booking.email?.toLowerCase().includes(searchValue) ||
+      booking.mode?.toLowerCase().includes(searchValue)
+    );
+  });
+
+  const paginatedDataBooking = filteredBookings.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePrevclientBooking = () => {
+    if (currentPagebooking > 1) {
+      setCurrentPagebooking(currentPagebooking - 1);
+    }
+  };
+  
+  const handleNextclientBooking = () => {
+    if (currentPagebooking < totalPagesboking) {
+      setCurrentPagebooking(currentPagebooking + 1);
+    }
+  };
+  
+
 
   return (
     <Container fluid>
@@ -311,7 +389,7 @@ const  clientList  = useSelector((state) => state.customers.customers);
 
       <Row className="my-5">
         <Col sm={4} className="pe-1 mb-4">
-          <Card className="py-3 mx-2 rounded-4 my-3 h-100" style={{ backgroundColor: "white"}}>
+          <Card className="py-3 mx-2 rounded-4 my-3 h-100" style={{ backgroundColor: "white" }}>
             <div className="d-flex flex-column align-items-start mx-3">
               <h5 className="text-start " style={{ fontSize: "18px", fontWeight: "600" }}>Cafe Details</h5>
 
@@ -488,8 +566,6 @@ const  clientList  = useSelector((state) => state.customers.customers);
           </Card>
         </Col>
 
-
-
         <Col sm={8} className="mb-4">
 
 
@@ -555,7 +631,7 @@ const  clientList  = useSelector((state) => state.customers.customers);
                       padding: '1rem 1rem',
                     }}
                   >
-                    Game
+                    Games
                   </div>
                 </Nav.Link>
                 {activeKey === 'Game' && (
@@ -626,7 +702,7 @@ const  clientList  = useSelector((state) => state.customers.customers);
                       padding: '1rem 1rem',
                     }}
                   >
-                    Client List
+                    Clients
                   </div>
                 </Nav.Link>
                 {activeKey === 'Client' && (
@@ -660,7 +736,7 @@ const  clientList  = useSelector((state) => state.customers.customers);
                       padding: '1rem 1rem',
                     }}
                   >
-                    Booking
+                    Bookings
                   </div>
                 </Nav.Link>
                 {activeKey === 'Booking' && (
@@ -682,14 +758,14 @@ const  clientList  = useSelector((state) => state.customers.customers);
           </Card>
 
 
-          <Card className="my-2 rounded-4 my-3 " style={{ backgroundColor: "white" ,height:"93%"}} >
+          <Card className="my-2 rounded-4 my-3 h-100" style={{ backgroundColor: "white" }} >
 
 
             {/* gallary Image  */}
 
             <div className="mx-2">
               {activeKey === 'gallary' && (
-                <Col sm={12} className="my-3 mx-3">
+                <Col sm={12} className="my-3 mx-1">
 
                   {
                     loadingMain || !cafe ? (
@@ -723,20 +799,24 @@ const  clientList  = useSelector((state) => state.customers.customers);
                           <span className="mx-2"></span>
                         </Col>
                         {/* Gallery */}
-                        <Col sm={12} className="">
-                          <Row className="g-3 mx-1">
+                        <Col sm={12} className="mx-0">
+                          <Row className="g-3 mx-1 ">
                             {cafe?.cafeImage?.length > 0 ? (
                               [...cafe.cafeImage].reverse().map((img, index) => (
                                 <Col key={index} xs={6} sm={4} md={3} lg={3}>
-                                  <div className="w-100 h-100 d-flex justify-content-center">
+                                  <div className="w-100 h-100 d-flex justify-content-center "
+                                  // style={{ borderRadius: "10px", border: "2px solid #00AF0F" }}
+                                  >
                                     <Image
                                       src={`${baseURL}/${img}`}
                                       onError={(e) => (e.target.src = Rectangle389)}
-                                      className="rounded-0 img-fluid"
+                                      className=" img-fluid"
                                       style={{
                                         objectFit: "cover",
                                         height: "10rem",
                                         width: "100%",
+                                        borderRadius: "10px",
+                                        // border: "2px solid rgb(19, 39, 21)"
                                       }}
                                       alt={`Gallery ${index + 1}`}
                                     />
@@ -791,6 +871,7 @@ const  clientList  = useSelector((state) => state.customers.customers);
                         fontSize: "16px",
                         cursor: "pointer",
                         color: "#00AF0F",
+
                       }}
                       onClick={() => setShowModalAdd(true)}
                     >
@@ -817,20 +898,28 @@ const  clientList  = useSelector((state) => state.customers.customers);
 
                         {games.length > 0 ? (
                           [...games].reverse().map((game, index) => (
-                            <Col className="my-2 " key={index} xs={12} sm={6} md={6} lg={6}>
-                              <Card className="rounded-4 h-100 gsap-card" style={{ borderColor: "#E4E4E4", borderWidth: "2px" }} onClick={() => handleOpenGameDetails(game?._id)}>
+                            <Col className="my-2 " key={index} xs={12} sm={6} md={6} lg={6} >
+                              <Card className="rounded-4 h-100  gsap-card-move " style={{
+                                borderColor: "#E4E4E4", borderWidth: "2px",
+                                cursor: "pointer",
+
+                              }} onClick={() => handleOpenGameDetails(game?._id)}
+
+                              >
+
                                 <Card.Img
                                   src={`${baseURL}/${game.gameImage || Rectangle389}`}
                                   onError={(e) => (e.target.src = Rectangle389)}
                                   className="img-fluid rounded-4 my-2 mx-auto d-block"
                                   style={{
                                     width: "90%",
-                                    height: "auto",
-                                    maxHeight: "200px",
-                                    objectFit: "cover",
+                                    height: "250px",
+                                    maxHeight: "250px",
+
                                   }}
                                   alt="Game Image"
                                 />
+
                                 <Card.Body>
                                   <Card.Title style={{ fontSize: "16px", fontWeight: "600", marginBottom: "20px" }}>{game.name || "Game Title"}</Card.Title>
                                   <Card.Text>
@@ -988,8 +1077,11 @@ const  clientList  = useSelector((state) => state.customers.customers);
                         className="form-control me-2"
                         placeholder="Search"
                         aria-label="Search"
-                      // value={searchQuery}
-                      // onChange={(e) => setSearchQuery(e.target.value)}
+                        value={searchQuery}
+                        onChange={(e) => {
+                          setSearchQuery(e.target.value);
+                          setCurrentPage(1);
+                        }}
                       />
 
                     </div>
@@ -1011,7 +1103,7 @@ const  clientList  = useSelector((state) => state.customers.customers);
                         {(paginatedData.length > 0 ? paginatedData : clientList).map((client, idx) => (
                           <tr key={idx}>
                             <td>{idx + 1}</td>
-                            <td><a href="#" className="text-primary fw-bold">{client.name}</a></td>
+                            <td><span className="text-primary fw-bold">{client.name}</span></td>
                             <td>{client.contact_no}</td>
                             <td>{client.email || "---"}</td>
                             <td>{client.creditLimit}</td>
@@ -1021,19 +1113,6 @@ const  clientList  = useSelector((state) => state.customers.customers);
                       </tbody>
                     </Table>
 
-                    {/* <div className="d-flex justify-content-end align-items-center my-4">
-                      <Button style={{ backgroundColor:'white'}} onClick={handlePrevclient} disabled={currentPage === 1}>
-                        <GrFormPrevious style={{ color: "black", fontSize: "20px" }} />
-                      </Button>
-
-                      <span className="mx-3">
-                         {currentPage} ... {totalPages}
-                      </span>
-
-                      <Button style={{ backgroundColor:'white' }} onClick={handleNextclient} disabled={currentPage === totalPages}>
-                        <MdOutlineNavigateNext style={{ color: "black", fontSize: "20px" }}  />
-                      </Button>
-                    </div> */}
 
 
 
@@ -1122,9 +1201,132 @@ const  clientList  = useSelector((state) => state.customers.customers);
 
                 <Row className="d-flex flex-wrap justify-content-center p-2 mx-1">
                   <Col sm={6} className=" alingn-items-start">
-                    <h5 className="text-start " style={{ fontSize: "18px", fontWeight: "600" }}>Booking List</h5>
-                  </Col>
 
+                  </Col>
+                  <Col sm={6} className=" alingn-items-end ">
+                    <div className="d-flex justify-content-end">
+                      <input
+                        type="search"
+                        className="form-control me-2"
+                        placeholder="Search"
+                        aria-label="Search"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+
+                      />
+
+                    </div>
+                  </Col>
+                  <Col sm={12} className="my-3 alingn-items-end">
+
+                    <Table hover responsive >
+                      <thead className="table-light ">
+                        <tr>
+                          <th className="fw-bold">S/N</th>
+                          <th className="fw-bold"> Booking Id </th>
+                          <th className="fw-bold">Name</th>
+                          <th className="fw-bold">Sports</th>
+                          <th className="fw-bold">Persons</th>
+                          <th className="fw-bold">Mode</th>
+                          <th className="fw-bold">Time/Date</th>
+                          <th className="fw-bold">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(paginatedDataBooking.length > 0 ? paginatedDataBooking : bookings).map((booking, idx) => (
+                          <tr key={idx}>
+                            <td>{idx + 1}</td>
+                            <td><span className="text-primary fw-bold">{booking.booking_id}</span></td>
+
+                            <td>{booking.customerName}</td>
+                            <td>{booking.game_id?.name}</td>
+                           
+                            <td>{booking.players?.length || "---"}</td>
+                           
+                            <td>{booking.status || "---"}</td>
+                            <td>
+                              {formatDate(booking.slot_date)}<br />
+                              {convertTo12Hour(booking?.slot_id?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time)}
+                            </td>
+                            <td>
+                              <span className="text-primary fw-bold"><Image src={edit} width={20} height={20} /></span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                    <div className="d-flex justify-content-end align-items-center my-4">
+                      {/* Previous Button */}
+                      <Button
+                        style={{
+                          backgroundColor: "white",
+                          border: "1px solid #dee2e6",
+                          padding: "0.25rem 0.5rem",
+                          borderRadius: "0.375rem",
+                        }}
+                        onClick={handlePrevclientBooking}
+                        disabled={currentPagebooking === 1}
+                      >
+                        <GrFormPrevious style={{ color: "black", fontSize: "20px" }} />
+                      </Button>
+
+                      {/* Page Numbers */}
+                      <span className="d-flex align-items-center mx-2 gap-2">
+                        <Button
+                          style={{
+                            backgroundColor: currentPagebooking === 1 ? "#0062ff" : "white",
+                            color: currentPagebooking === 1 ? "white" : "black",
+                            border: "1px solid #dee2e6",
+                            borderRadius: "0.375rem",
+                            padding: "0.25rem 0.6rem",
+                          }}
+                        >
+                          1
+                        </Button>
+
+                        <Button
+                          style={{
+                            backgroundColor: currentPagebooking === 2 ? "#0062ff" : "white",
+                            color: currentPagebooking === 2 ? "white" : "black",
+                            border: "1px solid #dee2e6",
+                            borderRadius: "0.375rem",
+                            padding: "0.25rem 0.6rem",
+                          }}
+                        >
+                          2
+                        </Button>
+
+                        <span style={{ fontSize: "16px", fontWeight: "500" }}>...</span>
+
+                        <Button
+                          style={{
+                            backgroundColor: currentPagebooking === totalPagesboking ? "#0062ff" : "white",
+                            color: currentPagebooking === totalPagesboking ? "white" : "black",
+                            border: "1px solid #dee2e6",
+                            borderRadius: "0.375rem",
+                            padding: "0.25rem 0.6rem",
+                          }}
+                        >
+                          {totalPagesboking}
+                        </Button>
+                      </span>
+
+                      {/* Next Button */}
+                      <Button
+                        style={{
+                          backgroundColor: "white",
+                          border: "1px solid #dee2e6",
+                          padding: "0.25rem 0.5rem",
+                          borderRadius: "0.375rem",
+                        }}
+                        onClick={handleNextclientBooking}
+                        disabled={currentPagebooking === totalPagesboking}
+                      >
+                        <MdOutlineNavigateNext style={{ color: "black", fontSize: "20px" }} />
+                      </Button>
+                    </div>
+
+                  </Col>
                 </Row>
 
 

@@ -42,7 +42,7 @@ import GameDeleteModal from "../modal/gameDelete";
 import areaSize from '/assets/superAdmin/cafe/areaSize.png';
 import payLater from '/assets/superAdmin/cafe/payLater.png';
 import commission from '/assets/superAdmin/cafe/commission.png';
-import { fetchCafesID } from "../../../../store/slices/cafeSlice";
+import { fetchCafes, fetchCafesID } from "../../../../store/slices/cafeSlice";
 import { FaPlus } from "react-icons/fa";
 import { GoPlus } from "react-icons/go";
 import EditSlotOffcanvas from "../offcanvasCafe/editSlot";
@@ -87,6 +87,8 @@ const GameDetailsCafe = () => {
 
 
   console.log("selected game here 99", selectedGame?.data);
+  const cafe_id = selectedGame?.data?.cafe;
+  console.log("your cafeid here",cafe_id );
 
   // compare game id with selected game id
 
@@ -138,15 +140,16 @@ const GameDetailsCafe = () => {
 
 
   useEffect(() => {
-    dispatch(fetchCafesID(cafeId));
-  }, [cafeId, dispatch]);
+    dispatch(fetchCafes(cafe_id));
+  }, [cafe_id, dispatch]);
 
   const cafeDetails = useSelector((state) => state.cafes);
-  console.log("cafe details membership ==", cafeDetails);
+  console.log("cafe details game 11 00 ==", cafeDetails);
 
   // compare cafeId with cafeDetails.cafeId
-  const isCafeIdMatch = cafeDetails.cafes?.find(cafe => cafe._id === cafeId);
+  const isCafeIdMatch = cafeDetails.cafes?.find(cafe => cafe._id === cafe_id);
   console.log("isCafeIdMatch membership ==", isCafeIdMatch);
+
 
 
   const generateWeekdays = () => {
@@ -215,7 +218,9 @@ const GameDetailsCafe = () => {
                     style={{ objectFit: "cover", width: "50px", height: "50px" }}
                   />
                   <div className="ms-sm-3 ">
-                    <h5 className="text-primary " style={{ fontSize: "16px", fontWeight: "500" }}>{isCafeIdMatch?.cafe_name}</h5>
+                    <h5 className="text-primary " style={{ fontSize: "16px", fontWeight: "500" }}>
+                      {isCafeIdMatch?.cafe_name}
+                      </h5>
                   </div>
                 </div>
               </Card>
@@ -545,6 +550,11 @@ const GameDetailsCafe = () => {
                                         {slot.slot_name}
                                       </div>
                                       </td>
+                                      <td>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          {slot.players}
+                                        </div>
+                                      </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
                                           <span className={slot.is_deleted === false ? "text-success fw-semibold" : "text-danger"}>
@@ -617,6 +627,11 @@ const GameDetailsCafe = () => {
                                       <div className="my-2">
                                         {slot.slot_name}
                                       </div>
+                                      </td>
+                                      <td>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          {slot.players}
+                                        </div>
                                       </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
@@ -692,6 +707,11 @@ const GameDetailsCafe = () => {
                                         {slot.slot_name}
                                       </div>
                                       </td>
+                                      <td>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          {slot.players}
+                                        </div>
+                                      </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
                                           <span className={slot.is_deleted === false ? "text-success fw-semibold" : "text-danger"}>
@@ -764,6 +784,11 @@ const GameDetailsCafe = () => {
                                       <div className="my-2">
                                         {slot.slot_name}
                                       </div>
+                                      </td>
+                                      <td>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          {slot.players}
+                                        </div>
                                       </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
@@ -838,6 +863,11 @@ const GameDetailsCafe = () => {
                                         {slot.slot_name}
                                       </div>
                                       </td>
+                                      <td>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          {slot.players}
+                                        </div>
+                                      </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
                                           <span className={slot.is_deleted === false ? "text-success fw-semibold" : "text-danger"}>
@@ -910,6 +940,11 @@ const GameDetailsCafe = () => {
                                       <div className="my-2">
                                         {slot.slot_name}
                                       </div>
+                                      </td>
+                                      <td>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          {slot.players}
+                                        </div>
                                       </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
@@ -984,6 +1019,11 @@ const GameDetailsCafe = () => {
                                       <div className="my-2">
                                         {slot.slot_name}
                                       </div>
+                                      </td>
+                                      <td>
+                                        <div className="d-flex align-items-center my-2 ">
+                                          {slot.players}
+                                        </div>
                                       </td>
                                       <td style={{ width: '160px' }}>
                                         <div className="d-flex align-items-center my-2 ">
