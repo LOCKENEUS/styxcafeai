@@ -182,8 +182,6 @@ const GameDetailsCafe = () => {
   return (
     <Container fluid style={{ marginTop: "0px" }}>
       <Row className=" game-detail-animate " >
-
-
         <Card.Header className="fw-bold">
           <Row className="d-flex justify-content-between align-items-center  ">
             <Col sm={8} xs={12}>
@@ -196,12 +194,6 @@ const GameDetailsCafe = () => {
                     Games Details
                   </Link>
                 </Breadcrumb.Item>
-                {/* <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }} >
-                <Link to="/superadmin/CafeGames"
-                  state={{ cafeId: cafeId }}>
-                  All Games
-                </Link>
-              </Breadcrumb.Item> */}
                 <Breadcrumb.Item active style={{ fontSize: "16px", fontWeight: "500" }} > Game</Breadcrumb.Item>
 
               </Breadcrumb>

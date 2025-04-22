@@ -314,7 +314,7 @@ const ViewDetails = () => {
 
 
   // -----------------------    client Details -----------------------
-  const itemsPerPage = 7;
+  const itemsPerPage = 10;
 
 
 
@@ -335,9 +335,9 @@ const ViewDetails = () => {
   );
 
   // -----------------------    client Details -----------------------
- 
-  // const itemsPerPage = 5; // You can change this as needed
-  
+
+
+
 
   const paginatedData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
@@ -352,15 +352,18 @@ const ViewDetails = () => {
   //   (currentPagebooking - 1) * itemsPerPage,
   //   currentPagebooking * itemsPerPage
   // );
-  
+
   // const clientList = useSelector((state) => state.customers.customers);
   const filteredBookings = bookings.filter((booking) => {
     const searchValue = searchQuery.toLowerCase();
     return (
-      booking.booking_id?.toString().toLowerCase().includes(searchValue) ||
+    booking.booking_id?.toString().toLowerCase().includes(searchValue) ||
+      booking.customerName?.toLowerCase().includes(searchValue) ||
       booking.game_id?.name?.toLowerCase().includes(searchValue) ||
-      booking.email?.toLowerCase().includes(searchValue) ||
-      booking.mode?.toLowerCase().includes(searchValue)
+      booking.players?.length?.toString().toLowerCase().includes(searchValue) ||
+      booking.status?.toLowerCase().includes(searchValue) ||
+      booking.slot_date?.toString().toLowerCase().includes(searchValue) ||
+      booking.slot_id?.start_time?.toString().toLowerCase().includes(searchValue) 
     );
   });
 
@@ -374,19 +377,23 @@ const ViewDetails = () => {
       setCurrentPagebooking(currentPagebooking - 1);
     }
   };
-  
+
   const handleNextclientBooking = () => {
     if (currentPagebooking < totalPagesboking) {
       setCurrentPagebooking(currentPagebooking + 1);
     }
   };
+
+  const handleBookingClick = (bookingID) => {
+    navigate(`/superadmin/Bookings/BookingDetails`, { state: { bookingID: bookingID } });
+   
+  }
   
+
 
 
   return (
     <Container fluid>
-
-
       <Row className="my-5">
         <Col sm={4} className="pe-1 mb-4">
           <Card className="py-3 mx-2 rounded-4 my-3 h-100" style={{ backgroundColor: "white" }}>
@@ -1226,30 +1233,66 @@ const ViewDetails = () => {
                           <th className="fw-bold"> Booking Id </th>
                           <th className="fw-bold">Name</th>
                           <th className="fw-bold">Sports</th>
-                          <th className="fw-bold">Persons</th>
+                          <th className="fw-bold">Players</th>
                           <th className="fw-bold">Mode</th>
                           <th className="fw-bold">Time/Date</th>
-                          <th className="fw-bold">Actions</th>
+                          <th className="fw-bold"> Price</th>
                         </tr>
                       </thead>
                       <tbody>
                         {(paginatedDataBooking.length > 0 ? paginatedDataBooking : bookings).map((booking, idx) => (
                           <tr key={idx}>
                             <td>{idx + 1}</td>
-                            <td><span className="text-primary fw-bold">{booking.booking_id}</span></td>
+                            <td><span className="text-primary fw-bold" style={{ cursor: "pointer" }} 
+                            onClick={() => handleBookingClick(booking._id)}
+                            >{booking.booking_id}</span></td>
 
                             <td>{booking.customerName}</td>
                             <td>{booking.game_id?.name}</td>
-                           
+
                             <td>{booking.players?.length || "---"}</td>
-                           
-                            <td>{booking.status || "---"}</td>
+
+                            {/* <td>{booking.status || "---"}</td> */}
+                            <td>
+                              <span
+                                className="d-flex align-items-center w-75 justify-content-center"
+                                style={{
+                                  backgroundColor:
+                                    booking.status === "Pending" ? "#FFF3CD"
+                                      :
+                                      booking.mode === "Online"
+                                        ? "#03D41414"
+                                        : "#FF00000D",
+                                  borderRadius: "20px",
+                                  padding: "5px 10px",
+                                  color:
+                                    booking.status === "Pending" ? "#856404"
+                                      :
+                                      booking.mode === "Online" ? "#00AF0F" : "orange",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    width: "10px",
+                                    height: "10px",
+                                    borderRadius: "50%",
+                                    backgroundColor:
+                                      booking.status === "Pending" ? "#856404"
+                                        : booking.mode === "Online"
+                                          ? "#03D414"
+                                          : "orange",
+                                    marginRight: "5px",
+                                  }}
+                                />
+                                {booking?.status === "Pending" ? "Pending" : booking?.mode}
+                              </span>
+                            </td>
                             <td>
                               {formatDate(booking.slot_date)}<br />
                               {convertTo12Hour(booking?.slot_id?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time)}
                             </td>
                             <td>
-                              <span className="text-primary fw-bold"><Image src={edit} width={20} height={20} /></span>
+                            ₹ {booking.gamePrice}
                             </td>
                           </tr>
                         ))}
