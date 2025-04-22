@@ -188,6 +188,8 @@ const BookingDetails = () => {
   };
 
   const handleAddPlayer = async () => {
+
+    if(teamMembers.length >= selectedGame?.data?.players - 1) return alert(`You can add only ${selectedGame?.data?.players} players at a time`)
     const submittedData = new FormData();
     submittedData.append("cafe", cafeId);
     submittedData.append("name", newPlayer.name);
@@ -349,9 +351,11 @@ const BookingDetails = () => {
           return
         }
       }
-      await dispatch(addBooking(bookingData)).unwrap()
-      navigate("/admin/bookings")
-    } catch (error) { }
+      const response = await dispatch(addBooking(bookingData)).unwrap()
+      navigate(`/admin/booking/checkout/${response?.data?._id}`)
+    } catch (error) {
+      console.error(error);
+     }
   };
 
   const handlePayLater = async () => {
@@ -402,6 +406,10 @@ const BookingDetails = () => {
   }, [searchCustTerm, dispatch, cafeId]);
 
   const handleSelectCustomer = (customer) => {
+    if(teamMembers.length >= selectedGame?.data?.players - 1) {
+      alert(`You can add only ${selectedGame?.data?.players} players at a time`);
+      return
+    }
     setSearchCustTerm("");
     setSearchedCustomers([]);
 
@@ -546,8 +554,7 @@ const BookingDetails = () => {
 
             const verifyData = await verifyResponse.json();
             if (verifyData.success) {
-              alert("Payment Successful and Booking Confirmed!");
-              navigate("/admin/bookings");
+              navigate(`/admin/booking/checkout/${result?.data?._id}");`);
             } else {
               await dispatch(deleteBooking(result?.data?._id)); // Remove booking if verification fails
               alert("Payment Verification Failed");
@@ -586,6 +593,7 @@ const BookingDetails = () => {
       ...provided,
       border: 'none',
       borderRadius: '16px',
+      cursor: 'pointer',
       padding: '2%',
       boxShadow: 'none',
       '&:hover': {
@@ -626,7 +634,7 @@ const BookingDetails = () => {
           </div>
 
           {searchTerm.length > 2 && filteredCustomers.length > 0 && (
-            <ListGroup className="position-absolute w-25 shadow bg-white z-index-100">
+            <ListGroup className="position-absolute shadow bg-white z-index-100" style={{width: "18%"}}>
               {filteredCustomers.map((customer) => (
                 <ListGroup.Item
                   key={customer.id}
@@ -1164,6 +1172,7 @@ const BookingDetails = () => {
                             top: "20px",
                             right: "10px",
                             color: "red",
+                            cursor: "pointer"
                             // zIndex: 2,
                           }}
                           onClick={() => {

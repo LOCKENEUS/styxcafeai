@@ -24,39 +24,70 @@ const Calendar = ({ selectedGame }) => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+  // const generateDates = () => {
+  //   const dates = [];
+  //   const today = new Date();
+
+  //   for (let i = 0; i < 22; i++) {
+  //     const date = new Date(today);
+  //     date.setDate(today.getDate() + i);
+
+  //     dates.push({
+  //       day: date.getDate(),
+  //       month: date.toLocaleString("default", { month: "short" }),
+  //       status:
+  //         i === 0
+  //           ? "Today"
+  //           : date.toLocaleString("default", { weekday: "short" }),
+  //     });
+  //   }
+  //   return dates;
+  // };
   const generateDates = () => {
     const dates = [];
     const today = new Date();
-
-    for (let i = 0; i < 22; i++) {
+  
+    for (let i = 0; i < 14; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
-
+  
       dates.push({
+        fullDate: date,
         day: date.getDate(),
         month: date.toLocaleString("default", { month: "short" }),
-        status:
-          i === 0
-            ? "Today"
-            : date.toLocaleString("default", { weekday: "short" }),
+        status: i === 0 ? "Today" : date.toLocaleString("default", { weekday: "short" }),
       });
     }
+  
     return dates;
   };
+  
   const dates = generateDates();
 
   const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 9) % dates.length);
+    setCurrentIndex((prevIndex) => (prevIndex + 7) % dates.length);
   };
+
+  // const handlePrev = () => {
+  //   setCurrentIndex(
+  //     (prevIndex) => (prevIndex - 9 + dates.length) % dates.length
+  //   );
+  // };
 
   const handlePrev = () => {
-    setCurrentIndex(
-      (prevIndex) => (prevIndex - 9 + dates.length) % dates.length
-    );
+    if (currentIndex > 0) {
+      setCurrentIndex((prevIndex) => Math.max(prevIndex - 7, 0));
+    }
   };
-  const visibleDates = dates.slice(currentIndex, currentIndex + 9);
+  
 
-  return (
+  const visibleDates = dates.slice(currentIndex, currentIndex + 7);
+
+  return (<>
+ <div className="m-4">
+  {activeDate.toLocaleString("default", { month: "long" })} {activeDate.getFullYear()}
+</div>
+
     <div className="calendar-slider mt-5">
       <style jsx>{`
           .calendar-slider {
@@ -155,9 +186,17 @@ const Calendar = ({ selectedGame }) => {
           }
         `}</style>
 
-      <button className="nav-button prev-button" onClick={handlePrev}>
+      {/* <button className="nav-button prev-button" onClick={handlePrev}>
         <RiArrowLeftSLine />
-      </button>
+      </button> */}
+      <button
+  className="nav-button prev-button mt-3"
+  onClick={handlePrev}
+  disabled={currentIndex === 0}
+  style={{ opacity: currentIndex === 0 ? 0.5 : 1, cursor: currentIndex === 0 ? "not-allowed" : "pointer" }}
+>
+  <RiArrowLeftSLine />
+</button>
 
       <div className="date-container">
         {visibleDates.map((date, index) => (
@@ -178,18 +217,22 @@ const Calendar = ({ selectedGame }) => {
               ? "active"
               : ""
               } ${date.status === "Today" ? "today" : ""}`}
+            // onClick={() => {
+            //   const newDate = new Date(activeDate);
+            //   newDate.setDate(date.day);
+            //   newDate.setMonth(
+            //     new Date().getMonth() +
+            //     (date.month !==
+            //       new Date().toLocaleString("default", { month: "short" })
+            //       ? 1
+            //       : 0)
+            //   );
+            //   setActiveDate(newDate);
+            // }}
             onClick={() => {
-              const newDate = new Date(activeDate);
-              newDate.setDate(date.day);
-              newDate.setMonth(
-                new Date().getMonth() +
-                (date.month !==
-                  new Date().toLocaleString("default", { month: "short" })
-                  ? 1
-                  : 0)
-              );
-              setActiveDate(newDate);
+              setActiveDate(date.fullDate);
             }}
+            
           >
             <small style={{ fontSize: "1rem", fontWeight: "bold" }}>
               {date.status}
@@ -218,86 +261,14 @@ const Calendar = ({ selectedGame }) => {
         ))}
       </div>
 
-      <button className="nav-button next-button" onClick={handleNext}>
+      <button className="nav-button next-button mt-3" onClick={handleNext}>
         <RiArrowRightSLine />
       </button>
       <BookingSlots date={activeDate} selectedGame={selectedGame} gameId={id} />
     </div>
+    </>
   );
 };
-
-// const BookingSlots = ({ date, selectedGame, gameId }) => {
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-
-//   const slots = useSelector((state) => state.slots?.slots || []);
-//   const bookings = useSelector((state) => state.bookings?.bookings || []);
-
-//   useEffect(() => {
-//     if (gameId) {
-//       dispatch(getslots24(gameId));
-//       dispatch(getBookingsByGame(gameId)); // Fetch bookings for the selected game
-//     }
-//   }, [gameId, dispatch]);
-
-//   const isSlotBooked = (slotId, date) => {
-//     return bookings.some(
-//       (booking) =>
-//         booking.slot_id._id === slotId &&
-//         new Date(booking.slot_date).toDateString() === new Date(date).toDateString()
-//     );
-//   };
-
-//   const handleBookSlot = async (gameId, slotId, date) => {
-//     navigate(`/admin/bookings/booking-details/${gameId}/${slotId}/${date}`);
-//   };
-
-//   return (
-//     <div className="booking-slots mt-5">
-//       {slots.map((slot, index) => {
-//         const currentTime = new Date();
-//         const slotDateTime = new Date(date);
-
-//         const slotHours = parseInt(slot.start_time.split(":")[0], 10);
-//         const slotMinutes = parseInt(slot.start_time.split(":")[1], 10);
-//         slotDateTime.setHours(slotHours, slotMinutes, 0, 0);
-
-//         const isPast = slotDateTime < currentTime;
-//         const booked = isSlotBooked(slot._id, date);
-
-//         return (
-//           <div key={index} className="slot-row mb-2 border border-2 p-2">
-//             <div className="d-flex flex-column flex-md-row justify-content-between align-items-center">
-//               <span className="mb-2 mb-md-0">
-//                 {convertTo12Hour(slot.start_time)} - {convertTo12Hour(slot.end_time)}
-//               </span>
-//               <div className="d-flex flex-column flex-md-row align-items-center gap-3">
-//                 <span className={booked ? "text-danger" : slot.is_active ? "text-success" : "text-danger"}>
-//                   {booked ? "Booked" : slot.is_active ? "Available" : "Unavailable"}
-//                 </span>
-//                 <span>₹{slot.slot_price ? slot.slot_price : selectedGame?.data.price}</span>
-//                 <Button
-//                   variant="primary"
-//                   disabled={booked || isPast}
-//                   className="w-100 w-md-auto"
-//                   style={{
-//                     backgroundColor: booked || isPast ? "#ccc" : "white",
-//                     border: booked || isPast ? "2px solid gray" : "2px solid blue",
-//                     color: booked || isPast ? "gray" : "blue",
-//                     minWidth: "120px",
-//                   }}
-//                   onClick={() => handleBookSlot(gameId, slot._id, date)}
-//                 >
-//                   {booked ? "Booked" : isPast ? "Time Passed" : "Book Slot"}
-//                 </Button>
-//               </div>
-//             </div>
-//           </div>
-//         );
-//       })}
-//     </div>
-//   );
-// };
 
 const BookingSlots = ({ date, selectedGame, gameId }) => {
   const dispatch = useDispatch();
@@ -306,7 +277,7 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
 
   const slots = useSelector((state) => state.slots?.slots || []);
   const bookings = useSelector((state) => state.bookings?.bookings || []);
-  
+
   useEffect(() => {
     if (gameId) {
       dispatch(getslots24(gameId));
@@ -337,54 +308,6 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
   const handleSlotCreate = () => {
     setShowSlotModal(true) // Navigate to the game details page to create slots
   };
-
-  // return (
-  //   <div className="booking-slots mt-5">
-  //     {slots
-  //       .filter((slot) => slot.day === selectedDay) // Show only slots for the selected day
-  //       .map((slot, index) => {
-  //         const currentTime = new Date();
-  //         const slotDateTime = new Date(date);
-
-  //         const slotHours = parseInt(slot.start_time.split(":")[0], 10);
-  //         const slotMinutes = parseInt(slot.start_time.split(":")[1], 10);
-  //         slotDateTime.setHours(slotHours, slotMinutes, 0, 0);
-
-  //         const isPast = slotDateTime < currentTime;
-  //         const booked = isSlotBooked(slot._id, date);
-
-  //         return (
-  //           <div key={index} className="slot-row mb-2 border border-2 p-2">
-  //             <div className="d-flex flex-column flex-md-row justify-content-between align-items-center">
-  //               <span className="mb-2 mb-md-0">
-  //                 {convertTo12Hour(slot.start_time)} - {convertTo12Hour(slot.end_time)}
-  //               </span>
-  //               <div className="d-flex flex-column flex-md-row align-items-center gap-3">
-  //                 <span className={booked ? "text-danger" : slot.is_active ? "text-success" : "text-danger"}>
-  //                   {booked ? "Booked" : slot.is_active ? "Available" : "Unavailable"}
-  //                 </span>
-  //                 <span>₹{slot.slot_price ? slot.slot_price : selectedGame?.data.price}</span>
-  //                 <Button
-  //                   variant="primary"
-  //                   disabled={booked || isPast || !slot.is_active}
-  //                   className="w-100 w-md-auto"
-  //                   style={{
-  //                     backgroundColor: booked || isPast ? "#ccc" : "white",
-  //                     border: booked || isPast || !slot.is_active ? "2px solid gray" : "2px solid blue",
-  //                     color: booked || isPast || !slot.is_active ? "gray" : "blue",
-  //                     minWidth: "120px",
-  //                   }}
-  //                   onClick={() => handleBookSlot(gameId, slot._id, date)}
-  //                 >
-  //                   {booked ? "Booked" : isPast ? "Time Passed" : !slot.is_active ? "Unavailable" : "Book Slot"}
-  //                 </Button>
-  //               </div>
-  //             </div>
-  //           </div>
-  //         );
-  //       })}
-  //   </div>
-  // );
 
   return (
     <div className="booking-slots mt-5">

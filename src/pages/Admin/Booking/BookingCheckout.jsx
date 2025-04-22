@@ -1257,7 +1257,7 @@
 // Main component above   ||
 
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Button, Image, Stack, Form, OverlayTrigger, Tooltip, Modal, Table, Dropdown } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Image, Stack, Form, OverlayTrigger, Tooltip, Modal, Table, Dropdown, Popover } from "react-bootstrap";
 import { FaPhone, FaVideo, FaComment, FaClock, FaRegClock, FaPause } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import userProfile from "/assets/profile/user_avatar.jpg";
@@ -1296,6 +1296,7 @@ const BookingCheckout = () => {
 
   const [options, setOptions] = useState([]);
   const [showConfirmOffline, setShowConfirmOffline] = useState(false);
+  const [isItemsSaved, setIsItemsSaved] = useState(true);
   const [selectedOption, setSelectedOption] = useState(null);
   const [showCreditModal, setShowCreditModal] = useState(false);
   const [showInventory, setShowInventory] = useState(false);
@@ -1356,7 +1357,7 @@ const BookingCheckout = () => {
         setShowInventory(true)
         const mappedItems = booking.so_id.items.map((item) => ({ id: item.item_id._id, item: item.item, price: item.price, quantity: item.quantity, tax: item.tax, total: item.total, totalTax: item.tax_amt }));
         setSelectedItems(mappedItems)
-        setSelectedIds(mappedItems.map((item) => item.id._id));
+        setSelectedIds(mappedItems.map((item) => item?.id));
       }
 
       dispatch(initializeTimer(booking))
@@ -1411,8 +1412,6 @@ const BookingCheckout = () => {
   }, [selectedItems]);
 
   const handleChange = (selectedOption) => {
-    console.log("selectedOption", selectedOption)
-    console.log("selectedIds", selectedIds)
     let id = selectedOption.value;
     if (!id || selectedIds.includes(id)) return;
     // if (!id || selectedIds.includes(_id)) return;
@@ -1432,13 +1431,15 @@ const BookingCheckout = () => {
         totalTax: totalTax
       }]);
       setSelectedIds([...selectedIds, selected._id]);
-      setSelectedOption(null)
+      setSelectedOption(null);
+      setIsItemsSaved(false);
     }
   };
 
   const updateProduct = (id, field, value) => {
     const updatedItems = selectedItems.map((product) => {
       if (product.id === id) {
+        setIsItemsSaved(false);
         // const updatedQuantity = field === "quantity" ? parseInt(value.replace(/\D/g, ""), 10) || 0 : product.quantity; // Ensure only numeric input
         const updatedQuantity = field === "quantity"
           ? parseInt(String(value).replace(/\D/g, ""), 10) || 0
@@ -1473,7 +1474,16 @@ const BookingCheckout = () => {
   }, [booking]);
 
   const handleStartTimer = () => {
-    dispatch(startBookingTimer(booking._id));
+    const today = new Date().toISOString().slice(0, 10); // e.g., "2025-04-22"
+    const bookingDate = booking?.slot_date?.slice(0, 10); // "2025-04-24"
+
+    if (today === bookingDate) {
+      dispatch(startBookingTimer(booking._id));
+    } else {
+      alert("Timer can only be started on the booking date.");
+      // Optional: alert("You can only start the timer on the booking day.");
+    }
+    // dispatch(startBookingTimer(booking._id));
   };
 
   const handlePauseTimer = () => {
@@ -1497,12 +1507,14 @@ const BookingCheckout = () => {
         cafe: cafeId
       };
       await dispatch(addToCart({ id: booking?._id, updatedData: itemsData })).unwrap()
+      setIsItemsSaved(true); // Mark items as saved
     } catch (error) {
-
+      console.error("Error saving items:", error);
     }
   }
 
   const handleOnlinePayment = async (finalPlayers, payableAmount) => {
+
     try {
       const payer = looserPlayer || selectedCustomer; // Use looser player if selected, otherwise main customer
 
@@ -1530,33 +1542,18 @@ const BookingCheckout = () => {
           adjustment
         })
       );
-
-      if (response) {
-        alert(`Payment collected from ${payer.name}`);
-      }
     } catch (error) {
       console.error("Error processing online payment:", error);
     }
   };
 
   const handleCollectOffline = async (finalPlayers, currentTotal) => {
+
     const formattedPlayers = finalPlayers.map(({ _id, ...rest }) => ({
       id: _id,
       ...rest,
     }));
 
-    // cafe: cafeId,
-    // customer_id: selectedCustomer?._id,
-    // game_id: selectedGame?.data?._id,
-    // slot_id: slot?._id,
-    // mode: "Offline",
-    // status: "Pending",
-    // total: priceToPay,
-    // paid_amount: payableAmount,
-    // slot_date: newdate,
-    // players: teamMembers,
-    // playerCredits: playerCredits,
-    // items: selectedItems
     try {
       const bookingData = {
         mode: "Offline",
@@ -1567,18 +1564,57 @@ const BookingCheckout = () => {
         looserPlayer: looserPlayer,
         adjustment
       };
-      await dispatch(updateBooking({ id: booking?._id, updatedData: bookingData })).unwrap()
-    } catch (error) { }
+      const response = await dispatch(updateBooking({ id: booking?._id, updatedData: bookingData })).unwrap()
+
+      // if (response.data) {
+      //   console.log("reached here after response...",)
+      //   navigate(`admin/booking/checkout/${id}`)
+      // }
+    } catch (error) {
+      console.error("Error processing offline payment:", error);
+    }
   };
 
   const handleSelectLooserPlayer = (player) => {
     setLooserPlayer(player);
   };
 
-  console.log("playerCredits", booking?.playerCredits);
+  const renderCreditsPopover = (
+    <Popover id="player-credits-popover">
+      <Popover.Header as="h3">Player Credits</Popover.Header>
+      <Popover.Body>
+        {booking?.playerCredits?.length > 0 ? (
+          <ul className="mb-0 ps-3">
+            {booking.playerCredits.map((player, index) => (
+              <li key={index}>
+                {player.name || player.id}: ₹ {player.credit || player.amount}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div>No credits data</div>
+        )}
+      </Popover.Body>
+    </Popover>
+  );
+
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      border: 'none',
+      borderRadius: '16px',
+      cursor: 'pointer',
+      // padding: '2%',
+      boxShadow: 'none',
+      '&:hover': {
+        border: 'none'
+      }
+    }),
+    // Optional: adjust dropdown indicator and other parts if needed
+  };
 
   return (
-    <Container className="mt-4">
+    <Container className="mt-4 pb-3">
       <Row>
         <h5>
           <Link to="/admin/dashboard">Home</Link> / <span style={{ color: "blue" }}>
@@ -1653,7 +1689,7 @@ const BookingCheckout = () => {
               </Col>
             </Row>
           </Card>
-          {booking?.status !== "Pending" ? <></>:<Button
+          {booking?.status !== "Pending" ? <></> : <Button
             variant="success"
             className="w-100 mt-3"
             style={{ backgroundColor: "#03D41414", color: "#00AF0F" }}
@@ -1669,7 +1705,7 @@ const BookingCheckout = () => {
               md={6}
               className={`d-flex flex-column p-0 justify-content-between transition-col`}
             >
-              <Card className="p-3 h-100" style={{marginLeft:"10px"}}>
+              <Card className="p-3 h-100" style={{ marginLeft: "10px" }}>
                 <h5 className="font-inter mb-3 pb-3 fs-3 text-color" style={{ borderBottom: "1px solid #ccc" }}>Booking Details
                   {selectedGame?.payLater ?
                     <span className="fw-bold text-info float-end">Amount : ₹ {slot?.slot_price ? slot?.slot_price : selectedGame?.price}/Hr</span>
@@ -1761,7 +1797,8 @@ const BookingCheckout = () => {
                           value={selectedOption}
                           isSearchable
                           placeholder="Select for add on's..."
-                          className="mb-1"
+                          className="mb-0"
+                          styles={customStyles}
                         />
                       }
 
@@ -1872,8 +1909,9 @@ const BookingCheckout = () => {
                               setSelectedItems(updatedProducts);
                               const updatedSelectedIds = selectedIds.filter((id) => id !== product.id);
                               setSelectedIds(updatedSelectedIds);
-                            }}                        
-                            >
+                              setIsItemsSaved(false); // Mark items as unsaved
+                            }}
+                          >
                             {booking?.status === "Pending" && <TbTrash style={{
                               top: "15px",
                               right: "-30px",
@@ -1937,20 +1975,20 @@ const BookingCheckout = () => {
                                     }
                                   />
 
-                                <Button
-                                  variant="light"
-                                  size="sm"
-                                  onClick={() =>
-                                    updateProduct(
-                                      product.id,
-                                      "quantity",
-                                      Number(product.quantity) + 1
-                                    )
-                                  }
-                                >
-                                  +
-                                </Button>
-                                </div>: <div className="text-color">Qty: {product.quantity}</div>}
+                                  <Button
+                                    variant="light"
+                                    size="sm"
+                                    onClick={() =>
+                                      updateProduct(
+                                        product.id,
+                                        "quantity",
+                                        Number(product.quantity) + 1
+                                      )
+                                    }
+                                  >
+                                    +
+                                  </Button>
+                                </div> : <div className="text-color">Qty: {product.quantity}</div>}
                               </div>
 
                               <div className="text-end ms-3" style={{ minWidth: "120px" }}>
@@ -1978,7 +2016,17 @@ const BookingCheckout = () => {
                       }}
                     >
                       <span className="text-color">Total: ₹ {addOnTotal}</span>
-                      {booking?.status === "Pending" && <span className="float-end bg-secondary text-white px-2 py-1 rounded" style={{ cursor: "pointer" }} onClick={handleSaveItems}>Save</span>}
+                      {
+                        booking?.status === "Pending"
+                        &&
+                        <span
+                          className="float-end text-white px-2 py-1 rounded"
+                          style={{ cursor: "pointer", background: `${isItemsSaved ? "grey" : "green"}` }}
+                          onClick={handleSaveItems}
+                        >
+                          {isItemsSaved ? "Saved" : "Save"}
+                        </span>
+                      }
                     </div>
                   </div>
                 </Card>
@@ -2243,7 +2291,7 @@ const BookingCheckout = () => {
               <Row className="mt-1">
                 <Col xs={6} className="text-primary fw-semibold">{selectedGame?.name} ({selectedGame?.size}) </Col>
                 <Col xs={3} className="muted-text">{booking?.players?.length + 1} Candidates</Col>
-                <Col xs={3} className="text-end">{(booking?.total - booking?.paid_amount) > 0 && <span className="text-danger">₹ {booking?.total - booking?.paid_amount} Pending</span>} </Col>
+                <Col xs={3} className="text-end">{selectedGame?.type === "Single" && !selectedGame?.payLater && (booking?.total - booking?.paid_amount) > 0 && <span className="text-danger">₹ {booking?.total - booking?.paid_amount} Pending</span>} </Col>
               </Row>
               <hr className="m-1" />
 
@@ -2276,6 +2324,9 @@ const BookingCheckout = () => {
                     placeholder="Enter adjustment value"
                     value={adjustment}
                     onChange={(e) => {
+                      if (e.target.value > total) {
+                        return
+                      }
                       setAdjustment(e.target.value);
                     }}
                   />
@@ -2428,7 +2479,13 @@ const BookingCheckout = () => {
                     xs={12}
                     className="w-100 mt-3"
                     disabled={!booking?.timer_status === "Stopped"}
-                    onClick={() => setShowCreditModal(true)}
+                    onClick={() => {
+                      if (!isItemsSaved) {
+                        alert("Please save the added items before proceeding with payment.");
+                        return;
+                      }
+                      setShowCreditModal(true)
+                    }}
                   >Payment Options</Button>
                 </Col>
 
@@ -2523,20 +2580,36 @@ const BookingCheckout = () => {
                 <Col xs={6} className="text-color fw-semibold">Amount Paid</Col>
                 <Col xs={6} className="muted-text">₹ {booking?.paid_amount}</Col>
               </Row>
-              
+
               <Row className="mt-1">
                 <Col xs={6} className="text-color fw-semibold">Adjustment</Col>
-                <Col xs={6} className="muted-text">₹ {booking?.adjustment}</Col>
+                <Col xs={6} className="muted-text">₹ {booking?.adjustment || 0}</Col>
               </Row>
-
+              {/* 
               <Row className="mt-2">
                 <Col xs={6} className="text-color fw-semibold">Credit Amount</Col>
                 <Col xs={6} className="muted-text">₹ {booking?.total - booking?.paid_amount}</Col>
+              </Row> */}
+
+              <Row className="mt-2">
+                <Col xs={6} className="text-color fw-semibold">Credit Amount</Col>
+                <Col xs={6} className="muted-text">
+                  <OverlayTrigger
+                    trigger={['hover', 'focus']}
+                    placement="right"
+                    overlay={renderCreditsPopover}
+                  >
+                    <span style={{ cursor: 'pointer' }}>
+                      ₹ {booking?.total - booking?.paid_amount}
+                    </span>
+                  </OverlayTrigger>
+                </Col>
               </Row>
+
 
               <Row className="mt-2">
                 <Col xs={6} className="text-color fw-semibold">Transaction ID</Col>
-                <Col xs={6} className="muted-text">{booking?.transaction?.razorpay_payment_id || "-"}</Col>
+                <Col xs={6} className="muted-text">{booking?.transaction?.razorpay_payment_id || "Cash"}</Col>
               </Row>
 
               <Row className="mt-2">

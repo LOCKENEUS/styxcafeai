@@ -208,7 +208,8 @@ export const processOnlinePayment = createAsyncThunk(
 
               const verifyData = verifyResponse.data;
               if (verifyData.success) {
-                window.location.href = "/admin/bookings";
+                console.log("verifyData", verifyData)
+                window.location.href = `/admin/booking/checkout/${verifyData.transaction.booking_id}`;
               } else {
                 return thunkAPI.rejectWithValue("Payment Verification Failed");
               }
@@ -353,7 +354,8 @@ const bookingslice = createSlice({
         if (index !== -1) {
           state.bookings[index] = updatedbooking; // Update state
         }
-        window.location.href = "/admin/bookings";
+        console.log("updatedbooking from redux", action.payload);
+        window.location.href = `/admin/booking/checkout/${action.payload?.data?._id}`;
       })
       .addCase(updateBooking.rejected, (state, action) => {
         state.loading = false;
@@ -384,6 +386,9 @@ const bookingslice = createSlice({
       .addCase(processOnlinePayment.fulfilled, (state, action) => {
         state.loading = false;
         state.successMessage = action.payload.message;
+        console.log("action.payload", action.payload);
+        // window.location.href = `/admin/booking/checkout/${action.payload?.data?._id}`;
+        // navigate 
       })
       .addCase(processOnlinePayment.rejected, (state, action) => {
         state.loading = false;

@@ -6,7 +6,7 @@ import pdflogo from "/assets/Admin/profileDetails/pdflogo.svg";
 import profileImg from "/assets/Admin/profileDetails/ProfileImg.png";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { collectAmount, getCustomerById } from "../../../store/AdminSlice/CustomerSlice";
+import { collectAmount, collectAmountOnline, getCustomerById } from "../../../store/AdminSlice/CustomerSlice";
 import { useNavigate } from "react-router-dom";
 import { FaRupeeSign } from "react-icons/fa";
 
@@ -59,8 +59,6 @@ const CustomerDetails = () => {
     }
   };
 
-  console.log("selectedBookingIds:", selectedBookingIds);
-
   // Add fallback image
   const defaultProfileImage = profileImg; // Your imported default image
   if (loading) {
@@ -99,16 +97,15 @@ const CustomerDetails = () => {
 
   const handleCollectOnline = async () => {
     await dispatch(
-      collectAmount({
+      collectAmountOnline({
         id: id,
-        updateData: { bookingIds: selectedBookingIds }
+        updateData: { bookingIds: selectedBookingIds, amount : creditAmount, customer: selectedCustomer?.data }
       })
     );
   }
 
   return (
     <Container className="mt-4">
-
       <Row>
         {/* Sidebar with Profile */}
         <Col md={4}>

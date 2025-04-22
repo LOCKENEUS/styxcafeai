@@ -59,9 +59,9 @@ const CustomerList = () => {
 
   // Filter customers based on search term
   const filteredCustomers = customers.filter(customer => 
-    customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.contact_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.email.toLowerCase().includes(searchTerm.toLowerCase())
+    customer?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    customer?.contact_no?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    customer?.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (

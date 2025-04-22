@@ -111,24 +111,23 @@ export const collectAmount = createAsyncThunk(
 );
 
 // Collect Amount Online
-export const collectAmountOnline = createAsyncThunk(
-  'customers/collectAmountOnline',
-  async ({id, updateData}, thunkAPI) => {
-    try {
-      await axios.patch(`${BASE_URL}/admin/customer/collect-amount/${id}`,updateData)
-      toast.success('Amount Collected!');
-      return id;
-    } catch (error) {
-      toast.error('Error collecting payment: ' + (error.response?.data?.message || 'Something went wrong'));
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
-    }
-  }
-);
+// export const collectAmountOnline = createAsyncThunk(
+//   'customers/collectAmountOnline',
+//   async ({id, updateData}, thunkAPI) => {
+//     try {
+//       await axios.patch(`${BASE_URL}/admin/customer/collect-amount/${id}`,updateData)
+//       toast.success('Amount Collected!');
+//       return id;
+//     } catch (error) {
+//       toast.error('Error collecting payment: ' + (error.response?.data?.message || 'Something went wrong'));
+//       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+//     }
+//   }
+// );
 
-export const collectCreditOnline = createAsyncThunk(
-  "bookings/processOnlinePayment",
-  async (
-    {id, updateData},thunkAPI) => {
+export const collectAmountOnline = createAsyncThunk(
+  "bookings/collectAmountOnline",
+  async ({id, updateData},thunkAPI) => {
     try {
       const backend_url = import.meta.env.VITE_API_URL;
       const response = await axios.post(
@@ -136,11 +135,7 @@ export const collectCreditOnline = createAsyncThunk(
         {
           amount: updateData.amount,
           currency: "INR",
-          customerId: selectedCustomer?._id,
-          gameId: selectedGame?._id,
-          slotId: slot?._id,
-          date: new Date().toISOString(),
-          teamMembers: [],
+          customerId: id,
         },
         {
           headers: {
@@ -151,29 +146,26 @@ export const collectCreditOnline = createAsyncThunk(
 
       const data = response.data;
 
+      console.log("data", data)
+
       if (data.success && data.order) {
         const options = {
           key: import.meta.env.VITE_RAZOR_LIVE_KEY,
-          amount: data.order.amount,
+          amount: data.order.amount * 100,
           currency: data.order.currency,
           name: "Lockene Inc",
-          description: "Game Booking",
+          description: "Credit Collection",
           order_id: data.order.id,
           handler: async function (response) {
             try {
               const verifyResponse = await axios.post(
-                `${backend_url}/admin/booking/verify-payment`,
+                `${backend_url}/admin/collect-online`,
                 {
                   razorpay_order_id: response.razorpay_order_id,
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature,
                   booking_id: bookingId,
-                  amount: data.order.amount,
-                  paid_amount,
-                  total,
-                  looser,
-                  playerCredits,
-                  adjustment
+                  amount: data.order.amount
                 },
                 {
                   headers: {
@@ -197,9 +189,9 @@ export const collectCreditOnline = createAsyncThunk(
             }
           },
           prefill: {
-            name: selectedCustomer?.name,
-            email: selectedCustomer?.email,
-            contact: selectedCustomer?.contact_no,
+            name: updateData.customer.name,
+            email: updateData.customer.email,
+            contact: updateData.customer.contact_no,
           },
           theme: {
             color: "#3399cc",

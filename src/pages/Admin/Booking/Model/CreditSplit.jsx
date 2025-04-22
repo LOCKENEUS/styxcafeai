@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Row, Col, Container } from "react-bootstrap";
 
-// import { BiSplit } from 'react-icons/bi';
 import { BsCurrencyRupee, BsFillPlusSquareFill, BsSquareHalf } from 'react-icons/bs';
 import { LuBadgeCheck, LuSplit } from "react-icons/lu";
 import { LiaCoinsSolid } from "react-icons/lia";
@@ -20,13 +19,9 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
 
     updatedPlayers[index].share = parsed;
     setAllPlayers(updatedPlayers);
-
-    // const newTotal = updatedPlayers.reduce((sum, p) => sum + (p.share || 0), 0);
-    // setCurrentTotal(newTotal);
   };
 
   const handleSplitAmount = () => {
-    console.log("reached-here")
     // Calculate the split amount based on the selected split type
     const totalPlayers = allPlayers.length;
     const splitAmount = totalAmount / totalPlayers;
@@ -40,52 +35,6 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
     }))
     setAllPlayers(updatedPlayers);
   };
-
-  // const handleAssignCredit = (index) => {
-  //   const updatedPlayers = [...allPlayers];
-  //   const player = updatedPlayers[index];
-  //   const shareAmount = parseFloat(player.share) || 0;
-
-  //   const availableCredit = player.creditLimit - player.creditAmount;
-
-  //   if (shareAmount > availableCredit) {
-  //     alert(`Insufficient credit for ${player.name}. Available: ₹${availableCredit}`);
-  //     return;
-  //   }
-
-  //   player.credit = shareAmount;
-  //   player.creditAssigned = true;
-
-  //   setCurrentTotal((prevTotal) => prevTotal - shareAmount);
-  //   setAllPlayers(updatedPlayers);
-  // };
-
-  // const handleAssignCredit = (index) => {
-  //   const updatedPlayers = [...allPlayers];
-  //   const player = updatedPlayers[index];
-  //   const shareAmount = parseFloat(player.share) || 0;
-
-  //   const availableCredit = player.creditLimit - player.creditAmount;
-
-  //   if (player.creditAssigned) {
-  //     // Unassign the credit
-  //     player.credit = 0;
-  //     player.creditAssigned = false;
-  //     setCurrentTotal((prevTotal) => prevTotal + shareAmount);
-  //   } else {
-  //     // Assign the credit
-  //     if (shareAmount > availableCredit) {
-  //       alert(`Insufficient credit for ${player.name}. Available: ₹${availableCredit}`);
-  //       return;
-  //     }
-
-  //     player.credit = shareAmount;
-  //     player.creditAssigned = true;
-  //     setCurrentTotal((prevTotal) => prevTotal - shareAmount);
-  //   }
-
-  //   setAllPlayers(updatedPlayers);
-  // };
 
   const handleAssignCredit = (index) => {
     const updatedPlayers = [...allPlayers];
@@ -116,6 +65,8 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
     setAllPlayers(updatedPlayers);
   };
 
+  console.log("allPlayers", allPlayers.length);
+
   return (
     <Modal show={show} onHide={handleClose}>
       <div className="modal-content rounded-2">
@@ -132,6 +83,10 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
             >
               <BsSquareHalf /> 50-50
             </Button>}
+            {allPlayers?.length === 1 && <Button variant="primary" className="fw-bold" onClick={handleSplitAmount}>
+              <LuSplit size={16} className="" /> Split Expenses
+            </Button>
+            }
             <span style={{ background: "#FF00000D", color: "#FF0000", padding: "12px", marginLeft: "190px" }} className="rounded-2"> <BsCurrencyRupee /> <span className="fw-bold ms-1">{currentTotal}</span></span>
           </Modal.Title>
           <Button variant="close" onClick={handleClose} className="ms-auto"></Button>
@@ -162,7 +117,6 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
                       outline: "none"
                     }}
                   />
-
                 </Col>
                 <Col xs={4}>
                   <span
@@ -172,15 +126,6 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
                     <LiaCoinsSolid size={25} /> {player.creditLimit - player.creditAmount}/{player.creditLimit}
                   </span>
                 </Col>
-                {/* <Col xs={2} className="text-end">
-                  {!player.creditAssigned ? <Button variant="light" className="rounded-circle p-1 border" onClick={() => handleAssignCredit(index)}
-                  >
-                    <BsFillPlusSquareFill className="rounded-1" size={20} />
-                  </Button> : <Button variant="light" className="rounded-circle p-1 border" onClick={() => handleAssignCredit(index)}
-                  >
-                    <LuBadgeCheck className="rounded-1" size={20} />
-                  </Button>}
-                </Col> */}
                 <Col xs={1} className="text-end">
                   <Button
                     variant="light"
@@ -196,7 +141,6 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
                 </Col>
               </Row>
             ))}
-
             <Button size="sm" className="w-25" onClick={() => handleOnlinePayment(allPlayers, currentTotal)}>Online</Button>
             <Button size="sm" className="mx-4 w-25" onClick={() => handleCollectOffline(allPlayers, currentTotal)}>Offline</Button>
           </Container>

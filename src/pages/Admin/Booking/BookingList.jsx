@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import moment from 'moment';
+// import moment from 'moment';
 import {
     Row,
     Col,
@@ -55,33 +55,77 @@ const BookingList = () => {
         }
     }, [dispatch]);
 
+    // const filterBookingsByDate = (filter) => {
+    //     const today = moment().startOf("day");
+
+    //     switch (filter) {
+    //         case "Today":
+    //             return bookings?.filter((booking) =>
+    //                 moment(booking.slot_date).isSame(today, "day")
+    //             );
+    //         case "Tomorrow":
+    //             return bookings?.filter((booking) =>
+    //                 moment(booking.slot_date).isSame(today.clone().add(1, "days"), "day")
+    //             );
+    //         case "Yesterday":
+    //             return bookings?.filter((booking) =>
+    //                 moment(booking.slot_date).isSame(today.clone().subtract(1, "days"), "day")
+    //             );
+    //         case "Monday":
+    //         case "Tuesday":
+    //         case "Wednesday":
+    //         case "Thursday":
+    //             return bookings?.filter((booking) =>
+    //                 moment(booking.slot_date).format("dddd") === filter
+    //             );
+    //         case "All Bookings":
+
+    //         default:
+    //             return bookings
+    //     }
+    // };
+
     const filterBookingsByDate = (filter) => {
-        const today = moment().startOf("day");
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Normalize today's date
+
+        const normalizeDate = (dateStr) => {
+            const date = new Date(dateStr);
+            date.setHours(0, 0, 0, 0);
+            return date;
+        };
+
+        const getDayName = (dateStr) => {
+            return new Date(dateStr).toLocaleDateString('en-US', { weekday: 'long' });
+        };
 
         switch (filter) {
             case "Today":
                 return bookings?.filter((booking) =>
-                    moment(booking.slot_date).isSame(today, "day")
+                    normalizeDate(booking.slot_date).getTime() === today.getTime()
                 );
+
             case "Tomorrow":
                 return bookings?.filter((booking) =>
-                    moment(booking.slot_date).isSame(today.clone().add(1, "days"), "day")
+                    normalizeDate(booking.slot_date).getTime() === new Date(today.getTime() + 86400000).getTime()
                 );
+
             case "Yesterday":
                 return bookings?.filter((booking) =>
-                    moment(booking.slot_date).isSame(today.clone().subtract(1, "days"), "day")
+                    normalizeDate(booking.slot_date).getTime() === new Date(today.getTime() - 86400000).getTime()
                 );
+
             case "Monday":
             case "Tuesday":
             case "Wednesday":
             case "Thursday":
                 return bookings?.filter((booking) =>
-                    moment(booking.slot_date).format("dddd") === filter
+                    getDayName(booking.slot_date) === filter
                 );
-            case "All Bookings":
 
+            case "All Bookings":
             default:
-                return bookings
+                return bookings;
         }
     };
 
@@ -215,7 +259,12 @@ const BookingList = () => {
                                     <li
                                         key={index}
                                         value={option}
-                                        style={{ cursor: "pointer", padding: "10px" }}
+                                        style={{
+                                            cursor: "pointer",
+                                            padding: "10px",
+                                            backgroundColor: selectedFilter === option ? "#0062FF" : "transparent",
+                                            color: selectedFilter === option ? "white" : "black",
+                                        }}
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleFilterChange(option, e);
@@ -254,7 +303,7 @@ const BookingList = () => {
                     <div className="d-flex gap-3">
                         <FiFilter
                             onClick={toggleFilterDropdown}
-                            style={{ fontSize: "20px", color: "#0062FF" }}
+                            style={{ fontSize: "20px", color: "#0062FF", cursor: "pointer" }}
                         />
                     </div>
                     {filterDropdownOpen && (
@@ -272,7 +321,12 @@ const BookingList = () => {
                             {games.length > 0 && games.map((sport, index) => (
                                 <li
                                     key={index}
-                                    style={{ cursor: "pointer", padding: "10px" }}
+                                    style={{
+                                        cursor: "pointer",
+                                        padding: "10px",
+                                        backgroundColor: gameFilter === sport?.name ? "#0062FF" : "transparent", // Highlight selected game filter
+                                        color: gameFilter === sport?.name ? "white" : "black", // Change text color for the selected game filter
+                                    }}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         setGameFilter(sport?.name);
@@ -341,7 +395,7 @@ const BookingList = () => {
                         {currentBookings.length > 0 ?
                             currentBookings?.map((booking, index) => (
                                 <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
-                                    <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
+                                    <td style={{ border: "none", minWidth: "100px", alignContent: "center", paddingLeft: "3%" }}>
                                         {index + 1}
                                     </td>
                                     <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
@@ -445,7 +499,7 @@ const BookingList = () => {
                                 </tr>
                             )) :
                             <tr>
-                                <td colSpan={8} className="text-center " style={{ height:"40vh", border: "none" }}>
+                                <td colSpan={8} className="text-center " style={{ height: "40vh", border: "none" }}>
                                     <h1>  <span>  <MdOutlineDoNotDisturb /> </span> No booking Available</h1>
                                 </td>
                             </tr>}

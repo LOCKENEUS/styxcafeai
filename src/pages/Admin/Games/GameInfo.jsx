@@ -122,35 +122,67 @@ const GameInfo = () => {
     "Thursday",
   ];
 
+  // const filterBookingsByDate = (filter) => {
+  //   const today = moment().startOf("day");
+
+  //   switch (filter) {
+  //     case "Today":
+  //       return bookings?.filter((booking) =>
+  //         moment(booking.slot_date).isSame(today, "day")
+  //       );
+  //     case "Tomorrow":
+  //       return bookings?.filter((booking) =>
+  //         moment(booking.slot_date).isSame(today.clone().add(1, "days"), "day")
+  //       );
+  //     case "Yesterday":
+  //       return bookings?.filter((booking) =>
+  //         moment(booking.slot_date).isSame(today.clone().subtract(1, "days"), "day")
+  //       );
+  //     case "Monday":
+  //     case "Tuesday":
+  //     case "Wednesday":
+  //     case "Thursday":
+  //       return bookings?.filter((booking) =>
+  //         moment(booking.slot_date).format("dddd") === filter
+  //       );
+  //     case "All Bookings": // Handle the new option
+  //     default:
+  //       return bookings
+  //   }
+  // };
+
   const filterBookingsByDate = (filter) => {
-    const today = moment().startOf("day");
-
-    switch (filter) {
-      case "Today":
-        return bookings?.filter((booking) =>
-          moment(booking.slot_date).isSame(today, "day")
-        );
-      case "Tomorrow":
-        return bookings?.filter((booking) =>
-          moment(booking.slot_date).isSame(today.clone().add(1, "days"), "day")
-        );
-      case "Yesterday":
-        return bookings?.filter((booking) =>
-          moment(booking.slot_date).isSame(today.clone().subtract(1, "days"), "day")
-        );
-      case "Monday":
-      case "Tuesday":
-      case "Wednesday":
-      case "Thursday":
-        return bookings?.filter((booking) =>
-          moment(booking.slot_date).format("dddd") === filter
-        );
-      case "All Bookings": // Handle the new option
-      default:
-        return bookings
-    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize
+  
+    const normalizeDate = (date) => {
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    };
+  
+    return bookings?.filter((booking) => {
+      const bookingDate = normalizeDate(booking.slot_date);
+  
+      switch (filter) {
+        case "Today":
+          return bookingDate.getTime() === today.getTime();
+        case "Tomorrow":
+          return bookingDate.getTime() === new Date(today.getTime() + 86400000).getTime();
+        case "Yesterday":
+          return bookingDate.getTime() === new Date(today.getTime() - 86400000).getTime();
+        case "Monday":
+        case "Tuesday":
+        case "Wednesday":
+        case "Thursday":
+          return bookingDate.toLocaleDateString('en-US', { weekday: 'long' }) === filter;
+        case "All Bookings":
+        default:
+          return true;
+      }
+    });
   };
-
+  
   const filteredBookings = filterBookingsByDate(selectedFilter)
     .filter((booking) => booking?.customerName?.toLowerCase().includes(searchTerm.toLowerCase()))
     .filter((booking) => gameFilter === "All" || booking?.gameTitle === gameFilter);
@@ -194,27 +226,27 @@ const GameInfo = () => {
                 objectFit: "cover",
               }}
             />
-             <div
-                            onClick={() => navigate(`/admin/games/edit-game/${gameId}`)}
-                            className="rounded-circle"
-                            style={{
-                                position: "absolute",
-                                bottom: "35px",
-                                right: "15px",
-                                width: "30px",
-                                height: "30px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                backgroundColor: "white",
-                                border: "none",
-                                boxShadow: "none",
-                                outline: "none",
-                                cursor: "pointer",
-                            }}
-                        >
-                          <BiPencil  color="blue" />
-               </div>
+            <div
+              onClick={() => navigate(`/admin/games/edit-game/${gameId}`)}
+              className="rounded-circle"
+              style={{
+                position: "absolute",
+                bottom: "35px",
+                right: "15px",
+                width: "30px",
+                height: "30px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "white",
+                border: "none",
+                boxShadow: "none",
+                outline: "none",
+                cursor: "pointer",
+              }}
+            >
+              <BiPencil color="blue" />
+            </div>
           </Col>
           <Col
             md={5}
@@ -447,7 +479,7 @@ const GameInfo = () => {
                 </tr>
               </thead>
               <tbody style={{ minHeight: "200px", display: "table-row-group" }}>
-                {currentBookings.length > 0 ? 
+                {currentBookings.length > 0 ?
                   currentBookings?.map((booking, index) => (
                     <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
                       <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
@@ -556,7 +588,7 @@ const GameInfo = () => {
                   )) : (
                     <tr>
                       <td colSpan="9" className="text-center">
-                        <img src={nobookings} className="w-50"/>
+                        <img src={nobookings} className="w-50" />
                       </td>
                     </tr>
                   )}
