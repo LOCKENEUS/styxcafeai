@@ -25,6 +25,7 @@ import { getGameById } from "../../../store/slices/gameSlice";
 import { getBookingsByGame } from "../../../store/AdminSlice/BookingSlice";
 import { convertTo12Hour, formatDate } from "../../../components/utils/utils";
 import { BiPencil } from "react-icons/bi";
+import CustomSlotModal from "./Modal/CustomSlot";
 
 const GameInfo = () => {
   const { gameId } = useParams();
@@ -36,6 +37,7 @@ const GameInfo = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
+  const [showCustomSlot, setShowCustomSlot] = useState(false);
   const [gameFilter, setGameFilter] = useState("All");
   const [selectedFilter, setSelectedFilter] = useState("All");
   const [collection, setCollection] = useState(0);
@@ -209,16 +211,16 @@ const GameInfo = () => {
       </Row>
 
       {/* Booking Overview */}
-      <Card className="p-3 mb-2" style={{ backgroundColor: "transparent" }}>
-        <Row className="gap-3" style={{ backgroundColor: "transparent" }}>
-          <Col md={2} className="position-relative" style={{ backgroundColor: "transparent" }}>
+      <Card className="p-1" style={{ backgroundColor: "white", marginBottom: "20px" }}>
+        <Row className="" style={{ backgroundColor: "transparent" }}>
+          <Col md={2} className="position-relative my-auto" style={{ backgroundColor: "transparent" }}>
             <img
               src={
                 `${import.meta.env.VITE_API_URL}/${selectedGame?.data?.gameImage}` ||
                 gm2
               }
               alt={selectedGame?.data?.name}
-              className="img-fluid rounded"
+              className="img-fluid rounded m-3"
               style={{
                 width: "100%",
                 height: "164px",
@@ -250,7 +252,7 @@ const GameInfo = () => {
           </Col>
           <Col
             md={5}
-            className="d-flex flex-column justify-content-around"
+            className="d-flex flex-column justify-content-around px-4"
             style={{ backgroundColor: "transparent" }}
           >
             <h5>{selectedGame?.data?.name}
@@ -305,7 +307,7 @@ const GameInfo = () => {
             </div>
           </Col>
           <Col
-            md={3}
+            md={5}
             className="text-end d-flex flex-column justify-content-around align-items-end"
             style={{ backgroundColor: "transparent" }}
           >
@@ -314,13 +316,25 @@ const GameInfo = () => {
             >
               ₹ {selectedGame?.data?.price}
             </h4>
+            <span>
             <Button
+            size="sm"
               variant="primary"
               style={{ width: "128px", height: "37px" }}
               onClick={handleBookSlotClick}
             >
               Book Slot
             </Button>
+
+            <Button
+            size="sm"
+              variant="primary"
+              style={{ width: "150px", height: "37px", marginLeft: "10px" }}
+              onClick={() => setShowCustomSlot(true)}
+            >
+              Custom Booking
+            </Button>
+            </span>
           </Col>
         </Row>
       </Card>
@@ -328,7 +342,7 @@ const GameInfo = () => {
       {showCalendar ? (
         <Calendar selectedGame={selectedGame} />
       ) : (
-        <Card className="p-3" style={{ backgroundColor: "transparent" }}>
+        <Card className="p-3" style={{ backgroundColor: "white" }}>
           <Row
             className="mb-3 d-flex justify-content-between"
             style={{ backgroundColor: "transparent" }}
@@ -482,7 +496,7 @@ const GameInfo = () => {
                 {currentBookings.length > 0 ?
                   currentBookings?.map((booking, index) => (
                     <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
-                      <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
+                      <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>    
                         {index + 1}
                       </td>
                       <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
@@ -519,7 +533,7 @@ const GameInfo = () => {
                       </td>
                       <td
                         className="align-middle"
-                        style={{ border: "none", minWidth: "120px" }}
+                        style={{ border: "none", minWidth: "130px" }}
                       >
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <span
@@ -561,7 +575,7 @@ const GameInfo = () => {
                         style={{ border: "none", minWidth: "120px" }}
                       >
                         {formatDate(booking.slot_date)}<br />
-                        {convertTo12Hour(booking?.slot_id?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time)}
+                        {convertTo12Hour(booking?.slot_id?.start_time || booking?.custom_slot?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time || booking?.custom_slot?.end_time)}
                       </td>
                       <td
                         className="align-middle"
@@ -608,6 +622,15 @@ const GameInfo = () => {
           </div>
         </Card>
       )}
+
+      {showCustomSlot && 
+      <CustomSlotModal 
+      show={showCustomSlot} 
+      handleClose={() => setShowCustomSlot(false)} 
+      gameId={gameId}
+      date={new Date()}
+      />}
+      
     </div>
   );
 };

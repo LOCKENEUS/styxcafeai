@@ -128,7 +128,11 @@ const slotslice = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    setSlotDataManually: (state, action) => {
+      state.slot = action.payload; // or state.slots if it's an array of slots
+    },
+  },
   extraReducers: (builder) => {
     builder
       // Fetch slots
@@ -242,3 +246,5 @@ const slotslice = createSlice({
 });
 
 export default slotslice.reducer;
+export const { setSlotDataManually } = slotslice.actions;
+

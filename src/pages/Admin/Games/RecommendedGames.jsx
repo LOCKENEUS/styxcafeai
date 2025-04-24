@@ -120,9 +120,9 @@ const RecommendedGames = () => {
           {indoorGames.length > 0 ? (
             indoorGames.map((game, index) => (
               <Col key={game._id} lg={2.4} xs={8} md={3} style={{ padding: '0 0.5rem' }}>
-                <Card 
-                  className="shadow-sm game-card" 
-                  style={{ 
+                <Card
+                  className="shadow-sm game-card"
+                  style={{
                     cursor: 'pointer',
                     opacity: 1, // Ensure initial visibility
                     transform: 'none' // Reset any transforms
@@ -139,7 +139,12 @@ const RecommendedGames = () => {
                     onClick={() => handleCardClick(game._id)}
                   />
                   <Card.Body>
-                    <Card.Title>{game.name}</Card.Title>
+                    <Card.Title
+                    style={{
+                      fontWeight: "600",
+                      fontSize: "24px",
+                    }}
+                    >{game.name}</Card.Title>
                     <Card.Text>
                       <small className="text-success">
                         ● {game.type} ({game.size} players)
@@ -162,9 +167,9 @@ const RecommendedGames = () => {
           ) : (
             <Col className="text-center py-5">
               <div className="d-flex flex-column align-items-center">
-                <img 
-                  src={Nogame} 
-                  alt="No games" 
+                <img
+                  src={Nogame}
+                  alt="No games"
                   style={{ width: '150px', opacity: 0.7 }}
                 />
                 <h5 className="mt-3 text-muted">No indoor games available</h5>
@@ -187,9 +192,9 @@ const RecommendedGames = () => {
           {outdoorGames.length > 0 ? (
             outdoorGames.map((game, index) => (
               <Col key={game._id} lg={2.4} xs={8} md={3} style={{ padding: '0 0.5rem' }}>
-                <Card 
+                <Card
                   className="shadow-sm game-card"
-                  style={{ 
+                  style={{
                     opacity: 1, // Ensure initial visibility
                     transform: 'none' // Reset any transforms
                   }}
@@ -228,9 +233,9 @@ const RecommendedGames = () => {
           ) : (
             <Col className="text-center py-5">
               <div className="d-flex flex-column align-items-center">
-                <img 
-                  src={Nogame} 
-                  alt="No games" 
+                <img
+                  src={Nogame}
+                  alt="No games"
                   style={{ width: '150px', opacity: 0.7 }}
                 />
                 <h5 className="mt-3 text-muted">No outdoor games available</h5>

@@ -102,6 +102,10 @@ const CustomerDetails = () => {
         updateData: { bookingIds: selectedBookingIds, amount : creditAmount, customer: selectedCustomer?.data }
       })
     );
+
+    setSelectedBookingIds([]);
+    setCreditAmount(0);
+    setSelectAll(false); 
   }
 
   return (
@@ -206,13 +210,13 @@ const CustomerDetails = () => {
               <Col>
                 <Nav justify variant="tabs">
                   <Nav.Item>
-                    <Nav.Link eventKey="/home">Booking History</Nav.Link>
+                    <Nav.Link className="text-start" eventKey="/home">Booking History</Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
-                    <Nav.Link eventKey="link-1">Pending Credit</Nav.Link>
+                    <Nav.Link className="text-start" eventKey="link-1">Pending Credit</Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
-                    <Nav.Link eventKey="link-2">Transaction history</Nav.Link>
+                    <Nav.Link className="text-start" eventKey="link-2">Transaction history</Nav.Link>
                   </Nav.Item>
                 </Nav>
               </Col>
@@ -401,8 +405,67 @@ const CustomerDetails = () => {
                     </Card>
                   </Tab.Pane>
                   <Tab.Pane eventKey="link-2">
-                    <h4>Link Content</h4>
-                    <p>Here is the content for the second link.</p>
+                       {/* <Card className="p-3 mb-3">
+                      <div className="d-flex align-items-center justify-content-between">
+                        <input
+                          type="text"
+                          placeholder="Search by Booking ID or Game"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="form-control shadow-lg w-50 mb-3"
+                        />
+                      </div>
+                      <div className="table-responsive">
+                        <Table className="table">
+                          <thead style={{ backgroundColor: "#0062FF0D" }}>
+                            <tr>
+                              <th style={{ fontWeight: "600" }}  >S/N</th>
+                              <th style={{ fontWeight: "600" }}  >Booking ID</th>
+                              <th style={{ fontWeight: "600" }}  >Transaction ID</th>
+                              <th style={{ fontWeight: "600" }}  >Date</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {selectedCustomer?.bookings.length > 0 ? (
+                              selectedCustomer?.bookings.map((booking, index) => (
+                                <tr key={booking._id}>
+                                  <td>{index + 1}</td>
+                                  <td style={{ fontWeight: "600", color: "blue" }} onClick={() => navigate(`/admin/booking/checkout/${booking._id}`)} >{booking.booking_id}</td>
+                                  <td>{credit.game_name}</td>
+                                  <td>{new Date(credit.slot_date).toLocaleDateString()}</td>
+                                  <td>
+                                    <span >
+                                      {credit.credit}
+                                    </span>
+                                  </td>
+                                  <td>{credit.total}</td>
+                                </tr>
+                              ))
+                            ) : (
+                              <tr>
+                                <td colSpan="6" className="text-center">No pending payments</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </Table>
+                      </div>
+
+                      <div className="d-flex justify-content-center align-items-center gap-3 pt-3">
+                        <Pagination.Prev
+                          onClick={() => setCurrentPage(currentPage - 1)}
+                          disabled={currentPage === 1}
+                          className="btn rounded-2 d-flex justify-content-center align-items-center btn-primary btn-sm"
+                          style={{ width: '40px', height: '40px' }}
+                        />
+                        <span>Page {currentPage} of {totalPages}</span>
+                        <Pagination.Next
+                          onClick={() => setCurrentPage(currentPage + 1)}
+                          disabled={currentPage === totalPages}
+                          className="btn rounded-2 d-flex justify-content-center align-items-center btn-primary btn-sm"
+                          style={{ width: '40px', height: '40px' }}
+                        />
+                      </div>
+                    </Card> */}
                   </Tab.Pane>
                 </Tab.Content>
               </Col>

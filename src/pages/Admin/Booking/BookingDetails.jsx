@@ -19,21 +19,16 @@ import { getGameById } from "../../../store/slices/gameSlice";
 import { getSlotDetails } from "../../../store/slices/slotsSlice";
 import { addBooking, deleteBooking } from "../../../store/AdminSlice/BookingSlice";
 import ClientModel from "./Model/ClientModel";
-import { FaDeleteLeft, FaRupeeSign } from "react-icons/fa6";
 import { getItems } from "../../../store/AdminSlice/Inventory/ItemsSlice";
 import { getTaxFields } from "../../../store/AdminSlice/TextFieldSlice";
-import { AiOutlineClose } from "react-icons/ai";
 import Select from "react-select";
 import { LiaCoinsSolid } from "react-icons/lia";
-import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
-import CreditSplit from "./Model/CreditSplit";
 import { RxCross2 } from "react-icons/rx";
 import { TbTrash } from "react-icons/tb";
 
 const BookingDetails = () => {
   const { customers, loading, error } = useSelector((state) => state.customers);
   const { selectedGame, status: gameStatus, error: gameError } = useSelector((state) => state.games);
-  const { taxFields } = useSelector((state) => state.taxFieldSlice);
 
   const { slot, loading: slotLoading, error: slotError } = useSelector((state) => state.slots);
   const { items } = useSelector((state) => state.items);
@@ -46,6 +41,7 @@ const BookingDetails = () => {
   const [options, setOptions] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [showCreditModal, setShowCreditModal] = useState(false);
+  const [showCustomSlot, setShowCustomSlot] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCustTerm, setSearchCustTerm] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
@@ -62,6 +58,8 @@ const BookingDetails = () => {
   const [selectedMethod, setSelectedMethod] = useState("Payment Options");
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
+
+  console.log("slot_info", slot);
 
   const backend_url = import.meta.env.VITE_API_URL;
   const dispatch = useDispatch();
@@ -106,16 +104,16 @@ const BookingDetails = () => {
     if (slotId) {
       dispatch(getSlotDetails({ id: slotId }));
     }
-    if (gameId && slotId) {
-      if (slot?.price) {
+    if (gameId || slotId) {
+      console.log("gameId and slotId", slot);
+      if (slot?.slot_price) {
         if (addOnTotal > 0) {
-          setPayableAmount(slot?.price + addOnTotal)
-          setPriceToPay(slot?.price + addOnTotal)
+          setPayableAmount(slot?.slot_price + addOnTotal)
+          setPriceToPay(slot?.slot_price + addOnTotal)
         } else {
-          setPayableAmount(slot?.price)
-          setPriceToPay(slot?.price)
+          setPayableAmount(slot?.slot_price)
+          setPriceToPay(slot?.slot_price)
         }
-
       } else {
         if (addOnTotal > 0) {
           setPayableAmount(selectedGame?.data?.price + addOnTotal)
@@ -359,6 +357,7 @@ const BookingDetails = () => {
   };
 
   const handlePayLater = async () => {
+    console.log("reached-here")
     try {
       if(selectedGame?.data?.type === "Multiplayer" && selectedCustomer && teamMembers.length < 1) {
         window.alert("Please add at least 2 players")
@@ -369,6 +368,13 @@ const BookingDetails = () => {
         ...item,
         tax_amt: item.totalTax
       }))
+
+      console.log("mappedItems", mappedItems)
+
+      let booking_type = "Regular"
+      if(!slot._id){
+        booking_type = "Custom"
+      }
   
       const bookingData = {
         cafe: cafeId,
@@ -380,8 +386,12 @@ const BookingDetails = () => {
         total: selectedGame?.data?.price,
         slot_date: newdate,
         players: teamMembers,
-        items: mappedItems
+        items: mappedItems,
+        custom_slot: slot,
+        booking_type: booking_type
       };
+
+      console.log("bookingData", bookingData)
       const response = await dispatch(addBooking(bookingData)).unwrap()
 
       navigate(`/admin/booking/checkout/${response?.data?._id}`)
@@ -602,6 +612,8 @@ const BookingDetails = () => {
     }),
     // Optional: adjust dropdown indicator and other parts if needed
   };
+
+  console.log("slot", slot);
 
   return (
     <Container fluid className="p-4 ">
@@ -864,7 +876,7 @@ const BookingDetails = () => {
                     <>
                       <div className="mb-5 d-flex justify-content-between">
                         <span className="text-color">Game Price:</span>
-                        <span className="muted-text">₹ {slot?.price ? slot.price : selectedGame?.data?.price}</span>
+                        <span className="muted-text">₹ {slot?.slot_price ? slot.slot_price : selectedGame?.data?.price}</span>
                       </div>
 
                       {/* <div className="mb-5 d-flex justify-content-between">
@@ -910,15 +922,7 @@ const BookingDetails = () => {
                         </Dropdown>
                         {/* <Button style={{background: "#00B72BCC", color: "#fff"}} className="btn border-0 w-100" onClick={() => setShowCreditModal(!showCreditModal)}>Payment Options</Button> */}
                       </div>
-                      {/* 
-                      {showCreditModal &&
-                        <CreditSplit
-                          show={showCreditModal}
-                          handleClose={() => setShowCreditModal(false)}
-                          totalAmount={priceToPay}
-                          players={teamMembers}
-                          customer={selectedCustomer}
-                        />} */}
+            
                     </>
                   ) : (
                     <p className="muted-text d-flex justify-content-center align-items-center h-100 w-100 mb-0">
@@ -927,136 +931,7 @@ const BookingDetails = () => {
                   )}
 
                 </div>
-                {/* <div className="w-100 w-md-50 bg-body rounded-3 border p-3 shadow-sm">
-                  {showOnCredit && (
-                    <>
-                      <Row className="mb-3">
-                        <Col xs={6}>
-                          <p className="mb-1 fw-medium text-secondary">Total Amount</p>
-                        </Col>
-                        <Col xs={6}>
-                          <Form.Control
-                            size="sm"
-                            type="text"
-                            readOnly
-                            value={priceToPay}
-                            className="fw-bold border-secondary"
-                          />
-                        </Col>
-                      </Row>
-
-                      <Row className="mb-3">
-                        <Col xs={6}>
-                          <p className="mb-1 fw-medium text-secondary">Payable Amount</p>
-                        </Col>
-                        <Col xs={6}>
-                          <Form.Control
-                            size="sm"
-                            type="text"
-                            value={payableAmount}
-                            onChange={handlePayableAmountChange}
-                            className="border-secondary"
-                          />
-                        </Col>
-                      </Row>
-
-                      <Row className="mb-4">
-                        <Col xs={6}>
-                          <p className="mb-1 fw-medium text-secondary">Credit Amount</p>
-                        </Col>
-                        <Col xs={6}>
-                          <Form.Control
-                            size="sm"
-                            type="text"
-                            readOnly
-                            value={creditAmount}
-                            className="border-secondary"
-                          />
-                        </Col>
-                      </Row>
-
-                      {creditAmount > 0 && (
-                        <div>
-                          <h5 className="mb-3 fw-semibold">Credit Collection</h5>
-                          <Card className="border-0">
-                            <Card.Body className="p-2">
-                              <InputGroup className="mb-2">
-                                <Form.Control
-                                  size="sm"
-                                  value={selectedCustomer.name}
-                                  readOnly
-                                />
-                                <Form.Control
-                                  size="sm"
-                                  placeholder="Rs 0"
-                                  value={
-                                    playerCredits.find((p) => p.id === selectedCustomer._id)?.credit || ""
-                                  }
-                                  onChange={(e) => {
-                                    const enteredValue = parseFloat(e.target.value) || 0;
-                                    const limit = selectedCustomer.creditLimit - selectedCustomer.creditAmount;
-                                    if (enteredValue > limit) {
-                                      alert("Credit amount exceeds the limit");
-                                      return;
-                                    }
-                                    handleCreditChange(selectedCustomer._id, enteredValue);
-                                  }}
-                                />
-                              </InputGroup>
-                              {Number(playerCredits.find((p) => p.id === selectedCustomer._id)?.credit) <= 0 && (
-                                <div className="text-danger small">Credit amount should be greater than 0</div>
-                              )}
-                            </Card.Body>
-                          </Card>
-
-                          {teamMembers.length > 0 &&
-                            teamMembers.map((player, index) => {
-                              const credit = playerCredits.find((p) => p.id === player.id)?.credit || 0;
-                              return (
-                                <Card key={index} className="mb-2 border-0">
-                                  <Card.Body className="p-2">
-                                    <InputGroup>
-                                      <Form.Control
-                                        size="sm"
-                                        value={player.name}
-                                        readOnly
-                                      />
-                                      <Form.Control
-                                        size="sm"
-                                        placeholder="Rs 0"
-                                        value={credit}
-                                        onChange={(e) => {
-                                          const enteredValue = parseFloat(e.target.value) || 0;
-                                          const limit = player.creditLimit - player.creditAmount;
-                                          if (enteredValue > limit) {
-                                            alert("Credit amount exceeds the limit");
-                                            return;
-                                          }
-                                          handleCreditChange(player.id, enteredValue);
-                                        }}
-                                      />
-                                    </InputGroup>
-                                    {Number(credit) <= 0 && (
-                                      <div className="text-danger small mt-1">Not eligible for credit</div>
-                                    )}
-                                  </Card.Body>
-                                </Card>
-                              );
-                            })}
-
-                          <div className="d-flex gap-2 mt-3">
-                            <Button size="sm" variant="primary" className="w-50" onClick={handleOnlinePayment}>
-                              Online
-                            </Button>
-                            <Button size="sm" variant="outline-secondary" className="w-50" onClick={handleCollectOffline}>
-                              Offline
-                            </Button>
-                          </div>
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div> */}
+              
               </div>
             </Col>
           </Row>
@@ -1092,72 +967,6 @@ const BookingDetails = () => {
                   className="hide-scrollbar"
                 >
                   <div className="fs-4 text-color mx-2">Items ({selectedItems?.length})</div>
-                  {/* {selectedItems.map((product, index) => (
-                    <div key={index} className="mb-2 shadow-lg fs-6"
-                      style={{ background: "#F9F9F9", width: "90%", height: "10%" }}
-                    >
-                        <div className="d-flex justify-content-between align-items-center p-2">
-                          <div style={{ flex: 1 }}>
-                            <div className="fw-semibold fs-6"
-                              style={{
-                                maxHeight: "20px", overflowY: "auto", scrollbarWidth: "none",// Firefox
-                                msOverflowStyle: "none"
-                              }}
-                              onWheel={(e) => e.stopPropagation()}
-                            >{product.item}</div>
-                            <div className="muted-text small mb-1">₹{product.price} each</div>
-                          </div>
-
-                          <div style={{ flex: 1 }}>
-                            <div className="d-flex align-items-center gap-1">
-                              <Button
-                                variant="light"
-                                size="sm"
-                                onClick={() =>
-                                  updateProduct(product.id, "quantity", Math.max(0, Number(product.quantity) - 1))
-                                }
-                              >
-                                −
-                              </Button>
-
-                              <input
-                                type="number"
-                                min="0"
-                                value={product.quantity}
-                                style={{
-                                  width: "50px",
-                                  height: "28px",
-                                  fontSize: "12px",
-                                  textAlign: "center",
-                                  padding: "2px 4px",
-                                  border: "1px solid #ccc",
-                                }}
-                                onChange={(e) => updateProduct(product.id, "quantity", Number(e.target.value))}
-                              />
-
-                              <Button
-                                variant="light"
-                                size="sm"
-                                onClick={() =>
-                                  updateProduct(product.id, "quantity", Number(product.quantity) + 1)
-                                }
-                              >
-                                +
-                              </Button>
-                            </div>
-
-                          </div>
-
-                          <div className="text-end ms-3" style={{ minWidth: "120px" }}>
-                            <div className="small">
-                              Tax ({product?.tax?.tax_rate || 0}%):{" "}
-                              <span className="fw-semibold">₹{product.totalTax}</span>
-                            </div>
-                            <div className="fw-semibold">Total: ₹{product.total}</div>
-                          </div>
-                        </div>
-                    </div>
-                  ))} */}
                   <div>
                     {selectedItems.map((product, index) => (
                       <div

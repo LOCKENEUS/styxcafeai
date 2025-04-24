@@ -293,10 +293,18 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
 
   const selectedDay = getDayName(date); // Get the selected day's name
 
+  // const isSlotBooked = (slotId, date) => {
+  //   return bookings.some(
+  //     (booking) =>
+  //       booking.slot_id._id === slotId &&
+  //       new Date(booking.slot_date).toDateString() === new Date(date).toDateString()
+  //   );
+  // };
+
   const isSlotBooked = (slotId, date) => {
     return bookings.some(
       (booking) =>
-        booking.slot_id._id === slotId &&
+        booking.slot_id?._id === slotId && booking.status !== "Paid" &&
         new Date(booking.slot_date).toDateString() === new Date(date).toDateString()
     );
   };

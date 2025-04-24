@@ -110,21 +110,6 @@ export const collectAmount = createAsyncThunk(
   }
 );
 
-// Collect Amount Online
-// export const collectAmountOnline = createAsyncThunk(
-//   'customers/collectAmountOnline',
-//   async ({id, updateData}, thunkAPI) => {
-//     try {
-//       await axios.patch(`${BASE_URL}/admin/customer/collect-amount/${id}`,updateData)
-//       toast.success('Amount Collected!');
-//       return id;
-//     } catch (error) {
-//       toast.error('Error collecting payment: ' + (error.response?.data?.message || 'Something went wrong'));
-//       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
-//     }
-//   }
-// );
-
 export const collectAmountOnline = createAsyncThunk(
   "bookings/collectAmountOnline",
   async ({id, updateData},thunkAPI) => {
@@ -149,6 +134,7 @@ export const collectAmountOnline = createAsyncThunk(
       console.log("data", data)
 
       if (data.success && data.order) {
+        console.log("reached here...data")
         const options = {
           key: import.meta.env.VITE_RAZOR_LIVE_KEY,
           amount: data.order.amount * 100,
@@ -158,14 +144,15 @@ export const collectAmountOnline = createAsyncThunk(
           order_id: data.order.id,
           handler: async function (response) {
             try {
-              const verifyResponse = await axios.post(
-                `${backend_url}/admin/collect-online`,
+              const verifyResponse = await axios.patch(
+                `${backend_url}/admin/customer/collect-online/${id}`,
                 {
                   razorpay_order_id: response.razorpay_order_id,
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature,
-                  booking_id: bookingId,
-                  amount: data.order.amount
+                  bookingIds: updateData.bookingIds,
+                  amount: data.order.amount,
+                  customerId: id
                 },
                 {
                   headers: {
@@ -175,6 +162,8 @@ export const collectAmountOnline = createAsyncThunk(
                   },
                 }
               );
+
+              console.log("verifyResponse", verifyResponse)
 
               const verifyData = verifyResponse.data;
               if (verifyData.success) {

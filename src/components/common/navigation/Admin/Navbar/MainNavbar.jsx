@@ -408,9 +408,8 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
             </li>
 
             <li className="nav-item d-none d-none d-md-block">
-
-              <div className="dropdown">
-                <a className="navbar-dropdown-account-wrapper justify-content-center align-items-center gap-4" id="accountNavbarDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" data-bs-dropdown-animation="">
+              <div className="dropdown" style={{ cursor: "pointer" }}>
+                <a className="navbar-dropdown-account-wrapper justify-content-center align-items-center gap-4 px-4" id="accountNavbarDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" data-bs-dropdown-animation="">
                   <p style={{ color: "#677788", fontWeight: "bold" }} className='m-0'>{user?.name}</p>
                   <div className="avatar avatar-sm avatar-circle">
                     {/* <img className="avatar-img" src={profilePic} alt="Image Description" /> */}

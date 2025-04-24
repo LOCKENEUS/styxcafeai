@@ -1579,6 +1579,8 @@ const BookingCheckout = () => {
     setLooserPlayer(player);
   };
 
+  console.log("custom slot", booking?.custom_slot)
+
   const renderCreditsPopover = (
     <Popover id="player-credits-popover">
       <Popover.Header as="h3">Player Credits</Popover.Header>
@@ -1689,7 +1691,7 @@ const BookingCheckout = () => {
               </Col>
             </Row>
           </Card>
-          {booking?.status !== "Pending" ? <></> : <Button
+          {booking?.booking_type === "Custom" || booking?.status !== "Pending" ? <></> : <Button
             variant="success"
             className="w-100 mt-3"
             style={{ backgroundColor: "#03D41414", color: "#00AF0F" }}
@@ -1706,7 +1708,7 @@ const BookingCheckout = () => {
               className={`d-flex flex-column p-0 justify-content-between transition-col`}
             >
               <Card className="p-3 h-100" style={{ marginLeft: "10px" }}>
-                <h5 className="font-inter mb-3 pb-3 fs-3 text-color" style={{ borderBottom: "1px solid #ccc" }}>Booking Details
+                <h5 className="font-inter mb-3 pb-3 fs-4 text-color" style={{ borderBottom: "1px solid #ccc" }}>Booking Details
                   {selectedGame?.payLater ?
                     <span className="fw-bold text-info float-end">Amount : ₹ {slot?.slot_price ? slot?.slot_price : selectedGame?.price}/Hr</span>
                     :
@@ -1734,6 +1736,16 @@ const BookingCheckout = () => {
                     </p>
                   </Col>
                 </Row>
+                <Row>
+                  <Col xs={6}>
+                    <p className="text-color m-0">Pay Later</p>
+                  </Col>
+                  <Col xs={6}>
+                    <p className="muted-text mb-3">
+                      <span className="muted-text">{!selectedGame?.paylater ? "Yes" : "No"}</span>
+                    </p>
+                  </Col>
+                </Row>
                 <Row className="mb-1">
                   <Col xs={6}>
                     <p className="text-color">No. of Candidates</p>
@@ -1746,8 +1758,12 @@ const BookingCheckout = () => {
                   <Col xs={6}>
                     <p className="text-color">Time Slot</p>
                   </Col>
-                  <Col xs={6}>
-                    <span className="muted-text">{slot?.start_time && convertTo12Hour(slot?.start_time)} - {slot?.end_time && convertTo12Hour(slot.end_time)}</span>
+                  <Col xs={6}>{
+                    booking?.booking_type === "Regular" ?
+                      <span className="muted-text">{slot?.start_time && convertTo12Hour(slot?.start_time)} - {slot?.end_time && convertTo12Hour(slot.end_time)}</span>
+                      :
+                      <span className="muted-text">{booking?.custom_slot?.start_time && convertTo12Hour(booking?.custom_slot?.start_time)} - {booking?.custom_slot?.start_time && convertTo12Hour(booking?.custom_slot.end_time)}</span>
+                  }
                   </Col>
                 </Row>
                 <Row className="mb-1">
@@ -1769,269 +1785,278 @@ const BookingCheckout = () => {
               </Card>
             </Col>
 
-            {showInventory && (
-              <Col
-                md={6}
-                className={`transition-col ${showInventory ? "visible" : "hidden"}`}
-                style={{ display: showInventory ? "block" : "none" }}
-              >
-                <Card className="">
-                  <div className="bg-white rounded-3 p-0 d-flex flex-column" style={{ height: "350px" }}>
+            <Col
+              md={6}
+            >
+              <Card className="">
+                <div className="bg-white rounded-3 p-0 d-flex flex-column" style={{ height: "350px" }}>
 
-                    {/* Sticky Top Input */}
-                    <div
-                      style={{
-                        padding: "12px 16px",
-                        borderBottom: "1px solid #ddd",
-                        background: "#fff",
-                        zIndex: 10,
-                        position: "sticky",
-                        borderRadius: "16px",
-                        top: 0,
-                      }}
-                    >
-                      {booking?.status !== "Pending" ? <span className="text-color fs-4">Selected Items</span> :
-                        <Select
-                          options={options}
-                          onChange={handleChange}
-                          value={selectedOption}
-                          isSearchable
-                          placeholder="Select for add on's..."
-                          className="mb-0"
-                          styles={customStyles}
-                        />
-                      }
-
-                    </div>
-
-                    {/* Scrollable Content */}
-                    <div
-                      style={{
-                        overflowY: "auto",
-                        flex: 1,
-                        padding: "12px 16px",
-                        scrollbarWidth: "none",
-                        msOverflowStyle: "none",
-                      }}
-                      className="hide-scrollbar"
-                    >
-                      {selectedItems.map((product, index) => (
-                        // <div className="d-flex justify-content-between align-items-center">
-                        //   <Card key={index} className="mb-2 shadow-sm fs-6" style={{ background: "#eeeaef", height: "20%", width: "100%" }}>
-                        //     <div
-                        //       style={{
-                        //         position: "absolute",
-                        //         bottom: "35px",
-                        //         right: "-6px",
-                        //         cursor: "pointer",
-                        //         borderRadius: "80%",
-                        //         padding: "3px",
-                        //         zIndex: 2,
-                        //       }}
-                        //       onClick={() => {
-                        //         const updatedProducts = selectedItems.filter((_, i) => i !== index);
-                        //         setSelectedItems(updatedProducts);
-                        //         const updatedSelectedIds = selectedIds.filter((id) => id !== product.id);
-                        //         setSelectedIds(updatedSelectedIds);
-                        //       }}
-                        //     >
-                        //       <AiOutlineClose size={12} color="red" />
-                        //     </div>
-                        //     <Card.Body className="py-1 px-3">
-                        //       <div className="d-flex justify-content-between align-items-start">
-                        //         <div style={{ flex: 1 }}>
-                        //           <div
-                        //             className="fw-semibold fs-6"
-                        //             style={{
-                        //               maxHeight: "20px",
-                        //               overflowY: "auto",
-                        //               scrollbarWidth: "none",
-                        //               msOverflowStyle: "none",
-                        //             }}
-                        //             onWheel={(e) => e.stopPropagation()}
-                        //           >
-                        //             {product.item}
-                        //           </div>
-                        //           <div className="muted-text small mb-1">₹{product.price} each</div>
-                        //         </div>
-
-                        //         <div style={{ flex: 1 }}>
-                        //           <Form.Control
-                        //             type="number"
-                        //             min="0"
-                        //             max="999"
-                        //             value={product.quantity}
-                        //             size="sm"
-                        //             style={{
-                        //               width: "60px",
-                        //               height: "28px",
-                        //               fontSize: "12px",
-                        //               marginLeft: "10px",
-                        //               padding: "1px 3px",
-                        //               border: "1px solid #ccc",
-                        //             }}
-                        //             placeholder="Qty"
-                        //             onChange={(e) => {
-                        //               let value = e.target.value;
-                        //               if (value > 999) value = 999;
-                        //               updateProduct(product.id, "quantity", value)
-                        //             }}
-                        //           />
-                        //         </div>
-
-                        //         <div className="text-end ms-3" style={{ minWidth: "120px" }}>
-                        //           <div className="small">
-                        //             Tax ({product?.tax?.tax_rate || 0}%):{" "}
-                        //             <span className="fw-semibold">₹{product.totalTax}</span>
-                        //           </div>
-                        //           <div className="fw-semibold">Total: ₹{product.total}</div>
-                        //         </div>
-                        //       </div>
-                        //     </Card.Body>
-                        //   </Card>
-                        // </div>
-                        <div
-                          key={index}
-                          className="position-relative d-flex mb-3"
-                          style={{ width: "100%" }}
+                  {/* Sticky Top Input */}
+                  <div
+                    style={{
+                      padding: "12px 16px",
+                      borderBottom: "1px solid #ddd",
+                      background: "#fff",
+                      zIndex: 10,
+                      position: "sticky",
+                      borderRadius: "16px",
+                      top: 0,
+                    }}
+                  >
+                    {booking?.status !== "Pending" ? <div className="text-color fs-4">
+                      Selected Items
+                      <Link
+                        to={`/admin/Inventory/SaleOrderDetails/${booking?.so_id?._id}`}
+                      >
+                        <span
+                          style={{ cursor: "pointer" }}
+                          className="float-end text-primary"
                         >
-                          {/* Trash Icon */}
-                          <span
-                            className="position-absolute bg-transparent border-0 color-red"
-                            style={{
-                              top: "20px",
-                              right: "10px",
-                              color: "red",
-                              zIndex: 2,
-                            }}
-                            onClick={() => {
-                              const updatedProducts = selectedItems.filter((_, i) => i !== index);
-                              setSelectedItems(updatedProducts);
-                              const updatedSelectedIds = selectedIds.filter((id) => id !== product.id);
-                              setSelectedIds(updatedSelectedIds);
-                              setIsItemsSaved(false); // Mark items as unsaved
-                            }}
-                          >
-                            {booking?.status === "Pending" && <TbTrash style={{
-                              top: "15px",
-                              right: "-30px",
-                              zIndex: 2,
-                            }} size={12} />}
-                          </span>
+                          {booking?.so_id?.so_no}
+                        </span>
+                      </Link>
+                    </div>
+                      :
+                      <Select
+                        options={options}
+                        onChange={handleChange}
+                        value={selectedOption}
+                        isSearchable
+                        placeholder="Select for add on's..."
+                        className="mb-0"
+                        styles={customStyles}
+                      />
+                    }
 
-                          {/* Product Card */}
-                          <div
-                            className="fs-6"
-                            style={{ background: "#F9F9F9", width: "90%", height: "10%" }}
-                          >
-                            <div className="d-flex justify-content-between align-items-center p-2">
-                              <div style={{ flex: 1 }}>
-                                <div
-                                  className="fs-6 text-color"
-                                  style={{
-                                    maxHeight: "20px",
-                                    overflowY: "auto",
-                                    scrollbarWidth: "none", // Firefox
-                                    msOverflowStyle: "none", // IE
-                                  }}
-                                  onWheel={(e) => e.stopPropagation()}
+                  </div>
+
+                  {/* Scrollable Content */}
+                  <div
+                    style={{
+                      overflowY: "auto",
+                      flex: 1,
+                      padding: "12px 16px",
+                      scrollbarWidth: "none",
+                      msOverflowStyle: "none",
+                    }}
+                    className="hide-scrollbar"
+                  >
+                    {selectedItems.map((product, index) => (
+                      // <div className="d-flex justify-content-between align-items-center">
+                      //   <Card key={index} className="mb-2 shadow-sm fs-6" style={{ background: "#eeeaef", height: "20%", width: "100%" }}>
+                      //     <div
+                      //       style={{
+                      //         position: "absolute",
+                      //         bottom: "35px",
+                      //         right: "-6px",
+                      //         cursor: "pointer",
+                      //         borderRadius: "80%",
+                      //         padding: "3px",
+                      //         zIndex: 2,
+                      //       }}
+                      //       onClick={() => {
+                      //         const updatedProducts = selectedItems.filter((_, i) => i !== index);
+                      //         setSelectedItems(updatedProducts);
+                      //         const updatedSelectedIds = selectedIds.filter((id) => id !== product.id);
+                      //         setSelectedIds(updatedSelectedIds);
+                      //       }}
+                      //     >
+                      //       <AiOutlineClose size={12} color="red" />
+                      //     </div>
+                      //     <Card.Body className="py-1 px-3">
+                      //       <div className="d-flex justify-content-between align-items-start">
+                      //         <div style={{ flex: 1 }}>
+                      //           <div
+                      //             className="fw-semibold fs-6"
+                      //             style={{
+                      //               maxHeight: "20px",
+                      //               overflowY: "auto",
+                      //               scrollbarWidth: "none",
+                      //               msOverflowStyle: "none",
+                      //             }}
+                      //             onWheel={(e) => e.stopPropagation()}
+                      //           >
+                      //             {product.item}
+                      //           </div>
+                      //           <div className="muted-text small mb-1">₹{product.price} each</div>
+                      //         </div>
+
+                      //         <div style={{ flex: 1 }}>
+                      //           <Form.Control
+                      //             type="number"
+                      //             min="0"
+                      //             max="999"
+                      //             value={product.quantity}
+                      //             size="sm"
+                      //             style={{
+                      //               width: "60px",
+                      //               height: "28px",
+                      //               fontSize: "12px",
+                      //               marginLeft: "10px",
+                      //               padding: "1px 3px",
+                      //               border: "1px solid #ccc",
+                      //             }}
+                      //             placeholder="Qty"
+                      //             onChange={(e) => {
+                      //               let value = e.target.value;
+                      //               if (value > 999) value = 999;
+                      //               updateProduct(product.id, "quantity", value)
+                      //             }}
+                      //           />
+                      //         </div>
+
+                      //         <div className="text-end ms-3" style={{ minWidth: "120px" }}>
+                      //           <div className="small">
+                      //             Tax ({product?.tax?.tax_rate || 0}%):{" "}
+                      //             <span className="fw-semibold">₹{product.totalTax}</span>
+                      //           </div>
+                      //           <div className="fw-semibold">Total: ₹{product.total}</div>
+                      //         </div>
+                      //       </div>
+                      //     </Card.Body>
+                      //   </Card>
+                      // </div>
+                      <div
+                        key={index}
+                        className="position-relative d-flex mb-3"
+                        style={{ width: "100%" }}
+                      >
+                        {/* Trash Icon */}
+                        <span
+                          className="position-absolute bg-transparent border-0 color-red"
+                          style={{
+                            top: "20px",
+                            right: "10px",
+                            color: "red",
+                            zIndex: 2,
+                          }}
+                          onClick={() => {
+                            const updatedProducts = selectedItems.filter((_, i) => i !== index);
+                            setSelectedItems(updatedProducts);
+                            const updatedSelectedIds = selectedIds.filter((id) => id !== product.id);
+                            setSelectedIds(updatedSelectedIds);
+                            setIsItemsSaved(false); // Mark items as unsaved
+                          }}
+                        >
+                          {booking?.status === "Pending" && <TbTrash style={{
+                            top: "15px",
+                            right: "-30px",
+                            zIndex: 2,
+                          }} size={12} />}
+                        </span>
+
+                        {/* Product Card */}
+                        <div
+                          className="fs-6"
+                          style={{ background: "#F9F9F9", width: "90%", height: "10%" }}
+                        >
+                          <div className="d-flex justify-content-between align-items-center p-2">
+                            <div style={{ flex: 1 }}>
+                              <div
+                                className="fs-6 text-color"
+                                style={{
+                                  maxHeight: "20px",
+                                  overflowY: "auto",
+                                  scrollbarWidth: "none", // Firefox
+                                  msOverflowStyle: "none", // IE
+                                }}
+                                onWheel={(e) => e.stopPropagation()}
+                              >
+                                {product.item}
+                              </div>
+                              <div className="muted-text small mb-1">₹{product.price} /each</div>
+                            </div>
+
+                            <div style={{ flex: 2 }}>
+                              {booking?.status === "Pending" ? <div className="d-flex align-items-center gap-1">
+                                <Button
+                                  variant="light"
+                                  disabled={product.quantity <= 1}
+                                  size="sm"
+                                  onClick={() =>
+                                    updateProduct(
+                                      product.id,
+                                      "quantity",
+                                      Math.max(0, Number(product.quantity) - 1)
+                                    )
+                                  }
                                 >
-                                  {product.item}
-                                </div>
-                                <div className="muted-text small mb-1">₹{product.price} /each</div>
+                                  −
+                                </Button>
+
+                                <input
+                                  type="number"
+                                  min="0"
+                                  value={product.quantity}
+                                  style={{
+                                    width: "50px",
+                                    height: "28px",
+                                    fontSize: "12px",
+                                    textAlign: "center",
+                                    padding: "2px 4px",
+                                    border: "1px solid #ccc",
+                                  }}
+                                  onChange={(e) =>
+                                    updateProduct(product.id, "quantity", Number(e.target.value))
+                                  }
+                                />
+
+                                <Button
+                                  variant="light"
+                                  size="sm"
+                                  onClick={() =>
+                                    updateProduct(
+                                      product.id,
+                                      "quantity",
+                                      Number(product.quantity) + 1
+                                    )
+                                  }
+                                >
+                                  +
+                                </Button>
+                              </div> : <div className="text-color">Qty: {product.quantity}</div>}
+                            </div>
+
+                            <div className="text-end ms-3" style={{ minWidth: "120px" }}>
+                              <div className="small">
+                                <span className="text-color">Tax</span> (<span className="muted-text">{product?.tax?.tax_rate || 0}% {product?.tax?.tax_name}</span>):{" "}
+                                <span className="text-color">₹{product.totalTax}</span>
                               </div>
-
-                              <div style={{ flex: 2 }}>
-                                {booking?.status === "Pending" ? <div className="d-flex align-items-center gap-1">
-                                  <Button
-                                    variant="light"
-                                    disabled={product.quantity <= 1}
-                                    size="sm"
-                                    onClick={() =>
-                                      updateProduct(
-                                        product.id,
-                                        "quantity",
-                                        Math.max(0, Number(product.quantity) - 1)
-                                      )
-                                    }
-                                  >
-                                    −
-                                  </Button>
-
-                                  <input
-                                    type="number"
-                                    min="0"
-                                    value={product.quantity}
-                                    style={{
-                                      width: "50px",
-                                      height: "28px",
-                                      fontSize: "12px",
-                                      textAlign: "center",
-                                      padding: "2px 4px",
-                                      border: "1px solid #ccc",
-                                    }}
-                                    onChange={(e) =>
-                                      updateProduct(product.id, "quantity", Number(e.target.value))
-                                    }
-                                  />
-
-                                  <Button
-                                    variant="light"
-                                    size="sm"
-                                    onClick={() =>
-                                      updateProduct(
-                                        product.id,
-                                        "quantity",
-                                        Number(product.quantity) + 1
-                                      )
-                                    }
-                                  >
-                                    +
-                                  </Button>
-                                </div> : <div className="text-color">Qty: {product.quantity}</div>}
-                              </div>
-
-                              <div className="text-end ms-3" style={{ minWidth: "120px" }}>
-                                <div className="small">
-                                  <span className="text-color">Tax</span> (<span className="muted-text">{product?.tax?.tax_rate || 0}% {product?.tax?.tax_name}</span>):{" "}
-                                  <span className="text-color">₹{product.totalTax}</span>
-                                </div>
-                                <div className="text-color">Total: ₹{product.total}</div>
-                              </div>
+                              <div className="text-color">Total: ₹{product.total}</div>
                             </div>
                           </div>
                         </div>
-                      ))}
-                    </div>
-
-                    {/* Sticky Bottom Total */}
-                    <div
-                      style={{
-                        padding: "8px 12px",
-                        borderTop: "1px solid #ddd",
-                        // fontWeight: "600",
-                        // textAlign: "right",
-                        background: "#fff",
-                        borderRadius: "0 0 10px 10px",
-                      }}
-                    >
-                      <span className="text-color">Total: ₹ {addOnTotal}</span>
-                      {
-                        booking?.status === "Pending"
-                        &&
-                        <span
-                          className="float-end text-white px-2 py-1 rounded"
-                          style={{ cursor: "pointer", background: `${isItemsSaved ? "grey" : "green"}` }}
-                          onClick={handleSaveItems}
-                        >
-                          {isItemsSaved ? "Saved" : "Save"}
-                        </span>
-                      }
-                    </div>
+                      </div>
+                    ))}
                   </div>
-                </Card>
-              </Col>
-            )}
+
+                  {/* Sticky Bottom Total */}
+                  <div
+                    style={{
+                      padding: "8px 12px",
+                      borderTop: "1px solid #ddd",
+                      // fontWeight: "600",
+                      // textAlign: "right",
+                      background: "#fff",
+                      borderRadius: "0 0 10px 10px",
+                    }}
+                  >
+                    <span className="text-color">Total: ₹ {addOnTotal}</span>
+                    {
+                      booking?.status === "Pending"
+                      &&
+                      <span
+                        className="float-end text-white px-2 py-1 rounded"
+                        style={{ cursor: "pointer", background: `${isItemsSaved ? "grey" : "green"}` }}
+                        onClick={handleSaveItems}
+                      >
+                        {isItemsSaved ? "Saved" : "Save"}
+                      </span>
+                    }
+                  </div>
+                </div>
+              </Card>
+            </Col>
 
           </Row>
           {selectedGame?.type === "Multiplayer" && selectedGame?.payLater || selectedGame?.type === "Single" && selectedGame?.payLater ?
@@ -2453,27 +2478,6 @@ const BookingCheckout = () => {
               </div>}
 
               <Row>
-                {/* <Col md={3} xs={6}>
-                  <Button variant="primary btn btn-sm"
-                    xs={12}
-                    className="w-100 mt-3"
-                    disabled={!booking?.timer_status === "Stopped"}
-                    onClick={handleOnlinePayment}
-                  >
-                    Online
-                  </Button>
-                </Col>
-                <Col md={3} xs={6}>
-                  <Button variant="primary btn btn-sm"
-                    xs={12}
-                    className="w-100 mt-3"
-                    disabled={!booking?.timer_status === "Stopped"}
-                    onClick={() => setShowConfirmOffline(true)}
-                  >
-                    Offline
-                  </Button>
-
-                </Col> */}
                 <Col md={3} xs={6}>
                   <Button variant="primary btn btn-sm"
                     xs={12}
@@ -2578,18 +2582,13 @@ const BookingCheckout = () => {
 
               <Row className="mt-1">
                 <Col xs={6} className="text-color fw-semibold">Amount Paid</Col>
-                <Col xs={6} className="muted-text">₹ {booking?.paid_amount}</Col>
+                <Col xs={6} className="muted-text">₹ {booking?.paid_amount > 0 ? booking?.paid_amount : 0}</Col>
               </Row>
 
               <Row className="mt-1">
                 <Col xs={6} className="text-color fw-semibold">Adjustment</Col>
                 <Col xs={6} className="muted-text">₹ {booking?.adjustment || 0}</Col>
               </Row>
-              {/* 
-              <Row className="mt-2">
-                <Col xs={6} className="text-color fw-semibold">Credit Amount</Col>
-                <Col xs={6} className="muted-text">₹ {booking?.total - booking?.paid_amount}</Col>
-              </Row> */}
 
               <Row className="mt-2">
                 <Col xs={6} className="text-color fw-semibold">Credit Amount</Col>

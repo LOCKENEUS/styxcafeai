@@ -474,7 +474,13 @@ const BookingList = () => {
                                         style={{ border: "none", minWidth: "120px" }}
                                     >
                                         {formatDate(booking.slot_date)}<br />
-                                        {convertTo12Hour(booking?.slot_id?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time)}
+                                        {/* {booking?.booking_type === "Regular" ? (convertTo12Hour(booking?.slot_id?.start_time)-convertTo12Hour(booking?.slot_id?.end_time))
+                                          :
+                                          (convertTo12Hour(booking?.custom_slot?.start_time)-convertTo12Hour(booking?.custom_slot?.end_time))
+                                        } */}
+                                    
+                                    {convertTo12Hour(booking?.slot_id?.start_time || booking?.custom_slot?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time || booking?.custom_slot?.end_time)}
+
                                     </td>
                                     <td
                                         className="align-middle"

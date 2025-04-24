@@ -136,9 +136,9 @@ const BookingEdit = () => {
             dispatch(getSlotDetails({ id: slotId }));
         }
         if (gameId && slotId) {
-            if (slot?.price) {
-                setPayableAmount(slot?.price)
-                setPriceToPay(slot?.price)
+            if (slot?.slot_price) {
+                setPayableAmount(slot?.slot_price)
+                setPriceToPay(slot?.slot_price)
             } else {
                 setPayableAmount(selectedGame?.price)
                 setPriceToPay(selectedGame?.price)

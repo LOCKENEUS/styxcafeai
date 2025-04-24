@@ -3,7 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 body {
   margin: 0;
-  font-family: "Poppins", sans-serif;
+  font-family: "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #F2F2F2;
@@ -19,7 +19,7 @@ body {
 }
 
 .nav-Logo-sp{
-  font-family: "Pacifico", cursive;
+  font-family: "Inter", cursive;
   background: linear-gradient(to top, black, #004b8d);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
