@@ -357,7 +357,7 @@ const ViewDetails = () => {
   const filteredBookings = bookings.filter((booking) => {
     const searchValue = searchQuery.toLowerCase();
     return (
-    booking.booking_id?.toString().toLowerCase().includes(searchValue) ||
+      booking.booking_id?.toString().toLowerCase().includes(searchValue) ||
       booking.customerName?.toLowerCase().includes(searchValue) ||
       booking.game_id?.name?.toLowerCase().includes(searchValue) ||
       booking.players?.length?.toString().toLowerCase().includes(searchValue) ||
@@ -370,8 +370,8 @@ const ViewDetails = () => {
   });
 
   const paginatedDataBooking = filteredBookings.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    (currentPagebooking - 1) * itemsPerPage,
+    currentPagebooking * itemsPerPage
   );
 
   const handlePrevclientBooking = () => {
@@ -388,9 +388,13 @@ const ViewDetails = () => {
 
   const handleBookingClick = (bookingID) => {
     navigate(`/superadmin/Bookings/BookingDetails`, { state: { bookingID: bookingID } });
-   
+
   }
-  
+
+  const handleClientClick = (clientID) => {
+    console.log("client id teri vali client id click ", clientID);
+    navigate(`/superadmin/Clients/ClientDetails`, { state: { clientID: clientID } });
+  }
 
 
 
@@ -762,6 +766,41 @@ const ViewDetails = () => {
                   />
                 )}
               </Nav.Item>
+              {/* earning  */}
+              <Nav.Item style={{ textAlign: 'center' }}>
+                <Nav.Link
+                  eventKey="earning"
+                  style={{
+                    padding: 0,
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontWeight: activeKey === 'earning' ? '600' : '400',
+                      fontSize: '16px',
+                      color: activeKey === 'earning' ? '#0d6efd' : '#6c757d',
+                      padding: '1rem 1rem',
+                    }}
+                  >
+                    Earning
+                  </div>
+                </Nav.Link>
+                {activeKey === 'earning' && (
+                  <div
+
+                    style={{
+                      margin: '0 18px ',
+                      width: '40%',
+                      height: '2px',
+                      backgroundColor: '#0d6efd',
+                      borderRadius: '2px',
+
+                    }}
+                  />
+                )}
+              </Nav.Item>
             </Nav>
 
           </Card>
@@ -1112,7 +1151,7 @@ const ViewDetails = () => {
                         {(paginatedData.length > 0 ? paginatedData : clientList).map((client, idx) => (
                           <tr key={idx}>
                             <td>{idx + 1}</td>
-                            <td><span className="text-primary fw-bold">{client.name}</span></td>
+                            <td><span className="text-primary fw-bold " style={{ cursor: "pointer" }} onClick={() => handleClientClick(client._id)}>{client.name}</span></td>
                             <td>{client.contact_no}</td>
                             <td>{client.email || "---"}</td>
                             <td>{client.creditLimit}</td>
@@ -1245,8 +1284,8 @@ const ViewDetails = () => {
                         {(paginatedDataBooking?.length > 0 ? paginatedDataBooking : bookings)?.map((booking, idx) => (
                           <tr key={idx}>
                             <td>{idx + 1}</td>
-                            <td><span className="text-primary fw-bold" style={{ cursor: "pointer" }} 
-                            onClick={() => handleBookingClick(booking._id)}
+                            <td><span className="text-primary fw-bold" style={{ cursor: "pointer" }}
+                              onClick={() => handleBookingClick(booking._id)}
                             >{booking.booking_id}</span></td>
 
                             <td>{booking.customerName}</td>
@@ -1293,13 +1332,13 @@ const ViewDetails = () => {
                               {formatDate(booking.slot_date)}<br />
                               {/* {convertTo12Hour(booking?.slot_id?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time)} */}
                               ₹ {
-                              booking?.booking_type === "Regular"
-                                ? `${convertTo12Hour(booking?.slot_id?.start_time)} - ${convertTo12Hour(booking?.slot_id?.end_time)}`
-                                : `${convertTo12Hour(booking?.custom_slot?.start_time)} - ${convertTo12Hour(booking?.custom_slot?.end_time)}`
-                            }
+                                booking?.booking_type === "Regular"
+                                  ? `${convertTo12Hour(booking?.slot_id?.start_time)} - ${convertTo12Hour(booking?.slot_id?.end_time)}`
+                                  : `${convertTo12Hour(booking?.custom_slot?.start_time)} - ${convertTo12Hour(booking?.custom_slot?.end_time)}`
+                              }
                             </td>
                             <td>
-                            ₹ {booking.gamePrice}
+                              ₹ {booking.gamePrice}
                             </td>
                           </tr>
                         ))}
@@ -1382,6 +1421,27 @@ const ViewDetails = () => {
 
 
               )}
+
+
+              {/* earning */}
+
+              {activeKey === "earning" && (
+
+
+                <Row className="d-flex flex-wrap justify-content-center p-2 mx-1">
+                  <Col sm={6} className=" alingn-items-start">
+                    <h4>earning</h4>
+
+                  </Col>
+                  <Col sm={6} className=" alingn-items-end ">
+
+                  </Col>
+
+                </Row>
+
+
+
+              )}
             </div>
 
           </Card>
@@ -1403,4 +1463,4 @@ const ViewDetails = () => {
   );
 };
 
-export default ViewDetails
+export default ViewDetails;

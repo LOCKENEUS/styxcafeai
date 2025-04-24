@@ -150,7 +150,7 @@ const BookingDetailsPage = () => {
                         </h1>
                       </Col>
                       <Col sm={6} xs={6} className="mb-2 mt-4">
-                        <p className="text-end" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
+                        <p className="text-end" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%", color: "#666666" }}>
                           {selectedBooking?.booking?.customer_id?.name || '---'}
                         </p>
                       </Col>
@@ -160,7 +160,7 @@ const BookingDetailsPage = () => {
                         </h1>
                       </Col>
                       <Col sm={6} xs={8} className="my-2 ">
-                        <p className="text-end" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
+                        <p className="text-end" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", color: "#666666", letterSpacing: "0%" }}>
                           {selectedBooking?.booking?.customer_id?.email || '---'}
                         </p>
                       </Col>
@@ -170,7 +170,7 @@ const BookingDetailsPage = () => {
                         </h1>
                       </Col>
                       <Col sm={6} xs={8} className="my-2 ">
-                        <p className="text-end" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
+                        <p className="text-end" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%", color: "#666666" }}>
                           {selectedBooking?.booking?.customer_id?.contact_no || '---'}
                         </p>
                       </Col>
@@ -180,7 +180,7 @@ const BookingDetailsPage = () => {
                         </h1>
                       </Col>
                       <Col sm={6} xs={8} className="my-2 ">
-                        <p className="text-end" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
+                        <p className="text-end" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%", color: "#666666" }}>
                           {selectedBooking?.booking?.customer_id?.contact_no || '---'}
                         </p>
                       </Col>
@@ -190,7 +190,7 @@ const BookingDetailsPage = () => {
                         </h1>
                       </Col>
                       <Col sm={6} xs={8} className="my-2 ">
-                        <p className="text-end" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
+                        <p className="text-end" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%", color: "#666666" }}>
                           ₹ {selectedBooking?.booking?.customer_id?.creditLimit - selectedBooking?.booking?.customer_id?.creditAmount || '---'}
                         </p>
                       </Col>
@@ -200,7 +200,7 @@ const BookingDetailsPage = () => {
                         </h1>
                       </Col>
                       <Col sm={6} xs={8} className="my-2 ">
-                        <p className="text-end" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
+                        <p className="text-end" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%", color: "#666666" }}>
                           {selectedBooking?.booking?.customer_id?.address || '---'}
                         </p>
                       </Col>
@@ -211,7 +211,7 @@ const BookingDetailsPage = () => {
                         </h1>
                       </Col>
                       <Col sm={6} xs={8} className="my-2 ">
-                        <p className="text-end" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%" }}>
+                        <p className="text-end" style={{ fontWeight: 400, fontSize: "16px", lineHeight: "100%", letterSpacing: "0%", color: "#666666" }}>
                           {selectedBooking?.booking?.totalGamesPlayed || '---'}
                         </p>
                       </Col>
@@ -253,7 +253,7 @@ const BookingDetailsPage = () => {
 
             </Col>
 
-            <Col sm={8} xs={12} 
+            <Col sm={8} xs={12}
             // className="my-2"
             >
               <Card className="rounded-4 my-3">
@@ -282,30 +282,30 @@ const BookingDetailsPage = () => {
 
                     <Row className="mx-1 " style={{ marginTop: "20px", marginBottom: "20px" }}>
                       <Col xs={4} sm={4} className=" my-2">
-                        <h4 style={{ fontSize: '16px', fontWeight: '400', color: "#333333" }}>Selected Game :</h4>
+                        <h4 style={{ fontSize: '16px', fontWeight: '500', color: "#333333" }}>Selected Game :</h4>
                       </Col>
                       <Col xs={8} sm={8} className="d-flex align-items-center gap-3 my-1 ">
                         {/* <div className="d-flex align-items-center gap-3 "> */}
                         <h4 style={{ fontSize: '16px', fontWeight: '600', color: "#0062FF", letterSpacing: '1px', marginBottom: 0 }}>
                           {selectedBooking?.booking?.game_id?.name}
                         </h4>
-                        <h4 className="p-2 rounded-1" style={{ fontSize: '16px', fontWeight: '400', color: "#00Af0F", marginBottom: 0, backgroundColor: "rgba(21, 255, 0, 0.16)" }}>
+                        <h4 className="p-2 rounded-1" style={{ fontSize: '16px', fontWeight: '500', color: "#00Af0F", marginBottom: 0, backgroundColor: "rgba(21, 255, 0, 0.16)" }}>
 
                           {selectedBooking?.booking?.game_id?.type}
                         </h4>
                         {/* </div> */}
                       </Col>
                       <Col xs={4} sm={4} className="my-1">
-                        <h4 style={{ fontSize: '16px', fontWeight: '400', color: "#333333" }}>No. of Candidates :</h4>
+                        <h4 style={{ fontSize: '16px', fontWeight: '500', color: "#333333" }}>No. of Candidates :</h4>
                       </Col>
                       <Col xs={8} sm={8} className="my-1">
-                        <h4 style={{ fontSize: '14px', fontWeight: '600', color: "#333333", letterSpacing: '1px' }}>{selectedBooking?.booking?.players?.length + 1}</h4>
+                        <h4 style={{ fontSize: '14px', fontWeight: '500', color: "#666", letterSpacing: '1px' }}>{selectedBooking?.booking?.players?.length + 1}</h4>
                       </Col>
                       <Col xs={4} sm={4} className="my-1">
-                        <h4 style={{ fontSize: '16px', fontWeight: '400', color: "#333333" }}>Time Slot :</h4>
+                        <h4 style={{ fontSize: '16px', fontWeight: '500', color: "#333333" }}>Time Slot :</h4>
                       </Col>
                       <Col xs={8} sm={8} className="my-1">
-                        <h4 style={{ fontSize: '14px', fontWeight: '600', color: "#333333", letterSpacing: '1px' }}>
+                        <h4 style={{ fontSize: '14px', fontWeight: '500', color: "#666", letterSpacing: '1px' }}>
                           {selectedBooking?.booking?.slot_id?.start_time && selectedBooking?.booking?.slot_id?.end_time ? (
                             <>
                               {convertTo12Hour(selectedBooking.booking.slot_id.start_time)} - {convertTo12Hour(selectedBooking.booking.slot_id.end_time)}
@@ -317,16 +317,16 @@ const BookingDetailsPage = () => {
 
                       </Col>
                       <Col xs={4} sm={4} className="my-1">
-                        <h4 style={{ fontSize: '16px', fontWeight: '400', color: "#333333" }}>Day/Date :</h4>
+                        <h4 style={{ fontSize: '16px', fontWeight: '500', color: "#333333" }}>Day/Date :</h4>
                       </Col>
                       <Col xs={8} sm={8} className="my-1">
-                        <h4 style={{ fontSize: '14px', fontWeight: '600', color: "#333333", letterSpacing: '1px' }}>{formatDate(selectedBooking?.booking?.slot_id?.createdAt)}</h4>
+                        <h4 style={{ fontSize: '14px', fontWeight: '500', color: "#666", letterSpacing: '1px' }}>{formatDate(selectedBooking?.booking?.slot_id?.createdAt)}</h4>
                       </Col>
                       <Col xs={4} sm={4} className="my-1">
-                        <h4 style={{ fontSize: '16px', fontWeight: '400', color: "#333333" }}>Booking ID :</h4>
+                        <h4 style={{ fontSize: '16px', fontWeight: '500', color: "#333333" }}>Booking ID :</h4>
                       </Col>
                       <Col xs={8} sm={8} className="my-1 ">
-                        <h4 className="" style={{ fontSize: '14px', fontWeight: '600', letterSpacing: '1px', color: "#333333" }}>{selectedBooking?.booking?.booking_id}</h4>
+                        <h4 className="" style={{ fontSize: '14px', fontWeight: '500', letterSpacing: '1px', color: "#666" }}>{selectedBooking?.booking?.booking_id}</h4>
                       </Col>
                     </Row>
 
@@ -357,45 +357,50 @@ const BookingDetailsPage = () => {
                     </div>
 
                     <div style={{ marginTop: "20px", marginBottom: "20px" }}>
-
-                      {items?.map((item, index) => (
-                        <Row
-                          key={index}
-                          className="mx-3 my-2  align-items-center"
-                          style={{
-                            backgroundColor: '#F9F9F9',
-                            color: '#333333',
-                            padding: '10px',
-                            borderRadius: '10px',
-                          }}
-                        >
-                          <Col sm={4} xs={4} className="my-1">
-                            <div>
-                              <div className="mb-1" style={{ fontSize: '14px', fontWeight: '500', color: '#333333' }}>
-                                {item.item}
+                      {items && items.length > 0 ? (
+                        items.map((item, index) => (
+                          <Row
+                            key={index}
+                            className="mx-3 my-2 align-items-center"
+                            style={{
+                              backgroundColor: '#F9F9F9',
+                              color: '#333333',
+                              padding: '10px',
+                              borderRadius: '10px',
+                            }}
+                          >
+                            <Col sm={4} xs={4} className="my-1">
+                              <div>
+                                <div className="mb-1" style={{ fontSize: '14px', fontWeight: '500', color: '#333333' }}>
+                                  {item.item}
+                                </div>
+                                <div style={{ color: '#666', fontSize: '14px', fontWeight: '400' }}>
+                                  ₹ <span>{item.price || '---'}</span> / Each
+                                </div>
                               </div>
-                              <div style={{ color: '#666', fontSize: '14px', fontWeight: '400' }}>
-                                ₹ <span style={{ color: '#666', fontSize: '14px', fontWeight: '400' }}>{item.price || '---'}</span> / Each
+                            </Col>
+
+                            <Col sm={4} xs={4} className="my-1 text-center">
+                              <div style={{ fontSize: '16px', fontWeight: '600' }}>QTY: {item?.quantity || 0}</div>
+                            </Col>
+
+                            <Col sm={4} xs={4} className="my-1 text-end">
+                              <div className="mb-1" style={{ fontSize: '14px', fontWeight: '500' }}>
+                                Tax ({item?.tax?.tax_rate || 0}%):
                               </div>
-                            </div>
-                          </Col>
-
-                          <Col sm={4} xs={4} className="my-1 text-center">
-                            {/* quantity */}
-                            <div style={{ fontSize: '16px', fontWeight: '600' }}>QTY : {item?.quantity || 0} </div>
-                          </Col>
-
-                          <Col sm={4} xs={4} className="my-1 text-end">
-                            <div className="mb-1" style={{ fontSize: '14px', fontWeight: '500' }}>Tax ({item?.tax?.tax_rate || 0} %) :</div>
-                            <div style={{ fontSize: '14px', fontWeight: '500', color: '#0062FF' }}>
-                              Total : ₹ {item.total || '0'}
-                            </div>
-                          </Col>
-
-
-                        </Row>
-                      ))}
+                              <div style={{ fontSize: '14px', fontWeight: '500', color: '#0062FF' }}>
+                                Total: ₹ {item.total || '0'}
+                              </div>
+                            </Col>
+                          </Row>
+                        ))
+                      ) : (
+                        <p className="text-center " style={{ fontSize: '14px', fontWeight: '500', color: '#666' }}>
+                          No items available.
+                        </p>
+                      )}
                     </div>
+
 
                   </Col>
                 </Row>
@@ -492,146 +497,146 @@ const BookingDetailsPage = () => {
               <Card className="rounded-4 my-3 ">
 
                 <Col xs={12} sm={12} >
-                <div className="mx-4 my-4 d-flex justify-content-between align-items-center">
-                      <h4 className="mb-0" style={{ fontWeight: 600, fontSize: "21px" }}>
-                        Payment Details
+                  <div className="mx-4 my-4 d-flex justify-content-between align-items-center">
+                    <h4 className="mb-0" style={{ fontWeight: 600, fontSize: "21px" }}>
+                      Payment Details
+                    </h4>
+
+                  </div>
+
+
+                  <Row className="mb-3 mx-3 ">
+                    <Col xs={5}>
+
+                      <h4 style={{ fontSize: '16px', fontWeight: '600', color: "#0062FF" }}>
+                        {selectedBooking?.booking?.game_id?.name} ({selectedBooking?.booking?.game_id?.size})
                       </h4>
-                      
-                    </div>
-
-                
-                <Row className="mb-3 mx-3 ">
-                      <Col xs={5}>
-
-                        <h4 style={{ fontSize: '16px', fontWeight: '600', color: "#0062FF" }}>
-                          {selectedBooking?.booking?.game_id?.name} ({selectedBooking?.booking?.game_id?.size})
-                        </h4>
-                      </Col>
-                      <Col xs={7} >
-                      <h4 style={{ fontSize: '16px', fontWeight: '600', color: "#333", letterSpacing: '1px' }}>
-                      {selectedBooking?.booking?.playerCredits.length} Players
+                    </Col>
+                    <Col xs={7} >
+                      <h4 style={{ fontSize: '16px', fontWeight: '400', color: "#666", letterSpacing: '1px' }}>
+                        {selectedBooking?.booking?.playerCredits.length} Players
                       </h4>
-                      </Col>
-                      {/* <Col className="text-end fw-bold">₹ {selectedBooking?.booking?.total} Total</Col> */}
-                    </Row>
-               
-                <Row className="mb-3 mx-3 ">
+                    </Col>
+                    {/* <Col className="text-end fw-bold">₹ {selectedBooking?.booking?.total} Total</Col> */}
+                  </Row>
+
+                  <Row className="mb-3 mx-3 ">
 
 
-                  <Col xs={5} ><h4 style={{ fontSize: '16px', fontWeight: '600', color: "#0062FF" }}>Booking Mode</h4></Col>
-                  <Col xs={7}>
-                    <span
-                      className="d-flex align-items-center "
-                      style={{
-                        backgroundColor:
-                          selectedBooking?.booking?.mode === "Online"
-                            ? "#03D41414"
-                            : "#FF00000D",
-                        borderRadius: "20px",
-                        fontSize: "12px",
-                        padding: "5px 10px",
-                        marginLeft: "-10px",
-                        width: "100px",
-
-                        color:
-                          selectedBooking?.booking?.mode === "Online" ? "#00AF0F" : "orange",
-                      }}
-                    >
-                      <div
+                    <Col xs={5} ><h4 style={{ fontSize: '16px', fontWeight: '500', color: "#333" }}>Booking Mode</h4></Col>
+                    <Col xs={7}>
+                      <span
+                        className="d-flex align-items-center text-center "
                         style={{
-                          width: "8px",
-                          height: "8px",
-                          borderRadius: "50%",
                           backgroundColor:
                             selectedBooking?.booking?.mode === "Online"
-                              ? "#03D414"
-                              : "orange",
-                          marginRight: "5px",
+                              ? "#03D41414"
+                              : "#FF00000D",
+                          borderRadius: "20px",
+                          fontSize: "12px",
+                          padding: "5px 10px",
+                          marginLeft: "-10px",
+                          width: "100px",
+
+                          color:
+                            selectedBooking?.booking?.mode === "Online" ? "#00AF0F" : "orange",
                         }}
-                      />
-                      {selectedBooking?.booking?.mode}
-                    </span>
-                  </Col>
-                </Row>
-
-                <Row className="mb-3 mx-3 ">
-                  <Col xs={5}><h4 style={{ fontSize: '16px', fontWeight: '600', color: "#0062FF" }}>Amount Paid</h4></Col>
-                  <Col xs={7}>
-                    <h4 style={{ fontSize: '16px', fontWeight: '600', color: "#333333", letterSpacing: '1px' }}>₹ {selectedBooking?.booking?.paid_amount}</h4>
-                  </Col>
-                </Row>
-
-                <Row className="mb-3 mx-3 ">
-                  <Col xs={5}><h4 style={{ fontSize: '16px', fontWeight: '600', color: "#0062FF" }}>Adjustment</h4></Col>
-                  <Col xs={7}>
-
-                    <h4 style={{ fontSize: '16px', fontWeight: '600', color: "#333333", letterSpacing: '1px' }}>₹ {selectedBooking?.booking?.adjustment || 0}</h4>
-                  </Col>
-                </Row>
-
-                <Row className="mb-3 mx-3 ">
-                  <Col xs={5}><h4 style={{ fontSize: '16px', fontWeight: '600', color: "#0062FF" }}>Credit Amount</h4></Col>
-                  <Col xs={7}><h4 style={{ fontSize: '14px', fontWeight: '300', color: "#666666", letterSpacing: '1px' }}>
-                    {/* ₹ {selectedBooking?.booking?.total - selectedBooking?.booking?.paid_amount} */}
-                    <OverlayTrigger
-                      trigger={['hover', 'focus']}
-                      placement="right"
-                      overlay={renderCreditsPopover}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <span style={{ cursor: 'pointer' ,fontSize: '16px', fontWeight: '600', color: "#333333", letterSpacing: '1px' }}>
-                        ₹ {selectedBooking?.booking?.total - selectedBooking?.booking?.paid_amount}
+                      >
+                        <div className="text-center"
+                          style={{
+                            width: "8px",
+                            height: "8px",
+                            borderRadius: "50%",
+                            backgroundColor:
+                              selectedBooking?.booking?.mode === "Online"
+                                ? "#03D414"
+                                : "orange",
+                            marginRight: "5px",
+                          }}
+                        />
+                        {selectedBooking?.booking?.mode}
                       </span>
-                    </OverlayTrigger>
-                  </h4>
-                  </Col>
-                </Row>
+                    </Col>
+                  </Row>
 
-                <Row className="mb-3 mx-3 ">
-                  <Col xs={5}><h4 style={{ fontSize: '16px', fontWeight: '600', color: "#0062FF" }}>Transaction ID</h4></Col>
-                  <Col xs={7}>
-                    <h4 style={{ fontSize: '16px', fontWeight: '600', color: "#333333", letterSpacing: '1px' }}>
-                      {selectedBooking?.booking?.transaction?.razorpay_payment_id || "-"}
-                    </h4></Col>
-                </Row>
+                  <Row className="mb-3 mx-3 ">
+                    <Col xs={5}><h4 style={{ fontSize: '16px', fontWeight: '500', color: "#333" }}>Amount Paid</h4></Col>
+                    <Col xs={7}>
+                      <h4 style={{ fontSize: '16px', fontWeight: '400', color: "#666", letterSpacing: '1px' }}>₹ {selectedBooking?.booking?.paid_amount}</h4>
+                    </Col>
+                  </Row>
 
-                <Row className="mb-3 mx-3 ">
-                  <Col xs={5}><h4 style={{ fontSize: '16px', fontWeight: '600', color: "#0062FF" }}>Date/Time</h4></Col>
-                  <Col xs={7}>
-                    <h4 style={{ fontSize: '16px', fontWeight: '600', color: "#333333", letterSpacing: '1px' }}>
-                      {selectedBooking?.booking?.mode === "Online" ? formatDateAndTime(selectedBooking?.booking?.transaction?.createdAt) : formatDateAndTime(selectedBooking?.booking?.createdAt)}
+                  <Row className="mb-3 mx-3 ">
+                    <Col xs={5}><h4 style={{ fontSize: '16px', fontWeight: '500', color: "#333" }}>Adjustment</h4></Col>
+                    <Col xs={7}>
+
+                      <h4 style={{ fontSize: '16px', fontWeight: '400', color: "#666", letterSpacing: '1px' }}>₹ {selectedBooking?.booking?.adjustment || 0}</h4>
+                    </Col>
+                  </Row>
+
+                  <Row className="mb-3 mx-3 ">
+                    <Col xs={5}><h4 style={{ fontSize: '16px', fontWeight: '500', color: "#333" }}>Credit Amount</h4></Col>
+                    <Col xs={7}><h4 style={{ fontSize: '14px', fontWeight: '300', color: "#666666", letterSpacing: '1px' }}>
+                      {/* ₹ {selectedBooking?.booking?.total - selectedBooking?.booking?.paid_amount} */}
+                      <OverlayTrigger
+                        trigger={['hover', 'focus']}
+                        placement="right"
+                        overlay={renderCreditsPopover}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <span style={{ cursor: 'pointer', fontSize: '16px', fontWeight: '400', color: "#666", letterSpacing: '1px' }}>
+                          ₹ {selectedBooking?.booking?.total - selectedBooking?.booking?.paid_amount}
+                        </span>
+                      </OverlayTrigger>
                     </h4>
-                  </Col>
-                </Row>
+                    </Col>
+                  </Row>
 
-                <Row className="mb-3 mx-3 align-items-center border-top">
-        <Col xs={4} className="mt-4">
-          <h4 style={{ fontSize: '16px', fontWeight: '600', color: "#333" }}>TOTAL</h4 >
-        </Col>
-        <Col xs={4} className="text-center mt-4">
-          <Badge
-            pill
-            bg=""
-            style={{
-              backgroundColor: '#e6f9ec', // Light green background
-              color: '#00AF0F',
-              padding: '10px 20px',
-              fontSize: '16px',
-              fontWeight: '500',
-            }}
-          >
-            Amount Paid
-          </Badge>
-        </Col>
-        <Col xs={4} className="text-end">
-          <h4 className="my-2" style={{ fontSize: '16px', fontWeight: '600', color: "#333333", letterSpacing: '1px' }}>₹ {selectedBooking?.booking?.total}</h4>
-        </Col>
-      </Row>
+                  <Row className="mb-3 mx-3 ">
+                    <Col xs={5}><h4 style={{ fontSize: '16px', fontWeight: '500', color: "#333" }}>Transaction ID</h4></Col>
+                    <Col xs={7}>
+                      <h4 style={{ fontSize: '16px', fontWeight: '400', color: "#666", letterSpacing: '1px' }}>
+                        {selectedBooking?.booking?.transaction?.razorpay_payment_id || "-"}
+                      </h4></Col>
+                  </Row>
+
+                  <Row className="mb-3 mx-3 ">
+                    <Col xs={5}><h4 style={{ fontSize: '16px', fontWeight: '500', color: "#333" }}>Date/Time</h4></Col>
+                    <Col xs={7}>
+                      <h4 style={{ fontSize: '16px', fontWeight: '400', color: "#666", letterSpacing: '1px' }}>
+                        {selectedBooking?.booking?.mode === "Online" ? formatDateAndTime(selectedBooking?.booking?.transaction?.createdAt) : formatDateAndTime(selectedBooking?.booking?.createdAt)}
+                      </h4>
+                    </Col>
+                  </Row>
+
+                  <Row className="mb-3 mx-3 align-items-center border-top">
+                    <Col xs={4} className="mt-4">
+                      <h4 style={{ fontSize: '16px', fontWeight: '500', color: "#333" }}>TOTAL</h4 >
+                    </Col>
+                    <Col xs={5} className="text-end mt-4">
+                      <Badge
+                        pill
+                        bg=""
+                        style={{
+                          backgroundColor: '#e6f9ec', // Light green background
+                          color: '#00AF0F',
+                          padding: '10px 20px',
+                          fontSize: '16px',
+                          fontWeight: '500',
+                        }}
+                      >
+                        Amount Paid
+                      </Badge>
+                    </Col>
+                    <Col xs={3} className="text-start mt-4">
+                      <h4 className="my-4" style={{ fontSize: '16px', fontWeight: '600', color: "#333333", letterSpacing: '1px' }}>₹ {selectedBooking?.booking?.total}</h4>
+                    </Col>
+                  </Row>
 
 
-                
+
                 </Col>
-                
+
               </Card>
 
 

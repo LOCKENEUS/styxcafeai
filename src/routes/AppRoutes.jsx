@@ -109,6 +109,7 @@ import CafeGames from "../pages/SuperAdmin/cafe/Games/CafeGames";
 import CreateMembership from "../pages/SuperAdmin/cafe/membership/CreateMembership";
 import GameDetailsCafe from "../pages/SuperAdmin/cafe/Games/GameDetails";
 import BookingDetailsPage from "../pages/SuperAdmin/cafe/booking/bookingDetailspage";
+import ClientDetailsPage from "../pages/SuperAdmin/cafe/client/clientDetailspage";
 
 
 
@@ -176,6 +177,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/superadmin/CafeGames" element={<CafeGames />} />
           <Route path="/superadmin/CreateMembership" element={<CreateMembership />} />
           <Route path="/superadmin/Bookings/BookingDetails" element={<BookingDetailsPage />} />
+          <Route path="/superadmin/Clients/ClientDetails" element={<ClientDetailsPage />} />
 
 
 
