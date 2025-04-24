@@ -363,7 +363,9 @@ const ViewDetails = () => {
       booking.players?.length?.toString().toLowerCase().includes(searchValue) ||
       booking.status?.toLowerCase().includes(searchValue) ||
       booking.slot_date?.toString().toLowerCase().includes(searchValue) ||
-      booking.slot_id?.start_time?.toString().toLowerCase().includes(searchValue) 
+      booking.slot_id?.start_time?.toString().toLowerCase().includes(searchValue) ||
+      booking.slot_id?.end_time?.toString().toLowerCase().includes(searchValue) ||
+      booking.slot_id?.duration?.toString().toLowerCase().includes(searchValue)
     );
   });
 
@@ -1240,7 +1242,7 @@ const ViewDetails = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {(paginatedDataBooking.length > 0 ? paginatedDataBooking : bookings).map((booking, idx) => (
+                        {(paginatedDataBooking?.length > 0 ? paginatedDataBooking : bookings)?.map((booking, idx) => (
                           <tr key={idx}>
                             <td>{idx + 1}</td>
                             <td><span className="text-primary fw-bold" style={{ cursor: "pointer" }} 
@@ -1289,7 +1291,12 @@ const ViewDetails = () => {
                             </td>
                             <td>
                               {formatDate(booking.slot_date)}<br />
-                              {convertTo12Hour(booking?.slot_id?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time)}
+                              {/* {convertTo12Hour(booking?.slot_id?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time)} */}
+                              ₹ {
+                              booking?.booking_type === "Regular"
+                                ? `${convertTo12Hour(booking?.slot_id?.start_time)} - ${convertTo12Hour(booking?.slot_id?.end_time)}`
+                                : `${convertTo12Hour(booking?.custom_slot?.start_time)} - ${convertTo12Hour(booking?.custom_slot?.end_time)}`
+                            }
                             </td>
                             <td>
                             ₹ {booking.gamePrice}
