@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Card, Row, Col, Container } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Card, Row, Col, Container, Spinner } from 'react-bootstrap';
 import { MdOutlineArrowOutward } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGames } from '../../../store/slices/gameSlice';
@@ -12,6 +12,7 @@ const RecommendedGames = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { games, status } = useSelector((state) => state.games);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -125,7 +126,6 @@ const RecommendedGames = () => {
                   style={{
                     cursor: 'pointer',
                     opacity: 1, // Ensure initial visibility
-                    transform: 'none' // Reset any transforms
                   }}
                 >
                   <Card.Img
@@ -142,7 +142,7 @@ const RecommendedGames = () => {
                     <Card.Title
                     style={{
                       fontWeight: "600",
-                      fontSize: "24px",
+                      fontSize: "16px",
                     }}
                     >{game.name}</Card.Title>
                     <Card.Text>
@@ -151,13 +151,17 @@ const RecommendedGames = () => {
                       </small>
                     </Card.Text>
                     <div className="d-flex justify-content-between align-items-center">
-                      <span className="text-primary fw-bold px-3 py-2 rounded-pill" style={{ backgroundColor: '#FAFAF4' }}>₹{game.price}/Person</span>
+                      <span className="text-primary fw-bold px-3 py-2 rounded-pill" style={{ backgroundColor: '#F2F2F2' }}>₹{game.price}/Person</span>
                       <button
                         className="btn btn-primary rounded-circle"
                         style={{ width: '40px', height: '40px', padding: 0 }}
-                        onClick={() => navigate(`/admin/games/${game._id}`)}
-                      >
-                        <MdOutlineArrowOutward />
+                        onClick={() => {
+                          setIsLoading(true);
+                          navigate(`/admin/games/${game._id}`);
+                          setIsLoading(false);
+                        }}
+                       >
+                        {isLoading ? <Spinner animation="border" size="sm" /> : <MdOutlineArrowOutward />}
                       </button>
                     </div>
                   </Card.Body>

@@ -8,6 +8,7 @@ import { LiaCoinsSolid } from "react-icons/lia";
 const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePayment, totalAmount, players, customer }) => {
   const [allPlayers, setAllPlayers] = useState([]);
   const [currentTotal, setCurrentTotal] = useState(totalAmount);
+  const [isAmountSplit, setIsAmountSplit] = useState(false);
 
   useEffect(() => {
     setAllPlayers([customer, ...players]);
@@ -22,6 +23,7 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
   };
 
   const handleSplitAmount = () => {
+    setIsAmountSplit(true);
     // Calculate the split amount based on the selected split type
     const totalPlayers = allPlayers.length;
     const splitAmount = totalAmount / totalPlayers;
@@ -108,6 +110,7 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
                     type="number"
                     className="form-control text-center"
                     placeholder="Share"
+                    disabled={!isAmountSplit}
                     value={player.share}
                     onChange={(e) => handleShareChange(index, e.target.value)}
                     style={{

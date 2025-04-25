@@ -187,7 +187,7 @@ const BookingDetails = () => {
 
   const handleAddPlayer = async () => {
 
-    if(teamMembers.length >= selectedGame?.data?.players - 1) return alert(`You can add only ${selectedGame?.data?.players} players at a time`)
+    if (teamMembers.length >= selectedGame?.data?.players - 1) return alert(`You can add only ${selectedGame?.data?.players} players at a time`)
     const submittedData = new FormData();
     submittedData.append("cafe", cafeId);
     submittedData.append("name", newPlayer.name);
@@ -316,7 +316,7 @@ const BookingDetails = () => {
   }
 
   const handleCollectOffline = async () => {
-    if(selectedGame?.data?.type === "Multiplayer" && selectedCustomer && teamMembers.length < 1) {
+    if (selectedGame?.data?.type === "Multiplayer" && selectedCustomer && teamMembers.length < 1) {
       window.alert("Please add at least 2 players")
       return
     }
@@ -353,13 +353,13 @@ const BookingDetails = () => {
       navigate(`/admin/booking/checkout/${response?.data?._id}`)
     } catch (error) {
       console.error(error);
-     }
+    }
   };
 
   const handlePayLater = async () => {
     console.log("reached-here")
     try {
-      if(selectedGame?.data?.type === "Multiplayer" && selectedCustomer && teamMembers.length < 1) {
+      if (selectedGame?.data?.type === "Multiplayer" && selectedCustomer && teamMembers.length < 1) {
         window.alert("Please add at least 2 players")
         return
       }
@@ -372,10 +372,10 @@ const BookingDetails = () => {
       console.log("mappedItems", mappedItems)
 
       let booking_type = "Regular"
-      if(!slot._id){
+      if (!slot._id) {
         booking_type = "Custom"
       }
-  
+
       const bookingData = {
         cafe: cafeId,
         customer_id: selectedCustomer?._id,
@@ -416,7 +416,7 @@ const BookingDetails = () => {
   }, [searchCustTerm, dispatch, cafeId]);
 
   const handleSelectCustomer = (customer) => {
-    if(teamMembers.length >= selectedGame?.data?.players - 1) {
+    if (teamMembers.length >= selectedGame?.data?.players - 1) {
       alert(`You can add only ${selectedGame?.data?.players} players at a time`);
       return
     }
@@ -484,7 +484,7 @@ const BookingDetails = () => {
 
   const handleOnlinePayment = async () => {
     try {
-      if(selectedGame?.data?.type === "Multiplayer" && selectedCustomer && teamMembers.length < 1) {
+      if (selectedGame?.data?.type === "Multiplayer" && selectedCustomer && teamMembers.length < 1) {
         window.alert("Please add at least 2 players")
         return
       }
@@ -493,7 +493,7 @@ const BookingDetails = () => {
         ...item,
         tax_amt: item.totalTax
       }))
-  
+
       // Step 1: Create Razorpay Order FIRST (before creating booking)
       const response = await fetch(`${backend_url}/admin/booking/payment`, {
         method: "POST",
@@ -646,10 +646,11 @@ const BookingDetails = () => {
           </div>
 
           {searchTerm.length > 2 && filteredCustomers.length > 0 && (
-            <ListGroup className="position-absolute shadow bg-white z-index-100" style={{width: "18%"}}>
+            <ListGroup className="position-absolute shadow bg-white z-index-100" style={{ width: "18%" }}>
               {filteredCustomers.map((customer) => (
                 <ListGroup.Item
                   key={customer.id}
+                  style={{ cursor: "pointer" }}
                   action
                   onClick={() => {
                     setSelectedCustomer(customer)
@@ -718,7 +719,7 @@ const BookingDetails = () => {
 
                   {showInput ? (
                     <div className="mb-2 d-flex flex-column gap-2">
-                        <Form.Control
+                      <Form.Control
                         type="text"
                         placeholder="Enter player name"
                         value={searchCustTerm}
@@ -740,16 +741,17 @@ const BookingDetails = () => {
                               key={index}
                               onClick={() => handleSelectCustomer(customer)}
                               className="p-2 hover:bg-blue-500 hover:text-white cursor-pointer"
+                              style={{ cursor: "pointer" }}
                             >
                               {customer?.name} - {customer?.contact_no}
                             </li>
                           ))}
                         </ul>
                       )}
-                       <Form.Control
-                         type="text"
-                         inputMode="numeric"
-                         pattern="[0-9]*"
+                      <Form.Control
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
                         placeholder="Enter contact number"
                         maxLength={10}
                         value={newPlayer.contact_no}
@@ -787,7 +789,12 @@ const BookingDetails = () => {
                       <h5 className="text-color">No of Candidates  ({teamMembers.length + 1})</h5>
                       {teamMembers.map((player, index) => (
                         <p key={index} className="mt-4">
-                          {player.name} - {player.contact_no} <span className="float-end"><RxCross2 size={20} className="text-danger" onClick={() => handleRemovePlayer(player.id)} /></span>
+                          {player.name} - {player.contact_no}
+                          <span
+                            className="float-end"
+                          >
+                            <RxCross2 size={20} className="text-danger pointer" onClick={() => handleRemovePlayer(player.id)} />
+                          </span>
                         </p>
                       ))}
                     </div>
@@ -806,7 +813,7 @@ const BookingDetails = () => {
             <Col md={12} style={{ height: "9vh" }}></Col>
             <Col md={12}>
               <div
-                style={{ height:selectedCustomer?"auto":"40vh" }}
+                style={{ height: selectedCustomer ? "auto" : "40vh" }}
                 className="bg-white rounded-3 p-1 mb-2 position-relative"
               >
                 <div className="px-3">
@@ -922,7 +929,7 @@ const BookingDetails = () => {
                         </Dropdown>
                         {/* <Button style={{background: "#00B72BCC", color: "#fff"}} className="btn border-0 w-100" onClick={() => setShowCreditModal(!showCreditModal)}>Payment Options</Button> */}
                       </div>
-            
+
                     </>
                   ) : (
                     <p className="muted-text d-flex justify-content-center align-items-center h-100 w-100 mb-0">
@@ -931,7 +938,7 @@ const BookingDetails = () => {
                   )}
 
                 </div>
-              
+
               </div>
             </Col>
           </Row>
@@ -976,13 +983,11 @@ const BookingDetails = () => {
                       >
                         {/* Trash Icon */}
                         <span
-                          className="position-absolute bg-transparent border-0 color-red"
+                          className="position-absolute bg-transparent border-0 color-red pointer"
                           style={{
                             top: "20px",
                             right: "10px",
                             color: "red",
-                            cursor: "pointer"
-                            // zIndex: 2,
                           }}
                           onClick={() => {
                             const updatedProducts = selectedItems.filter((_, i) => i !== index);
@@ -999,11 +1004,15 @@ const BookingDetails = () => {
                             setPayableAmount((prevPayable) => prevPayable - product.total);
                           }}
                         >
-                          <TbTrash style={{
-                            top: "15px",
-                            right: "-30px",
-                            zIndex: 2,
-                          }} size={20} />
+                          <TbTrash
+                            style={{
+                              top: "15px",
+                              right: "-30px",
+                              zIndex: 2,
+                              cursor: "pointer"
+                            }}
+                            size={20}
+                          />
                         </span>
 
                         {/* Product Card */}

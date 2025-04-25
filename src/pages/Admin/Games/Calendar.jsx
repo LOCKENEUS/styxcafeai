@@ -1,5 +1,5 @@
 import React, { use, useEffect, useState } from "react";
-import { Button, Card } from "react-bootstrap";
+import { Button, Card, Spinner } from "react-bootstrap";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
 import { TbMoodSad } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router-dom";
@@ -273,7 +273,8 @@ const Calendar = ({ selectedGame }) => {
 const BookingSlots = ({ date, selectedGame, gameId }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [showSlotModal, setShowSlotModal] = useState(false); // State to control the slot modal visibility
+  const [showSlotModal, setShowSlotModal] = useState(false);
+  const [isLoading,setIsLoading] = useState(false);
 
   const slots = useSelector((state) => state.slots?.slots || []);
   const bookings = useSelector((state) => state.bookings?.bookings || []);
@@ -310,7 +311,9 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
   };
 
   const handleBookSlot = async (gameId, slotId, date) => {
+    setIsLoading(true);
     navigate(`/admin/bookings/booking-details/${gameId}/${slotId}/${date}`);
+    setIsLoading(false);
   };
 
   const handleSlotCreate = () => {
@@ -367,7 +370,7 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
                       }}
                       onClick={() => handleBookSlot(gameId, slot._id, date)}
                     >
-                      {booked ? "Booked" : isPast ? "Time Passed" : !slot.is_active ? "Unavailable" : "Book Slot"}
+                      {booked ? "Booked" : isPast ? "Time Passed" : !slot.is_active ? "Unavailable" : "Book Slot"}{isLoading && <Spinner animation="border" size="sm" />}
                     </Button>
                   </div>
                 </div>

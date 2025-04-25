@@ -37,6 +37,7 @@ const GameInfo = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [showCustomSlot, setShowCustomSlot] = useState(false);
   const [gameFilter, setGameFilter] = useState("All");
   const [selectedFilter, setSelectedFilter] = useState("All");
@@ -156,16 +157,16 @@ const GameInfo = () => {
   const filterBookingsByDate = (filter) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalize
-  
+
     const normalizeDate = (date) => {
       const d = new Date(date);
       d.setHours(0, 0, 0, 0);
       return d;
     };
-  
+
     return bookings?.filter((booking) => {
       const bookingDate = normalizeDate(booking.slot_date);
-  
+
       switch (filter) {
         case "Today":
           return bookingDate.getTime() === today.getTime();
@@ -184,7 +185,7 @@ const GameInfo = () => {
       }
     });
   };
-  
+
   const filteredBookings = filterBookingsByDate(selectedFilter)
     .filter((booking) => booking?.customerName?.toLowerCase().includes(searchTerm.toLowerCase()))
     .filter((booking) => gameFilter === "All" || booking?.gameTitle === gameFilter);
@@ -193,7 +194,9 @@ const GameInfo = () => {
   const currentBookings = filteredBookings.slice((activePage - 1) * itemsPerPage, activePage * itemsPerPage);
 
   const handleBookSlotClick = () => {
+    setIsLoading(true);
     setShowCalendar(true);
+    setIsLoading(false);
   };
 
   return (
@@ -223,7 +226,7 @@ const GameInfo = () => {
               className="img-fluid rounded m-3"
               style={{
                 width: "100%",
-                height: "164px",
+                height: "230px",
                 borderRadius: "19px",
                 objectFit: "cover",
               }}
@@ -251,89 +254,51 @@ const GameInfo = () => {
             </div>
           </Col>
           <Col
-            md={5}
-            className="d-flex flex-column justify-content-around px-4"
+            md={6}
+            className="d-flex flex-column justify-content-around p-4"
             style={{ backgroundColor: "transparent" }}
           >
-            <h5>{selectedGame?.data?.name}
-
-              <Button
-                variant="success"
-                className="mx-2 rounded-pill"
-                style={{
-                  backgroundColor: "#03D41414",
-                  color: "#00AF0F",
-                  border: "none",
-                }}
-              >
-                {selectedGame?.data?.type}
-              </Button>
-              <Button
-                variant="primary"
-                className="rounded-pill"
-                style={{
-                  backgroundColor: "#0062FF14",
-                  color: "#0062FF",
-                  border: "none",
-                }}
-              >
-                {selectedGame?.data?.zone}
-              </Button>
-              {selectedGame?.data?.payLater &&
-                <Button
-                  variant="primary"
-                  className="rounded-pill mx-2"
-                  style={{
-                    backgroundColor: "#efd8f2",
-                    color: "#ce0de7",
-                    border: "none",
-                  }}
-                >
-                  Pay Later
-                </Button>
-              }
-            </h5>
+            <h5 className="fw-600 fs-3">{selectedGame?.data?.name}</h5>
             <p className="text-muted">{selectedGame?.data?.details}</p>
-            <div >
-              <p>
-                <b>Cancellation:</b> <span>{selectedGame?.data?.cancellation ? "Yes" : "No"}</span>
-              </p>
-              <p>
-                <b>Created At:</b> <span>{new Date(selectedGame?.data?.createdAt).toLocaleString()}</span>
-              </p>
-              <p>
-                <b>Updated At:</b> <span>{new Date(selectedGame?.data?.updatedAt).toLocaleString()}</span>
-              </p>
+            <div className="d-flex gap-3">
+              <div><img src="/assets/Admin/Game/paylater.svg" className="me-1 mb-1 p-1" alt="paylater" /> {selectedGame?.data?.payLater ? "Pay Later" : "Direct Booking"}</div>
+              <div><img src="/assets/Admin/Game/singleplayer.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.type}</div>
+              <div><img src="/assets/Admin/Game/indoor.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.zone}</div>
+              <div><img src="/assets/Admin/Game/indoor.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.cancellation ? "Cancellation Yes" : "Cancellation No"}</div>
+            </div>
+
+            <div>
+              <img src="/assets/Admin/Game/price.svg" className="mb-2" alt="paylater" />
+              <span style={{ color: "#0062FF", fontSize: "24px" }} className="fw-bold text-primary">{selectedGame?.data?.price}</span>
             </div>
           </Col>
           <Col
-            md={5}
+            md={4}
             className="text-end d-flex flex-column justify-content-around align-items-end"
             style={{ backgroundColor: "transparent" }}
           >
-            <h4
-              style={{ fontSize: "24px", color: "#0062FF", fontWeight: "bold" }}
-            >
-              ₹ {selectedGame?.data?.price}
-            </h4>
-            <span>
-            <Button
-            size="sm"
-              variant="primary"
-              style={{ width: "128px", height: "37px" }}
-              onClick={handleBookSlotClick}
-            >
-              Book Slot
-            </Button>
+            <div className="mb-10 p-2">
+              <span className="text-color">Created At - </span>{new Date(selectedGame?.data?.createdAt).toLocaleString()}
+            </div>
+            <span className="align-bottom p-2 mt-3">
+              <Button
+                size="sm"
+                variant="primary"
+                disabled={isLoading}
+                style={{ width: "128px", height: "37px" }}
+                onClick={handleBookSlotClick}
+              >
+                Book Slot
+              </Button>
 
-            <Button
-            size="sm"
-              variant="primary"
-              style={{ width: "150px", height: "37px", marginLeft: "10px" }}
-              onClick={() => setShowCustomSlot(true)}
-            >
-              Custom Booking
-            </Button>
+              <Button
+                size="sm"
+                variant="primary"
+                style={{ width: "150px", height: "37px", marginLeft: "10px" }}
+                onClick={() => setShowCustomSlot(true)}
+              >
+                Custom Booking
+              </Button>
             </span>
           </Col>
         </Row>
@@ -496,7 +461,7 @@ const GameInfo = () => {
                 {currentBookings.length > 0 ?
                   currentBookings?.map((booking, index) => (
                     <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
-                      <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>    
+                      <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
                         {index + 1}
                       </td>
                       <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
@@ -623,14 +588,14 @@ const GameInfo = () => {
         </Card>
       )}
 
-      {showCustomSlot && 
-      <CustomSlotModal 
-      show={showCustomSlot} 
-      handleClose={() => setShowCustomSlot(false)} 
-      gameId={gameId}
-      date={new Date()}
-      />}
-      
+      {showCustomSlot &&
+        <CustomSlotModal
+          show={showCustomSlot}
+          handleClose={() => setShowCustomSlot(false)}
+          gameId={gameId}
+          date={new Date()}
+        />}
+
     </div>
   );
 };

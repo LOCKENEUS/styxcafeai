@@ -113,7 +113,7 @@ const CustomerDetails = () => {
       <Row>
         {/* Sidebar with Profile */}
         <Col md={4}>
-          <Card className="p-3">
+          <Card className="p-3" style={{ height: "100vh" }}>
             <div className="d-flex justify-content-center flex-column align-items-center">
               <div className="position-relative">
                 <div
@@ -157,53 +157,36 @@ const CustomerDetails = () => {
                     <LuPencil />
                   </button>
                 </div>
-                <div className="d-flex gap-7">
-                  <div>
-                    <h5>{selectedCustomer?.data?.name || "N/A"}</h5>
-                    <p>{selectedCustomer?.data?.email || "N/A"}</p>
-                  </div>
-
-                  <div>
-                    <div>
-                      Credit Limit: {selectedCustomer?.data?.creditLimit || "N/A"}
-                    </div>
-                    <div>
-                      Credit Left: {selectedCustomer?.data?.creditLimit - selectedCustomer?.data?.creditAmount || "N/A"}
-                    </div>
-                  </div>
-
-                  <hr />
-                </div>
               </div>
             </div>
 
             {/* Profile Info */}
-            <div className="d-flex flex-column gap-2 mt-1">
+            <div className="d-flex flex-column gap-2 mt-1 scrollable"    style={{
+      overflowY: "auto",
+      flex: 1, // takes remaining space in the Card
+      paddingRight: "10px", // for scrollbar spacing
+      scrollbarWidth: "none",         // For Firefox
+      msOverflowStyle: "none"   
+    }}>
+            <p><strong className="">Name:</strong> <span className="float-end">{selectedCustomer?.data?.name || "N/A"}</span></p>
+            <p><strong className="">Credit Limit:</strong> <span className="float-end">{selectedCustomer?.data?.creditLimit || "N/A"}</span></p>
+            <p><strong className="">Credit Left:</strong> <span className="float-end">{selectedCustomer?.data?.creditLimit - selectedCustomer?.data?.creditAmount || "N/A"}</span></p>
+
               <p><strong className="">Gender:</strong> <span className="float-end">{selectedCustomer?.data?.gender || "N/A"}</span></p>
               <p><strong>Email Id:</strong> <span className="float-end">{selectedCustomer?.data?.email || "N/A"}</span></p>
               <p><strong>Phone Number:</strong> <span className="float-end">{selectedCustomer?.data?.contact_no || "N/A"}</span></p>
               <p><strong>Location:</strong> <span className="float-end">{selectedCustomer?.data?.city || "N/A"}</span></p>
               <p><strong>Department:</strong> <span className="float-end">{selectedCustomer?.data?.department || "N/A"}</span></p>
-              {/* <p><strong>Company:</strong> {selectedCustomer?.data?.company || "N/A"}</p>
-                <p><strong>Bank:</strong> {selectedCustomer?.data?.bank_name || "N/A"}</p>
-                <p><strong>Account No.:</strong> {selectedCustomer?.data?.account_number || "N/A"}</p> */}
+                <p><strong>Address:</strong> <span className="float-end">{selectedCustomer?.data?.address || "N/A"}</span></p>
+              <p><strong>City:</strong> <span className="float-end">{selectedCustomer?.data?.city || "N/A"}</span></p>
+              <p><strong>State:</strong> <span className="float-end">{selectedCustomer?.data?.state || "N/A"}</span></p>
+              <p><strong>Country:</strong> <span className="float-end">{selectedCustomer?.data?.country || "N/A"}</span></p>
             </div>
-
-
           </Card>
         </Col>
 
         {/* Billing Details */}
         <Col md={8}>
-          <Card className="p-3 mb-3">
-            <h5>Details</h5>
-            <div className="d-flex flex-column gap-2">
-              <p><strong>Address:</strong> {selectedCustomer?.data?.address}</p>
-              <p><strong>City:</strong> {selectedCustomer?.data?.city}</p>
-              <p><strong>State:</strong> {selectedCustomer?.data?.state}</p>
-              <p><strong>Country:</strong> {selectedCustomer?.data?.country}</p>
-            </div>
-          </Card>
 
           <Tab.Container activeKey={activeKey} onSelect={(k) => setActiveKey(k)}>
             <Row>
@@ -225,7 +208,7 @@ const CustomerDetails = () => {
               <Col className="mt-3">
                 <Tab.Content>
                   <Tab.Pane eventKey="/home">
-                    <Card className="p-3 mb-3">
+                    <Card className="p-3 mb-3" style={{ height:"88vh" }}>
                       <div className="d-flex align-items-center justify-content-between">
                         {/* <h5>Booking History</h5> */}
                         <input
@@ -291,7 +274,7 @@ const CustomerDetails = () => {
                     </Card>
                   </Tab.Pane>
                   <Tab.Pane eventKey="link-1">
-                    <Card className="p-3 mb-3">
+                    <Card className="p-3 mb-3" style={{ height:"88vh" }}>
                       <div className="d-flex align-items-center justify-content-between">
                         {/* <h5>Booking History</h5> */}
                         <input
@@ -405,7 +388,7 @@ const CustomerDetails = () => {
                     </Card>
                   </Tab.Pane>
                   <Tab.Pane eventKey="link-2">
-                       {/* <Card className="p-3 mb-3">
+                       <Card className="p-3 mb-3" style={{ height:"88vh" }}>
                       <div className="d-flex align-items-center justify-content-between">
                         <input
                           type="text"
@@ -430,15 +413,9 @@ const CustomerDetails = () => {
                               selectedCustomer?.bookings.map((booking, index) => (
                                 <tr key={booking._id}>
                                   <td>{index + 1}</td>
-                                  <td style={{ fontWeight: "600", color: "blue" }} onClick={() => navigate(`/admin/booking/checkout/${booking._id}`)} >{booking.booking_id}</td>
-                                  <td>{credit.game_name}</td>
-                                  <td>{new Date(credit.slot_date).toLocaleDateString()}</td>
-                                  <td>
-                                    <span >
-                                      {credit.credit}
-                                    </span>
-                                  </td>
-                                  <td>{credit.total}</td>
+                                  <td style={{ fontWeight: "600", color: "blue" }} onClick={() => navigate(`/admin/booking/checkout/${booking.booking_id}`)} >{booking.booking_id}</td>
+                                  <td>{booking?.playerCredits[0]?.txn_id ? booking?.playerCredits[0]?.txn_id : "Cash"}</td>
+                                  <td>{booking?.playerCredits[0]?.paymentDate && new Date(booking?.playerCredits[0]?.paymentDate).toLocaleDateString()}</td>
                                 </tr>
                               ))
                             ) : (
@@ -465,7 +442,7 @@ const CustomerDetails = () => {
                           style={{ width: '40px', height: '40px' }}
                         />
                       </div>
-                    </Card> */}
+                    </Card>
                   </Tab.Pane>
                 </Tab.Content>
               </Col>

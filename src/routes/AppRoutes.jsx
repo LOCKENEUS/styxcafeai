@@ -291,7 +291,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
                   : sessionStorage.getItem("userRole") === "admin"
                     ? "/admin/dashboard"
                     : "/admin/login"
-                : "/user/login"
+                : "/admin/login"
             }
             replace
           />
@@ -308,7 +308,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
                   : sessionStorage.getItem("userRole") === "admin"
                     ? "/admin/dashboard"
                     : "/user/dashboard"
-                : "/user/login"
+                : "/admin/login"
             }
             replace
           />

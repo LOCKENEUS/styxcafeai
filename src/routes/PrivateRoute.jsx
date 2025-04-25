@@ -15,7 +15,7 @@ const PrivateRoute = () => {
   const isAuthenticated = sessionStorage.getItem("authToken");
   const userRole = JSON.parse(sessionStorage.getItem("userRole") || '""');
 
-  return isAuthenticated && userRole === "superadmin" ? <Outlet /> : <Navigate to="/user/login" replace />;
+  return isAuthenticated && userRole === "superadmin" ? <Outlet /> : <Navigate to="/admin/login" replace />;
 };
 
 

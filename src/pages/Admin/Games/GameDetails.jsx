@@ -15,6 +15,7 @@ import { copySlots, deleteslot, getslots } from "../../../store/slices/slotsSlic
 import { FaEdit } from "react-icons/fa";
 import { BiPen, BiPencil } from "react-icons/bi";
 import { AiOutlineClose } from "react-icons/ai";
+// import { convertTo24HourFormat } from "../../../components/utils/utils";
 
 const GameDetails = () => {
     const { id } = useParams();
@@ -26,19 +27,19 @@ const GameDetails = () => {
     const [activeDate, setActiveDate] = useState(new Date());
     const slots = useSelector((state) => state.slots?.slots || []);
     const [slotToEdit, setSlotToEdit] = useState(null);
-    const [isMobile, setIsMobile] = useState(false); 
+    const [isMobile, setIsMobile] = useState(false);
     let gameId = id;
 
 
     useEffect(() => {
         const handleResize = () => {
-          const mobile = window.innerWidth < 1200;
-          setIsMobile(mobile);
+            const mobile = window.innerWidth < 1200;
+            setIsMobile(mobile);
         };
         handleResize();
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
-      }, []);
+    }, []);
 
     useEffect(() => {
         if (id) {
@@ -91,8 +92,27 @@ const GameDetails = () => {
 
     const weekdays = generateWeekdays();
 
+    const convertTo24HourFormat = (time12h) => {
+        if (!time12h) return ""; // Handle empty case
+        const [time, modifier] = time12h.split(" ");
+        let [hours, minutes] = time.split(":");
+        if (modifier === "PM" && hours !== "12") {
+            hours = String(parseInt(hours, 10) + 12);
+        }
+        if (modifier === "AM" && hours === "12") {
+            hours = "00";
+        }
+        return `${hours}:${minutes}`;
+    };
+
     const handleEditSlot = (slot) => {
-        setSlotToEdit(slot);
+        const formattedSlot = {
+            ...slot,
+            start_time: convertTo24HourFormat(slot.start_time),
+            end_time: convertTo24HourFormat(slot.end_time),
+        };
+
+        setSlotToEdit(formattedSlot);
         setShowSlotModal(true);
     };
 
@@ -119,8 +139,8 @@ const GameDetails = () => {
             </Row>
 
             {/* Booking Overview */}
-            <Card className="p-3 mb-2" style={{ backgroundColor: "transparent" }}>
-                <Row className="gap-3" style={{ backgroundColor: "transparent" }}>
+            <Card className="p-3 mb-2" style={{ backgroundColor: "white" }}>
+                <Row className="" style={{ backgroundColor: "transparent" }}>
                     <Col md={2} style={{ backgroundColor: "transparent", position: "relative" }}>
                         <img
                             src={
@@ -131,7 +151,7 @@ const GameDetails = () => {
                             className="img-fluid rounded"
                             style={{
                                 width: "100%",
-                                height: "164px",
+                                height: "230px",
                                 borderRadius: "19px",
                                 objectFit: "cover",
                             }}
@@ -159,71 +179,60 @@ const GameDetails = () => {
                         </div>
                     </Col>
                     <Col
-                        md={5}
+                        md={6}
                         className="d-flex flex-column justify-content-around"
                         style={{ backgroundColor: "transparent" }}
                     >
                         <h5>{selectedGame?.data?.name}({selectedGame?.data?.size})
-                            <Button
-                                variant="success"
-                                className="rounded-pill"
-                                style={{
-                                    backgroundColor: "#03D41414",
-                                    color: "#00AF0F",
-                                    border: "none",
-                                    marginLeft: "10px",
-                                }}
-                            >
-                                Type: {selectedGame?.data?.type}
-                            </Button>
-                            <Button
-                                variant="primary"
-                                className="rounded-pill"
-                                style={{
-                                    backgroundColor: "#0062FF14",
-                                    color: "#0062FF",
-                                    border: "none",
-                                    marginLeft: "10px",
-                                }}
-                            >
-                                Zone: {selectedGame?.data?.zone}
-                            </Button>
                         </h5>
                         <p className="text-muted">{selectedGame?.data?.details}</p>
 
                         {/* Buttons Container */}
-                        <div className="d-flex gap-2">
+                        {/* <div className="d-flex gap-2">
                             Cancellation : {selectedGame?.data?.cancellation ? "Yes" : "No"}
+                        </div> */}
+                        <div className="d-flex gap-3">
+                            <div><img src="/assets/Admin/Game/paylater.svg" className="me-1 mb-1 p-1" alt="paylater" /> {selectedGame?.data?.payLater ? "Pay Later" : "Direct Booking"}</div>
+                            <div><img src="/assets/Admin/Game/singleplayer.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.type}</div>
+                            <div><img src="/assets/Admin/Game/indoor.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.zone}</div>
+                            <div><img src="/assets/Admin/Game/indoor.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.cancellation ? "Cancellation Yes" : "Cancellation No"}</div>
                         </div>
 
                         {/* Timestamps Container */}
-                        <div className="mt-3">
+                        {/* <div className="mt-3">
                             <p>
                                 <b>Created At:</b> <span>{new Date(selectedGame?.data?.createdAt).toLocaleString()}</span>
                             </p>
                             <p>
                                 <b>Updated At:</b> <span>{new Date(selectedGame?.data?.updatedAt).toLocaleString()}</span>
                             </p>
+                        </div> */}
+
+                        <div>
+                            <img src="/assets/Admin/Game/price.svg" className="mb-2" alt="paylater" />
+                            <span style={{ color: "#0062FF", fontSize: "24px" }} className="fw-bold text-primary">{selectedGame?.data?.price}</span>
                         </div>
                     </Col>
 
                     <Col
-                        md={3}
-                        className="text-end d-flex flex-column justify-content-around align-items-end"
+                        md={4}
+                        className="d-flex flex-column justify-content-between align-items-end"
                         style={{ backgroundColor: "transparent" }}
                     >
-                        <h4
-                            style={{ fontSize: "24px", color: "#0062FF", fontWeight: "bold" }}
-                        >
-                            ₹ {selectedGame?.data?.price}
-                        </h4>
-                        <Button
-                            variant="primary"
-                            style={{ width: "128px", height: "37px" }}
-                            onClick={handleSlotCreate}
-                        >
-                            Add Slots
-                        </Button>
+                            <div>
+                                  <span className="text-color">Created At - </span><span>{new Date(selectedGame?.data?.createdAt).toLocaleString()}</span>
+                            </div>
+                            <div>
+                                <Button
+                                    variant="primary"
+                                    style={{ width: "128px", height: "37px" }}
+                                    onClick={handleSlotCreate}
+                                >
+                                    Add Slots
+                                </Button>
+                            </div>
+
+
                     </Col>
                 </Row>
             </Card>
@@ -309,51 +318,51 @@ const GameDetails = () => {
                         </Button>
 
                         <div className={`${isMobile ? 'list-view' : ''} `}>
-                        {/* {slots.map((slot, index) => ( */}
-                        {filteredSlots.map((slot, index) => (
-                            <Card key={index} className={`slot-row mb-2 ${isMobile ? 'list-item p-2' : 'border border-2 px-4 py-2'}`}>
-                                <div className={`d-flex flex-column ${isMobile ? '' : 'flex-md-row justify-content-between align-items-center'}`}>
-                                    <span className="mb-2 mb-md-0">{slot.start_time} - {slot.end_time}</span>
-                                    <div className={`d-flex ${isMobile ? '' : 'flex-md-row'} align-items-center gap-3`}>
-                                        <span className={slot.is_active ? "text-success" : "text-danger"}>
-                                            {slot.is_active ? "Available" : "Booked"}
-                                        </span>
-                                        <span>₹{slot.slot_price ? slot.slot_price : selectedGame?.data.price}</span>
-                                        <Button
-                                            disabled={slot.status === "Booked"}
-                                            className="w-100 w-md-auto"
-                                            style={{
-                                                backgroundColor: "transparent",
-                                                border: "none",
-                                                boxShadow: "none",
-                                                outline: "none",
-                                            }}
-                                            onClick={() => handleEditSlot(slot)}
-                                        >
-                                            <FaEdit style={{ color: "blue", fontSize: "1.2rem" }} />
-                                        </Button>
+                            {/* {slots.map((slot, index) => ( */}
+                            {filteredSlots.map((slot, index) => (
+                                <Card key={index} className={`slot-row mb-2 ${isMobile ? 'list-item p-2' : 'border border-2 px-4 py-2'}`}>
+                                    <div className={`d-flex flex-column ${isMobile ? '' : 'flex-md-row justify-content-between align-items-center'}`}>
+                                        <span className="mb-2 mb-md-0">{slot.start_time} - {slot.end_time}</span>
+                                        <div className={`d-flex ${isMobile ? '' : 'flex-md-row'} align-items-center gap-3`}>
+                                            <span className={slot.is_active ? "text-success" : "text-danger"}>
+                                                {slot.is_active ? "Available" : "Booked"}
+                                            </span>
+                                            <span>₹{slot.slot_price ? slot.slot_price : selectedGame?.data.price}</span>
+                                            <Button
+                                                disabled={slot.status === "Booked"}
+                                                className="w-100 w-md-auto"
+                                                style={{
+                                                    backgroundColor: "transparent",
+                                                    border: "none",
+                                                    boxShadow: "none",
+                                                    outline: "none",
+                                                }}
+                                                onClick={() => handleEditSlot(slot)}
+                                            >
+                                                <FaEdit style={{ color: "blue", fontSize: "1.2rem" }} />
+                                            </Button>
 
-                                        <Button
-                                            onClick={() => handleToggleStatus(slot)}
-                                            size="sm"
-                                            className="rounded-pill"
-                                            style={{
-                                                backgroundColor: slotStatus[slot._id] ? "green" : "red",
-                                                borderColor: slotStatus[slot._id] ? "green" : "red",
-                                                color: "white",
-                                                padding: "5px 15px",
-                                                fontSize: "14px",
-                                                width: "100px",
-                                                textAlign: "center",
-                                            }}
-                                        >
-                                            {slotStatus[slot._id] ? "Active" : "Deactive"}
-                                        </Button>
+                                            <Button
+                                                onClick={() => handleToggleStatus(slot)}
+                                                size="sm"
+                                                className="rounded-pill"
+                                                style={{
+                                                    backgroundColor: slotStatus[slot._id] ? "green" : "red",
+                                                    borderColor: slotStatus[slot._id] ? "green" : "red",
+                                                    color: "white",
+                                                    padding: "5px 15px",
+                                                    fontSize: "14px",
+                                                    width: "100px",
+                                                    textAlign: "center",
+                                                }}
+                                            >
+                                                {slotStatus[slot._id] ? "Active" : "Deactive"}
+                                            </Button>
 
+                                        </div>
                                     </div>
-                                </div>
-                            </Card>
-                        ))}
+                                </Card>
+                            ))}
                         </div>
                     </div>
                 )}
