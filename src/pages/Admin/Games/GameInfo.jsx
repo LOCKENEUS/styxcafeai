@@ -260,7 +260,7 @@ const GameInfo = () => {
           >
             <h5 className="fw-600 fs-3">{selectedGame?.data?.name}</h5>
             <p className="text-muted">{selectedGame?.data?.details}</p>
-            <div className="d-flex gap-3">
+            <div className="d-flex gap-1">
               <div><img src="/assets/Admin/Game/paylater.svg" className="me-1 mb-1 p-1" alt="paylater" /> {selectedGame?.data?.payLater ? "Pay Later" : "Direct Booking"}</div>
               <div><img src="/assets/Admin/Game/singleplayer.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.type}</div>
               <div><img src="/assets/Admin/Game/indoor.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.zone}</div>

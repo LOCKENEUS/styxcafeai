@@ -2076,7 +2076,7 @@ const BookingCheckout = () => {
                     <div className="">
                       <p className="mb-0 text-color">
                         Start Time:
-                        <span className="ms-2 muted-text">{booking?.start_time ? new Date(booking?.start_time).toLocaleTimeString() : new Date().toLocaleTimeString()}</span>
+                        <span className="ms-2 muted-text">{booking?.start_time ? new Date(booking?.start_time).toLocaleTimeString() : "-"}</span>
                       </p>
                       <p className="mb-0 text-color">
                         End Time:
@@ -2203,7 +2203,7 @@ const BookingCheckout = () => {
                     <Col md={4} className="p-0">
                       <div className="ms-3">
                         <p className="mb-0 muted-text">
-                          <strong>Start Time:</strong> {new Date(booking?.start_time).toLocaleTimeString()}
+                          <strong>Start Time:</strong> {booking?.start_time ? new Date(booking?.start_time).toLocaleTimeString() : "-"}
                         </p>
                         <p className="mb-0 muted-text">
                           <strong>End Time:</strong> {booking?.end_time ? new Date(booking?.end_time).toLocaleTimeString() : "-"}

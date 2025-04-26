@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Image, Spinner, Table, Pagination, Nav, Tab, Button, Form } from "react-bootstrap";
+import { Container, Row, Col, Card, Image, Spinner, Table, Pagination, Nav, Tab, Button, Form, InputGroup, FormControl } from "react-bootstrap";
 import profileBg from "/assets/Admin/profileDetails/profileBg.png";
 import { LuPencil } from "react-icons/lu";
 import pdflogo from "/assets/Admin/profileDetails/pdflogo.svg";
 import profileImg from "/assets/Admin/profileDetails/ProfileImg.png";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { collectAmount, collectAmountOnline, getCustomerById } from "../../../store/AdminSlice/CustomerSlice";
+import { collectAmount, collectAmountOnline, collectCustomCreditAmount, collectCustomCreditAmountOnline, getCustomerById } from "../../../store/AdminSlice/CustomerSlice";
 import { useNavigate } from "react-router-dom";
 import { FaRupeeSign } from "react-icons/fa";
+import CreditCollectModal from "./Modal/CreditCollectModal";
 
 const CustomerDetails = () => {
   const { id } = useParams();
@@ -19,9 +20,11 @@ const CustomerDetails = () => {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [collectMode, setCollectMode] = useState(false);
+  const [showCollectModal, setShowCollectModal] = useState(false);
   const [selectAll, setSelectAll] = useState(false);
   const [selectedBookingIds, setSelectedBookingIds] = useState([]);
   const [creditAmount, setCreditAmount] = useState(0);
+  const [amount, setAmount] = useState(0);
   const [activeKey, setActiveKey] = useState("/home");
   const itemsPerPage = 5; // Number of items to display per page
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
@@ -99,14 +102,26 @@ const CustomerDetails = () => {
     await dispatch(
       collectAmountOnline({
         id: id,
-        updateData: { bookingIds: selectedBookingIds, amount : creditAmount, customer: selectedCustomer?.data }
+        updateData: { bookingIds: selectedBookingIds, amount: creditAmount, customer: selectedCustomer?.data }
       })
     );
 
     setSelectedBookingIds([]);
     setCreditAmount(0);
-    setSelectAll(false); 
+    setSelectAll(false);
   }
+
+  const handleCollectCustomCredit = async () => {
+    await dispatch(
+      collectCustomCreditAmount({id, amount})
+    );
+  };
+
+  const handleCollectCustomCreditOnline = async () => {
+    await dispatch(
+      collectCustomCreditAmountOnline({id, amount, customer: selectedCustomer?.data})
+    );
+  };
 
   return (
     <Container className="mt-4">
@@ -151,7 +166,6 @@ const CustomerDetails = () => {
                     }}
                     onClick={() => {
                       navigate(`/admin/users/create-customer/${selectedCustomer?.data._id}`)
-
                     }}
                   >
                     <LuPencil />
@@ -161,23 +175,23 @@ const CustomerDetails = () => {
             </div>
 
             {/* Profile Info */}
-            <div className="d-flex flex-column gap-2 mt-1 scrollable"    style={{
-      overflowY: "auto",
-      flex: 1, // takes remaining space in the Card
-      paddingRight: "10px", // for scrollbar spacing
-      scrollbarWidth: "none",         // For Firefox
-      msOverflowStyle: "none"   
-    }}>
-            <p><strong className="">Name:</strong> <span className="float-end">{selectedCustomer?.data?.name || "N/A"}</span></p>
-            <p><strong className="">Credit Limit:</strong> <span className="float-end">{selectedCustomer?.data?.creditLimit || "N/A"}</span></p>
-            <p><strong className="">Credit Left:</strong> <span className="float-end">{selectedCustomer?.data?.creditLimit - selectedCustomer?.data?.creditAmount || "N/A"}</span></p>
+            <div className="d-flex flex-column gap-2 mt-1 scrollable" style={{
+              overflowY: "auto",
+              flex: 1, // takes remaining space in the Card
+              paddingRight: "10px", // for scrollbar spacing
+              scrollbarWidth: "none",         // For Firefox
+              msOverflowStyle: "none"
+            }}>
+              <p><strong className="">Name:</strong> <span className="float-end">{selectedCustomer?.data?.name || "N/A"}</span></p>
+              <p><strong className="">Credit Limit:</strong> <span className="float-end">₹ {selectedCustomer?.data?.creditLimit || "N/A"}</span></p>
+              <p><strong className="">Credit Left:</strong> <span className="float-end">₹ {selectedCustomer?.data?.creditLimit - selectedCustomer?.data?.creditAmount || "N/A"}</span></p>
 
               <p><strong className="">Gender:</strong> <span className="float-end">{selectedCustomer?.data?.gender || "N/A"}</span></p>
               <p><strong>Email Id:</strong> <span className="float-end">{selectedCustomer?.data?.email || "N/A"}</span></p>
               <p><strong>Phone Number:</strong> <span className="float-end">{selectedCustomer?.data?.contact_no || "N/A"}</span></p>
               <p><strong>Location:</strong> <span className="float-end">{selectedCustomer?.data?.city || "N/A"}</span></p>
               <p><strong>Department:</strong> <span className="float-end">{selectedCustomer?.data?.department || "N/A"}</span></p>
-                <p><strong>Address:</strong> <span className="float-end">{selectedCustomer?.data?.address || "N/A"}</span></p>
+              <p><strong>Address:</strong> <span className="float-end">{selectedCustomer?.data?.address || "N/A"}</span></p>
               <p><strong>City:</strong> <span className="float-end">{selectedCustomer?.data?.city || "N/A"}</span></p>
               <p><strong>State:</strong> <span className="float-end">{selectedCustomer?.data?.state || "N/A"}</span></p>
               <p><strong>Country:</strong> <span className="float-end">{selectedCustomer?.data?.country || "N/A"}</span></p>
@@ -189,9 +203,9 @@ const CustomerDetails = () => {
         <Col md={8}>
 
           <Tab.Container activeKey={activeKey} onSelect={(k) => setActiveKey(k)}>
-            <Row>
+            <Row >
               <Col>
-                <Nav justify variant="tabs">
+                <Nav justify variant="tabs" className="bg-white rounded-2">
                   <Nav.Item>
                     <Nav.Link className="text-start" eventKey="/home">Booking History</Nav.Link>
                   </Nav.Item>
@@ -208,7 +222,7 @@ const CustomerDetails = () => {
               <Col className="mt-3">
                 <Tab.Content>
                   <Tab.Pane eventKey="/home">
-                    <Card className="p-3 mb-3" style={{ height:"88vh" }}>
+                    <Card className="p-3 mb-3" style={{ height: "88vh" }}>
                       <div className="d-flex align-items-center justify-content-between">
                         {/* <h5>Booking History</h5> */}
                         <input
@@ -244,7 +258,7 @@ const CustomerDetails = () => {
                                       {booking.status}
                                     </span>
                                   </td>
-                                  <td>{booking.total}</td>
+                                  <td>₹ {booking.total}</td>
                                 </tr>
                               ))
                             ) : (
@@ -274,43 +288,28 @@ const CustomerDetails = () => {
                     </Card>
                   </Tab.Pane>
                   <Tab.Pane eventKey="link-1">
-                    <Card className="p-3 mb-3" style={{ height:"88vh" }}>
-                      <div className="d-flex align-items-center justify-content-between">
+                    <Card className="p-3 mb-3" style={{ height: "88vh" }}>
+                      <div className="d-flex justify-content-between">
                         {/* <h5>Booking History</h5> */}
-                        <input
+                        <FormControl
+                          size="sm"
                           type="text"
                           placeholder="Search by Booking ID or Game"
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           className="form-control shadow-lg w-50 mb-3"
                         />
-                        {!collectMode && <Button
-                          size="sm"
-                          variant="success"
-                          disabled={selectedCustomer?.creditHistory.length === 0}
-                          onClick={() => setCollectMode(!collectMode)}
-                        >
-                          Collect Now
-                        </Button>}
-                        {collectMode &&
-                          <Form.Select
+                        {/* <InputGroup className="mb-3 mx-2 shadow-lg w-50"> */}
+                          {/* <FormControl
                             size="sm"
-                            disabled={selectedCustomer?.creditHistory.length === 0}
-                            className="w-25 bg-success text-white text-center"
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              if (value === 'offline') handleCollectOffline();
-                              else if (value === 'online') handleCollectOnline(); // define this function if needed
-                            }}
-                            defaultValue=""
-                          >
-                            <option className="text-center bg-white text-dark" value="" disabled>
-                              Collect Now ({<FaRupeeSign />} {creditAmount})
-                            </option>
-                            <option className="bg-white text-dark" value="offline">COLLECT OFFLINE</option>
-                            <option className="bg-white text-dark" value="online">COLLECT ONLINE</option>
-                          </Form.Select>
-                        }
+                            type="text"
+                            value={amount}
+                            placeholder="Enter credit amount to clear"
+                            onChange={(e) => setAmount(e.target.value)}
+                          /> */}
+                          
+                          <Button size="sm" variant="primary" className="float-end m-2 mb-3" onClick={() => setShowCollectModal(true)}>Collect Credit</Button>
+                        {/* </InputGroup> */}
                       </div>
                       <div className="table-responsive">
                         <Table className="table">
@@ -346,10 +345,10 @@ const CustomerDetails = () => {
                                   <td>{new Date(credit.slot_date).toLocaleDateString()}</td>
                                   <td>
                                     <span >
-                                      {credit.credit}
+                                    ₹ {credit.credit}
                                     </span>
                                   </td>
-                                  <td>{credit.total}</td>
+                                  <td>₹ {credit.total}</td>
                                   {collectMode && <td className="text-center">
                                     <input
                                       type="checkbox"
@@ -370,8 +369,38 @@ const CustomerDetails = () => {
                         </Table>
                       </div>
 
+                      <div className="d-flex align-items-center justify-content-end">
+                        {!collectMode && <Button
+                          size="sm"
+                          variant="success"
+                          disabled={selectedCustomer?.creditHistory.length === 0}
+                          onClick={() => setCollectMode(!collectMode)}
+                        >
+                          Collect Now
+                        </Button>}
+                        {collectMode &&
+                          <Form.Select
+                            size="sm"
+                            disabled={selectedCustomer?.creditHistory.length === 0}
+                            className="w-25 bg-success text-white text-center"
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value === 'offline') handleCollectOffline();
+                              else if (value === 'online') handleCollectOnline(); // define this function if needed
+                            }}
+                            defaultValue=""
+                          >
+                            <option className="text-center bg-white text-dark" value="" disabled>
+                              Collect Now ({<FaRupeeSign />} {creditAmount})
+                            </option>
+                            <option className="bg-white text-dark" value="offline">CASH</option>
+                            <option className="bg-white text-dark" value="online">COLLECT ONLINE</option>
+                          </Form.Select>
+                        }
+                      </div>
+
                       <div className="d-flex justify-content-center align-items-center gap-3 pt-3">
-                        <Pagination.Prev
+                        {/* <Pagination.Prev
                           onClick={() => setCurrentPage(currentPage - 1)}
                           disabled={currentPage === 1}
                           className="btn rounded-2 d-flex justify-content-center align-items-center btn-primary btn-sm"
@@ -383,12 +412,12 @@ const CustomerDetails = () => {
                           disabled={currentPage === totalPages}
                           className="btn rounded-2 d-flex justify-content-center align-items-center btn-primary btn-sm"
                           style={{ width: '40px', height: '40px' }}
-                        />
+                        /> */}
                       </div>
                     </Card>
                   </Tab.Pane>
                   <Tab.Pane eventKey="link-2">
-                       <Card className="p-3 mb-3" style={{ height:"88vh" }}>
+                    <Card className="p-3 mb-3" style={{ height: "88vh" }}>
                       <div className="d-flex align-items-center justify-content-between">
                         <input
                           type="text"
@@ -463,7 +492,15 @@ const CustomerDetails = () => {
             </Card> */}
         </Col>
       </Row>
-
+    {showCollectModal && 
+      <CreditCollectModal 
+      show={showCollectModal} 
+      amount={amount}
+      onHide={() => setShowCollectModal(false)} 
+      onCollectCash={handleCollectCustomCredit} 
+      onCollectOnline={handleCollectCustomCreditOnline} 
+      handleChange={(value) => setAmount(value)} 
+      />}
     </Container>
   );
 };

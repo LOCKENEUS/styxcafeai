@@ -200,6 +200,111 @@ export const collectAmountOnline = createAsyncThunk(
   }
 );
 
+export const collectCustomCreditAmount = createAsyncThunk(
+  'customers/collectCustomCreditAmount',
+  async ({id, amount}, thunkAPI) => {
+    try {
+      await axios.patch(`${BASE_URL}/admin/customer/custom-credit-amount/${id}`,{amount: amount})
+      toast.success('Amount Collected!');
+      return id;
+    } catch (error) {
+      toast.error('Error collecting payment: ' + (error.response?.data?.message || 'Something went wrong'));
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+    }
+  }
+);
+
+export const collectCustomCreditAmountOnline = createAsyncThunk(
+  "bookings/collectCustomCreditAmountOnline",
+  async ({id, amount, customer},thunkAPI) => {
+
+    console.log("amount from redux", amount)
+    console.log("id from redux", customer)
+    try {
+      const backend_url = import.meta.env.VITE_API_URL;
+      const response = await axios.post(
+        `${backend_url}/admin/booking/payment`,
+        {
+          amount: amount,
+          currency: "INR",
+          customerId: id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+          },
+        }
+      );
+
+      const data = response.data;
+
+      if (data.success && data.order) {
+        console.log("reached here...data")
+        const options = {
+          key: import.meta.env.VITE_RAZOR_LIVE_KEY,
+          amount: data.order.amount * 100,
+          currency: data.order.currency,
+          name: "Lockene Inc",
+          description: "Credit Collection",
+          order_id: data.order.id,
+          handler: async function (response) {
+            console.log("response", response)
+            try {
+              const verifyResponse = await axios.patch(
+                `${backend_url}/admin/customer/custom-credit-online/${id}`,
+                {
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  amount: data.order.amount / 100,
+                  customerId: id
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${sessionStorage.getItem(
+                      "authToken"
+                    )}`,
+                  },
+                }
+              );
+
+              console.log("verifyResponse", verifyResponse)
+
+              const verifyData = verifyResponse.data;
+              if (verifyData.success) {
+                window.location.href = `/admin/users/customer-details/${id}`
+              } else {
+                return thunkAPI.rejectWithValue("Payment Verification Failed");
+              }
+            } catch (error) {
+              return thunkAPI.rejectWithValue(
+                error.response?.data || "Payment verification error"
+              );
+            }
+          },
+          prefill: {
+            name: customer.name,
+            email: customer.email,
+            contact: customer.contact_no,
+          },
+          theme: {
+            color: "#3399cc",
+          },
+        };
+
+        const razorpay = new window.Razorpay(options);
+        razorpay.open();
+
+        return { success: true, message: "Payment process initiated" };
+      } else {
+        return thunkAPI.rejectWithValue("Failed to create Razorpay order");
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data || "Payment error");
+    }
+  }
+);
+
 const customerSlice = createSlice({
   name: 'customers',
   initialState: {

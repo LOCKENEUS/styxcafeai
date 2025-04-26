@@ -316,6 +316,10 @@ const BookingDetails = () => {
   }
 
   const handleCollectOffline = async () => {
+    if(!selectedCustomer){
+      window.alert("Please select a customer")
+      return
+    }
     if (selectedGame?.data?.type === "Multiplayer" && selectedCustomer && teamMembers.length < 1) {
       window.alert("Please add at least 2 players")
       return
@@ -357,7 +361,10 @@ const BookingDetails = () => {
   };
 
   const handlePayLater = async () => {
-    console.log("reached-here")
+    if(!selectedCustomer){
+      window.alert("Please select a customer")
+      return
+    }
     try {
       if (selectedGame?.data?.type === "Multiplayer" && selectedCustomer && teamMembers.length < 1) {
         window.alert("Please add at least 2 players")
@@ -483,6 +490,10 @@ const BookingDetails = () => {
   };
 
   const handleOnlinePayment = async () => {
+    if(!selectedCustomer){
+      window.alert("Please select customer")
+      return
+    }
     try {
       if (selectedGame?.data?.type === "Multiplayer" && selectedCustomer && teamMembers.length < 1) {
         window.alert("Please add at least 2 players")
@@ -828,7 +839,7 @@ const BookingDetails = () => {
                     </span>
                   </div>
 
-                  {selectedCustomer ? (
+                  {/* {selectedCustomer ? ( */}
                     <>
                       <Row className="mb-5">
                         <Col xs={6} className="muted-text"></Col>
@@ -836,7 +847,7 @@ const BookingDetails = () => {
                       </Row>
                       <Row className="mb-3">
                         <Col xs={6} className="text-color">Customer Name:</Col>
-                        <Col xs={6} className="muted-text">{selectedCustomer.name}</Col>
+                        <Col xs={6} className="muted-text">{selectedCustomer?.name || ""}</Col>
                       </Row>
 
                       <Row className="mb-3">
@@ -851,14 +862,14 @@ const BookingDetails = () => {
                       <Row className="mb-3">
                         <Col xs={6} className="text-color">Day & Time:</Col>
                         <Col xs={6} className="muted-text">
-                          {formattedDate} - {convertTo12Hour(slot.start_time)}
+                          {formattedDate} - {slot?.start_time && convertTo12Hour(slot?.start_time)}
                         </Col>
                       </Row>
 
                       <Row className="mb-3">
                         <Col xs={6} className="text-color">Contact:</Col>
                         <Col xs={6} className="muted-text">
-                          {selectedCustomer.contact_no}
+                          {selectedCustomer?.contact_no || ""}
                         </Col>
                       </Row>
 
@@ -868,18 +879,18 @@ const BookingDetails = () => {
                           {selectedGame?.data?.type === "Multiplayer" ? teamMembers.length + 1 : 1}            </Col>
                       </Row>
                     </>
-                  ) : (
-                    <div className="d-flex justify-content-center mt-6 align-items-center h-100">
-                      <p className="muted-text mb-0">Select Customers</p>
-                    </div>
-                  )}
+                  {/* // ) : (
+                  //   <div className="d-flex justify-content-center mt-6 align-items-center h-100">
+                  //     <p className="muted-text mb-0">Select Customers</p>
+                  //   </div>
+                  // )} */}
                 </div>
               </div>
             </Col>
             <Col md={12}>
               <div className="d-flex gap-0 rounded-2" style={{ minHeight: "46vh" }}>
                 <div className="bg-white p-4 w-100 border-end border-2 rounded-3" style={{ minHeight: "57%" }}>
-                  {selectedCustomer ? (
+                  {/* {selectedCustomer ? ( */}
                     <>
                       <div className="mb-5 d-flex justify-content-between">
                         <span className="text-color">Game Price:</span>
@@ -931,11 +942,11 @@ const BookingDetails = () => {
                       </div>
 
                     </>
-                  ) : (
+                  {/* ) : (
                     <p className="muted-text d-flex justify-content-center align-items-center h-100 w-100 mb-0">
                       Select Customers
                     </p>
-                  )}
+                  )} */}
 
                 </div>
 

@@ -207,7 +207,7 @@ const BookingEdit = () => {
         setSearchCustTerm("");
         setSearchedCustomers([]);
 
-        let isAlreadyAdded = teamMembers.some(
+        let isAlreadyAdded = teamMembers?.some(
             (member) => member.contact_no === customer.contact_no
         );
 
@@ -605,7 +605,7 @@ const BookingEdit = () => {
                                                 >
                                                     <option value="">Select Slot</option>
                                                     {slots.map((slot, index) => {
-                                                        const isBooked = bookings.some(
+                                                        const isBooked = bookings?.some(
                                                             (booking) =>
                                                                 booking.slot_id._id === slot._id &&
                                                                 booking.slot_date.startsWith(date)

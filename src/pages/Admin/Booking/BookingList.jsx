@@ -345,50 +345,55 @@ const BookingList = () => {
                 <div className="fs-1"><strong>Collection: ₹ </strong>{collection}</div>
                 <Table striped bordered hover>
                     <thead
-                        className="text-lowercase"
+                        className=""
                         style={{ backgroundColor: "#0062FF0D" }}
                     >
                         <tr>
                             <th
-                                style={{ border: "none", fontSize: "1rem", color: "black" }}
+                                style={{ textTransform: "none", border: "none", fontSize: "1rem", color: "black" }}
                             >
                                 <small>Sr. No</small>
                             </th>
                             <th
-                                style={{ border: "none", fontSize: "1rem", color: "black" }}
+                                style={{ textTransform: "none", border: "none", fontSize: "1rem", color: "black" }}
                             >
                                 <small>Booking Id</small>
                             </th>
                             <th
-                                style={{ border: "none", fontSize: "1rem", color: "black" }}
+                                style={{ textTransform: "none", border: "none", fontSize: "1rem", color: "black" }}
                             >
                                 Name
                             </th>
                             <th
-                                style={{ border: "none", fontSize: "1rem", color: "black" }}
+                                style={{ textTransform: "none", border: "none", fontSize: "1rem", color: "black" }}
                             >
                                 Sports
                             </th>
                             <th
-                                style={{ border: "none", fontSize: "1rem", color: "black" }}
+                                style={{ textTransform: "none", border: "none", fontSize: "1rem", color: "black" }}
                             >
                                 Persons
                             </th>
                             <th
-                                style={{ paddingLeft: "20px", border: "none", fontSize: "1rem", color: "black" }}
+                                style={{ textTransform: "none", border: "none", fontSize: "1rem", color: "black" }}
                             >
                                 Mode
                             </th>
                             <th
-                                style={{ border: "none", fontSize: "1rem", color: "black" }}
+                                style={{ textTransform: "none", border: "none", fontSize: "1rem", color: "black" }}
                             >
                                 Time / Date
                             </th>
                             <th
-                                style={{ border: "none", fontSize: "1rem", color: "black" }}
+                                style={{ textTransform: "none", border: "none", fontSize: "1rem", color: "black" }}
+                            >
+                                Total
+                            </th>
+                            {/* <th
+                                style={{ textTransform: "none", border: "none", fontSize: "1rem", color: "black" }}
                             >
                                 Actions
-                            </th>
+                            </th> */}
                         </tr>
                     </thead>
                     <tbody>
@@ -434,7 +439,9 @@ const BookingList = () => {
                                         className="align-middle"
                                         style={{ border: "none", minWidth: "140px" }}
                                     >
+
                                         <div style={{ display: "flex", alignItems: "center" }}>
+
                                             <span
                                                 className="d-flex align-items-center w-75 justify-content-center"
                                                 style={{
@@ -468,6 +475,26 @@ const BookingList = () => {
                                                 {booking?.status === "Pending" ? "Pending" : booking?.mode}
                                             </span>
                                         </div>
+                                        <span style={{ fontSize: "0.6rem", color: "green", paddingLeft: "5px" }}>
+                                            {
+                                            (booking?.game_id?.payLater && booking?.start_time && !booking?.end_time) 
+                                            || 
+                                            (() => {
+                                                const now = new Date();
+                                                const slotDate = new Date(booking?.slot_date);
+                                                const [startHour, startMinute] = (booking?.slot_id?.start_time || "").split(":").map(Number);
+                                                const [endHour, endMinute] = (booking?.slot_id?.end_time || "").split(":").map(Number);
+                                            
+                                                const startDateTime = new Date(slotDate);
+                                                startDateTime.setHours(startHour, startMinute, 0, 0);
+                                            
+                                                const endDateTime = new Date(slotDate);
+                                                endDateTime.setHours(endHour, endMinute, 0, 0);
+                                            
+                                                return ( !booking?.game_id?.payLater && now >= startDateTime && now <= endDateTime);
+                                              })() ? "Game Running" : ""
+                                            }
+                                        </span>
                                     </td>
                                     <td
                                         className="align-middle"
@@ -478,11 +505,17 @@ const BookingList = () => {
                                           :
                                           (convertTo12Hour(booking?.custom_slot?.start_time)-convertTo12Hour(booking?.custom_slot?.end_time))
                                         } */}
-                                    
-                                    {convertTo12Hour(booking?.slot_id?.start_time || booking?.custom_slot?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time || booking?.custom_slot?.end_time)}
+
+                                        {convertTo12Hour(booking?.slot_id?.start_time || booking?.custom_slot?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time || booking?.custom_slot?.end_time)}
 
                                     </td>
                                     <td
+                                        className="align-middle"
+                                        style={{ border: "none", minWidth: "120px" }}
+                                    >
+                                        ₹  {booking?.total}
+                                    </td>
+                                    {/* <td
                                         className="align-middle"
                                         style={{
                                             border: "none",
@@ -501,7 +534,7 @@ const BookingList = () => {
                                                 style={{ color: "#0062FF", fontSize: "1.2rem" }}
                                             />
                                         </Button>
-                                    </td>
+                                    </td> */}
                                 </tr>
                             )) :
                             <tr>
