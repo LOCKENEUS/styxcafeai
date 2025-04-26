@@ -14,6 +14,7 @@ const EditSlotOffcanvas = ({ show, handleClose, slotID }) => {
   // map slotList _id to slotID
   const shortlistedSlot = slotList.find((slot) => slot._id === slotID);
   console.log("shortlistedSlot finaly got week  ---", shortlistedSlot);
+  const [saveLoder , setSaveLoder] = useState(false);
 
     // const slotList = useSelector((state) => state.slots.slotList || []);
 
@@ -101,14 +102,14 @@ const EditSlotOffcanvas = ({ show, handleClose, slotID }) => {
     e.preventDefault();
 
     
-    
+      setSaveLoder(true);
     const formDataToSend = {
       _id: slotID,
       game_id: GameID,
       start_time: convertTo24HourFormat(formState.startTime),
     end_time: convertTo24HourFormat(formState.endTime),
       day: formState.day,
-      maxPlayers: formState.maxPlayers,
+      players: formState.maxPlayers,
       slot_price: formState.slotPrice,
       slot_name: formState.slotName,
       adminNote: formState.adminNote
@@ -117,8 +118,10 @@ const EditSlotOffcanvas = ({ show, handleClose, slotID }) => {
     try {
       await dispatch(updateslot({ id: slotID, updatedData: formDataToSend })).unwrap();
       handleClose();
+      setSaveLoder(false);
     } catch (error) {
       console.error("Error updating slot:", error);
+      setSaveLoder(false);
     }
   };
    
@@ -246,10 +249,19 @@ const EditSlotOffcanvas = ({ show, handleClose, slotID }) => {
             />
           </Form.Group>
 
-          <Button variant="success" type="submit" className="rounded-2 float-end my-5" >
+          {/* <Button variant="success" type="submit" className="rounded-2 float-end my-5" >
           Save Slot
             
-          </Button>
+          </Button> */}
+          <Button 
+  variant="success" 
+  type="submit" 
+  className="rounded-2 float-end my-5"
+  disabled={saveLoder}
+>
+  {saveLoder ? 'Saving...' : 'Save Slot'}
+</Button>
+
         </Form>
       </Offcanvas.Body>
     </Offcanvas>

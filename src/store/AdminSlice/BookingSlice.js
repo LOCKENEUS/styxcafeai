@@ -242,6 +242,23 @@ export const processOnlinePayment = createAsyncThunk(
   }
 );
 
+export const fetchEarning = createAsyncThunk(
+  "bookings/fetchEarning",
+  async ({ id, updatedData }, thunkAPI) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/admin/booking/report/`,
+        updatedData
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Something went wrong"
+      );
+    }
+  }
+);
+
 const bookingslice = createSlice({
   name: "bookings",
   initialState: {
@@ -391,6 +408,33 @@ const bookingslice = createSlice({
         // navigate 
       })
       .addCase(processOnlinePayment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+
+      // .addCase(fetchEarning.pending, (state) => {
+      //   state.loading = true;
+      //   state.error = null;
+      // })
+      // .addCase(fetchEarning.fulfilled, (state, action) => {
+      //   state.loading = false;
+      //   // state.bookings.push(action.payload.data);
+      //   toast.success("Earning added to cart successfully");
+      // })
+      // .addCase(fetchEarning.rejected, (state, action) => {
+      //   state.loading = false;
+      //   state.error = action.payload;
+      //   toast.error("Earning to add Earning to cart");
+      // });
+      .addCase(fetchEarning.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchEarning.fulfilled, (state, action) => {
+        state.loading = false;
+        state.earningData = action.payload.data; 
+      })
+      .addCase(fetchEarning.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

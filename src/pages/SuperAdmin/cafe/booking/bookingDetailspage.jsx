@@ -224,7 +224,7 @@ const BookingDetailsPage = () => {
 
               </Card>
 
-              <Card className="rounded-4 my-3">
+              {/* <Card className="rounded-4 my-3">
                 <Row className="justify-content-center align-items-center text-center my-3 " >
                   <Col xs="2" sm={4} className="my-1">
                     <Button className=" rounded-circle border-0" style={{ backgroundColor: "#F2F2F2" }} >
@@ -247,7 +247,7 @@ const BookingDetailsPage = () => {
 
 
                 </Row>
-              </Card>
+              </Card> */}
 
 
 

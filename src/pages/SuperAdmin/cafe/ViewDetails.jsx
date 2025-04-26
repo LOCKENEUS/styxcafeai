@@ -28,7 +28,7 @@ import ForwordPassword from "./modal/forwordPassword";
 import Loader from "../../../components/common/Loader/Loader";
 import gsap from "gsap";
 import { getCustomers } from "../../../store/AdminSlice/CustomerSlice";
-import { getBookings } from "../../../store/AdminSlice/BookingSlice";
+import { fetchEarning, getBookings } from "../../../store/AdminSlice/BookingSlice";
 import { convertTo12Hour, formatDate } from "../../../components/utils/utils";
 import { setsEqual } from "chart.js/helpers";
 
@@ -72,8 +72,39 @@ const ViewDetails = () => {
   const [endDate, setEndDate] = useState(null);
   const [totalEarning, setTotalEarning] = useState(null);
   const [filteredBookingsset, setFilteredBookingsset] = useState([]);
+  const [earningData, setEarningData] = useState([]);
+  const [today, setToday] = useState(() => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = ("0" + (d.getMonth() + 1)).slice(-2);
+    const day = ("0" + d.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  });
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const d = new Date();
+    const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0); // last day of this month
+    const year = lastDay.getFullYear();
+    const month = ("0" + (lastDay.getMonth() + 1)).slice(-2);
+    const day = ("0" + lastDay.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  });
 
 
+
+  const [requestData, setRequestData] = useState({
+    cafeId: cafeId,
+    startDate: today,
+    endDate: selectedDate,
+    gameId: "" // blank for all games
+  });
+
+  // useEffect(() => {
+  //   dispatch(fetchEarning(requestData));
+  // },[dispatch,requestData]);
+
+  const dataEarning = useSelector(state => state.bookings.earningData);
+
+  console.log("earning -- ", dataEarning);
 
 
   useEffect(() => {
@@ -404,26 +435,26 @@ const ViewDetails = () => {
   // -------------------  Earning -------------------
 
 
-  
+
   const normalizeDate = (dateStr) => {
     const date = new Date(dateStr);
     date.setHours(0, 0, 0, 0);
     return date;
   };
-  
+
   const filterBookings = (eventKey) => {
     setSelectedItem(eventKey);
     const today = new Date();
     let filtered = [];
     let earnings = 0;
-    
+
     if (eventKey === "Select") {
       filtered = bookings;
       bookings.forEach((booking) => {
         earnings += booking?.gamePrice || 0;
       });
     }
-  
+
     switch (eventKey) {
       case "Day":
         filtered = bookings.filter((booking) => {
@@ -433,13 +464,13 @@ const ViewDetails = () => {
           return isToday;
         });
         break;
-  
+
       case "Week":
         const startOfWeek = new Date(today);
         const endOfWeek = new Date(today);
         startOfWeek.setDate(today.getDate() - today.getDay());
         endOfWeek.setDate(today.getDate() + (6 - today.getDay()));
-  
+
         filtered = bookings.filter((booking) => {
           const slotDate = new Date(booking.slot_date);
           const inWeek = slotDate >= startOfWeek && slotDate <= endOfWeek;
@@ -447,11 +478,11 @@ const ViewDetails = () => {
           return inWeek;
         });
         break;
-  
+
       case "Month":
         const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
         const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-  
+
         filtered = bookings.filter((booking) => {
           const slotDate = new Date(booking.slot_date);
           const inMonth = slotDate >= startOfMonth && slotDate <= endOfMonth;
@@ -459,26 +490,26 @@ const ViewDetails = () => {
           return inMonth;
         });
         break;
-  
-     
-        default:
-          filtered = bookings.map((booking) => {
-            earnings += booking?.gamePrice || 0;
-            const slotDate = new Date(booking.slot_date);
-            return slotDate;
-          });
-          break;
+
+
+      default:
+        filtered = bookings.map((booking) => {
+          earnings += booking?.gamePrice || 0;
+          const slotDate = new Date(booking.slot_date);
+          return slotDate;
+        });
+        break;
     }
-  
+
     setFilteredBookingsset(filtered);
     setTotalEarning(earnings);
   };
-  
-  
-  // Optional: filter by search query
+
+
+
   // const filteredBookingsEarning = bookings||filteredBookingsset.filter((booking) => {
   //   const searchValue = searchQuery.toLowerCase();
-  
+
   //   return (
   //     booking.booking_id?.toString().toLowerCase().includes(searchValue) ||
   //     booking.customerName?.toLowerCase().includes(searchValue) ||
@@ -494,12 +525,12 @@ const ViewDetails = () => {
   const filteredBookingsEarning = (filteredBookingsset.length > 0 ? filteredBookingsset : bookings).filter((booking) => {
     const searchValue = searchQuery.toLowerCase();
     const slotDate = new Date(booking.slot_date);
-  
+
     // Custom date range filter
     const isWithinDateRange =
       (!startDate || new Date(startDate) <= slotDate) &&
       (!endDate || slotDate <= new Date(endDate));
-  
+
     return (
       isWithinDateRange &&
       (
@@ -515,16 +546,46 @@ const ViewDetails = () => {
       )
     );
   });
-  
+
   // Paginate the filtered data
   const paginatedDataBookingEarning = filteredBookingsEarning.slice(
     (currentPagebooking - 1) * itemsPerPage,
     currentPagebooking * itemsPerPage
   );
-  
 
-  
+  const gameCollection = [
+    { gameName: "PUBG", gamePlay: 5, price: 10, date: "01/01/2023" },
+    { gameName: "Call of Duty", gamePlay: 3, price: 20, date: "01/01/2023" },
+    { gameName: "Free Fire", gamePlay: 2, price: 15, date: "02/01/2023" },
+    { gameName: "PUBG", gamePlay: 3, price: 20, date: "02/01/2023" },
+  ];
 
+  const groupedByDate = gameCollection.reduce((acc, game) => {
+    if (!acc[game.date]) {
+      acc[game.date] = [];
+    }
+    acc[game.date].push(game);
+    return acc;
+  }, {});
+
+  const dates = Object.keys(groupedByDate);
+
+  // const handleFetchEarning = () => {
+  //   dispatch(fetchEarning({ id: null, updatedData: requestData }));
+
+  //   console.log("requestData", requestData);
+  // };
+  const handleFetchEarning = async () => {
+    try {
+      const response = await dispatch(fetchEarning({ id: null, updatedData: requestData })).unwrap();
+      console.log("Fetched Data:", response.data);
+      setEarningData(response.data); // save the "data" array from response
+    } catch (error) {
+      console.error("Error fetching earning:", error);
+    }
+  };
+
+  console.log("earningData == 00", earningData);
 
 
 
@@ -591,7 +652,7 @@ const ViewDetails = () => {
                   /> */}
                 <p
                   className=" text-start"
-                  style={{ fontWeight: 500, fontSize: "16px", lineHeight: "100%", letterSpacing: "100%", color: "#0062FF" }}
+                  style={{ fontWeight: 700, fontSize: "16px", lineHeight: "100%", letterSpacing: "100%", color: "#0062FF" }}
                 >
                   {cafe?.name || '---'}
                 </p>
@@ -679,23 +740,24 @@ const ViewDetails = () => {
 
             <Row className="justify-content-center align-items-center text-center " style={{ marginTop: "110px", marginBottom: "20px" }}>
               <Col xs="2" sm={4} className="my-1">
-                <Button className=" rounded-circle border-0" style={{ backgroundColor: "#F2F2F2" }} >
+                {/* <Button className=" rounded-circle border-0" style={{ backgroundColor: "#F2F2F2" }} >
                   <Image src={call} alt="CafeCall" className="mx-1 my-2 " style={{ objectFit: "cover", width: "19.65px", height: "19.65px" }} />
-                </Button>
+                </Button> */}
 
               </Col>
               <Col xs="2" sm={4} className="my-1">
-                <Button className=" rounded-circle border-0" style={{ backgroundColor: "#F2F2F2" }} >
+                {/* <Button className=" rounded-circle border-0" style={{ backgroundColor: "#F2F2F2" }} >
                   <Image src={Notification} alt="CafeCall" className="mx-1 my-2 " style={{ objectFit: "cover", width: "19.65px", height: "19.65px" }} />
-                </Button>
+                </Button> */}
 
               </Col>
               <Col xs="2" sm={4} className="my-1">
-                <Button className=" rounded-circle border-0" style={{ backgroundColor: "#F2F2F2" }} >
+                {/* <Button className=" rounded-circle border-0" style={{ backgroundColor: "#F2F2F2" }} >
                   <Image src={Message} alt="CafeCall" className="mx-0 my-2 " style={{ objectFit: "cover", width: "23.63px", height: "18.38px" }} />
-                </Button>
+                </Button> */}
 
               </Col>
+              <Col sm={12} className="d-flex justify-content-center my-5">  </Col>
 
               <Col sm={12} className="d-flex justify-content-center mt-3 ">
                 <h4 className="text-center " style={{ fontSize: "16px", fontWeight: "500", color: "#0062FF", cursor: "pointer" }}
@@ -703,6 +765,8 @@ const ViewDetails = () => {
                 >Reset Password ?
                 </h4>
               </Col >
+
+
             </Row>
 
 
@@ -905,6 +969,7 @@ const ViewDetails = () => {
                     border: 'none',
                     backgroundColor: 'transparent',
                   }}
+                  onClick={handleFetchEarning}
                 >
                   <div
                     style={{
@@ -1284,7 +1349,7 @@ const ViewDetails = () => {
                             <td><span className="text-primary fw-bold " style={{ cursor: "pointer" }} onClick={() => handleClientClick(client._id)}>{client.name}</span></td>
                             <td>{client.contact_no}</td>
                             <td>{client.email || "---"}</td>
-                            <td>{client.creditLimit}</td>
+                            <td> ₹ {client.creditLimit}</td>
                             <td>{client.membership || "---"}</td>
                           </tr>
                         ))}
@@ -1558,25 +1623,242 @@ const ViewDetails = () => {
               {activeKey === "earning" && (
 
 
-                <Row className="d-flex flex-wrap justify-content-center p-2 mx-1 my-3">
-                  <Col sm={6} className="align-items-center">
-                  <DropdownButton
-  id="dropdown-item-button"
-  title={selectedItem}
-  variant="outline-dark"
-  onSelect={(eventKey) => filterBookings(eventKey)}
-  style={{ width: '400px' }}
->
-  <Dropdown.Item as="button" eventKey="" disabled >Select</Dropdown.Item>
-  <Dropdown.Item eventKey="Day" as="button">Day</Dropdown.Item>
-  <Dropdown.Item eventKey="Week" as="button">Week</Dropdown.Item>
-  <Dropdown.Item eventKey="Month" as="button">Month</Dropdown.Item>
-</DropdownButton>
 
-</Col>
 
-                  <Col sm={6} className=" alingn-items-end ">
-                    <div className="d-flex justify-content-end">
+
+                // <Row className="d-flex flex-wrap justify-content-center p-2 mx-1 my-3">
+                //   <Col sm={6} className="align-items-center">
+                //     <DropdownButton
+                //       id="dropdown-item-button"
+                //       title={selectedItem}
+                //       variant="outline-dark"
+                //       onSelect={(eventKey) => filterBookings(eventKey)}
+                //       style={{ width: '400px' }}
+                //     >
+                //       <Dropdown.Item as="button" eventKey="" disabled >Select</Dropdown.Item>
+                //       <Dropdown.Item eventKey="Day" as="button">Day</Dropdown.Item>
+                //       <Dropdown.Item eventKey="Week" as="button">Week</Dropdown.Item>
+                //       <Dropdown.Item eventKey="Month" as="button">Month</Dropdown.Item>
+                //     </DropdownButton>
+
+                //   </Col>
+                //   <Col sm={6} className=" alingn-items-end ">
+                //     <div className="d-flex justify-content-end">
+                //       <input
+                //         type="search"
+                //         className="form-control me-2"
+                //         placeholder="Search"
+                //         aria-label="Search"
+                //         value={searchQuery}
+                //         onChange={(e) => setSearchQuery(e.target.value)}
+                //       />
+                //     </div>
+                //   </Col>
+                //   <Col sm={6} className="d-flex justify-content-start my-2">
+                //     <Form.Control
+                //       type={startDate ? "date" : "text"}
+                //       value={startDate}
+                //       onChange={(e) => setStartDate(e.target.value)}
+                //       onFocus={(e) => e.target.type = 'date'}
+                //       onBlur={(e) => {
+                //         if (!e.target.value) e.target.type = 'text'
+                //       }}
+                //       className="me-2"
+                //       placeholder="Start Date"
+
+                //     />
+                //     <Form.Control
+                //       type={startDate ? "date" : "text"}
+                //       value={endDate}
+                //       onFocus={(e) => e.target.type = 'date'}
+                //       onBlur={(e) => {
+                //         if (!e.target.value) e.target.type = 'text'
+                //       }}
+                //       onChange={(e) => setEndDate(e.target.value)}
+                //       placeholder="End Date"
+                //     />
+                //   </Col>
+                //   <Col sm={6} className="d-flex justify-content-end my-2">
+                //     <h4 className="my-3" style={{ fontWeight: "600", fontSize: "16px", color: "#0062FF" }}>
+                //       Total Earning : ₹ {totalEarning || bookings.reduce((sum, booking) => sum + (booking?.gamePrice || 0), 0)}
+                //     </h4>
+                //   </Col>
+                //   <Col sm={12} className="my-3 alingn-items-end">
+                //     <Table hover responsive>
+                //       <thead className="table-light">
+                //         <tr>
+                //           <th className="fw-bold">S/N</th>
+                //           <th className="fw-bold">Booking Id</th>
+                //           <th className="fw-bold">Name</th>
+                //           <th className="fw-bold">Sports</th>
+                //           <th className="fw-bold">Players</th>
+                //           <th className="fw-bold">Mode</th>
+                //           <th className="fw-bold">Time/Date</th>
+                //           <th className="fw-bold">Price</th>
+                //         </tr>
+                //       </thead>
+                //       <tbody>
+                //         {filteredBookingsEarning?.length > 0 ? (
+                //           filteredBookingsEarning.map((booking, idx) => (
+                //             <tr key={idx}>
+                //               <td>{idx + 1}</td>
+                //               <td>
+                //                 <span
+                //                   className="text-primary fw-bold"
+                //                   style={{ cursor: "pointer" }}
+                //                   onClick={() => handleBookingClick(booking._id)}
+                //                 >
+                //                   {booking.booking_id}
+                //                 </span>
+                //               </td>
+                //               <td>{booking.customerName}</td>
+                //               <td>{booking.game_id?.name}</td>
+                //               <td>{booking.players?.length || "---"}</td>
+                //               <td>
+                //                 <span
+                //                   className="d-flex align-items-center w-75 justify-content-center"
+                //                   style={{
+                //                     backgroundColor:
+                //                       booking.status === "Pending"
+                //                         ? "#FFF3CD"
+                //                         : booking.mode === "Online"
+                //                           ? "#03D41414"
+                //                           : "#FF00000D",
+                //                     borderRadius: "20px",
+                //                     padding: "5px 10px",
+                //                     color:
+                //                       booking.status === "Pending"
+                //                         ? "#856404"
+                //                         : booking.mode === "Online"
+                //                           ? "#00AF0F"
+                //                           : "orange",
+                //                   }}
+                //                 >
+                //                   <div
+                //                     style={{
+                //                       width: "10px",
+                //                       height: "10px",
+                //                       borderRadius: "50%",
+                //                       backgroundColor:
+                //                         booking.status === "Pending"
+                //                           ? "#856404"
+                //                           : booking.mode === "Online"
+                //                             ? "#03D414"
+                //                             : "orange",
+                //                       marginRight: "5px",
+                //                     }}
+                //                   />
+                //                   {booking?.status === "Pending" ? "Pending" : booking?.mode}
+                //                 </span>
+                //               </td>
+                //               <td>
+                //                 {formatDate(booking.slot_date)}
+                //                 <br />
+                //                 ₹{" "}
+                //                 {booking?.booking_type === "Regular"
+                //                   ? `${convertTo12Hour(booking?.slot_id?.start_time)} - ${convertTo12Hour(booking?.slot_id?.end_time)}`
+                //                   : `${convertTo12Hour(booking?.custom_slot?.start_time)} - ${convertTo12Hour(booking?.custom_slot?.end_time)}`}
+                //               </td>
+                //               <td>₹ {booking.gamePrice}</td>
+                //             </tr>
+                //           ))
+                //         ) : (
+                //           <tr>
+                //             <td colSpan="8" className="text-center">
+                //               No data found
+                //             </td>
+                //           </tr>
+                //         )}
+                //       </tbody>
+                //     </Table>
+                //     <div className="d-flex justify-content-end align-items-center my-4">
+
+                //       <Button
+                //         style={{
+                //           backgroundColor: "white",
+                //           border: "1px solid #dee2e6",
+                //           padding: "0.25rem 0.5rem",
+                //           borderRadius: "0.375rem",
+                //         }}
+                //         onClick={handlePrevclientBooking}
+                //         disabled={currentPagebooking === 1}
+                //       >
+                //         <GrFormPrevious style={{ color: "black", fontSize: "20px" }} />
+                //       </Button>              
+                //       <span className="d-flex align-items-center mx-2 gap-2">
+                //         <Button
+                //           style={{
+                //             backgroundColor: currentPagebooking === 1 ? "#0062ff" : "white",
+                //             color: currentPagebooking === 1 ? "white" : "black",
+                //             border: "1px solid #dee2e6",
+                //             borderRadius: "0.375rem",
+                //             padding: "0.25rem 0.6rem",
+                //           }}
+                //         >
+                //           1
+                //         </Button>
+
+                //         <Button
+                //           style={{
+                //             backgroundColor: currentPagebooking === 2 ? "#0062ff" : "white",
+                //             color: currentPagebooking === 2 ? "white" : "black",
+                //             border: "1px solid #dee2e6",
+                //             borderRadius: "0.375rem",
+                //             padding: "0.25rem 0.6rem",
+                //           }}
+                //         >
+                //           2
+                //         </Button>
+                //         <span style={{ fontSize: "16px", fontWeight: "500" }}>...</span>
+                //         <Button
+                //           style={{
+                //             backgroundColor: currentPagebooking === totalPagesboking ? "#0062ff" : "white",
+                //             color: currentPagebooking === totalPagesboking ? "white" : "black",
+                //             border: "1px solid #dee2e6",
+                //             borderRadius: "0.375rem",
+                //             padding: "0.25rem 0.6rem",
+                //           }}
+                //         >
+                //           {totalPagesboking}
+                //         </Button>
+                //       </span>
+
+                //       <Button
+                //         style={{
+                //           backgroundColor: "white",
+                //           border: "1px solid #dee2e6",
+                //           padding: "0.25rem 0.5rem",
+                //           borderRadius: "0.375rem",
+                //         }}
+                //         onClick={handleNextclientBooking}
+                //         disabled={currentPagebooking === totalPagesboking}
+                //       >
+                //         <MdOutlineNavigateNext style={{ color: "black", fontSize: "20px" }} />
+                //       </Button>
+                //     </div>
+                //   </Col>
+                // </Row>
+
+
+                <Row className="d-flex flex-wrap justify-content-center p-2 mx-1 my-3" >
+                  {/* <Col sm={6} className="align-items-center">
+                    <DropdownButton
+                      id="dropdown-item-button"
+                      title={selectedItem}
+                      variant="outline-dark"
+                      onSelect={(eventKey) => filterBookings(eventKey)}
+                      style={{ width: '400px' }}
+                    >
+                      <Dropdown.Item as="button" eventKey="" disabled >Select</Dropdown.Item>
+                      <Dropdown.Item eventKey="Day" as="button">Day</Dropdown.Item>
+                      <Dropdown.Item eventKey="Week" as="button">Week</Dropdown.Item>
+                      <Dropdown.Item eventKey="Month" as="button">Month</Dropdown.Item>
+                    </DropdownButton>
+
+                  </Col> */}
+
+                  {/* <Col sm={6} className=" alingn-items-end "> */}
+                    {/* <div className="d-flex justify-content-end">
                       <input
                         type="search"
                         className="form-control me-2"
@@ -1585,125 +1867,126 @@ const ViewDetails = () => {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                       />
-
                     </div>
                   </Col>
                   <Col sm={6} className="d-flex justify-content-start my-2">
                     <Form.Control
-                      type="date"
+                      type={startDate ? "date" : "text"}
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
+                      onFocus={(e) => e.target.type = 'date'}
+                      onBlur={(e) => {
+                        if (!e.target.value) e.target.type = 'text'
+                      }}
                       className="me-2"
                       placeholder="Start Date"
                     />
                     <Form.Control
-                      type="date"
+                      type={startDate ? "date" : "text"}
                       value={endDate}
+                      onFocus={(e) => e.target.type = 'date'}
+                      onBlur={(e) => {
+                        if (!e.target.value) e.target.type = 'text'
+                      }}
                       onChange={(e) => setEndDate(e.target.value)}
                       placeholder="End Date"
                     />
                   </Col>
-
-
                   <Col sm={6} className="d-flex justify-content-end my-2">
-                  <h4 style={{ fontWeight: "600", fontSize: "16px", color: "#0062FF" }}>
-  Total Earning : ₹ {totalEarning || bookings.reduce((sum, booking) => sum + (booking?.gamePrice || 0), 0)}
-</h4>
-
-                  </Col>
-
-                  <Col sm={12} className="my-3 alingn-items-end">
-
-                  <Table hover responsive>
-        <thead className="table-light">
-          <tr>
-            <th className="fw-bold">S/N</th>
-            <th className="fw-bold">Booking Id</th>
-            <th className="fw-bold">Name</th>
-            <th className="fw-bold">Sports</th>
-            <th className="fw-bold">Players</th>
-            <th className="fw-bold">Mode</th>
-            <th className="fw-bold">Time/Date</th>
-            <th className="fw-bold">Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredBookingsEarning?.length > 0 ? (
-            filteredBookingsEarning.map((booking, idx) => (
-              <tr key={idx}>
-                <td>{idx + 1}</td>
-                <td>
-                  <span
-                    className="text-primary fw-bold"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => handleBookingClick(booking._id)}
-                  >
-                    {booking.booking_id}
-                  </span>
-                </td>
-                <td>{booking.customerName}</td>
-                <td>{booking.game_id?.name}</td>
-                <td>{booking.players?.length || "---"}</td>
-                <td>
-                  <span
-                    className="d-flex align-items-center w-75 justify-content-center"
-                    style={{
-                      backgroundColor:
-                        booking.status === "Pending"
-                          ? "#FFF3CD"
-                          : booking.mode === "Online"
-                          ? "#03D41414"
-                          : "#FF00000D",
-                      borderRadius: "20px",
-                      padding: "5px 10px",
-                      color:
-                        booking.status === "Pending"
-                          ? "#856404"
-                          : booking.mode === "Online"
-                          ? "#00AF0F"
-                          : "orange",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "10px",
-                        height: "10px",
-                        borderRadius: "50%",
-                        backgroundColor:
-                          booking.status === "Pending"
-                            ? "#856404"
-                            : booking.mode === "Online"
-                            ? "#03D414"
-                            : "orange",
-                        marginRight: "5px",
-                      }}
-                    />
-                    {booking?.status === "Pending" ? "Pending" : booking?.mode}
-                  </span>
-                </td>
-                <td>
-                  {formatDate(booking.slot_date)}
-                  <br />
-                  ₹{" "}
-                  {booking?.booking_type === "Regular"
-                    ? `${convertTo12Hour(booking?.slot_id?.start_time)} - ${convertTo12Hour(booking?.slot_id?.end_time)}`
-                    : `${convertTo12Hour(booking?.custom_slot?.start_time)} - ${convertTo12Hour(booking?.custom_slot?.end_time)}`}
-                </td>
-                <td>₹ {booking.gamePrice}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="8" className="text-center">
-                No data found
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </Table>
-
+                    <h4 className="my-3" style={{ fontWeight: "600", fontSize: "16px", color: "#0062FF" }}>
+                      Total Earning : ₹ {totalEarning || bookings.reduce((sum, booking) => sum + (booking?.gamePrice || 0), 0)}
+                    </h4>
+                  </Col> */}
+                  {/* <Col sm={12} className="my-3 alingn-items-end">
+                    <Table hover responsive>
+                      <thead className="table-light">
+                        <tr>
+                          <th className="fw-bold">S/N</th>
+                          <th className="fw-bold">Booking Id</th>
+                          <th className="fw-bold">Name</th>
+                          <th className="fw-bold">Sports</th>
+                          <th className="fw-bold">Players</th>
+                          <th className="fw-bold">Mode</th>
+                          <th className="fw-bold">Time/Date</th>
+                          <th className="fw-bold">Price</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredBookingsEarning?.length > 0 ? (
+                          filteredBookingsEarning.map((booking, idx) => (
+                            <tr key={idx}>
+                              <td>{idx + 1}</td>
+                              <td>
+                                <span
+                                  className="text-primary fw-bold"
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => handleBookingClick(booking._id)}
+                                >
+                                  {booking.booking_id}
+                                </span>
+                              </td>
+                              <td>{booking.customerName}</td>
+                              <td>{booking.game_id?.name}</td>
+                              <td>{booking.players?.length || "---"}</td>
+                              <td>
+                                <span
+                                  className="d-flex align-items-center w-75 justify-content-center"
+                                  style={{
+                                    backgroundColor:
+                                      booking.status === "Pending"
+                                        ? "#FFF3CD"
+                                        : booking.mode === "Online"
+                                          ? "#03D41414"
+                                          : "#FF00000D",
+                                    borderRadius: "20px",
+                                    padding: "5px 10px",
+                                    color:
+                                      booking.status === "Pending"
+                                        ? "#856404"
+                                        : booking.mode === "Online"
+                                          ? "#00AF0F"
+                                          : "orange",
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      width: "10px",
+                                      height: "10px",
+                                      borderRadius: "50%",
+                                      backgroundColor:
+                                        booking.status === "Pending"
+                                          ? "#856404"
+                                          : booking.mode === "Online"
+                                            ? "#03D414"
+                                            : "orange",
+                                      marginRight: "5px",
+                                    }}
+                                  />
+                                  {booking?.status === "Pending" ? "Pending" : booking?.mode}
+                                </span>
+                              </td>
+                              <td>
+                                {formatDate(booking.slot_date)}
+                                <br />
+                                ₹{" "}
+                                {booking?.booking_type === "Regular"
+                                  ? `${convertTo12Hour(booking?.slot_id?.start_time)} - ${convertTo12Hour(booking?.slot_id?.end_time)}`
+                                  : `${convertTo12Hour(booking?.custom_slot?.start_time)} - ${convertTo12Hour(booking?.custom_slot?.end_time)}`}
+                              </td>
+                              <td>₹ {booking.gamePrice}</td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="8" className="text-center">
+                              No data found
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </Table>
                     <div className="d-flex justify-content-end align-items-center my-4">
-                      {/* Previous Button */}
+
                       <Button
                         style={{
                           backgroundColor: "white",
@@ -1716,8 +1999,6 @@ const ViewDetails = () => {
                       >
                         <GrFormPrevious style={{ color: "black", fontSize: "20px" }} />
                       </Button>
-
-                      {/* Page Numbers */}
                       <span className="d-flex align-items-center mx-2 gap-2">
                         <Button
                           style={{
@@ -1742,9 +2023,7 @@ const ViewDetails = () => {
                         >
                           2
                         </Button>
-
                         <span style={{ fontSize: "16px", fontWeight: "500" }}>...</span>
-
                         <Button
                           style={{
                             backgroundColor: currentPagebooking === totalPagesboking ? "#0062ff" : "white",
@@ -1758,7 +2037,6 @@ const ViewDetails = () => {
                         </Button>
                       </span>
 
-                      {/* Next Button */}
                       <Button
                         style={{
                           backgroundColor: "white",
@@ -1772,21 +2050,57 @@ const ViewDetails = () => {
                         <MdOutlineNavigateNext style={{ color: "black", fontSize: "20px" }} />
                       </Button>
                     </div>
+                  </Col> */}
+
+                  <Col sm={12} className="my-3 alingn-items-end">
+                    <Table hover responsive>
+                      <thead className="table-light">
+                        <tr>
+                          <th className="fw-bold">S.No</th>
+                          <th className="fw-bold">Date</th>
+                          <th className="fw-bold">Game Collection</th>
+                          <th className="fw-bold">Total </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {earningData.map((date, index) => {
+                          return (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>
+                                <span className="me-3 my-2" style={{ width: "100px", display: "inline-block" }}>
+                                  {date.date}
+                                </span>
+                              </td>
+                              <td>
+                                {Object.entries(date.games).map(([gameName, gameDetails], idx) => (
+                                  <div key={idx} className="my-2">
+                                    <span className="me-3" style={{ width: "190px", display: "inline-block" }}>
+                                      {gameName}
+                                    </span>
+                                    <span className="me-3" style={{ width: "80px", display: "inline-block" }}>
+                                      {gameDetails.count} play
+                                    </span>
+                                    <span style={{ width: "80px", display: "inline-block" }}>
+                                      ₹ {gameDetails.amountPaid}
+                                    </span>
+                                  </div>
+                                ))}
+                              </td>
+                              <td>₹ {date.totalAmountPaid}</td>
+                            </tr>
+
+                          );
+                        })}
+                      </tbody>
+                    </Table>
+
 
                   </Col>
-
-
-
-
                 </Row>
-
-
-
               )}
             </div>
-
           </Card>
-
         </Col>
       </Row>
       <EditCafeOffcanvas
