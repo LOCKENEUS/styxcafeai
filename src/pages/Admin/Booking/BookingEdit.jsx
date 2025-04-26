@@ -599,12 +599,12 @@ const BookingEdit = () => {
                                                     className="border-2"
                                                     value={slot ? slot._id : ""}
                                                     onChange={(e) => {
-                                                        const selectedSlot = slots.find(s => s._id === e.target.value);
+                                                        const selectedSlot = slots?.find(s => s._id === e.target.value);
                                                         setSlot(selectedSlot);
                                                     }}
                                                 >
                                                     <option value="">Select Slot</option>
-                                                    {slots.map((slot, index) => {
+                                                    {slots?.map((slot, index) => {
                                                         const isBooked = bookings?.some(
                                                             (booking) =>
                                                                 booking.slot_id._id === slot._id &&
