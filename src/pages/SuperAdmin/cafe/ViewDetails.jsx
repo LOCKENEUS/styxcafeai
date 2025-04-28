@@ -73,7 +73,10 @@ const ViewDetails = () => {
   const [customEndDate, setCustomEndDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [totalEarning, setTotalEarning] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [allEarningData, setAllEarningData] = useState([]);
   const [filteredBookingsset, setFilteredBookingsset] = useState([]);
+  const [filteredEarningData, setFilteredEarningData] = useState([]);
   const [earningData, setEarningData] = useState([]);
   const [today, setToday] = useState(() => {
     const d = new Date();
@@ -144,9 +147,43 @@ const ViewDetails = () => {
     gameId: ""
   });
 
-  // useEffect(() => {
-  //   dispatch(fetchEarning(requestData));
-  // },[dispatch,requestData]);
+  const [currentPageEarning, setCurrentPageEarning] = useState(1);
+  const itemsPerPageEarning = 5;
+
+  useEffect(() => {
+    if (searchTerm === "") {
+      setFilteredEarningData(earningData); // If search empty, show full data
+    } else {
+      const filtered = earningData.filter(item => {
+        const gameNames = Object.keys(item.games || {});
+
+        // Check match in games name
+        const matchGameName = gameNames.some(gameName =>
+          gameName.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+        // Check match in amountPaid
+        const matchAmountPaid = Object.values(item.games || {}).some(game =>
+          game.amountPaid !== undefined &&
+          game.amountPaid.toString().includes(searchTerm)
+        );
+
+        // Check match in count
+        const matchCount = Object.values(item.games || {}).some(game =>
+          game.count !== undefined &&
+          game.count.toString().includes(searchTerm)
+        );
+
+        return matchGameName || matchAmountPaid || matchCount;
+      });
+
+      setFilteredEarningData(filtered);
+    }
+  }, [searchTerm, earningData]);
+
+
+
+
 
   const dataEarning = useSelector(state => state.bookings.earningData);
 
@@ -678,7 +715,18 @@ const ViewDetails = () => {
     }
   };
 
+  const dataToDisplay = filteredEarningData.length > 0 ? filteredEarningData : earningData;
 
+  // Pagination calculation
+  const indexOfLastItem = currentPageEarning * itemsPerPageEarning;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPageEarning;
+  const currentItems = dataToDisplay.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPagesEarning = Math.ceil(dataToDisplay.length / itemsPerPageEarning);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPageEarning(pageNumber);
+  };
 
 
 
@@ -686,7 +734,7 @@ const ViewDetails = () => {
     <Container fluid>
       <Row className="my-5">
         <Col sm={4} className="pe-1 mb-4">
-          <Card className="py-3 mx-2 rounded-4 my-3 h-100" style={{ backgroundColor: "white" }}>
+          <Card className="py-3 mx-2 rounded-4 my-3 " style={{ backgroundColor: "white" }}>
             <div className="d-flex flex-column align-items-start mx-3">
               <h5 className="text-start " style={{ fontSize: "18px", fontWeight: "600" }}>Cafe Details</h5>
 
@@ -850,7 +898,7 @@ const ViewDetails = () => {
                 </Button> */}
 
               </Col>
-              <Col sm={12} className="d-flex justify-content-center my-5">  </Col>
+              {/* <Col sm={12} className="d-flex justify-content-center my-5">  </Col> */}
 
               <Col sm={12} className="d-flex justify-content-center mt-3 ">
                 <h4 className="text-center " style={{ fontSize: "16px", fontWeight: "500", color: "#0062FF", cursor: "pointer" }}
@@ -1094,7 +1142,7 @@ const ViewDetails = () => {
           </Card>
 
 
-          <Card className="my-2 rounded-4 my-3 h-100" style={{ backgroundColor: "white" }} >
+          <Card className="my-2 rounded-4 my-3 h-100 " style={{ backgroundColor: "white", maxHeight: '910px', overflowY: 'auto' }} >
 
 
             {/* gallary Image  */}
@@ -1954,27 +2002,27 @@ const ViewDetails = () => {
 
 
                   </Col>
-                 
 
-                  
+
+
                   <Col sm={6} className="d-flex justify-content-end my-2">
                     <h4 className="my-3" style={{ fontWeight: "600", fontSize: "16px", color: "#0062FF" }}>
                       Total Earning : ₹ {totalEarning || earningData.reduce((sum, booking) => sum + (booking?.totalAmountPaid || 0), 0)}
                     </h4>
                   </Col>
-                  {/* <Col sm={6} className=" alingn-items-end my-2">
-                     <div className="d-flex justify-content-end">
-                       <input
-                         type="search"
-                         className="form-control me-2"
-                         placeholder="Search"
-                         aria-label="Search"
-                         value={searchQuery}
-                         onChange={(e) => setSearchQuery(e.target.value)}
-                       />
-                     </div>
-                   </Col> */}
-                  
+                  <Col sm={5} className=" alingn-items-end my-2">
+                    <div className="d-flex justify-content-end">
+                      <input
+                        type="search"
+                        className="form-control me-2"
+                        placeholder="Search"
+                        aria-label="Search"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                    </div>
+                  </Col>
+
                   {/* <Col sm={6} className="my-3 alingn-items-end">
                     <Table hover responsive>
                       <thead className="table-light">
@@ -2129,7 +2177,7 @@ const ViewDetails = () => {
                       </Button>
                     </div>
                   </Col> */}
-                   {selectedItem === "Custom Date" && (
+                  {selectedItem === "Custom Date" && (
                     <Col sm={7} className="d-flex justify-content-end my-2">
                       <Form.Control
                         type={customStartDate ? "date" : "text"}
@@ -2151,12 +2199,16 @@ const ViewDetails = () => {
                           if (!e.target.value) e.target.type = 'text';
                         }}
                         placeholder="End Date"
+                        min={customStartDate}
                       />
                       {customStartDate && customEndDate && (
-                        <Button className="ms-2 " onClick={() => filterBookingsEarning("Custom Date")}>Filter</Button>
+                        <Button className="ms-2" onClick={() => filterBookingsEarning("Custom Date")}>
+                          Filter
+                        </Button>
                       )}
                     </Col>
                   )}
+
 
                   <Col sm={12} className="my-3 alingn-items-end">
                     <Table hover responsive>
@@ -2169,35 +2221,101 @@ const ViewDetails = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {earningData.map((date, index) => (
-                          <tr key={index}>
-                            <td>{index + 1}</td>
-                            <td>
-                              <span className="me-3 my-2" style={{ width: "100px", display: "inline-block" }}>
-                                {date.date}
-                              </span>
+                        {(currentItems.length > 0 ? currentItems : (filteredEarningData.length > 0 ? filteredEarningData : earningData)).length > 0 ? (
+                          (currentItems.length > 0 ? currentItems : (filteredEarningData.length > 0 ? filteredEarningData : earningData)).map((date, index) => (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>
+                                <span className="me-3 my-2" style={{ width: "100px", display: "inline-block" }}>
+                                  {date.date}
+                                </span>
+                              </td>
+                              <td>
+                                {Object.entries(date.games).map(([gameName, gameDetails], idx) => (
+                                  <div key={idx} className="my-2">
+                                    <span className="me-3" style={{ width: "190px", display: "inline-block" }}>
+                                      {gameName}
+                                    </span>
+                                    <span className="me-3" style={{ width: "80px", display: "inline-block" }}>
+                                      {gameDetails.count} play
+                                    </span>
+                                    <span style={{ width: "80px", display: "inline-block" }}>
+                                      ₹ {gameDetails.amountPaid}
+                                    </span>
+                                  </div>
+                                ))}
+                              </td>
+                              <td>₹ {date.totalAmountPaid}</td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="4" className="text-center py-3">
+                              No Data Found
                             </td>
-                            <td>
-                              {Object.entries(date.games).map(([gameName, gameDetails], idx) => (
-                                <div key={idx} className="my-2">
-                                  <span className="me-3" style={{ width: "190px", display: "inline-block" }}>
-                                    {gameName}
-                                  </span>
-                                  <span className="me-3" style={{ width: "80px", display: "inline-block" }}>
-                                    {gameDetails.count} play
-                                  </span>
-                                  <span style={{ width: "80px", display: "inline-block" }}>
-                                    ₹ {gameDetails.amountPaid}
-                                  </span>
-                                </div>
-                              ))}
-                            </td>
-                            <td>₹ {date.totalAmountPaid}</td>
                           </tr>
-                        ))}
+                        )}
                       </tbody>
 
                     </Table>
+                    {totalPagesEarning > 1 && (
+  <Pagination className="justify-content-end my-5">
+    <Pagination.Prev
+      onClick={() => handlePageChange(currentPageEarning - 1)}
+      disabled={currentPageEarning === 1}
+    />
+
+    {/* Show the first page */}
+    {currentPageEarning > 3 && (
+      <Pagination.Item onClick={() => handlePageChange(1)}>
+        1
+      </Pagination.Item>
+    )}
+
+    {/* Show "..." if the pages are more than 3 and the current page isn't too close to the beginning */}
+    {currentPageEarning > 3 && <Pagination.Ellipsis />}
+
+    {/* Show the current page and a range of surrounding pages */}
+    {[...Array(totalPagesEarning)].map((_, idx) => {
+      const pageNum = idx + 1;
+
+      if (
+        (pageNum >= currentPageEarning - 1 && pageNum <= currentPageEarning + 1) ||
+        pageNum === 1 ||
+        pageNum === totalPagesEarning
+      ) {
+        return (
+          <Pagination.Item
+            key={pageNum}
+            active={pageNum === currentPageEarning}
+            onClick={() => handlePageChange(pageNum)}
+          >
+            {pageNum}
+          </Pagination.Item>
+        );
+      }
+
+      return null;
+    })}
+
+    {/* Show "..." if the pages are more than 3 and the current page isn't too close to the end */}
+    {currentPageEarning < totalPagesEarning - 2 && <Pagination.Ellipsis />}
+
+    {/* Show the last page */}
+    {currentPageEarning < totalPagesEarning - 2 && (
+      <Pagination.Item onClick={() => handlePageChange(totalPagesEarning)}>
+        {totalPagesEarning}
+      </Pagination.Item>
+    )}
+
+    <Pagination.Next
+      onClick={() => handlePageChange(currentPageEarning + 1)}
+      disabled={currentPageEarning === totalPagesEarning}
+    />
+  </Pagination>
+)}
+
+
 
 
                   </Col>

@@ -361,7 +361,7 @@ const LocationForm = ({
             </Col>
           </Row>
 
-          {/* <Row className="mb-2 g-4">
+          <Row className="mb-2 g-4">
             <Col md={6}>
               <Form.Label className="fw-bold text-secondary d-block">
                 Upload Image
@@ -410,7 +410,7 @@ const LocationForm = ({
                 </div>
               </div>
             </Col>
-          </Row> */}
+          </Row>
 
           {/* <Form.Group className="mb-2">
             <Form.Label htmlFor="details" className="fw-bold text-secondary">
