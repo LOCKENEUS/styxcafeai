@@ -67,8 +67,10 @@ const ViewDetails = () => {
   const [lodermembership, setLodermembership] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPagebooking, setCurrentPagebooking] = useState(1);
-  const [selectedItem, setSelectedItem] = useState('Select');
+  const [selectedItem, setSelectedItem] = useState(null);
   const [startDate, setStartDate] = useState(null);
+  const [customStartDate, setCustomStartDate] = useState(null);
+  const [customEndDate, setCustomEndDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [totalEarning, setTotalEarning] = useState(null);
   const [filteredBookingsset, setFilteredBookingsset] = useState([]);
@@ -82,20 +84,64 @@ const ViewDetails = () => {
   });
   const [selectedDate, setSelectedDate] = useState(() => {
     const d = new Date();
-    const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0); // last day of this month
+    const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0);
     const year = lastDay.getFullYear();
     const month = ("0" + (lastDay.getMonth() + 1)).slice(-2);
     const day = ("0" + lastDay.getDate()).slice(-2);
     return `${year}-${month}-${day}`;
   });
+  // Week start (Monday) and week end (Sunday)
+  const [weekStartDate, setWeekStartDate] = useState(() => {
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0 (Sun) to 6 (Sat)
+
+    const diffToMonday = now.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+    const monday = new Date(now.setDate(diffToMonday));
+
+    const year = monday.getFullYear();
+    const month = ("0" + (monday.getMonth() + 1)).slice(-2);
+    const day = ("0" + monday.getDate()).slice(-2);
+    return `${year}-${month}-${day}`; // Example: 2025-04-21 (Monday)
+  });
+
+  const [weekEndDate, setWeekEndDate] = useState(() => {
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0 (Sun) to 6 (Sat)
+
+    const diffToSunday = now.getDate() + (7 - dayOfWeek) % 7;
+    const sunday = new Date(now.setDate(diffToSunday));
+
+    const year = sunday.getFullYear();
+    const month = ("0" + (sunday.getMonth() + 1)).slice(-2);
+    const day = ("0" + sunday.getDate()).slice(-2);
+    return `${year}-${month}-${day}`; // Example: 2025-04-27 (Sunday)
+  });
+  const monthStartDate = (() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = ("0" + (now.getMonth() + 1)).slice(-2); // months are 0-indexed
+    return `${year}-${month}-01`; // Always 01 for start of month
+  })();
 
 
+  const monthEndDate = (() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth(); // 0 (Jan) to 11 (Dec)
+
+    const lastDayOfMonth = new Date(year, month + 1, 0); // 0th day of next month is last day of current month
+    const endYear = lastDayOfMonth.getFullYear();
+    const endMonth = ("0" + (lastDayOfMonth.getMonth() + 1)).slice(-2);
+    const endDate = ("0" + lastDayOfMonth.getDate()).slice(-2);
+
+    return `${endYear}-${endMonth}-${endDate}`; // Example: 2025-04-30
+  })();
 
   const [requestData, setRequestData] = useState({
     cafeId: cafeId,
     startDate: today,
-    endDate: selectedDate,
-    gameId: "" // blank for all games
+    endDate: today,
+    gameId: ""
   });
 
   // useEffect(() => {
@@ -579,13 +625,65 @@ const ViewDetails = () => {
     try {
       const response = await dispatch(fetchEarning({ id: null, updatedData: requestData })).unwrap();
       console.log("Fetched Data:", response.data);
-      setEarningData(response.data); // save the "data" array from response
+      setEarningData(response.data);
     } catch (error) {
       console.error("Error fetching earning:", error);
     }
   };
 
+  const handleFetchEarningDay = async () => {
+    try {
+      const response = await dispatch(fetchEarning({ id: null, updatedData: requestData })).unwrap();
+      console.log("Fetched Data:", response.data);
+      setEarningData(response.data);
+    } catch (error) {
+      console.error("Error fetching earning:", error);
+    }
+  };
+
+
   console.log("earningData == 00", earningData);
+  const filterBookingsEarning = async (eventKey) => {
+    setSelectedItem(eventKey);
+
+    let updatedData = {
+      cafeId: cafeId,
+      startDate: today,
+      endDate: today,
+      gameId: "",
+    };
+
+    if (eventKey === "Current Month") {
+      updatedData.startDate = monthStartDate;
+      updatedData.endDate = monthEndDate;
+    } else if (eventKey === "This Week") {
+      updatedData.startDate = weekStartDate;
+      updatedData.endDate = weekEndDate;
+    } else if (eventKey === "Today") {
+      updatedData.startDate = today;
+      updatedData.endDate = today;
+    }  else if (eventKey === "Custom Date") {
+      // Show custom date pickers for custom date range
+      // if (!customStartDate || !customEndDate) {
+      //   alert("Please select both start and end dates.");
+      //   return;
+      // }
+      updatedData.startDate = customStartDate; 
+      updatedData.endDate = customEndDate; 
+    }
+
+    setRequestData(updatedData);
+
+    try {
+      const response = await dispatch(fetchEarning({ id: null, updatedData })).unwrap();
+      console.log("Fetched Data:", response.data);
+      setEarningData(response.data);
+    } catch (error) {
+      console.error("Error fetching earning:", error);
+    }
+  };
+
+
 
 
 
@@ -1841,24 +1939,62 @@ const ViewDetails = () => {
 
 
                 <Row className="d-flex flex-wrap justify-content-center p-2 mx-1 my-3" >
-                  {/* <Col sm={6} className="align-items-center">
+                  <Col sm={4} className="align-items-center">
                     <DropdownButton
                       id="dropdown-item-button"
-                      title={selectedItem}
+                      title={selectedItem || "Select"}
                       variant="outline-dark"
-                      onSelect={(eventKey) => filterBookings(eventKey)}
+                      onSelect={(eventKey) => filterBookingsEarning(eventKey)}
                       style={{ width: '400px' }}
                     >
-                      <Dropdown.Item as="button" eventKey="" disabled >Select</Dropdown.Item>
-                      <Dropdown.Item eventKey="Day" as="button">Day</Dropdown.Item>
-                      <Dropdown.Item eventKey="Week" as="button">Week</Dropdown.Item>
-                      <Dropdown.Item eventKey="Month" as="button">Month</Dropdown.Item>
+                      <Dropdown.Item as="button" eventKey="" disabled>Select</Dropdown.Item>
+                      <Dropdown.Item eventKey="Today" as="button" defaultChecked >Today</Dropdown.Item>
+                      <Dropdown.Item eventKey="This Week" as="button">This Week</Dropdown.Item>
+                      <Dropdown.Item eventKey="Current Month" as="button">Current Month</Dropdown.Item>
+                     
+                      <Dropdown.Item as="button" eventKey="Custom Date" >Custom Date</Dropdown.Item>
                     </DropdownButton>
 
-                  </Col> */}
+                   
 
-                  {/* <Col sm={6} className=" alingn-items-end "> */}
-                    {/* <div className="d-flex justify-content-end">
+
+                  </Col>
+                   <Col sm={7}>
+                   <Row>
+                   {selectedItem === "Custom Date" && (
+          <Col sm={6} className="d-flex justify-content-start my-2">
+            <Form.Control
+              type={customStartDate ? "date" : "text"}
+              value={customStartDate}
+              onChange={(e) => setCustomStartDate(e.target.value)}
+              onFocus={(e) => e.target.type = 'date'}
+              onBlur={(e) => {
+                if (!e.target.value) e.target.type = 'text';
+              }}
+              className="me-2"
+              placeholder="Start Date"
+            />
+            <Form.Control
+              type={customEndDate ? "date" : "text"}
+              value={customEndDate}
+              onChange={(e) => setCustomEndDate(e.target.value)}
+              onFocus={(e) => e.target.type = 'date'}
+              onBlur={(e) => {
+                if (!e.target.value) e.target.type = 'text';
+              }}
+              placeholder="End Date"
+            />
+            {customStartDate && customEndDate && (
+            <Button onClick={() => filterBookingsEarning("Custom Date")}>Filter</Button>
+          )}
+          </Col>
+        )}
+                   </Row>
+                   
+                   </Col>
+
+                  {/* <Col sm={6} className=" alingn-items-end ">
+                    <div className="d-flex justify-content-end">
                       <input
                         type="search"
                         className="form-control me-2"
@@ -1868,8 +2004,8 @@ const ViewDetails = () => {
                         onChange={(e) => setSearchQuery(e.target.value)}
                       />
                     </div>
-                  </Col>
-                  <Col sm={6} className="d-flex justify-content-start my-2">
+                  </Col> */}
+                  {/* <Col sm={6} className="d-flex justify-content-start my-2">
                     <Form.Control
                       type={startDate ? "date" : "text"}
                       value={startDate}
@@ -1891,12 +2027,12 @@ const ViewDetails = () => {
                       onChange={(e) => setEndDate(e.target.value)}
                       placeholder="End Date"
                     />
-                  </Col>
+                  </Col> */}
                   <Col sm={6} className="d-flex justify-content-end my-2">
                     <h4 className="my-3" style={{ fontWeight: "600", fontSize: "16px", color: "#0062FF" }}>
-                      Total Earning : ₹ {totalEarning || bookings.reduce((sum, booking) => sum + (booking?.gamePrice || 0), 0)}
+                      Total Earning : ₹ {totalEarning || earningData.reduce((sum, booking) => sum + (booking?.totalAmountPaid || 0), 0)}
                     </h4>
-                  </Col> */}
+                  </Col>
                   {/* <Col sm={12} className="my-3 alingn-items-end">
                     <Table hover responsive>
                       <thead className="table-light">
@@ -2063,36 +2199,34 @@ const ViewDetails = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {earningData.map((date, index) => {
-                          return (
-                            <tr key={index}>
-                              <td>{index + 1}</td>
-                              <td>
-                                <span className="me-3 my-2" style={{ width: "100px", display: "inline-block" }}>
-                                  {date.date}
-                                </span>
-                              </td>
-                              <td>
-                                {Object.entries(date.games).map(([gameName, gameDetails], idx) => (
-                                  <div key={idx} className="my-2">
-                                    <span className="me-3" style={{ width: "190px", display: "inline-block" }}>
-                                      {gameName}
-                                    </span>
-                                    <span className="me-3" style={{ width: "80px", display: "inline-block" }}>
-                                      {gameDetails.count} play
-                                    </span>
-                                    <span style={{ width: "80px", display: "inline-block" }}>
-                                      ₹ {gameDetails.amountPaid}
-                                    </span>
-                                  </div>
-                                ))}
-                              </td>
-                              <td>₹ {date.totalAmountPaid}</td>
-                            </tr>
-
-                          );
-                        })}
+                        {earningData.map((date, index) => (
+                          <tr key={index}>
+                            <td>{index + 1}</td>
+                            <td>
+                              <span className="me-3 my-2" style={{ width: "100px", display: "inline-block" }}>
+                                {date.date}
+                              </span>
+                            </td>
+                            <td>
+                              {Object.entries(date.games).map(([gameName, gameDetails], idx) => (
+                                <div key={idx} className="my-2">
+                                  <span className="me-3" style={{ width: "190px", display: "inline-block" }}>
+                                    {gameName}
+                                  </span>
+                                  <span className="me-3" style={{ width: "80px", display: "inline-block" }}>
+                                    {gameDetails.count} play
+                                  </span>
+                                  <span style={{ width: "80px", display: "inline-block" }}>
+                                    ₹ {gameDetails.amountPaid}
+                                  </span>
+                                </div>
+                              ))}
+                            </td>
+                            <td>₹ {date.totalAmountPaid}</td>
+                          </tr>
+                        ))}
                       </tbody>
+
                     </Table>
 
 

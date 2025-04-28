@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button,  Table } from "react-bootstrap";
+import { Button,  Card,  Container,  Image,  Table } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addLocation,
@@ -9,6 +9,7 @@ import {
 } from "../../../store/slices/locationSlice";
 import ViewDetails from "./ViewDetails";
 import LocationForm from "./LocationForm";
+import plus from "/assets/superAdmin/cafe/Plus.png";
 
 const CreateLocation = () => {
   const dispatch = useDispatch();
@@ -181,7 +182,7 @@ const CreateLocation = () => {
   };
 
   const handleCreateClick = () => {
-    setFormData(initialFormData); // Ensure fresh form
+    setFormData(initialFormData); 
     setIsEditing(false);
     setShowCanvas(true);
   };
@@ -197,45 +198,102 @@ const CreateLocation = () => {
   }, []);
 
   return (
-    <div className="p-3">
+    <div className="my-5">
+
+      <Container fluid>
+                  <Card className="my-3 mx-auto py-3 px-3 rounded-4 h-100" style={{ backgroundColor: "white" }}>
       <div className="d-flex justify-content-between align-items-center mb-3">
         <div className="ms-3">
-          <h1>Location Details</h1>
+          <h1 className="text-center mx-2 mt-2">Location Details</h1>
         </div>
         {!selectedLocation && (
-          <Button variant="primary" onClick={handleCreateClick}>
-            Create Location
-          </Button>
+          <Button  onClick={handleCreateClick} className=" rounded-4 border-0" style={{ backgroundColor: "#F2F2F2" }}>
+             <Image src={plus} alt="add" className=" " />
+            {/* Create Location */}
+           </Button>
         )}
       </div>
 
       {!selectedLocation ? (
-        <Table striped bordered hover responsive>
+        <Table className="my-3" hover responsive>
           {/* Keep existing table structure the same */}
-          <thead>
+          <thead style={{ backgroundColor: "#e9f5f8" }}>
             <tr>
-              <th>#</th>
-              <th>Address</th>
-              <th>City</th>
-              <th>State</th>
-              <th>Country</th>
-              <th>Coordinates</th>
+              <th
+              style={{
+                fontWeight: "600",
+                fontSize: "clamp(14px, 3vw, 16px)",
+                padding: "clamp(10px, 2vw, 15px)",
+                border: "none",
+                color: "gray",
+                borderTopLeftRadius: "10px",
+                borderBottomLeftRadius: "10px",
+              }}
+              >#</th>
+              <th
+              style={{
+                fontWeight: "600",
+                fontSize: "clamp(14px, 3vw, 16px)",
+                padding: "clamp(10px, 2vw, 15px)",
+                border: "none",
+                color: "gray",
+              }}
+              
+              >Address</th>
+              <th
+              style={{
+                fontWeight: "600",
+                fontSize: "clamp(14px, 3vw, 16px)",
+                padding: "clamp(10px, 2vw, 15px)",
+                border: "none",
+                color: "gray",
+              }}
+              >City</th>
+              <th
+              style={{
+                fontWeight: "600",
+                fontSize: "clamp(14px, 3vw, 16px)",
+                padding: "clamp(10px, 2vw, 15px)",
+                border: "none",
+                color: "gray",
+              }}
+              >State</th>
+              <th
+              style={{
+                fontWeight: "600",
+                fontSize: "clamp(14px, 3vw, 16px)",
+                padding: "clamp(10px, 2vw, 15px)",
+                border: "none",
+                color: "gray",
+              }}
+              >Country</th>
+              <th
+              style={{
+                fontWeight: "600",
+                fontSize: "clamp(14px, 3vw, 16px)",
+                padding: "clamp(10px, 2vw, 15px)",
+                border: "none",
+                color: "gray",
+                borderTopRightRadius: "10px",
+                borderBottomRightRadius: "10px"
+              }}
+              >Coordinates</th>
             </tr>
           </thead>
           <tbody>
             {locations.length > 0 ? (
               locations.map((location, index) => (
-                <tr
+                <tr className="py-4"
                   key={index}
                   onClick={() => setSelectedLocation({ data: location, index })}
                   style={{ cursor: "pointer" }}
                 >
-                  <td>{index + 1}</td>
-                  <td>{location.address}</td>
-                  <td>{location.city}</td>
-                  <td>{location.state}</td>
-                  <td>{location.country}</td>
-                  <td>
+                  <td className="py-4">{index + 1}</td>
+                  <td className="py-4">{location.address}</td>
+                  <td className="py-4">{location.city}</td>
+                  <td className="py-4">{location.state}</td>
+                  <td className="py-4">{location.country}</td>
+                  <td className="py-4">
                     {location.lat}, {location.lng}
                   </td>
                 </tr>
@@ -258,6 +316,7 @@ const CreateLocation = () => {
           onEdit={handleEdit}
         />
       )}
+    </Card>
 
       <LocationForm
         showCanvas={showCanvas}
@@ -275,6 +334,7 @@ const CreateLocation = () => {
         handleGetCurrentLocation={handleGetCurrentLocation}
         editIndex={editIndex}
       />
+      </Container>
     </div>
   );
 };

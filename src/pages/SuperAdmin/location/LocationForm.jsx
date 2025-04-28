@@ -219,43 +219,30 @@ const LocationForm = ({
           <Form.Group className="mb-3">
             <Form.Label htmlFor="address" className="fw-bold text-secondary">
               Address
+              <span className="text-danger ms-1">*</span>
             </Form.Label>
             <GooglePlacesAutocomplete
               apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
               selectProps={{
                 value: formData.address
                   ? { label: formData.address, value: formData.address }
-                  : null, // ✅ Pre-fill address
+                  : null, 
                 onChange: handleSelect,
                 placeholder: "Search address...",
+                required: true,
               }}
+              
+              
             />
           </Form.Group>
 
           <Row className="mb-2 g-4">
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label className="fw-bold text-secondary">City</Form.Label>
-                <Form.Select
-                  value={formData.city}
-                  onChange={(e) =>
-                    setFormData({ ...formData, city: e.target.value })
-                  }
-                  disabled={!formData.state}
-                >
-                  <option>Select City</option>
-                  {cities.map((c, idx) => (
-                    <option key={idx} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </Col>
+            
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label className="fw-bold text-secondary">
                   Country
+                  <span className="text-danger ms-1">*</span>
                 </Form.Label>
                 <Form.Select
                   value={formData.country}
@@ -267,6 +254,7 @@ const LocationForm = ({
                       city: "",
                     })
                   }
+                  required
                 >
                   <option>Select Country</option>
                   {countries.map((c, idx) => (
@@ -277,13 +265,11 @@ const LocationForm = ({
                 </Form.Select>
               </Form.Group>
             </Col>
-          </Row>
-
-          <Row className="mb-2 g-4">
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label className="fw-bold text-secondary">
                   State
+                  <span className="text-danger ms-1">*</span>
                 </Form.Label>
                 <Form.Select
                   value={formData.state}
@@ -294,6 +280,7 @@ const LocationForm = ({
                       city: "",
                     })
                   }
+                  required
                   disabled={!formData.country}
                 >
                   <option>Select State</option>
@@ -305,9 +292,38 @@ const LocationForm = ({
                 </Form.Select>
               </Form.Group>
             </Col>
+          </Row>
+
+          <Row className="mb-2 g-4">
+         
+
+
+            <Col md={6}>
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-bold text-secondary">City
+                <span className="text-danger ms-1">*</span>
+                </Form.Label>
+                <Form.Select
+                  value={formData.city}
+                  onChange={(e) =>
+                    setFormData({ ...formData, city: e.target.value })
+                  }
+                  disabled={!formData.state}
+                  required
+                >
+                  <option>Select City</option>
+                  {cities.map((c, idx) => (
+                    <option key={idx} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
             <Col md={6}>
               <Form.Label className="fw-bold text-secondary">
                 Coordinates
+                <span className="text-danger ms-1">*</span>
               </Form.Label>
               <div className="d-flex gap-2">
                 <Form.Control
@@ -334,18 +350,18 @@ const LocationForm = ({
                   className="py-2 border-2"
                   aria-label="Longitude"
                 />
-                <Button
+                {/* <Button
                   variant="outline-primary"
                   onClick={handleGetCurrentLocation}
                   title="Get Current Location"
                 >
                   📍
-                </Button>
+                </Button> */}
               </div>
             </Col>
           </Row>
 
-          <Row className="mb-2 g-4">
+          {/* <Row className="mb-2 g-4">
             <Col md={6}>
               <Form.Label className="fw-bold text-secondary d-block">
                 Upload Image
@@ -394,9 +410,9 @@ const LocationForm = ({
                 </div>
               </div>
             </Col>
-          </Row>
+          </Row> */}
 
-          <Form.Group className="mb-2">
+          {/* <Form.Group className="mb-2">
             <Form.Label htmlFor="details" className="fw-bold text-secondary">
               Location Details
             </Form.Label>
@@ -411,7 +427,7 @@ const LocationForm = ({
               className="border-2"
               placeholder="Describe the location details..."
             />
-          </Form.Group>
+          </Form.Group> */}
 
           <div className="d-flex justify-content-end gap-3 mt-4">
             <Button variant="success" type="submit" disabled={isLoading}>

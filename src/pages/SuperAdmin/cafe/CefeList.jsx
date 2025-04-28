@@ -279,48 +279,48 @@ const CafeManager = () => {
                     <thead style={{ backgroundColor: "#e9f5f8" }}>
                       <tr className="rounded-4">
                         <th style={{
-                          fontWeight: "500",
+                          fontWeight: "600",
                           fontSize: "clamp(14px, 3vw, 16px)",
                           padding: "clamp(10px, 2vw, 15px)",
                           border: "none",
-                          color: "black",
+                          color: "gray",
                           borderTopLeftRadius: "10px",
                           borderBottomLeftRadius: "10px",
                         }}>#</th>
                         <th style={{
-                          fontWeight: "500",
+                          fontWeight: "600",
                           fontSize: "clamp(14px, 3vw, 16px)",
                           padding: "clamp(10px, 2vw, 15px)",
                           border: "none",
-                          color: "black",
+                          color: "gray",
                         }}>Cafe Name</th>
                         <th style={{
-                          fontWeight: "500",
+                          fontWeight: "600",
                           fontSize: "clamp(14px, 3vw, 16px)",
                           padding: "clamp(10px, 2vw, 15px)",
                           border: "none",
-                          color: "black",
+                          color: "gray",
                         }}>Address</th>
                         <th style={{
-                          fontWeight: "500",
+                          fontWeight: "600",
                           fontSize: "clamp(14px, 3vw, 16px)",
                           padding: "clamp(10px, 2vw, 15px)",
                           border: "none",
-                          color: "black",
+                          color: "gray",
                         }}>Contact</th>
                         <th style={{
-                          fontWeight: "500",
+                          fontWeight: "600",
                           fontSize: "clamp(14px, 3vw, 16px)",
                           padding: "clamp(10px, 2vw, 15px)",
                           border: "none",
-                          color: "black",
+                          color: "gray",
                         }}>Owner</th>
                         <th style={{
-                          fontWeight: "500",
+                          fontWeight: "600",
                           fontSize: "clamp(14px, 3vw, 16px)",
                           padding: "clamp(10px, 2vw, 15px)",
                           border: "none",
-                          color: "black",
+                          color: "gray",
                           borderTopRightRadius: "10px",
                           borderBottomRightRadius: "10px"
                         }}>Email</th>
