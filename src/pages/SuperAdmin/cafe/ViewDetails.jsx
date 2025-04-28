@@ -67,7 +67,7 @@ const ViewDetails = () => {
   const [lodermembership, setLodermembership] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPagebooking, setCurrentPagebooking] = useState(1);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState("Today");
   const [startDate, setStartDate] = useState(null);
   const [customStartDate, setCustomStartDate] = useState(null);
   const [customEndDate, setCustomEndDate] = useState(null);
@@ -643,6 +643,7 @@ const ViewDetails = () => {
 
 
   console.log("earningData == 00", earningData);
+
   const filterBookingsEarning = async (eventKey) => {
     setSelectedItem(eventKey);
 
@@ -662,16 +663,10 @@ const ViewDetails = () => {
     } else if (eventKey === "Today") {
       updatedData.startDate = today;
       updatedData.endDate = today;
-    }  else if (eventKey === "Custom Date") {
-      // Show custom date pickers for custom date range
-      // if (!customStartDate || !customEndDate) {
-      //   alert("Please select both start and end dates.");
-      //   return;
-      // }
-      updatedData.startDate = customStartDate; 
-      updatedData.endDate = customEndDate; 
+    } else if (eventKey === "Custom Date") {
+      updatedData.startDate = customStartDate;
+      updatedData.endDate = customEndDate;
     }
-
     setRequestData(updatedData);
 
     try {
@@ -1938,8 +1933,8 @@ const ViewDetails = () => {
                 // </Row>
 
 
-                <Row className="d-flex flex-wrap justify-content-center p-2 mx-1 my-3" >
-                  <Col sm={4} className="align-items-center">
+                <Row className="d-flex flex-wrap justify-content-between p-2 mx-1 my-3" >
+                  <Col sm={5} className=" justify-content-start align-items-start">
                     <DropdownButton
                       id="dropdown-item-button"
                       title={selectedItem || "Select"}
@@ -1951,89 +1946,36 @@ const ViewDetails = () => {
                       <Dropdown.Item eventKey="Today" as="button" defaultChecked >Today</Dropdown.Item>
                       <Dropdown.Item eventKey="This Week" as="button">This Week</Dropdown.Item>
                       <Dropdown.Item eventKey="Current Month" as="button">Current Month</Dropdown.Item>
-                     
+
                       <Dropdown.Item as="button" eventKey="Custom Date" >Custom Date</Dropdown.Item>
                     </DropdownButton>
 
-                   
+
 
 
                   </Col>
-                   <Col sm={7}>
-                   <Row>
-                   {selectedItem === "Custom Date" && (
-          <Col sm={6} className="d-flex justify-content-start my-2">
-            <Form.Control
-              type={customStartDate ? "date" : "text"}
-              value={customStartDate}
-              onChange={(e) => setCustomStartDate(e.target.value)}
-              onFocus={(e) => e.target.type = 'date'}
-              onBlur={(e) => {
-                if (!e.target.value) e.target.type = 'text';
-              }}
-              className="me-2"
-              placeholder="Start Date"
-            />
-            <Form.Control
-              type={customEndDate ? "date" : "text"}
-              value={customEndDate}
-              onChange={(e) => setCustomEndDate(e.target.value)}
-              onFocus={(e) => e.target.type = 'date'}
-              onBlur={(e) => {
-                if (!e.target.value) e.target.type = 'text';
-              }}
-              placeholder="End Date"
-            />
-            {customStartDate && customEndDate && (
-            <Button onClick={() => filterBookingsEarning("Custom Date")}>Filter</Button>
-          )}
-          </Col>
-        )}
-                   </Row>
-                   
-                   </Col>
+                 
 
-                  {/* <Col sm={6} className=" alingn-items-end ">
-                    <div className="d-flex justify-content-end">
-                      <input
-                        type="search"
-                        className="form-control me-2"
-                        placeholder="Search"
-                        aria-label="Search"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                      />
-                    </div>
-                  </Col> */}
-                  {/* <Col sm={6} className="d-flex justify-content-start my-2">
-                    <Form.Control
-                      type={startDate ? "date" : "text"}
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      onFocus={(e) => e.target.type = 'date'}
-                      onBlur={(e) => {
-                        if (!e.target.value) e.target.type = 'text'
-                      }}
-                      className="me-2"
-                      placeholder="Start Date"
-                    />
-                    <Form.Control
-                      type={startDate ? "date" : "text"}
-                      value={endDate}
-                      onFocus={(e) => e.target.type = 'date'}
-                      onBlur={(e) => {
-                        if (!e.target.value) e.target.type = 'text'
-                      }}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      placeholder="End Date"
-                    />
-                  </Col> */}
+                  
                   <Col sm={6} className="d-flex justify-content-end my-2">
                     <h4 className="my-3" style={{ fontWeight: "600", fontSize: "16px", color: "#0062FF" }}>
                       Total Earning : ₹ {totalEarning || earningData.reduce((sum, booking) => sum + (booking?.totalAmountPaid || 0), 0)}
                     </h4>
                   </Col>
-                  {/* <Col sm={12} className="my-3 alingn-items-end">
+                  {/* <Col sm={6} className=" alingn-items-end my-2">
+                     <div className="d-flex justify-content-end">
+                       <input
+                         type="search"
+                         className="form-control me-2"
+                         placeholder="Search"
+                         aria-label="Search"
+                         value={searchQuery}
+                         onChange={(e) => setSearchQuery(e.target.value)}
+                       />
+                     </div>
+                   </Col> */}
+                  
+                  {/* <Col sm={6} className="my-3 alingn-items-end">
                     <Table hover responsive>
                       <thead className="table-light">
                         <tr>
@@ -2187,6 +2129,34 @@ const ViewDetails = () => {
                       </Button>
                     </div>
                   </Col> */}
+                   {selectedItem === "Custom Date" && (
+                    <Col sm={7} className="d-flex justify-content-end my-2">
+                      <Form.Control
+                        type={customStartDate ? "date" : "text"}
+                        value={customStartDate}
+                        onChange={(e) => setCustomStartDate(e.target.value)}
+                        onFocus={(e) => e.target.type = 'date'}
+                        onBlur={(e) => {
+                          if (!e.target.value) e.target.type = 'text';
+                        }}
+                        className="me-2"
+                        placeholder="Start Date"
+                      />
+                      <Form.Control
+                        type={customEndDate ? "date" : "text"}
+                        value={customEndDate}
+                        onChange={(e) => setCustomEndDate(e.target.value)}
+                        onFocus={(e) => e.target.type = 'date'}
+                        onBlur={(e) => {
+                          if (!e.target.value) e.target.type = 'text';
+                        }}
+                        placeholder="End Date"
+                      />
+                      {customStartDate && customEndDate && (
+                        <Button className="ms-2 " onClick={() => filterBookingsEarning("Custom Date")}>Filter</Button>
+                      )}
+                    </Col>
+                  )}
 
                   <Col sm={12} className="my-3 alingn-items-end">
                     <Table hover responsive>
