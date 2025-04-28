@@ -1520,9 +1520,27 @@ const BookingCheckout = () => {
     dispatch(resumeBookingTimer(booking._id));
   };
 
-  const handleStopTimer = () => {
-    dispatch(stopBookingTimer(booking._id));
-    setIsStopped(true)
+  // const handleStopTimer = () => {
+  //   dispatch(stopBookingTimer(booking._id));
+  //   setIsStopped(true)
+  // };
+
+  const handleStopTimer = async () => {
+    try {
+      // Stop the timer in the backend
+      await dispatch(stopBookingTimer(booking._id));
+  
+      // Stop the timer in the frontend immediately
+      setIsStopped(true);
+      setPaused(true); // Mark the timer as paused
+      clearInterval(); // Clear the interval to stop the timer updates
+  
+      // Fetch the updated booking details to get the stopped time
+      const updatedBooking = await dispatch(getBookingDetails(booking._id)).unwrap();
+      setCurrentTime(updatedBooking.total_time || 0); // Update the timer with the stopped time
+    } catch (error) {
+      console.error("Error stopping the timer:", error);
+    }
   };
 
   const handleSaveItems = async () => {
