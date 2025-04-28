@@ -88,7 +88,7 @@ const BookGames = () => {
       {/* Breadcrumb */}
       <h5>
         <Link to="/admin/dashboard">Home</Link> /{' '}
-        <span style={{ color: 'blue' }}>Recommended Games</span>
+        <span style={{ color: 'blue' }}>Book Games</span>
       </h5>
 
       {/* Indoor Games Section */}
@@ -124,7 +124,7 @@ const BookGames = () => {
                     <div className="d-flex justify-content-between align-items-center">
                       <span
                         className="text-primary fw-bold px-3 py-2 rounded-pill"
-                        style={{ backgroundColor: '#FAFAF4' }}
+                        style={{ backgroundColor: '#f2f2f2' }}
                       >
                         ₹{game.price}/Hour
                       </span>
@@ -183,7 +183,7 @@ const BookGames = () => {
                     <div className="d-flex justify-content-between align-items-center">
                       <span
                         className="text-primary fw-bold px-3 py-2 rounded-pill"
-                        style={{ backgroundColor: '#FAFAFA' }}
+                        style={{ backgroundColor: '#f2f2f2' }}
                       >
                         ₹{game.price}/Person
                       </span>

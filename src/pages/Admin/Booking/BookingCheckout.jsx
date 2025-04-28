@@ -1411,28 +1411,54 @@ const BookingCheckout = () => {
     }
   }, [selectedItems]);
 
+  // const handleChange = (selectedOption) => {
+  //   let id = selectedOption.value;
+  //   if (!id || selectedIds.includes(id)) return;
+  //   // if (!id || selectedIds.includes(_id)) return;
+
+  //   setSelectedValue("");
+
+  //   const selected = items.find(item => item._id === id);
+  //   if (selected) {
+  //     let totalTax = selected.tax ? Math.round((selected.tax.tax_rate * selected.sellingPrice) / 100) : 0;
+  //     setSelectedItems([...selectedItems, {
+  //       id: selected._id,
+  //       item: selected.name,
+  //       price: selected.sellingPrice,
+  //       quantity: 1,
+  //       tax: selected.tax || null,
+  //       total: selected.sellingPrice,
+  //       totalTax: totalTax
+  //     }]);
+  //     setSelectedIds([...selectedIds, selected._id]);
+  //     setSelectedOption(null);
+  //     setIsItemsSaved(false);
+  //   }
+  // };
+
   const handleChange = (selectedOption) => {
     let id = selectedOption.value;
     if (!id || selectedIds.includes(id)) return;
-    // if (!id || selectedIds.includes(_id)) return;
 
     setSelectedValue("");
 
     const selected = items.find(item => item._id === id);
+
+    console.log('selected', selected)
     if (selected) {
-      let totalTax = selected.tax ? Math.round((selected.tax.tax_rate * selected.sellingPrice) / 100) : 0;
+      const totalTax = Math.round((selected.tax?.tax_rate * selected.sellingPrice) / 100) || 0;
+      const total = selected.sellingPrice + totalTax || 0;
       setSelectedItems([...selectedItems, {
         id: selected._id,
         item: selected.name,
         price: selected.sellingPrice,
         quantity: 1,
         tax: selected.tax || null,
-        total: selected.sellingPrice,
+        total: total,
         totalTax: totalTax
       }]);
       setSelectedIds([...selectedIds, selected._id]);
-      setSelectedOption(null);
-      setIsItemsSaved(false);
+      setSelectedOption(null)
     }
   };
 
@@ -1549,10 +1575,19 @@ const BookingCheckout = () => {
 
   const handleCollectOffline = async (finalPlayers, currentTotal) => {
 
-    const formattedPlayers = finalPlayers.map(({ _id, ...rest }) => ({
-      id: _id,
-      ...rest,
-    }));
+    // const formattedPlayers = finalPlayers.map(({ _id, ...rest }) => ({
+    //   id: _id,
+    //   ...rest,
+    // }));
+
+    const formattedPlayers = finalPlayers
+  .filter(player => player.credit !== undefined && player.credit !== null)  // Filter out players without 'credit'
+  .map(({ _id, ...rest }) => ({
+    id: _id,
+    ...rest,
+  }));
+
+  console.log("playerCredits", formattedPlayers);
 
     try {
       const bookingData = {
@@ -1794,12 +1829,13 @@ const BookingCheckout = () => {
                   {/* Sticky Top Input */}
                   <div
                     style={{
-                      padding: "12px 16px",
+                      padding: "7px 16px",
                       borderBottom: "1px solid #ddd",
                       background: "#fff",
                       zIndex: 10,
                       position: "sticky",
-                      borderRadius: "16px",
+                      borderTopLeftRadius: "16px",
+                      borderTopRightRadius: "16px",
                       top: 0,
                     }}
                   >

@@ -216,7 +216,7 @@ const GameInfo = () => {
       {/* Booking Overview */}
       <Card className="p-1" style={{ backgroundColor: "white", marginBottom: "20px" }}>
         <Row className="" style={{ backgroundColor: "transparent" }}>
-          <Col md={2} className="position-relative my-auto" style={{ backgroundColor: "transparent" }}>
+          <Col md={3} className="position-relative my-auto" style={{ backgroundColor: "transparent" }}>
             <img
               src={
                 `${import.meta.env.VITE_API_URL}/${selectedGame?.data?.gameImage}` ||
@@ -225,7 +225,7 @@ const GameInfo = () => {
               alt={selectedGame?.data?.name}
               className="img-fluid rounded m-3"
               style={{
-                width: "100%",
+                width: "90%",
                 height: "230px",
                 borderRadius: "19px",
                 objectFit: "cover",
@@ -236,8 +236,8 @@ const GameInfo = () => {
               className="rounded-circle"
               style={{
                 position: "absolute",
-                bottom: "35px",
-                right: "15px",
+                bottom: "20px",
+                right: "25px",
                 width: "30px",
                 height: "30px",
                 display: "flex",
@@ -255,16 +255,16 @@ const GameInfo = () => {
           </Col>
           <Col
             md={6}
-            className="d-flex flex-column justify-content-around p-4"
+            className="d-flex flex-column justify-content-around p-3 px-1"
             style={{ backgroundColor: "transparent" }}
           >
             <h5 className="fw-600 fs-3">{selectedGame?.data?.name}</h5>
             <p className="text-muted">{selectedGame?.data?.details}</p>
             <div className="d-flex gap-1">
-              <div><img src="/assets/Admin/Game/paylater.svg" className="me-1 mb-1 p-1" alt="paylater" /> {selectedGame?.data?.payLater ? "Pay Later" : "Direct Booking"}</div>
+              <div><img src="/assets/Admin/Game/paylater.svg" className="me-1 mb-1 p-1" alt="paylater" /> {selectedGame?.data?.payLater ? "Pay Later" : "Pay Now"}</div>
               <div><img src="/assets/Admin/Game/singleplayer.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.type}</div>
               <div><img src="/assets/Admin/Game/indoor.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.zone}</div>
-              <div><img src="/assets/Admin/Game/indoor.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.cancellation ? "Cancellation Yes" : "Cancellation No"}</div>
+              <div><img src="/assets/Admin/Game/crosssign.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.cancellation ? "Cancellation Yes" : "Cancellation No"}</div>
             </div>
 
             <div>
@@ -273,19 +273,20 @@ const GameInfo = () => {
             </div>
           </Col>
           <Col
-            md={4}
-            className="text-end d-flex flex-column justify-content-around align-items-end"
+            md={3}
+            className="text-end d-flex flex-column justify-content-around align-items-end px-0"
             style={{ backgroundColor: "transparent" }}
           >
-            <div className="mb-10 p-2">
+            <div className="mb-10 p-2 mx-2">
               <span className="text-color">Created At - </span>{new Date(selectedGame?.data?.createdAt).toLocaleString()}
             </div>
-            <span className="align-bottom p-2 mt-3">
+            <span className="align-bottom p-2 px-0 mt-3">
               <Button
                 size="sm"
                 variant="primary"
+                className="px-0"
                 disabled={isLoading}
-                style={{ width: "128px", height: "37px" }}
+                style={{ width: "108px", height: "37px"}}
                 onClick={handleBookSlotClick}
               >
                 Book Slot
@@ -294,7 +295,8 @@ const GameInfo = () => {
               <Button
                 size="sm"
                 variant="primary"
-                style={{ width: "150px", height: "37px", marginLeft: "10px" }}
+                className="px-0"
+                style={{ width: "120px", height: "37px", marginLeft: "10px", marginRight: "20px" }}
                 onClick={() => setShowCustomSlot(true)}
               >
                 Custom Booking

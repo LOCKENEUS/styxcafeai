@@ -100,11 +100,11 @@ const BookingEdit = () => {
 
     useEffect(() => {
         if (booking) {
-            const mappedPlayers = booking.players.map((player) => ({ 
-                id: player._id, 
-                name: player.name, 
-                contact_no: player.contact_no, 
-                creditEligibility: player.creditEligibility, 
+            const mappedPlayers = booking?.players?.map((player) => ({ 
+                id: player?._id, 
+                name: player?.name, 
+                contact_no: player?.contact_no, 
+                creditEligibility: player?.creditEligibility, 
                 creditLimit: player.creditLimit, 
                 creditAmount: player.creditAmount, 
             }));

@@ -15,7 +15,6 @@ import { copySlots, deleteslot, getslots } from "../../../store/slices/slotsSlic
 import { FaEdit } from "react-icons/fa";
 import { BiPen, BiPencil } from "react-icons/bi";
 import { AiOutlineClose } from "react-icons/ai";
-// import { convertTo24HourFormat } from "../../../components/utils/utils";
 
 const GameDetails = () => {
     const { id } = useParams();
@@ -23,7 +22,7 @@ const GameDetails = () => {
     const navigate = useNavigate();
     const { selectedGame, status, error } = useSelector((state) => state.games);
     const [showSlotModal, setShowSlotModal] = useState(false);
-    const [slotStatus, setSlotStatus] = useState({});
+    // const [slotStatus, setSlotStatus] = useState({});
     const [activeDate, setActiveDate] = useState(new Date());
     const slots = useSelector((state) => state.slots?.slots || []);
     const [slotToEdit, setSlotToEdit] = useState(null);
@@ -56,7 +55,7 @@ const GameDetails = () => {
         if (gameId) {
             dispatch(getslots(gameId));
         }
-    }, [gameId]);
+    }, [gameId, dispatch]);
 
     useEffect(() => {
         if (slots.length) {
@@ -64,7 +63,6 @@ const GameDetails = () => {
             slots.forEach(slot => {
                 initialStatus[slot._id] = slot.is_active;
             });
-            setSlotStatus(initialStatus);
         }
     }, [slots]);
 
@@ -74,15 +72,17 @@ const GameDetails = () => {
         }
     };
 
-    const handleToggleStatus = (slot) => {
-        const newStatus = !slotStatus[slot._id];
+    const handleToggleStatus = async (slot) => {
+        // dispatch(deleteslot(slot._id))
+        // refetchSlots();
 
-        setSlotStatus(prev => ({
-            ...prev,
-            [slot._id]: newStatus
-        }));
+        // Dispatch the action to toggle the slot status
+        await dispatch(deleteslot(slot._id));
 
-        dispatch(deleteslot(slot._id))
+        // Update the local state for real-time UI changes
+        const updatedSlots = slots.map((s) =>
+            s._id === slot._id ? { ...s, is_active: !slot.is_active } : s
+        );
         refetchSlots();
     };
 
@@ -122,7 +122,29 @@ const GameDetails = () => {
         refetchSlots();
     };
 
-    const filteredSlots = slots.filter(slot => slot.day === weekdays[activeDate.getDay()]);
+    const sortSlotsByTime = (slots) => {
+        const convertTo24HourMinutes = (timeStr) => {
+          let [time, modifier] = timeStr.split(" ");
+          let [hours, minutes] = time.split(":").map(Number);
+      
+          if (modifier === "PM" && hours !== 12) {
+            hours += 12;
+          }
+          if (modifier === "AM" && hours === 12) {
+            hours = 0;
+          }
+          return hours * 60 + minutes;
+        };
+      
+        return slots.sort((a, b) => {
+          const aStart = convertTo24HourMinutes(a.start_time);
+          const bStart = convertTo24HourMinutes(b.start_time);
+          return aStart - bStart;
+        });
+      };    
+
+    let filteredSlots = slots.filter(slot => slot.day === weekdays[activeDate.getDay()]);
+    filteredSlots = sortSlotsByTime(filteredSlots);
 
     return (
         <div className="container mt-4">
@@ -141,7 +163,7 @@ const GameDetails = () => {
             {/* Booking Overview */}
             <Card className="p-3 mb-2" style={{ backgroundColor: "white" }}>
                 <Row className="" style={{ backgroundColor: "transparent" }}>
-                    <Col md={2} style={{ backgroundColor: "transparent", position: "relative" }}>
+                    <Col md={3} style={{ backgroundColor: "transparent", position: "relative", paddingRight: "0px" }}>
                         <img
                             src={
                                 `${import.meta.env.VITE_API_URL}/${selectedGame?.data?.gameImage}` ||
@@ -150,10 +172,11 @@ const GameDetails = () => {
                             alt={selectedGame?.data?.name}
                             className="img-fluid rounded"
                             style={{
-                                width: "100%",
+                                width: "90%",
                                 height: "230px",
                                 borderRadius: "19px",
                                 objectFit: "cover",
+                                // paddingRight: "0px",
                             }}
                         />
                         <div
@@ -161,8 +184,8 @@ const GameDetails = () => {
                             className="rounded-circle"
                             style={{
                                 position: "absolute",
-                                bottom: "35px",
-                                right: "15px",
+                                bottom: "5px",
+                                right: "30px",
                                 width: "30px",
                                 height: "30px",
                                 display: "flex",
@@ -191,11 +214,11 @@ const GameDetails = () => {
                         {/* <div className="d-flex gap-2">
                             Cancellation : {selectedGame?.data?.cancellation ? "Yes" : "No"}
                         </div> */}
-                        <div className="d-flex gap-3">
-                            <div><img src="/assets/Admin/Game/paylater.svg" className="me-1 mb-1 p-1" alt="paylater" /> {selectedGame?.data?.payLater ? "Pay Later" : "Direct Booking"}</div>
+                        <div className="d-flex gap-2">
+                            <div><img src="/assets/Admin/Game/paylater.svg" className="me-1 mb-1 p-1" alt="paylater" /> {selectedGame?.data?.payLater ? "Pay Later" : "Pay Now"}</div>
                             <div><img src="/assets/Admin/Game/singleplayer.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.type}</div>
                             <div><img src="/assets/Admin/Game/indoor.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.zone}</div>
-                            <div><img src="/assets/Admin/Game/indoor.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.cancellation ? "Cancellation Yes" : "Cancellation No"}</div>
+                            <div><img src="/assets/Admin/Game/crosssign.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.cancellation ? "Cancellation Yes" : "Cancellation No"}</div>
                         </div>
 
                         {/* Timestamps Container */}
@@ -215,22 +238,22 @@ const GameDetails = () => {
                     </Col>
 
                     <Col
-                        md={4}
+                        md={3}
                         className="d-flex flex-column justify-content-between align-items-end"
                         style={{ backgroundColor: "transparent" }}
                     >
-                            <div>
-                                  <span className="text-color">Created At - </span><span>{new Date(selectedGame?.data?.createdAt).toLocaleString()}</span>
-                            </div>
-                            <div>
-                                <Button
-                                    variant="primary"
-                                    style={{ width: "128px", height: "37px" }}
-                                    onClick={handleSlotCreate}
-                                >
-                                    Add Slots
-                                </Button>
-                            </div>
+                        <div>
+                            <span className="text-color">Created At - </span><span>{new Date(selectedGame?.data?.createdAt).toLocaleString()}</span>
+                        </div>
+                        <div>
+                            <Button
+                                variant="primary"
+                                style={{ width: "128px", height: "37px" }}
+                                onClick={handleSlotCreate}
+                            >
+                                Add Slots
+                            </Button>
+                        </div>
 
 
                     </Col>
@@ -273,7 +296,7 @@ const GameDetails = () => {
                 padding: 10px;
                 text-align: center;
                 border: 1px solid #ccc;
-                border-radius: 20px;
+                border-radius: 10px;
                 min-width: 100px;
                 background: #fff;
                 flex: 1;
@@ -345,10 +368,10 @@ const GameDetails = () => {
                                             <Button
                                                 onClick={() => handleToggleStatus(slot)}
                                                 size="sm"
-                                                className="rounded-pill"
+                                                className="rounded-2"
                                                 style={{
-                                                    backgroundColor: slotStatus[slot._id] ? "green" : "red",
-                                                    borderColor: slotStatus[slot._id] ? "green" : "red",
+                                                    backgroundColor: slot?.is_active ? "green" : "red", // slotStatus[slot._id] ? "green" : "red",
+                                                    borderColor: slot?.is_active ? "green" : "red",
                                                     color: "white",
                                                     padding: "5px 15px",
                                                     fontSize: "14px",
@@ -356,7 +379,7 @@ const GameDetails = () => {
                                                     textAlign: "center",
                                                 }}
                                             >
-                                                {slotStatus[slot._id] ? "Active" : "Deactive"}
+                                                {slot?.is_active ? "Active" : "Deactive"}
                                             </Button>
 
                                         </div>

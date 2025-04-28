@@ -236,7 +236,7 @@ const slotslice = createSlice({
       })
       .addCase(deleteslot.fulfilled, (state, action) => {
         state.loading = false;
-        state.slots = state.slots.filter((loc) => loc._id !== action.payload); // Use _id instead of id
+        // state.slots = state.slots.filter((loc) => loc._id !== action.payload); // Use _id instead of id
       })
       .addCase(deleteslot.rejected, (state, action) => {
         state.loading = false;
