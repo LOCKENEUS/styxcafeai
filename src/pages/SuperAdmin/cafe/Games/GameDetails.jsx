@@ -103,7 +103,7 @@ const { games } = useSelector((state) => state.games);
     cafeId: cafeId,
     startDate: today,
     endDate: today,
-    gameId: ""
+    gameId: gameId,
   });
 
 
@@ -322,7 +322,8 @@ const { games } = useSelector((state) => state.games);
       cafeId: cafeId,
       startDate: today,
       endDate: today,
-      gameId: id === 'All' ? null : id, 
+      // gameId: id === 'All' ? null : id, 
+      gameId: gameId,
     };
 
     if (eventKey === "Current Month") {
@@ -373,7 +374,7 @@ const { games } = useSelector((state) => state.games);
     };
 
     try {
-      const response = await dispatch(fetchEarning({ id: null, updatedData })).unwrap();
+      const response = await dispatch(fetchEarning({ id: gameId, updatedData })).unwrap();
       console.log("Fetched Data:", response.data);
       setEarningData(response.data);
     } catch (error) {
@@ -383,8 +384,17 @@ const { games } = useSelector((state) => state.games);
   };
 
   const handleFetchEarning = async () => {
+
+    let updatedData = {
+      cafeId: cafeId,
+      startDate: today,
+      endDate: today,
+      // gameId: id === 'All' ? null : id, 
+      gameId: gameId,
+    };
+
     try {
-      const response = await dispatch(fetchEarning({ id: null, updatedData: requestData })).unwrap();
+      const response = await dispatch(fetchEarning({ id: null, updatedData: updatedData })).unwrap();
       console.log("Fetched Data:", response.data);
       setEarningData(response.data);
     } catch (error) {
