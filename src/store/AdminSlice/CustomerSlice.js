@@ -1,118 +1,164 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 // Fetch all customers
 export const getCustomers = createAsyncThunk(
-  'customers/getCustomers',
+  "customers/getCustomers",
   async (id, thunkAPI) => {
     try {
-      console.log('Making API call with cafe ID:', id);
+      console.log("Making API call with cafe ID:", id);
       const response = await axios.get(`${BASE_URL}/admin/customer/list/${id}`);
-      console.log('API response:', response.data);
+      console.log("API response:", response.data);
       return response.data.data;
     } catch (error) {
-      console.error('API error:', error);
-      toast.error('Error fetching customers: ' + (error.response?.data?.message || 'Something went wrong'));
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      console.error("API error:", error);
+      toast.error(
+        "Error fetching customers: " +
+          (error.response?.data?.message || "Something went wrong")
+      );
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 export const searchCustomers = createAsyncThunk(
-  'customers/searchCustomers',
-  async ({cafeId, searchTerm}, thunkAPI) => {
+  "customers/searchCustomers",
+  async ({ cafeId, searchTerm }, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/customer/search/${cafeId}?search=${searchTerm}`);
-      console.log('API response:', response.data);
+      const response = await axios.get(
+        `${BASE_URL}/admin/customer/search/${cafeId}?search=${searchTerm}`
+      );
+      console.log("API response:", response.data);
       return response.data.data;
     } catch (error) {
-      console.error('API error:', error);
-      toast.error('Error fetching customers: ' + (error.response?.data?.message || 'Something went wrong'));
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      console.error("API error:", error);
+      toast.error(
+        "Error fetching customers: " +
+          (error.response?.data?.message || "Something went wrong")
+      );
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Fetch a single customer by ID
 export const getCustomerById = createAsyncThunk(
-  'customers/getCustomerById',
+  "customers/getCustomerById",
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(`${BASE_URL}/admin/customer/${id}`);
       return response.data;
     } catch (error) {
-      toast.error('Error fetching customer by ID: ' + (error.response?.data?.message || 'Something went wrong'));
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(
+        "Error fetching customer by ID: " +
+          (error.response?.data?.message || "Something went wrong")
+      );
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Add a new customer
 export const addCustomer = createAsyncThunk(
-  'customers/addCustomer',
+  "customers/addCustomer",
   async (customerData, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/admin/customer`, customerData);
-      toast.success('Customer added successfully!');
+      const response = await axios.post(
+        `${BASE_URL}/admin/customer`,
+        customerData
+      );
+      toast.success("Customer added successfully!");
       return response.data.data;
     } catch (error) {
-      toast.error('Error adding customer: ' + (error.response?.data?.message || 'Something went wrong'));
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(
+        "Error adding customer: " +
+          (error.response?.data?.message || "Something went wrong")
+      );
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Update an existing customer
 export const updateCustomer = createAsyncThunk(
-  'customers/updateCustomer',
+  "customers/updateCustomer",
   async ({ id, data }, thunkAPI) => {
     try {
-      const response = await axios.put(`${BASE_URL}/admin/customer/${id}`, data);
-      toast.success('Customer updated successfully!');
+      const response = await axios.put(
+        `${BASE_URL}/admin/customer/${id}`,
+        data
+      );
+      toast.success("Customer updated successfully!");
       return response.data.data;
     } catch (error) {
-      toast.error('Error updating customer: ' + (error.response?.data?.message || 'Something went wrong'));
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(
+        "Error updating customer: " +
+          (error.response?.data?.message || "Something went wrong")
+      );
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Delete a customer
 export const deleteCustomer = createAsyncThunk(
-  'customers/deleteCustomer',
+  "customers/deleteCustomer",
   async (id, thunkAPI) => {
     try {
       await axios.delete(`${BASE_URL}/admin/customer/${id}`);
-      toast.success('Customer deleted successfully!');
+      toast.success("Customer deleted successfully!");
       return id;
     } catch (error) {
-      toast.error('Error deleting customer: ' + (error.response?.data?.message || 'Something went wrong'));
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(
+        "Error deleting customer: " +
+          (error.response?.data?.message || "Something went wrong")
+      );
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Collect Amount Offline
 export const collectAmount = createAsyncThunk(
-  'customers/collectAmount',
-  async ({id, updateData}, thunkAPI) => {
+  "customers/collectAmount",
+  async ({ id, updateData }, thunkAPI) => {
     try {
-      await axios.patch(`${BASE_URL}/admin/customer/collect-amount/${id}`,updateData)
-      toast.success('Amount Collected!');
+      await axios.patch(
+        `${BASE_URL}/admin/customer/collect-amount/${id}`,
+        updateData
+      );
+      toast.success("Amount Collected!");
       return id;
     } catch (error) {
-      toast.error('Error collecting payment: ' + (error.response?.data?.message || 'Something went wrong'));
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(
+        "Error collecting payment: " +
+          (error.response?.data?.message || "Something went wrong")
+      );
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 export const collectAmountOnline = createAsyncThunk(
   "bookings/collectAmountOnline",
-  async ({id, updateData},thunkAPI) => {
+  async ({ id, updateData }, thunkAPI) => {
     try {
       const backend_url = import.meta.env.VITE_API_URL;
       const response = await axios.post(
@@ -131,10 +177,10 @@ export const collectAmountOnline = createAsyncThunk(
 
       const data = response.data;
 
-      console.log("data", data)
+      console.log("data", data);
 
       if (data.success && data.order) {
-        console.log("reached here...data")
+        console.log("reached here...data");
         const options = {
           key: import.meta.env.VITE_RAZOR_LIVE_KEY,
           amount: data.order.amount * 100,
@@ -152,7 +198,7 @@ export const collectAmountOnline = createAsyncThunk(
                   razorpay_signature: response.razorpay_signature,
                   bookingIds: updateData.bookingIds,
                   amount: data.order.amount,
-                  customerId: id
+                  customerId: id,
                 },
                 {
                   headers: {
@@ -163,7 +209,7 @@ export const collectAmountOnline = createAsyncThunk(
                 }
               );
 
-              console.log("verifyResponse", verifyResponse)
+              console.log("verifyResponse", verifyResponse);
 
               const verifyData = verifyResponse.data;
               if (verifyData.success) {
@@ -201,25 +247,32 @@ export const collectAmountOnline = createAsyncThunk(
 );
 
 export const collectCustomCreditAmount = createAsyncThunk(
-  'customers/collectCustomCreditAmount',
-  async ({id, amount}, thunkAPI) => {
+  "customers/collectCustomCreditAmount",
+  async ({ id, amount }, thunkAPI) => {
     try {
-      await axios.patch(`${BASE_URL}/admin/customer/custom-credit-amount/${id}`,{amount: amount})
-      toast.success('Amount Collected!');
+      await axios.patch(
+        `${BASE_URL}/admin/customer/custom-credit-amount/${id}`,
+        { amount: amount }
+      );
+      toast.success("Amount Collected!");
       return id;
     } catch (error) {
-      toast.error('Error collecting payment: ' + (error.response?.data?.message || 'Something went wrong'));
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(
+        "Error collecting payment: " +
+          (error.response?.data?.message || "Something went wrong")
+      );
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 export const collectCustomCreditAmountOnline = createAsyncThunk(
   "bookings/collectCustomCreditAmountOnline",
-  async ({id, amount, customer},thunkAPI) => {
-
-    console.log("amount from redux", amount)
-    console.log("id from redux", customer)
+  async ({ id, amount, customer }, thunkAPI) => {
+    console.log("amount from redux", amount);
+    console.log("id from redux", customer);
     try {
       const backend_url = import.meta.env.VITE_API_URL;
       const response = await axios.post(
@@ -239,7 +292,7 @@ export const collectCustomCreditAmountOnline = createAsyncThunk(
       const data = response.data;
 
       if (data.success && data.order) {
-        console.log("reached here...data")
+        console.log("reached here...data");
         const options = {
           key: import.meta.env.VITE_RAZOR_LIVE_KEY,
           amount: data.order.amount * 100,
@@ -248,7 +301,7 @@ export const collectCustomCreditAmountOnline = createAsyncThunk(
           description: "Credit Collection",
           order_id: data.order.id,
           handler: async function (response) {
-            console.log("response", response)
+            console.log("response", response);
             try {
               const verifyResponse = await axios.patch(
                 `${backend_url}/admin/customer/custom-credit-online/${id}`,
@@ -257,7 +310,7 @@ export const collectCustomCreditAmountOnline = createAsyncThunk(
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature,
                   amount: data.order.amount / 100,
-                  customerId: id
+                  customerId: id,
                 },
                 {
                   headers: {
@@ -268,11 +321,11 @@ export const collectCustomCreditAmountOnline = createAsyncThunk(
                 }
               );
 
-              console.log("verifyResponse", verifyResponse)
+              console.log("verifyResponse", verifyResponse);
 
               const verifyData = verifyResponse.data;
               if (verifyData.success) {
-                window.location.href = `/admin/users/customer-details/${id}`
+                window.location.href = `/admin/users/customer-details/${id}`;
               } else {
                 return thunkAPI.rejectWithValue("Payment Verification Failed");
               }
@@ -306,7 +359,7 @@ export const collectCustomCreditAmountOnline = createAsyncThunk(
 );
 
 const customerSlice = createSlice({
-  name: 'customers',
+  name: "customers",
   initialState: {
     customers: [],
     selectedCustomer: null,
@@ -371,7 +424,9 @@ const customerSlice = createSlice({
       .addCase(updateCustomer.fulfilled, (state, action) => {
         state.loading = false;
         const updatedCustomer = action.payload;
-        const index = state.customers.findIndex((customer) => customer._id === updatedCustomer._id);
+        const index = state.customers.findIndex(
+          (customer) => customer._id === updatedCustomer._id
+        );
         if (index !== -1) {
           state.customers[index] = updatedCustomer;
         }
@@ -388,7 +443,9 @@ const customerSlice = createSlice({
       })
       .addCase(deleteCustomer.fulfilled, (state, action) => {
         state.loading = false;
-        state.customers = state.customers.filter((customer) => customer._id !== action.payload);
+        state.customers = state.customers.filter(
+          (customer) => customer._id !== action.payload
+        );
       })
       .addCase(deleteCustomer.rejected, (state, action) => {
         state.loading = false;

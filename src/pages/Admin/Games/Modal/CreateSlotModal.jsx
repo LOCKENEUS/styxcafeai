@@ -324,7 +324,7 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, refetchSlots }
         slot_price: "",
       });
       handleClose();
-      refetchSlots(); // Refetch slots after updating
+      // refetchSlots(); // Refetch slots after updating
     } else {
       dispatch(addslot(payload));
       console.log("refetch_called");
@@ -336,14 +336,13 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, refetchSlots }
         slot_price: "",
       })
       handleClose();
-      refetchSlots(); // Refetch slots after updating
+      // refetchSlots(); // Refetch slots after updating
     }
   };
 
   const buildTimeString = (hour, minute, period) => {
     return `${hour.padStart(2, '0')}:${minute.padStart(2, '0')} ${period}`;
   };
-
 
   const labelStyle = { fontWeight: "500", color: "#5A5A5A", fontSize: "1rem" };
   const inputStyle = { border: "2px solid rgb(163, 164, 164)", borderRadius: "6px" };

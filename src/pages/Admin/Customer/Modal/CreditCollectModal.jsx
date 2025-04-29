@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 
-const CreditCollectModal = ({ show, onHide, amount, onCollectCash, onCollectOnline, handleChange}) => {
+const CreditCollectModal = ({ show, onHide, amount, onCollectCash, onCollectOnline, handleChange, creditTotal}) => {
   // const [amount, setAmount] = useState("");
 
   const handleCashClick = () => {
     if (amount && parseFloat(amount) > 0) {
       onCollectCash(amount);
       handleChange("");
+      onHide();
     }
   };
   
@@ -15,6 +16,7 @@ const CreditCollectModal = ({ show, onHide, amount, onCollectCash, onCollectOnli
     if (amount && parseFloat(amount) > 0) {
       onCollectOnline(amount);
       // handleChange("");
+      onHide();
     }
   };
 
@@ -23,7 +25,7 @@ const CreditCollectModal = ({ show, onHide, amount, onCollectCash, onCollectOnli
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Collect Credit Amount</Modal.Title>
+        <Modal.Title>Collect Credit Amount ( ₹{creditTotal} )</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form.Group>

@@ -258,7 +258,7 @@ const GameInfo = () => {
             className="d-flex flex-column justify-content-around p-3 px-1"
             style={{ backgroundColor: "transparent" }}
           >
-            <h5 className="fw-600 fs-3">{selectedGame?.data?.name}</h5>
+            <h5 className="fw-600 fs-3" style={{fontWeight:"600"}}>{selectedGame?.data?.name}</h5>
             <p className="text-muted">{selectedGame?.data?.details}</p>
             <div className="d-flex gap-1">
               <div><img src="/assets/Admin/Game/paylater.svg" className="me-1 mb-1 p-1" alt="paylater" /> {selectedGame?.data?.payLater ? "Pay Later" : "Pay Now"}</div>

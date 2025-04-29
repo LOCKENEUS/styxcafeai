@@ -38,6 +38,35 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
     setAllPlayers(updatedPlayers);
   };
 
+  // const handleAssignCredit = (index) => {
+  //   const updatedPlayers = [...allPlayers];
+  //   const player = updatedPlayers[index];
+  //   const shareAmount = parseFloat(player.share) || 0;
+  
+  //   const availableCredit = player.creditLimit - player.creditAmount;
+  
+  //   if (player.creditAssigned) {
+  //     // Unassign the credit
+  //     player.creditAmount -= player.credit; // Reduce the assigned credit from the creditAmount
+  //     player.credit = 0;
+  //     player.creditAssigned = false;
+  //     setCurrentTotal((prevTotal) => prevTotal + shareAmount);
+  //   } else {
+  //     // Assign the credit
+  //     if (shareAmount > availableCredit) {
+  //       alert(`Insufficient credit for ${player.name}. Available: ₹${availableCredit}`);
+  //       return;
+  //     }
+  
+  //     player.credit = shareAmount;
+  //     player.creditAmount += shareAmount; // Add the assigned credit to the creditAmount
+  //     player.creditAssigned = true;
+  //     setCurrentTotal((prevTotal) => prevTotal - shareAmount);
+  //   }
+  
+  //   setAllPlayers(updatedPlayers);
+  // };
+
   const handleAssignCredit = (index) => {
     const updatedPlayers = [...allPlayers];
     const player = updatedPlayers[index];
@@ -58,6 +87,11 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
         return;
       }
   
+      if (shareAmount > currentTotal) {
+        alert(`Cannot assign more than the remaining total amount. Remaining: ₹${currentTotal}`);
+        return;
+      }
+  
       player.credit = shareAmount;
       player.creditAmount += shareAmount; // Add the assigned credit to the creditAmount
       player.creditAssigned = true;
@@ -66,9 +100,7 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
   
     setAllPlayers(updatedPlayers);
   };
-
-  console.log("allPlayers", allPlayers.length);
-
+  
   return (
     <Modal show={show} onHide={handleClose}>
       <div className="modal-content rounded-2">
@@ -110,7 +142,7 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
                     type="number"
                     className="form-control text-center"
                     placeholder="Share"
-                    disabled={!isAmountSplit}
+                    disabled={!isAmountSplit || player.creditAssigned}
                     value={player.share}
                     onChange={(e) => handleShareChange(index, e.target.value)}
                     style={{

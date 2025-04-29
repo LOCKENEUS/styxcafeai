@@ -98,10 +98,10 @@ const CreateItemsForm = () => {
         }
 
         // SKU validation
-        if (!formData.sku.trim()) {
-            newErrors.sku = 'SKU is required';
-            isValid = false;
-        }
+        // if (!formData.sku.trim()) {
+        //     newErrors.sku = 'SKU is required';
+        //     isValid = false;
+        // }
 
         // Unit validation
         if (!formData.unit) {
@@ -376,7 +376,7 @@ const CreateItemsForm = () => {
                             <label className="fw-bold my-2">
                                 {/* <FaStarOfLife className="text-danger size-sm" />  */}
                                 SKU
-                                <span className="text-danger ms-1 ">*</span>
+                                {/* <span className="text-danger ms-1 ">*</span> */}
                             </label>
                             <input
                                 type="text"
@@ -387,7 +387,7 @@ const CreateItemsForm = () => {
                                 onChange={handleChange}
                             
                             />
-                            {errors.sku && <div className="invalid-feedback">{errors.sku}</div>}
+                            {/* {errors.sku && <div className="invalid-feedback">{errors.sku}</div>} */}
                         </FormGroup>
                     </Col>
 
@@ -456,7 +456,7 @@ const CreateItemsForm = () => {
                     <label className="fw-bold my-2">
                                 {/* <FaStarOfLife className="text-danger size-sm" />  */}
                                 HSN Code
-                                <span className="text-danger ms-1 ">*</span>
+                                {/* <span className="text-danger ms-1 ">*</span> */}
                             </label>
                             <input
                                 type="number"
@@ -468,7 +468,7 @@ const CreateItemsForm = () => {
                                 
                                 
                             />
-                            {errors.hsnCode && <div className="invalid-feedback">{errors.hsnCode}</div>}
+                            {/* {errors.hsnCode && <div className="invalid-feedback">{errors.hsnCode}</div>} */}
                         </FormGroup>
                     </Col>
 

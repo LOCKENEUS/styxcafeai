@@ -183,7 +183,7 @@ const slotslice = createSlice({
       })
       .addCase(addslot.fulfilled, (state, action) => {
         state.loading = false;
-        state.slots.push(action.payload.data);
+        // state.slots.push(action.payload.data);
         // refetchSlots(); // Refetch slots after adding
         toast.success("Slot added successfully");
       })

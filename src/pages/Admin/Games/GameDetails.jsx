@@ -52,10 +52,11 @@ const GameDetails = () => {
     };
 
     useEffect(() => {
+        console.log("gameid-from-useeffect", gameId)
         if (gameId) {
             dispatch(getslots(gameId));
         }
-    }, [gameId, dispatch]);
+    }, [gameId, showSlotModal, dispatch]);
 
     useEffect(() => {
         if (slots.length) {
@@ -67,6 +68,7 @@ const GameDetails = () => {
     }, [slots]);
 
     const refetchSlots = () => {
+        console.log("called-the-functio-to-re-fetch-data")
         if (gameId) {
             dispatch(getslots(gameId));
         }
@@ -124,27 +126,29 @@ const GameDetails = () => {
 
     const sortSlotsByTime = (slots) => {
         const convertTo24HourMinutes = (timeStr) => {
-          let [time, modifier] = timeStr.split(" ");
-          let [hours, minutes] = time.split(":").map(Number);
-      
-          if (modifier === "PM" && hours !== 12) {
-            hours += 12;
-          }
-          if (modifier === "AM" && hours === 12) {
-            hours = 0;
-          }
-          return hours * 60 + minutes;
+            let [time, modifier] = timeStr.split(" ");
+            let [hours, minutes] = time.split(":").map(Number);
+
+            if (modifier === "PM" && hours !== 12) {
+                hours += 12;
+            }
+            if (modifier === "AM" && hours === 12) {
+                hours = 0;
+            }
+            return hours * 60 + minutes;
         };
-      
+
         return slots.sort((a, b) => {
-          const aStart = convertTo24HourMinutes(a.start_time);
-          const bStart = convertTo24HourMinutes(b.start_time);
-          return aStart - bStart;
+            const aStart = convertTo24HourMinutes(a.start_time);
+            const bStart = convertTo24HourMinutes(b.start_time);
+            return aStart - bStart;
         });
-      };    
+    };
 
     let filteredSlots = slots.filter(slot => slot.day === weekdays[activeDate.getDay()]);
     filteredSlots = sortSlotsByTime(filteredSlots);
+
+    console.log("slots", slots)
 
     return (
         <div className="container mt-4">
@@ -206,8 +210,8 @@ const GameDetails = () => {
                         className="d-flex flex-column justify-content-around"
                         style={{ backgroundColor: "transparent" }}
                     >
-                        <h5>{selectedGame?.data?.name}({selectedGame?.data?.size})
-                        </h5>
+                        <span className="fs-3 text-color">{selectedGame?.data?.name}({selectedGame?.data?.size})
+                        </span>
                         <p className="text-muted">{selectedGame?.data?.details}</p>
 
                         {/* Buttons Container */}

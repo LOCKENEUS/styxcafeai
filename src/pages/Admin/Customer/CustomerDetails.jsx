@@ -24,6 +24,7 @@ const CustomerDetails = () => {
   const [selectAll, setSelectAll] = useState(false);
   const [selectedBookingIds, setSelectedBookingIds] = useState([]);
   const [creditAmount, setCreditAmount] = useState(0);
+  const [creditTotal, setCreditTotal] = useState(0);
   const [amount, setAmount] = useState(0);
   const [activeKey, setActiveKey] = useState("/home");
   const itemsPerPage = 5; // Number of items to display per page
@@ -32,6 +33,19 @@ const CustomerDetails = () => {
   useEffect(() => {
     dispatch(getCustomerById(id));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    if (selectedCustomer) {
+      let creditTotalAmount = 0
+      selectedCustomer?.creditHistory.forEach((credit) => {
+        console.log("credit amount to add", credit?.credit);
+        creditTotalAmount += credit?.credit
+      })
+      setCreditTotal(creditTotalAmount)
+    }
+  }, [dispatch, selectedCustomer]);
+
+  console.log("selectedCustomer total credit", creditTotal);
 
   const handleCheckboxChange = (bookingId, isChecked, creditValue) => {
     if (isChecked) {
@@ -113,13 +127,13 @@ const CustomerDetails = () => {
 
   const handleCollectCustomCredit = async () => {
     await dispatch(
-      collectCustomCreditAmount({id, amount})
+      collectCustomCreditAmount({ id, amount })
     );
   };
 
   const handleCollectCustomCreditOnline = async () => {
     await dispatch(
-      collectCustomCreditAmountOnline({id, amount, customer: selectedCustomer?.data})
+      collectCustomCreditAmountOnline({ id, amount, customer: selectedCustomer?.data })
     );
   };
 
@@ -299,16 +313,7 @@ const CustomerDetails = () => {
                           onChange={(e) => setSearchQuery(e.target.value)}
                           className="form-control shadow-lg w-50 mb-3"
                         />
-                        {/* <InputGroup className="mb-3 mx-2 shadow-lg w-50"> */}
-                          {/* <FormControl
-                            size="sm"
-                            type="text"
-                            value={amount}
-                            placeholder="Enter credit amount to clear"
-                            onChange={(e) => setAmount(e.target.value)}
-                          /> */}
-                          
-                          <Button size="sm" variant="primary" className="float-end m-2 mb-3" onClick={() => setShowCollectModal(true)}>Collect Credit</Button>
+                        <Button size="sm" variant="primary" className="float-end m-2 mb-3" onClick={() => setShowCollectModal(true)}>Custom Credit Collection</Button>
                         {/* </InputGroup> */}
                       </div>
                       <div className="table-responsive">
@@ -319,8 +324,9 @@ const CustomerDetails = () => {
                               <th style={{ fontWeight: "600" }}  >Booking ID</th>
                               <th style={{ fontWeight: "600" }}  >Game</th>
                               <th style={{ fontWeight: "600" }}  >Slot Date</th>
-                              <th style={{ fontWeight: "600" }}  >Credit</th>
+                              
                               <th style={{ fontWeight: "600" }}  >Total</th>
+                              <th style={{ fontWeight: "600" }}  >Credit</th>
                               {collectMode && <th style={{ fontWeight: "600" }}  >
                                 Collect
                                 <span
@@ -340,15 +346,16 @@ const CustomerDetails = () => {
                               selectedCustomer?.creditHistory.map((credit, index) => (
                                 <tr key={credit._id}>
                                   <td>{index + 1}</td>
-                                  <td style={{ fontWeight: "600", color: "blue" }} onClick={() => navigate(`/admin/booking/checkout/${credit.booking_id}`)} >{credit.booking_no}</td>
+                                  <td style={{ fontWeight: "600", color: "blue", cursor: "pointer" }} onClick={() => navigate(`/admin/booking/checkout/${credit.booking_id}`)} >{credit.booking_no}</td>
                                   <td>{credit.game_name}</td>
                                   <td>{new Date(credit.slot_date).toLocaleDateString()}</td>
+                                  
+                                  <td>₹ {credit.total}</td>
                                   <td>
                                     <span >
-                                    ₹ {credit.credit}
+                                      ₹ {credit.credit}
                                     </span>
                                   </td>
-                                  <td>₹ {credit.total}</td>
                                   {collectMode && <td className="text-center">
                                     <input
                                       type="checkbox"
@@ -442,7 +449,7 @@ const CustomerDetails = () => {
                               selectedCustomer?.bookings.map((booking, index) => (
                                 <tr key={booking._id}>
                                   <td>{index + 1}</td>
-                                  <td style={{ fontWeight: "600", color: "blue" }} onClick={() => navigate(`/admin/booking/checkout/${booking.booking_id}`)} >{booking.booking_id}</td>
+                                  <td style={{ fontWeight: "600", color: "blue", cursor: "pointer" }} onClick={() => navigate(`/admin/booking/checkout/${booking.booking_id}`)} >{booking.booking_id}</td>
                                   <td>{booking?.playerCredits[0]?.txn_id ? booking?.playerCredits[0]?.txn_id : "Cash"}</td>
                                   <td>{booking?.playerCredits[0]?.paymentDate && new Date(booking?.playerCredits[0]?.paymentDate).toLocaleDateString()}</td>
                                 </tr>
@@ -477,30 +484,18 @@ const CustomerDetails = () => {
               </Col>
             </Row>
           </Tab.Container>
-
-          {/* Bank Details */}
-          {/* <Card className="p-3">
-              <h5>Bank Details</h5>
-              <div className="d-flex flex-wrap justify-content-around gap-2">
-                <p><strong>Bank Name:</strong> State Bank of India</p>
-                <p><strong>Account Number:</strong> 24578965230</p>
-                <p><strong>IFSC/SWIFT/BIC:</strong> SBI0145720124</p>
-                <p><strong>Account Type:</strong> Savings</p>
-                <p><strong>Created At:</strong> 2025-02-07 10:54:16</p>
-                <p><strong>Modified At:</strong> 2025-02-07</p>
-              </div>
-            </Card> */}
         </Col>
       </Row>
-    {showCollectModal && 
-      <CreditCollectModal 
-      show={showCollectModal} 
-      amount={amount}
-      onHide={() => setShowCollectModal(false)} 
-      onCollectCash={handleCollectCustomCredit} 
-      onCollectOnline={handleCollectCustomCreditOnline} 
-      handleChange={(value) => setAmount(value)} 
-      />}
+      {showCollectModal &&
+        <CreditCollectModal
+          show={showCollectModal}
+          amount={amount}
+          onHide={() => setShowCollectModal(false)}
+          onCollectCash={handleCollectCustomCredit}
+          onCollectOnline={handleCollectCustomCreditOnline}
+          handleChange={(value) => setAmount(value)}
+          creditTotal={creditTotal}
+        />}
     </Container>
   );
 };

@@ -1275,6 +1275,7 @@ import { getTaxFields } from "../../../store/AdminSlice/TextFieldSlice";
 import CreditSplit from "./Model/CreditSplit";
 import { FaTrash } from "react-icons/fa6";
 import { TbTrash } from "react-icons/tb";
+import ItemsSave from "./Model/itemsSave";
 
 const BookingCheckout = () => {
 
@@ -1299,6 +1300,7 @@ const BookingCheckout = () => {
   const [isItemsSaved, setIsItemsSaved] = useState(true);
   const [selectedOption, setSelectedOption] = useState(null);
   const [showCreditModal, setShowCreditModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showInventory, setShowInventory] = useState(false);
   const [addOnTotal, setAddOnTotal] = useState(0);
   const [playerCredits, setPlayerCredits] = useState([]);
@@ -1334,7 +1336,7 @@ const BookingCheckout = () => {
 
   useEffect(() => {
     if (items.length > 0) {
-      setOptions(items.map((item) => ({ value: item._id, label: item.name })));
+      setOptions(items.map((item) => ({ value: item._id, label: `${item.name} (₹ ${item.sellingPrice})` })));
     }
   }, [items]);
 
@@ -1353,11 +1355,28 @@ const BookingCheckout = () => {
       setSlot(booking?.slot_id);
       setPlayers(booking?.players);
 
+      // if (booking?.so_id) {
+      //   setShowInventory(true)
+      //   const mappedItems = booking.so_id.items.map((item) => ({ id: item.item_id._id, item: item.item, price: item.price, quantity: item.quantity, tax: item.tax, total: item.total, totalTax: item.tax_amt }));
+      //   setSelectedItems(mappedItems)
+      //   setSelectedIds(mappedItems.map((item) => item?.id));
+      // }
+
       if (booking?.so_id) {
-        setShowInventory(true)
-        const mappedItems = booking.so_id.items.map((item) => ({ id: item.item_id._id, item: item.item, price: item.price, quantity: item.quantity, tax: item.tax, total: item.total, totalTax: item.tax_amt }));
-        setSelectedItems(mappedItems)
-        setSelectedIds(mappedItems.map((item) => item?.id));
+        const mappedItems = booking.so_id.items.map((item) => ({
+          id: item.item_id._id,
+          item: item.item,
+          price: item.price,
+          quantity: item.quantity,
+          tax: item.tax,
+          total: item.total,
+          totalTax: item.tax_amt,
+        }));
+        setSelectedItems(mappedItems);
+        setSelectedIds(mappedItems.map((item) => item.id));
+      } else {
+        setSelectedItems([]);
+        setSelectedIds([]);
       }
 
       dispatch(initializeTimer(booking))
@@ -1408,8 +1427,11 @@ const BookingCheckout = () => {
         total += item.total;
       })
       setAddOnTotal(total)
+      
+    }else{
+      setAddOnTotal(0)
     }
-  }, [selectedItems]);
+  }, [selectedItems,selectedIds]);
 
   // const handleChange = (selectedOption) => {
   //   let id = selectedOption.value;
@@ -1441,6 +1463,8 @@ const BookingCheckout = () => {
     if (!id || selectedIds.includes(id)) return;
 
     setSelectedValue("");
+
+    setIsItemsSaved(false);
 
     const selected = items.find(item => item._id === id);
 
@@ -1529,12 +1553,12 @@ const BookingCheckout = () => {
     try {
       // Stop the timer in the backend
       await dispatch(stopBookingTimer(booking._id));
-  
+
       // Stop the timer in the frontend immediately
       setIsStopped(true);
       setPaused(true); // Mark the timer as paused
       clearInterval(); // Clear the interval to stop the timer updates
-  
+
       // Fetch the updated booking details to get the stopped time
       const updatedBooking = await dispatch(getBookingDetails(booking._id)).unwrap();
       setCurrentTime(updatedBooking.total_time || 0); // Update the timer with the stopped time
@@ -1599,13 +1623,13 @@ const BookingCheckout = () => {
     // }));
 
     const formattedPlayers = finalPlayers
-  .filter(player => player.credit !== undefined && player.credit !== null)  // Filter out players without 'credit'
-  .map(({ _id, ...rest }) => ({
-    id: _id,
-    ...rest,
-  }));
+      .filter(player => player.credit !== undefined && player.credit !== null)  // Filter out players without 'credit'
+      .map(({ _id, ...rest }) => ({
+        id: _id,
+        ...rest,
+      }));
 
-  console.log("playerCredits", formattedPlayers);
+    console.log("playerCredits", formattedPlayers);
 
     try {
       const bookingData = {
@@ -1632,7 +1656,7 @@ const BookingCheckout = () => {
     setLooserPlayer(player);
   };
 
-  console.log("custom slot", booking?.custom_slot)
+  console.log("selectedIds", selectedIds)
 
   const renderCreditsPopover = (
     <Popover id="player-credits-popover">
@@ -1642,7 +1666,7 @@ const BookingCheckout = () => {
           <ul className="mb-0 ps-3">
             {booking.playerCredits.map((player, index) => (
               <li key={index}>
-                {player.name || player.id}: ₹ {player.credit || player.amount}
+                {player.name || player.id}: ₹ {player.credit || 0}
               </li>
             ))}
           </ul>
@@ -1857,7 +1881,7 @@ const BookingCheckout = () => {
                       top: 0,
                     }}
                   >
-                    {booking?.status !== "Pending" ? <div className="text-color fs-4">
+                    {booking?.status !== "Pending" ? <div className="text-color fs-4 p-2">
                       Selected Items
                       <Link
                         to={`/admin/Inventory/SaleOrderDetails/${booking?.so_id?._id}`}
@@ -2111,7 +2135,6 @@ const BookingCheckout = () => {
                 </div>
               </Card>
             </Col>
-
           </Row>
           {selectedGame?.type === "Multiplayer" && selectedGame?.payLater || selectedGame?.type === "Single" && selectedGame?.payLater ?
             booking?.status === "Paid" ?
@@ -2264,6 +2287,7 @@ const BookingCheckout = () => {
                         </p>
                       </div>
                     </Col>
+                    
                     <Col md={3}>
 
                       {looserPlayer && (
@@ -2394,7 +2418,7 @@ const BookingCheckout = () => {
 
               <Row>
                 <Col xs={6} className="d-flex align-items-center">
-                  <p className="text-color">Adjustment </p>
+                  <p className="text-color">Adjustment / Discount </p>
                 </Col>
                 <Col xs={6} className="mb-2">
                   <Form.Control
@@ -2540,6 +2564,7 @@ const BookingCheckout = () => {
                     onClick={() => {
                       if (!isItemsSaved) {
                         alert("Please save the added items before proceeding with payment.");
+                        setShowConfirmModal(true)
                         return;
                       }
                       setShowCreditModal(true)
@@ -2674,8 +2699,15 @@ const BookingCheckout = () => {
             </Card>
           }
         </Col>
-
       </Row>
+
+      {showConfirmModal && (
+        <ItemsSave
+        show={showConfirmModal}
+        handleClose={() => setShowConfirmModal(false)}
+        handleConfirm={handleSaveItems}
+        />
+      )}
     </Container>
   );
 };
