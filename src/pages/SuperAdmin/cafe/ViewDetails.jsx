@@ -77,6 +77,7 @@ const ViewDetails = () => {
   const [allEarningData, setAllEarningData] = useState([]);
   const [filteredBookingsset, setFilteredBookingsset] = useState([]);
   const [filteredEarningData, setFilteredEarningData] = useState([]);
+  const [selectedGameId, setSelectedGameId] = useState('All');
   const [earningData, setEarningData] = useState([]);
   const [today, setToday] = useState(() => {
     const d = new Date();
@@ -180,16 +181,8 @@ const ViewDetails = () => {
       setFilteredEarningData(filtered);
     }
   }, [searchTerm, earningData]);
-
-
-
-
-
   const dataEarning = useSelector(state => state.bookings.earningData);
-
   console.log("earning -- ", dataEarning);
-
-
   useEffect(() => {
     dispatch(getBookings(cafeId));
   }, [dispatch, cafeId]);
@@ -681,14 +674,56 @@ const ViewDetails = () => {
 
   console.log("earningData == 00", earningData);
 
-  const filterBookingsEarning = async (eventKey) => {
+  // const filterBookingsEarning = async (eventKey,id) => {
+  //   console.log("eventKey == ", eventKey);
+  //   setSelectedItem(eventKey);
+
+  //   let updatedData = {
+  //     cafeId: cafeId,
+  //     startDate: today,
+  //     endDate: today,
+  //     gameId: id,
+  //   };
+
+  //   if (eventKey === "Current Month") {
+  //     updatedData.startDate = monthStartDate;
+  //     updatedData.endDate = monthEndDate;
+  //     updatedData.gameId = id;
+  //   } else if (eventKey === "This Week") {
+  //     updatedData.startDate = weekStartDate;
+  //     updatedData.endDate = weekEndDate;
+  //     updatedData.gameId = id;
+  //   } else if (eventKey === "Today") {
+  //     updatedData.startDate = today;
+  //     updatedData.endDate = today;
+  //     updatedData.gameId = id;
+  //   } else if (eventKey === "Custom Date") {
+  //     updatedData.startDate = customStartDate;
+  //     updatedData.endDate = customEndDate;
+  //     updatedData.gameId = id;
+  //   }
+  //   setRequestData(updatedData);
+
+  //   try {
+  //     const response = await dispatch(fetchEarning({ id: null, updatedData })).unwrap();
+  //     console.log("Fetched Data:", response.data);
+  //     setEarningData(response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching earning:", error);
+  //   }
+  // };
+
+  const filterBookingsEarning = async (eventKey = selectedItem, id = selectedGameId) => {
+    console.log("eventKey == ", eventKey, "gameId == ", id);
+
     setSelectedItem(eventKey);
+    setSelectedGameId(id);
 
     let updatedData = {
       cafeId: cafeId,
       startDate: today,
       endDate: today,
-      gameId: "",
+      gameId: id === 'All' ? null : id, // If All, no filter on game
     };
 
     if (eventKey === "Current Month") {
@@ -704,6 +739,7 @@ const ViewDetails = () => {
       updatedData.startDate = customStartDate;
       updatedData.endDate = customEndDate;
     }
+
     setRequestData(updatedData);
 
     try {
@@ -716,8 +752,6 @@ const ViewDetails = () => {
   };
 
   const dataToDisplay = filteredEarningData.length > 0 ? filteredEarningData : earningData;
-
-  // Pagination calculation
   const indexOfLastItem = currentPageEarning * itemsPerPageEarning;
   const indexOfFirstItem = indexOfLastItem - itemsPerPageEarning;
   const currentItems = dataToDisplay.slice(indexOfFirstItem, indexOfLastItem);
@@ -728,6 +762,26 @@ const ViewDetails = () => {
     setCurrentPageEarning(pageNumber);
   };
 
+  console.log("games 99 == 00", games);
+
+  const handleGameIDPass = async (id) => {
+    console.log('Selected Game ID:', id);
+    let updatedData = {
+      cafeId: cafeId,
+      startDate: today,
+      endDate: today,
+      gameId: id,
+    };
+
+    try {
+      const response = await dispatch(fetchEarning({ id: null, updatedData })).unwrap();
+      console.log("Fetched Data:", response.data);
+      setEarningData(response.data);
+    } catch (error) {
+      console.error("Error fetching earning:", error);
+    }
+
+  };
 
 
   return (
@@ -1241,10 +1295,7 @@ const ViewDetails = () => {
 
                 </Col>
               )}
-
-
               {/* Game  */}
-
               {activeKey === 'Game' && (
                 <Row className=" justify-content-start w-100 my-3 mx-1">
                   <Col sm={12} className="d-flex justify-content-sm-end justify-content-end  ">
@@ -1340,9 +1391,7 @@ const ViewDetails = () => {
                     )}
                 </Row>
               )}
-
               {/* Membership Cards */}
-
               {activeKey === "Membership" && (
                 <Row className=" d-flex flex-wrap justify-content-center p-2">
 
@@ -1444,12 +1493,7 @@ const ViewDetails = () => {
 
                 </Row>
               )}
-
-
-
               {activeKey === "Client" && (
-
-
                 <Row className="d-flex flex-wrap justify-content-center p-2 mx-1">
                   <Col sm={6} className=" alingn-items-start">
                     {/* <h5 className="text-start " style={{ fontSize: "18px", fontWeight: "600" }}>Client List</h5> */}
@@ -1573,13 +1617,7 @@ const ViewDetails = () => {
 
                   </Col>
                 </Row>
-
-
-
               )}
-
-
-
               {activeKey === "Booking" && (
 
 
@@ -1757,16 +1795,9 @@ const ViewDetails = () => {
 
 
               )}
-
-
               {/* earning */}
 
               {activeKey === "earning" && (
-
-
-
-
-
                 // <Row className="d-flex flex-wrap justify-content-center p-2 mx-1 my-3">
                 //   <Col sm={6} className="align-items-center">
                 //     <DropdownButton
@@ -1983,28 +2014,43 @@ const ViewDetails = () => {
 
                 <Row className="d-flex flex-wrap justify-content-between p-2 mx-1 my-3" >
                   <Col sm={5} className=" justify-content-start align-items-start">
-                    <DropdownButton
-                      id="dropdown-item-button"
-                      title={selectedItem || "Select"}
-                      variant="outline-dark"
-                      onSelect={(eventKey) => filterBookingsEarning(eventKey)}
-                      style={{ width: '400px' }}
-                    >
-                      <Dropdown.Item as="button" eventKey="" disabled>Select</Dropdown.Item>
-                      <Dropdown.Item eventKey="Today" as="button" defaultChecked >Today</Dropdown.Item>
-                      <Dropdown.Item eventKey="This Week" as="button">This Week</Dropdown.Item>
-                      <Dropdown.Item eventKey="Current Month" as="button">Current Month</Dropdown.Item>
+                    <Row className="align-items-center">
+                      <Col sm={6} className="mb-2 mb-sm-0">
+                        <DropdownButton
+                          id="dropdown-item-button"
+                          title={selectedItem || "Select"}
+                          variant="outline-dark"
+                          onSelect={(eventKey) => filterBookingsEarning(eventKey, selectedGameId)}
+                          style={{ width: '100%' }}
+                        >
+                          <Dropdown.Item as="button" eventKey="" disabled>Select</Dropdown.Item>
+                          <Dropdown.Item eventKey="Today" as="button">Today</Dropdown.Item>
+                          <Dropdown.Item eventKey="This Week" as="button">This Week</Dropdown.Item>
+                          <Dropdown.Item eventKey="Current Month" as="button">Current Month</Dropdown.Item>
+                          <Dropdown.Item eventKey="Custom Date" as="button">Custom Date</Dropdown.Item>
+                        </DropdownButton>
+                      </Col>
 
-                      <Dropdown.Item as="button" eventKey="Custom Date" >Custom Date</Dropdown.Item>
-                    </DropdownButton>
-
-
-
-
+                      <Col sm={6}>
+                        <Form.Select
+                          aria-label="Default select example"
+                          value={selectedGameId}
+                          onChange={(e) => {
+                            const selectedId = e.target.value;
+                            setSelectedGameId(selectedId);
+                            filterBookingsEarning(selectedItem, selectedId); // Pass current selectedItem (Today/This Week) + new Game ID
+                          }}
+                        >
+                          <option value="All">All</option>
+                          {games?.map((game) => (
+                            <option key={game._id} value={game._id}>
+                              {game.name}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </Col>
+                    </Row>
                   </Col>
-
-
-
                   <Col sm={6} className="d-flex justify-content-end my-2">
                     <h4 className="my-3" style={{ fontWeight: "600", fontSize: "16px", color: "#0062FF" }}>
                       Total Earning : ₹ {totalEarning || earningData.reduce((sum, booking) => sum + (booking?.totalAmountPaid || 0), 0)}
@@ -2208,8 +2254,6 @@ const ViewDetails = () => {
                       )}
                     </Col>
                   )}
-
-
                   <Col sm={12} className="my-3 alingn-items-end">
                     <Table hover responsive>
                       <thead className="table-light">
@@ -2259,61 +2303,61 @@ const ViewDetails = () => {
 
                     </Table>
                     {totalPagesEarning > 1 && (
-  <Pagination className="justify-content-end my-5">
-    <Pagination.Prev
-      onClick={() => handlePageChange(currentPageEarning - 1)}
-      disabled={currentPageEarning === 1}
-    />
+                      <Pagination className="justify-content-end my-5">
+                        <Pagination.Prev
+                          onClick={() => handlePageChange(currentPageEarning - 1)}
+                          disabled={currentPageEarning === 1}
+                        />
 
-    {/* Show the first page */}
-    {currentPageEarning > 3 && (
-      <Pagination.Item onClick={() => handlePageChange(1)}>
-        1
-      </Pagination.Item>
-    )}
+                        {/* Show the first page */}
+                        {currentPageEarning > 3 && (
+                          <Pagination.Item onClick={() => handlePageChange(1)}>
+                            1
+                          </Pagination.Item>
+                        )}
 
-    {/* Show "..." if the pages are more than 3 and the current page isn't too close to the beginning */}
-    {currentPageEarning > 3 && <Pagination.Ellipsis />}
+                        {/* Show "..." if the pages are more than 3 and the current page isn't too close to the beginning */}
+                        {currentPageEarning > 3 && <Pagination.Ellipsis />}
 
-    {/* Show the current page and a range of surrounding pages */}
-    {[...Array(totalPagesEarning)].map((_, idx) => {
-      const pageNum = idx + 1;
+                        {/* Show the current page and a range of surrounding pages */}
+                        {[...Array(totalPagesEarning)].map((_, idx) => {
+                          const pageNum = idx + 1;
 
-      if (
-        (pageNum >= currentPageEarning - 1 && pageNum <= currentPageEarning + 1) ||
-        pageNum === 1 ||
-        pageNum === totalPagesEarning
-      ) {
-        return (
-          <Pagination.Item
-            key={pageNum}
-            active={pageNum === currentPageEarning}
-            onClick={() => handlePageChange(pageNum)}
-          >
-            {pageNum}
-          </Pagination.Item>
-        );
-      }
+                          if (
+                            (pageNum >= currentPageEarning - 1 && pageNum <= currentPageEarning + 1) ||
+                            pageNum === 1 ||
+                            pageNum === totalPagesEarning
+                          ) {
+                            return (
+                              <Pagination.Item
+                                key={pageNum}
+                                active={pageNum === currentPageEarning}
+                                onClick={() => handlePageChange(pageNum)}
+                              >
+                                {pageNum}
+                              </Pagination.Item>
+                            );
+                          }
 
-      return null;
-    })}
+                          return null;
+                        })}
 
-    {/* Show "..." if the pages are more than 3 and the current page isn't too close to the end */}
-    {currentPageEarning < totalPagesEarning - 2 && <Pagination.Ellipsis />}
+                        {/* Show "..." if the pages are more than 3 and the current page isn't too close to the end */}
+                        {currentPageEarning < totalPagesEarning - 2 && <Pagination.Ellipsis />}
 
-    {/* Show the last page */}
-    {currentPageEarning < totalPagesEarning - 2 && (
-      <Pagination.Item onClick={() => handlePageChange(totalPagesEarning)}>
-        {totalPagesEarning}
-      </Pagination.Item>
-    )}
+                        {/* Show the last page */}
+                        {currentPageEarning < totalPagesEarning - 2 && (
+                          <Pagination.Item onClick={() => handlePageChange(totalPagesEarning)}>
+                            {totalPagesEarning}
+                          </Pagination.Item>
+                        )}
 
-    <Pagination.Next
-      onClick={() => handlePageChange(currentPageEarning + 1)}
-      disabled={currentPageEarning === totalPagesEarning}
-    />
-  </Pagination>
-)}
+                        <Pagination.Next
+                          onClick={() => handlePageChange(currentPageEarning + 1)}
+                          disabled={currentPageEarning === totalPagesEarning}
+                        />
+                      </Pagination>
+                    )}
 
 
 

@@ -4,178 +4,179 @@ import { useDispatch } from "react-redux";
 import { addGame, updateGame } from "../../../../store/slices/gameSlice";
 import { TiDeleteOutline } from "react-icons/ti";
 
-const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) => {
+const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) => {
 
 
 
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-      console.log("Cafe ID offcanvas:", cafeId);
-      const dispatch = useDispatch();
-      // const cafes = useSelector(selectCafes);
-      const [imagePreview, setImagePreview] = useState(null);
-      const fileInputRef = useRef(null);
-      const [width, setWidth] = useState(window.innerWidth < 768 ? "90%" : "50%");
-      const [areaDimension, setAreaDimension] = useState({
-        length: '',
-        breadth: '',
-        selectedArea: ''
-      });
-      const initialFormData = {
-        name: "",
-        type: "Single",
-        price: "",
-        zone: "Indoor",
-        areaDimension: areaDimension,
-        players: "1",
-        cancellation: true,
-        details: "",
-        gameImage: null,
-        cafe: cafeId,
-        commission: 0,
-        payLater: true,
-      };
+  console.log("Cafe ID offcanvas:", cafeId);
+  const dispatch = useDispatch();
+  // const cafes = useSelector(selectCafes);
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
+  const [width, setWidth] = useState(window.innerWidth < 768 ? "90%" : "50%");
+  const [areaDimension, setAreaDimension] = useState({
+    length: '',
+    breadth: '',
+    selectedArea: ''
+  });
+  const initialFormData = {
+    name: "",
+    type: "Single",
+    price: "",
+    zone: "Indoor",
+    areaDimension: areaDimension,
+    players: "1",
+    cancellation: true,
+    details: "",
+    gameImage: null,
+    cafe: cafeId,
+    commission: 0,
+    payLater: true,
+  };
 
-      const [formData, setFormData] = useState(initialFormData);
-
-    
+  const [formData, setFormData] = useState(initialFormData);
 
 
-    const handleSubmit = async (e) => {
-      
-  
-      console.log("submit form ", cafeId);
-      e.preventDefault();
-      setIsLoading(true);
-  
-      const formDataToSend = new FormData();
 
-      const { length, breadth, selectedArea } = formData.areaDimension;
-      const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
-  
-      // Append fields directly instead of using a loop
-      formDataToSend.append('name', formData.name);
-      formDataToSend.append('type', formData.type);
-      formDataToSend.append('price', formData.price);
-      formDataToSend.append('zone', formData.zone);
-      formDataToSend.append('size', sizeFormatted);
-      formDataToSend.append('players', formData.players);
-      formDataToSend.append('cancellation', formData.cancellation);
-      formDataToSend.append('details', formData.details);
-      formDataToSend.append('cafe', formData.cafe);
-      formDataToSend.append('commission', formData.commission);
-      formDataToSend.append('payLater', formData.payLater);
-  
-      // Append image file if exists
-      if (formData.gameImage instanceof File) {
-        formDataToSend.append('gameImage', formData.gameImage);
-        // console.log(`Appending image: ${formData.gameImage.name}`);
-      }
-      // Log the entire FormData object for debugging
-      // for (let pair of formDataToSend.entries()) {
-      //   console.log(`${pair[0]}: ${pair[1]}`);
-      // }
-      console.log(formData)
-  
-      try {
-          await dispatch(addGame(formDataToSend));
-          handleClose();
-       
-      } catch (error) {
-        console.error("Error submitting form:", error);
-        handleClose();
-      } finally {
-        setIsLoading(false);
-      }
-  
-      // Reset form data and image preview after submission
-      setFormData(initialFormData);
-      setImagePreview(null);
-     
-    }; 
 
-    const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setFormData((prev) => ({ ...prev, [name]: value }));
+  const handleSubmit = async (e) => {
 
-      if (['length', 'breadth', 'selectedArea'].includes(name)) {
-        setFormData((prev) => {
-          const updatedArea = {
-            ...prev.areaDimension,
-            [name]: value,
-          };
-          return {
-            ...prev,
-            areaDimension: updatedArea,
-          };
-        });
-      } else {
-        setFormData((prev) => ({
-          ...prev,
-          [name]: value,
-        }));
-      }
 
-         // Validation for number of players
-  if (name === 'players' && formData.type === 'Multiplayer') {
-    const num = parseInt(value);
-    if (num <= 1 ) {
-      setErrors(prev => ({
-        ...prev,
-        players: 'Please enter more than 1 player for multiplayer games.'
-      }));
-    } else {
-      setErrors(prev => ({ ...prev, players: '' }));
+    console.log("submit form ", cafeId);
+    e.preventDefault();
+    setIsLoading(true);
+
+    const formDataToSend = new FormData();
+
+    const { length, breadth, selectedArea } = formData.areaDimension;
+    const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
+
+    // Append fields directly instead of using a loop
+    formDataToSend.append('name', formData.name);
+    formDataToSend.append('type', formData.type);
+    formDataToSend.append('price', formData.price);
+    formDataToSend.append('zone', formData.zone);
+    formDataToSend.append('size', sizeFormatted);
+    formDataToSend.append('players', formData.players);
+    formDataToSend.append('cancellation', formData.cancellation);
+    formDataToSend.append('details', formData.details);
+    formDataToSend.append('cafe', formData.cafe);
+    formDataToSend.append('commission', formData.commission);
+    formDataToSend.append('payLater', formData.payLater);
+
+    // Append image file if exists
+    if (formData.gameImage instanceof File) {
+      formDataToSend.append('gameImage', formData.gameImage);
+      // console.log(`Appending image: ${formData.gameImage.name}`);
     }
-  }
+    // Log the entire FormData object for debugging
+    // for (let pair of formDataToSend.entries()) {
+    //   console.log(`${pair[0]}: ${pair[1]}`);
+    // }
+    console.log(formData)
 
-  // Optional: Reset players field if type is changed
-  if (name === 'type' && value === 'Single') {
-    setFormData(prev => ({
-      ...prev,
-      players: ''
-    }));
-    setErrors(prev => ({ ...prev, players: '' }));
-  } 
-  
-  // size validation l*b ft format
-  if (name === 'size') {
-    const regex = /^[0-9]+x[0-9]+ ft$/;
-    if (!regex.test(value)) {
-      setErrors(prev => ({
-        ...prev,
-        size: 'Please enter size in format l*b ft'
-      }));
-    } else {
-      setErrors(prev => ({ ...prev, size: '' }));
-    }}
+    try {
+      await dispatch(addGame(formDataToSend));
+      handleClose();
 
-    };
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      handleClose();
+    } finally {
+      setIsLoading(false);
+    }
 
-    const handleFileChange = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImagePreview(reader.result);
-          setFormData((prev) => ({ ...prev, gameImage: file }));
+    // Reset form data and image preview after submission
+    setFormData(initialFormData);
+    setImagePreview(null);
+
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (['length', 'breadth', 'selectedArea'].includes(name)) {
+      setFormData((prev) => {
+        const updatedArea = {
+          ...prev.areaDimension,
+          [name]: value,
         };
-        reader.readAsDataURL(file);
-      }
-    };
-    const handleRemoveImage = (e) => {
-      const updatedImagePreviews = imagePreview.filter((_, i) => i !== e);
-      setImagePreview(updatedImagePreviews);
-  
+        return {
+          ...prev,
+          areaDimension: updatedArea,
+        };
+      });
+    } else {
       setFormData((prev) => ({
         ...prev,
-        cafeImage: prev.imagePreview.filter((_, i) => i !== e),
+        [name]: value,
       }));
-    };
+    }
+
+    // Validation for number of players
+    if (name === 'players' && formData.type === 'Multiplayer') {
+      const num = parseInt(value);
+      if (num <= 1) {
+        setErrors(prev => ({
+          ...prev,
+          players: 'Please enter more than 1 player for multiplayer games.'
+        }));
+      } else {
+        setErrors(prev => ({ ...prev, players: '' }));
+      }
+    }
+
+    // Optional: Reset players field if type is changed
+    if (name === 'type' && value === 'Single') {
+      setFormData(prev => ({
+        ...prev,
+        players: 1
+      }));
+      setErrors(prev => ({ ...prev, players: '' }));
+    }
+
+    // size validation l*b ft format
+    if (name === 'size') {
+      const regex = /^[0-9]+x[0-9]+ ft$/;
+      if (!regex.test(value)) {
+        setErrors(prev => ({
+          ...prev,
+          size: 'Please enter size in format l*b ft'
+        }));
+      } else {
+        setErrors(prev => ({ ...prev, size: '' }));
+      }
+    }
+
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+        setFormData((prev) => ({ ...prev, gameImage: file }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  const handleRemoveImage = (e) => {
+    const updatedImagePreviews = imagePreview.filter((_, i) => i !== e);
+    setImagePreview(updatedImagePreviews);
+
+    setFormData((prev) => ({
+      ...prev,
+      cafeImage: prev.imagePreview.filter((_, i) => i !== e),
+    }));
+  };
 
   return (
-    <Offcanvas show={show} onHide={handleClose} placement="end"  style={{ width: "600px" }}>
+    <Offcanvas show={show} onHide={handleClose} placement="end" style={{ width: "600px" }}>
       <Offcanvas.Header closeButton>
         <Offcanvas.Title><h2 className="text-primary fw-bold">Add Game </h2></Offcanvas.Title>
       </Offcanvas.Header>
@@ -208,13 +209,13 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
                 required
                 className="form-select-lg border-2"
               >
-                <option  value='Single'>Single player</option>
+                <option value='Single'>Single player</option>
                 <option > Multiplayer</option>
               </Form.Select>
               {formData.type === "Multiplayer" && (
                 <Form.Group className="mb-2 mt-2">
                   <Form.Label htmlFor="players" className="fw-bold text-secondary">Number of Players
-                  <span className="text-danger">*</span>
+                    <span className="text-danger">*</span>
                   </Form.Label>
                   <Form.Control
                     id="players"
@@ -227,14 +228,14 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
                     placeholder="Enter number of players"
                   />
                   {errors.players && (
-                  <div className="invalid-feedback d-block">{errors.players}</div>
-                )}
+                    <div className="invalid-feedback d-block">{errors.players}</div>
+                  )}
                 </Form.Group>
               )}
             </Col>
             <Col md={6}>
               <Form.Label htmlFor="gamePrice" className="fw-bold text-secondary">Price of Game
-              <span className="text-danger">*</span>
+                <span className="text-danger">*</span>
               </Form.Label>
               <Form.Control
                 id="gamePrice"
@@ -249,7 +250,7 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
             </Col>
             <Col md={6}>
               <Form.Label htmlFor="gameSize" className="fw-bold text-secondary">Area of dimensions
-              <span className="text-danger">*</span>
+                <span className="text-danger">*</span>
               </Form.Label>
               {/* <Form.Control
                 id="gameSize"
@@ -266,53 +267,53 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
               )} */}
 
               <Row className="g-1">
-              <Col sm={4}>
-            
-              <Form.Control
-                type="number"
-                name="length"
-                value={formData.length}
-                onChange={handleInputChange}
-                placeholder="length"
-                required
-              />
-            
-          </Col>
+                <Col sm={4}>
 
-          <Col sm={4}>
-            
-              
-              <Form.Control
-                type="number"
-                name="breadth"
-                value={formData.breadth}
-                onChange={handleInputChange}
-                placeholder="breadth"
-                required
-              />
-            
-          </Col>
+                  <Form.Control
+                    type="number"
+                    name="length"
+                    value={formData.length}
+                    onChange={handleInputChange}
+                    placeholder="length"
+                    required
+                  />
 
-          <Col sm={4}>
-              
-          <Form.Select
-      name="selectedArea"
-      value={formData.selectedArea}
-      onChange={handleInputChange}
-      required
-    >
-      <option value="">Select Area</option>
-  <option value="ft">Feet (ft)</option>
-  <option value="in">Inches (in)</option>
-  <option value="yd">Yards (yd)</option>
-  <option value="m">Meters (m)</option>
-  <option value="cm">Centimeters (cm)</option>
-    </Form.Select>
-            
-          </Col>
+                </Col>
+
+                <Col sm={4}>
+
+
+                  <Form.Control
+                    type="number"
+                    name="breadth"
+                    value={formData.breadth}
+                    onChange={handleInputChange}
+                    placeholder="breadth"
+                    required
+                  />
+
+                </Col>
+
+                <Col sm={4}>
+
+                  <Form.Select
+                    name="selectedArea"
+                    value={formData.selectedArea}
+                    onChange={handleInputChange}
+                    required
+                  >
+                    <option value="">Select Area</option>
+                    <option value="ft">Feet (ft)</option>
+                    <option value="in">Inches (in)</option>
+                    <option value="yd">Yards (yd)</option>
+                    <option value="m">Meters (m)</option>
+                    <option value="cm">Centimeters (cm)</option>
+                  </Form.Select>
+
+                </Col>
               </Row>
-             
-              
+
+
             </Col>
           </Row>
 
@@ -373,8 +374,8 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
                 required
                 className="form-select-lg border-2"
               >
-                 <option value={true}>Yes</option>
-                 <option value={false}>No</option>
+                <option value={true}>Yes</option>
+                <option value={false}>No</option>
               </Form.Select>
             </Col>
             <Col md={6}>
@@ -387,8 +388,8 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
                 required
                 className="form-select-lg border-2"
               >
-                 <option value={true}>Yes</option>
-                 <option value={false}>No</option>
+                <option value={true}>Yes</option>
+                <option value={false}>No</option>
               </Form.Select>
             </Col>
           </Row>
@@ -396,7 +397,7 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
           <Row className="mb-2 g-4">
             <Col md={6}>
               <Form.Label className="fw-bold text-secondary d-block">Upload Image
-              <span className="text-danger">*</span>
+                <span className="text-danger">*</span>
               </Form.Label>
               <div className="border-2 align-items-center rounded-3 p-3 bg-light">
                 <Form.Control
@@ -443,36 +444,36 @@ const AddGamesOffcanvas = ({ show, handleClose,cafeId,selectedGameDetails  }) =>
               </div>
             </Col>
             <Col md={6}>
-            {/* gameImage */}
-            <div className="d-flex flex-wrap gap-2">
-             {imagePreview && (
-                    <div className="position-relative">
-                      <img
-                        src={imagePreview }
-                        alt="Preview"
-                        className="img-thumbnail"
-                        style={{
-                          width: "100px",
-                          height: "100px",
-                          objectFit: "cover",
-                        }}
-                      />
-                      <div
-                        onClick={handleRemoveImage}
-                        className="position-absolute top-0 end-0 cursor-pointer"
-                        style={{ transform: "translate(25%, -25%)" }}
-                      >
-                        <TiDeleteOutline color="red" size={25} />
-                      </div>
+              {/* gameImage */}
+              <div className="d-flex flex-wrap gap-2">
+                {imagePreview && (
+                  <div className="position-relative">
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="img-thumbnail"
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <div
+                      onClick={handleRemoveImage}
+                      className="position-absolute top-0 end-0 cursor-pointer"
+                      style={{ transform: "translate(25%, -25%)" }}
+                    >
+                      <TiDeleteOutline color="red" size={25} />
                     </div>
-                  )}
-            </div>
+                  </div>
+                )}
+              </div>
             </Col>
           </Row>
 
           <Form.Group className="mb-2">
             <Form.Label htmlFor="gameDetails" className="fw-bold text-secondary">Game Details
-            <span className="text-danger">*</span>
+              <span className="text-danger">*</span>
             </Form.Label>
             <Form.Control
               id="gameDetails"
