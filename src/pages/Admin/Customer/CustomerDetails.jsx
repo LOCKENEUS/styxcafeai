@@ -456,7 +456,7 @@ const CustomerDetails = () => {
                               ))
                             ) : (
                               <tr>
-                                <td colSpan="6" className="text-center">No pending payments</td>
+                                <td colSpan="6"  className="text-center">No pending payments</td>
                               </tr>
                             )}
                           </tbody>
