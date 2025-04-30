@@ -66,6 +66,7 @@ const ViewDetails = () => {
   const [lodergames, setLodergames] = useState(true);
   const [lodermembership, setLodermembership] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchQueryBooking, setSearchQueryBooking] = useState("");
   const [currentPagebooking, setCurrentPagebooking] = useState(1);
   const [selectedItem, setSelectedItem] = useState("Today");
   const [startDate, setStartDate] = useState(null);
@@ -249,7 +250,7 @@ const ViewDetails = () => {
     );
   });
 
-
+  
 
 
   // --------------------- gallery ---------------------
@@ -469,21 +470,24 @@ const ViewDetails = () => {
   // );
 
   // const clientList = useSelector((state) => state.customers.customers);
+  
   const filteredBookings = bookings.filter((booking) => {
-    const searchValue = searchQuery.toLowerCase();
+    const searchValue = searchQueryBooking.toLowerCase();
     return (
       booking.booking_id?.toString().toLowerCase().includes(searchValue) ||
       booking.customerName?.toLowerCase().includes(searchValue) ||
       booking.game_id?.name?.toLowerCase().includes(searchValue) ||
       booking.players?.length?.toString().toLowerCase().includes(searchValue) ||
-      booking.status?.toLowerCase().includes(searchValue) ||
+      booking?.gamePrice?.toString().toLowerCase().includes(searchValue) ||
+      booking.status ?.toLowerCase().includes(searchValue) ||           
+      booking.mode?.toLowerCase().includes(searchValue) ||    
       booking.slot_date?.toString().toLowerCase().includes(searchValue) ||
-      booking.slot_id?.start_time?.toString().toLowerCase().includes(searchValue) ||
-      booking.slot_id?.end_time?.toString().toLowerCase().includes(searchValue) ||
-      booking.slot_id?.duration?.toString().toLowerCase().includes(searchValue)
+      (booking?.slot_id?.start_time && convertTo12Hour(booking.slot_id.start_time)?.toLowerCase().includes(searchValue)) ||
+    (booking?.slot_id?.end_time && convertTo12Hour(booking.slot_id.end_time)?.toLowerCase().includes(searchValue))
+      // booking.slot_id?.duration?.toString().toLowerCase().includes(searchValue)
     );
   });
-
+  
   const paginatedDataBooking = filteredBookings.slice(
     (currentPagebooking - 1) * itemsPerPage,
     currentPagebooking * itemsPerPage
@@ -608,8 +612,8 @@ const ViewDetails = () => {
       (!endDate || slotDate <= new Date(endDate));
 
     return (
-      isWithinDateRange &&
-      (
+      // isWithinDateRange &&
+      // (
         booking.booking_id?.toString().toLowerCase().includes(searchValue) ||
         booking.customerName?.toLowerCase().includes(searchValue) ||
         booking.game_id?.name?.toLowerCase().includes(searchValue) ||
@@ -619,7 +623,7 @@ const ViewDetails = () => {
         booking.slot_id?.start_time?.toString().toLowerCase().includes(searchValue) ||
         booking.slot_id?.end_time?.toString().toLowerCase().includes(searchValue) ||
         booking.slot_id?.duration?.toString().toLowerCase().includes(searchValue)
-      )
+      // )
     );
   });
 
@@ -1619,8 +1623,6 @@ const ViewDetails = () => {
                 </Row>
               )}
               {activeKey === "Booking" && (
-
-
                 <Row className="d-flex flex-wrap justify-content-center p-2 mx-1">
                   <Col sm={6} className=" alingn-items-start">
 
@@ -1632,21 +1634,20 @@ const ViewDetails = () => {
                         className="form-control me-2"
                         placeholder="Search"
                         aria-label="Search"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        value={searchQueryBooking}
+                        onChange={(e) => setSearchQueryBooking(e.target.value)}
 
                       />
 
                     </div>
                   </Col>
                   <Col sm={12} className="my-3 alingn-items-end">
-
                     <Table hover responsive >
                       <thead className="table-light ">
                         <tr>
                           <th className="fw-bold">S/N</th>
                           <th className="fw-bold"> Booking Id </th>
-                          <th className="fw-bold">Name</th>
+                          <th className="fw-bold">Name 77</th>
                           <th className="fw-bold">Sports</th>
                           <th className="fw-bold">Players</th>
                           <th className="fw-bold">Mode</th>
@@ -1655,16 +1656,14 @@ const ViewDetails = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {(paginatedDataBooking?.length > 0 ? paginatedDataBooking : bookings)?.map((booking, idx) => (
+                        {(paginatedDataBooking?.length > 0 ? paginatedDataBooking : filteredBookings)?.map((booking, idx) => (
                           <tr key={idx}>
                             <td>{idx + 1}</td>
                             <td><span className="text-primary fw-bold" style={{ cursor: "pointer" }}
                               onClick={() => handleBookingClick(booking._id)}
                             >{booking.booking_id}</span></td>
-
                             <td>{booking.customerName}</td>
                             <td>{booking.game_id?.name}</td>
-
                             <td>{booking.players?.length || "---"}</td>
 
                             {/* <td>{booking.status || "---"}</td> */}
@@ -1704,12 +1703,16 @@ const ViewDetails = () => {
                             </td>
                             <td>
                               {formatDate(booking.slot_date)}<br />
-                              {/* {convertTo12Hour(booking?.slot_id?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time)} */}
-                              ₹ {
+                             
+                              {/* {
                                 booking?.booking_type === "Regular"
                                   ? `${convertTo12Hour(booking?.slot_id?.start_time)} - ${convertTo12Hour(booking?.slot_id?.end_time)}`
                                   : `${convertTo12Hour(booking?.custom_slot?.start_time)} - ${convertTo12Hour(booking?.custom_slot?.end_time)}`
-                              }
+                              } */}
+
+                              {convertTo12Hour(booking?.slot_id?.start_time || booking?.custom_slot?.start_time)}
+                              - {convertTo12Hour(booking?.slot_id?.end_time || booking?.custom_slot?.end_time)}
+                              
                             </td>
                             <td>
                               ₹ {booking.gamePrice}
@@ -1732,7 +1735,6 @@ const ViewDetails = () => {
                       >
                         <GrFormPrevious style={{ color: "black", fontSize: "20px" }} />
                       </Button>
-
                       {/* Page Numbers */}
                       <span className="d-flex align-items-center mx-2 gap-2">
                         <Button
@@ -1746,7 +1748,6 @@ const ViewDetails = () => {
                         >
                           1
                         </Button>
-
                         <Button
                           style={{
                             backgroundColor: currentPagebooking === 2 ? "#0062ff" : "white",
@@ -1758,9 +1759,7 @@ const ViewDetails = () => {
                         >
                           2
                         </Button>
-
                         <span style={{ fontSize: "16px", fontWeight: "500" }}>...</span>
-
                         <Button
                           style={{
                             backgroundColor: currentPagebooking === totalPagesboking ? "#0062ff" : "white",
@@ -1791,9 +1790,6 @@ const ViewDetails = () => {
 
                   </Col>
                 </Row>
-
-
-
               )}
               {/* earning */}
 

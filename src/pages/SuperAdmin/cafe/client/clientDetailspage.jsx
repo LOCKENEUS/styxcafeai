@@ -62,14 +62,15 @@ const ClientDetailsPage = () => {
         const searchValue = searchQuery.toLowerCase();
         return (
             booking.booking_id?.toString().toLowerCase().includes(searchValue) ||
-            booking.customerName?.toLowerCase().includes(searchValue) ||
-            booking.game_id?.name?.toLowerCase().includes(searchValue) ||
-            booking.players?.length?.toString().toLowerCase().includes(searchValue) ||
-            booking.status?.toLowerCase().includes(searchValue) ||
-            booking.slot_date?.toString().toLowerCase().includes(searchValue) ||
-            booking.slot_id?.start_time?.toString().toLowerCase().includes(searchValue) ||
-            booking.slot_id?.end_time?.toString().toLowerCase().includes(searchValue) ||
-            booking.slot_id?.duration?.toString().toLowerCase().includes(searchValue)
+                  booking.customerName?.toLowerCase().includes(searchValue) ||
+                  booking.game_id?.name?.toLowerCase().includes(searchValue) ||
+                  booking.players?.length?.toString().toLowerCase().includes(searchValue) ||
+                  booking?.gamePrice?.toString().toLowerCase().includes(searchValue) ||
+                  booking.status ?.toLowerCase().includes(searchValue) ||           
+                  booking.mode?.toLowerCase().includes(searchValue) ||    
+                  booking.slot_date?.toString().toLowerCase().includes(searchValue) ||
+                  (booking?.slot_id?.start_time && convertTo12Hour(booking.slot_id.start_time)?.toLowerCase().includes(searchValue)) ||
+                (booking?.slot_id?.end_time && convertTo12Hour(booking.slot_id.end_time)?.toLowerCase().includes(searchValue))
         );
     });
 
@@ -300,13 +301,13 @@ const ClientDetailsPage = () => {
                             </Card>
 
 
-                            <Card className="rounded-4 my-3">
+                            <Card className="rounded-4 my-3 h-100" style={{ maxHeight: "530px",overflow: "auto" }}>
 
                                 <Row className="mx-2">
                                     <Col sm={12} className="my-3  alingn-items-end">
                                         <div className="mx-1 my-1 d-flex justify-content-between align-items-center">
                                             <h4 className="mb-3" style={{ fontWeight: 600, fontSize: "21px" }}>
-                                                Booking List
+                                                Booking List 
                                             </h4>
                                             <div className="mx-1 my-2 d-flex justify-content-end">
                                                 <input
@@ -318,12 +319,11 @@ const ClientDetailsPage = () => {
                                                     onChange={(e) => setSearchQuery(e.target.value)}
 
                                                 />
-
                                             </div>
 
                                         </div>
                                         <Table hover responsive >
-                                            <thead className="table-light ">
+                                            <thead className="table-light " >
                                                 <tr>
                                                     <th className="fw-bold">S/N</th>
                                                     <th className="fw-bold"> Booking Id </th>
@@ -386,11 +386,13 @@ const ClientDetailsPage = () => {
                                                         <td>
                                                             {formatDate(booking.slot_date)}<br />
                                                             {/* {convertTo12Hour(booking?.slot_id?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time)} */}
-                                                            ₹ {
+                                                             {/* {
                                                                 booking?.booking_type === "Regular"
                                                                     ? `${convertTo12Hour(booking?.slot_id?.start_time)} - ${convertTo12Hour(booking?.slot_id?.end_time)}`
                                                                     : `${convertTo12Hour(booking?.custom_slot?.start_time)} - ${convertTo12Hour(booking?.custom_slot?.end_time)}`
-                                                            }
+                                                            } */}
+                                                            {convertTo12Hour(booking?.slot_id?.start_time || booking?.custom_slot?.start_time)}
+                                                             - {convertTo12Hour(booking?.slot_id?.end_time || booking?.custom_slot?.end_time)}
                                                         </td>
                                                         <td>
                                                             ₹ {booking.gamePrice}

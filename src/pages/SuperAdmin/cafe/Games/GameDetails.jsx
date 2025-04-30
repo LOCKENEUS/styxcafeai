@@ -787,7 +787,7 @@ const { games } = useSelector((state) => state.games);
           </Card>
 
 
-          <Card className="my-4 h-100" style={{ maxHeight: "600px" }}>
+          <Card className="my-4 h-100" style={{ maxHeight: "600px", overflow:"auto" }}>
 
             {activeKey === 'slotTime' && (
               <Row className="my-3 mx-1 align-items-center">
