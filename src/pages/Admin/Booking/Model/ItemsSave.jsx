@@ -3,9 +3,9 @@ import { Modal, Button, Container } from "react-bootstrap";
 const ItemsSave = ({ show, handleClose, handleConfirm }) => {
   
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal size="sm" show={show} onHide={handleClose}>
       <div className="modal-content rounded-2">
-        <Modal.Header style={{ backgroundColor: "", padding: "20px" }} className="d-flex ">
+        <Modal.Header className="d-flex p-3">
           <Modal.Title>
            
           </Modal.Title>

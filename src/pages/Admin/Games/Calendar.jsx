@@ -336,6 +336,11 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
       ) : (
         slots
           .filter((slot) => slot.day === selectedDay)
+          .sort((a, b) => {
+            const [aH, aM] = a.start_time.split(":").map(Number);
+            const [bH, bM] = b.start_time.split(":").map(Number);
+            return aH !== bH ? aH - bH : aM - bM;
+          })
           .map((slot, index) => {
             const currentTime = new Date();
             const slotDateTime = new Date(date);
@@ -350,14 +355,14 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
             return (
               <Card key={index} className="slot-row mb-2 border border-2 p-2">
                 <div className="d-flex  flex-md-row justify-content-between align-items-center">
-                  <span className="mb-2 mb-md-0">
+                  <span className="mb-2 mx-2 text-medium mb-md-0">
                     {convertTo12Hour(slot.start_time)} - {convertTo12Hour(slot.end_time)}
                   </span>
                   <div className="d-flex  flex-md-row align-items-center gap-3">
                     <span className={booked ? "text-danger" : slot.is_active ? "text-success" : "text-danger"}>
                       {booked ? "Booked" : slot.is_active ? "Available" : "Unavailable"}
                     </span>
-                    <span>₹{slot.slot_price ? slot.slot_price : selectedGame?.data.price}</span>
+                    <span className="text-medium">₹{slot.slot_price ? slot.slot_price : selectedGame?.data.price}</span>
                     <Button
                       variant="primary"
                       disabled={booked || isPast || !slot.is_active}

@@ -140,14 +140,14 @@ const RecommendedGames = () => {
                   />
                   <Card.Body>
                     <Card.Title
-                    style={{
-                      fontWeight: "600",
-                      fontSize: "16px",
-                    }}
+                      style={{
+                        fontWeight: "600",
+                        fontSize: "16px",
+                      }}
                     >{game.name}</Card.Title>
                     <Card.Text>
                       <small className="text-success">
-                        ● {game.type} ({game.size} players)
+                        ● {game.type} ({game.players} players) {game?.payLater && <span className="text-warning">Pay Later</span>}
                       </small>
                     </Card.Text>
                     <div className="d-flex justify-content-between align-items-center">
@@ -160,7 +160,7 @@ const RecommendedGames = () => {
                           navigate(`/admin/games/${game._id}`);
                           setIsLoading(false);
                         }}
-                       >
+                      >
                         {isLoading ? <Spinner animation="border" size="sm" /> : <MdOutlineArrowOutward />}
                       </button>
                     </div>
@@ -170,7 +170,7 @@ const RecommendedGames = () => {
             ))
           ) : (
             <Col className="text-center py-5">
-              <div className="d-flex flex-column align-items-center">
+              {/* <div className="d-flex flex-column align-items-center">
                 <img
                   src={Nogame}
                   alt="No games"
@@ -178,6 +178,33 @@ const RecommendedGames = () => {
                 />
                 <h5 className="mt-3 text-muted">No indoor games available</h5>
                 <p className="text-muted">Click the + button to add a new game</p>
+              </div> */}
+
+              <div className="d-flex flex-column justify-content-center align-items-center muted-text fs-3"
+                style={{
+                  width: "24%",
+                  // background: "white", 
+                  paddingTop: "12%",
+                  paddingBottom: "12%",
+                  borderRadius: "20px",
+                  border: "1px dashed #C4C4C4"
+                }}
+              >
+
+                <Link to="/admin/games/create-new-game">
+                  <IoAdd
+                    style={{
+                      fontSize: 'clamp(30px, 8vw, 40px)',
+                      cursor: 'pointer',
+                      backgroundColor: 'white',
+                      color: 'blue',
+                      border: '2px solid blue',
+                      borderRadius: '50%',
+                      padding: '0.2rem',
+                    }}
+                  />
+                </Link>
+                No Games Added Yet
               </div>
             </Col>
           )}
@@ -217,7 +244,7 @@ const RecommendedGames = () => {
                     <Card.Title>{game.name}</Card.Title>
                     <Card.Text>
                       <small className="text-success">
-                        ● {game.type} ({game.size} players)
+                        ● {game.type} ({game.players} players) {game?.payLater && <span className="text-warning">Pay Later</span>}
                       </small>
                     </Card.Text>
                     <div className="d-flex justify-content-between align-items-center">
@@ -236,7 +263,7 @@ const RecommendedGames = () => {
             ))
           ) : (
             <Col className="text-center py-5">
-              <div className="d-flex flex-column align-items-center">
+              {/* <div className="d-flex flex-column align-items-center">
                 <img
                   src={Nogame}
                   alt="No games"
@@ -244,6 +271,33 @@ const RecommendedGames = () => {
                 />
                 <h5 className="mt-3 text-muted">No outdoor games available</h5>
                 <p className="text-muted">Click the + button to add a new game</p>
+              </div> */}
+
+              <div className="d-flex flex-column justify-content-center align-items-center muted-text fs-3"
+                style={{
+                  width: "24%",
+                  // background: "white", 
+                  paddingTop: "12%",
+                  paddingBottom: "12%",
+                  borderRadius: "20px",
+                  border: "1px dashed #C4C4C4"
+                }}
+              >
+
+                <Link to="/admin/games/create-new-game">
+                  <IoAdd
+                    style={{
+                      fontSize: 'clamp(30px, 8vw, 40px)',
+                      cursor: 'pointer',
+                      backgroundColor: 'white',
+                      color: 'blue',
+                      border: '2px solid blue',
+                      borderRadius: '50%',
+                      padding: '0.2rem',
+                    }}
+                  />
+                </Link>
+                No Games Added Yet
               </div>
             </Col>
           )}

@@ -1427,11 +1427,11 @@ const BookingCheckout = () => {
         total += item.total;
       })
       setAddOnTotal(total)
-      
-    }else{
+
+    } else {
       setAddOnTotal(0)
     }
-  }, [selectedItems,selectedIds]);
+  }, [selectedItems, selectedIds]);
 
   // const handleChange = (selectedOption) => {
   //   let id = selectedOption.value;
@@ -1768,14 +1768,17 @@ const BookingCheckout = () => {
               </Col>
             </Row>
           </Card>
-          {booking?.booking_type === "Custom" || booking?.status !== "Pending" ? <></> : <Button
-            variant="success"
-            className="w-100 mt-3"
-            style={{ backgroundColor: "#03D41414", color: "#00AF0F" }}
-            onClick={() => navigate(`/admin/booking/edit/${booking?._id}`)}
-          >
-            Edit Booking
-          </Button>}
+          {(booking?.booking_type === "Regular" && selectedGame?.cancellation && booking?.status === "Pending") || (booking?.booking_type === "Regular" && selectedGame?.cancellation && !selectedGame?.payLater) ?
+            <Button
+              variant="success"
+              className="w-100 mt-3"
+              style={{ backgroundColor: "#03D41414", color: "#00AF0F" }}
+              onClick={() => navigate(`/admin/booking/edit/${booking?._id}`)}
+            >
+              Edit Booking
+            </Button>
+            :
+            <></>}
         </Col>
 
         <Col md={9} className="d-flex flex-column gap-1 justify-content-between">
@@ -2234,12 +2237,12 @@ const BookingCheckout = () => {
                         )
                       }
 
-                      <Modal show={showConfirm} onHide={() => setShowConfirm(false)} centered>
-                        <Modal.Header closeButton>
+                      <Modal size="sm" show={showConfirm} onHide={() => setShowConfirm(false)} centered>
+                        <Modal.Header className="p-3" closeButton>
                           <Modal.Title>Confirm Stop Timer</Modal.Title>
                         </Modal.Header>
-                        <Modal.Body>Are you sure you want to stop the timer?</Modal.Body>
-                        <Modal.Footer>
+                        <Modal.Body className="p-3">Are you sure you want to stop the timer?</Modal.Body>
+                        <Modal.Footer className="p-3">
                           <Button variant="secondary" onClick={() => setShowConfirm(false)}>
                             No
                           </Button>
@@ -2287,7 +2290,7 @@ const BookingCheckout = () => {
                         </p>
                       </div>
                     </Col>
-                    
+
                     <Col md={3}>
 
                       {looserPlayer && (
@@ -2703,9 +2706,9 @@ const BookingCheckout = () => {
 
       {showConfirmModal && (
         <ItemsSave
-        show={showConfirmModal}
-        handleClose={() => setShowConfirmModal(false)}
-        handleConfirm={handleSaveItems}
+          show={showConfirmModal}
+          handleClose={() => setShowConfirmModal(false)}
+          handleConfirm={handleSaveItems}
         />
       )}
     </Container>

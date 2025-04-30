@@ -330,6 +330,11 @@ const BookingDetails = () => {
       tax_amt: item.totalTax
     }))
 
+    let booking_type = "Regular"
+    if (!slot._id) {
+      booking_type = "Custom"
+    }
+
     try {
       const bookingData = {
         cafe: cafeId,
@@ -343,7 +348,9 @@ const BookingDetails = () => {
         slot_date: newdate,
         players: teamMembers,
         playerCredits: playerCredits,
-        items: mappedItems
+        items: mappedItems,
+        custom_slot: slot,
+        booking_type: booking_type,
       };
       if (showOnCredit) {
         let limit = selectedCustomer?.creditLimit - selectedCustomer?.creditAmount
@@ -505,6 +512,11 @@ const BookingDetails = () => {
         tax_amt: item.totalTax
       }))
 
+      let booking_type = "Regular"
+      if (!slot._id) {
+        booking_type = "Custom"
+      }
+
       // Step 1: Create Razorpay Order FIRST (before creating booking)
       const response = await fetch(`${backend_url}/admin/booking/payment`, {
         method: "POST",
@@ -552,7 +564,9 @@ const BookingDetails = () => {
               playerCredits: playerCredits,
               slot_date: newdate,
               players: teamMembers,
-              items: mappedItems
+              items: mappedItems,
+              custom_slot: slot,
+              booking_type: booking_type,
             };
 
             const result = await dispatch(addBooking(bookingData)).unwrap();
@@ -705,7 +719,7 @@ const BookingDetails = () => {
                         </small>
                       </div>
                     </div>
-                  )) : <div className="text-center mt-4">No customers found</div>
+                  )) : <div className="text-center mt-4">No customers available</div>
               ) : (
                 <>
                   <div className="d-flex align-items-center p-2 mb-2 rounded" style={{ background: "#F4F4F4" }}>

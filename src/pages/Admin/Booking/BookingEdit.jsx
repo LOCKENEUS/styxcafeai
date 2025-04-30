@@ -52,6 +52,7 @@ const BookingEdit = () => {
     const [activeTab, setActiveTab] = useState("checkout");
     const [showClientModal, setShowClientModal] = useState(false);
     const [selectedOption, setSelectedOption] = useState("Payment Options");
+    const [filteredSlots, setFilteredSlots] = useState([]);
 
     const backend_url = import.meta.env.VITE_API_URL;
     const dispatch = useDispatch();
@@ -76,7 +77,7 @@ const BookingEdit = () => {
     useEffect(() => {
         const user = JSON.parse(sessionStorage.getItem('user'));
         if (user?._id) {
-            dispatch(getGames(user._id));
+            dispatch(getGames(user?._id));
         }
     }, [dispatch]);
 
@@ -99,14 +100,30 @@ const BookingEdit = () => {
     }, [dispatch, selectedGame]);
 
     useEffect(() => {
+        if (date && slots.length > 0) {
+            console.log("date...", date)
+            const selectedDay = new Date(date).toLocaleDateString("en-US", { weekday: "long" });
+            const availableSlots = slots.filter(slot => slot.day === selectedDay)
+                .sort((a, b) => {
+                    const [aH, aM] = a.start_time.split(":").map(Number);
+                    const [bH, bM] = b.start_time.split(":").map(Number);
+                    return aH !== bH ? aH - bH : aM - bM;
+                })
+            setFilteredSlots(availableSlots)
+        }
+    }, [date, slots]);
+
+    console.log("filtered", filteredSlots)
+
+    useEffect(() => {
         if (booking) {
-            const mappedPlayers = booking?.players?.map((player) => ({ 
-                id: player?._id, 
-                name: player?.name, 
-                contact_no: player?.contact_no, 
-                creditEligibility: player?.creditEligibility, 
-                creditLimit: player.creditLimit, 
-                creditAmount: player.creditAmount, 
+            const mappedPlayers = booking?.players?.map((player) => ({
+                id: player?._id,
+                name: player?.name,
+                contact_no: player?.contact_no,
+                creditEligibility: player?.creditEligibility,
+                creditLimit: player.creditLimit,
+                creditAmount: player.creditAmount,
             }));
             const isoDate = booking?.slot_date;
             const dateOnly = new Date(isoDate).toISOString().split("T")[0];
@@ -118,8 +135,6 @@ const BookingEdit = () => {
 
         }
     }, [booking]);
-
-    console.log("teamMembers", teamMembers);
 
     useEffect(() => {
         if (cafeId) {
@@ -146,7 +161,6 @@ const BookingEdit = () => {
         }
     }, [dispatch, gameId, slotId]);
 
-    console.log("payableAmount", payableAmount);
     const handleAddPlayer = async () => {
         const submittedData = new FormData();
         submittedData.append("cafe", cafeId);
@@ -208,13 +222,13 @@ const BookingEdit = () => {
         setSearchedCustomers([]);
 
         let isAlreadyAdded = teamMembers?.some(
-            (member) => member.contact_no === customer.contact_no
+            (member) => member?.contact_no === customer?.contact_no
         );
 
-        isAlreadyAdded = selectedCustomer.contact_no === customer.contact_no
+        isAlreadyAdded = selectedCustomer?.contact_no === customer?.contact_no
 
         if (!isAlreadyAdded) {
-            setTeamMembers([...teamMembers, { id: customer._id, name: customer.name, contact_no: customer.contact_no }]);
+            setTeamMembers([...teamMembers, { id: customer?._id, name: customer?.name, contact_no: customer?.contact_no }]);
         } else {
             alert("Customer is already added!");
         }
@@ -238,7 +252,27 @@ const BookingEdit = () => {
 
         }
     }
-    console.log("slot", slot);
+
+    const sortSlotsByTime = (slots) => {
+        const convertTo24HourMinutes = (timeStr) => {
+            let [time, modifier] = timeStr.split(" ");
+            let [hours, minutes] = time.split(":").map(Number);
+
+            if (modifier === "PM" && hours !== 12) {
+                hours += 12;
+            }
+            if (modifier === "AM" && hours === 12) {
+                hours = 0;
+            }
+            return hours * 60 + minutes;
+        };
+
+        return slots.sort((a, b) => {
+            const aStart = convertTo24HourMinutes(a.start_time);
+            const bStart = convertTo24HourMinutes(b.start_time);
+            return aStart - bStart;
+        });
+    };
 
     return (
         <Container fluid className="p-4 ">
@@ -561,6 +595,7 @@ const BookingEdit = () => {
                                                 <Form.Control
                                                     type="date"
                                                     value={date}
+                                                    min={new Date().toISOString().split("T")[0]} // Prevent backdates
                                                     onChange={(e) => setDate(e.target.value)}
                                                 />
                                             </Form.Group>
@@ -592,7 +627,7 @@ const BookingEdit = () => {
                                     </Col> */}
 
                                         <Col md={6}>
-                                            <Form.Group>
+                                            {/* <Form.Group>
                                                 <Form.Label className="text-color">Select Slot</Form.Label>
                                                 <Form.Select
                                                     size="sm"
@@ -617,9 +652,34 @@ const BookingEdit = () => {
                                                         );
                                                     })}
                                                 </Form.Select>
+                                            </Form.Group> */}
+                                            <Form.Group>
+                                                <Form.Label className="text-color">Select Slot</Form.Label>
+                                                <Form.Select
+                                                    size="sm"
+                                                    className="border-2"
+                                                    value={slot ? slot?._id : ""}
+                                                    onChange={(e) => {
+                                                        const selectedSlot = filteredSlots.find(s => s?._id === e.target.value);
+                                                        setSlot(selectedSlot);
+                                                    }}
+                                                >
+                                                    {filteredSlots.length > 0 ? <option value="">Select Slot</option> : <option>No slots available</option>}
+                                                    {filteredSlots.map((slot, index) => {
+                                                        const isBooked = bookings.some(
+                                                            (booking) =>
+                                                                booking?.slot_id?._id === slot?._id &&
+                                                                booking?.slot_date.startsWith(date)
+                                                        );
+                                                        return (
+                                                            <option key={index} value={slot?._id} disabled={isBooked}>
+                                                                {slot?.start_time} - {slot?.end_time} {isBooked ? "(Booked)" : ""}
+                                                            </option>
+                                                        );
+                                                    })}
+                                                </Form.Select>
                                             </Form.Group>
                                         </Col>
-
                                     </Row>
                                 </Card>
                             ) : (

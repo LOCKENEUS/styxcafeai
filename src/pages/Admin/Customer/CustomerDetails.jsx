@@ -110,7 +110,10 @@ const CustomerDetails = () => {
         updateData: { bookingIds: selectedBookingIds }
       })
     );
+
+    await dispatch(getCustomerById(id));
   }
+
 
   const handleCollectOnline = async () => {
     await dispatch(
@@ -129,6 +132,7 @@ const CustomerDetails = () => {
     await dispatch(
       collectCustomCreditAmount({ id, amount })
     );
+    await dispatch(getCustomerById(id));
   };
 
   const handleCollectCustomCreditOnline = async () => {
@@ -198,8 +202,18 @@ const CustomerDetails = () => {
             }}>
               <p><strong className="">Name:</strong> <span className="float-end">{selectedCustomer?.data?.name || "N/A"}</span></p>
               <p><strong className="">Credit Limit:</strong> <span className="float-end">₹ {selectedCustomer?.data?.creditLimit || "N/A"}</span></p>
-              <p><strong className="">Credit Left:</strong> <span className="float-end">₹ {selectedCustomer?.data?.creditLimit - selectedCustomer?.data?.creditAmount || "N/A"}</span></p>
-
+              {/* <p><strong className="">Credit Left:</strong> <span className="float-end">₹ {selectedCustomer?.data?.creditLimit - selectedCustomer?.data?.creditAmount || "N/A"}</span></p> */}
+              <p>
+                <strong className="">Credit Left:</strong>
+                <span className="float-end">
+                  ₹ {
+                    selectedCustomer?.data?.creditLimit != null &&
+                      selectedCustomer?.data?.creditAmount != null
+                      ? selectedCustomer.data.creditLimit - selectedCustomer.data.creditAmount
+                      : "N/A"
+                  }
+                </span>
+              </p>
               <p><strong className="">Gender:</strong> <span className="float-end">{selectedCustomer?.data?.gender || "N/A"}</span></p>
               <p><strong>Email Id:</strong> <span className="float-end">{selectedCustomer?.data?.email || "N/A"}</span></p>
               <p><strong>Phone Number:</strong> <span className="float-end">{selectedCustomer?.data?.contact_no || "N/A"}</span></p>
@@ -314,8 +328,8 @@ const CustomerDetails = () => {
                           className="form-control shadow-lg w-50 mb-3"
                         />
                         <Button size="sm" variant="primary" className="float-end m-2 mb-3" onClick={() => setShowCollectModal(true)}>Custom Credit Collection</Button>
-                        {/* </InputGroup> */}
                       </div>
+                      <div><span className="float-end px-3 text-color fs-4">Credit: ₹{creditTotal}</span></div>
                       <div className="table-responsive">
                         <Table className="table">
                           <thead style={{ backgroundColor: "#0062FF0D" }}>
@@ -324,7 +338,7 @@ const CustomerDetails = () => {
                               <th style={{ fontWeight: "600" }}  >Booking ID</th>
                               <th style={{ fontWeight: "600" }}  >Game</th>
                               <th style={{ fontWeight: "600" }}  >Slot Date</th>
-                              
+
                               <th style={{ fontWeight: "600" }}  >Total</th>
                               <th style={{ fontWeight: "600" }}  >Credit</th>
                               {collectMode && <th style={{ fontWeight: "600" }}  >
@@ -349,7 +363,7 @@ const CustomerDetails = () => {
                                   <td style={{ fontWeight: "600", color: "blue", cursor: "pointer" }} onClick={() => navigate(`/admin/booking/checkout/${credit.booking_id}`)} >{credit.booking_no}</td>
                                   <td>{credit.game_name}</td>
                                   <td>{new Date(credit.slot_date).toLocaleDateString()}</td>
-                                  
+
                                   <td>₹ {credit.total}</td>
                                   <td>
                                     <span >
@@ -445,7 +459,7 @@ const CustomerDetails = () => {
                             </tr>
                           </thead>
                           <tbody>
-                            {selectedCustomer?.bookings.length > 0 ? (
+                            {/* {selectedCustomer?.bookings.length > 0 ? (
                               selectedCustomer?.bookings.map((booking, index) => (
                                 <tr key={booking._id}>
                                   <td>{index + 1}</td>
@@ -458,7 +472,40 @@ const CustomerDetails = () => {
                               <tr>
                                 <td colSpan="6"  className="text-center">No pending payments</td>
                               </tr>
+                            )} */}
+
+                            {selectedCustomer?.bookings?.filter(
+                              booking => booking?.playerCredits[0]?.paymentDate
+                            ).length > 0 ? (
+                              selectedCustomer?.bookings
+                                .filter(booking => booking?.playerCredits[0]?.paymentDate)
+                                .map((booking, index) => (
+                                  <tr key={booking._id}>
+                                    <td>{index + 1}</td>
+                                    <td
+                                      style={{ fontWeight: "600", color: "blue", cursor: "pointer" }}
+                                      onClick={() => navigate(`/admin/booking/checkout/${booking.booking_id}`)}
+                                    >
+                                      {booking.booking_id}
+                                    </td>
+                                    <td>
+                                      {booking?.playerCredits[0]?.txn_id
+                                        ? booking.playerCredits[0].txn_id
+                                        : "Cash"}
+                                    </td>
+                                    <td>
+                                      {new Date(booking.playerCredits[0].paymentDate).toLocaleDateString()}
+                                    </td>
+                                  </tr>
+                                ))
+                            ) : (
+                              <tr>
+                                <td colSpan="6" className="text-center">
+                                  No pending payments
+                                </td>
+                              </tr>
                             )}
+
                           </tbody>
                         </Table>
                       </div>

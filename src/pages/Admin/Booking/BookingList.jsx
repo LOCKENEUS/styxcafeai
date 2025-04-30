@@ -218,6 +218,8 @@ const BookingList = () => {
         }
     };
 
+    console.log("filteredBookings", currentBookings);
+
     return (
         <div className="container-fluid min-vh-100">
             <Row>
@@ -482,8 +484,10 @@ const BookingList = () => {
                                             (() => {
                                                 const now = new Date();
                                                 const slotDate = new Date(booking?.slot_date);
-                                                const [startHour, startMinute] = (booking?.slot_id?.start_time || "").split(":").map(Number);
-                                                const [endHour, endMinute] = (booking?.slot_id?.end_time || "").split(":").map(Number);
+                                                console.log("slot-start-time", booking?.slot_id?.start_time);
+                                                console.log("cistom-slot-start-time", booking?.custom_slot?.start_time);
+                                                const [startHour, startMinute] = (booking?.slot_id?.start_time ? booking?.slot_id?.start_time : booking?.custom_slot?.start_time).split(":").map(Number);
+                                                const [endHour, endMinute] = (booking?.slot_id?.end_time ? booking?.slot_id?.end_time : booking?.custom_slot?.end_time).split(":").map(Number);
                                             
                                                 const startDateTime = new Date(slotDate);
                                                 startDateTime.setHours(startHour, startMinute, 0, 0);
@@ -500,7 +504,7 @@ const BookingList = () => {
                                         className="align-middle"
                                         style={{ border: "none", minWidth: "120px" }}
                                     >
-                                        {formatDate(booking.slot_date)}<br />
+                                        {formatDate(booking?.slot_date)}<br />
                                         {/* {booking?.booking_type === "Regular" ? (convertTo12Hour(booking?.slot_id?.start_time)-convertTo12Hour(booking?.slot_id?.end_time))
                                           :
                                           (convertTo12Hour(booking?.custom_slot?.start_time)-convertTo12Hour(booking?.custom_slot?.end_time))
