@@ -22,7 +22,7 @@ const CustomerList = () => {
   useEffect(() => {
     const user = JSON.parse(sessionStorage.getItem('user'));
     const cafeId = user?._id;
-    
+
     if (cafeId) {
       dispatch(getCustomers(cafeId));
     }
@@ -58,7 +58,7 @@ const CustomerList = () => {
   const totalPages = Math.ceil(customers.length / itemsPerPage);
 
   // Filter customers based on search term
-  const filteredCustomers = customers.filter(customer => 
+  const filteredCustomers = customers.filter(customer =>
     customer?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     customer?.contact_no?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     customer?.email?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -71,11 +71,11 @@ const CustomerList = () => {
           <h4 className="text-dark fw-bold" style={{ fontSize: 'clamp(20px, 5vw, 25px)', margin: 0 }}>
             Customer List
           </h4>
-          
+
           {/* Search Input */}
           <InputGroup className="mb-3 w-50">
             <div className="d-flex px-2 bg-white align-items-center">
-              <BiSearch size={20}/>
+              <BiSearch size={20} />
             </div>
             <FormControl
               className="border-none"
@@ -101,7 +101,7 @@ const CustomerList = () => {
         </div>
 
         <div data-aos="fade-right" ata-aos-duration="1000" style={{ overflowX: 'auto', width: '100%' }}>
-          <Table striped  hover style={{ minWidth: '600px' }}>
+          <Table striped hover style={{ minWidth: '600px' }}>
             <thead style={{ backgroundColor: '#0062FF0D' }}>
               <tr>
                 <th>S/N</th>
@@ -136,14 +136,16 @@ const CustomerList = () => {
                       <td onClick={() => navigate(`/admin/users/customer-details/${customer._id}`)} style={{ color: 'blue', cursor: 'pointer' }}>
                         {customer.name}
                       </td>
-                      <td>{customer.contact_no}</td>
-                      <td>{customer.email}</td>
-                      <td>{customer.gender}</td>
-                      <td>{customer.address}</td>
-                      <td>{customer.age}</td>
-                      <td className="text-center">
-                  
-                        <Button variant="link" className="text-danger p-0" onClick={() => handleDeleteCustomer(customer._id)}>
+                      <td>{customer.contact_no || 'N/A'}</td>
+                      <td>{customer.email || 'N/A'}</td>
+                      <td>{customer.gender || 'N/A'}</td>
+                      <td>{customer.address || 'N/A'}</td>
+                      <td>{customer.age || 'N/A'}</td>
+                      <td>
+                        <Button variant="link"
+                          className="text-danger"
+                          onClick={() => handleDeleteCustomer(customer._id)}
+                        >
                           <FaTrash style={{ color: '#FF0000', fontSize: '1.2rem' }} />
                         </Button>
                       </td>

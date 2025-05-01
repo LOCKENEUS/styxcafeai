@@ -267,11 +267,11 @@ const PurchaseOrderDetails = () => {
                                                     </td>
                                                     <td>
                                                         SKU : {item?.sku} <br />
-                                                        Qty : {item?.quantity}
+                                                        Qty : {item?.quantity} Nos
                                                     </td>
-                                                    <td>Price : {item?.price}</td>
-                                                    <td>{item?.tax?.tax_name}:{item?.tax?.tax_rate}</td>
-                                                    <td>Total : {item?.total}</td>
+                                                    <td>Price : &#8377; {item?.price}</td>
+                                                    <td>{item?.tax?.tax_name}:{item?.tax?.tax_rate}%</td>
+                                                    <td>Total : &#8377; {item?.total}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -290,7 +290,7 @@ const PurchaseOrderDetails = () => {
                                     <tbody>
                                         <tr>
                                             <td className="fw-bold text-start">Subtotal:</td>
-                                            <td>{selectedPo?.subtotal}</td>
+                                            <td>&#8377; {selectedPo?.subtotal}</td>
                                         </tr>
                                         {selectedPo?.discount_value > 0 && <tr>
                                             <td className="fw-bold text-start">Discount{selectedPo?.discount_type === "Percentage" && <>({selectedPo?.discount_value})</>}:</td>
@@ -307,12 +307,12 @@ const PurchaseOrderDetails = () => {
                                         ))}
                                         <tr>
                                             <td className="fw-bold text-start">Total:</td>
-                                            <td>{purchaseOrder?.total.toFixed(2)}</td>
+                                            <td>&#8377; {purchaseOrder?.total.toFixed(2)}</td>
                                         </tr>
                                         {selectedPo?.adjustment_note && <tr>
                                             <td className="fw-bold text-start">{purchaseOrder?.adjustment_note}
                                             </td>
-                                            <td>{selectedPo?.adjustment_amount}</td>
+                                            <td> &#8377; {selectedPo?.adjustment_amount}</td>
                                         </tr>}
                                     </tbody>
                                 </Table>

@@ -9,7 +9,13 @@ export const getUsers = createAsyncThunk(
   'users/getUsers',
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/staff-member/list/${id}`);
+      const response = await axios.get(`${BASE_URL}/admin/staff-member/list/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       return response.data.data;
     } catch (error) {
       toast.error(error.response?.data?.message || 'Something went wrong');
@@ -23,7 +29,13 @@ export const getUserById = createAsyncThunk(
   'users/getUserById',
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/staff-member/${id}`);
+      const response = await axios.get(`${BASE_URL}/admin/staff-member/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       return response.data.data;
     } catch (error) {
       toast.error(error.response?.data?.message || 'Something went wrong');
@@ -37,7 +49,14 @@ export const addUser = createAsyncThunk(
   'users/addUser',
   async (userData, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/admin/staff-member`, userData);
+      const response = await axios.post(`${BASE_URL}/admin/staff-member`, 
+        userData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       toast.success('User added successfully!');
       return response.data.data;
     } catch (error) {
@@ -52,7 +71,14 @@ export const updateUser = createAsyncThunk(
   'users/updateUser',
   async ({ id, data }, thunkAPI) => {
     try {
-      const response = await axios.put(`${BASE_URL}/admin/staff-member/${id}`, data);
+      const response = await axios.put(`${BASE_URL}/admin/staff-member/${id}`, 
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       toast.success('User updated successfully!');
       return response.data.data;
     } catch (error) {
@@ -67,7 +93,13 @@ export const deleteUser = createAsyncThunk(
   'users/deleteUser',
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`${BASE_URL}/admin/staff-member/${id}`);
+      await axios.delete(`${BASE_URL}/admin/staff-member/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       toast.success('User deleted successfully!');
       return id;
     } catch (error) {

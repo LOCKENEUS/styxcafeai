@@ -9,9 +9,15 @@ export const getCustomers = createAsyncThunk(
   "customers/getCustomers",
   async (id, thunkAPI) => {
     try {
-      console.log("Making API call with cafe ID:", id);
-      const response = await axios.get(`${BASE_URL}/admin/customer/list/${id}`);
-      console.log("API response:", response.data);
+      const response = await axios.get(`${BASE_URL}/admin/customer/list/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem(
+              "authToken"
+            )}`,
+          },
+        }
+      );
       return response.data.data;
     } catch (error) {
       console.error("API error:", error);
@@ -31,9 +37,15 @@ export const searchCustomers = createAsyncThunk(
   async ({ cafeId, searchTerm }, thunkAPI) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/admin/customer/search/${cafeId}?search=${searchTerm}`
+        `${BASE_URL}/admin/customer/search/${cafeId}?search=${searchTerm}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem(
+              "authToken"
+            )}`,
+          },
+        }
       );
-      console.log("API response:", response.data);
       return response.data.data;
     } catch (error) {
       console.error("API error:", error);
@@ -53,7 +65,15 @@ export const getCustomerById = createAsyncThunk(
   "customers/getCustomerById",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/customer/${id}`);
+      const response = await axios.get(`${BASE_URL}/admin/customer/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem(
+              "authToken"
+            )}`,
+          },
+        }
+      );
       return response.data;
     } catch (error) {
       toast.error(
@@ -74,7 +94,14 @@ export const addCustomer = createAsyncThunk(
     try {
       const response = await axios.post(
         `${BASE_URL}/admin/customer`,
-        customerData
+        customerData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem(
+              "authToken"
+            )}`,
+          },
+        }
       );
       toast.success("Customer added successfully!");
       return response.data.data;
@@ -97,7 +124,14 @@ export const updateCustomer = createAsyncThunk(
     try {
       const response = await axios.put(
         `${BASE_URL}/admin/customer/${id}`,
-        data
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem(
+              "authToken"
+            )}`,
+          },
+        }
       );
       toast.success("Customer updated successfully!");
       return response.data.data;
@@ -118,7 +152,15 @@ export const deleteCustomer = createAsyncThunk(
   "customers/deleteCustomer",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`${BASE_URL}/admin/customer/${id}`);
+      await axios.delete(`${BASE_URL}/admin/customer/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem(
+              "authToken"
+            )}`,
+          },
+        }
+      );
       toast.success("Customer deleted successfully!");
       return id;
     } catch (error) {
@@ -140,7 +182,14 @@ export const collectAmount = createAsyncThunk(
     try {
       await axios.patch(
         `${BASE_URL}/admin/customer/collect-amount/${id}`,
-        updateData
+        updateData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem(
+              "authToken"
+            )}`,
+          },
+        }
       );
       toast.success("Amount Collected!");
       return id;
@@ -177,10 +226,7 @@ export const collectAmountOnline = createAsyncThunk(
 
       const data = response.data;
 
-      console.log("data", data);
-
       if (data.success && data.order) {
-        console.log("reached here...data");
         const options = {
           key: import.meta.env.VITE_RAZOR_LIVE_KEY,
           amount: data.order.amount * 100,
@@ -208,8 +254,6 @@ export const collectAmountOnline = createAsyncThunk(
                   },
                 }
               );
-
-              console.log("verifyResponse", verifyResponse);
 
               const verifyData = verifyResponse.data;
               if (verifyData.success) {
@@ -252,7 +296,14 @@ export const collectCustomCreditAmount = createAsyncThunk(
     try {
       await axios.patch(
         `${BASE_URL}/admin/customer/custom-credit-amount/${id}`,
-        { amount: amount }
+        { amount: amount },
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem(
+              "authToken"
+            )}`,
+          },
+        }
       );
       toast.success("Amount Collected!");
       return id;
@@ -271,8 +322,6 @@ export const collectCustomCreditAmount = createAsyncThunk(
 export const collectCustomCreditAmountOnline = createAsyncThunk(
   "bookings/collectCustomCreditAmountOnline",
   async ({ id, amount, customer }, thunkAPI) => {
-    console.log("amount from redux", amount);
-    console.log("id from redux", customer);
     try {
       const backend_url = import.meta.env.VITE_API_URL;
       const response = await axios.post(
@@ -292,7 +341,6 @@ export const collectCustomCreditAmountOnline = createAsyncThunk(
       const data = response.data;
 
       if (data.success && data.order) {
-        console.log("reached here...data");
         const options = {
           key: import.meta.env.VITE_RAZOR_LIVE_KEY,
           amount: data.order.amount * 100,
@@ -301,7 +349,6 @@ export const collectCustomCreditAmountOnline = createAsyncThunk(
           description: "Credit Collection",
           order_id: data.order.id,
           handler: async function (response) {
-            console.log("response", response);
             try {
               const verifyResponse = await axios.patch(
                 `${backend_url}/admin/customer/custom-credit-online/${id}`,
@@ -320,8 +367,6 @@ export const collectCustomCreditAmountOnline = createAsyncThunk(
                   },
                 }
               );
-
-              console.log("verifyResponse", verifyResponse);
 
               const verifyData = verifyResponse.data;
               if (verifyData.success) {
@@ -395,7 +440,6 @@ const customerSlice = createSlice({
       .addCase(getCustomerById.fulfilled, (state, action) => {
         state.loading = false;
         state.selectedCustomer = action.payload;
-        console.log(state.selectedCustomer);
       })
       .addCase(getCustomerById.rejected, (state, action) => {
         state.loading = false;

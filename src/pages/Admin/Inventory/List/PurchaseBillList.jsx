@@ -86,7 +86,7 @@ const PurchaseBillList = () => {
     },
     { name: "vendor", selector: (row) => row.vendor_id?.name, sortable: true },
     { name: " Status", selector: (row) => row.status || "Pending", sortable: true },
-    { name: "Total", selector: (row) => row.total, sortable: true },
+    { name: "Total", selector: (row) => `₹ ${row.total}`, sortable: true },
 
   ];
     const handleShowDetails = (row) => {

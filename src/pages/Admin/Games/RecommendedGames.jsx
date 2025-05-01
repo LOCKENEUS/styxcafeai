@@ -180,16 +180,37 @@ const RecommendedGames = () => {
                 <p className="text-muted">Click the + button to add a new game</p>
               </div> */}
 
-              <div className="d-flex flex-column justify-content-center align-items-center muted-text fs-3"
+              <div
+                className="d-flex flex-column justify-content-center align-items-center muted-text fs-3 position-relative"
                 style={{
                   width: "24%",
-                  // background: "white", 
                   paddingTop: "12%",
                   paddingBottom: "12%",
                   borderRadius: "20px",
-                  border: "1px dashed #C4C4C4"
                 }}
               >
+                {/* SVG for custom dashed border */}
+                <svg
+                  width="100%"
+                  height="100%"
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    borderRadius: "20px",
+                    pointerEvents: "none",
+                  }}
+                >
+                  <rect
+                    x="1" y="1"
+                    width="calc(100% - 2px)" height="calc(100% - 2px)"
+                    rx="20" // Matches border-radius
+                    fill="none"
+                    stroke="#C4C4C4"
+                    strokeWidth="1"
+                    strokeDasharray="5, 5" // Adjust these values (dash, gap)
+                  />
+                </svg>
 
                 <Link to="/admin/games/create-new-game">
                   <IoAdd
@@ -273,16 +294,37 @@ const RecommendedGames = () => {
                 <p className="text-muted">Click the + button to add a new game</p>
               </div> */}
 
-              <div className="d-flex flex-column justify-content-center align-items-center muted-text fs-3"
+              <div
+                className="d-flex flex-column justify-content-center align-items-center muted-text fs-3 position-relative"
                 style={{
                   width: "24%",
-                  // background: "white", 
                   paddingTop: "12%",
                   paddingBottom: "12%",
                   borderRadius: "20px",
-                  border: "1px dashed #C4C4C4"
                 }}
               >
+                {/* SVG for custom dashed border */}
+                <svg
+                  width="100%"
+                  height="100%"
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    borderRadius: "20px",
+                    pointerEvents: "none",
+                  }}
+                >
+                  <rect
+                    x="1" y="1"
+                    width="calc(100% - 2px)" height="calc(100% - 2px)"
+                    rx="20" // Matches border-radius
+                    fill="none"
+                    stroke="#C4C4C4"
+                    strokeWidth="1"
+                    strokeDasharray="5, 5" // Adjust these values (dash, gap)
+                  />
+                </svg>
 
                 <Link to="/admin/games/create-new-game">
                   <IoAdd

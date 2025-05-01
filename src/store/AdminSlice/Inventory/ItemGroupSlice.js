@@ -9,7 +9,13 @@ export const getItemGroups = createAsyncThunk(
   'itemGroups/getItemGroups',
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/inventory/item-group/list/${id}`);
+      const response = await axios.get(`${BASE_URL}/admin/inventory/item-group/list/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       return response.data.data;
     } catch (error) {
       toast.error(error.response?.data?.message || 'Something went wrong');
@@ -23,7 +29,13 @@ export const getItemGroupById = createAsyncThunk(
   'itemGroups/getItemGroupById',
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/inventory/item-group/${id}`);
+      const response = await axios.get(`${BASE_URL}/admin/inventory/item-group/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       return response.data.data;
     } catch (error) {
       toast.error(error.response?.data?.message || 'Something went wrong');
@@ -37,7 +49,14 @@ export const addItemGroup = createAsyncThunk(
   'itemGroups/addItemGroup',
   async (itemGroupData, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/admin/inventory/item-group`, itemGroupData);
+      const response = await axios.post(`${BASE_URL}/admin/inventory/item-group`, 
+        itemGroupData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       toast.success('Item group added successfully!');
       return response.data.data;
     } catch (error) {
@@ -52,7 +71,14 @@ export const updateItemGroup = createAsyncThunk(
   'itemGroups/updateItemGroup',
   async ({ id, itemGroupData }, thunkAPI) => {
     try {
-      const response = await axios.put(`${BASE_URL}/admin/inventory/item-group/${id}`, itemGroupData);
+      const response = await axios.put(`${BASE_URL}/admin/inventory/item-group/${id}`, 
+        itemGroupData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       toast.success('Item group updated successfully!');
       return response.data.data;
     } catch (error) {
@@ -67,7 +93,13 @@ export const deleteItemGroup = createAsyncThunk(
   'itemGroups/deleteItemGroup',
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`${BASE_URL}/admin/inventory/item-group/${id}`);
+      await axios.delete(`${BASE_URL}/admin/inventory/item-group/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       toast.success('Item group deleted successfully!');
       return id;
     } catch (error) {

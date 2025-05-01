@@ -9,7 +9,13 @@ export const getVendors = createAsyncThunk(
   'vendors/getVendors',
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/inventory/vendor/list/${id}`);
+      const response = await axios.get(`${BASE_URL}/admin/inventory/vendor/list/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       return response.data.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
@@ -22,7 +28,13 @@ export const getVendorById = createAsyncThunk(
   'vendors/getVendorById',
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/inventory/vendor/${id}`);
+      const response = await axios.get(`${BASE_URL}/admin/inventory/vendor/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       return response.data.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
@@ -35,7 +47,14 @@ export const addVendor = createAsyncThunk(
   'vendors/addVendor',
   async (vendorData, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/admin/inventory/vendor`, vendorData);
+      const response = await axios.post(`${BASE_URL}/admin/inventory/vendor`, 
+        vendorData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       toast.success('Vendor added successfully!');
       return response.data.data;
     } catch (error) {
@@ -50,7 +69,14 @@ export const updateVendor = createAsyncThunk(
   'vendors/updateVendor',
   async ({ id, vendorData }, thunkAPI) => {
     try {
-      const response = await axios.put(`${BASE_URL}/admin/inventory/vendor/${id}`, vendorData);
+      const response = await axios.put(`${BASE_URL}/admin/inventory/vendor/${id}`, 
+        vendorData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       toast.success('Vendor updated successfully!');
       return response.data.data;
     } catch (error) {
@@ -64,7 +90,13 @@ export const deleteVendor = createAsyncThunk(
   'vendors/deleteVendor',
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`${BASE_URL}/admin/inventory/vendor/${id}`);
+      await axios.delete(`${BASE_URL}/admin/inventory/vendor/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       toast.success('Vendor deleted successfully!');
       return id;
     } catch (error) {

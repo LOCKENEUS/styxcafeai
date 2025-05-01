@@ -50,14 +50,11 @@ const PurchaseBillCreate = () => {
  
   const cafeId = user?._id;
 
-  console.log("user ----", user);
   const userName= user?.name;
   const userEmail= user?.email;
   const UserContactN = user?.contact_no;
   const UserAddress = user?.address;
   const UesrPAN = user?.panNo;
-  console.log("userName ----", userName);
-
 
   // Filter payment terms from custom fields
   const paymentTerms = customFields.filter(field => field.type === 'Payment Terms');
@@ -71,7 +68,6 @@ const PurchaseBillCreate = () => {
   // const lisgetCustomers = useSelector((state) => state.customers?.customers);
   const { customers, loading: customerLoading } = useSelector((state) => state.customers);
   const customersList = customers?.customers;
-  console.log("customersList ========", customersList);
 
   useEffect(() => {
     const user = JSON.parse(sessionStorage.getItem('user'));
@@ -104,9 +100,7 @@ const PurchaseBillCreate = () => {
     "1800": 1800,
   };
 
-
   const TaxList = useSelector((state) => state.taxFieldSlice?.taxFields);
-  console.log("unit Tax 101", TaxList);
 
   const calculateTotal = (price, quantity, tax) => {
     const subtotal = Math.round(price * quantity * 100) / 100;
@@ -214,7 +208,6 @@ const PurchaseBillCreate = () => {
 
     // Calculate final total
     const total = Math.round(subtotal - discountAmount + taxAmount + (parseFloat(totals.adjustmentAmount) || 0));
-    console.log("total", total);
 
     setTotals(prev => ({
       ...prev,
@@ -424,7 +417,6 @@ const PurchaseBillCreate = () => {
       setVendorId(selectedVendor?._id);
     }
     handleClose();
-    console.log("Selected vendor ID:---", newVendorId);
   };
 
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -616,8 +608,6 @@ const PurchaseBillCreate = () => {
                 />
               </div>
 
-
-
               <div className="d-flex flex-row align-items-center gap-2">
                 <Form.Select
                   name="payment_terms"
@@ -631,7 +621,7 @@ const PurchaseBillCreate = () => {
                 >
                   <option value="">Select Payment Term</option>
                   {paymentTerms.map((term) => (
-                    <option key={term._id} value={term._id}>
+                    <option key={term._id} value={term.name}>
                       {term.name}
                     </option>
                   ))}

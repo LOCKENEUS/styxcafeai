@@ -13,39 +13,14 @@ import TGm1 from '/assets/Admin/Dashboard/GamesImage/TGm1.png'
 import TGm2 from '/assets/Admin/Dashboard/GamesImage/Tgm2.png'
 import { Link } from 'react-router-dom';
 import { BiSearch } from 'react-icons/bi';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGames } from '../../../store/slices/gameSlice';
 import { useNavigate } from 'react-router-dom';
 import Nogame from "/assets/Admin/Game/No Game.png";
 import gsap from 'gsap';
-
-const summaryData = [
-  {
-    title: "Total Online Bookings",
-    value: "145",
-    icon: user_check,
-    bgColor: '#00AF0F0D'
-  },
-  {
-    title: "Total Waiting Bookings",
-    value: "45",
-    icon: user_forbid_fil,
-    bgColor: '#F0D4000D'
-  },
-  {
-    title: "Total Cancel Booking",
-    value: "05",
-    icon: user_x_fill,
-    bgColor: '#FF00000D'
-  },
-  {
-    title: "Total Payments",
-    value: "7200",
-    icon: rupee_circle,
-    bgColor: '#00D5ED0D'
-  }
-];
+import { getAdminDashboardData } from '../../../store/AdminSlice/DashboardSlice';
+import { formatDate } from '../../../components/utils/utils';
 
 const tournaments = [
   {
@@ -65,53 +40,24 @@ const tournaments = [
   // Add more tournaments as needed
 ];
 
-const bookingsData = [
-  {
-    id: 1,
-    name: "Rahul Vishvakarma",
-    game: "Snooker & Pool",
-    datetime: "04:00 PM | Sunday, 6 March, 2025",
-    quantity: 2,
-    image: TGm1
-  },
-  {
-    id: 2,
-    name: "Rohan Shetty",
-    game: "Paddle Tennis",
-    datetime: "04:00 PM | Sunday, 6 March, 2025",
-    quantity: 1,
-    image: gm1
-  },
-  {
-    id: 3,
-    name: "Shreya Mahajan",
-    game: "Paddle Tennis",
-    datetime: "04:00 PM | Sunday, 6 March, 2025",
-    quantity: 1,
-    image: gm2
-  },
-  {
-    id: 4,
-    name: "Rohan Shetty",
-    game: "Paddle Tennis",
-    datetime: "04:00 PM | Sunday, 6 March, 2025",
-    quantity: 1,
-    image: gm3
-  }
-];
-
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [recentBookings, setRecentBookings] = useState([]);
   const { games } = useSelector((state) => state.games);
+  const { adminDashboard } = useSelector((state) => state.adminDashboard);
   const cafe = JSON.parse(sessionStorage.getItem('user'));
   const cafeId = cafe?._id
   const summaryCardsRef = useRef(null);
   const gamesRef = useRef(null);
   const tournamentsRef = useRef(null);
   const containerRef = useRef(null);
+  
+  const backend_url = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
+
+    dispatch(getAdminDashboardData(cafeId)).unwrap()
     // Scroll to top on mount
     window.scrollTo(0, 0);
     
@@ -119,6 +65,12 @@ const AdminDashboard = () => {
       dispatch(getGames(cafeId));
     }
   }, [dispatch, cafeId]);
+
+  useEffect(() => {
+      if(adminDashboard) {
+        setRecentBookings(adminDashboard?.recentBookings);
+      }
+  }, [adminDashboard]);
 
   // Animation effects
   useEffect(() => {
@@ -189,6 +141,7 @@ const AdminDashboard = () => {
     return () => ctx.revert();
   }, []);
 
+  console.log("recent bookings", recentBookings);
 
   return (
     <Container fluid className="p-2" ref={containerRef}>
@@ -208,33 +161,111 @@ const AdminDashboard = () => {
 
       {/* Summary Cards */}
       <Row className="mt-4 mb-4">
-        {summaryData.map((item, index) => (
-          <Col key={index} xs={6} md={3}>
+
+          <Col xs={6} md={3}>
             <div className="summary-card">
               <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100'>
                 <span className='d-flex align-items-center justify-content-center rounded-4'
-                  style={{ width: '50px', height: '50px', background: item.bgColor }}>
-                  <img src={item.icon} alt={item.title} />
+                  style={{ width: '50px', height: '50px', background:"#00AF0F0D" }}>
+                  <img src={user_check} alt="User Check Icon" />
                 </span>
                 <div>
-                  <small className="text-muted">{item.title}</small>
-                  <h2 className="mt-2">{item.value}</h2>
+                  <small className="text-muted">Total Online Bookings</small>
+                  <h2 className="mt-2">{adminDashboard?.totalOnlineBookings}</h2>
                 </div>
               </div>
 
               <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
-                <small className="text-muted">{item.title}</small>
+                <small className="text-muted">Total Online Bookings</small>
                 <div className='d-flex align-items-center justify-content-between mt-2'>
                   <span className='d-flex align-items-center justify-content-center rounded-4'
-                    style={{ width: '50px', height: '50px', background: item.bgColor }}>
-                    <img src={item.icon} alt={item.title} />
+                    style={{ width: '50px', height: '50px', background: "#00AF0F0D" }}>
+                    <img src={user_check} alt="user check icon"/>
                   </span>
-                  <h2 className="mb-0">{item.value}</h2>
+                  <h2 className="mb-0">{adminDashboard?.totalOnlineBookings || 0}</h2>
                 </div>
               </div>
             </div>
           </Col>
-        ))}
+
+          <Col xs={6} md={3}>
+            <div className="summary-card">
+              <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100'>
+                <span className='d-flex align-items-center justify-content-center rounded-4'
+                  style={{ width: '50px', height: '50px', background:"#F0D4000D" }}>
+                  <img src={user_forbid_fil} alt="User forbid fill" />
+                </span>
+                <div>
+                  <small className="text-muted">Total Waiting Bookings</small>
+                  <h2 className="mt-2">{adminDashboard?.totalWaitingBookings}</h2>
+                </div>
+              </div>
+
+              <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
+                <small className="text-muted">Total Waiting Bookings</small>
+                <div className='d-flex align-items-center justify-content-between mt-2'>
+                  <span className='d-flex align-items-center justify-content-center rounded-4'
+                    style={{ width: '50px', height: '50px', background: "#F0D4000D" }}>
+                    <img src={user_forbid_fil} alt="user forbid icon"/>
+                  </span>
+                  <h2 className="mb-0">{adminDashboard?.totalWaitingBookings || 0}</h2>
+                </div>
+              </div>
+            </div>
+          </Col>
+
+          <Col xs={6} md={3}>
+            <div className="summary-card">
+              <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100'>
+                <span className='d-flex align-items-center justify-content-center rounded-4'
+                  style={{ width: '50px', height: '50px', background:"#FF00000D" }}>
+                  <img src={user_x_fill} alt="cancel icon" />
+                </span>
+                <div>
+                  <small className="text-muted">Total Cancel Bookings</small>
+                  <h2 className="mt-2">{adminDashboard?.totalCncelledBookings || 0}</h2>
+                </div>
+              </div>
+
+              <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
+                <small className="text-muted">Total Cancel Bookings</small>
+                <div className='d-flex align-items-center justify-content-between mt-2'>
+                  <span className='d-flex align-items-center justify-content-center rounded-4'
+                    style={{ width: '50px', height: '50px', background: "#FF00000D" }}>
+                    <img src={user_x_fill} alt="cancel icon"/>
+                  </span>
+                  <h2 className="mb-0">{adminDashboard?.totalCncelledBookings || 0}</h2>
+                </div>
+              </div>
+            </div>
+          </Col>
+
+          <Col xs={6} md={3}>
+            <div className="summary-card">
+              <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100'>
+                <span className='d-flex align-items-center justify-content-center rounded-4'
+                  style={{ width: '50px', height: '50px', background:"#00D5ED0D" }}>
+                  <img src={rupee_circle} alt="rupee icon" />
+                </span>
+                <div>
+                  <small className="text-muted">Total Payments</small>
+                  <h2 className="mt-2">{adminDashboard?.totalAmount || 0}</h2>
+                </div>
+              </div>
+
+              <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
+                <small className="text-muted">Total Payments</small>
+                <div className='d-flex align-items-center justify-content-between mt-2'>
+                  <span className='d-flex align-items-center justify-content-center rounded-4'
+                    style={{ width: '50px', height: '50px', background: "#00D5ED0D" }}>
+                    <img src={rupee_circle} alt="rupee icon"/>
+                  </span>
+                  <h2 className="mb-0">{adminDashboard?.totalAmount || 0}</h2>
+                </div>
+              </div>
+            </div>
+          </Col>
+    
       </Row>
 
       {/* Mobile Bookings Card */}
@@ -245,8 +276,8 @@ const AdminDashboard = () => {
               <div className="d-flex gap-3">
                 <div style={{ width: '60px', height: '60px' }}>
                   <img
-                    src={bookingsData[0].image}
-                    alt={bookingsData[0].name}
+                    src={user_check}
+                    alt="abc"
                     style={{
                       width: '100%',
                       height: '100%',
@@ -256,10 +287,10 @@ const AdminDashboard = () => {
                   />
                 </div>
                 <div className="flex-grow-1">
-                  <h6 className="mb-1">{bookingsData[0].name}</h6>
-                  <small className="text-muted d-block">{bookingsData[0].game}</small>
-                  <small className="text-muted d-block">{bookingsData[0].datetime}</small>
-                  <small className="text-muted d-block">Quantity: {bookingsData[0].quantity} Tickets</small>
+                  <h6 className="mb-1">Hitesh</h6>
+                  <small className="text-muted d-block">Cricket</small>
+                  <small className="text-muted d-block">25/10/1998</small>
+                  <small className="text-muted d-block">Quantity: 2 Tickets</small>
                 </div>
                 <div className="d-flex gap-2 align-items-center">
                   <BsXCircle className="text-danger" style={{ fontSize: '1.2rem', cursor: 'pointer' }} />
@@ -410,15 +441,15 @@ const AdminDashboard = () => {
           <div className="d-none d-md-block">
             <Card className="border-0">
               <Card.Body>
-                <Card.Title style={{ fontSize: "1.2rem", marginBottom: "0.8rem" }} className="mb-4">Bookings</Card.Title>
+                <Card.Title style={{ fontSize: "1.2rem", marginBottom: "0.8rem" }} className="mb-4">Recent Bookings</Card.Title>
                 <ListGroup variant="flush">
-                  {bookingsData.map((booking) => (
+                  {recentBookings.map((booking) => (
                     <ListGroup.Item key={booking.id} className="border-bottom py-3 booking-item">
                       <div className="d-flex gap-3">
                         <div style={{ width: '60px', height: '60px' }}>
                           <img
-                            src={booking.image}
-                            alt={booking.name}
+                            src={`${backend_url}/${booking?.game_id?.gameImage}` || gm1}
+                            alt={booking?.game_id?.name}
                             style={{
                               width: '100%',
                               height: '100%',
@@ -428,10 +459,10 @@ const AdminDashboard = () => {
                           />
                         </div>
                         <div className="flex-grow-1">
-                          <h6 className="mb-1">{booking.name}</h6>
-                          <small className="text-muted d-block">{booking.game}</small>
-                          <small className="text-muted d-block">{booking.datetime}</small>
-                          <small className="text-muted d-block">Quantity: {booking.quantity} Tickets</small>
+                          <h6 className="mb-1">{booking?.customer_id?.name}</h6>
+                          <small className="text-muted d-block">{booking?.game_id?.name}</small>
+                          <small className="text-muted d-block">{formatDate(booking.slot_date)}</small>
+                          <small className="text-muted d-block">Price: &#8377; {booking.type === 'Regular' ? (booking?.slot_id?.slot_price || booking?.game_id?.price) : (booking?.custom_slot?.slot_price || booking?.game_id?.price)}</small>
                         </div>
                         <div className="d-flex gap-2 align-items-center">
                           <BsXCircle className="text-danger" style={{ fontSize: '1.2rem', cursor: 'pointer' }} />

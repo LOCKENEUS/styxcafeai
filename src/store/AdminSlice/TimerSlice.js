@@ -9,7 +9,13 @@ export const startBookingTimer = createAsyncThunk(
   async (bookingId, thunkAPI) => {
     try {
       const { data } = await axios.put(
-        `${BASE_URL}/admin/booking/start-timer/${bookingId}`
+        `${BASE_URL}/admin/booking/start-timer/${bookingId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+          },
+        }
       );
       return data.start_time;
     } catch (error) {
@@ -25,7 +31,13 @@ export const pauseBookingTimer = createAsyncThunk(
   async (bookingId, thunkAPI) => {
     try {
       const { data } = await axios.put(
-        `${BASE_URL}/admin/booking/pause-timer/${bookingId}`
+        `${BASE_URL}/admin/booking/pause-timer/${bookingId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+          },
+        }
       );
       return data.paused_time;
     } catch (error) {
@@ -41,7 +53,13 @@ export const resumeBookingTimer = createAsyncThunk(
   async (bookingId, thunkAPI) => {
     try {
       const { data } = await axios.put(
-        `${BASE_URL}/admin/booking/resume-timer/${bookingId}`
+        `${BASE_URL}/admin/booking/resume-timer/${bookingId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+          },
+        }
       );
       return data.start_time;
     } catch (error) {
@@ -57,7 +75,13 @@ export const stopBookingTimer = createAsyncThunk(
   async (bookingId, thunkAPI) => {
     try {
       const { data } = await axios.put(
-        `${BASE_URL}/admin/booking/stop-timer/${bookingId}`
+        `${BASE_URL}/admin/booking/stop-timer/${bookingId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+          },
+        }
       );
       return data.total_price;
     } catch (error) {

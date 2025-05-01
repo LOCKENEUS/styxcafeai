@@ -81,7 +81,7 @@ const BillPaymentList = () => {
         ),
       },
       { name: "Mode", selector: (row) => row.mode, sortable: true },
-      { name: "Amount", selector: (row) => row.deposit_amount, sortable: true },
+      { name: "Amount", selector: (row) => `₹ ${row.deposit_amount}`, sortable: true },
       { name: "Transaction ID", selector: (row) => row.transaction_id, sortable: true },
       { 
         name: "Date", 

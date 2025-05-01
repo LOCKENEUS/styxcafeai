@@ -9,7 +9,13 @@ export const getPBills = createAsyncThunk(
   'pBill/getPBills',
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/inventory/po/bill/list/${id}`);
+      const response = await axios.get(`${BASE_URL}/admin/inventory/po/bill/list/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       return response.data.data;
     } catch (error) {
       toast.error(error.response?.data?.message || 'Something went wrong');
@@ -23,7 +29,13 @@ export const getPBillById = createAsyncThunk(
   'pBill/getPBillById',
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/inventory/po/${id}`);
+      const response = await axios.get(`${BASE_URL}/admin/inventory/po/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       return response.data.data;
     } catch (error) {
       toast.error(error.response?.data?.message || 'Something went wrong');
@@ -37,7 +49,14 @@ export const addPBill = createAsyncThunk(
   'pBill/addPBill',
   async (billData, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/admin/inventory/po/bill`, billData);
+      const response = await axios.post(`${BASE_URL}/admin/inventory/po/bill`, 
+        billData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       toast.success('Purchase Bill added successfully!');
       return response.data.data;
     } catch (error) {
@@ -52,7 +71,14 @@ export const updatePBill = createAsyncThunk(
   'pBill/updatePBill',
   async ({ id, billData }, thunkAPI) => {
     try {
-      const response = await axios.put(`${BASE_URL}/admin/inventory/po/bill/${id}`, billData);
+      const response = await axios.put(`${BASE_URL}/admin/inventory/po/bill/${id}`, 
+        billData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       toast.success('Purchase Bill updated successfully!');
       return response.data.data;
     } catch (error) {
@@ -67,7 +93,13 @@ export const deletePBill = createAsyncThunk(
   'pBill/deletePBill',
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`${BASE_URL}/admin/inventory/po/bill/${id}`);
+      await axios.delete(`${BASE_URL}/admin/inventory/po/bill/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       toast.success('Purchase Bill deleted successfully!');
       return id;
     } catch (error) {

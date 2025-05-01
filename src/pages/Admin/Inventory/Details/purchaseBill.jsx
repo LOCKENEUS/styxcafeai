@@ -307,11 +307,11 @@ export const PurchaseBillDetailsAdmin = () => {
                                                             HSN: {item.item_id?.hsn}
                                                         </td>
                                                         <td>
-                                                            SKU: {item.item_id?._id}<br />
+                                                            SKU: {item.item_id?.sku}<br />
                                                             Qty: {item.quantity} Nos
                                                         </td>
                                                         <td>Price: ₹{item.price}</td>
-                                                        <td>{item.tax?.tax_name} ({item.tax?.tax_rate}%)</td>
+                                                        <td>{item.tax?.tax_name} ({item.tax?.tax_rate || 0}%)</td>
                                                         <td>Total: ₹{item.total}</td>
                                                     </tr>
                                                 ))}

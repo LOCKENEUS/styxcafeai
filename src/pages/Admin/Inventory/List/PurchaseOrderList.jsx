@@ -224,7 +224,7 @@ const PurchaseOrderList = () => {
                           </div>
                         </td>
                         <td>{row.vendor}</td>
-                        <td>{row.amount}</td>
+                        <td>&#8377; {row.amount}</td>
                         <td>{row.status}</td>
                         <td>{row.delivery_date}</td>
                       </tr>

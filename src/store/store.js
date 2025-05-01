@@ -27,6 +27,7 @@ import soInvoiceRouter from './AdminSlice/Inventory/SoInvoiceSlice';
 import CollectPaymentRouter from './AdminSlice/Inventory/CollectPaymentSlice';
 import CollectPurchaseBill from './AdminSlice/Inventory/CollectPurchaseBill';
 import pBillReducer from './AdminSlice/Inventory/PBillSlice';
+import adminDashboardReducer from './AdminSlice/DashboardSlice';
 
 export const store = configureStore({
   reducer: {
@@ -39,6 +40,7 @@ export const store = configureStore({
     slots: slotReducer,
     offers: offerReducer, // Ensure 'offers' matches useSelector((state) => state.offers)
     memberships: membershipReducer, // Ensure 'memberships' matches useSelector((state) => state.memberships)
+    adminDashboard: adminDashboardReducer,
 
     // Admin Slices
     inventory: inventoryReducer,

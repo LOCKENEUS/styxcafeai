@@ -93,7 +93,14 @@ export const createPurchaseReceive = createAsyncThunk(
   'purchaseReceive/createPurchaseReceive',
   async (POData, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/admin/inventory/po/receive`, POData);
+      const response = await axios.post(`${BASE_URL}/admin/inventory/po/receive`, 
+        POData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       toast.success('Purchase Receive added successfully!');
       return response.data.data;
     } catch (error) {
@@ -108,7 +115,13 @@ export const getPurchaseReceive = createAsyncThunk(
   'purchaseReceive/getPurchaseReceive',
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/inventory/po/receive/${id}`);
+      const response = await axios.get(`${BASE_URL}/admin/inventory/po/receive/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       return response.data.data;
     } catch (error) {
       toast.error(error.response?.data?.message || 'Something went wrong');
@@ -122,7 +135,13 @@ export const getPurchaseReceiveList = createAsyncThunk(
   'purchaseReceive/getPurchaseReceiveList',
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/inventory/po/receive/list/${id}`);
+      const response = await axios.get(`${BASE_URL}/admin/inventory/po/receive/list/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       return response.data.data;
     } catch (error) {
       toast.error(error.response?.data?.message || 'Something went wrong');

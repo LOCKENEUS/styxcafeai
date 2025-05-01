@@ -9,9 +9,17 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 export const getBookings = createAsyncThunk(
   "bookings/getbookings",
   async (cafeId, thunkAPI) => {
+    const token = sessionStorage.getItem("authToken");
     try {
       const response = await axios.get(
-        `${BASE_URL}/admin/booking/list/${cafeId}`
+        `${BASE_URL}/admin/booking/list/${cafeId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem(
+              "authToken"
+            )}`,
+          },
+        }
       );
       return response.data.data;
     } catch (error) {
@@ -24,10 +32,17 @@ export const getBookings = createAsyncThunk(
 
 export const getBookingsByDate = createAsyncThunk(
   "bookings/getbookingsByDate",
-  async ({cafeId, date}, thunkAPI) => {
+  async ({ cafeId, date }, thunkAPI) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/admin/booking/list/${cafeId}/${date}`
+        `${BASE_URL}/admin/booking/list/${cafeId}/${date}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem(
+              "authToken"
+            )}`,
+          },
+        }
       );
       return response.data.data;
     } catch (error) {
@@ -42,7 +57,15 @@ export const getBookingsByGame = createAsyncThunk(
   "bookings/getbookingsByGame",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/booking/game/${id}`);
+      const response = await axios.get(`${BASE_URL}/admin/booking/game/${id}`, 
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem(
+              "authToken"
+            )}`,
+          },
+        }
+      );
       return response.data.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -59,7 +82,14 @@ export const addBooking = createAsyncThunk(
     try {
       const response = await axios.post(
         `${BASE_URL}/admin/booking`,
-        bookingData
+        bookingData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem(
+              "authToken"
+            )}`,
+          },
+        }
       );
       return response.data;
     } catch (error) {
@@ -77,7 +107,14 @@ export const updateBooking = createAsyncThunk(
     try {
       const response = await axios.put(
         `${BASE_URL}/admin/booking/${id}`,
-        updatedData
+        updatedData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem(
+              "authToken"
+            )}`,
+          },
+        }
       );
       return response.data;
     } catch (error) {
@@ -94,7 +131,14 @@ export const addToCart = createAsyncThunk(
     try {
       const response = await axios.post(
         `${BASE_URL}/admin/booking/add-to-cart/${id}`,
-        updatedData
+        updatedData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem(
+              "authToken"
+            )}`,
+          },
+        }
       );
       return response.data;
     } catch (error) {
@@ -109,7 +153,15 @@ export const getBookingDetails = createAsyncThunk(
   "bookings/bookingDetails",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/booking/${id}`);
+      const response = await axios.get(`${BASE_URL}/admin/booking/${id}`, 
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem(
+              "authToken"
+            )}`,
+          },
+        }
+      );
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -124,7 +176,15 @@ export const deleteBooking = createAsyncThunk(
   "bookings/deletebooking",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`${BASE_URL}/admin/booking/${id}`);
+      await axios.delete(`${BASE_URL}/admin/booking/${id}`, 
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem(
+              "authToken"
+            )}`,
+          },
+        }
+      );
       return id;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -147,7 +207,7 @@ export const processOnlinePayment = createAsyncThunk(
       total,
       looser,
       playerCredits,
-      adjustment
+      adjustment,
     },
     thunkAPI
   ) => {
@@ -195,7 +255,7 @@ export const processOnlinePayment = createAsyncThunk(
                   total,
                   looser,
                   playerCredits,
-                  adjustment
+                  adjustment,
                 },
                 {
                   headers: {
@@ -208,7 +268,6 @@ export const processOnlinePayment = createAsyncThunk(
 
               const verifyData = verifyResponse.data;
               if (verifyData.success) {
-                console.log("verifyData", verifyData)
                 window.location.href = `/admin/booking/checkout/${verifyData.transaction.booking_id}`;
               } else {
                 return thunkAPI.rejectWithValue("Payment Verification Failed");
@@ -248,7 +307,14 @@ export const fetchEarning = createAsyncThunk(
     try {
       const response = await axios.post(
         `${BASE_URL}/admin/booking/report/`,
-        updatedData
+        updatedData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem(
+              "authToken"
+            )}`,
+          },
+        }
       );
       return response.data;
     } catch (error) {
@@ -340,7 +406,6 @@ const bookingslice = createSlice({
         state.error = action.payload;
       })
 
-      
       // AddToCart
       .addCase(addToCart.pending, (state) => {
         state.loading = true;
@@ -371,7 +436,6 @@ const bookingslice = createSlice({
         if (index !== -1) {
           state.bookings[index] = updatedbooking; // Update state
         }
-        console.log("updatedbooking from redux", action.payload);
         window.location.href = `/admin/booking/checkout/${action.payload?.data?._id}`;
       })
       .addCase(updateBooking.rejected, (state, action) => {
@@ -403,15 +467,13 @@ const bookingslice = createSlice({
       .addCase(processOnlinePayment.fulfilled, (state, action) => {
         state.loading = false;
         state.successMessage = action.payload.message;
-        console.log("action.payload", action.payload);
         // window.location.href = `/admin/booking/checkout/${action.payload?.data?._id}`;
-        // navigate 
+        // navigate
       })
       .addCase(processOnlinePayment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-
 
       // .addCase(fetchEarning.pending, (state) => {
       //   state.loading = true;
@@ -432,7 +494,7 @@ const bookingslice = createSlice({
       })
       .addCase(fetchEarning.fulfilled, (state, action) => {
         state.loading = false;
-        state.earningData = action.payload.data; 
+        state.earningData = action.payload.data;
       })
       .addCase(fetchEarning.rejected, (state, action) => {
         state.loading = false;

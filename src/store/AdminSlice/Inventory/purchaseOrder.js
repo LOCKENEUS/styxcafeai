@@ -10,7 +10,12 @@ export const CreateVendor = createAsyncThunk(
     try {
       const response = await axios.post(
         `${BASE_URL}/admin/inventory/vendor`,
-        vendorData
+        vendorData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
       );
       toast.success("Vendor added successfully!");
       return response.data.data;
@@ -38,7 +43,12 @@ export const GetVendorsList = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/admin/inventory/vendor/list/${id}`
+        `${BASE_URL}/admin/inventory/vendor/list/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
       );
       return response.data.data;
     } catch (error) {
@@ -56,7 +66,12 @@ export const CreatePurchaseOrder = createAsyncThunk(
     try {
       const response = await axios.post(
         `${BASE_URL}/admin/inventory/po`,
-        POData
+        POData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
       );
       toast.success("Purchase Order added successfully!");
       return response.data.data;
@@ -76,7 +91,12 @@ export const UpdatePurchaseOrder = createAsyncThunk(
     try {
       const response = await axios.put(
         `${BASE_URL}/admin/inventory/po/${id}`,
-        POData
+        POData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
       );
       toast.success("Purchase Order updated successfully!");
       return response.data.data;
@@ -96,7 +116,12 @@ export const GetPOList = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/admin/inventory/po/list/${id}`
+        `${BASE_URL}/admin/inventory/po/list/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
       );
       return response.data.data;
     } catch (error) {
@@ -113,7 +138,12 @@ export const GetPOListByVendor = createAsyncThunk(
   async ({ id, vendor }, thunkAPI) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/admin/inventory/po/list/${id}/${vendor}`
+        `${BASE_URL}/admin/inventory/po/list/${id}/${vendor}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
       );
       return response.data.data;
     } catch (error) {
@@ -133,6 +163,7 @@ export const GetPurchaseOrder = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/admin/inventory/po/${id}`, {
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
         },
       });
       return response.data.data;
@@ -152,7 +183,12 @@ export const sendMailToVendor = createAsyncThunk(
     try {
       const response = await axios.post(
         `${BASE_URL}/admin/inventory/po/send-mail`,
-        orderData
+        orderData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
       );
       toast.success("Mail sent successfully!");
       return response.data.data;

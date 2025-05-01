@@ -10,7 +10,12 @@ export const getItems = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/admin/inventory/item/list/${id}`
+        `${BASE_URL}/admin/inventory/item/list/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
       );
       return response.data.data;
     } catch (error) {
@@ -28,7 +33,12 @@ export const getItemTransactions = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/admin/inventory/item/transactions/${id}`
+        `${BASE_URL}/admin/inventory/item/transactions/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
       );
       return response.data.data;
     } catch (error) {
@@ -46,7 +56,12 @@ export const getItemById = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/admin/inventory/item/${id}`
+        `${BASE_URL}/admin/inventory/item/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
       );
       return response.data.data;
     } catch (error) {
@@ -65,7 +80,12 @@ export const addItem = createAsyncThunk(
     try {
       const response = await axios.post(
         `${BASE_URL}/admin/inventory/item`,
-        itemData
+        itemData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
       );
       toast.success("Item added successfully!");
       return response.data.data;
@@ -85,7 +105,12 @@ export const updateItem = createAsyncThunk(
     try {
       const response = await axios.put(
         `${BASE_URL}/admin/inventory/item/${id}`,
-        itemData
+        itemData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
       );
       toast.success("Item updated successfully!");
       return response.data.data;
@@ -103,7 +128,13 @@ export const deleteItem = createAsyncThunk(
   "items/deleteItem",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`${BASE_URL}/admin/inventory/item/${id}`);
+      await axios.delete(`${BASE_URL}/admin/inventory/item/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
       toast.success("Item deleted successfully!");
       return id;
     } catch (error) {
@@ -125,6 +156,7 @@ export const getItemsCount = createAsyncThunk(
         {
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
           },
         }
       );

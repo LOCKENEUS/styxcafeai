@@ -6,6 +6,7 @@ import { getGames } from '../../../store/slices/gameSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import Nogame from "/assets/Admin/Game/No Game.png";
 import gsap from 'gsap';
+import { IoAdd } from 'react-icons/io5';
 
 const BookGames = () => {
   const navigate = useNavigate();
@@ -98,7 +99,7 @@ const BookGames = () => {
         </h5>
       </div>
 
-      <div data-aos="fade-right" data-aos-duration="600"  className="horizontal-scroll mb-5">
+      <div data-aos="fade-right" data-aos-duration="600" className="horizontal-scroll mb-5">
         <Row className="flex-nowrap" style={{ margin: '0 -0.5rem' }}>
           {indoorGames.length > 0 ? (
             indoorGames.map((game) => (
@@ -142,9 +143,57 @@ const BookGames = () => {
             ))
           ) : (
             <Col className="text-center py-5">
-              <div className="d-flex flex-column align-items-center">
+              {/* <div className="d-flex flex-column align-items-center">
                 <img src={Nogame} alt="No games" style={{ width: '150px', opacity: 0.7 }} />
                 <h5 className="mt-3 text-muted">No indoor games available</h5>
+              </div> */}
+
+              <div
+                className="d-flex flex-column justify-content-center align-items-center muted-text fs-3 position-relative"
+                style={{
+                  width: "24%",
+                  paddingTop: "12%",
+                  paddingBottom: "12%",
+                  borderRadius: "20px",
+                }}
+              >
+                {/* SVG for custom dashed border */}
+                <svg
+                  width="100%"
+                  height="100%"
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    borderRadius: "20px",
+                    pointerEvents: "none",
+                  }}
+                >
+                  <rect
+                    x="1" y="1"
+                    width="calc(100% - 2px)" height="calc(100% - 2px)"
+                    rx="20" // Matches border-radius
+                    fill="none"
+                    stroke="#C4C4C4"
+                    strokeWidth="1"
+                    strokeDasharray="5, 5" // Adjust these values (dash, gap)
+                  />
+                </svg>
+
+                <Link to="/admin/games/create-new-game">
+                  <IoAdd
+                    style={{
+                      fontSize: 'clamp(30px, 8vw, 40px)',
+                      cursor: 'pointer',
+                      backgroundColor: 'white',
+                      color: 'blue',
+                      border: '2px solid blue',
+                      borderRadius: '50%',
+                      padding: '0.2rem',
+                    }}
+                  />
+                </Link>
+                No Games Added Yet
               </div>
             </Col>
           )}
@@ -201,9 +250,57 @@ const BookGames = () => {
             ))
           ) : (
             <Col className="text-center py-5">
-              <div className="d-flex flex-column align-items-center">
+              {/* <div className="d-flex flex-column align-items-center">
                 <img src={Nogame} alt="No games" style={{ width: '150px', opacity: 0.7 }} />
                 <h5 className="mt-3 text-muted">No outdoor games available</h5>
+              </div> */}
+
+              <div
+                className="d-flex flex-column justify-content-center align-items-center muted-text fs-3 position-relative"
+                style={{
+                  width: "24%",
+                  paddingTop: "12%",
+                  paddingBottom: "12%",
+                  borderRadius: "20px",
+                }}
+              >
+                {/* SVG for custom dashed border */}
+                <svg
+                  width="100%"
+                  height="100%"
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    borderRadius: "20px",
+                    pointerEvents: "none",
+                  }}
+                >
+                  <rect
+                    x="1" y="1"
+                    width="calc(100% - 2px)" height="calc(100% - 2px)"
+                    rx="20" // Matches border-radius
+                    fill="none"
+                    stroke="#C4C4C4"
+                    strokeWidth="1"
+                    strokeDasharray="5, 5" // Adjust these values (dash, gap)
+                  />
+                </svg>
+
+                <Link to="/admin/games/create-new-game">
+                  <IoAdd
+                    style={{
+                      fontSize: 'clamp(30px, 8vw, 40px)',
+                      cursor: 'pointer',
+                      backgroundColor: 'white',
+                      color: 'blue',
+                      border: '2px solid blue',
+                      borderRadius: '50%',
+                      padding: '0.2rem',
+                    }}
+                  />
+                </Link>
+                No Games Added Yet
               </div>
             </Col>
           )}
