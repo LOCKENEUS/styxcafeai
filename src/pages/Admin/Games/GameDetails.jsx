@@ -52,7 +52,6 @@ const GameDetails = () => {
     };
 
     useEffect(() => {
-        console.log("gameid-from-useeffect", gameId)
         if (gameId) {
             dispatch(getslots(gameId));
         }
@@ -119,7 +118,6 @@ const GameDetails = () => {
     };
 
     const handleCopySlots = async (day) => {
-        console.log("Copying slots for day:", day);
         await dispatch(copySlots({ game_id: gameId, day }));
         refetchSlots();
     };
@@ -147,8 +145,6 @@ const GameDetails = () => {
 
     let filteredSlots = slots.filter(slot => slot.day === weekdays[activeDate.getDay()]);
     filteredSlots = sortSlotsByTime(filteredSlots);
-
-    console.log("slots", slots)
 
     return (
         <div className="container mt-4">
@@ -402,6 +398,7 @@ const GameDetails = () => {
                     selectedGame={selectedGame}
                     slot={slotToEdit}
                     refetchSlots={refetchSlots} // pass this down
+                    day={weekdays[activeDate.getDay()]} // pass the active day
                 />
             )}
         </div>

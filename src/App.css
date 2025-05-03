@@ -78,9 +78,45 @@
 .text-medium{
   color: rgba(0, 0, 0, 1);
   font-weight:500;
-  font : 14px
+  font : 14px;
+}
+
+.text-dashboard-sm{
+  color: #666666;
+  font-weight:500;
+  font : 14px;
 }
 
 .pointer{
   cursor: pointer;
 }
+
+.fixed-left-sidebar {
+  position: fixed;
+  /* top: 0;
+  left: 0; */
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 1000;
+  width: 20%;
+  /* Hide scrollbar for Firefox */
+  scrollbar-width: none;
+
+  /* Hide scrollbar for Chrome, Safari and Edge */
+  -ms-overflow-style: none; /* IE and Edge */}
+
+.scrollable-content {
+  margin-left: 25%; /* Match the width of the fixed sidebar */
+  height: 100vh;
+  overflow-y: auto;
+  padding-right: 1rem;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+

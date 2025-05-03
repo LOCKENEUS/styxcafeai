@@ -36,10 +36,14 @@ const PurchaseOrderForm = () => {
   const { taxFields } = useSelector((state) => state.taxFieldSlice);
   const { items, loading } = useSelector((state) => state.items);
   const [showVendorList, setShowVendorList] = useState(false);
-  const handleShowVendorList = () => setShowVendorList(true);
+  const handleShowVendorList = () => {
+    setUserType("Vendor");
+    setShowVendorList(true);
+  }
   const handleCloseVendorList = () => setShowVendorList(false);
   const [vendorSelected, setVendorSelected] = useState([]);
   const [selectedOption, setSelectedOption] = useState("Organization");
+  const [userType, setUserType] = useState("Superadmin");
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [vendorId, setVendorId] = useState("");
   const user = JSON.parse(sessionStorage.getItem("user"));
@@ -237,15 +241,16 @@ const PurchaseOrderForm = () => {
   // Update the handleSubmit function
   const handleSubmit = async () => {
 
-    if (!vendorId) {
-      toast.error("Please select a vendor.");
-      return;
-    }
+    // if (!vendorId) {
+    //   toast.error("Please select a vendor.");
+    //   return;
+    // }
     const submitData = new FormData();
 
     // Add basic form fields
     submitData.append('cafe', cafeId);
     submitData.append('vendor_id', vendorId);
+    submitData.append('user_type', userType);
     submitData.append('delivery_date', formData.date);
     submitData.append('payment_terms', formData.payment_terms);
     submitData.append('reference', formData.reference);
@@ -322,7 +327,7 @@ const PurchaseOrderForm = () => {
     handleClose();
   };
 
-  console.log("customer", selectedCustomer);
+  console.log("user_type", userType);
 
   return (
     <Container fluid className="p-4">
@@ -370,6 +375,16 @@ const PurchaseOrderForm = () => {
                   onClick={handleShowVendorList}
                 >
                   <span>+</span> Add Vendor
+                </Button>
+                <Button
+                  style={{ width: "144px", height: "44px", borderStyle: "dashed" }}
+                  variant="outline-primary"
+                  className="d-flex align-items-center justify-content-center gap-2"
+                  onClick={() => {
+                    setUserType("Superadmin");
+                  }}
+                >
+                  Superadmin
                 </Button>
               </div>
             </div>

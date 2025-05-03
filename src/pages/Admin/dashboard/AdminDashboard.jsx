@@ -148,7 +148,7 @@ const AdminDashboard = () => {
       <h3 className="mb-4">Hello, {cafe.cafe_name}</h3>
 
       {/* Search Bar for Mobile */}
-      <Row className="d-md-none mb-3">
+      <Row className="d-md-none mb-3 m-2">
         <Col>
           <input
             type="text"
@@ -160,23 +160,22 @@ const AdminDashboard = () => {
       </Row>
 
       {/* Summary Cards */}
-      <Row className="mt-4 mb-4">
-
+      <Row className="g-0 mb-4" style={{marginLeft: '12px'}} ref={summaryCardsRef}>
           <Col xs={6} md={3}>
-            <div className="summary-card">
-              <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100'>
-                <span className='d-flex align-items-center justify-content-center rounded-4'
+            <div className="summary-card" style={{ borderStartStartRadius: '12px', borderEndStartRadius: '12px' }}>
+              <div className='desktop-view d-none d-md-flex gap-0 p-2 w-100' style={{borderRight: '1px solid #E0E0E0'}}>
+                <span className='d-flex align-items-center justify-content-center m-auto rounded-4'
                   style={{ width: '50px', height: '50px', background:"#00AF0F0D" }}>
                   <img src={user_check} alt="User Check Icon" />
                 </span>
                 <div>
-                  <small className="text-muted">Total Online Bookings</small>
+                  <small className="text-dashboard-sm">Total Online Bookings</small>
                   <h2 className="mt-2">{adminDashboard?.totalOnlineBookings}</h2>
                 </div>
               </div>
 
               <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
-                <small className="text-muted">Total Online Bookings</small>
+                <small className="text-dashboard-sm">Total Online Bookings</small>
                 <div className='d-flex align-items-center justify-content-between mt-2'>
                   <span className='d-flex align-items-center justify-content-center rounded-4'
                     style={{ width: '50px', height: '50px', background: "#00AF0F0D" }}>
@@ -190,19 +189,19 @@ const AdminDashboard = () => {
 
           <Col xs={6} md={3}>
             <div className="summary-card">
-              <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100'>
+              <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100' style={{borderRight: '1px solid #E0E0E0'}}>
                 <span className='d-flex align-items-center justify-content-center rounded-4'
                   style={{ width: '50px', height: '50px', background:"#F0D4000D" }}>
                   <img src={user_forbid_fil} alt="User forbid fill" />
                 </span>
                 <div>
-                  <small className="text-muted">Total Waiting Bookings</small>
+                  <small className="text-dashboard-sm">Total Waiting Bookings</small>
                   <h2 className="mt-2">{adminDashboard?.totalWaitingBookings}</h2>
                 </div>
               </div>
 
               <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
-                <small className="text-muted">Total Waiting Bookings</small>
+                <small className="text-dashboard-sm">Total Waiting Bookings</small>
                 <div className='d-flex align-items-center justify-content-between mt-2'>
                   <span className='d-flex align-items-center justify-content-center rounded-4'
                     style={{ width: '50px', height: '50px', background: "#F0D4000D" }}>
@@ -216,19 +215,19 @@ const AdminDashboard = () => {
 
           <Col xs={6} md={3}>
             <div className="summary-card">
-              <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100'>
+              <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100' style={{borderRight: '1px solid #E0E0E0'}}>
                 <span className='d-flex align-items-center justify-content-center rounded-4'
                   style={{ width: '50px', height: '50px', background:"#FF00000D" }}>
                   <img src={user_x_fill} alt="cancel icon" />
                 </span>
                 <div>
-                  <small className="text-muted">Total Cancel Bookings</small>
+                  <small className="text-dashboard-sm">Total Cancel Bookings</small>
                   <h2 className="mt-2">{adminDashboard?.totalCncelledBookings || 0}</h2>
                 </div>
               </div>
 
               <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
-                <small className="text-muted">Total Cancel Bookings</small>
+                <small className="text-dashboard-sm">Total Cancel Bookings</small>
                 <div className='d-flex align-items-center justify-content-between mt-2'>
                   <span className='d-flex align-items-center justify-content-center rounded-4'
                     style={{ width: '50px', height: '50px', background: "#FF00000D" }}>
@@ -241,20 +240,20 @@ const AdminDashboard = () => {
           </Col>
 
           <Col xs={6} md={3}>
-            <div className="summary-card">
+            <div className="summary-card" style={{ borderEndEndRadius: '12px', borderStartEndRadius: '12px' }}>
               <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100'>
                 <span className='d-flex align-items-center justify-content-center rounded-4'
                   style={{ width: '50px', height: '50px', background:"#00D5ED0D" }}>
                   <img src={rupee_circle} alt="rupee icon" />
                 </span>
                 <div>
-                  <small className="text-muted">Total Payments</small>
+                  <small className="text-dashboard-sm">Total Payments</small>
                   <h2 className="mt-2">{adminDashboard?.totalAmount || 0}</h2>
                 </div>
               </div>
 
               <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
-                <small className="text-muted">Total Payments</small>
+                <small className="text-dashboard-sm">Total Payments</small>
                 <div className='d-flex align-items-center justify-content-between mt-2'>
                   <span className='d-flex align-items-center justify-content-center rounded-4'
                     style={{ width: '50px', height: '50px', background: "#00D5ED0D" }}>
@@ -304,12 +303,12 @@ const AdminDashboard = () => {
 
       <Row className="g-4">
         {/* Left Column */}
-        <Col md={8}>
+        <Col md={8} className='px-4'>
           {/* Listed Games */}
-          <Card className="border-0" ref={gamesRef}>
-            <Card.Body>
-              <div className="d-flex justify-content-between mb-3 align-items-center">
-                <Card.Title style={{ fontSize: "1.2rem" }}>Listed Games</Card.Title>
+          {/* <Card className="border-0" ref={gamesRef}>
+            <Card.Body> */}
+              <div className="d-flex justify-content-between mb-1 align-items-center">
+                <Card.Title style={{ fontSize: "1.2rem" }} >Listed Games</Card.Title>
                 <Link to="/admin/games/recommended" className="text-primary" style={{ cursor: 'pointer', fontWeight: "bold" }}>View All</Link>
               </div>
               {games.length > 0 ? (
@@ -370,12 +369,12 @@ const AdminDashboard = () => {
                   </button>
                 </div>
               )}
-            </Card.Body>
-          </Card>
+            {/* </Card.Body>
+          </Card> */}
           {/* Tournaments */}
-          <Card className="border-0 mt-4" ref={tournamentsRef}>
-            <Card.Body>
-              <div className="d-flex mb-4 justify-content-between align-items-center">
+          {/* <Card className="border-0 mt-4" ref={tournamentsRef}>
+            <Card.Body> */}
+              <div className="d-flex mb-1 mt-3 justify-content-between align-items-center">
                 <Card.Title style={{ fontSize: "1.2rem", marginBottom: "0.8rem" }}>Tournaments</Card.Title>
                 <span className="text-primary" style={{ cursor: 'pointer', fontWeight: "bold" }}>View All</span>
               </div>
@@ -430,18 +429,17 @@ const AdminDashboard = () => {
                   ))}
                 </Row>
               </div>
-            </Card.Body>
-          </Card>
-
+            {/* </Card.Body>
+          </Card> */}
         </Col>
 
         {/* Right Column */}
-        <Col md={4}>
+        <Col md={4} className="p-0">
           {/* Desktop Bookings Card */}
-          <div className="d-none d-md-block">
-            <Card className="border-0">
-              <Card.Body>
-                <Card.Title style={{ fontSize: "1.2rem", marginBottom: "0.8rem" }} className="mb-4">Recent Bookings</Card.Title>
+          <div className="d-none d-md-block" style={{ marginRight: '15px' }}>
+            {/* <Card className="border-0">
+              <Card.Body> */}
+                <Card.Title style={{ fontSize: "1.2rem", marginBottom: "0.8rem" }} className="mb-2">Recent Bookings</Card.Title>
                 <ListGroup variant="flush">
                   {recentBookings.map((booking) => (
                     <ListGroup.Item key={booking.id} className="border-bottom py-3 booking-item">
@@ -472,8 +470,8 @@ const AdminDashboard = () => {
                     </ListGroup.Item>
                   ))}
                 </ListGroup>
-              </Card.Body>
-            </Card>
+              {/* </Card.Body>
+            </Card> */}
           </div>
           {/* Other Tournaments */}
           <Card className="border-0">
@@ -535,7 +533,7 @@ const AdminDashboard = () => {
 
 .summary-card {
   gap: 2rem;
-  border-radius: 8px;
+  padding: 20px;
   background-color: #fff;
 }
 

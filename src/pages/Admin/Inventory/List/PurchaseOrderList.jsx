@@ -44,6 +44,7 @@ const PurchaseOrderList = () => {
   ? listOfPO.map((po, index) => ({
       sn: index + 1,
       name: po.po_no,
+      user_type: po.user_type,
       vendor: po.vendor_id?.name || "-",
       amount: po.total || "-",
       status: po.status ? "Pending" : "Completed",
@@ -208,7 +209,6 @@ const PurchaseOrderList = () => {
                         <td>
                           <div className="d-flex align-items-center">
                             <span
-
                               className="d-flex justify-content-center align-items-center rounded-circle me-2"
                               style={{
                                 width: "35px",
@@ -223,7 +223,7 @@ const PurchaseOrderList = () => {
                             <div style={{ color: "#0062FF" }}>{row.name}</div>
                           </div>
                         </td>
-                        <td>{row.vendor}</td>
+                        <td>{row?.user_type === "Vendor" ? row?.vendor : "Superadmin"}</td>
                         <td>&#8377; {row.amount}</td>
                         <td>{row.status}</td>
                         <td>{row.delivery_date}</td>

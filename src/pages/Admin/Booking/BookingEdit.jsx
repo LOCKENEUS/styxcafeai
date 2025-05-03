@@ -11,6 +11,7 @@ import {
     Dropdown,
     ListGroup,
     Card,
+    Spinner,
 } from "react-bootstrap";
 import { addCustomer, getCustomers, searchCustomers } from "../../../store/AdminSlice/CustomerSlice";
 import profile_pic from "/assets/profile/user_avatar.jpg";
@@ -24,6 +25,7 @@ import ClientModel from "./Model/ClientModel";
 import { IoAdd } from "react-icons/io5";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
+import { BiLoaderCircle } from "react-icons/bi";
 
 const BookingEdit = () => {
 
@@ -37,6 +39,7 @@ const BookingEdit = () => {
     const [date, setDate] = useState("");
     const [slot, setSlot] = useState("");
     const [searchedCustomers, setSearchedCustomers] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     const [priceToPay, setPriceToPay] = useState(0);
     const [searchLoading, setSearchLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
@@ -101,7 +104,6 @@ const BookingEdit = () => {
 
     useEffect(() => {
         if (date && slots.length > 0) {
-            console.log("date...", date)
             const selectedDay = new Date(date).toLocaleDateString("en-US", { weekday: "long" });
             const availableSlots = slots.filter(slot => slot.day === selectedDay)
                 .sort((a, b) => {
@@ -112,8 +114,6 @@ const BookingEdit = () => {
             setFilteredSlots(availableSlots)
         }
     }, [date, slots]);
-
-    console.log("filtered", filteredSlots)
 
     useEffect(() => {
         if (booking) {
@@ -236,6 +236,7 @@ const BookingEdit = () => {
 
     const handleUpdateSlot = async () => {
         try {
+            setIsLoading(true);
             const updatedData = {
                 game_id: selectedGame?._id,
                 slot_date: date,
@@ -246,10 +247,12 @@ const BookingEdit = () => {
             };
 
             await dispatch(updateBooking({ id: booking?._id, updatedData: updatedData })).unwrap();
+            setIsLoading(false);
             // navigate("/admin/bookings");
 
         } catch (error) {
-
+            setIsLoading(false);
+            console.error("Error updating booking:", error);
         }
     }
 
@@ -461,84 +464,6 @@ const BookingEdit = () => {
                                 </div>
                             </div>
                             {selectedCustomer ? (
-                                // <Row>
-                                //     <Col md={6}>
-                                //         <div className="mb-4">
-                                //             <h5 className="muted-text">Customer Name</h5>
-                                //             <p className="text-black">{selectedCustomer.name}</p>
-                                //         </div>
-                                //     </Col>
-                                //     <Col md={6}>
-                                //         <Form.Label className="text-color" htmlFor="game">Select Game</Form.Label>
-                                //         <Form.Control
-                                //             as="select"
-                                //             size="sm"
-                                //             className="w-100 border border-2"
-                                //             value={selectedGame ? JSON.stringify(selectedGame) : ""}
-                                //             onChange={(e) => setSelectedGame(JSON.parse(e.target.value))}
-                                //         >
-                                //             <option value="">Select Game</option>
-                                //             {games.map((game, index) => (
-                                //                 <option key={index} value={JSON.stringify(game)}>
-                                //                     {game.name}
-                                //                 </option>
-                                //             ))}
-                                //         </Form.Control>
-                                //     </Col>
-                                //     <Col md={6}>
-
-                                //         <div className="mb-4">
-                                //             <h5 className="muted-text">Booked Game</h5>
-                                //             <p style={{ fontWeight: "bold" }} className="text-primary">
-                                //                 {selectedGame?.name} ({selectedGame?.size})
-                                //             </p>
-                                //         </div>
-                                //     </Col>
-
-                                //     <Col md={6}>
-                                //         <div className="mb-4">
-                                //             <h5 className="muted-text">Day & Time</h5>
-                                //             <p className="">{formattedDate} - {convertTo12Hour(slot.start_time)}</p>
-                                //         </div>
-                                //     </Col>
-
-                                //     <Col md={6}>
-                                //         <Form.Group controlId="datePicker">
-                                //             <Form.Label>Select Date</Form.Label>
-                                //             <Form.Control
-                                //                 type="date"
-                                //                 value={date}
-                                //                 onChange={(e) => setDate(e.target.value)}
-                                //             />
-                                //         </Form.Group>
-                                //     </Col>
-                                //     <Col md={6}></Col>
-
-                                //     <Col md={6}>
-                                //         <Form.Group controlId="datePicker">
-                                //             <Form.Control
-                                //                 as="select"
-                                //                 size="sm"
-                                //                 className="w-100 border border-2"
-                                //                 value={slot ? JSON.stringify(slot) : ""}
-                                //                 onChange={(e) => setSlot(JSON.parse(e.target.value))}
-                                //             >
-                                //                 <option value="">Select Slot</option>
-                                //                 {slots.map((slot, index) => {
-                                //                     // Check if this slot is booked on the selected date
-                                //                     const isBooked = bookings.some(
-                                //                         (booking) => booking.slot_id._id === slot._id && booking.slot_date.startsWith(date) // Ensure it's the same date
-                                //                     );
-                                //                     return (
-                                //                         <option key={index} value={JSON.stringify(slot)} disabled={isBooked}>
-                                //                             {slot?.start_time} - {slot?.end_time} {isBooked ? "(Booked)" : ""}
-                                //                         </option>
-                                //                     );
-                                //                 })}
-                                //             </Form.Control>
-                                //         </Form.Group>
-                                //     </Col>
-                                // </Row>
 
                                 <Card className="p-2 shadow-sm border-0">
                                     <Row className="g-4">
@@ -601,58 +526,8 @@ const BookingEdit = () => {
                                             </Form.Group>
                                         </Col>
 
-                                        {/* Slot Selection */}
-                                        {/* <Col md={6}>
-                                        <Form.Group>
-                                            <Form.Label className="text-color">Select Slot</Form.Label>
-                                            <Form.Select
-                                                size="sm"
-                                                className="border-2"
-                                                value={slot ? JSON.stringify(slot) : ""}
-                                                onChange={(e) => setSlot(JSON.parse(e.target.value))}
-                                            >
-                                                <option value="">Select Slot</option>
-                                                {slots.map((slot, index) => {
-                                                    const isBooked = bookings.some(
-                                                        (booking) => booking.slot_id._id === slot._id && booking.slot_date.startsWith(date)
-                                                    );
-                                                    return (
-                                                        <option key={index} value={JSON.stringify(slot)} disabled={isBooked}>
-                                                            {slot?.start_time} - {slot?.end_time} {isBooked ? "(Booked)" : ""}
-                                                        </option>
-                                                    );
-                                                })}
-                                            </Form.Select>
-                                        </Form.Group>
-                                    </Col> */}
-
                                         <Col md={6}>
-                                            {/* <Form.Group>
-                                                <Form.Label className="text-color">Select Slot</Form.Label>
-                                                <Form.Select
-                                                    size="sm"
-                                                    className="border-2"
-                                                    value={slot ? slot._id : ""}
-                                                    onChange={(e) => {
-                                                        const selectedSlot = slots?.find(s => s._id === e.target.value);
-                                                        setSlot(selectedSlot);
-                                                    }}
-                                                >
-                                                    <option value="">Select Slot</option>
-                                                    {slots?.map((slot, index) => {
-                                                        const isBooked = bookings?.some(
-                                                            (booking) =>
-                                                                booking.slot_id._id === slot._id &&
-                                                                booking.slot_date.startsWith(date)
-                                                        );
-                                                        return (
-                                                            <option key={index} value={slot._id} disabled={isBooked}>
-                                                                {slot.start_time} - {slot.end_time} {isBooked ? "(Booked)" : ""}
-                                                            </option>
-                                                        );
-                                                    })}
-                                                </Form.Select>
-                                            </Form.Group> */}
+                                            
                                             <Form.Group>
                                                 <Form.Label className="text-color">Select Slot</Form.Label>
                                                 <Form.Select
@@ -661,8 +536,33 @@ const BookingEdit = () => {
                                                     value={slot ? slot?._id : ""}
                                                     onChange={(e) => {
                                                         const selectedSlot = filteredSlots.find(s => s?._id === e.target.value);
-                                                        setSlot(selectedSlot);
-                                                    }}
+                                                      
+                                                        if (selectedSlot) {
+                                                          const convertTo24Hour = (time12h) => {
+                                                            const [time, modifier] = time12h.split(' ');
+                                                            let [hours, minutes] = time.split(':');
+                                                            hours = parseInt(hours, 10);
+                                                      
+                                                            if (modifier === 'PM' && hours !== 12) {
+                                                              hours += 12;
+                                                            }
+                                                            if (modifier === 'AM' && hours === 12) {
+                                                              hours = 0;
+                                                            }
+                                                      
+                                                            return `${hours.toString().padStart(2, '0')}:${minutes}`;
+                                                          };
+                                                      
+                                                          const updatedSlot = {
+                                                            ...selectedSlot,
+                                                            start_time: convertTo24Hour(selectedSlot.start_time),
+                                                            end_time: convertTo24Hour(selectedSlot.end_time)
+                                                          };
+                                                      
+                                                          setSlot(updatedSlot);
+                                                        }
+                                                      }}
+                                                      
                                                 >
                                                     {filteredSlots.length > 0 ? <option value="">Select Slot</option> : <option>No slots available</option>}
                                                     {filteredSlots.map((slot, index) => {
@@ -721,6 +621,7 @@ const BookingEdit = () => {
                                             onClick={handleUpdateSlot}
                                         >
                                             Save
+                                            {isLoading && <Spinner className="ms-2" animation="border" size="sm" />}
                                         </Button>
                                     </div>
                                 </div>
