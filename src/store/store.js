@@ -8,6 +8,7 @@ import locationReducer from './slices/locationSlice';
 import slotReducer from './slices/slotsSlice';
 import offerReducer from './slices/offerSlice';
 import membershipReducer from './slices/MembershipSlice';
+import InventorySlice from './slices/inventory';
 
 // Admin Slices
 import inventoryReducer from './adminslices/inventory';
@@ -28,6 +29,8 @@ import CollectPaymentRouter from './AdminSlice/Inventory/CollectPaymentSlice';
 import CollectPurchaseBill from './AdminSlice/Inventory/CollectPurchaseBill';
 import pBillReducer from './AdminSlice/Inventory/PBillSlice';
 import adminDashboardReducer from './AdminSlice/DashboardSlice';
+
+
 
 export const store = configureStore({
   reducer: {
@@ -62,7 +65,12 @@ export const store = configureStore({
      purchaseBill: CollectPurchaseBill,
         // bookings
         bookings: bookingsReducer,
-        timer: timerReducer
+        timer: timerReducer,
+
+
+        // super admin
+
+        inventorySuperAdmin: InventorySlice
 
   },
 });

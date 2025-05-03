@@ -19,6 +19,7 @@ export const getGames = createAsyncThunk(
     }
   }
 );
+
 // Async thunk to fetch a game by ID
 export const getGameById = createAsyncThunk(
   "games/getGameById",
@@ -96,9 +97,6 @@ export const deleteGame = createAsyncThunk(
     }
   }
 );
-
-
-
 
 const gameSlice = createSlice({
   name: "games",

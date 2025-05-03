@@ -41,9 +41,9 @@ import CafeTableList from "../pages/Admin/Tables/CafeTableList";
 // Inventory Components
 import { Dashboards } from "../components/common/inventory";
 import { Vendor } from "../components/common/inventory/vendor";
-import { Items } from "../components/common/inventory/items";
+import { Items } from "../components/common/inventory/list/items";
 import { ItemsGroup } from "../components/common/inventory/itemsGroup";
-import { ItemCreate } from "../components/common/inventory/itemCreate";
+import { ItemCreate } from "../components/common/inventory/create/itemCreate";
 import { IitemGroupCreate } from "../components/common/inventory/iitemGroupCreate";
 import { VendorCreate } from "../components/common/inventory/vendorCreate";
 import { PurchaseReceived } from "../components/common/inventory/purchaseReceived";

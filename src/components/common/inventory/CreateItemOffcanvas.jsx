@@ -95,7 +95,7 @@ const CreateItemOffcanvas = ({ show, handleClose }) => {
         aria-labelledby="offcanvasItemLabel"
       >
         <Offcanvas.Header closeButton className="bg-light text-dark">
-          <Offcanvas.Title id="offcanvasItemLabel">Create New Item</Offcanvas.Title>
+          <Offcanvas.Title id="offcanvasItemLabel">Create New Item </Offcanvas.Title>
         </Offcanvas.Header>
         
         <Offcanvas.Body>

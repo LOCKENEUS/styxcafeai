@@ -1417,7 +1417,7 @@ const { games } = useSelector((state) => state.games);
                                      </Col>
                
                                      <Col sm={6}>
-                                       <Form.Select
+                                       {/* <Form.Select
                                          aria-label="Default select example"
                                          value={selectedGameId}
                                          onChange={(e) => {
@@ -1432,7 +1432,7 @@ const { games } = useSelector((state) => state.games);
                                              {game.name}
                                            </option>
                                          ))}
-                                       </Form.Select>
+                                       </Form.Select> */}
                                      </Col>
                                    </Row>
                                  </Col>

@@ -66,12 +66,7 @@ export const ItemsDetails = () => {
         console.log("Back button clicked");
         // navigate /Inventory/Items
         navigate("/Inventory/Items");
-
-
       }
-    
-
-
     return (
         <Container className="text-center">
 
