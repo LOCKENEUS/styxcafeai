@@ -1,25 +1,94 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect, Image, InputGroup, Row } from "react-bootstrap";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { FaPlus, FaStarOfLife } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { Units } from "../modal/units";
 import { fetchItems } from "../../../../store/adminslices/inventory";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addItems } from "../../../../store/slices/inventory";
 import add from '/assets/inventory/material-symbols_add-rounded.png'
 import { Manufacturer } from "../modal/manufacturer";
 import { Brand } from "../modal/brand";
 import { TaxModal } from "../modal/tax";
+import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
+import { getCustomFields } from "../../../../store/AdminSlice/CustomField";
+import { getVendors } from "../../../../store/AdminSlice/Inventory/VendorSlice";
+import { toast } from "react-toastify";
 export const ItemCreate = () => {
     const [imagePreview, setImagePreview] = useState('https://fsm.lockene.net/assets/Web-Fsm/images/avtar/3.jpg');
     const [showUnitModal, setShowUnitModal] = useState(false);
-    const [showManufacturerModal, setShowManufacturerModal ] = useState(false);
-    const [showBrandModal,setShowBrandModal]  = useState(false);
+    const [showManufacturerModal, setShowManufacturerModal] = useState(false);
+    const [showBrandModal, setShowBrandModal] = useState(false);
     const [showTaxModal, setShowTaxModal] = useState(false);
     const dispatch = useDispatch();
-    const [taxPreference, setTaxPreference] = useState('inclusive');
+    const [taxPreference, setTaxPreference] = useState('Taxable');
     const [galleryImages, setGalleryImages] = useState([]);
+
+    const [galleryFiles, setGalleryFiles] = useState([]); // actual files
+
+
+    const [superAdminId, setSuperAdminId] = useState('');
+    const customFields = useSelector(state => state.customFields.customFields);
+    // useEffect(() => {
+    //     const token = localStorage.getItem("token");
+    //     if (token) {
+    //       const userData = JSON.parse(token);
+    //       console.log("User ID (_id):", userData._id);
+    //     }
+    //   }, []);
+
+    // -----------------------   API CALLS ---------------------------
+    useEffect(() => {
+        const userData = sessionStorage.getItem("user");
+        if (userData) {
+            const parsedUser = JSON.parse(userData);
+            setSuperAdminId(parsedUser._id);
+            console.log("User ID (_id):-- ", parsedUser._id);
+            console.log("User Name:", parsedUser.name);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (superAdminId) {
+            dispatch(getCustomFields(superAdminId));
+        }
+    }, [dispatch, superAdminId]);
+
+    useEffect(() => {
+
+        if (superAdminId) {
+            dispatch(getTaxFields(superAdminId));
+
+        }
+    }, [dispatch, superAdminId]);
+    useEffect(() => {
+        if (superAdminId) {
+            dispatch(getVendors(superAdminId));
+        }
+
+    }, [dispatch, superAdminId]);
+
+
+
+    const taxFieldsList = useSelector((state) => state.taxFieldSlice.taxFields);
+    console.log("Tax Fields:", taxFieldsList);
+
+    const unitOptions = customFields.filter(field => field.type === "Unit");
+    const manufacturerOptions = customFields.filter(field => field.type === "Manufacturer");
+    const brandOptions = customFields.filter(field => field.type === "Brand");
+    const vendors = useSelector(state => state.vendors.vendors);
+
+    console.log("Unit Options:", unitOptions);
+    console.log("Manufacturer Options:", manufacturerOptions);
+    console.log("Brand Options:", brandOptions);
+
+
+    // useEffect(() => {
+    //     dispatch(getItems(superAdminId));
+    // })
+
+    // const { items } = useSelector((state) => state.items);
 
     const [formData, setFormData] = useState({
         name: "",
@@ -27,7 +96,7 @@ export const ItemCreate = () => {
         sku: "",
         unitType: "",
         hsnCode: "",
-        taxPreference:"inclusive",
+        taxPreference: "Taxable",
         length: "",
         width: "",
         height: "",
@@ -35,22 +104,32 @@ export const ItemCreate = () => {
         weight1: "",
         weight_unit: "",
         manufacturer: "",
-        ean: "",
+        // ean: "",
         brand: "",
-        upc: "",
-        mpn: "",
+        // upc: "",
+        // mpn: "",
         cost_price: "",
         selling_price: "",
         vendor: "",
         stock: "",
         stock_rate: "",
         reorder_point: "",
+        selectedTax: "",
+        cafeSellingPrice: "",
+
 
     });
 
     const handleChange = (e) => {
+        // const { name, value } = e.target;
+        // setFormData({ ...formData, [name]: value });
+        // taxPreference
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+        if (name === 'taxPreference') {
+            setTaxPreference(value);
+        }
+
     }
 
 
@@ -58,25 +137,106 @@ export const ItemCreate = () => {
         setTaxPreference(e.target.value);
     };
 
+    // const handleGalleryChange = (e) => {
+    //     const files = Array.from(e.target.files);
+    //     const previews = files.map((file) => URL.createObjectURL(file));
+    //     setGalleryImages(previews);
+    // };
+
     const handleGalleryChange = (e) => {
         const files = Array.from(e.target.files);
         const previews = files.map((file) => URL.createObjectURL(file));
-        setGalleryImages(previews);
+
+        setGalleryFiles(files); // save actual File objects
+        setGalleryImages(previews); // save preview URLs
     };
 
 
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
-        // try {
-        //     dispatch(addItems(formData)); 
-        //     console.log("Submitted data:", formData);
+        if (
+            formData.name === '' ||
+            formData.sku === '' ||
+            formData.unitType === '' ||
+            formData.cost_price === '' ||
+            formData.selling_price === '' ||
+            formData.cafeSellingPrice === ''
+        ) {
+            return toast.error('Please fill all the required fields');
 
-        // } catch (error) {
-        //     console.error("Error submitting form:", error);
-        // }
+        }
+
+
+        try {
+            const formDataToSend = new FormData();
+
+            formDataToSend.append("groupId", superAdminId);
+            formDataToSend.append("name", formData.name);
+            formDataToSend.append("sku", formData.sku);
+            formDataToSend.append("unit", formData.unitType);
+            formDataToSend.append("hsn", formData.hsnCode);
+            formDataToSend.append("taxable", formData.taxPreference === "Taxable");
+            formDataToSend.append("tax", formData.selectedTax);
+            formDataToSend.append("length", formData.length);
+            formDataToSend.append("width", formData.width);
+            formDataToSend.append("height", formData.height);
+            formDataToSend.append("dimensionUnit", formData.dimension_unit);
+            formDataToSend.append("weight", formData.weight1);
+            formDataToSend.append("weightUnit", formData.weight_unit);
+            formDataToSend.append("manufacturer", formData.manufacturer);
+            formDataToSend.append("brand", formData.brand);
+            formDataToSend.append("costPrice", formData.cost_price);
+            formDataToSend.append("sellingPrice", formData.selling_price);
+            formDataToSend.append("preferredVendor", formData.vendor);
+            formDataToSend.append("stock", formData.stock);
+            formDataToSend.append("stockRate", formData.stock_rate);
+            formDataToSend.append("reorderPoint", formData.reorder_point);
+            formDataToSend.append("cafeSellingPrice", formData.cafeSellingPrice);
+
+            // Append images
+            galleryFiles.forEach((file) => {
+                formDataToSend.append("galleryImages", file);
+
+            });
+
+
+            await dispatch(addItems(formDataToSend));
+
+            console.log("Submitted data:", formDataToSend);
+            // Reset form after successful submission
+            setFormData({
+                name: "",
+                // hsnCode: "",
+                sku: "",
+                unitType: "",
+                hsnCode: "",
+                taxPreference: "Taxable",
+                length: "",
+                width: "",
+                height: "",
+                dimension_unit: "",
+                weight1: "",
+                weight_unit: "",
+                manufacturer: "",
+                // ean: "",
+                brand: "",
+                // upc: "",
+                // mpn: "",
+                cost_price: "",
+                selling_price: "",
+                vendor: "",
+                stock: "",
+                stock_rate: "",
+                reorder_point: "",
+                selectedTax: "",
+                cafeSellingPrice: "",
+            });
+        } catch (error) {
+            console.error("Error submitting form:", error);
+            toast.error("Failed to submit form.");
+        }
     };
+
 
     // -----    style -----
 
@@ -160,6 +320,8 @@ export const ItemCreate = () => {
                                             value={formData.name}
                                             onChange={handleChange}
                                             style={inputStyle}
+
+
                                         />
                                     </FormGroup>
                                 </Col>
@@ -178,6 +340,7 @@ export const ItemCreate = () => {
                                             value={formData.sku}
                                             onChange={handleChange}
                                             style={inputStyle}
+                                            required
                                         />
                                     </FormGroup>
                                 </Col>
@@ -195,12 +358,16 @@ export const ItemCreate = () => {
                                                 value={formData.unitType}
                                                 defaultValue="Mobile"
                                                 style={inputStyle}
+                                                required
                                             >
-                                                <option value="Home">Home</option>
-                                                <option value="Work">Work</option>
-                                                <option value="Fax">Fax</option>
-                                                <option value="Direct">Direct</option>
-                                                <option value="Mobile">Mobile</option>
+                                                {/* map unitOptions */}
+                                                <option value="" disabled>Select Unit</option>
+                                                {unitOptions.map((option, index) => (
+                                                    <option key={option._id || index} value={option.name}>
+                                                        {option.name}
+                                                    </option>
+                                                ))}
+
                                             </FormSelect>
 
                                             <Button
@@ -222,7 +389,7 @@ export const ItemCreate = () => {
                                         </InputGroup>
 
                                         <div id="addUnitFieldContainer" />
-                                        <Units show={showUnitModal} handleClose={() => setShowUnitModal(false)} />
+                                        <Units show={showUnitModal} handleClose={() => setShowUnitModal(false)} superAdminId={superAdminId} />
                                     </FormGroup>
                                 </Col>
                             </Row>
@@ -238,12 +405,12 @@ export const ItemCreate = () => {
                                             HSN Code
                                             {/* <span className="text-danger ms-1 ">*</span> */}
                                         </label>
-                                        <input style={inputStyle} type="text" name="hsnCode" 
-                                        className="form-control" id="hsnCode"
-                                         placeholder="HSN Code"
-                                         value={formData.hsnCode}
-                                         onChange={handleChange}
-                                         />
+                                        <input style={inputStyle} type="text" name="hsnCode"
+                                            className="form-control" id="hsnCode"
+                                            placeholder="HSN Code"
+                                            value={formData.hsnCode}
+                                            onChange={handleChange}
+                                        />
                                     </FormGroup>
                                 </Col>
 
@@ -260,24 +427,34 @@ export const ItemCreate = () => {
                                             onChange={handleChange}
                                             style={inputStyle}
                                         >
-                                            <option value="inclusive">Taxsaple</option>
-                                            <option value="exclusive">Not Tax</option>
+                                            <option value="Taxable">Taxsaple</option>
+                                            <option value="Non-Taxable">Not Tax</option>
                                         </FormSelect>
                                     </FormGroup>
                                 </Col>
 
-                                {taxPreference !== 'inclusive' && (
+                                {taxPreference === 'Taxable' && (
                                     <Col sm={4} className="my-2">
                                         <FormGroup>
                                             <label className="fw-bold my-2" style={lableHeader}>
                                                 Tax <span className="text-danger ms-1">*</span>
                                             </label>
                                             <InputGroup >
-                                                <FormSelect aria-label="Select Tax" name="tax" style={inputStyle} >
-                                                    <option value="23%">23%</option>
-                                                    <option value="8%">8%</option>
-                                                    <option value="7%">7%</option>
+                                                <FormSelect
+                                                    aria-label="Select Tax"
+                                                    name="tax"
+                                                    style={inputStyle}
+                                                    defaultValue=""
+                                                    value={formData.selectedTax}
+                                                >
+                                                    <option value="" disabled>Select Tax</option>
+                                                    {taxFieldsList.map((tax, index) => (
+                                                        <option key={tax._id || index} value={tax._id}>
+                                                            {tax.tax_name}  ({tax.tax_rate}%)
+                                                        </option>
+                                                    ))}
                                                 </FormSelect>
+
                                                 <Button
                                                     type="button"
                                                     variant="outline-primary"
@@ -294,7 +471,7 @@ export const ItemCreate = () => {
                                                 >
                                                     <FaPlus />
                                                 </Button>
-                                                <TaxModal show={showTaxModal} handleClose={() => setShowTaxModal(false)} />
+                                                <TaxModal show={showTaxModal} handleClose={() => setShowTaxModal(false)} superAdminId={superAdminId} />
                                             </InputGroup>
 
 
@@ -306,22 +483,22 @@ export const ItemCreate = () => {
                                     <FormGroup>
                                         <label className="fw-bold my-2" style={lableHeader}>Dimensions</label>
                                         <InputGroup className="gap-2">
-                                            <FormControl type="tel" name="length" placeholder="Length" 
-                                           
-                                            value={formData.length}
-                                            onChange={handleChange}
-                                            style={inputStyle} />
-                                            <FormControl type="tel" name="width" placeholder="Width" 
-                                            value={formData.width}
-                                            onChange={handleChange}
-                                            style={inputStyle} />
-                                            <FormControl type="tel" name="height" placeholder="height"
-                                            value={formData.height}
-                                            onChange={handleChange}
-                                            style={inputStyle} />
+                                            <FormControl type="number" name="length" placeholder="Length"
+
+                                                value={formData.length}
+                                                onChange={handleChange}
+                                                style={inputStyle} />
+                                            <FormControl type="number" name="width" placeholder="Width"
+                                                value={formData.width}
+                                                onChange={handleChange}
+                                                style={inputStyle} />
+                                            <FormControl type="number" name="height" placeholder="height"
+                                                value={formData.height}
+                                                onChange={handleChange}
+                                                style={inputStyle} />
                                             <FormSelect name="dimension_unit" style={inputStyle}
-                                            value={formData.dimension_unit}
-                                            onChange={handleChange}
+                                                value={formData.dimension_unit}
+                                                onChange={handleChange}
                                             >
                                                 <option value="mm">mm</option>
                                                 <option value="cm">cm</option>
@@ -347,9 +524,9 @@ export const ItemCreate = () => {
                                             />
 
                                             <FormSelect name="weight_unit" id="weight_unit"
-                                            value={formData.weight_unit}
-                                            onChange={handleChange}
-                                            style={inputStyle} >
+                                                value={formData.weight_unit}
+                                                onChange={handleChange}
+                                                style={inputStyle} >
                                                 <option value="kg">kg</option>
                                                 <option value="g">g</option>
                                                 <option value="t">t</option>
@@ -370,13 +547,17 @@ export const ItemCreate = () => {
                                         </label>
                                         <InputGroup>
                                             <FormSelect aria-label="Select Tax" style={inputStyle}
-                                            name="manufacturer"
-                                            value={formData.manufacturer}
-                                            onChange={handleChange}
+                                                name="manufacturer"
+                                                value={formData.manufacturer}
+                                                onChange={handleChange}
                                             >
                                                 <option value="MI">MI</option>
-                                                <option value="HP">HP</option>
-                                                <option value="Dell">Dell</option>
+                                                {/* map manufacturerOptions */}
+                                                {manufacturerOptions.map((manufacturer, index) => (
+                                                    <option key={manufacturer._id || index} value={manufacturer._id}>
+                                                        {manufacturer.name}
+                                                    </option>
+                                                ))}
                                             </FormSelect>
                                             <Button
                                                 type="button"
@@ -394,7 +575,7 @@ export const ItemCreate = () => {
                                             >
                                                 <FaPlus />
                                             </Button>
-                                            <Manufacturer show={showManufacturerModal} handleClose={() => setShowManufacturerModal(false)} />
+                                            <Manufacturer show={showManufacturerModal} handleClose={() => setShowManufacturerModal(false)} superAdminId={superAdminId} />
                                         </InputGroup>
                                         {/* <div id="addTaxFieldContainer" />
                                         <a className="js-create-field form-link" href="javascript:;">
@@ -419,8 +600,11 @@ export const ItemCreate = () => {
                                                 style={inputStyle}
                                             >
                                                 <option value="">Select Brand</option>
-                                                <option value="Work">HP</option>
-                                                <option value="Xiomi">Xiomi</option>
+                                                {brandOptions.map((brand, index) => (
+                                                    <option key={brand._id || index} value={brand._id}>
+                                                        {brand.name}
+                                                    </option>
+                                                ))}
 
                                             </FormSelect>
                                             <Button
@@ -440,7 +624,7 @@ export const ItemCreate = () => {
                                                 <FaPlus />
                                             </Button>
 
-                                            <Brand show={showBrandModal} handleClose={() => setShowBrandModal(false)} />
+                                            <Brand show={showBrandModal} handleClose={() => setShowBrandModal(false)} superAdminId={superAdminId} />
                                         </InputGroup>
                                         {/* <div />
                                         <a className="js-create-field form-link" href="javascript:;">
@@ -448,12 +632,12 @@ export const ItemCreate = () => {
                                         </a> */}
                                     </FormGroup>
                                 </Col>
-                                <Col sm={4} className="my-2">
+                                {/* <Col sm={4} className="my-2">
                                     <FormGroup>
                                         <label className="fw-bold my-2" style={lableHeader}>
-                                            {/* <FaStarOfLife className="text-danger size-sm" />  */}
+                                            
                                             MPN
-                                            {/* <span className="text-danger ms-1 ">*</span> */}
+                                           
                                         </label>
                                         <input type="text" className="form-control" placeholder="0 0 0 - 0 0 0" style={inputStyle}
                                         name='mpn'
@@ -465,9 +649,9 @@ export const ItemCreate = () => {
                                 <Col sm={4} className="my-2">
                                     <FormGroup>
                                         <label className="fw-bold my-2" style={lableHeader}>
-                                            {/* <FaStarOfLife className="text-danger size-sm" />  */}
+                                           
                                             UPC
-                                            {/* <span className="text-danger ms-1 ">*</span> */}
+                                           
                                         </label>
                                         <input type="text" className="form-control" placeholder="0 0 0 - 0 0 0" style={inputStyle} 
                                         name="upc"
@@ -475,7 +659,7 @@ export const ItemCreate = () => {
                                         onChange={handleChange}
                                         />
                                     </FormGroup>
-                                </Col>
+                                </Col> */}
                             </Row>
                         </Card>
 
@@ -492,7 +676,7 @@ export const ItemCreate = () => {
                                             <InputGroupText style={inputStyle} >₹</InputGroupText>
 
                                             <FormControl
-                                                type="tel"
+                                                type="number"
                                                 name="cost_price"
                                                 value={formData.cost_price}
                                                 placeholder="00.00"
@@ -526,19 +710,44 @@ export const ItemCreate = () => {
                                 <Col sm={4} className="my-2">
                                     <FormGroup>
                                         <label className="fw-bold my-2" style={lableHeader}>
+                                            Cafe Selling Price <span className="text-danger">*</span>
+                                        </label>
+                                        <InputGroup className="gap-2">
+
+                                            <InputGroupText style={inputStyle}>₹</InputGroupText>
+
+                                            <FormControl
+                                                style={inputStyle}
+                                                type="number"
+                                                value={formData.cafeSellingPrice}
+                                                name="cafeSellingPrice"
+                                                placeholder="00.00"
+                                                onChange={handleChange}
+                                            />
+                                        </InputGroup>
+                                    </FormGroup>
+                                </Col>
+
+
+                                <Col sm={4} className="my-2">
+                                    <FormGroup>
+                                        <label className="fw-bold my-2" style={lableHeader}>
                                             {/* <FaStarOfLife className="text-danger size-sm" />  */}
                                             Preferrd Vendor
                                             <span className="text-danger ms-1 ">*</span>
                                         </label>
                                         <InputGroup>
                                             <FormSelect aria-label="Select Tax" style={inputStyle}
-                                            name="vendor"
-                                            value={formData.vendor}
-                                            onChange={handleChange}
+                                                name="vendor"
+                                                value={formData.vendor}
+                                                onChange={handleChange}
                                             >
-                                                <option value=" ">Select Vendor</option>
-                                                <option value="Vendor1">Vendor1</option>
-                                                <option value="Vendor2">Vendor2</option>
+                                                <option value="">Select Vendor</option>
+                                                {vendors.map(vendor => (
+                                                    <option key={vendor._id} value={vendor._id}>
+                                                        {vendor.name}
+                                                    </option>
+                                                ))}
 
 
                                             </FormSelect>
@@ -567,10 +776,10 @@ export const ItemCreate = () => {
                                 <Col sm={4} className="my-2">
                                     <FormGroup  >
                                         <lable className="fw-bold my-2" style={lableHeader}    >Opening Stock</lable>
-                                        <input className="form-control mt-2" type="tel" name="stock"
-                                        value={formData.stock}
-                                        onChange={handleChange}
-                                        placeholder="100" style={inputStyle} />
+                                        <input className="form-control mt-2" type="number" name="stock"
+                                            value={formData.stock}
+                                            onChange={handleChange}
+                                            placeholder="100" style={inputStyle} />
                                     </FormGroup>
                                 </Col>
 
@@ -579,10 +788,11 @@ export const ItemCreate = () => {
                                         <lable className="fw-bold my-2" style={lableHeader}>Opening Stock (Rate Per Unit)</lable>
                                         <InputGroup className="gap-2">
                                             <InputGroupText className="mt-2" style={inputStyle}>₹</InputGroupText>
-                                            <input className="form-control mt-2" type="tel" name="stock_rate" 
-                                            value={formData.stock_rate}
-                                            onChange={handleChange}
-                                            placeholder="00.00" style={inputStyle} />
+                                            <input className="form-control mt-2" name="stock_rate"
+                                                type="number"
+                                                value={formData.stock_rate}
+                                                onChange={handleChange}
+                                                placeholder="00.00" style={inputStyle} />
                                         </InputGroup>
                                     </FormGroup>
                                 </Col>
@@ -591,9 +801,9 @@ export const ItemCreate = () => {
                                     <FormGroup >
                                         <lable className="fw-bold my-2" style={lableHeader}>Reorder Point</lable>
                                         <FormControl className="form-control mt-2" type="number"
-                                         value={formData.reorder_point}
-                                         onChange={handleChange}
-                                         name="reorder_point" placeholder="000" style={inputStyle} />
+                                            value={formData.reorder_point}
+                                            onChange={handleChange}
+                                            name="reorder_point" placeholder="000" style={inputStyle} />
                                     </FormGroup>
                                 </Col>
                             </Row>
@@ -660,7 +870,7 @@ export const ItemCreate = () => {
 
 
                                     </Row>
-                                </Col><Col sm={4} className="my-2">
+                                </Col><Col sm={4} className="my-2 d-flex flex-wrap">
                                     {galleryImages.length > 0 &&
                                         galleryImages.map((src, idx) => (
                                             <Col sm={3} key={idx} className="my-2">

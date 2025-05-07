@@ -14,7 +14,7 @@ export const addItems = createAsyncThunk(
         itemsData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
           },
         }
       );
@@ -27,10 +27,32 @@ export const addItems = createAsyncThunk(
   }
 );
 
+export const getItems = createAsyncThunk(
+  "games/getItems",
+  async (itemId, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/superadmin/inventory/item/list`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Something went wrong"
+      );
+    }
+  }
+);
+
+
 const InventorySlice = createSlice({
   name: "inventory",
   initialState: {
-    it: [], 
+    it: [],
     selectedinventory: null,
     status: "idle",
     error: null,
@@ -39,7 +61,7 @@ const InventorySlice = createSlice({
     setSelectedInventory(state, action) {
       state.selectedinventory = action.payload;
     },
-    
+
   },
   extraReducers: (builder) => {
     builder
@@ -47,16 +69,27 @@ const InventorySlice = createSlice({
         state.status = "loading";
       })
       .addCase(addItems.fulfilled, (state, action) => {
-        state.it.push(action.payload.data); 
+        state.it.push(action.payload.data);
         toast.success("Item added successfully!");
-        state.status = "succeeded"; 
+        state.status = "succeeded";
       })
       .addCase(addItems.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
         toast.error(action.payload || "Failed to add item");
+      })
+      .addCase(getItems.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getItems.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.inventory = action.payload;
+      })
+      .addCase(getItems.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
       });
-  },  
+  },
 });
 
 export const { setSelectedInventory } = InventorySlice.actions;
