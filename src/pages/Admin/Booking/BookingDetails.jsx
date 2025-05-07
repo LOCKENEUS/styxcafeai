@@ -59,8 +59,6 @@ const BookingDetails = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
 
-  console.log("slot_info", slot);
-
   const backend_url = import.meta.env.VITE_API_URL;
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -105,7 +103,6 @@ const BookingDetails = () => {
       dispatch(getSlotDetails({ id: slotId }));
     }
     if (gameId || slotId) {
-      console.log("gameId and slotId", slot);
       if (slot?.slot_price) {
         if (addOnTotal > 0) {
           setPayableAmount(slot?.slot_price + addOnTotal)
@@ -383,8 +380,6 @@ const BookingDetails = () => {
         tax_amt: item.totalTax
       }))
 
-      console.log("mappedItems", mappedItems)
-
       let booking_type = "Regular"
       if (!slot._id) {
         booking_type = "Custom"
@@ -405,7 +400,6 @@ const BookingDetails = () => {
         booking_type: booking_type
       };
 
-      console.log("bookingData", bookingData)
       const response = await dispatch(addBooking(bookingData)).unwrap()
 
       navigate(`/admin/booking/checkout/${response?.data?._id}`)
@@ -637,8 +631,6 @@ const BookingDetails = () => {
     }),
     // Optional: adjust dropdown indicator and other parts if needed
   };
-
-  console.log("slot", slot);
 
   return (
     <Container fluid className="p-4 ">
@@ -943,7 +935,7 @@ const BookingDetails = () => {
                           </Dropdown.Toggle>
                           <Dropdown.Menu className="w-100" style={{ background: "e6e3e7", color: "white", border: "none" }}>
                             <Dropdown.Item eventKey="Online">Online</Dropdown.Item>
-                            <Dropdown.Item eventKey="Offline">Offline</Dropdown.Item>
+                            <Dropdown.Item eventKey="Offline">Cash</Dropdown.Item>
                             {selectedGame?.data?.payLater && (
                               <Dropdown.Item eventKey="Pay Later">Pay Later</Dropdown.Item>
                             )}

@@ -181,10 +181,39 @@ const slotslice = createSlice({
         state.loading = true;
         state.error = null;
       })
+      // .addCase(addslot.fulfilled, (state, action) => {
+      //   state.loading = false;
+      //   // state.slots.push(action.payload.data);
+      //   toast.success("Slot added successfully");
+      // })
       .addCase(addslot.fulfilled, (state, action) => {
         state.loading = false;
-        // state.slots.push(action.payload.data);
-        // refetchSlots(); // Refetch slots after adding
+      
+        const slot = action.payload.data;
+      
+        // Helper function to convert "HH:mm" to 12-hour format
+        const formatTo12Hour = (timeStr) => {
+          const [hour, minute] = timeStr.split(':');
+          const date = new Date();
+          date.setHours(hour);
+          date.setMinutes(minute);
+          return date.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+          });
+        };
+      
+        // Modify start and end time
+        const formattedSlot = {
+          ...slot,
+          start_time: formatTo12Hour(slot.start_time),
+          end_time: formatTo12Hour(slot.end_time),
+        };
+      
+        // Push formatted data to state
+        state.slots.push(formattedSlot);
+      
         toast.success("Slot added successfully");
       })
       .addCase(addslot.rejected, (state, action) => {

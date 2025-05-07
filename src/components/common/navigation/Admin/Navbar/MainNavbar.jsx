@@ -59,9 +59,6 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
     });
   };
 
-  console.log("user", user);
-  console.log("profilePic", profilePic);
-
   return (
     <header id="header" className="navbar navbar-expand-lg  navbar-fixed navbar-height navbar-container navbar-bordered bg-white">
       <div style={{ width: "100%" }} className=" d-flex justify-content-between align-items-center">

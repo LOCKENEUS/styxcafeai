@@ -141,8 +141,6 @@ const AdminDashboard = () => {
     return () => ctx.revert();
   }, []);
 
-  console.log("recent bookings", recentBookings);
-
   return (
     <Container fluid className="p-2" ref={containerRef}>
       <h3 className="mb-4">Hello, {cafe.cafe_name}</h3>
@@ -164,7 +162,7 @@ const AdminDashboard = () => {
           <Col xs={6} md={3}>
             <div className="summary-card" style={{ borderStartStartRadius: '12px', borderEndStartRadius: '12px' }}>
               <div className='desktop-view d-none d-md-flex gap-0 p-2 w-100' style={{borderRight: '1px solid #E0E0E0'}}>
-                <span className='d-flex align-items-center justify-content-center m-auto rounded-4'
+                <span className='d-flex align-items-center justify-content-center m-2 rounded-4'
                   style={{ width: '50px', height: '50px', background:"#00AF0F0D" }}>
                   <img src={user_check} alt="User Check Icon" />
                 </span>
@@ -462,10 +460,10 @@ const AdminDashboard = () => {
                           <small className="text-muted d-block">{formatDate(booking.slot_date)}</small>
                           <small className="text-muted d-block">Price: &#8377; {booking.type === 'Regular' ? (booking?.slot_id?.slot_price || booking?.game_id?.price) : (booking?.custom_slot?.slot_price || booking?.game_id?.price)}</small>
                         </div>
-                        <div className="d-flex gap-2 align-items-center">
+                        {/* <div className="d-flex gap-2 align-items-center">
                           <BsXCircle className="text-danger" style={{ fontSize: '1.2rem', cursor: 'pointer' }} />
                           <BsCheckCircle className="text-success" style={{ fontSize: '1.2rem', cursor: 'pointer' }} />
-                        </div>
+                        </div> */}
                       </div>
                     </ListGroup.Item>
                   ))}
@@ -474,10 +472,10 @@ const AdminDashboard = () => {
             </Card> */}
           </div>
           {/* Other Tournaments */}
-          <Card className="border-0">
+          {/* <Card className="border-0">
             <Card.Body>
               <ListGroup variant="flush">
-                {[/* Repeat for other tournaments */].map((tournament, idx) => (
+                {[].map((tournament, idx) => (
                   <ListGroup.Item key={idx}>
                     <div className="d-flex justify-content-between align-items-center">
                       <div>
@@ -490,7 +488,7 @@ const AdminDashboard = () => {
                 ))}
               </ListGroup>
             </Card.Body>
-          </Card>
+          </Card> */}
         </Col>
       </Row>
 

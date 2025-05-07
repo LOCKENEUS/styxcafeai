@@ -118,7 +118,6 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
         slot_price: "",
       });
       handleClose();
-      // refetchSlots(); // Refetch slots after updating
     } else {
       dispatch(addslot(payload));
       setFormData({
@@ -129,7 +128,6 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
         slot_price: "",
       })
       handleClose();
-      // refetchSlots(); // Refetch slots after updating
     }
   };
 

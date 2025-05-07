@@ -21,7 +21,6 @@ const MainNavbar = ({ setIsAuthenticated ,toggleSidebar ,collapsed  }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    console.log("Logging out...");
     sessionStorage.removeItem('authToken');
     sessionStorage.removeItem('userRole');
     sessionStorage.removeItem('user');

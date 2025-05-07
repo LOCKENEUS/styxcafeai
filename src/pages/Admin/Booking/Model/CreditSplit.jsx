@@ -177,7 +177,7 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
               </Row>
             ))}
             <Button size="sm" className="w-25" onClick={() => handleOnlinePayment(allPlayers, currentTotal)}>Online</Button>
-            <Button size="sm" className="mx-4 w-25" onClick={() => handleCollectOffline(allPlayers, currentTotal)}>Offline</Button>
+            <Button size="sm" className="mx-4 w-25" onClick={() => handleCollectOffline(allPlayers, currentTotal)}>Cash</Button>
           </Container>
         </Modal.Body>
       </div>

@@ -67,17 +67,13 @@ const GameDetails = () => {
     }, [slots]);
 
     const refetchSlots = () => {
-        console.log("called-the-functio-to-re-fetch-data")
         if (gameId) {
             dispatch(getslots(gameId));
         }
     };
 
     const handleToggleStatus = async (slot) => {
-        // dispatch(deleteslot(slot._id))
-        // refetchSlots();
-
-        // Dispatch the action to toggle the slot status
+        
         await dispatch(deleteslot(slot._id));
 
         // Update the local state for real-time UI changes
@@ -145,6 +141,8 @@ const GameDetails = () => {
 
     let filteredSlots = slots.filter(slot => slot.day === weekdays[activeDate.getDay()]);
     filteredSlots = sortSlotsByTime(filteredSlots);
+
+    console.log("CreateSlotModal", showSlotModal);
 
     return (
         <div className="container mt-4">
@@ -397,8 +395,7 @@ const GameDetails = () => {
                     handleClose={() => setShowSlotModal(false)}
                     selectedGame={selectedGame}
                     slot={slotToEdit}
-                    refetchSlots={refetchSlots} // pass this down
-                    day={weekdays[activeDate.getDay()]} // pass the active day
+                    day={weekdays[activeDate.getDay()]}
                 />
             )}
         </div>

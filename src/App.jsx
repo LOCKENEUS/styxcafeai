@@ -12,6 +12,7 @@ import AppRoutes from "./routes/AppRoutes";
 import './App.css'
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import AuthWatcher from "./components/utils/authWatcher";
 
 AOS.init({
   duration: 1500,
@@ -25,7 +26,9 @@ function App() {
   return (
     <Fragment>
       <Router>
+      <AuthWatcher setIsAuthenticated={setIsAuthenticated}>
         <AppRoutes setIsAuthenticated={setIsAuthenticated} isAuthenticated={isAuthenticated} />
+      </AuthWatcher>
       </Router>
     </Fragment>
   );
