@@ -241,7 +241,7 @@ const CustomerDetails = () => {
                     <Nav.Link className="text-start" eventKey="link-1">Pending Credit</Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
-                    <Nav.Link className="text-start" eventKey="link-2">Transaction history</Nav.Link>
+                    <Nav.Link className="text-start" eventKey="link-2">Transaction History</Nav.Link>
                   </Nav.Item>
                 </Nav>
               </Col>

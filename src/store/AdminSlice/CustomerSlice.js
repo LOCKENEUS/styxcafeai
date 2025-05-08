@@ -65,6 +65,8 @@ export const getCustomerById = createAsyncThunk(
   "customers/getCustomerById",
   async (id, thunkAPI) => {
     try {
+       const token = sessionStorage.getItem("authToken");
+      console.log("Fetching token with ID:", token);
       const response = await axios.get(`${BASE_URL}/admin/customer/${id}`,
         {
           headers: {

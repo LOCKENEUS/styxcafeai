@@ -102,7 +102,7 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
   };
   
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal show={show} onHide={handleClose} centered>
       <div className="modal-content rounded-2">
         <Modal.Header style={{ backgroundColor: "", padding: "20px" }} className="d-flex ">
           <Modal.Title>

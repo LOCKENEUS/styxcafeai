@@ -1374,7 +1374,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button, Image, Stack, Form, OverlayTrigger, Tooltip, Modal, Table, Dropdown, Popover } from "react-bootstrap";
-import { FaPhone, FaVideo, FaComment, FaClock, FaRegClock, FaPause } from "react-icons/fa";
+import { FaPhone, FaVideo, FaComment, FaClock, FaRegClock, FaPause, FaRupeeSign } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import userProfile from "/assets/profile/user_avatar.jpg";
 import { useDispatch, useSelector } from "react-redux";
@@ -1389,6 +1389,7 @@ import { getTaxFields } from "../../../store/AdminSlice/TextFieldSlice";
 import CreditSplit from "./Model/CreditSplit";
 import { TbTrash } from "react-icons/tb";
 import ItemsSave from "./Model/itemsSave";
+import { MdCancel } from "react-icons/md";
 
 const BookingCheckout = () => {
 
@@ -1842,17 +1843,17 @@ const BookingCheckout = () => {
                 <FaVideo size={20} />
               </Col> */}
               <Col className="m-auto">
-              {(booking?.booking_type === "Regular" && selectedGame?.cancellation && booking?.status === "Pending") || (booking?.booking_type === "Regular" && selectedGame?.cancellation && !selectedGame?.payLater) ?
-                <Button
-                  variant="success"
-                  className="w-100 border-0"
-                  style={{ backgroundColor: "#03D41414", color: "#00AF0F" }}
-                  onClick={() => navigate(`/admin/booking/edit/${booking?._id}`)}
-                >
-                  Edit Booking
-                </Button>
-                :
-                <></>}
+                {(booking?.booking_type === "Regular" && selectedGame?.cancellation && booking?.status === "Pending") || (booking?.booking_type === "Regular" && selectedGame?.cancellation && !selectedGame?.payLater) ?
+                  <Button
+                    variant="success"
+                    className="w-100 border-0"
+                    style={{ backgroundColor: "#03D41414", color: "#00AF0F" }}
+                    onClick={() => navigate(`/admin/booking/edit/${booking?._id}`)}
+                  >
+                    Edit Booking
+                  </Button>
+                  :
+                  <></>}
               </Col>
             </Row>
           </Card>
@@ -1963,7 +1964,7 @@ const BookingCheckout = () => {
                     }}
                   >
                     {booking?.status !== "Pending" ? <div className="text-color fs-4 p-2">
-                      Selected Items ({selectedItems?.length || 0 })
+                      Selected Items ({selectedItems?.length || 0})
                       <Link
                         to={`/admin/Inventory/SaleOrderDetails/${booking?.so_id?._id}`}
                       >
@@ -2032,9 +2033,9 @@ const BookingCheckout = () => {
                         {/* Product Card */}
                         <div
                           className="fs-6"
-                          style={{ background: "#F9F9F9", width: "60%", height: "10%", borderBottom: "1px solid #ddd" }}
+                          style={{ background: "#F9F9F9", width: "100%", height: "10%", borderBottom: "1px solid #ddd" }}
                         >
-                          <div className="d-flex justify-content-between align-items-center p-2">
+                          <div className="d-flex justify-content-around align-items-center p-2">
                             <div style={{ flex: 1 }}>
                               <div
                                 className="fs-6 text-color"
@@ -2051,7 +2052,7 @@ const BookingCheckout = () => {
                               <div className="muted-text small mb-1">₹{product.price} /each</div>
                             </div>
 
-                            <div style={{ flex: 2 }}>
+                            <div style={{ flex: 2, display: "flex", justifyContent: "center" }}>
                               {booking?.status === "Pending" ? <div className="d-flex align-items-center gap-1">
                                 <Button
                                   variant="light"
@@ -2108,27 +2109,27 @@ const BookingCheckout = () => {
                               </div>
                               <div className="text-color">Total: ₹{product.total}</div>
                             </div>
-                            
+
                             <div>
-                            <span
-                            className="border-0 color-red"
-                            style={{ marginTop: "20px", marginLeft: "30px", color: "red", zIndex: 2, cursor: "pointer" }}
-                            onClick={() => {
-                              const updatedProducts = selectedItems.filter((_, i) => i !== index);
-                              setSelectedItems(updatedProducts);
-                              const updatedSelectedIds = selectedIds.filter((id) => id !== product.id);
-                              setSelectedIds(updatedSelectedIds);
-                              setIsItemsSaved(false); // Mark items as unsaved
-                            }}
-                          >
-                            {booking?.status === "Pending" && <TbTrash style={{
-                            }} size={12} />}
-                          </span>
+                              <span
+                                className="border-0 color-red"
+                                style={{ marginTop: "20px", marginLeft: "30px", color: "red", zIndex: 2, cursor: "pointer" }}
+                                onClick={() => {
+                                  const updatedProducts = selectedItems.filter((_, i) => i !== index);
+                                  setSelectedItems(updatedProducts);
+                                  const updatedSelectedIds = selectedIds.filter((id) => id !== product.id);
+                                  setSelectedIds(updatedSelectedIds);
+                                  setIsItemsSaved(false); // Mark items as unsaved
+                                }}
+                              >
+                                {booking?.status === "Pending" && <TbTrash style={{
+                                }} size={12} />}
+                              </span>
                             </div>
 
                           </div>
                         </div>
-                       
+
                       </div>
                     ))}
                   </div>
@@ -2216,7 +2217,7 @@ const BookingCheckout = () => {
                     <h3 className="text-color pt-2"> ₹ 512</h3>
                   </Col> */}
 
-                  <Col md={6} className="p-3 bg-white d-flex gap-4" style={{ borderRadius: "10px", width: "48%" }}>
+                  <Col md={6} sm={12} className="p-3 bg-white d-flex gap-4" style={{ borderRadius: "10px", width: "48%" }}>
                     <div>
                       <img src="/assets/Admin/Game/Notification3.svg" alt="Game Timer" />
                     </div>
@@ -2241,85 +2242,90 @@ const BookingCheckout = () => {
                 </Row>
               </div>
               : (
-                selectedGame?.payLater &&
-                <div className="rounded shadow-sm w-100" style={{ marginLeft: "10px" }}>
-                  <Row className="mt-2 gap-3">
-                    <Col md={6} className="bg-white d-flex p-3" style={{ borderRadius: "10px", width: "48%" }}>
-                      <div className="d-flex gap-4" style={{ border: "none" }}>
-                        <div>
-                          <img src="/assets/Admin/Game/Notification.svg" alt="Game Timer" />
-                        </div>
-                        <div className="text-color my-auto">
-                          <div>Total Time</div>
-                          <div className="text-color fs-4">
-                            <span className="">{Math.floor(currentTime / 60)} m</span> :
-                            <span className="">{currentTime % 60} s</span>
+                selectedGame?.payLater && 
+                <div className="rounded shadow-sm w-100 right-padding-responsive left-margin-responsive" style={{ marginLeft: "10px", paddingRight: "8px" }}>
+                  <Row className="mt-2 gap-0">
+                    <Col md={6} className="p-0">
+                      <div className="bg-white d-flex p-3 gap-1" style={{ borderRadius: "10px", width: "100%" }}>
+                        <div className="d-flex gap-4 custom-gap-responsive" style={{ border: "none" }}>
+                          <div>
+                            <img src="/assets/Admin/Game/Notification.svg" alt="Game Timer" />
+                          </div>
+                          <div className="text-color my-auto">
+                            <div>Total Time</div>
+                            <div className="text-color fs-4">
+                              <span className="">{Math.floor(currentTime / 60)} m</span> :
+                              <span className="">{currentTime % 60} s</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="d-flex justify-content-around align-items-center gap-4">
-                      {isRunning || isPaused ? (
-                        <Button
-                          size="sm"
-                          variant="outline-danger"
-                          className="px-2"
-                          style={{ border: "2px dashed rgb(255, 68, 0)", width: "50%", paddingRight: "10px", marginLeft: "30px" }}
-                          onClick={() => setShowConfirm(true)} // Show confirmation modal
-                        >
-                          Stop
-                        </Button>
-                      ) : (
-                        !isPaused &&
-                        <Button
-                          size="sm"
-                          variant="outline-primary"
-                          disabled={booking?.total_time > 0 && booking?.timer_status === "Stopped"}
-                          style={{ border: "2px dashed", width: "100%",height: "40px", padding: "2px", marginLeft: "30px" }}
-                          onClick={handleStartTimer}
-                        >
-                          <FaClock size={16} style={{ marginRight: "5px" }} />
-                          <span>Start</span>
-                        </Button>
-                      )}
+                        <div className="d-flex justify-content-around align-items-center gap-4 custom-gap-responsive">
+                          {isRunning || isPaused ? (
+                            <Button
+                              size="sm"
+                              variant="outline-danger"
+                              className="px-2"
+                              style={{ border: "2px dashed rgb(255, 68, 0)", width: "50%", paddingRight: "10px", marginLeft: "30px" }}
+                              onClick={() => setShowConfirm(true)} // Show confirmation modal
+                            >
+                              Stop
+                            </Button>
+                          ) : (
+                            !isPaused &&
+                            <Button
+                              size="sm"
+                              variant="outline-primary"
+                              className="start-btn-responsive mt-2"
+                              disabled={booking?.total_time > 0 && booking?.timer_status === "Stopped"}
+                              style={{ border: "2px dashed", width: "100%", height: "40px", padding: "2px", marginLeft: "30px" }}
+                              onClick={handleStartTimer}
+                            >
+                              <FaClock size={16} style={{ marginRight: "5px" }} />
+                              <span>Start</span>
+                            </Button>
+                          )}
 
-                      {
-                        !isRunning ? (
-                          <VscDebugContinue
-                            size={48}
-                            className="text-success mt-2"
-                            style={{ marginLeft: "5%", cursor: "pointer" }}
-                            onClick={handleResumeTimer}
-                          />
-                        ) : (
-                          <FaPause
-                            size={32}
-                            className="text-danger mt-2"
-                            style={{ marginLeft: "5%", cursor: "pointer" }}
-                            onClick={handlePauseTimer}
-                          />
-                        )
-                      }
-                      </div>
-                   
-                    </Col>
-
-                    <Col md={6} className="p-0 bg-white" style={{ borderRadius: "10px", width: "48%" }}>
-                      <div className="d-flex p-3" style={{ border: "none" }}>
-                        <div>
-                          <img src="/assets/Admin/Game/Notification2.svg" alt="Game Timer" />
-                        </div>
-                        <div className="d-flex gap-2" style={{ width: "100%" }}>
-                          <div className="mb-0 muted-text w-50">
-                            <div className="px-2" style={{ borderRight: "1px solid grey" }}>Start</div> <div className="text-color px-2" style={{ borderRight: "1px solid grey" }}>{booking?.start_time ? new Date(booking?.start_time).toLocaleTimeString() : new Date(tempStartTime).toLocaleTimeString()}</div>
-                          </div>
-                          <div className="mb-0 muted-text w-50 mx-4">
-                            <div>End</div> <div className="text-color">{booking?.end_time ? new Date(booking?.end_time).toLocaleTimeString() : ""}</div>
-                          </div>
+                          {
+                            !isRunning ? (
+                              <VscDebugContinue
+                                size={48}
+                                className="text-success mt-2"
+                                style={{ marginLeft: "5%", cursor: "pointer" }}
+                                onClick={handleResumeTimer}
+                              />
+                            ) : (
+                              <FaPause
+                                size={32}
+                                className="text-danger mt-2"
+                                style={{ marginLeft: "5%", cursor: "pointer" }}
+                                onClick={handlePauseTimer}
+                              />
+                            )
+                          }
                         </div>
                       </div>
                     </Col>
 
-                    <Col md={6} className="p-3 bg-white d-flex gap-4" style={{ borderRadius: "10px", width: "48%" }}>
+                    <Col md={6} >
+                      <div className="bg-white d-flex p-3" style={{ borderRadius: "10px", width: "100%" }}>
+                        <div className="d-flex" style={{ border: "none",width: "100%" }}>
+                          <div>
+                            <img src="/assets/Admin/Game/Notification2.svg" alt="Game Timer" />
+                          </div>
+                          <div className="d-flex gap-2" style={{ width: "100%" }}>
+                            <div className="mb-0 muted-text w-50">
+                              <div className="px-2" style={{ borderRight: "1px solid grey" }}>Start</div> <div className="text-color px-2" style={{ borderRight: "1px solid grey" }}>{booking?.start_time ? new Date(booking?.start_time).toLocaleTimeString() : new Date(tempStartTime).toLocaleTimeString()}</div>
+                            </div>
+                            <div className="mb-0 muted-text w-50 text-center">
+                              <div>End</div> <div className="text-color">{booking?.end_time ? new Date(booking?.end_time).toLocaleTimeString() : ""}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Col>
+
+                    <Col md={6} className="p-0 mt-2">
+                      <div className="bg-white d-flex p-3 gap-2" style={{ borderRadius: "10px", width: "100%" }}>
                       <div>
                         <img src="/assets/Admin/Game/Notification3.svg" alt="Game Timer" />
                       </div>
@@ -2331,10 +2337,11 @@ const BookingCheckout = () => {
                           ₹ {priceToPay}
                         </div>
                       </div>
+                      </div>
                     </Col>
 
-                    <Col md={6} className="bg-white d-flex p-3" style={{ borderRadius: "10px", width: "48%" }}>
-
+                    <Col md={6} className="mt-2">
+                      <div className="bg-white d-flex p-3" style={{ borderRadius: "10px", width: "100%" }}>
                       <div>
                         <img src="/assets/Admin/Game/Notification4.svg" alt="Game Timer" />
                       </div>
@@ -2431,6 +2438,7 @@ const BookingCheckout = () => {
                           </div>
                         </Stack>
                       </OverlayTrigger>
+                      </div>
                     </Col>
                   </Row>
                 </div>
@@ -2440,134 +2448,140 @@ const BookingCheckout = () => {
           }
 
           {booking?.status === "Pending" ?
-            <Card className="p-3 mt-2 rounded-3">
-              <h5 className="fs-3 text-color">Payment Details</h5>
-              <Row className="mt-1">
-                <Col xs={6} className="text-primary fw-semibold">{selectedGame?.name} ({selectedGame?.size}) </Col>
-                <Col xs={3} className="muted-text">{booking?.players?.length + 1} Candidates</Col>
-                <Col xs={3} className="text-end">{selectedGame?.type === "Single" && !selectedGame?.payLater && (booking?.total - booking?.paid_amount) > 0 && <span className="text-danger">₹ {booking?.total - booking?.paid_amount} Pending</span>} </Col>
-              </Row>
-              <hr className="m-1" />
+            <div className="rounded shadow-sm w-100">
+              <Row className="p-2">
+                <Col md={12} className="bg-white p-3 rounded-2">
+                  {/* <Card className="p-3 mt-2 rounded-3" style={{ marginLeft: "10px", marginRight: "10px" }}> */}
+                    <h5 className="fs-3 text-color">Payment Details</h5>
+                    <Row className="mt-1">
+                      <Col xs={6} className="text-primary fw-semibold">{selectedGame?.name} ({selectedGame?.size}) </Col>
+                      <Col xs={3} className="muted-text">{booking?.players?.length + 1} Candidates</Col>
+                      <Col xs={3} className="text-end">{selectedGame?.type === "Single" && !selectedGame?.payLater && (booking?.total - booking?.paid_amount) > 0 && <span className="text-danger">₹ {booking?.total - booking?.paid_amount} Pending</span>} </Col>
+                    </Row>
+                    <hr className="m-1" />
 
-              <Row className="mt-1">
-                <Col xs={6} className="d-flex align-items-center">
-                  <p className="text-color">Total Amount</p>
-                </Col>
-                <Col xs={6} className="mb-2">
-                  <span className="fw-bold text-color">
-                    <Form.Control
-                      size="sm"
-                      type="text"
-                      placeholder="Disabled readonly input"
-                      aria-label="Disabled input example"
-                      readOnly
-                      value={total}
-                    />
-                  </span>
-                </Col>
-              </Row>
+                    <Row className="mt-1">
+                      <Col xs={6} className="d-flex align-items-center">
+                        <p className="text-color">Total Amount</p>
+                      </Col>
+                      <Col xs={6} className="mb-2">
+                        <span className="fw-bold text-color">
+                          <Form.Control
+                            size="sm"
+                            type="text"
+                            placeholder="Disabled readonly input"
+                            aria-label="Disabled input example"
+                            readOnly
+                            value={total}
+                          />
+                        </span>
+                      </Col>
+                    </Row>
 
-              <Row>
-                <Col xs={6} className="d-flex align-items-center">
-                  <p className="text-color">Adjustment / Discount </p>
-                </Col>
-                <Col xs={6} className="mb-2">
-                  <Form.Control
-                    size="sm"
-                    type="number"
-                    placeholder="Enter adjustment value"
-                    value={adjustment}
-                    onChange={(e) => {
-                      if (e.target.value > total) {
-                        return
-                      }
-                      setAdjustment(e.target.value);
-                    }}
-                  />
-                </Col>
-
-              </Row>
-
-              {creditAmount > 0 && <div className="mt-4">
-                <h4>Credit Collection
-                  {/* <Button size="sm" className="btn btn-primary bg-body text-color" onClick={handleSplitCredit}>Split Credit</Button> */}
-                </h4>
-                <Table bordered hover responsive size="sm" className="mt-2">
-                  <thead className="bg-light">
-                    <tr>
-                      <th>Name</th>
-                      <th>Limit</th>
-                      <th>Balance</th>
-                      <th>Credit</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {/* Selected Customer Row */}
-                    <tr>
-                      <td>{selectedCustomer.name}</td>
-                      <td>{selectedCustomer?.creditLimit}</td>
-                      <td>{selectedCustomer.creditLimit - selectedCustomer.creditAmount}</td>
-                      <td>
+                    <Row>
+                      <Col xs={6} className="d-flex align-items-center">
+                        <p className="text-color">Adjustment / Discount </p>
+                      </Col>
+                      <Col xs={6} className="mb-2">
                         <Form.Control
                           size="sm"
                           type="number"
-                          placeholder="Rs 0"
-                          value={playerCredits.find(p => p._id === selectedCustomer._id)?.credit || 0}
-                          onChange={(e) => handleCreditChange(selectedCustomer._id, e.target.value)}
+                          placeholder="Enter adjustment value"
+                          value={adjustment}
+                          onChange={(e) => {
+                            if (e.target.value > total) {
+                              return
+                            }
+                            setAdjustment(e.target.value);
+                          }}
                         />
-                      </td>
-                    </tr>
+                      </Col>
 
-                    {/* Other Players Rows */}
-                    {players.length > 0 && players.map((player, index) => (
-                      <tr key={player._id}>
-                        <td>{player.name}</td>
-                        <td>{player.creditLimit}</td>
-                        <td>{player.creditLimit - player.creditAmount}</td>
-                        <td>
-                          <Form.Control
-                            size="sm"
-                            type="number"
-                            placeholder="Rs 0"
-                            value={playerCredits.find(p => p._id === player._id)?.credit || 0}
-                            onChange={(e) => handleCreditChange(player._id, e.target.value)}
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </div>}
+                    </Row>
 
-              <Row>
-                <Col md={3} xs={6}>
-                  <Button variant="primary btn btn-sm"
-                    xs={12}
-                    className="w-100 mt-3"
-                    disabled={!booking?.timer_status === "Stopped"}
-                    onClick={() => {
-                      if (!isItemsSaved) {
-                        alert("Please save the added items before proceeding with payment.");
-                        setShowConfirmModal(true)
-                        return;
-                      }
-                      setShowCreditModal(true)
-                    }}
-                  >Payment Options</Button>
+                    {creditAmount > 0 && <div className="mt-4">
+                      <h4>Credit Collection
+                        {/* <Button size="sm" className="btn btn-primary bg-body text-color" onClick={handleSplitCredit}>Split Credit</Button> */}
+                      </h4>
+                      <Table bordered hover responsive size="sm" className="mt-2">
+                        <thead className="bg-light">
+                          <tr>
+                            <th>Name</th>
+                            <th>Limit</th>
+                            <th>Balance</th>
+                            <th>Credit</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {/* Selected Customer Row */}
+                          <tr>
+                            <td>{selectedCustomer.name}</td>
+                            <td>{selectedCustomer?.creditLimit}</td>
+                            <td>{selectedCustomer.creditLimit - selectedCustomer.creditAmount}</td>
+                            <td>
+                              <Form.Control
+                                size="sm"
+                                type="number"
+                                placeholder="Rs 0"
+                                value={playerCredits.find(p => p._id === selectedCustomer._id)?.credit || 0}
+                                onChange={(e) => handleCreditChange(selectedCustomer._id, e.target.value)}
+                              />
+                            </td>
+                          </tr>
+
+                          {/* Other Players Rows */}
+                          {players.length > 0 && players.map((player, index) => (
+                            <tr key={player._id}>
+                              <td>{player.name}</td>
+                              <td>{player.creditLimit}</td>
+                              <td>{player.creditLimit - player.creditAmount}</td>
+                              <td>
+                                <Form.Control
+                                  size="sm"
+                                  type="number"
+                                  placeholder="Rs 0"
+                                  value={playerCredits.find(p => p._id === player._id)?.credit || 0}
+                                  onChange={(e) => handleCreditChange(player._id, e.target.value)}
+                                />
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </Table>
+                    </div>}
+
+                    <Row>
+                      <Col md={3} xs={12}>
+                        <Button variant="primary btn btn-sm"
+                          xs={12}
+                          className="w-100 mt-3 tab-button-responsive"
+                          disabled={!booking?.timer_status === "Stopped"}
+                          onClick={() => {
+                            if (!isItemsSaved) {
+                              alert("Please save the added items before proceeding with payment.");
+                              setShowConfirmModal(true)
+                              return;
+                            }
+                            setShowCreditModal(true)
+                          }}
+                        >Payment Options</Button>
+                      </Col>
+
+                      {showCreditModal &&
+                        <CreditSplit
+                          show={showCreditModal}
+                          handleClose={() => setShowCreditModal(false)}
+                          handleCollectOffline={handleCollectOffline}
+                          handleOnlinePayment={handleOnlinePayment}
+                          totalAmount={total}
+                          players={players}
+                          customer={selectedCustomer}
+                        />}
+                    </Row>
+                  {/* </Card> */}
                 </Col>
-
-                {showCreditModal &&
-                  <CreditSplit
-                    show={showCreditModal}
-                    handleClose={() => setShowCreditModal(false)}
-                    handleCollectOffline={handleCollectOffline}
-                    handleOnlinePayment={handleOnlinePayment}
-                    totalAmount={total}
-                    players={players}
-                    customer={selectedCustomer}
-                  />}
               </Row>
-            </Card>
+            </div>
             :
             <Card className="p-3 mt-2 rounded-3 h-100">
               <h5 className="fs-3">Payment Details</h5>

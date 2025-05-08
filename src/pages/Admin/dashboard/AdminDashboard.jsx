@@ -161,9 +161,9 @@ const AdminDashboard = () => {
       <Row className="g-0 mb-4" style={{marginLeft: '12px'}} ref={summaryCardsRef}>
           <Col xs={6} md={3}>
             <div className="summary-card" style={{ borderStartStartRadius: '12px', borderEndStartRadius: '12px' }}>
-              <div className='desktop-view d-none d-md-flex gap-0 p-2 w-100' style={{borderRight: '1px solid #E0E0E0'}}>
-                <span className='d-flex align-items-center justify-content-center m-2 rounded-4'
-                  style={{ width: '50px', height: '50px', background:"#00AF0F0D" }}>
+            <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100' style={{borderRight: '1px solid #E0E0E0'}}>
+                <span className='d-flex align-items-center justify-content-center rounded-4'
+                  style={{ width: '50px', height: '50px', background:"#F0D4000D" }}>
                   <img src={user_check} alt="User Check Icon" />
                 </span>
                 <div>

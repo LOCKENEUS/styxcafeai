@@ -117,7 +117,7 @@ const BookGames = () => {
                   />
                   <Card.Body>
                     <Card.Title>{game.name}</Card.Title>
-                    <Card.Text>
+                    <Card.Text style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       <small className="text-success">
                         ● {game.type} ({game.players} players) {game?.payLater && <span className="text-warning">Pay Later</span>}
                       </small>
@@ -202,7 +202,7 @@ const BookGames = () => {
 
 
       {/* Outdoor Games Section */}
-      <h5 className="text-dark fw-bold mb-2" style={{ fontSize: 'clamp(20px, 5vw, 25px)', margin: 0 }}>
+      <h5 className="text-dark fw-bold" style={{ fontSize: 'clamp(20px, 5vw, 25px)', margin: 0 }}>
         Outdoor Games
       </h5>
 

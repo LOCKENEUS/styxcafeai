@@ -120,3 +120,56 @@
   display: none;
 }
 
+@media (max-width: 1440px) and (min-width: 1400px) {
+  .timer-content {
+    flex-direction: column !important;
+    align-items: start !important;
+  }
+
+  .timer-buttons {
+    flex-direction: column !important;
+    align-items: start !important;
+  }
+
+  .timer-card {
+    width: 100% !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .start-btn-responsive {
+    font-size: 0.75rem !important; /* Make text smaller */
+    padding: 0.25rem 0.5rem !important; /* Adjust padding */
+    height: 32px !important; /* Reduce height */
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .custom-gap-responsive {
+    gap: 0 !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .right-padding-responsive {
+    padding-right: 10px !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .right-padding-responsive {
+    padding-right: 10px !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .tab-button-responsive {
+    width: 200px !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .left-margin-responsive {
+    margin-left: 10px !important;
+  }
+}

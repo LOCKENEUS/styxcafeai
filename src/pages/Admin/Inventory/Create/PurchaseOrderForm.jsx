@@ -376,7 +376,7 @@ const PurchaseOrderForm = () => {
                 >
                   <span>+</span> Add Vendor
                 </Button>
-                <Button
+                {/* <Button
                   style={{ width: "144px", height: "44px", borderStyle: "dashed" }}
                   variant="outline-primary"
                   className="d-flex align-items-center justify-content-center gap-2"
@@ -385,7 +385,7 @@ const PurchaseOrderForm = () => {
                   }}
                 >
                   Superadmin
-                </Button>
+                </Button> */}
               </div>
             </div>
             <Row className="mt-3">

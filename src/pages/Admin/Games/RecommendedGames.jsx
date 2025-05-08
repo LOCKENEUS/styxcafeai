@@ -145,7 +145,7 @@ const RecommendedGames = () => {
                         fontSize: "16px",
                       }}
                     >{game.name}</Card.Title>
-                    <Card.Text>
+                    <Card.Text style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       <small className="text-success">
                         ● {game.type} ({game.players} players) {game?.payLater && <span className="text-warning">Pay Later</span>}
                       </small>
@@ -263,7 +263,7 @@ const RecommendedGames = () => {
                   />
                   <Card.Body>
                     <Card.Title>{game.name}</Card.Title>
-                    <Card.Text>
+                    <Card.Text style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       <small className="text-success">
                         ● {game.type} ({game.players} players) {game?.payLater && <span className="text-warning">Pay Later</span>}
                       </small>

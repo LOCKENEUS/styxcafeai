@@ -281,26 +281,30 @@ const GameInfo = () => {
               <span className="text-color">Created At - </span>{new Date(selectedGame?.data?.createdAt).toLocaleString()}
             </div>
             <span className="align-bottom p-2 px-0 mt-3">
+              <div className="d-flex justify-content-around gap-2 p-2">
               <Button
                 size="sm"
                 variant="primary"
-                className="px-0"
+                className="px-2 m-2"
                 disabled={isLoading}
-                style={{ width: "108px", height: "37px"}}
+                style={{ width: "80%", height: "37px", marginRight: "30px" }}
                 onClick={handleBookSlotClick}
               >
                 Book Slot
               </Button>
+              </div>
 
+              <div>
               <Button
                 size="sm"
                 variant="primary"
                 className="px-0"
-                style={{ width: "120px", height: "37px", marginLeft: "10px", marginRight: "20px" }}
+                style={{ width: "80%", height: "37px", marginLeft: "10px", marginRight: "50px" }}
                 onClick={() => setShowCustomSlot(true)}
               >
                 Custom Booking
               </Button>
+              </div>
             </span>
           </Col>
         </Row>
