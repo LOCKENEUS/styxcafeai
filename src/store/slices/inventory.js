@@ -48,6 +48,48 @@ export const getItems = createAsyncThunk(
   }
 );
 
+// /superadmin/inventory/item-group
+export const addItemsGroups = createAsyncThunk(
+  "games/addItemsGroups",
+  async (itemsData, thunkAPI) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/superadmin/inventory/item-group`,
+        itemsData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Something went wrong"
+      );
+    }
+  }
+);
+export const getItemsGroups = createAsyncThunk(
+  "games/getItemsGroups",
+  async (itemId, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/superadmin/inventory/item-group/list`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Something went wrong"
+      );
+    }
+  }
+);
 
 const InventorySlice = createSlice({
   name: "inventory",
@@ -78,6 +120,20 @@ const InventorySlice = createSlice({
         state.error = action.payload;
         toast.error(action.payload || "Failed to add item");
       })
+      // addItemsGroups
+      .addCase(addItemsGroups.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(addItemsGroups.fulfilled, (state, action) => {
+        state.it.push(action.payload.data);
+        toast.success("Item added successfully!");
+        state.status = "succeeded";
+      })
+      .addCase(addItemsGroups.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+        toast.error(action.payload || "Failed to add item group");
+      })
       .addCase(getItems.pending, (state) => {
         state.status = "loading";
       })
@@ -86,6 +142,17 @@ const InventorySlice = createSlice({
         state.inventory = action.payload;
       })
       .addCase(getItems.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(getItemsGroups.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getItemsGroups.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.inventory = action.payload;
+      })
+      .addCase(getItemsGroups.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

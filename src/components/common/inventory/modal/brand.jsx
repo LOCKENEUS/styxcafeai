@@ -44,6 +44,9 @@ export const Brand = ({ show, handleClose, superAdminId }) => {
       await dispatch(addCustomField(formDataSubmit));
       // toast.success("Brand added successfully!");
       handleClose();
+      setFormData({
+        name: "",
+      })
     } catch (error) {
       console.error("Error submitting brand:", error);
       // toast.error("Failed to add brand.");

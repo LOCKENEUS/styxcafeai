@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect, Image, InputGroup, Row } from "react-bootstrap";
+import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect, Image, InputGroup, Row, Spinner } from "react-bootstrap";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { FaPlus, FaStarOfLife } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -24,7 +24,7 @@ export const ItemCreate = () => {
     const dispatch = useDispatch();
     const [taxPreference, setTaxPreference] = useState('Taxable');
     const [galleryImages, setGalleryImages] = useState([]);
-
+    const [submitLoading, setSubmitLoading] = useState(false);
     const [galleryFiles, setGalleryFiles] = useState([]); // actual files
 
 
@@ -144,25 +144,31 @@ export const ItemCreate = () => {
     // };
 
     const handleGalleryChange = (e) => {
-        const files = Array.from(e.target.files);
-        const previews = files.map((file) => URL.createObjectURL(file));
-
-        setGalleryFiles(files); // save actual File objects
-        setGalleryImages(previews); // save preview URLs
-    };
+        const file = e.target.files[0]; // Only one file
+        if (file) {
+          const preview = URL.createObjectURL(file);
+          setGalleryFiles([file]); // Save as array for consistency
+          setGalleryImages([preview]);
+        }
+      };
+      
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        // loder 
+        setSubmitLoading(true);
         if (
             formData.name === '' ||
-            formData.sku === '' ||
+            // formData.sku === '' ||
             formData.unitType === '' ||
             formData.cost_price === '' ||
             formData.selling_price === '' ||
             formData.cafeSellingPrice === ''
         ) {
+            setSubmitLoading(false);
             return toast.error('Please fill all the required fields');
+
 
         }
 
@@ -170,7 +176,7 @@ export const ItemCreate = () => {
         try {
             const formDataToSend = new FormData();
 
-            formDataToSend.append("groupId", superAdminId);
+            // formDataToSend.append("groupId", superAdminId);
             formDataToSend.append("name", formData.name);
             formDataToSend.append("sku", formData.sku);
             formDataToSend.append("unit", formData.unitType);
@@ -195,13 +201,13 @@ export const ItemCreate = () => {
 
             // Append images
             galleryFiles.forEach((file) => {
-                formDataToSend.append("galleryImages", file);
+                formDataToSend.append("image", file);
 
             });
 
 
             await dispatch(addItems(formDataToSend));
-
+            // setSubmitLoading(false);
             console.log("Submitted data:", formDataToSend);
             // Reset form after successful submission
             setFormData({
@@ -230,10 +236,14 @@ export const ItemCreate = () => {
                 reorder_point: "",
                 selectedTax: "",
                 cafeSellingPrice: "",
+                file: null,
             });
         } catch (error) {
             console.error("Error submitting form:", error);
             toast.error("Failed to submit form.");
+            
+        }finally {
+            setSubmitLoading(false);
         }
     };
 
@@ -329,7 +339,8 @@ export const ItemCreate = () => {
                                 <Col sm={4} className="my-2  px-4">
                                     <FormGroup>
                                         <label className="fw-bold my-2" style={lableHeader}>
-                                            SKU <span className="text-danger ms-1">*</span>
+                                            SKU 
+                                            {/* <span className="text-danger ms-1">*</span> */}
                                         </label>
                                         <input
                                             type="text"
@@ -340,7 +351,7 @@ export const ItemCreate = () => {
                                             value={formData.sku}
                                             onChange={handleChange}
                                             style={inputStyle}
-                                            required
+                                            
                                         />
                                     </FormGroup>
                                 </Col>
@@ -428,7 +439,7 @@ export const ItemCreate = () => {
                                             style={inputStyle}
                                         >
                                             <option value="Taxable">Taxsaple</option>
-                                            <option value="Non-Taxable">Not Tax</option>
+                                            <option value="Non-Taxable">Non Taxable</option>
                                         </FormSelect>
                                     </FormGroup>
                                 </Col>
@@ -437,15 +448,17 @@ export const ItemCreate = () => {
                                     <Col sm={4} className="my-2">
                                         <FormGroup>
                                             <label className="fw-bold my-2" style={lableHeader}>
-                                                Tax <span className="text-danger ms-1">*</span>
+                                                Tax
+                                                 {/* <span className="text-danger ms-1">*</span> */}
                                             </label>
                                             <InputGroup >
                                                 <FormSelect
                                                     aria-label="Select Tax"
-                                                    name="tax"
+                                                    name="selectedTax"
                                                     style={inputStyle}
                                                     defaultValue=""
                                                     value={formData.selectedTax}
+                                                    onChange={handleChange}
                                                 >
                                                     <option value="" disabled>Select Tax</option>
                                                     {taxFieldsList.map((tax, index) => (
@@ -734,7 +747,7 @@ export const ItemCreate = () => {
                                         <label className="fw-bold my-2" style={lableHeader}>
                                             {/* <FaStarOfLife className="text-danger size-sm" />  */}
                                             Preferrd Vendor
-                                            <span className="text-danger ms-1 ">*</span>
+                                            {/* <span className="text-danger ms-1 ">*</span> */}
                                         </label>
                                         <InputGroup>
                                             <FormSelect aria-label="Select Tax" style={inputStyle}
@@ -812,7 +825,7 @@ export const ItemCreate = () => {
 
                         <Card className="my-2 mx-auto py-3 px-2 rounded-4" style={{ backgroundColor: "white" }}>
                             <Row className="my-1 mx-3">
-                                <Col sm={3} className="my-2 ">
+                                {/* <Col sm={3} className="my-2 ">
                                     <lable className="fw-bold my-2" style={lableHeader}>Link with Website</lable>
                                     <div className="form-group mt-4 m-t-15 m-checkbox-inline mb-3 custom-radio-ml">
                                         <FormCheck
@@ -833,28 +846,29 @@ export const ItemCreate = () => {
                                             defaultChecked
                                         />
                                     </div>
-                                </Col>
+                                </Col> */}
 
 
 
                                 <Col sm={5} className=" my-2">
                                     <Row className="">
-                                        <Col sm={12} className="my-2">
+                                        <Col sm={12} className="my-2  ">
                                             <FormGroup>
                                                 <lable className="fw-bold my-2" style={lableHeader}>
-                                                    Gallery Images <span className="text-muted">(You can upload multiple images)</span>
+                                                    Gallery Images <span className="text-muted">(Only one image allowed)</span>
                                                 </lable>
                                                 <input
                                                     type="file"
                                                     accept=".jpg,.jpeg,.png"
-                                                    multiple
                                                     onChange={handleGalleryChange}
                                                     style={{ display: 'none' }}
                                                     id="galleryUpload"
                                                 />
-                                                <label htmlFor="galleryUpload" style={{ cursor: 'pointer' }}>
+                                                <label className="form-control border-0 "
+                                                
+                                                htmlFor="galleryUpload" style={{ cursor: 'pointer' }}>
                                                     <div
-                                                        className="border border-primary p-3 text-center"
+                                                        className="border border-primary p-3 text-center "
                                                         style={{
                                                             borderRadius: '12px',
                                                             background: '#f8f9fa',
@@ -891,7 +905,15 @@ export const ItemCreate = () => {
                                 </Col>
 
                                 <Col sm={12} className="my-4 btn-lg justify-content-end align-items-end" >
-                                    <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>Submit</Button>
+                                    {/* lodaer setSubmitLoading */}
+                                    <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
+                                        {submitLoading ? (
+                                            <>
+                                                <Spinner animation="border" size="sm" className="me-2" /> Saving...
+                                            </>
+                                        ) : ('Submit')}
+
+                                    </Button>
                                 </Col>
                             </Row>
                         </Card>

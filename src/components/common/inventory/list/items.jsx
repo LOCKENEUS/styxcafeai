@@ -12,6 +12,7 @@ import solar_export from '/assets/inventory/solar_export-linear.png'
 import add from '/assets/inventory/material-symbols_add-rounded.png'
 import { useDispatch, useSelector } from "react-redux";
 import { getItems } from "../../../../store/slices/inventory";
+import Loader from "../../Loader/Loader";
 
 
 
@@ -20,28 +21,29 @@ export const Items = () => {
   useEffect(() => {
     const userData = sessionStorage.getItem("user");
     if (userData) {
-        const parsedUser = JSON.parse(userData);
-        setSuperAdminId(parsedUser._id);
-        console.log("User ID (_id):-- ", parsedUser._id);
-        console.log("User Name:", parsedUser.name);
+      const parsedUser = JSON.parse(userData);
+      setSuperAdminId(parsedUser._id);
+      console.log("User ID (_id):-- ", parsedUser._id);
+      console.log("User Name:", parsedUser.name);
     }
-}, []);
+  }, []);
   const [searchText, setSearchText] = useState("");
   const navigator = useNavigate();
+  const [mainLoading, setMainLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activePage, setActivePage] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
-  
+
   const dispatch = useDispatch();
   useEffect(() => {
     // if (superAdminId) {
-      dispatch(getItems());
+    dispatch(getItems());
     // }
   }, [dispatch]);
   const items = useSelector((state) => state.inventorySuperAdmin.inventory);
 
-  console.log("item list  ----",items);
+  console.log("item list  ----", items);
 
   const filteredItems = [
     { itemName: "oItem A", price: "100", stock: 50, sku: "SKU001", hsn: "1234", unit: "pcs", dimension: "10x10x5" },
@@ -286,53 +288,70 @@ export const Items = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {currentItems.map((row, index) => {
-                          const colors = ["#FFB6C1", "#ADD8E6", "#90EE90", "#FFD700", "#FFA07A"];
-                          const bgColor = colors[index % colors.length];
-                          const initial = row.name?.charAt(0)?.toUpperCase() || "?";
-
-                          return (
-                            // <tr key={index} style={{ fontSize: "1px", verticalAlign: "middle", color: "black" }}>
-                            <tr key={index} style={{ verticalAlign: "middle", color: "gray", fontSize: "14px", fontWeight: "500" }}>
-
-                              <td className="py-4">{index + 1}</td>
-                              <td className="py-4 d-flex align-items-center">
-                                <div
-                                  style={{
-                                    backgroundColor: bgColor,
-                                    color: "#fff",
-                                    borderRadius: "50%",
-                                    width: "40px",
-                                    height: "40px",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    fontSize: "20px",
-                                    fontWeight: "800",
-                                    marginRight: "10px",
-                                  }}
-                                >
-                                  {initial}
-                                </div>
-                                <span style={{ color: "rgb(0, 98, 255)" ,cursor:"pointer", fontWeight:"600" ,fontSize:"16px"}}>{row.name}</span>
-                              </td>
-                              <td className="py-4">₹ {row.costPrice || '----'}</td>
-                              <td className="py-4">{row.stock || '----' }</td>
-                              <td className="py-4">{row.sku || '----'}</td>
-                              <td className="py-4">{row.hsn || '----'}</td>
-                              <td className="py-4">{row.unit || '----'}</td>
-                              <td className="py-4">
-                                {/* lentht x width x height x unit */}
-                                {row.length} x {row.width} x {row.height}  {row.dimensionUnit}
+                        {
+                          mainLoading || !items ? (
+                            <tr>
+                              <td colSpan={8} className="text-center">
+                                <Loader />
                               </td>
                             </tr>
-                          );
-                        })}
+                          ) : currentItems.length > 0 ? (
+                            currentItems.map((row, index) => {
+                              const colors = ["#FFB6C1", "#ADD8E6", "#90EE90", "#FFD700", "#FFA07A"];
+                              const bgColor = colors[index % colors.length];
+                              const initial = row.name?.charAt(0)?.toUpperCase() || "?";
+
+                              return (
+                                <tr key={index} style={{ verticalAlign: "middle", color: "gray", fontSize: "14px", fontWeight: "500" }}>
+                                  <td className="py-4">{index + 1}</td>
+                                  <td className="py-4 d-flex align-items-center">
+                                    <div
+                                      style={{
+                                        backgroundColor: bgColor,
+                                        color: "#fff",
+                                        borderRadius: "50%",
+                                        width: "40px",
+                                        height: "40px",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        fontSize: "20px",
+                                        fontWeight: "800",
+                                        marginRight: "10px",
+                                      }}
+                                    >
+                                      {initial}
+                                    </div>
+                                    <span style={{ color: "rgb(0, 98, 255)", cursor: "pointer", fontWeight: "600", fontSize: "16px" }}>
+                                      {row.name}
+                                    </span>
+                                  </td>
+                                  <td className="py-4">₹ {row.costPrice || '----'}</td>
+                                  <td className="py-4">{row.stock || '----'}</td>
+                                  <td className="py-4">{row.sku || '----'}</td>
+                                  <td className="py-4">{row.hsn || '----'}</td>
+                                  <td className="py-4">{row.unit || '----'}</td>
+                                  <td className="py-4">
+                                    {(!row.length || !row.width || !row.height || !row.dimensionUnit)
+                                      ? '---'
+                                      : `${row.length} x ${row.width} x ${row.height} ${row.dimensionUnit}`}
+                                  </td>
+                                </tr>
+                              );
+                            })
+                          ) : (
+                            <tr>
+                              <td colSpan={8} className="text-center">No Items Found</td>
+                            </tr>
+                          )
+                        }
                       </tbody>
+
+
                     </Table>
                   </div>
-                  {/* Pagination Controls */}
-                  <Pagination className="mt-3 justify-content-end">
+
+                  {/* <Pagination className="mt-3 justify-content-end">
                     <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
                     {[...Array(totalPages)].map((_, idx) => (
                       <Pagination.Item
@@ -344,7 +363,31 @@ export const Items = () => {
                       </Pagination.Item>
                     ))}
                     <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
+                  </Pagination> */}
+                  <Pagination className="mt-3 justify-content-end">
+                    <Pagination.Prev
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    />
+
+                    {/* Generate pagination items dynamically based on totalPages */}
+                    {[...Array(totalPages)].map((_, idx) => (
+                      <Pagination.Item
+                        key={idx}
+                        active={idx + 1 === currentPage}
+                        onClick={() => handlePageChange(idx + 1)}
+                      >
+                        {idx + 1}
+                      </Pagination.Item>
+                    ))}
+
+                    <Pagination.Next
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    />
                   </Pagination>
+
+
                 </Col>
               </Row>
             </Card>

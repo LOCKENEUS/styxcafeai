@@ -1,5 +1,5 @@
 import { color } from "chart.js/helpers";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardBody, CardHeader, Col, Container, Form, FormControl, InputGroup, Button, Breadcrumb, BreadcrumbItem, Row, Image, Pagination, Table } from "react-bootstrap";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import DataTable from "react-data-table-component";
@@ -10,6 +10,8 @@ import { Link, useNavigate } from "react-router-dom";
 import gm1 from '/assets/inventory/mynaui_search.svg'
 import solar_export from '/assets/inventory/solar_export-linear.png'
 import add from '/assets/inventory/material-symbols_add-rounded.png'
+import { useDispatch, useSelector } from "react-redux";
+import { getItemsGroups } from "../../../../store/slices/inventory";
 
 export const ItemsGroup = () => {
   const [searchText, setSearchText] = useState("");
@@ -18,6 +20,12 @@ export const ItemsGroup = () => {
   const [activePage, setActivePage] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
+const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getItemsGroups());
+  }, [dispatch]);
+  const itemsGroup = useSelector((state) => state.inventorySuperAdmin.inventory);
+  console.log("itemsGroup", itemsGroup);
   const filteredItems = [
     { itemName: "oItem A", price: "100", manufacturer: 50, brand: "SKU001", items: "1234", unit: "pcs"},
     {  itemName: "Alice", unit: "231",manufacturer : "231", brand: "SKU0011", items: "231", unit: "231" },
