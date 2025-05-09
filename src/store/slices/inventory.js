@@ -90,6 +90,109 @@ export const getItemsGroups = createAsyncThunk(
     }
   }
 );
+export const getItemsById = createAsyncThunk(
+  "games/getItemsById",
+  async (itemId, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/superadmin/inventory/item/${itemId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Something went wrong"
+      );
+    }
+  }
+);
+// /superadmin/inventory/item-group/:id
+export const getItemsGroupsById = createAsyncThunk(
+  "games/getItemsById",
+  async (itemId, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/superadmin/inventory/item-group/${itemId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Something went wrong"
+      );
+    }
+  }
+);
+export const deleteItemById = createAsyncThunk(
+  "games/deleteItemById",
+  async (id, thunkAPI) => {
+    try {
+      await axios.delete(`${BASE_URL}/superadmin/inventory/item/${id}`, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+        },
+      });
+      toast.success("Item deleted successfully!");
+      return id;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Something went wrong"
+      );
+    }
+  }
+);
+// export const deleteItemGroupsById = createAsyncThunk(
+//   "games/deleteItemGroupsById",
+//   async (id, thunkAPI) => {
+//     try {
+//       await axios.delete(`${BASE_URL}/superadmin/inventory/item-group/${id}`, {
+//         headers: {
+//           Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+//         },
+//       });
+//       toast.success("Item deleted successfully!");
+//       return id;
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(
+//         error.response?.data || "Something went wrong"
+//       );
+//     }
+//   }
+// );
+
+
+
+// /superadmin/inventory/item/
+
+export const updateItemsById = createAsyncThunk(
+  "games/updateItemsById",
+  async ({ itemsData, itemId }, thunkAPI) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/superadmin/inventory/item/${itemId}`,
+        itemsData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Something went wrong"
+      );
+    }
+  }
+);
 
 const InventorySlice = createSlice({
   name: "inventory",
@@ -155,7 +258,54 @@ const InventorySlice = createSlice({
       .addCase(getItemsGroups.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
-      });
+      })
+      // getItemsById
+      .addCase(getItemsById.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getItemsById.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.inventory = action.payload;
+      })
+      .addCase(getItemsById.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      // deleteItemById
+      .addCase(deleteItemById.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(deleteItemById.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.inventory = state.inventory.filter(
+          (item) => item._id !== action.payload
+         
+        );
+         toast.success("Item deleted successfully!");
+      })
+      .addCase(deleteItemById.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+        toast.error("Item deleted failed!");
+      })
+  
+       .addCase(updateItemsById.pending, (state) => {
+         state.status = "loading";
+       })
+       .addCase(updateItemsById.fulfilled, (state, action) => {
+         state.status = "succeeded";
+         state.inventory = state.inventory.filter(
+           (item) => item._id !== action.payload
+         );
+         toast.success("Item updated successfully!");
+       })
+       .addCase(updateItemsById.rejected, (state, action) => {
+         state.status = "failed";
+         state.error = action.payload;
+         toast.error("Item updated failed!");
+       });
+       
+
   },
 });
 

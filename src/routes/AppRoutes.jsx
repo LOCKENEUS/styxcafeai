@@ -110,6 +110,8 @@ import CreateMembership from "../pages/SuperAdmin/cafe/membership/CreateMembersh
 import GameDetailsCafe from "../pages/SuperAdmin/cafe/Games/GameDetails";
 import BookingDetailsPage from "../pages/SuperAdmin/cafe/booking/bookingDetailspage";
 import ClientDetailsPage from "../pages/SuperAdmin/cafe/client/clientDetailspage";
+import { ItemGroupDetail } from "../components/common/inventory/details/itemGroupDetail";
+import { EditItem } from "../components/common/inventory/edit/editItem";
 
 
 
@@ -152,7 +154,9 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
 
           <Route path="/Inventory/Dashboard" element={<Dashboards />} />
           <Route path="/Inventory/Items" element={<Items />} />
+          <Route path="/Inventory/Items/ItemEdit" element={<EditItem />} />
           <Route path="/Inventory/ItemsGroup" element={<ItemsGroup />} />
+          <Route path="/Inventory/ItemsGroupDetails" element={<ItemGroupDetail />} />
           <Route path="/Inventory/vendor" element={<Vendor />} />
           <Route path="/Inventory/itemCreate" element={<ItemCreate />} />
           <Route path="/Inventory/ItemGroupCreate" element={<IitemGroupCreate />} />

@@ -65,11 +65,6 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
   }, [selectedGame]);
   
   console.log("area dimension === ", areaDimension);
-  
-  
-
-
-
   useEffect(() => {
     if (selectedGame) {
       setFormData({
@@ -87,10 +82,6 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
       });
     }
   }, [selectedGame]);
-
-
-  
-
   const formRef = useRef(null);
   useEffect(() => {
     gsap.from(formRef.current, {
@@ -226,7 +217,7 @@ const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
   return (
     <Offcanvas show={show} onHide={handleClose} placement="end" style={{ width: "700px" }}>
       <Offcanvas.Header closeButton>
-        <Offcanvas.Title><h2 className="text-primary fw-bold">Edit Game</h2> </Offcanvas.Title>
+        <Offcanvas.Title><h2 className="text-primary fw-bold">Edit Game </h2> </Offcanvas.Title>
       </Offcanvas.Header>
       <Offcanvas.Body>
 

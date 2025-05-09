@@ -12,6 +12,8 @@ import solar_export from '/assets/inventory/solar_export-linear.png'
 import add from '/assets/inventory/material-symbols_add-rounded.png'
 import { useDispatch, useSelector } from "react-redux";
 import { getItemsGroups } from "../../../../store/slices/inventory";
+import { FcNext, FcPrevious } from "react-icons/fc";
+import Loader from "../../Loader/Loader";
 
 export const ItemsGroup = () => {
   const [searchText, setSearchText] = useState("");
@@ -20,43 +22,93 @@ export const ItemsGroup = () => {
   const [activePage, setActivePage] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
-const dispatch = useDispatch();
+  const [mainLoading, setMainLoading] = useState(false);
+  const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getItemsGroups());
+    setMainLoading(true);
+    dispatch(getItemsGroups()).finally(() => {
+      setMainLoading(false);
+    });
   }, [dispatch]);
-  const itemsGroup = useSelector((state) => state.inventorySuperAdmin.inventory);
-  console.log("itemsGroup", itemsGroup);
-  const filteredItems = [
-    { itemName: "oItem A", price: "100", manufacturer: 50, brand: "SKU001", items: "1234", unit: "pcs"},
-    {  itemName: "Alice", unit: "231",manufacturer : "231", brand: "SKU0011", items: "231", unit: "231" },
-    {  itemName: "Bob", unit: "231", manufacturer: "231", brand: "SKU0012", items: "231", unit: "231"},
-    {  itemName: "Charlie", unit: "231", manufacturer: "231", brand: "SKU00121", items: "231", unit: "231" },
-    { itemName: "David", unit: "231", manufacturer: "231", brand: "SKU0013", items: "231", unit: "231" },
-    {  itemName: "Eve", unit: "231", manufacturer: "231", brand: "SKU0014", items: "231", unit: "231" },    
-  ];
-  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  // const itemsGroup = useSelector((state) => state.inventorySuperAdmin.inventory) || [];
+  const itemsGroupList = useSelector((state) => state.inventorySuperAdmin?.inventory) || [];
 
+  console.log("itemsGroup", itemsGroupList);
+
+  const filteredItems = Array.isArray(itemsGroupList)
+    ? itemsGroupList.filter((item) =>
+      item.group_name?.toLowerCase().includes(searchText.toLowerCase()) ||
+      item.unit?.toLowerCase().includes(searchText.toLowerCase()) ||
+      item.manufacturer?.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+      item.brand?.name?.toLowerCase().includes(searchText.toLowerCase())
+    )
+    : [];
+
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentItems = filteredItems.slice(startIndex, startIndex + itemsPerPage);
 
+  // const itemsGroupList = useSelector((state) => state.inventorySuperAdmin.inventory?.data) || [];
+  // const currentItems = Array.isArray(itemsGroupList)
+  //   ? itemsGroupList.slice(startIndex, startIndex + itemsPerPage)
+  //   : [];
+
+
+
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  // const currentItems = itemsGroup.slice(startIndex, startIndex + itemsPerPage);
+  // const currentItems = (itemsGroup || []).slice(startIndex, startIndex + itemsPerPage);
+  console.log("currentItems", currentItems);
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
     }
   };
+  const handleShowCreate = (e) => {
+    e.preventDefault();
+    navigator("/Inventory/ItemGroupCreate");
+  }
+  const handleShowDetails = (groupId) => {
+    console.log("groupId  ", groupId);
+    navigator("/Inventory/ItemsGroupDetails", { state: { groupId } });
+  }
+  const handleExportToCSV = () => {
+    const headers = ["#", "Name", "Unit", "Manufacturer", "Brand", "Items"];
+    const rows = currentItems.map((row, index) => {
+      return [
+        index + 1,
+        row.group_name || "---",
+        typeof row.unit === "object" ? row.unit?.name || "---" : row.unit || "---",
+        typeof row.manufacturer?.name === "object" ? row.manufacturer?.name?.en || "---" : row.manufacturer?.name || "---",
+        typeof row.brand === "object" ? row.brand?.name || "---" : row.brand || "---",
+        row.length || "---",
+      ];
+    });
 
-  // const handleShowCreate = (e) => {
-  //   e.preventDefault();
-    // e.target.value = ""; 
-  //   navigator("/Inventory/itemCreate");
-  // }
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((row) => row.map(value => `"${value}"`).join(","))
+    ].join("\n");
 
-  
-      const handleShowCreate = (e) => {
-        e.preventDefault();
-        navigator("/Inventory/ItemGroupCreate");
-      }
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "group_items.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
 
   return (
 
@@ -92,41 +144,7 @@ const dispatch = useDispatch();
                 <Col sm={4} className="fluid d-flex justify-content-start">
                   <h1 className="text-center mx-2 mt-2">Group  Item  List</h1>
                 </Col>
-                {/* <Col sm={3} className="fluid d-flex justify-content-end">
-          <div className="d-flex justify-content-start align-items-start my-2" >
 
-                <InputGroup className="navbar-input-group " style={{ border: "none" }}>
-                  <InputGroupText className="border-0" style={{ background: "transparent", backgroundColor: "#FAFAFA" }}>
-                    < Image src={gm1} />
-                  </InputGroupText>
-
-                  <FormControl
-                    type="search"
-                    className="search"
-                    size="sm"
-                    placeholder="Search for vendors"
-                    aria-label="Search in docs"
-                    value={searchText}
-                    onChange={(e) => setSearchText(e.target.value)}
-                    
-                    style={{ background: "transparent", backgroundColor: "#FAFAFA",border:"none" }}
-                  />
-
-                  {searchText && (
-                    <InputGroupText
-                      as="a"
-                      href="javascript:;"
-                      onClick={() => setSearchText("")}
-                      
-                    >
-                     
-                    </InputGroupText>
-                  )}
-                </InputGroup>
-
-              </div>
-          
-          </Col> */}
                 <Col sm={8}>
                   <div className="d-flex justify-content-end align-items-center flex-wrap my-2">
                     <InputGroup
@@ -165,7 +183,9 @@ const dispatch = useDispatch();
                       size="sm"
                       style={{ borderColor: "#FF3636", color: "#FF3636" }}
                     > */}
-                    <Button variant="denger" className="btn  px-4 mx-4" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }}>
+                    <Button variant="denger" className="btn  px-4 mx-4" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }}
+                      onClick={handleExportToCSV}
+                    >
 
                       <Image className="me-2" style={{ width: "22px", height: "22px" }} src={solar_export} />
                       Export
@@ -173,7 +193,7 @@ const dispatch = useDispatch();
 
                     <Button type="button" variant="primary" className="px-4 mx-2" size="sm" onClick={handleShowCreate}>
                       <Image className="me-2" style={{ width: "22px", height: "22px" }} src={add} />
-                      New Group 
+                      New Group
                     </Button>
                   </div>
                 </Col>
@@ -181,7 +201,7 @@ const dispatch = useDispatch();
                   <div style={{ position: "relative", height: "500px", overflowY: "auto" }}>
                     <Table hover >
                       <thead style={{
-                        position: "sticky", top: 0, backgroundColor: "#e9f5f8", zIndex: 1,width:"100%"
+                        position: "sticky", top: 0, backgroundColor: "#e9f5f8", zIndex: 1, width: "100%"
                       }}>
                         <tr>
                           <th style={{
@@ -227,7 +247,7 @@ const dispatch = useDispatch();
                               color: "gray",
                             }}
                           >Brand</th>
-                          
+
                           <th
                             style={{
                               fontWeight: "600",
@@ -242,62 +262,100 @@ const dispatch = useDispatch();
                         </tr>
                       </thead>
                       <tbody>
-                        {currentItems.map((row, index) => {
-                          const colors = ["#FFB6C1", "#ADD8E6", "#90EE90", "#FFD700", "#FFA07A"];
-                          const bgColor = colors[index % colors.length];
-                          const initial = row.itemName?.charAt(0)?.toUpperCase() || "?";
-
-                          return (
-                            // <tr key={index} style={{ fontSize: "1px", verticalAlign: "middle", color: "black" }}>
-                            <tr key={index} style={{ verticalAlign: "middle", color: "gray", fontSize: "14px", fontWeight: "500" }}>
-
-                              <td className="py-4">{index + 1}</td>
-                              <td className="py-4 d-flex align-items-center">
-                                <div
-                                  style={{
-                                    backgroundColor: bgColor,
-                                    color: "#fff",
-                                    borderRadius: "50%",
-                                    width: "40px",
-                                    height: "40px",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    fontSize: "20px",
-                                    fontWeight: "800",
-                                    marginRight: "10px",
-                                  }}
-                                >
-                                  {initial}
-                                </div>
-                                <span style={{ color: "rgb(0, 98, 255)" ,cursor:"pointer", fontWeight:"600" ,fontSize:"16px"}}>{row.itemName}</span>
+                        {
+                          mainLoading || !itemsGroupList ? (
+                            <tr>
+                              <td colSpan={8} className="text-center">
+                                <Loader />
                               </td>
-                              <td className="py-4">{row.unit}</td>
-                              <td className="py-4" style={{ width: "200px" }}>{row.manufacturer}</td>
-                              <td className="py-4">{row.brand}</td>
-                              <td className="py-4" style={{ width: "300px" }}>{row.items}</td>
-                             
-                              <td className="py-4">{row.dimension}</td>
                             </tr>
-                          );
-                        })}
+                          ) : itemsGroupList.length === 0 ? (
+                            <tr>
+                              <td colSpan="6" className="text-center py-4 text-muted">
+                                No items found
+                              </td>
+                            </tr>
+                          ) : (
+                            currentItems.map((row, index) => {
+                              const colors = ["#FFB6C1", "#ADD8E6", "#90EE90", "#FFD700", "#FFA07A"];
+                              const bgColor = colors[index % colors.length];
+                              const initial = row.group_name?.charAt(0)?.toUpperCase() || "?";
+
+                              return (
+                                <tr key={index} style={{ verticalAlign: "middle", color: "gray", fontSize: "14px", fontWeight: "500" }}>
+                                  <td className="py-4">{index + 1}</td>
+                                  <td className="py-4 d-flex align-items-center">
+                                    <div
+                                      style={{
+                                        backgroundColor: bgColor,
+                                        color: "#fff",
+                                        borderRadius: "50%",
+                                        width: "40px",
+                                        height: "40px",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        fontSize: "20px",
+                                        fontWeight: "800",
+                                        marginRight: "10px",
+                                      }}
+                                    >
+                                      {initial}
+                                    </div>
+                                    <span style={{ color: "rgb(0, 98, 255)", cursor: "pointer", fontWeight: "600", fontSize: "16px" }}
+                                      onClick={() => handleShowDetails(row._id)}
+                                    >
+                                      {row.group_name}
+                                    </span>
+                                  </td>
+                                  <td className="py-4">
+                                    {typeof row.unit === "object" ? row.unit?.name || "---" : row.unit || "---"}
+                                  </td>
+                                  <td className="py-4" style={{ width: "200px" }}>
+                                    {typeof row.manufacturer?.name === "object"
+                                      ? row.manufacturer.name.en || "---"
+                                      : row.manufacturer?.name || "---"}
+                                  </td>
+                                  <td className="py-4">
+                                    {typeof row.brand === "object" ? row.brand?.name || "---" : row.brand || "---"}
+                                  </td>
+                                  <td className="py-4" style={{ width: "300px" }}>
+                                    {row.length || "---"}
+                                  </td>
+                                </tr>
+                              );
+                            })
+                          )
+                        }
                       </tbody>
+
+
                     </Table>
                   </div>
-                  {/* Pagination Controls */}
-                  <Pagination className="mt-3 justify-content-end">
-                    <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
-                    {[...Array(totalPages)].map((_, idx) => (
-                      <Pagination.Item
-                        key={idx}
-                        active={idx + 1 === currentPage}
-                        onClick={() => handlePageChange(idx + 1)}
-                      >
-                        {idx + 1}
-                      </Pagination.Item>
-                    ))}
-                    <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
-                  </Pagination>
+
+
+                </Col>
+                <Col sm={12} className="d-flex justify-content-end align-items-center mt-3">
+                  <Button
+                    className="btn btn-light fw-bold"
+                    onClick={handlePrev}
+                    disabled={currentPage === 1}
+
+                  >
+                    <FcPrevious />
+                  </Button>
+
+                  <span className="mx-3">
+                    Page {currentPage} of {totalPages}
+                  </span>
+
+                  <Button
+                    className="btn btn-light "
+                    onClick={handleNext}
+                    disabled={currentPage === totalPages}
+                  >
+                    <FcNext />
+                  </Button>
                 </Col>
               </Row>
             </Card>
@@ -309,4 +367,4 @@ const dispatch = useDispatch();
 };
 
 
-    
+

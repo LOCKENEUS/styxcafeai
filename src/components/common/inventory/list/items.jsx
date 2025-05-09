@@ -13,6 +13,7 @@ import add from '/assets/inventory/material-symbols_add-rounded.png'
 import { useDispatch, useSelector } from "react-redux";
 import { getItems } from "../../../../store/slices/inventory";
 import Loader from "../../Loader/Loader";
+import { FcNext, FcPrevious } from "react-icons/fc";
 
 
 
@@ -38,46 +39,59 @@ export const Items = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     // if (superAdminId) {
-    dispatch(getItems());
+    setMainLoading(true);
+    dispatch(getItems()).finally(() => {
+      setMainLoading(false);
+    });
     // }
   }, [dispatch]);
-  const items = useSelector((state) => state.inventorySuperAdmin.inventory);
 
-  console.log("item list  ----", items);
 
-  const filteredItems = [
-    { itemName: "oItem A", price: "100", stock: 50, sku: "SKU001", hsn: "1234", unit: "pcs", dimension: "10x10x5" },
-    { itemName: "Item B", price: "120", stock: 30, sku: "SKU002", hsn: "1235", unit: "pcs", dimension: "12x10x6" },
-    { itemName: "Item C", price: "90", stock: 40, sku: "SKU003", hsn: "1236", unit: "pcs", dimension: "11x9x5" },
-    { itemName: "Item D", price: "110", stock: 60, sku: "SKU004", hsn: "1237", unit: "pcs", dimension: "13x11x6" },
-    { itemName: "Item E", price: "95", stock: 70, sku: "SKU005", hsn: "1238", unit: "pcs", dimension: "10x8x5" },
-    { itemName: "Item F", price: "105", stock: 20, sku: "SKU006", hsn: "1239", unit: "pcs", dimension: "14x10x7" },
-    { itemName: "Item G", price: "130", stock: 10, sku: "SKU007", hsn: "1240", unit: "pcs", dimension: "15x12x6" },
-    { itemName: "Item H", price: "125", stock: 90, sku: "SKU008", hsn: "1241", unit: "pcs", dimension: "13x10x8" },
-    { itemName: "Item I", price: "140", stock: 35, sku: "SKU009", hsn: "1242", unit: "pcs", dimension: "16x12x9" },
-    { itemName: "Item J", price: "85", stock: 45, sku: "SKU010", hsn: "1243", unit: "pcs", dimension: "10x9x5" },
-    { itemName: "Item K", price: "115", stock: 65, sku: "SKU011", hsn: "1244", unit: "pcs", dimension: "12x10x6" },
-    { itemName: "Item L", price: "150", stock: 25, sku: "SKU012", hsn: "1245", unit: "pcs", dimension: "14x12x7" },
-    { itemName: "Item M", price: "135", stock: 75, sku: "SKU013", hsn: "1246", unit: "pcs", dimension: "13x11x6" },
-    { itemName: "Item N", price: "145", stock: 80, sku: "SKU014", hsn: "1247", unit: "pcs", dimension: "15x13x7" },
-    { itemName: "Item O", price: "155", stock: 100, sku: "SKU015", hsn: "1248", unit: "pcs", dimension: "16x14x8" },
-    { itemName: "Item P", price: "160", stock: 20, sku: "SKU016", hsn: "1249", unit: "pcs", dimension: "17x15x8" },
-    { itemName: "Item Q", price: "165", stock: 30, sku: "SKU017", hsn: "1250", unit: "pcs", dimension: "18x16x9" },
-    { itemName: "Item R", price: "170", stock: 45, sku: "SKU018", hsn: "1251", unit: "pcs", dimension: "19x17x9" },
-    { itemName: "Item S", price: "175", stock: 55, sku: "SKU019", hsn: "1252", unit: "pcs", dimension: "20x18x10" },
-    { itemName: "Item T", price: "180", stock: 60, sku: "SKU020", hsn: "1253", unit: "pcs", dimension: "21x19x10" }
-  ];
-  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+
+
+
+  const itemsList = useSelector((state) => state.inventorySuperAdmin.inventory);
+
+
+  // const filteredItems = itemsList?.filter((item) =>
+  //   item.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+  //   item.costPrice?.toString().toLowerCase().includes(searchText.toLowerCase()) ||
+  //   item.stock?.toString().toLowerCase().includes(searchText.toLowerCase()) ||
+  //   item.sku?.toLowerCase().includes(searchText.toLowerCase()) ||
+  //   item.unit?.toLowerCase().includes(searchText.toLowerCase())
+  // ) || [];
+
+
+  const filteredItems = Array.isArray(itemsList)
+    ? itemsList.filter((item) =>
+      item.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+      item.costPrice?.toString().toLowerCase().includes(searchText.toLowerCase()) ||
+      item.stock?.toString().toLowerCase().includes(searchText.toLowerCase()) ||
+      item.sku?.toLowerCase().includes(searchText.toLowerCase()) ||
+      item.unit?.toLowerCase().includes(searchText.toLowerCase())
+    )
+    : [];
+
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   // const currentItems = items.slice(startIndex, startIndex + itemsPerPage);
-  const currentItems = (items || []).slice(startIndex, startIndex + itemsPerPage);
+  const totalPages = Math.ceil((filteredItems.length || 0) / itemsPerPage);
+  const currentItems = filteredItems.slice(startIndex, startIndex + itemsPerPage);
 
 
+  console.log("currentItems", currentItems);
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
     }
+  };
+
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
   };
 
   const handleShowCreate = (e) => {
@@ -86,6 +100,49 @@ export const Items = () => {
     navigator("/Inventory/itemCreate");
   }
 
+  // /Inventory/ItemDetails
+  const handleShowDetails = (groupId) => {
+    // e.preventDefault();
+    console.log("groupId", groupId);
+    navigator("/Inventory/itemDetails", { state: { groupId } });
+
+  }
+  const exportToCSV = () => {
+
+
+    const headers = ["#", "Item Name", "Price", "Stock", "SKU", "HSN", "Unit", "Dimension"];
+    const rows = currentItems.map((row, index) => {
+      const dimension = (!row.length || !row.width || !row.height || !row.dimensionUnit)
+        ? '---'
+        : `${row.length} x ${row.width} x ${row.height} ${row.dimensionUnit}`;
+
+      return [
+        index + 1,
+        row.name || '----',
+        `₹ ${row.costPrice || '----'}`,
+        row.stock || '----',
+        row.sku || '----',
+        row.hsn || '----',
+        row.unit || '----',
+        dimension
+      ];
+    });
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((row) => row.map(value => `"${value}"`).join(","))
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "group_items.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+  };
   return (
 
 
@@ -183,20 +240,19 @@ export const Items = () => {
                           onClick={() => setSearchText("")}
                           style={{ cursor: "pointer" }}
                         >
-                          {/* <X id="clearSearchResultsIcon" /> */}
+
                         </InputGroupText>
                       )}
                     </InputGroup>
 
-                    {/* <Button
-                      variant="danger"
-                      className="px-4 mx-2"
-                      size="sm"
-                      style={{ borderColor: "#FF3636", color: "#FF3636" }}
-                    > */}
-                    <Button variant="denger" className="btn  px-4 mx-4" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }}>
 
-                      <Image className="me-2" style={{ width: "22px", height: "22px" }} src={solar_export} />
+                    <Button variant="denger" className="btn  px-4 mx-4" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }}
+                      onClick={exportToCSV}
+                    >
+
+                      <Image className="me-2" style={{ width: "22px", height: "22px" }} src={solar_export}
+
+                      />
                       Export
                     </Button>
 
@@ -289,7 +345,7 @@ export const Items = () => {
                       </thead>
                       <tbody>
                         {
-                          mainLoading || !items ? (
+                          mainLoading || !itemsList ? (
                             <tr>
                               <td colSpan={8} className="text-center">
                                 <Loader />
@@ -322,7 +378,7 @@ export const Items = () => {
                                     >
                                       {initial}
                                     </div>
-                                    <span style={{ color: "rgb(0, 98, 255)", cursor: "pointer", fontWeight: "600", fontSize: "16px" }}>
+                                    <span style={{ color: "rgb(0, 98, 255)", cursor: "pointer", fontWeight: "600", fontSize: "16px" }} onClick={() => handleShowDetails(row._id)}>
                                       {row.name}
                                     </span>
                                   </td>
@@ -364,28 +420,28 @@ export const Items = () => {
                     ))}
                     <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
                   </Pagination> */}
-                  <Pagination className="mt-3 justify-content-end">
-                    <Pagination.Prev
-                      onClick={() => handlePageChange(currentPage - 1)}
+                  <Col sm={12} className="d-flex justify-content-end align-items-center mt-3">
+                    <Button
+                      className="btn btn-light fw-bold"
+                      onClick={handlePrev}
                       disabled={currentPage === 1}
-                    />
 
-                    {/* Generate pagination items dynamically based on totalPages */}
-                    {[...Array(totalPages)].map((_, idx) => (
-                      <Pagination.Item
-                        key={idx}
-                        active={idx + 1 === currentPage}
-                        onClick={() => handlePageChange(idx + 1)}
-                      >
-                        {idx + 1}
-                      </Pagination.Item>
-                    ))}
+                    >
+                      <FcPrevious />
+                    </Button>
 
-                    <Pagination.Next
-                      onClick={() => handlePageChange(currentPage + 1)}
+                    <span className="mx-3">
+                      Page {currentPage} of {totalPages}
+                    </span>
+
+                    <Button
+                      className="btn btn-light "
+                      onClick={handleNext}
                       disabled={currentPage === totalPages}
-                    />
-                  </Pagination>
+                    >
+                      <FcNext />
+                    </Button>
+                  </Col>
 
 
                 </Col>
