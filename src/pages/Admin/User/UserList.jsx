@@ -76,7 +76,7 @@ const UserList = () => {
   }
 
   return (
-    <div className="container mt-4" style={{ padding: '0 1rem' }}>
+    <div className="container mt-4 mx-2 py-2 bg-white rounded-2" style={{ padding: '0 1rem' }}>
       <div
         className="d-flex justify-content-between align-items-center mt-5 mb-5"
         style={{ flexDirection: 'row', gap: '1rem' }}

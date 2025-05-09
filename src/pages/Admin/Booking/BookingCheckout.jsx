@@ -1390,6 +1390,7 @@ import CreditSplit from "./Model/CreditSplit";
 import { TbTrash } from "react-icons/tb";
 import ItemsSave from "./Model/itemsSave";
 import { MdCancel } from "react-icons/md";
+import axios from "axios";
 
 const BookingCheckout = () => {
 
@@ -1406,6 +1407,8 @@ const BookingCheckout = () => {
   const maxVisiblePlayers = 2;
   const [priceToPay, setPriceToPay] = useState(0);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [cashLoading, setCashLoading] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
 
@@ -1451,7 +1454,7 @@ const BookingCheckout = () => {
 
   useEffect(() => {
     if (items.length > 0) {
-      setOptions(items.map((item) => ({ value: item._id, label: `${item.name} (₹ ${item.sellingPrice})` })));
+      setOptions(items.map((item) => ({ value: item?._id, label: `${item?.name} (₹ ${item?.sellingPrice})` })));
     }
   }, [items]);
 
@@ -1479,7 +1482,7 @@ const BookingCheckout = () => {
 
       if (booking?.so_id) {
         const mappedItems = booking.so_id.items.map((item) => ({
-          id: item.item_id._id,
+          id: item?.item_id?._id,
           item: item.item,
           price: item.price,
           quantity: item.quantity,
@@ -1556,13 +1559,13 @@ const BookingCheckout = () => {
 
     setIsItemsSaved(false);
 
-    const selected = items.find(item => item._id === id);
+    const selected = items.find(item => item?._id === id);
 
     if (selected) {
       const totalTax = Math.round((selected.tax?.tax_rate * selected.sellingPrice) / 100) || 0;
       const total = selected.sellingPrice + totalTax || 0;
       setSelectedItems([...selectedItems, {
-        id: selected._id,
+        id: selected?._id,
         item: selected.name,
         price: selected.sellingPrice,
         quantity: 1,
@@ -1570,7 +1573,7 @@ const BookingCheckout = () => {
         total: total,
         totalTax: totalTax
       }]);
-      setSelectedIds([...selectedIds, selected._id]);
+      setSelectedIds([...selectedIds, selected?._id]);
       setSelectedOption(null)
     }
   };
@@ -1623,7 +1626,7 @@ const BookingCheckout = () => {
       // Set tempStartTime before dispatch
       setTempStartTime(currentTime);
 
-      dispatch(startBookingTimer(booking._id));
+      dispatch(startBookingTimer(booking?._id));
     } else {
       alert("Timer can only be started on the booking date.");
       // Optional: alert("You can only start the timer on the booking day.");
@@ -1632,17 +1635,17 @@ const BookingCheckout = () => {
   };
 
   const handlePauseTimer = () => {
-    dispatch(pauseBookingTimer(booking._id));
+    dispatch(pauseBookingTimer(booking?._id));
   };
 
   const handleResumeTimer = () => {
-    dispatch(resumeBookingTimer(booking._id));
+    dispatch(resumeBookingTimer(booking?._id));
   };
 
   const handleStopTimer = async () => {
     try {
       // Stop the timer in the backend
-      await dispatch(stopBookingTimer(booking._id));
+      await dispatch(stopBookingTimer(booking?._id));
 
       // Stop the timer in the frontend immediately
       setIsStopped(true);
@@ -1650,7 +1653,7 @@ const BookingCheckout = () => {
       clearInterval(); // Clear the interval to stop the timer updates
 
       // Fetch the updated booking details to get the stopped time
-      const updatedBooking = await dispatch(getBookingDetails(booking._id)).unwrap();
+      const updatedBooking = await dispatch(getBookingDetails(booking?._id)).unwrap();
       setCurrentTime(updatedBooking.total_time || 0); // Update the timer with the stopped time
     } catch (error) {
       console.error("Error stopping the timer:", error);
@@ -1674,6 +1677,7 @@ const BookingCheckout = () => {
   const handleOnlinePayment = async (finalPlayers, payableAmount) => {
 
     try {
+      setLoading(true);
       const payer = looserPlayer || selectedCustomer; // Use looser player if selected, otherwise main customer
 
       const formattedPlayers = finalPlayers.map(({ _id, ...rest }) => ({
@@ -1700,8 +1704,10 @@ const BookingCheckout = () => {
           adjustment
         })
       );
+      setLoading(false);
     } catch (error) {
       console.error("Error processing online payment:", error);
+      setLoading(false);
     }
   };
 
@@ -1724,11 +1730,32 @@ const BookingCheckout = () => {
         looserPlayer: looserPlayer,
         adjustment
       };
-      const response = await dispatch(updateBooking({ id: booking?._id, updatedData: bookingData })).unwrap()
+      // const response = await dispatch(updateBooking({ id: booking?._id, updatedData: bookingData })).unwrap()
 
-      // if (response.data) {
-      //   navigate(`admin/booking/checkout/${id}`)
-      // }
+      try {
+        setCashLoading(true);
+        const BASE_URL = import.meta.env.VITE_API_URL;
+        const response = await axios.put(
+          `${BASE_URL}/admin/booking/${booking?._id}`,
+          bookingData,
+          {
+            headers: {
+              Authorization: `Bearer ${sessionStorage.getItem(
+                "authToken"
+              )}`,
+            },
+          }
+        );
+        if (response.status = true) {
+          setCashLoading(false);
+          setShowCreditModal(false);
+          dispatch(getBookingDetails(booking?._id))
+          navigate(`/admin/booking/checkout/${booking?._id}`)
+        }
+      } catch (error) {
+        console.error("Error updating booking:", error);
+        setCashLoading(false);
+      }
     } catch (error) {
       console.error("Error processing offline payment:", error);
     }
@@ -1738,15 +1765,19 @@ const BookingCheckout = () => {
     setLooserPlayer(player);
   };
 
+  console.log("playerCredits", booking?.playerCredits);
+
   const renderCreditsPopover = (
     <Popover id="player-credits-popover">
       <Popover.Header as="h3">Player Credits</Popover.Header>
       <Popover.Body>
         {booking?.playerCredits?.length > 0 ? (
           <ul className="mb-0 ps-3">
-            {booking.playerCredits.map((player, index) => (
+            {booking?.playerCredits.map((player, index) => (
               <li key={index}>
+                <Link to={`/admin/users/customer-details/${player._id}`} className="text-decoration-none text-dark">
                 {player.name || player.id}: ₹ {player.credit || 0}
+                </Link>
               </li>
             ))}
           </ul>
@@ -1860,7 +1891,15 @@ const BookingCheckout = () => {
 
         </Col>
 
-        <Col md={8} className="d-flex flex-column gap-1 justify-content-between hide-scrollbar" style={{ overflowY: "auto", maxHeight: "100vh" }}>
+        <Col md={8} className="d-flex flex-column gap-1 justify-content-between hide-scrollbar" 
+        // style={{ overflowY: "auto", maxHeight: "100vh" }}
+        style={{
+          overflowY: "auto",
+          maxHeight: "100vh",
+          scrollbarWidth: "none", // For Firefox
+          msOverflowStyle: "none", // For IE/Edge
+        }}
+        >
           <Row>
             <Col
               md={12}
@@ -2166,7 +2205,7 @@ const BookingCheckout = () => {
           {selectedGame?.type === "Multiplayer" && selectedGame?.payLater || selectedGame?.type === "Single" && selectedGame?.payLater ?
             booking?.status === "Paid" ?
               <div className="rounded shadow-sm w-100" style={{ marginLeft: "10px" }}>
-                <Row className="mt-3 gap-3">
+                <Row className="mt-2 gap-3">
                   <Col md={6} className="bg-white d-flex p-3 gap-3" style={{ borderRadius: "10px", width: "48%" }}>
                     <div>
                       <img src="/assets/Admin/Game/Notification.svg" alt="Game Timer" />
@@ -2242,9 +2281,9 @@ const BookingCheckout = () => {
                 </Row>
               </div>
               : (
-                selectedGame?.payLater && 
+                selectedGame?.payLater &&
                 <div className="rounded shadow-sm w-100 right-padding-responsive left-margin-responsive" style={{ marginLeft: "10px", paddingRight: "8px" }}>
-                  <Row className="mt-2 gap-0">
+                  <Row className="mt-1 gap-0">
                     <Col md={6} className="p-0">
                       <div className="bg-white d-flex p-3 gap-1" style={{ borderRadius: "10px", width: "100%" }}>
                         <div className="d-flex gap-4 custom-gap-responsive" style={{ border: "none" }}>
@@ -2308,7 +2347,7 @@ const BookingCheckout = () => {
 
                     <Col md={6} >
                       <div className="bg-white d-flex p-3" style={{ borderRadius: "10px", width: "100%" }}>
-                        <div className="d-flex" style={{ border: "none",width: "100%" }}>
+                        <div className="d-flex" style={{ border: "none", width: "100%" }}>
                           <div>
                             <img src="/assets/Admin/Game/Notification2.svg" alt="Game Timer" />
                           </div>
@@ -2326,73 +2365,59 @@ const BookingCheckout = () => {
 
                     <Col md={6} className="p-0 mt-2">
                       <div className="bg-white d-flex p-3 gap-2" style={{ borderRadius: "10px", width: "100%" }}>
-                      <div>
-                        <img src="/assets/Admin/Game/Notification3.svg" alt="Game Timer" />
-                      </div>
-                      <div className="d-flex flex-column m-auto" style={{ width: "100%" }}>
                         <div>
-                          Charges
+                          <img src="/assets/Admin/Game/Notification3.svg" alt="Game Timer" />
                         </div>
-                        <div className="text-color fs-4">
-                          ₹ {priceToPay}
+                        <div className="d-flex flex-column m-auto" style={{ width: "100%" }}>
+                          <div>
+                            Charges
+                          </div>
+                          <div className="text-color fs-4">
+                            ₹ {priceToPay}
+                          </div>
                         </div>
-                      </div>
                       </div>
                     </Col>
 
                     <Col md={6} className="mt-2">
                       <div className="bg-white d-flex p-3" style={{ borderRadius: "10px", width: "100%" }}>
-                      <div>
-                        <img src="/assets/Admin/Game/Notification4.svg" alt="Game Timer" />
-                      </div>
-
-                      {looserPlayer && (
-                        <div className="mx-4 my-auto" style={{ width: "100%" }}>
-                          <div className="fw-bold">Looser </div>
-                          <div className="text-color fs-5">
-                            {looserPlayer.name}
-                          </div>
+                        <div>
+                          <img src="/assets/Admin/Game/Notification4.svg" alt="Game Timer" />
                         </div>
-                      )}
-                      <OverlayTrigger
-                        placement="left"
-                        show={showTooltip}
-                        onToggle={(isVisible) => setShowTooltip(isVisible)}
-                        overlay={
-                          <Tooltip
-                            id="player-list-tooltip"
-                            onMouseEnter={() => setShowTooltip(true)}
-                            onMouseLeave={() => setShowTooltip(false)}
-                          >
-                            <h6 className="m-2 p-2 text-light border-bottom">Select Looser Player</h6>
-                            <ul className="m-2 p-2 list-unstyled">
-                              {selectedCustomer && (
-                                <li
-                                  className="fw-bold p-1"
-                                  onClick={() => {
-                                    setLooserPlayer(selectedCustomer);
-                                    setShowTooltip(false);
-                                  }}
-                                  // style={{ cursor: "pointer" }}
-                                  style={{
-                                    cursor: "pointer",
-                                    transition: "all 0.2s ease-in-out",
-                                    backgroundColor: "transparent",
-                                    color: "white",
-                                  }}
-                                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f8f9fa", e.currentTarget.style.color = "black")}
-                                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent", e.currentTarget.style.color = "white")}
-                                >
-                                  {selectedCustomer?.name} (Customer)
-                                </li>
-                              )}
 
-                              {players?.length > 0 ? (
-                                players.map((player, index) => (
+                        {looserPlayer && (
+                          <div className="mx-4 my-auto" style={{ width: "100%" }}>
+                            <div className="fw-bold">Looser </div>
+                            <div className="text-color fs-5">
+                              {looserPlayer.name}
+                            </div>
+                          </div>
+                        )}
+                        
+                        <div className="px-2 my-auto">
+                        <small>Select looser</small>
+                        </div>
+                      
+                        <OverlayTrigger
+                          placement="left"
+                          show={showTooltip}
+                          onToggle={(isVisible) => setShowTooltip(isVisible)}
+                          overlay={
+                            <Tooltip
+                              id="player-list-tooltip"
+                              onMouseEnter={() => setShowTooltip(true)}
+                              onMouseLeave={() => setShowTooltip(false)}
+                            >
+                              <h6 className="m-2 p-2 text-light border-bottom">Select Looser Player</h6>
+                              <ul className="m-2 p-2 list-unstyled">
+                                {selectedCustomer && (
                                   <li
-                                    key={index}
-                                    className="p-1"
-                                    onClick={() => handleSelectLooserPlayer(player)}
+                                    className="fw-bold p-1"
+                                    onClick={() => {
+                                      setLooserPlayer(selectedCustomer);
+                                      setShowTooltip(false);
+                                    }}
+                                    // style={{ cursor: "pointer" }}
                                     style={{
                                       cursor: "pointer",
                                       transition: "all 0.2s ease-in-out",
@@ -2402,42 +2427,60 @@ const BookingCheckout = () => {
                                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f8f9fa", e.currentTarget.style.color = "black")}
                                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent", e.currentTarget.style.color = "white")}
                                   >
-                                    {player.name}
+                                    {selectedCustomer?.name} (Customer)
                                   </li>
-                                ))
-                              ) : (
-                                <li className="muted-text">No Players</li>
-                              )}
-                            </ul>
-                          </Tooltip>
-                        }
-                      >
-                        <Stack
-                          direction="horizontal"
-                          gap={2}
-                          className="align-items-center mt-2 float-end px-6"
-                          onMouseEnter={() => setShowTooltip(true)}
-                          onMouseLeave={() => setShowTooltip(false)}
+                                )}
+                                {players?.length > 0 ? (
+                                  players.map((player, index) => (
+                                    <li
+                                      key={index}
+                                      className="p-1"
+                                      onClick={() => handleSelectLooserPlayer(player)}
+                                      style={{
+                                        cursor: "pointer",
+                                        transition: "all 0.2s ease-in-out",
+                                        backgroundColor: "transparent",
+                                        color: "white",
+                                      }}
+                                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f8f9fa", e.currentTarget.style.color = "black")}
+                                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent", e.currentTarget.style.color = "white")}
+                                    >
+                                      {player.name}
+                                    </li>
+                                  ))
+                                ) : (
+                                  <li className="muted-text">No Players</li>
+                                )}
+                              </ul>
+                            </Tooltip>
+                          }
                         >
-                          <div className="d-flex">
-                            <Image src={userProfile} roundedCircle width={35} height={35} className="border" />
-                            {players &&
-                              players.slice(0, maxVisiblePlayers).map((player, index) => (
-                                <Image
-                                  src={player.customerProfile || userProfile}
-                                  roundedCircle
-                                  width={35}
-                                  height={35}
-                                  className="border ms-n3"
-                                  key={index}
-                                />
-                              ))}
-                            {players?.length > maxVisiblePlayers && (
-                              <span className="fw-bold muted-text ms-2">+{players.length - maxVisiblePlayers}</span>
-                            )}
-                          </div>
-                        </Stack>
-                      </OverlayTrigger>
+                          <Stack
+                            direction="horizontal"
+                            gap={2}
+                            className="align-items-center mt-2 float-end px-6"
+                            onMouseEnter={() => setShowTooltip(true)}
+                            onMouseLeave={() => setShowTooltip(false)}
+                          >
+                            <div className="d-flex">
+                              <Image src={userProfile} roundedCircle width={35} height={35} className="border" />
+                              {players &&
+                                players.slice(0, maxVisiblePlayers).map((player, index) => (
+                                  <Image
+                                    src={player.customerProfile || userProfile}
+                                    roundedCircle
+                                    width={35}
+                                    height={35}
+                                    className="border ms-n3"
+                                    key={index}
+                                  />
+                                ))}
+                              {players?.length > maxVisiblePlayers && (
+                                <span className="fw-bold muted-text ms-2">+{players.length - maxVisiblePlayers}</span>
+                              )}
+                            </div>
+                          </Stack>
+                        </OverlayTrigger>
                       </div>
                     </Col>
                   </Row>
@@ -2452,249 +2495,258 @@ const BookingCheckout = () => {
               <Row className="p-2">
                 <Col md={12} className="bg-white p-3 rounded-2">
                   {/* <Card className="p-3 mt-2 rounded-3" style={{ marginLeft: "10px", marginRight: "10px" }}> */}
-                    <h5 className="fs-3 text-color">Payment Details</h5>
-                    <Row className="mt-1">
-                      <Col xs={6} className="text-primary fw-semibold">{selectedGame?.name} ({selectedGame?.size}) </Col>
-                      <Col xs={3} className="muted-text">{booking?.players?.length + 1} Candidates</Col>
-                      <Col xs={3} className="text-end">{selectedGame?.type === "Single" && !selectedGame?.payLater && (booking?.total - booking?.paid_amount) > 0 && <span className="text-danger">₹ {booking?.total - booking?.paid_amount} Pending</span>} </Col>
-                    </Row>
-                    <hr className="m-1" />
+                  <h5 className="fs-3 text-color">Payment Details</h5>
+                  <Row className="mt-1">
+                    <Col xs={6} className="text-primary fw-semibold">{selectedGame?.name} ({selectedGame?.size}) </Col>
+                    <Col xs={3} className="muted-text">{booking?.players?.length + 1} Candidates</Col>
+                    <Col xs={3} className="text-end">{selectedGame?.type === "Single" && !selectedGame?.payLater && (booking?.total - booking?.paid_amount) > 0 && <span className="text-danger">₹ {booking?.total - booking?.paid_amount} Pending</span>} </Col>
+                  </Row>
+                  <hr className="m-1" />
 
-                    <Row className="mt-1">
-                      <Col xs={6} className="d-flex align-items-center">
-                        <p className="text-color">Total Amount</p>
-                      </Col>
-                      <Col xs={6} className="mb-2">
-                        <span className="fw-bold text-color">
-                          <Form.Control
-                            size="sm"
-                            type="text"
-                            placeholder="Disabled readonly input"
-                            aria-label="Disabled input example"
-                            readOnly
-                            value={total}
-                          />
-                        </span>
-                      </Col>
-                    </Row>
-
-                    <Row>
-                      <Col xs={6} className="d-flex align-items-center">
-                        <p className="text-color">Adjustment / Discount </p>
-                      </Col>
-                      <Col xs={6} className="mb-2">
+                  <Row className="mt-1">
+                    <Col xs={6} className="d-flex align-items-center">
+                      <p className="text-color">Total Amount</p>
+                    </Col>
+                    <Col xs={6} className="mb-2">
+                      <span className="fw-bold text-color">
                         <Form.Control
                           size="sm"
-                          type="number"
-                          placeholder="Enter adjustment value"
-                          value={adjustment}
-                          onChange={(e) => {
-                            if (e.target.value > total) {
-                              return
-                            }
-                            setAdjustment(e.target.value);
-                          }}
+                          type="text"
+                          placeholder="Disabled readonly input"
+                          aria-label="Disabled input example"
+                          readOnly
+                          value={total}
                         />
-                      </Col>
+                      </span>
+                    </Col>
+                  </Row>
 
-                    </Row>
+                  <Row>
+                    <Col xs={6} className="d-flex align-items-center">
+                      <p className="text-color">Adjustment / Discount </p>
+                    </Col>
+                    <Col xs={6} className="mb-2">
+                      <Form.Control
+                        size="sm"
+                        type="number"
+                        placeholder="Enter adjustment value"
+                        value={adjustment}
+                        onChange={(e) => {
+                          if (e.target.value > total) {
+                            return
+                          }
+                          setAdjustment(e.target.value);
+                        }}
+                      />
+                    </Col>
 
-                    {creditAmount > 0 && <div className="mt-4">
-                      <h4>Credit Collection
-                        {/* <Button size="sm" className="btn btn-primary bg-body text-color" onClick={handleSplitCredit}>Split Credit</Button> */}
-                      </h4>
-                      <Table bordered hover responsive size="sm" className="mt-2">
-                        <thead className="bg-light">
-                          <tr>
-                            <th>Name</th>
-                            <th>Limit</th>
-                            <th>Balance</th>
-                            <th>Credit</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {/* Selected Customer Row */}
-                          <tr>
-                            <td>{selectedCustomer.name}</td>
-                            <td>{selectedCustomer?.creditLimit}</td>
-                            <td>{selectedCustomer.creditLimit - selectedCustomer.creditAmount}</td>
+                  </Row>
+
+                  {creditAmount > 0 && <div className="mt-4">
+                    <h4>Credit Collection
+                      {/* <Button size="sm" className="btn btn-primary bg-body text-color" onClick={handleSplitCredit}>Split Credit</Button> */}
+                    </h4>
+                    <Table bordered hover responsive size="sm" className="mt-2">
+                      <thead className="bg-light">
+                        <tr>
+                          <th>Name</th>
+                          <th>Limit</th>
+                          <th>Balance</th>
+                          <th>Credit</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {/* Selected Customer Row */}
+                        <tr>
+                          <td>{selectedCustomer.name}</td>
+                          <td>{selectedCustomer?.creditLimit}</td>
+                          <td>{selectedCustomer.creditLimit - selectedCustomer.creditAmount}</td>
+                          <td>
+                            <Form.Control
+                              size="sm"
+                              type="number"
+                              placeholder="Rs 0"
+                              value={playerCredits.find(p => p?._id === selectedCustomer?._id)?.credit || 0}
+                              onChange={(e) => handleCreditChange(selectedCustomer?._id, e.target.value)}
+                            />
+                          </td>
+                        </tr>
+
+                        {/* Other Players Rows */}
+                        {players.length > 0 && players.map((player, index) => (
+                          <tr key={player?._id}>
+                            <td>{player.name}</td>
+                            <td>{player.creditLimit}</td>
+                            <td>{player.creditLimit - player.creditAmount}</td>
                             <td>
                               <Form.Control
                                 size="sm"
                                 type="number"
                                 placeholder="Rs 0"
-                                value={playerCredits.find(p => p._id === selectedCustomer._id)?.credit || 0}
-                                onChange={(e) => handleCreditChange(selectedCustomer._id, e.target.value)}
+                                value={playerCredits.find(p => p?._id === player?._id)?.credit || 0}
+                                onChange={(e) => handleCreditChange(player?._id, e.target.value)}
                               />
                             </td>
                           </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  </div>}
 
-                          {/* Other Players Rows */}
-                          {players.length > 0 && players.map((player, index) => (
-                            <tr key={player._id}>
-                              <td>{player.name}</td>
-                              <td>{player.creditLimit}</td>
-                              <td>{player.creditLimit - player.creditAmount}</td>
-                              <td>
-                                <Form.Control
-                                  size="sm"
-                                  type="number"
-                                  placeholder="Rs 0"
-                                  value={playerCredits.find(p => p._id === player._id)?.credit || 0}
-                                  onChange={(e) => handleCreditChange(player._id, e.target.value)}
-                                />
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </Table>
-                    </div>}
+                  <Row>
+                    <Col md={3} xs={12}>
+                      <Button variant="primary btn btn-sm"
+                        xs={12}
+                        className="w-100 mt-3 tab-button-responsive"
+                        disabled={!booking?.timer_status === "Stopped"}
+                        onClick={() => {
+                          if (!isItemsSaved) {
+                            alert("Please save the added items before proceeding with payment.");
+                            setShowConfirmModal(true)
+                            return;
+                          }
+                          setShowCreditModal(true)
+                        }}
+                      >Payment Options</Button>
+                    </Col>
 
-                    <Row>
-                      <Col md={3} xs={12}>
-                        <Button variant="primary btn btn-sm"
-                          xs={12}
-                          className="w-100 mt-3 tab-button-responsive"
-                          disabled={!booking?.timer_status === "Stopped"}
-                          onClick={() => {
-                            if (!isItemsSaved) {
-                              alert("Please save the added items before proceeding with payment.");
-                              setShowConfirmModal(true)
-                              return;
-                            }
-                            setShowCreditModal(true)
-                          }}
-                        >Payment Options</Button>
-                      </Col>
-
-                      {showCreditModal &&
-                        <CreditSplit
-                          show={showCreditModal}
-                          handleClose={() => setShowCreditModal(false)}
-                          handleCollectOffline={handleCollectOffline}
-                          handleOnlinePayment={handleOnlinePayment}
-                          totalAmount={total}
-                          players={players}
-                          customer={selectedCustomer}
-                        />}
-                    </Row>
+                    {showCreditModal &&
+                      <CreditSplit
+                        show={showCreditModal}
+                        handleClose={() => setShowCreditModal(false)}
+                        handleCollectOffline={handleCollectOffline}
+                        handleOnlinePayment={handleOnlinePayment}
+                        totalAmount={total}
+                        players={players}
+                        customer={selectedCustomer}
+                        loading={loading}
+                      />}
+                  </Row>
                   {/* </Card> */}
                 </Col>
               </Row>
             </div>
             :
-            <Card className="p-3 mt-2 rounded-3 h-100">
-              <h5 className="fs-3">Payment Details</h5>
-              <Row className="mt-1">
-                <Col xs={6} className="text-primary fw-semibold">{selectedGame?.name} ({selectedGame?.size}) </Col>
-                <Col xs={3} className="text-color">
-                  {/* {booking?.players?.length + 1} <span>Candidates</span> */}
-                  <OverlayTrigger
-                    placement="right"
-                    overlay={
-                      <Tooltip id="player-list-tooltip">
-                        <ul className="m-2 p-2">
-                          {/* Selected Customer */}
-                          {selectedCustomer && (
-                            <li className="fw-bold p-1">{selectedCustomer?.name} (Main Customer)</li>
-                          )}
+            <div className="rounded-3 w-100">
+              <Row className="mt-1 p-2" style={{ paddingLeft: "10px" }}>
+                <Col md={12} className="bg-white p-3 rounded-2">
+                  <h5 className="fs-3">Payment Details</h5>
+                  <Row>
+                    <Col xs={6} className="text-primary fw-semibold">{selectedGame?.name} ({selectedGame?.size}) </Col>
+                    <Col xs={3} className="text-color">
+                      {/* {booking?.players?.length + 1} <span>Candidates</span> */}
+                      <OverlayTrigger
+                        placement="right"
+                        overlay={
+                          <Tooltip id="player-list-tooltip">
+                            <ul className="m-2 p-2">
+                              {/* Selected Customer */}
+                              {selectedCustomer && (
+                                <li className="fw-bold p-1">{selectedCustomer?.name} (Main Customer)</li>
+                              )}
 
-                          {/* Players List */}
-                          {booking?.players?.length > 0 ? (
-                            players.map((player, index) => (
-                              <li key={index} className="p-1">{player.name}</li>
-                            ))
-                          ) : (
-                            <li className="muted-text">No Players</li>
-                          )}
-                        </ul>
-                      </Tooltip>
-                    }
-                  >
-                    <span className="cursor-pointer">
-                      {booking?.players?.length + 1} <span>Players</span>
-                    </span>
-                  </OverlayTrigger>
+                              {/* Players List */}
+                              {booking?.players?.length > 0 ? (
+                                players.map((player, index) => (
+                                  <li key={index} className="p-1">{player.name}</li>
+                                ))
+                              ) : (
+                                <li className="muted-text">No Players</li>
+                              )}
+                            </ul>
+                          </Tooltip>
+                        }
+                      >
+                        <span className="cursor-pointer">
+                          {booking?.players?.length + 1} <span>Players</span>
+                        </span>
+                      </OverlayTrigger>
+                    </Col>
+                    <Col xs={3} className="text-end text-color">₹ {booking?.total + booking?.adjustment} Total</Col>
+                  </Row>
+
+                  <hr />
+
+                  {/* <Col xs={3} className="text-end muted-text">₹ {booking?.total - booking?.paid_amount} Balance</Col> */}
+
+                  {/* <Col xs={3} className="text-end">{(booking?.total - booking?.paid_amount) > 0 && <span className="fs-3 text-danger">₹ { booking?.total - booking?.paid_amount} Pending</span>} </Col> */}
+
+                  <Row className="mt-2">
+                    <Col xs={6} className="text-color fw-semibold">Payment Mode</Col>
+                    <Col xs={6} className="muted-text">
+                      <span
+                        className="d-flex align-items-center w-25"
+                        style={{
+                          backgroundColor:
+                            booking?.mode === "Online"
+                              ? "#03D41414"
+                              : "#FF00000D",
+                          borderRadius: "20px",
+                          fontSize: "12px",
+                          padding: "5px 10px",
+                          marginLeft: "-10px",
+                          color:
+                            booking?.mode === "Online" ? "#00AF0F" : "orange",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: "8px",
+                            height: "8px",
+                            borderRadius: "50%",
+                            backgroundColor:
+                              booking?.mode === "Online"
+                                ? "#03D414"
+                                : "orange",
+                            marginRight: "5px",
+                          }}
+                        />
+                        {booking?.mode}
+                      </span>
+                    </Col>
+                  </Row>
+
+                  <Row className="mt-1 py-2">
+                    <Col xs={6} className="text-color fw-semibold">Amount Paid</Col>
+                    <Col xs={6} className="muted-text">₹ {booking?.paid_amount > 0 ? booking?.paid_amount : 0}</Col>
+                  </Row>
+
+                  <Row className="mt-1 py-2">
+                    <Col xs={6} className="text-color fw-semibold">Adjustment</Col>
+                    <Col xs={6} className="muted-text">₹ {booking?.adjustment || 0}</Col>
+                  </Row>
+
+                  <Row className="mt-2 py-2">
+                    <Col xs={6} className="text-color fw-semibold">Credit Amount</Col>
+                    <Col xs={6} className="muted-text">
+                      <OverlayTrigger
+                        trigger={['hover', 'focus']}
+                        placement="right"
+                        overlay={renderCreditsPopover}
+                      >
+                        <span style={{ cursor: 'pointer' }}>
+                          ₹ {booking?.total - booking?.paid_amount}
+                        </span>
+                      </OverlayTrigger>
+                    </Col>
+                  </Row>
+
+                  <Row className="mt-2 py-2">
+                    <Col xs={6} className="text-color fw-semibold">Transaction ID</Col>
+                    <Col xs={6} className="muted-text">{booking?.transaction?.razorpay_payment_id || "Cash"}</Col>
+                  </Row>
+
+                  <Row className="mt-2 py-2">
+                    <Col xs={6} className="text-color fw-semibold">Date/Time</Col>
+                    <Col xs={6} className="muted-text">
+                      {booking?.mode === "Online" ? formatDateAndTime(booking?.transaction?.createdAt) : formatDateAndTime(booking?.createdAt)}
+                    </Col>
+                  </Row>
                 </Col>
-                <Col xs={3} className="text-end text-color">₹ {booking?.total + booking?.adjustment} Total</Col>
-                {/* <Col xs={3} className="text-end muted-text">₹ {booking?.total - booking?.paid_amount} Balance</Col> */}
-                {/* <Col xs={3} className="text-end">{(booking?.total - booking?.paid_amount) > 0 && <span className="fs-3 text-danger">₹ { booking?.total - booking?.paid_amount} Pending</span>} </Col> */}
               </Row>
               <hr className="m-1" />
 
-              <Row className="mt-2">
-                <Col xs={6} className="text-color fw-semibold">Payment Mode</Col>
-                <Col xs={6} className="muted-text">
-                  <span
-                    className="d-flex align-items-center w-25"
-                    style={{
-                      backgroundColor:
-                        booking?.mode === "Online"
-                          ? "#03D41414"
-                          : "#FF00000D",
-                      borderRadius: "20px",
-                      fontSize: "12px",
-                      padding: "5px 10px",
-                      marginLeft: "-10px",
-                      color:
-                        booking?.mode === "Online" ? "#00AF0F" : "orange",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "8px",
-                        height: "8px",
-                        borderRadius: "50%",
-                        backgroundColor:
-                          booking?.mode === "Online"
-                            ? "#03D414"
-                            : "orange",
-                        marginRight: "5px",
-                      }}
-                    />
-                    {booking?.mode}
-                  </span>
-                </Col>
-              </Row>
-
-              <Row className="mt-1 py-2">
-                <Col xs={6} className="text-color fw-semibold">Amount Paid</Col>
-                <Col xs={6} className="muted-text">₹ {booking?.paid_amount > 0 ? booking?.paid_amount : 0}</Col>
-              </Row>
-
-              <Row className="mt-1 py-2">
-                <Col xs={6} className="text-color fw-semibold">Adjustment</Col>
-                <Col xs={6} className="muted-text">₹ {booking?.adjustment || 0}</Col>
-              </Row>
-
-              <Row className="mt-2 py-2">
-                <Col xs={6} className="text-color fw-semibold">Credit Amount</Col>
-                <Col xs={6} className="muted-text">
-                  <OverlayTrigger
-                    trigger={['hover', 'focus']}
-                    placement="right"
-                    overlay={renderCreditsPopover}
-                  >
-                    <span style={{ cursor: 'pointer' }}>
-                      ₹ {booking?.total - booking?.paid_amount}
-                    </span>
-                  </OverlayTrigger>
-                </Col>
-              </Row>
-
-
-              <Row className="mt-2 py-2">
-                <Col xs={6} className="text-color fw-semibold">Transaction ID</Col>
-                <Col xs={6} className="muted-text">{booking?.transaction?.razorpay_payment_id || "Cash"}</Col>
-              </Row>
-
-              <Row className="mt-2 py-2">
-                <Col xs={6} className="text-color fw-semibold">Date/Time</Col>
-                <Col xs={6} className="muted-text">
-                  {booking?.mode === "Online" ? formatDateAndTime(booking?.transaction?.createdAt) : formatDateAndTime(booking?.createdAt)}
-                </Col>
-              </Row>
-            </Card>
+            </div>
           }
         </Col>
       </Row>

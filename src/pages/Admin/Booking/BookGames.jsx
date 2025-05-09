@@ -142,7 +142,7 @@ const BookGames = () => {
               </Col>
             ))
           ) : (
-            <Col className="text-center py-5">
+            <Col className="text-center py-3">
               {/* <div className="d-flex flex-column align-items-center">
                 <img src={Nogame} alt="No games" style={{ width: '150px', opacity: 0.7 }} />
                 <h5 className="mt-3 text-muted">No indoor games available</h5>
@@ -249,7 +249,7 @@ const BookGames = () => {
               </Col>
             ))
           ) : (
-            <Col className="text-center py-5">
+            <Col className="text-center py-3">
               {/* <div className="d-flex flex-column align-items-center">
                 <img src={Nogame} alt="No games" style={{ width: '150px', opacity: 0.7 }} />
                 <h5 className="mt-3 text-muted">No outdoor games available</h5>

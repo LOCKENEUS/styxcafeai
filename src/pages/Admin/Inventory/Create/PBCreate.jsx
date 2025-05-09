@@ -432,6 +432,8 @@ const PurchaseBillCreate = () => {
     });
   };
 
+  console.log("products", products)
+
   return (
     <Container fluid className="p-4">
       <Col sm={12} className="my-3">

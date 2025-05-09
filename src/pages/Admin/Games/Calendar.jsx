@@ -24,25 +24,7 @@ const Calendar = ({ selectedGame }) => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  // const generateDates = () => {
-  //   const dates = [];
-  //   const today = new Date();
 
-  //   for (let i = 0; i < 22; i++) {
-  //     const date = new Date(today);
-  //     date.setDate(today.getDate() + i);
-
-  //     dates.push({
-  //       day: date.getDate(),
-  //       month: date.toLocaleString("default", { month: "short" }),
-  //       status:
-  //         i === 0
-  //           ? "Today"
-  //           : date.toLocaleString("default", { weekday: "short" }),
-  //     });
-  //   }
-  //   return dates;
-  // };
   const generateDates = () => {
     const dates = [];
     const today = new Date();
@@ -67,12 +49,6 @@ const Calendar = ({ selectedGame }) => {
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 7) % dates.length);
   };
-
-  // const handlePrev = () => {
-  //   setCurrentIndex(
-  //     (prevIndex) => (prevIndex - 9 + dates.length) % dates.length
-  //   );
-  // };
 
   const handlePrev = () => {
     if (currentIndex > 0) {
@@ -186,9 +162,6 @@ const Calendar = ({ selectedGame }) => {
           }
         `}</style>
 
-      {/* <button className="nav-button prev-button" onClick={handlePrev}>
-        <RiArrowLeftSLine />
-      </button> */}
       <button
   className="nav-button prev-button mt-3"
   onClick={handlePrev}
@@ -217,18 +190,6 @@ const Calendar = ({ selectedGame }) => {
               ? "active"
               : ""
               } ${date.status === "Today" ? "today" : ""}`}
-            // onClick={() => {
-            //   const newDate = new Date(activeDate);
-            //   newDate.setDate(date.day);
-            //   newDate.setMonth(
-            //     new Date().getMonth() +
-            //     (date.month !==
-            //       new Date().toLocaleString("default", { month: "short" })
-            //       ? 1
-            //       : 0)
-            //   );
-            //   setActiveDate(newDate);
-            // }}
             onClick={() => {
               setActiveDate(date.fullDate);
             }}
@@ -293,14 +254,6 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
   };
 
   const selectedDay = getDayName(date); // Get the selected day's name
-
-  // const isSlotBooked = (slotId, date) => {
-  //   return bookings.some(
-  //     (booking) =>
-  //       booking.slot_id._id === slotId &&
-  //       new Date(booking.slot_date).toDateString() === new Date(date).toDateString()
-  //   );
-  // };
 
   const isSlotBooked = (slotId, date) => {
     return bookings.some(

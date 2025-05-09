@@ -218,8 +218,6 @@ const BookingList = () => {
         }
     };
 
-    console.log("filteredBookings", currentBookings);
-
     return (
         <div className="container-fluid min-vh-100">
             <Row>
@@ -357,7 +355,7 @@ const BookingList = () => {
                                 <small>Sr. No</small>
                             </th>
                             <th
-                                style={{ textTransform: "none", border: "none", fontSize: "1rem", color: "black" }}
+                                style={{ textTransform: "none", overflow: "hidden", wrap: "nowrap", border: "none", fontSize: "1rem", color: "black" }}
                             >
                                 <small>Booking Id</small>
                             </th>
@@ -391,11 +389,6 @@ const BookingList = () => {
                             >
                                 Total
                             </th>
-                            {/* <th
-                                style={{ textTransform: "none", border: "none", fontSize: "1rem", color: "black" }}
-                            >
-                                Actions
-                            </th> */}
                         </tr>
                     </thead>
                     <tbody>
@@ -405,12 +398,33 @@ const BookingList = () => {
                                     <td style={{ border: "none", minWidth: "100px", alignContent: "center", paddingLeft: "3%" }}>
                                         {index + 1}
                                     </td>
-                                    <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
-                                        <Link to={`/admin/booking/checkout/${booking._id}`}>
+                                    <td
+                                        style={{
+                                            border: "none",
+                                            minWidth: "100px",
+                                            alignContent: "center",
+                                            whiteSpace: "nowrap",
+                                            overflow: "hidden",
+                                            textOverflow: "ellipsis"
+                                        }}>
+                                        <Link to={`/admin/booking/checkout/${booking._id}`}
+                                            style={{
+                                                display: "inline-block",
+                                                maxWidth: "100%",
+                                                overflow: "hidden",
+                                                textOverflow: "ellipsis",
+                                                whiteSpace: "nowrap",
+                                                color: "blue",
+                                                textDecoration: "none"
+                                            }}
+                                        >
                                             {booking.booking_id}
                                         </Link>
                                     </td>
-                                    <td style={{ border: "none", minWidth: "150px" }}>
+                                    <td style={{
+                                        border: "none", minWidth: "150px", alignContent: "center",
+                                        alignContent: "center",
+                                    }}>
                                         <div className="d-flex align-items-center">
                                             <img
                                                 src={profile}
@@ -479,24 +493,22 @@ const BookingList = () => {
                                         </div>
                                         <span style={{ fontSize: "0.6rem", color: "green", paddingLeft: "5px" }}>
                                             {
-                                            (booking?.game_id?.payLater && booking?.start_time && !booking?.end_time) 
-                                            || 
-                                            (() => {
-                                                const now = new Date();
-                                                const slotDate = new Date(booking?.slot_date);
-                                                console.log("slot-start-time", booking?.slot_id?.start_time);
-                                                console.log("cistom-slot-start-time", booking?.custom_slot?.start_time);
-                                                const [startHour, startMinute] = (booking?.slot_id?.start_time ? booking?.slot_id?.start_time : booking?.custom_slot?.start_time).split(":").map(Number);
-                                                const [endHour, endMinute] = (booking?.slot_id?.end_time ? booking?.slot_id?.end_time : booking?.custom_slot?.end_time).split(":").map(Number);
-                                            
-                                                const startDateTime = new Date(slotDate);
-                                                startDateTime.setHours(startHour, startMinute, 0, 0);
-                                            
-                                                const endDateTime = new Date(slotDate);
-                                                endDateTime.setHours(endHour, endMinute, 0, 0);
-                                            
-                                                return ( !booking?.game_id?.payLater && now >= startDateTime && now <= endDateTime);
-                                              })() ? "Game Running" : ""
+                                                (booking?.game_id?.payLater && booking?.start_time && !booking?.end_time)
+                                                    ||
+                                                    (() => {
+                                                        const now = new Date();
+                                                        const slotDate = new Date(booking?.slot_date);
+                                                        const [startHour, startMinute] = (booking?.slot_id?.start_time ? booking?.slot_id?.start_time : booking?.custom_slot?.start_time).split(":").map(Number);
+                                                        const [endHour, endMinute] = (booking?.slot_id?.end_time ? booking?.slot_id?.end_time : booking?.custom_slot?.end_time).split(":").map(Number);
+
+                                                        const startDateTime = new Date(slotDate);
+                                                        startDateTime.setHours(startHour, startMinute, 0, 0);
+
+                                                        const endDateTime = new Date(slotDate);
+                                                        endDateTime.setHours(endHour, endMinute, 0, 0);
+
+                                                        return (!booking?.game_id?.payLater && now >= startDateTime && now <= endDateTime);
+                                                    })() ? "Game Running" : ""
                                             }
                                         </span>
                                     </td>
@@ -519,26 +531,6 @@ const BookingList = () => {
                                     >
                                         ₹  {booking?.total}
                                     </td>
-                                    {/* <td
-                                        className="align-middle"
-                                        style={{
-                                            border: "none",
-                                            position: "relative",
-                                            minWidth: "100px",
-                                        }}
-                                    >
-                                        <Button
-                                            variant="link"
-                                            className="text-primary"
-                                            onClick={() =>
-                                                navigate(`/admin/booking/edit/${booking._id}`)
-                                            }
-                                        >
-                                            <FaEdit
-                                                style={{ color: "#0062FF", fontSize: "1.2rem" }}
-                                            />
-                                        </Button>
-                                    </td> */}
                                 </tr>
                             )) :
                             <tr>

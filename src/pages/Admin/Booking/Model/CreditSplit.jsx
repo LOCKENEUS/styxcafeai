@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Row, Col, Container } from "react-bootstrap";
+import { Modal, Button, Row, Col, Container, Spinner } from "react-bootstrap";
 
 import { BsCurrencyRupee, BsFillPlusSquareFill, BsSquareHalf } from 'react-icons/bs';
 import { LuBadgeCheck, LuSplit } from "react-icons/lu";
 import { LiaCoinsSolid } from "react-icons/lia";
 
-const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePayment, totalAmount, players, customer }) => {
+const CreditSplit = ({ show, 
+  handleClose, 
+  handleCollectOffline, 
+  handleOnlinePayment, 
+  totalAmount, 
+  players, 
+  customer, 
+  loading,
+  cashLoading
+}) => {
   const [allPlayers, setAllPlayers] = useState([]);
   const [currentTotal, setCurrentTotal] = useState(totalAmount);
   const [isAmountSplit, setIsAmountSplit] = useState(false);
@@ -38,42 +47,13 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
     setAllPlayers(updatedPlayers);
   };
 
-  // const handleAssignCredit = (index) => {
-  //   const updatedPlayers = [...allPlayers];
-  //   const player = updatedPlayers[index];
-  //   const shareAmount = parseFloat(player.share) || 0;
-  
-  //   const availableCredit = player.creditLimit - player.creditAmount;
-  
-  //   if (player.creditAssigned) {
-  //     // Unassign the credit
-  //     player.creditAmount -= player.credit; // Reduce the assigned credit from the creditAmount
-  //     player.credit = 0;
-  //     player.creditAssigned = false;
-  //     setCurrentTotal((prevTotal) => prevTotal + shareAmount);
-  //   } else {
-  //     // Assign the credit
-  //     if (shareAmount > availableCredit) {
-  //       alert(`Insufficient credit for ${player.name}. Available: ₹${availableCredit}`);
-  //       return;
-  //     }
-  
-  //     player.credit = shareAmount;
-  //     player.creditAmount += shareAmount; // Add the assigned credit to the creditAmount
-  //     player.creditAssigned = true;
-  //     setCurrentTotal((prevTotal) => prevTotal - shareAmount);
-  //   }
-  
-  //   setAllPlayers(updatedPlayers);
-  // };
-
   const handleAssignCredit = (index) => {
     const updatedPlayers = [...allPlayers];
     const player = updatedPlayers[index];
     const shareAmount = parseFloat(player.share) || 0;
-  
+
     const availableCredit = player.creditLimit - player.creditAmount;
-  
+
     if (player.creditAssigned) {
       // Unassign the credit
       player.creditAmount -= player.credit; // Reduce the assigned credit from the creditAmount
@@ -86,21 +66,21 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
         alert(`Insufficient credit for ${player.name}. Available: ₹${availableCredit}`);
         return;
       }
-  
+
       if (shareAmount > currentTotal) {
         alert(`Cannot assign more than the remaining total amount. Remaining: ₹${currentTotal}`);
         return;
       }
-  
+
       player.credit = shareAmount;
       player.creditAmount += shareAmount; // Add the assigned credit to the creditAmount
       player.creditAssigned = true;
       setCurrentTotal((prevTotal) => prevTotal - shareAmount);
     }
-  
+
     setAllPlayers(updatedPlayers);
   };
-  
+
   return (
     <Modal show={show} onHide={handleClose} centered>
       <div className="modal-content rounded-2">
@@ -176,8 +156,25 @@ const CreditSplit = ({ show, handleClose, handleCollectOffline, handleOnlinePaym
                 </Col>
               </Row>
             ))}
-            <Button size="sm" className="w-25" onClick={() => handleOnlinePayment(allPlayers, currentTotal)}>Online</Button>
-            <Button size="sm" className="mx-4 w-25" onClick={() => handleCollectOffline(allPlayers, currentTotal)}>Cash</Button>
+            <Button
+              size="sm"
+              className="w-25"
+              onClick={() => handleOnlinePayment(allPlayers, currentTotal)}
+            >
+              Online
+              <span className="ms-2">
+                {loading && <Spinner animation="border" size="sm" />}
+              </span>
+            </Button>
+            <Button
+              size="sm"
+              className="mx-4 w-25"
+              onClick={() => handleCollectOffline(allPlayers, currentTotal)}
+            >
+              Cash <span className="ms-2">
+                {cashLoading && <Spinner animation="border" size="sm" />}
+              </span>
+            </Button>
           </Container>
         </Modal.Body>
       </div>

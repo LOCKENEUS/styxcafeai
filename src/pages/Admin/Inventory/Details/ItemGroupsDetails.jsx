@@ -84,12 +84,12 @@ const ItemGroupsDetails = () => {
                     >
                       <BiCloudUpload /> Edit
                     </button>
-                    <button
+                    {/* <button
                       className="btn btn-danger me-2"
                       onClick={handleDelete}
                     >
                       <HiOutlineTrash /> Delete
-                    </button>
+                    </button> */}
                     <button
                       className="btn btn-secondary"
                       onClick={() => navigate(-1)}

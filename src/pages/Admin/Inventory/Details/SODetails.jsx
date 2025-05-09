@@ -4,8 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { getSOById, deleteSO } from "../../../../store/AdminSlice/Inventory/SoSlice";
 import { addSOInvoice } from "../../../../store/AdminSlice/Inventory/SoInvoiceSlice";
 import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Table, Spinner, Modal } from "react-bootstrap";
-import { LuPencil } from "react-icons/lu";
-import pdflogo from "/assets/Admin/profileDetails/pdflogo.svg";
 import deleteplogo from "/assets/inventory/Vector (1).png";
 import receive from "/assets/inventory/solar_card-send-linear.png";
 import print from "/assets/inventory/Vector.png";
@@ -228,13 +226,13 @@ export const SODetails = () => {
                     className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                         <Image src={editlogo} className="me-2" /> Edit
                     </Button>
-                    <Button 
+                    {/* <Button 
                         onClick={() => setShowDeleteModal(true)}
                         className="d-flex align-items-center" 
                         style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}
                     >
                         <Image src={deleteplogo} />
-                    </Button>
+                    </Button> */}
                 </Col>
             </Row>
         </Card>

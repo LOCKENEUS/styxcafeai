@@ -313,7 +313,7 @@ const BookingDetails = () => {
   }
 
   const handleCollectOffline = async () => {
-    if(!selectedCustomer){
+    if (!selectedCustomer) {
       window.alert("Please select a customer")
       return
     }
@@ -339,7 +339,7 @@ const BookingDetails = () => {
         game_id: selectedGame?.data?._id,
         slot_id: slot?._id,
         mode: "Offline",
-        status: "Pending",
+        status: "Paid",
         total: priceToPay,
         paid_amount: payableAmount,
         slot_date: newdate,
@@ -365,7 +365,7 @@ const BookingDetails = () => {
   };
 
   const handlePayLater = async () => {
-    if(!selectedCustomer){
+    if (!selectedCustomer) {
       window.alert("Please select a customer")
       return
     }
@@ -491,7 +491,7 @@ const BookingDetails = () => {
   };
 
   const handleOnlinePayment = async () => {
-    if(!selectedCustomer){
+    if (!selectedCustomer) {
       window.alert("Please select customer")
       return
     }
@@ -573,6 +573,7 @@ const BookingDetails = () => {
                 Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
               },
               body: JSON.stringify({
+                customer_id: selectedCustomer?._id,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
@@ -620,10 +621,10 @@ const BookingDetails = () => {
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
-      border: 'none',
-      borderRadius: '16px',
+      border: '1px solid grey',
+      borderRadius: '8px',
       cursor: 'pointer',
-      padding: '2%',
+      padding: '1%',
       boxShadow: 'none',
       '&:hover': {
         border: 'none'
@@ -640,7 +641,7 @@ const BookingDetails = () => {
       </h6>
       <Row>
         <Col style={{ height: "100%" }} md={4} lg={3}>
-          <div className="d-flex  gap-3">
+          <div className="d-flex gap-3 zero-gap">
             <InputGroup className="mb-3 ">
               <InputGroup.Text className="bg-white p-3 rounded-start">
                 <BsSearch />
@@ -664,6 +665,7 @@ const BookingDetails = () => {
 
           {searchTerm.length > 2 && filteredCustomers.length > 0 && (
             <ListGroup className="position-absolute shadow bg-white z-index-100" style={{ width: "18%" }}>
+
               {filteredCustomers.map((customer) => (
                 <ListGroup.Item
                   key={customer.id}
@@ -687,6 +689,7 @@ const BookingDetails = () => {
 
           <div className="bg-white rounded-3 p-3" style={{ minHeight: "90vh" }}>
             <div className="customer-list">
+              <small>Recent Customers </small>
               {!selectedCustomer ? (
                 filteredCustomers.length > 0 ?
                   filteredCustomers.map((customer, index) => (
@@ -846,45 +849,45 @@ const BookingDetails = () => {
                   </div>
 
                   {/* {selectedCustomer ? ( */}
-                    <>
-                      <Row className="mb-5">
-                        <Col xs={6} className="muted-text"></Col>
-                        <Col xs={6} className="text-color"></Col>
-                      </Row>
-                      <Row className="mb-3">
-                        <Col xs={6} className="text-color">Customer Name:</Col>
-                        <Col xs={6} className="muted-text">{selectedCustomer?.name || ""}</Col>
-                      </Row>
+                  <>
+                    <Row className="mb-5">
+                      <Col xs={6} className="muted-text"></Col>
+                      <Col xs={6} className="text-color"></Col>
+                    </Row>
+                    <Row className="mb-3">
+                      <Col xs={6} className="text-color">Customer Name:</Col>
+                      <Col xs={6} className="muted-text">{selectedCustomer?.name || ""}</Col>
+                    </Row>
 
-                      <Row className="mb-3">
-                        <Col xs={6} className="text-color">Booked Game:</Col>
-                        <Col xs={6}>
-                          <span className="text-primary fw-bold">
-                            {selectedGame?.data?.name} ({selectedGame?.data?.size})
-                          </span>
-                        </Col>
-                      </Row>
+                    <Row className="mb-3">
+                      <Col xs={6} className="text-color">Booked Game:</Col>
+                      <Col xs={6}>
+                        <span className="text-primary fw-bold">
+                          {selectedGame?.data?.name} ({selectedGame?.data?.size})
+                        </span>
+                      </Col>
+                    </Row>
 
-                      <Row className="mb-3">
-                        <Col xs={6} className="text-color">Day & Time:</Col>
-                        <Col xs={6} className="muted-text">
-                          {formattedDate} - {slot?.start_time && convertTo12Hour(slot?.start_time)}
-                        </Col>
-                      </Row>
+                    <Row className="mb-3">
+                      <Col xs={6} className="text-color">Day & Time:</Col>
+                      <Col xs={6} className="muted-text">
+                        {formattedDate} - {slot?.start_time && convertTo12Hour(slot?.start_time)}
+                      </Col>
+                    </Row>
 
-                      <Row className="mb-3">
-                        <Col xs={6} className="text-color">Contact:</Col>
-                        <Col xs={6} className="muted-text">
-                          {selectedCustomer?.contact_no || ""}
-                        </Col>
-                      </Row>
+                    <Row className="mb-3">
+                      <Col xs={6} className="text-color">Contact:</Col>
+                      <Col xs={6} className="muted-text">
+                        {selectedCustomer?.contact_no || ""}
+                      </Col>
+                    </Row>
 
-                      <Row className="mb-3">
-                        <Col xs={6} className="text-color">No of Candidates:</Col>
-                        <Col xs={6} className="muted-text">
-                          {selectedGame?.data?.type === "Multiplayer" ? teamMembers.length + 1 : 1}            </Col>
-                      </Row>
-                    </>
+                    <Row className="mb-3">
+                      <Col xs={6} className="text-color">No of Candidates:</Col>
+                      <Col xs={6} className="muted-text">
+                        {selectedGame?.data?.type === "Multiplayer" ? teamMembers.length + 1 : 1}            </Col>
+                    </Row>
+                  </>
                   {/* // ) : (
                   //   <div className="d-flex justify-content-center mt-6 align-items-center h-100">
                   //     <p className="muted-text mb-0">Select Customers</p>
@@ -897,57 +900,57 @@ const BookingDetails = () => {
               <div className="d-flex gap-0 rounded-2" style={{ minHeight: "46vh" }}>
                 <div className="bg-white p-4 w-100 border-end border-2 rounded-3" style={{ minHeight: "57%" }}>
                   {/* {selectedCustomer ? ( */}
-                    <>
-                      <div className="mb-5 d-flex justify-content-between">
-                        <span className="text-color">Game Price:</span>
-                        <span className="muted-text">₹ {slot?.slot_price ? slot.slot_price : selectedGame?.data?.price}</span>
-                      </div>
+                  <>
+                    <div className="mb-5 d-flex justify-content-between">
+                      <span className="text-color">Game Price:</span>
+                      <span className="muted-text">₹ {slot?.slot_price ? slot.slot_price : selectedGame?.data?.price}</span>
+                    </div>
 
-                      {/* <div className="mb-5 d-flex justify-content-between">
+                    {/* <div className="mb-5 d-flex justify-content-between">
                         <span className="text-color">Total Amount:</span>
                         <span className="muted-text">₹ {priceToPay}</span>
                       </div> */}
 
-                      <div className="mb-5 d-flex justify-content-between">
-                        <span className="text-color">Items Total:</span>
-                        <span className="muted-text">₹ {addOnTotal}</span>
-                      </div>
+                    <div className="mb-5 d-flex justify-content-between">
+                      <span className="text-color">Items Total:</span>
+                      <span className="muted-text">₹ {addOnTotal}</span>
+                    </div>
 
-                      <div className="mb-5 d-flex justify-content-between">
-                        <span className="text-color">Extra Charge:</span>
-                        <span className="muted-text">₹ 00.00</span>
-                      </div>
-                      {/* 
+                    <div className="mb-5 d-flex justify-content-between">
+                      <span className="text-color">Extra Charge:</span>
+                      <span className="muted-text">₹ 00.00</span>
+                    </div>
+                    {/* 
                       <div className="mb-5 d-flex justify-content-between">
                         <span className="text-color">GST:</span>
                         <span className="muted-text">₹ 00.00</span>
                       </div> */}
 
-                      <div className="mb-5 d-flex justify-content-between">
-                        <span className="text-color">TOTAL:</span>
-                        <span className="text-primary fw-bold">₹ {priceToPay}</span>
-                      </div>
+                    <div className="mb-5 d-flex justify-content-between">
+                      <span className="text-color">TOTAL:</span>
+                      <span className="text-primary fw-bold">₹ {priceToPay}</span>
+                    </div>
 
-                      <div className="mb-4">
-                        <Dropdown onSelect={handleSelect} className="w-100">
-                          <Dropdown.Toggle style={{ background: "#00B72BCC", color: "white", border: "none" }} id="dropdown-basic" className="w-100 text-center">
-                            {selectedMethod}
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu className="w-100" style={{ background: "e6e3e7", color: "white", border: "none" }}>
-                            <Dropdown.Item eventKey="Online">Online</Dropdown.Item>
-                            <Dropdown.Item eventKey="Offline">Cash</Dropdown.Item>
-                            {selectedGame?.data?.payLater && (
-                              <Dropdown.Item eventKey="Pay Later">Pay Later</Dropdown.Item>
-                            )}
-                            {/* {!selectedGame?.data?.payLater && (
+                    <div className="mb-4">
+                      <Dropdown onSelect={handleSelect} className="w-100">
+                        <Dropdown.Toggle style={{ background: "#00B72BCC", color: "white", border: "none" }} id="dropdown-basic" className="w-100 text-center">
+                          {selectedMethod}
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu className="w-100" style={{ background: "e6e3e7", color: "white", border: "none" }}>
+                          <Dropdown.Item eventKey="Online">Online</Dropdown.Item>
+                          <Dropdown.Item eventKey="Offline">Cash</Dropdown.Item>
+                          {selectedGame?.data?.payLater && (
+                            <Dropdown.Item eventKey="Pay Later">Pay Later</Dropdown.Item>
+                          )}
+                          {/* {!selectedGame?.data?.payLater && (
                               <Dropdown.Item eventKey="On Credit">On Credit</Dropdown.Item>
                             )} */}
-                          </Dropdown.Menu>
-                        </Dropdown>
-                        {/* <Button style={{background: "#00B72BCC", color: "#fff"}} className="btn border-0 w-100" onClick={() => setShowCreditModal(!showCreditModal)}>Payment Options</Button> */}
-                      </div>
+                        </Dropdown.Menu>
+                      </Dropdown>
+                      {/* <Button style={{background: "#00B72BCC", color: "#fff"}} className="btn border-0 w-100" onClick={() => setShowCreditModal(!showCreditModal)}>Payment Options</Button> */}
+                    </div>
 
-                    </>
+                  </>
                   {/* ) : (
                     <p className="muted-text d-flex justify-content-center align-items-center h-100 w-100 mb-0">
                       Select Customers
@@ -965,7 +968,7 @@ const BookingDetails = () => {
         <Col md={4} lg={5} className="p-1">
           <Row>
             <Col md={12}>
-              <Card className="mb-2">
+              <Card className="mb-2 p-1">
                 <Select
                   options={options}
                   onChange={handleChange}
@@ -996,46 +999,12 @@ const BookingDetails = () => {
                       <div
                         key={index}
                         className="position-relative d-flex mb-2 border-bottom border-2"
-                        style={{ width: "100%" }}
+                        style={{ width: "100%", background: '#F9F9F9' }}
                       >
-                        {/* Trash Icon */}
-                        <span
-                          className="position-absolute bg-transparent border-0 color-red pointer"
-                          style={{
-                            top: "20px",
-                            right: "10px",
-                            color: "red",
-                          }}
-                          onClick={() => {
-                            const updatedProducts = selectedItems.filter((_, i) => i !== index);
-                            setSelectedItems(updatedProducts);
-
-                            const updatedSelectedIds = selectedIds.filter((id) => id !== product.id);
-                            setSelectedIds(updatedSelectedIds);
-
-                            // Recalculate the addOnTotal
-                            const newTotal = updatedProducts.reduce((sum, item) => sum + item.total, 0);
-                            setAddOnTotal(newTotal);
-
-                            // Update the payable amount if needed
-                            setPayableAmount((prevPayable) => prevPayable - product.total);
-                          }}
-                        >
-                          <TbTrash
-                            style={{
-                              top: "15px",
-                              right: "-30px",
-                              zIndex: 2,
-                              cursor: "pointer"
-                            }}
-                            size={20}
-                          />
-                        </span>
-
                         {/* Product Card */}
                         <div
                           className="fs-6"
-                          style={{ background: "#F9F9F9", width: "90%", padding: "12px", height: "10%" }}
+                          style={{ background: "#F9F9F9", width: "100%", padding: "12px", height: "10%" }}
                         >
                           <div className="d-flex justify-content-between align-items-center p-2">
                             {/* Product Info */}
@@ -1115,6 +1084,41 @@ const BookingDetails = () => {
                               </div>
                               <div className="fw-semibold">Total: ₹{product.total}</div>
                             </div>
+                          </div>
+                          <div className="text-end">
+                            {/* Trash Icon */}
+                            <span
+                              className=""
+                              style={{
+                                top: "20px",
+                                right: "10px",
+                                color: "red",
+                              }}
+                              onClick={() => {
+                                const updatedProducts = selectedItems.filter((_, i) => i !== index);
+                                setSelectedItems(updatedProducts);
+
+                                const updatedSelectedIds = selectedIds.filter((id) => id !== product.id);
+                                setSelectedIds(updatedSelectedIds);
+
+                                // Recalculate the addOnTotal
+                                const newTotal = updatedProducts.reduce((sum, item) => sum + item.total, 0);
+                                setAddOnTotal(newTotal);
+
+                                // Update the payable amount if needed
+                                setPayableAmount((prevPayable) => prevPayable - product.total);
+                              }}
+                            >
+                              <TbTrash
+                                style={{
+                                  top: "15px",
+                                  right: "-30px",
+                                  zIndex: 2,
+                                  cursor: "pointer"
+                                }}
+                                size={20}
+                              />
+                            </span>
                           </div>
                         </div>
                       </div>

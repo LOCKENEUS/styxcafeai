@@ -19,6 +19,7 @@ const CustomerDetails = () => {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentPageTransaction, setCurrentPageTransaction] = useState(1);
   const [collectMode, setCollectMode] = useState(false);
   const [showCollectModal, setShowCollectModal] = useState(false);
   const [selectAll, setSelectAll] = useState(false);
@@ -103,6 +104,19 @@ const CustomerDetails = () => {
 
   const totalPages = Math.ceil((selectedCustomer?.bookings?.length || 0) / itemsPerPage);
 
+  // Calculate current transactions to display
+  const indexOfLastTransaction = currentPageTransaction * itemsPerPage;
+  const indexOfFirstTransaction = indexOfLastTransaction - itemsPerPage;
+  const currentTransactions = selectedCustomer?.creditTransaction
+    ? [...selectedCustomer.creditTransaction]
+      .filter(transaction =>
+        transaction?.bookings?.map((booking) => booking?.booking_id?.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
+      .slice(indexOfFirstTransaction, indexOfLastTransaction)
+    : [];
+
+  const totalPagesTransactions = Math.ceil((selectedCustomer?.creditTransaction?.length || 0) / itemsPerPage);
+
   const handleCollectOffline = async () => {
     await dispatch(
       collectAmount({
@@ -140,6 +154,9 @@ const CustomerDetails = () => {
       collectCustomCreditAmountOnline({ id, amount, customer: selectedCustomer?.data })
     );
   };
+
+  console.log("currentPage", currentPage);
+  console.log("currentPageTransaction", currentPageTransaction);
 
   return (
     <Container className="mt-4">
@@ -250,66 +267,69 @@ const CustomerDetails = () => {
               <Col className="mt-3">
                 <Tab.Content>
                   <Tab.Pane eventKey="/home">
-                    <Card className="p-3 mb-3" style={{ height: "88vh" }}>
-                      <div className="d-flex align-items-center justify-content-between">
-                        {/* <h5>Booking History</h5> */}
-                        <input
-                          type="text"
-                          placeholder="Search by Booking ID or Game"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="form-control shadow-lg w-50 mb-3"
-                        />
-                      </div>
-                      <div className="table-responsive">
-                        <Table className="table">
-                          <thead style={{ backgroundColor: "#0062FF0D" }}>
-                            <tr>
-                              <th style={{ fontWeight: "600" }}  >S/N</th>
-                              <th style={{ fontWeight: "600" }}  >Booking ID</th>
-                              <th style={{ fontWeight: "600" }}  >Game</th>
-                              <th style={{ fontWeight: "600" }}  >Slot Date</th>
-                              <th style={{ fontWeight: "600" }}  >Status</th>
-                              <th style={{ fontWeight: "600" }}  >Total</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {currentBookings.length > 0 ? (
-                              currentBookings.map((booking, index) => (
-                                <tr key={booking._id}>
-                                  <td>{index + 1 + indexOfFirstBooking}</td>
-                                  <td style={{ fontWeight: "600", color: "blue" }} onClick={() => navigate(`/admin/booking/checkout/${booking._id}`)} >{booking.booking_id}</td>
-                                  <td>{booking.game_id.name}</td>
-                                  <td>{new Date(booking.slot_date).toLocaleDateString()}</td>
-                                  <td>
-                                    <span className={`badge ${booking.status === 'Pending' ? 'bg-warning' : 'bg-success'}`}>
-                                      {booking.status}
-                                    </span>
-                                  </td>
-                                  <td>₹ {booking.total}</td>
-                                </tr>
-                              ))
-                            ) : (
+                    <Card className="p-3 mb-3 d-flex flex-column" style={{ height: "88vh" }}>
+                      <div className="flex-grow-1 overflow-auto">
+
+                        <div className="d-flex align-items-center justify-content-between">
+                          {/* <h5>Booking History</h5> */}
+                          <input
+                            type="text"
+                            placeholder="Search by Booking ID or Game"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="form-control shadow-lg w-50 mb-3"
+                          />
+                        </div>
+                        <div className="table-responsive">
+                          <Table className="table">
+                            <thead style={{ backgroundColor: "#0062FF0D" }}>
                               <tr>
-                                <td colSpan="6" className="text-center">No bookings available</td>
+                                <th style={{ fontWeight: "600" }}  >S/N</th>
+                                <th style={{ fontWeight: "600" }}  >Booking ID</th>
+                                <th style={{ fontWeight: "600" }}  >Game</th>
+                                <th style={{ fontWeight: "600" }}  >Slot Date</th>
+                                <th style={{ fontWeight: "600" }}  >Status</th>
+                                <th style={{ fontWeight: "600" }}  >Total</th>
                               </tr>
-                            )}
-                          </tbody>
-                        </Table>
+                            </thead>
+                            <tbody>
+                              {currentBookings.length > 0 ? (
+                                currentBookings.map((booking, index) => (
+                                  <tr key={booking._id}>
+                                    <td>{index + 1 + indexOfFirstBooking}</td>
+                                    <td style={{ fontWeight: "600", color: "blue" }} onClick={() => navigate(`/admin/booking/checkout/${booking._id}`)} >{booking.booking_id}</td>
+                                    <td>{booking.game_id.name}</td>
+                                    <td>{new Date(booking.slot_date).toLocaleDateString()}</td>
+                                    <td>
+                                      <span className={`badge ${booking.status === 'Pending' ? 'bg-warning' : 'bg-success'}`}>
+                                        {booking.status}
+                                      </span>
+                                    </td>
+                                    <td>₹ {booking.total}</td>
+                                  </tr>
+                                ))
+                              ) : (
+                                <tr>
+                                  <td colSpan="6" className="text-center">No bookings available</td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </Table>
+                        </div>
                       </div>
 
                       <div className="d-flex justify-content-center align-items-center gap-3">
                         <Pagination.Prev
                           onClick={() => setCurrentPage(currentPage - 1)}
                           disabled={currentPage === 1}
-                          className="btn rounded-circle d-flex justify-content-center align-items-center btn-primary btn-sm"
+                          className="btn rounded-2 d-flex justify-content-center align-items-center btn-primary btn-sm"
                           style={{ width: '40px', height: '40px' }}
                         />
                         <span>Page {currentPage} of {totalPages}</span>
                         <Pagination.Next
                           onClick={() => setCurrentPage(currentPage + 1)}
                           disabled={currentPage === totalPages}
-                          className="btn rounded-circle d-flex justify-content-center align-items-center btn-primary btn-sm"
+                          className="btn rounded-2 d-flex justify-content-center align-items-center btn-primary btn-sm"
                           style={{ width: '40px', height: '40px' }}
                         />
                       </div>
@@ -438,89 +458,76 @@ const CustomerDetails = () => {
                     </Card>
                   </Tab.Pane>
                   <Tab.Pane eventKey="link-2">
-                    <Card className="p-3 mb-3" style={{ height: "88vh" }}>
-                      <div className="d-flex align-items-center justify-content-between">
-                        <input
-                          type="text"
-                          placeholder="Search by Booking ID or Game"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="form-control shadow-lg w-50 mb-3"
-                        />
-                      </div>
-                      <div className="table-responsive">
-                        <Table className="table">
-                          <thead style={{ backgroundColor: "#0062FF0D" }}>
-                            <tr>
-                              <th style={{ fontWeight: "600" }}  >S/N</th>
-                              <th style={{ fontWeight: "600" }}  >Booking ID</th>
-                              <th style={{ fontWeight: "600" }}  >Transaction ID</th>
-                              <th style={{ fontWeight: "600" }}  >Date</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {/* {selectedCustomer?.bookings.length > 0 ? (
-                              selectedCustomer?.bookings.map((booking, index) => (
-                                <tr key={booking._id}>
-                                  <td>{index + 1}</td>
-                                  <td style={{ fontWeight: "600", color: "blue", cursor: "pointer" }} onClick={() => navigate(`/admin/booking/checkout/${booking.booking_id}`)} >{booking.booking_id}</td>
-                                  <td>{booking?.playerCredits[0]?.txn_id ? booking?.playerCredits[0]?.txn_id : "Cash"}</td>
-                                  <td>{booking?.playerCredits[0]?.paymentDate && new Date(booking?.playerCredits[0]?.paymentDate).toLocaleDateString()}</td>
-                                </tr>
-                              ))
-                            ) : (
-                              <tr>
-                                <td colSpan="6"  className="text-center">No pending payments</td>
-                              </tr>
-                            )} */}
+                    <Card className="p-3 mb-3 d-flex flex-column" style={{ height: "88vh" }}>
+                      <div className="flex-grow-1 overflow-auto">
 
-                            {selectedCustomer?.bookings?.filter(
-                              booking => booking?.playerCredits[0]?.paymentDate
-                            ).length > 0 ? (
-                              selectedCustomer?.bookings
-                                .filter(booking => booking?.playerCredits[0]?.paymentDate)
-                                .map((booking, index) => (
-                                  <tr key={booking._id}>
+                        <div className="d-flex align-items-center justify-content-between">
+                          <input
+                            type="text"
+                            placeholder="Search by Booking ID or Game"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="form-control shadow-lg w-50 mb-3"
+                          />
+                        </div>
+                        <div className="table-responsive">
+                          <Table className="table">
+                            <thead style={{ backgroundColor: "#0062FF0D" }}>
+                              <tr>
+                                <th style={{ fontWeight: "600" }}  >S/N</th>
+                                <th style={{ fontWeight: "600" }}  >Booking ID</th>
+                                <th style={{ fontWeight: "600" }}  >Transaction ID</th>
+                                <th style={{ fontWeight: "600" }}  >Amount</th>
+                                <th style={{ fontWeight: "600" }}  >Date</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+
+                              {currentTransactions.length > 0 ? (
+                                currentTransactions?.map((transaction, index) => (
+                                  <tr key={transaction._id}>
                                     <td>{index + 1}</td>
-                                    <td
-                                      style={{ fontWeight: "600", color: "blue", cursor: "pointer" }}
-                                      onClick={() => navigate(`/admin/booking/checkout/${booking.booking_id}`)}
-                                    >
-                                      {booking.booking_id}
-                                    </td>
+                                    {/* <td style={{ fontWeight: "600", color: "blue", cursor: "pointer" }} onClick={() => navigate(`/admin/booking/checkout/${transaction.booking_id}`)} >{transaction.bookings}</td> */}
                                     <td>
-                                      {booking?.playerCredits[0]?.txn_id
-                                        ? booking.playerCredits[0].txn_id
-                                        : "Cash"}
+                                      {transaction.bookings && transaction.bookings.length > 0
+                                        ? transaction.bookings.map((b, i) => (
+                                          <span key={b._id}>
+                                            <span
+                                              style={{ fontWeight: "600", color: "blue", cursor: "pointer", marginRight: "5px" }}
+                                              onClick={() => navigate(`/admin/booking/checkout/${b._id}`)}
+                                            >
+                                              {b.booking_id}
+                                            </span>
+                                            {i !== transaction.bookings.length - 1 && ", "}
+                                          </span>
+                                        ))
+                                        : "—"}
                                     </td>
-                                    <td>
-                                      {new Date(booking.playerCredits[0].paymentDate).toLocaleDateString()}
-                                    </td>
+                                    <td>{transaction.mode === "Cash" ? "Cash" : transaction.txn_id}</td>
+                                    <td>₹ {transaction.amount}</td>
+                                    <td>{new Date(transaction.createdAt).toLocaleDateString()}</td>
                                   </tr>
                                 ))
-                            ) : (
-                              <tr>
-                                <td colSpan="6" className="text-center">
-                                  No pending payments
-                                </td>
-                              </tr>
-                            )}
-
-                          </tbody>
-                        </Table>
+                              ) : (
+                                <></>
+                              )
+                              }
+                            </tbody>
+                          </Table>
+                        </div>
                       </div>
 
                       <div className="d-flex justify-content-center align-items-center gap-3 pt-3">
                         <Pagination.Prev
-                          onClick={() => setCurrentPage(currentPage - 1)}
-                          disabled={currentPage === 1}
+                          onClick={() => setCurrentPageTransaction(currentPageTransaction - 1)}
+                          disabled={currentPageTransaction === 1}
                           className="btn rounded-2 d-flex justify-content-center align-items-center btn-primary btn-sm"
                           style={{ width: '40px', height: '40px' }}
                         />
-                        <span>Page {currentPage} of {totalPages}</span>
+                        <span>Page {currentPageTransaction} of {totalPagesTransactions}</span>
                         <Pagination.Next
-                          onClick={() => setCurrentPage(currentPage + 1)}
-                          disabled={currentPage === totalPages}
+                          onClick={() => setCurrentPageTransaction(currentPageTransaction + 1)}
+                          disabled={currentPageTransaction === totalPagesTransactions}
                           className="btn rounded-2 d-flex justify-content-center align-items-center btn-primary btn-sm"
                           style={{ width: '40px', height: '40px' }}
                         />

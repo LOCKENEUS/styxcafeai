@@ -258,7 +258,7 @@ const GameInfo = () => {
             className="d-flex flex-column justify-content-around p-3 px-1"
             style={{ backgroundColor: "transparent" }}
           >
-            <h5 className="fw-600 fs-3" style={{fontWeight:"600"}}>{selectedGame?.data?.name}</h5>
+            <h5 className="fw-600 fs-3" style={{ fontWeight: "600" }}>{selectedGame?.data?.name}</h5>
             <p className="text-muted">{selectedGame?.data?.details}</p>
             <div className="d-flex gap-1">
               <div><img src="/assets/Admin/Game/paylater.svg" className="me-1 mb-1 p-1" alt="paylater" /> {selectedGame?.data?.payLater ? "Pay Later" : "Pay Now"}</div>
@@ -282,28 +282,28 @@ const GameInfo = () => {
             </div>
             <span className="align-bottom p-2 px-0 mt-3">
               <div className="d-flex justify-content-around gap-2 p-2">
-              <Button
-                size="sm"
-                variant="primary"
-                className="px-2 m-2"
-                disabled={isLoading}
-                style={{ width: "80%", height: "37px", marginRight: "30px" }}
-                onClick={handleBookSlotClick}
-              >
-                Book Slot
-              </Button>
+                <Button
+                  size="sm"
+                  variant="primary"
+                  className="px-2 m-2"
+                  disabled={isLoading}
+                  style={{ width: "80%", height: "37px", marginRight: "30px" }}
+                  onClick={handleBookSlotClick}
+                >
+                  Book Slot
+                </Button>
               </div>
 
               <div>
-              <Button
-                size="sm"
-                variant="primary"
-                className="px-0"
-                style={{ width: "80%", height: "37px", marginLeft: "10px", marginRight: "50px" }}
-                onClick={() => setShowCustomSlot(true)}
-              >
-                Custom Booking
-              </Button>
+                <Button
+                  size="sm"
+                  variant="primary"
+                  className="px-0"
+                  style={{ width: "80%", height: "37px", marginLeft: "10px", marginRight: "50px" }}
+                  onClick={() => setShowCustomSlot(true)}
+                >
+                  Custom Booking
+                </Button>
               </div>
             </span>
           </Col>
@@ -470,12 +470,31 @@ const GameInfo = () => {
                       <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
                         {index + 1}
                       </td>
-                      <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
-                        <Link to={`/admin/booking/checkout/${booking._id}`}>
+                      <td
+                        style={{
+                          border: "none",
+                          minWidth: "100px",
+                          alignContent: "center",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis"
+                        }}
+                      >
+                        <Link to={`/admin/booking/checkout/${booking._id}`}
+                            style={{
+                              display: "inline-block",
+                              maxWidth: "100%",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                              color: "blue",
+                              textDecoration: "none"
+                          }}
+                        >
                           {booking.booking_id}
                         </Link>
                       </td>
-                      <td style={{ border: "none", minWidth: "150px" }}>
+                      <td style={{ border: "none", minWidth: "150px", alignContent: "center" }}>
                         <div className="d-flex align-items-center">
                           <img
                             src={profile}

@@ -76,7 +76,6 @@ const ParchaseBCreate = () => {
   const UesrPAN = user?.panNo;
   const [isMobile, setIsMobile] = useState(false); 
 
-  console.log("selectedItem", selectedItem);
   // Filter payment terms from custom fields
   const paymentTerms = customFields.filter(
     (field) => field.type === "Payment Terms"
@@ -381,6 +380,8 @@ const ParchaseBCreate = () => {
     }
   };
 
+  console.log("products", products)
+
   // const handleVendorSelect = (newVendor) => {
   //   const selectedVendorId = newVendor;
   //   const selectedVendor = vendorsList.find(
@@ -448,7 +449,7 @@ const ParchaseBCreate = () => {
       // Set products data
       const mappedProducts = selectedItem.items.map((item, index) => ({
         id: index + 1,
-        item: item.item_id._id,
+        item: item?.item_id?._id,
         quantity: item.qty_received,
         price: item.price || 0,
         tax: item.tax?._id || "",
@@ -471,6 +472,8 @@ const ParchaseBCreate = () => {
       });
     }
   }, [selectedItem]);
+
+  console.log("items", items)
 
   return (
     <Container fluid className="p-4">
@@ -766,7 +769,7 @@ const ParchaseBCreate = () => {
             </tr>
           </thead>
           <tbody>
-            {products.map((product, index) => (
+            {products?.map((product, index) => (
               <tr className={` ${isMobile && "d-flex flex-column"} `} key={product.id}>
                 <td>
                   <div className="d-flex gap-2">
