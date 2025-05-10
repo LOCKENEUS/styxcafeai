@@ -146,8 +146,8 @@ const AdminDashboard = () => {
       <h3 className="mb-4">Hello, {cafe.cafe_name}</h3>
 
       {/* Search Bar for Mobile */}
-      <Row className="d-md-none mb-3 m-2">
-        <Col>
+      <Row className="d-md-none mb-3 p-0">
+        <Col className='p-0' style={{ marginLeft: '10px', marginRight: '10px' }}>
           <input
             type="text"
             placeholder="Search Tournaments, Games, Score"
@@ -158,7 +158,7 @@ const AdminDashboard = () => {
       </Row>
 
       {/* Summary Cards */}
-      <Row className="g-0 mb-4" style={{marginLeft: '12px'}} ref={summaryCardsRef}>
+      <Row className="g-0 mb-4 ms-lg-2 ms-0" ref={summaryCardsRef}>
           <Col xs={6} md={3}>
             <div className="summary-card" style={{ borderStartStartRadius: '12px', borderEndStartRadius: '12px' }}>
             <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100' style={{borderRight: '1px solid #E0E0E0'}}>

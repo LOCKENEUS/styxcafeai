@@ -8,6 +8,7 @@ import { getCustomers, deleteCustomer } from "../../../store/AdminSlice/Customer
 import { useNavigate } from "react-router-dom";
 import Loader from "../../../components/common/Loader/Loader";
 import { BiSearch } from "react-icons/bi";
+import "./Customer.css"
 
 const CustomerList = () => {
   const dispatch = useDispatch();
@@ -67,13 +68,13 @@ const CustomerList = () => {
   return (
     <div className="container mt-4 bg-white rounded-2 mx-2 py-2" style={{ padding: '0 1rem' }}>
       <>
-        <div className="d-flex justify-content-between align-items-center mt-5 mb-5" style={{ flexDirection: 'row', gap: '1rem' }}>
-          <h4 className="text-dark fw-bold" style={{ fontSize: 'clamp(20px, 5vw, 25px)', margin: 0 }}>
+        <div className="d-flex justify-content-between align-items-center mt-3 mb-3" style={{ flexDirection: 'row', gap: '1rem' }}>
+          <div className="text-dark fw-bold responsive-heading">
             Customer List
-          </h4>
+          </div>
 
           {/* Search Input */}
-          <InputGroup className="mb-3 w-50">
+          <InputGroup className="mb-3 w-50 mt-3">
             <div className="d-flex px-2 bg-white align-items-center">
               <BiSearch size={20} />
             </div>

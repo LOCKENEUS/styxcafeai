@@ -223,39 +223,18 @@ const GameInfo = () => {
                 gm2
               }
               alt={selectedGame?.data?.name}
-              className="img-fluid rounded m-3"
+              className="ps-2 pe-2 mt-2 mt-md-0 img-fluid responsive-img-width"
               style={{
-                width: "90%",
                 height: "230px",
-                borderRadius: "19px",
+                borderRadius: "20px",
                 objectFit: "cover",
               }}
             />
-            <div
-              onClick={() => navigate(`/admin/games/edit-game/${gameId}`)}
-              className="rounded-circle"
-              style={{
-                position: "absolute",
-                bottom: "20px",
-                right: "25px",
-                width: "30px",
-                height: "30px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "white",
-                border: "none",
-                boxShadow: "none",
-                outline: "none",
-                cursor: "pointer",
-              }}
-            >
-              <BiPencil color="blue" />
-            </div>
           </Col>
+
           <Col
             md={6}
-            className="d-flex flex-column justify-content-around p-3 px-1"
+            className="d-none d-md-flex flex-column justify-content-around p-3 px-1"
             style={{ backgroundColor: "transparent" }}
           >
             <h5 className="fw-600 fs-3" style={{ fontWeight: "600" }}>{selectedGame?.data?.name}</h5>
@@ -272,12 +251,13 @@ const GameInfo = () => {
               <span style={{ color: "#0062FF", fontSize: "24px" }} className="fw-bold text-primary">{selectedGame?.data?.price}</span>
             </div>
           </Col>
+
           <Col
             md={3}
-            className="text-end d-flex flex-column justify-content-around align-items-end px-0"
+            className="text-end d-none d-md-flex flex-column justify-content-around align-items-end px-0"
             style={{ backgroundColor: "transparent" }}
           >
-            <div className="mb-10 p-2 mx-2">
+            <div className="mb-10 p-2 mx-2 text-end">
               <span className="text-color">Created At - </span>{new Date(selectedGame?.data?.createdAt).toLocaleString()}
             </div>
             <span className="align-bottom p-2 px-0 mt-3">
@@ -308,6 +288,115 @@ const GameInfo = () => {
             </span>
           </Col>
         </Row>
+
+        <Col
+          xs={12}
+          md={6}
+          className="d-flex d-md-none flex-column justify-content-around p-2 p-md-3"
+          style={{ backgroundColor: "transparent" }}
+        >
+          <h5 className="fw-600 fs-5 fs-md-3" style={{ fontWeight: "600" }}>
+            {selectedGame?.data?.name}
+          </h5>
+
+          <p className="text-muted small">{selectedGame?.data?.details}</p>
+
+          <div className="d-flex flex-wrap gap-2">
+            <div className="d-flex align-items-center">
+              <img
+                src="/assets/Admin/Game/paylater.svg"
+                className="me-1 p-1"
+                alt="paylater"
+                style={{ width: "20px", height: "20px" }}
+              />
+              <small>{selectedGame?.data?.payLater ? "Pay Later" : "Pay Now"}</small>
+            </div>
+            <div className="d-flex align-items-center">
+              <img
+                src="/assets/Admin/Game/singleplayer.svg"
+                className="me-1 p-1"
+                alt="type"
+                style={{ width: "20px", height: "20px" }}
+              />
+              <small>{selectedGame?.data?.type}</small>
+            </div>
+            <div className="d-flex align-items-center">
+              <img
+                src="/assets/Admin/Game/indoor.svg"
+                className="me-1 p-1"
+                alt="zone"
+                style={{ width: "20px", height: "20px" }}
+              />
+              <small>{selectedGame?.data?.zone}</small>
+            </div>
+            <div className="d-flex align-items-center">
+              <img
+                src="/assets/Admin/Game/crosssign.svg"
+                className="me-1 p-1"
+                alt="cancel"
+                style={{ width: "20px", height: "20px" }}
+              />
+              <small>{selectedGame?.data?.cancellation ? "Cancellation Yes" : "Cancellation No"}</small>
+            </div>
+          </div>
+
+          <div className="mt-3">
+            <img
+              src="/assets/Admin/Game/price.svg"
+              className="mb-2"
+              alt="price"
+              style={{ width: "24px", height: "24px" }}
+            />
+            <span
+              className="fw-bold text-primary"
+              style={{ fontSize: "20px" }}
+            >
+              ₹ {selectedGame?.data?.price}
+            </span>
+          </div>
+        </Col>
+
+        <Col
+          md={3}
+          className="d-block d-md-none "
+          style={{ backgroundColor: "transparent" }}
+        >
+          <Row className="px-2">
+            <Col xs={6}>
+              <p className="text-color">Created At</p>
+            </Col>
+            <Col xs={6}>
+              <span className="muted-text">{new Date(selectedGame?.data?.createdAt).toLocaleString()}</span>
+            </Col>
+          </Row>
+
+          <Row className="mb-2 p-2">
+            <Col xs={6} className="">
+              <Button
+                size="sm"
+                variant="primary"
+                className=""
+                disabled={isLoading}
+                style={{ width: "80%", height: "37px" }}
+                onClick={handleBookSlotClick}
+              >
+                Book Slot
+              </Button>
+            </Col>
+            <Col xs={6} className="text-end">
+              <Button
+                size="sm"
+                variant="primary"
+                className=""
+                style={{ width: "80%", height: "37px" }}
+                onClick={() => setShowCustomSlot(true)}
+              >
+                Custom Booking
+              </Button>
+            </Col>
+          </Row>
+        </Col>
+
       </Card>
       {/* Bookings Table */}
       {showCalendar ? (
@@ -467,10 +556,11 @@ const GameInfo = () => {
                 {currentBookings.length > 0 ?
                   currentBookings?.map((booking, index) => (
                     <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
-                      <td style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
+                      <td className="p-0 p-md-2 text-center" style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
                         {index + 1}
                       </td>
                       <td
+                        className="p-0 p-md-2"
                         style={{
                           border: "none",
                           minWidth: "100px",
@@ -481,20 +571,20 @@ const GameInfo = () => {
                         }}
                       >
                         <Link to={`/admin/booking/checkout/${booking._id}`}
-                            style={{
-                              display: "inline-block",
-                              maxWidth: "100%",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                              color: "blue",
-                              textDecoration: "none"
+                          style={{
+                            display: "inline-block",
+                            maxWidth: "100%",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            color: "blue",
+                            textDecoration: "none"
                           }}
                         >
                           {booking.booking_id}
                         </Link>
                       </td>
-                      <td style={{ border: "none", minWidth: "150px", alignContent: "center" }}>
+                      <td className="p-0 p-md-2" style={{ border: "none", minWidth: "150px", alignContent: "center" }}>
                         <div className="d-flex align-items-center">
                           <img
                             src={profile}
@@ -510,19 +600,19 @@ const GameInfo = () => {
                         </div>
                       </td>
                       <td
-                        className="align-middle"
+                        className="align-middle p-0 p-md-2"
                         style={{ border: "none", minWidth: "120px" }}
                       >
                         {booking?.gameTitle}
                       </td>
                       <td
-                        className="align-middle"
+                        className="align-middle p-0"
                         style={{ border: "none", minWidth: "80px" }}
                       >
                         {booking.players.length + 1}
                       </td>
                       <td
-                        className="align-middle"
+                        className="align-middle p-0 p-md-2"
                         style={{ border: "none", minWidth: "130px" }}
                       >
                         <div style={{ display: "flex", alignItems: "center" }}>
@@ -561,14 +651,14 @@ const GameInfo = () => {
                         </div>
                       </td>
                       <td
-                        className="align-middle"
+                        className="align-middle p-0 p-md-2"
                         style={{ border: "none", minWidth: "120px" }}
                       >
                         {formatDate(booking.slot_date)}<br />
                         {convertTo12Hour(booking?.slot_id?.start_time || booking?.custom_slot?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time || booking?.custom_slot?.end_time)}
                       </td>
                       <td
-                        className="align-middle"
+                        className="align-middle p-0 p-md-2"
                         style={{
                           border: "none",
                           position: "relative",
@@ -591,7 +681,7 @@ const GameInfo = () => {
                     </tr>
                   )) : (
                     <tr>
-                      <td colSpan="9" className="text-center">
+                      <td colSpan="9" className="text-center p-0 p-md-2">
                         <img src={nobookings} className="w-50" />
                       </td>
                     </tr>

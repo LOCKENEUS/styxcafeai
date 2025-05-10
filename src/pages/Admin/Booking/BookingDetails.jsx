@@ -687,7 +687,7 @@ const BookingDetails = () => {
             handleClose={() => setShowClientModal(false)}
           />
 
-          <div className="bg-white rounded-3 p-3" style={{ minHeight: "90vh" }}>
+          <div className="bg-white rounded-3 p-3 responsive-height">
             <div className="customer-list">
               <small>Recent Customers </small>
               {!selectedCustomer ? (
@@ -830,7 +830,7 @@ const BookingDetails = () => {
 
         <Col md={4} lg={4} className="p-1">
           <Row>
-            <Col md={12} style={{ height: "9vh" }}></Col>
+            <Col md={12} className="d-none d-md-block" style={{ height: "9vh" }}></Col>
             <Col md={12}>
               <div
                 style={{ height: selectedCustomer ? "auto" : "40vh" }}

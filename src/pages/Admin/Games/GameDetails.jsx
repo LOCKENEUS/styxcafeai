@@ -161,17 +161,17 @@ const GameDetails = () => {
             {/* Booking Overview */}
             <Card className="p-3 mb-2" style={{ backgroundColor: "white" }}>
                 <Row className="" style={{ backgroundColor: "transparent" }}>
-                    <Col md={3} style={{ backgroundColor: "transparent", position: "relative", paddingRight: "0px" }}>
+                    <Col md={3} className="ps-1 pe-1" style={{ backgroundColor: "transparent", position: "relative", paddingRight: "0px" }}>
                         <img
                             src={
                                 `${import.meta.env.VITE_API_URL}/${selectedGame?.data?.gameImage}` ||
                                 gm2
                             }
                             alt={selectedGame?.data?.name}
-                            className="img-fluid rounded"
+                            className="img-fluid rounded responsive-img-width"
                             style={{
-                                width: "90%",
                                 height: "230px",
+                                margin: "0 auto",
                                 borderRadius: "19px",
                                 objectFit: "cover",
                                 // paddingRight: "0px",
@@ -179,11 +179,11 @@ const GameDetails = () => {
                         />
                         <div
                             onClick={() => navigate(`/admin/games/edit-game/${id}`)}
-                            className="rounded-circle"
+                            className="rounded-circle d-none d-md-block"
                             style={{
                                 position: "absolute",
                                 bottom: "5px",
-                                right: "30px",
+                                right: "33px",
                                 width: "30px",
                                 height: "30px",
                                 display: "flex",
@@ -196,12 +196,12 @@ const GameDetails = () => {
                                 cursor: "pointer",
                             }}
                         >
-                            <BiPencil color="blue" />
+                            <BiPencil color="blue" className="mt-2 ms-2" />
                         </div>
                     </Col>
                     <Col
                         md={6}
-                        className="d-flex flex-column justify-content-around"
+                        className="d-none d-md-flex flex-column justify-content-around"
                         style={{ backgroundColor: "transparent" }}
                     >
                         <span className="fs-3 text-color">{selectedGame?.data?.name}({selectedGame?.data?.size})
@@ -237,7 +237,7 @@ const GameDetails = () => {
 
                     <Col
                         md={3}
-                        className="d-flex flex-column justify-content-between align-items-end"
+                        className="d-none d-md-flex flex-column justify-content-between align-items-end"
                         style={{ backgroundColor: "transparent" }}
                     >
                         <div>
@@ -256,11 +256,109 @@ const GameDetails = () => {
 
                     </Col>
                 </Row>
+
+                
+                        <Col
+                            xs={12}
+                            md={6}
+                            className="d-flex d-md-none flex-column justify-content-around mt-2 p-2 p-md-3"
+                            style={{ backgroundColor: "transparent" }}
+                          >
+                            <h5 className="fw-600 fs-5 fs-md-3" style={{ fontWeight: "600" }}>
+                              {selectedGame?.data?.name} <span className="float-end text-primary" onClick={() => navigate(`/admin/games/edit-game/${id}`)}>Edit</span>
+                            </h5>
+                
+                            <p className="text-muted small">{selectedGame?.data?.details}</p>
+                
+                            <div className="d-flex flex-wrap gap-2">
+                              <div className="d-flex align-items-center">
+                                <img
+                                  src="/assets/Admin/Game/paylater.svg"
+                                  className="me-1 p-1"
+                                  alt="paylater"
+                                  style={{ width: "20px", height: "20px" }}
+                                />
+                                <small>{selectedGame?.data?.payLater ? "Pay Later" : "Pay Now"}</small>
+                              </div>
+                              <div className="d-flex align-items-center">
+                                <img
+                                  src="/assets/Admin/Game/singleplayer.svg"
+                                  className="me-1 p-1"
+                                  alt="type"
+                                  style={{ width: "20px", height: "20px" }}
+                                />
+                                <small>{selectedGame?.data?.type}</small>
+                              </div>
+                              <div className="d-flex align-items-center">
+                                <img
+                                  src="/assets/Admin/Game/indoor.svg"
+                                  className="me-1 p-1"
+                                  alt="zone"
+                                  style={{ width: "20px", height: "20px" }}
+                                />
+                                <small>{selectedGame?.data?.zone}</small>
+                              </div>
+                              <div className="d-flex align-items-center">
+                                <img
+                                  src="/assets/Admin/Game/crosssign.svg"
+                                  className="me-1 p-1"
+                                  alt="cancel"
+                                  style={{ width: "20px", height: "20px" }}
+                                />
+                                <small>{selectedGame?.data?.cancellation ? "Cancellation Yes" : "Cancellation No"}</small>
+                              </div>
+                            </div>
+                
+                            <div className="mt-3">
+                              <img
+                                src="/assets/Admin/Game/price.svg"
+                                className="mb-2"
+                                alt="price"
+                                style={{ width: "24px", height: "24px" }}
+                              />
+                              <span
+                                className="fw-bold text-primary"
+                                style={{ fontSize: "20px" }}
+                              >
+                                ₹ {selectedGame?.data?.price}
+                              </span>
+                            </div>
+                          </Col>
+                
+                          <Col
+                            md={3}
+                            className="d-block d-md-none "
+                            style={{ backgroundColor: "transparent" }}
+                          >
+                            <Row className="px-2">
+                              <Col xs={5}>
+                                <p className="text-color">Created At</p>
+                              </Col>
+                              <Col xs={7}>
+                                <span className="muted-text">{new Date(selectedGame?.data?.createdAt).toLocaleString()}</span>
+                              </Col>
+                            </Row>
+                
+                            <Row className="mb-2 p-2">
+                              <Col xs={6} className="">
+                            
+                              </Col>
+                              <Col xs={6} className="text-end">
+                              <Button
+                                variant="primary"
+                                style={{ width: "128px", height: "37px" }}
+                                onClick={handleSlotCreate}
+                            >
+                                Add Slots
+                            </Button>
+                              </Col>
+                            </Row>
+                          </Col>
             </Card>
 
             {/* Calendar Section */}
 
-            <div className="calendar-slider mt-5">
+            <div className="calendar-slider mt-2">
                 <div className="date-container">
                     {weekdays.map((day, index) => (
                         <div
@@ -328,7 +426,7 @@ const GameDetails = () => {
                         </p>
                     </div>
                 ) : (
-                    <div className="booking-slots mt-5 p-3">
+                    <div className="booking-slots mt-2 p-1 p-md-2">
                         <Button
                             variant="primary"
                             style={{ width: "128px", height: "37px" }}

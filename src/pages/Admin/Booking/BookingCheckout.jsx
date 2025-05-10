@@ -1374,22 +1374,21 @@
 
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button, Image, Stack, Form, OverlayTrigger, Tooltip, Modal, Table, Dropdown, Popover } from "react-bootstrap";
-import { FaPhone, FaVideo, FaComment, FaClock, FaRegClock, FaPause, FaRupeeSign } from "react-icons/fa";
+import { FaClock, FaPause } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import userProfile from "/assets/profile/user_avatar.jpg";
 import { useDispatch, useSelector } from "react-redux";
 import { convertTo12Hour, formatDate, formatDateAndTime } from "../../../components/utils/utils";
-import { addToCart, getBookingDetails, processOnlinePayment, updateBooking } from "../../../store/AdminSlice/BookingSlice";
+import { addToCart, getBookingDetails, processOnlinePayment } from "../../../store/AdminSlice/BookingSlice";
 import { VscDebugContinue } from "react-icons/vsc";
 import { initializeTimer, pauseBookingTimer, resumeBookingTimer, startBookingTimer, stopBookingTimer } from "../../../store/AdminSlice/TimerSlice";
-import "./BookingCheckout.css";
+import "./Booking.css";
 import Select from "react-select";
 import { getItems } from "../../../store/AdminSlice/Inventory/ItemsSlice";
 import { getTaxFields } from "../../../store/AdminSlice/TextFieldSlice";
 import CreditSplit from "./Model/CreditSplit";
 import { TbTrash } from "react-icons/tb";
 import ItemsSave from "./Model/itemsSave";
-import { MdCancel } from "react-icons/md";
 import axios from "axios";
 
 const BookingCheckout = () => {
@@ -2283,7 +2282,7 @@ const BookingCheckout = () => {
               : (
                 selectedGame?.payLater &&
                 <div className="rounded shadow-sm w-100 right-padding-responsive left-margin-responsive" style={{ marginLeft: "10px", paddingRight: "8px" }}>
-                  <Row className="mt-1 gap-0">
+                  <Row className="mt-1 px-1 gap-0">
                     <Col md={6} className="p-0">
                       <div className="bg-white d-flex p-3 gap-1" style={{ borderRadius: "10px", width: "100%" }}>
                         <div className="d-flex gap-4 custom-gap-responsive" style={{ border: "none" }}>

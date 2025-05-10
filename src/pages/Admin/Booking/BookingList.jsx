@@ -219,7 +219,7 @@ const BookingList = () => {
     };
 
     return (
-        <div className="container-fluid min-vh-100">
+        <div className="container-fluid min-vh-100 px-1 px-md-2">
             <Row>
                 <Col>
                     <p>
@@ -341,8 +341,8 @@ const BookingList = () => {
                 </Col>
             </Row>
 
-            <div className="table-responsive bg-white rounded-3 shadow-sm p-4">
-                <div className="fs-1"><strong>Collection: ₹ </strong>{collection}</div>
+            <div className="table-responsive bg-white rounded-3 shadow-sm p-1 p-md-4">
+                <div className="fs-1 py-2 py-md-0"><strong>Collection: ₹ </strong>{collection}</div>
                 <Table striped bordered hover>
                     <thead
                         className=""
@@ -395,10 +395,11 @@ const BookingList = () => {
                         {currentBookings.length > 0 ?
                             currentBookings?.map((booking, index) => (
                                 <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
-                                    <td style={{ border: "none", minWidth: "100px", alignContent: "center", paddingLeft: "3%" }}>
+                                    <td className="text-center p-0 p-md-2" style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
                                         {index + 1}
                                     </td>
                                     <td
+                                    className="text-center p-0 p-md-2"
                                         style={{
                                             border: "none",
                                             minWidth: "100px",
@@ -421,7 +422,9 @@ const BookingList = () => {
                                             {booking.booking_id}
                                         </Link>
                                     </td>
-                                    <td style={{
+                                    <td 
+                                    className="text-center p-0 p-md-2"
+                                    style={{
                                         border: "none", minWidth: "150px", alignContent: "center",
                                         alignContent: "center",
                                     }}>
@@ -440,19 +443,19 @@ const BookingList = () => {
                                         </div>
                                     </td>
                                     <td
-                                        className="align-middle"
+                                        className="align-middle p-0 p-md-2"
                                         style={{ border: "none", minWidth: "120px" }}
                                     >
                                         {booking?.gameTitle}
                                     </td>
                                     <td
-                                        className="align-middle"
+                                        className="align-middle p-0 p-md-2"
                                         style={{ border: "none", minWidth: "80px" }}
                                     >
                                         {booking.players.length + 1}
                                     </td>
                                     <td
-                                        className="align-middle"
+                                        className="align-middle p-0 p-md-2"
                                         style={{ border: "none", minWidth: "140px" }}
                                     >
 
@@ -513,7 +516,7 @@ const BookingList = () => {
                                         </span>
                                     </td>
                                     <td
-                                        className="align-middle"
+                                        className="align-middle p-0 p-md-2"
                                         style={{ border: "none", minWidth: "120px" }}
                                     >
                                         {formatDate(booking?.slot_date)}<br />
@@ -526,7 +529,7 @@ const BookingList = () => {
 
                                     </td>
                                     <td
-                                        className="align-middle"
+                                        className="align-middle p-0 p-md-2"
                                         style={{ border: "none", minWidth: "120px" }}
                                     >
                                         ₹  {booking?.total}

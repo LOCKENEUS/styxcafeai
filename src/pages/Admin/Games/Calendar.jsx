@@ -28,11 +28,11 @@ const Calendar = ({ selectedGame }) => {
   const generateDates = () => {
     const dates = [];
     const today = new Date();
-  
+
     for (let i = 0; i < 14; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
-  
+
       dates.push({
         fullDate: date,
         day: date.getDate(),
@@ -40,10 +40,10 @@ const Calendar = ({ selectedGame }) => {
         status: i === 0 ? "Today" : date.toLocaleString("default", { weekday: "short" }),
       });
     }
-  
+
     return dates;
   };
-  
+
   const dates = generateDates();
 
   const handleNext = () => {
@@ -55,14 +55,13 @@ const Calendar = ({ selectedGame }) => {
       setCurrentIndex((prevIndex) => Math.max(prevIndex - 7, 0));
     }
   };
-  
 
   const visibleDates = dates.slice(currentIndex, currentIndex + 7);
 
   return (<>
- <div className="m-4">
-  {activeDate.toLocaleString("default", { month: "long" })} {activeDate.getFullYear()}
-</div>
+    <div className="m-4">
+      {activeDate.toLocaleString("default", { month: "long" })} {activeDate.getFullYear()}
+    </div>
 
     <div className="calendar-slider mt-5">
       <style jsx>{`
@@ -163,13 +162,13 @@ const Calendar = ({ selectedGame }) => {
         `}</style>
 
       <button
-  className="nav-button prev-button mt-3"
-  onClick={handlePrev}
-  disabled={currentIndex === 0}
-  style={{ opacity: currentIndex === 0 ? 0.5 : 1, cursor: currentIndex === 0 ? "not-allowed" : "pointer" }}
->
-  <RiArrowLeftSLine />
-</button>
+        className="nav-button prev-button"
+        onClick={handlePrev}
+        disabled={currentIndex === 0}
+        style={{ opacity: currentIndex === 0 ? 0.5 : 1, cursor: currentIndex === 0 ? "not-allowed" : "pointer" }}
+      >
+        <RiArrowLeftSLine />
+      </button>
 
       <div className="date-container">
         {visibleDates.map((date, index) => (
@@ -193,7 +192,7 @@ const Calendar = ({ selectedGame }) => {
             onClick={() => {
               setActiveDate(date.fullDate);
             }}
-            
+
           >
             <small style={{ fontSize: "1rem", fontWeight: "bold" }}>
               {date.status}
@@ -222,12 +221,12 @@ const Calendar = ({ selectedGame }) => {
         ))}
       </div>
 
-      <button className="nav-button next-button mt-3" onClick={handleNext}>
+      <button className="nav-button next-button" onClick={handleNext}>
         <RiArrowRightSLine />
       </button>
       <BookingSlots date={activeDate} selectedGame={selectedGame} gameId={id} />
     </div>
-    </>
+  </>
   );
 };
 
@@ -235,7 +234,7 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showSlotModal, setShowSlotModal] = useState(false);
-  const [isLoading,setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const slots = useSelector((state) => state.slots?.slots || []);
   const bookings = useSelector((state) => state.bookings?.bookings || []);
@@ -328,7 +327,7 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
                       }}
                       onClick={() => handleBookSlot(gameId, slot._id, date)}
                     >
-                      {booked ? "Booked" : isPast ? "Time Passed" : !slot.is_active ? "Unavailable" : "Book Slot"}{isLoading && <Spinner animation="border" size="sm" />}
+                      {booked ? "Booked" : isPast ? "Unavailable" : !slot.is_active ? "Unavailable" : "Book Slot"}{isLoading && <Spinner animation="border" size="sm" />}
                     </Button>
                   </div>
                 </div>
