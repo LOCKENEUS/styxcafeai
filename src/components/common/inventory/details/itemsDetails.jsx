@@ -15,7 +15,6 @@ export const ItemsDetails = () => {
   const location = useLocation();
   const { groupId } = location.state || {};
   const [showdeleteModal, setShowDeleteModal] = useState(false);
-  console.log("Received groupId:", groupId);
   const [mainLoading, setMainLoading] = useState(false);
   const [key, setKey] = useState("tabOne");
   const navigate = useNavigate();
@@ -32,7 +31,6 @@ export const ItemsDetails = () => {
   }, [dispatch]);
 
   const itemDetails = useSelector((state) => state.inventorySuperAdmin.inventory);
-  console.log("itemDetails:", itemDetails);
 
   const tableData = [
     {
@@ -87,8 +85,6 @@ export const ItemsDetails = () => {
   ];
 
   const handaleBack = () => {
-    console.log("Back button clicked");
-
     navigate("/Inventory/Items");
   }
 

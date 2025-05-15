@@ -43,13 +43,10 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
   //   console.log("Client Created:", newClient);
   //   handleCloseCreateVendor(); // No need to pass false, just call the function
   // };
-  console.log("id ----------------------------------",cafeId);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-  
-    console.log("Client Created:", newClient);
-    
+      
     const formDataToSend = new FormData(); // Corrected initialization
   
     formDataToSend.append("name", newClient.vendorname);

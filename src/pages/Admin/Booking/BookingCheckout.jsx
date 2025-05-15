@@ -1704,6 +1704,9 @@ const BookingCheckout = () => {
         })
       );
       setLoading(false);
+      setShowCreditModal(false);
+      dispatch(getBookingDetails(booking?._id))
+      navigate(`/admin/booking/checkout/${booking?._id}`)
     } catch (error) {
       console.error("Error processing online payment:", error);
       setLoading(false);
@@ -1764,8 +1767,6 @@ const BookingCheckout = () => {
     setLooserPlayer(player);
   };
 
-  console.log("playerCredits", booking?.playerCredits);
-
   const renderCreditsPopover = (
     <Popover id="player-credits-popover">
       <Popover.Header as="h3">Player Credits</Popover.Header>
@@ -1775,7 +1776,7 @@ const BookingCheckout = () => {
             {booking?.playerCredits.map((player, index) => (
               <li key={index}>
                 <Link to={`/admin/users/customer-details/${player._id}`} className="text-decoration-none text-dark">
-                {player.name || player.id}: ₹ {player.credit || 0}
+                  {player.name || player.id}: ₹ {player.credit || 0}
                 </Link>
               </li>
             ))}
@@ -1890,14 +1891,14 @@ const BookingCheckout = () => {
 
         </Col>
 
-        <Col md={8} className="d-flex flex-column gap-1 justify-content-between hide-scrollbar" 
-        // style={{ overflowY: "auto", maxHeight: "100vh" }}
-        style={{
-          overflowY: "auto",
-          maxHeight: "100vh",
-          scrollbarWidth: "none", // For Firefox
-          msOverflowStyle: "none", // For IE/Edge
-        }}
+        <Col md={8} className="d-flex flex-column gap-1 justify-content-between hide-scrollbar"
+          // style={{ overflowY: "auto", maxHeight: "100vh" }}
+          style={{
+            overflowY: "auto",
+            maxHeight: "100vh",
+            scrollbarWidth: "none", // For Firefox
+            msOverflowStyle: "none", // For IE/Edge
+          }}
         >
           <Row>
             <Col
@@ -2282,7 +2283,7 @@ const BookingCheckout = () => {
               : (
                 selectedGame?.payLater &&
                 <div className="rounded shadow-sm w-100 right-padding-responsive left-margin-responsive" style={{ marginLeft: "10px", paddingRight: "8px" }}>
-                  <Row className="mt-1 px-1 gap-0">
+                  <Row className="mt-1 gap-0">
                     <Col md={6} className="p-0">
                       <div className="bg-white d-flex p-3 gap-1" style={{ borderRadius: "10px", width: "100%" }}>
                         <div className="d-flex gap-4 custom-gap-responsive" style={{ border: "none" }}>
@@ -2292,7 +2293,7 @@ const BookingCheckout = () => {
                           <div className="text-color my-auto">
                             <div>Total Time</div>
                             <div className="text-color fs-4">
-                              <span className="">{Math.floor(currentTime / 60)} m</span> :
+                              <span className="">{Math.floor(currentTime / 60)} m</span> : {" "}
                               <span className="">{currentTime % 60} s</span>
                             </div>
                           </div>
@@ -2392,11 +2393,11 @@ const BookingCheckout = () => {
                             </div>
                           </div>
                         )}
-                        
+
                         <div className="px-2 my-auto">
-                        <small>Select looser</small>
+                          <small>Select looser</small>
                         </div>
-                      
+
                         <OverlayTrigger
                           placement="left"
                           show={showTooltip}

@@ -20,10 +20,7 @@ export const ItemGroupDetail = () => {
         }
     }, [dispatch, groupId]);
     const itemGroupDetails = useSelector((state) => state.inventorySuperAdmin.inventory);
-    console.log("itemGroupDetails:", itemGroupDetails);
     const handaleBack = () => {
-        console.log("Back button clicked");
-
         navigate("/Inventory/ItemsGroup");
     }
     return (

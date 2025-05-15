@@ -142,8 +142,6 @@ const GameDetails = () => {
     let filteredSlots = slots.filter(slot => slot.day === weekdays[activeDate.getDay()]);
     filteredSlots = sortSlotsByTime(filteredSlots);
 
-    console.log("CreateSlotModal", showSlotModal);
-
     return (
         <div className="container mt-4">
             {/* Header Section */}

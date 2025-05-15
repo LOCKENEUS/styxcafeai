@@ -23,7 +23,6 @@ export const getMembershipsByCafeId = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(`${BASE_URL}/superadmin/membership/list/${id}`);
-      console.log("membership function ",response.data.data);
       return response.data.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');

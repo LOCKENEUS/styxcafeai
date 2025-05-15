@@ -135,9 +135,6 @@ export const PurchaseOrderUpdate = () => {
     }
   }, [selectedPo])
 
-  console.log("selectedPo", selectedPo)
-  console.log("totals", totals)
-
   useEffect(() => {
     dispatch(GetVendorsList(cafeId));
     dispatch(getTaxFields(cafeId));
@@ -374,8 +371,6 @@ export const PurchaseOrderUpdate = () => {
     }
     handleClose();
   };
-
-  console.log("id print", id)
 
   return (
     <Container fluid className="p-4">

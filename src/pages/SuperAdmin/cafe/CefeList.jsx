@@ -15,9 +15,6 @@ const CafeManager = () => {
   const dispatch = useDispatch();
   const cafes = useSelector(selectCafes);
 
-
-
-
   const loading = useSelector(selectLoading);
   const error = useSelector(selectError);
   const [formData, setFormData] = useState({});
@@ -52,10 +49,6 @@ const CafeManager = () => {
     officeContactNo: '',
   };
 
-
-
-
-
   // MObile Size 
   useEffect(() => {
     const handleResize = () => {
@@ -71,11 +64,8 @@ const CafeManager = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log('Cafes:', cafes.data);
-    console.log('Loading:', loading);
-    console.log('Error:', error);
+
   }, [cafes, loading, error]);
-  console.log('Cafes data  ---:', cafes);
   const handleInputChange = ({ target: { name, value } }) =>
     setFormData((prev) => ({ ...prev, [name]: value }));
 
@@ -152,8 +142,6 @@ const CafeManager = () => {
     }
   }, [showCanvas, isEditing]); // Remove `setFormDataState` and `initialFormData` from dependencies
 
-  console.log("img", imagePreview)
-
   const handleCloseCanvas = () => {
     setShowCanvas(false);
     setFormData(initialFormData);
@@ -197,11 +185,6 @@ const CafeManager = () => {
       setShowCanvas(true);
     }
   };
-
-  console.log("data ", formDataState)
-  // if (loading) return <p>Loading...</p>;
-  // if (error) return <p>Error: {error}</p>;
-
 
   const handlePrev = () => {
     if (currentPage > 1) setCurrentPage((prev) => prev - 1);

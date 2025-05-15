@@ -42,7 +42,6 @@ export const SalesOrder = () => {
 
   // Function to handle modal (replace with actual logic)
   const handleShowCreate = () => {
-    console.log("Show create item modal");
     navigate("/admin/Inventory/SaleOrderCreate");
   };
 

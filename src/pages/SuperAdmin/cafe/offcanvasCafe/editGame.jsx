@@ -8,13 +8,9 @@ import { TiDeleteOutline } from "react-icons/ti";
 import Rectangle389 from '/assets/superAdmin/cafe/Rectangle389.png';
 
 const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
-
-
-
   const [errors, setErrors] = useState({});
   const [previewImage, setPreviewImage] = useState(null);
   const baseURL = import.meta.env.VITE_API_URL;
-  console.log("Offcanvas edit game id", gameId);
   const [formData, setFormData] = useState({
     name: "",
     type: "Single ",
@@ -43,8 +39,6 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
     breadth: '',
     selectedArea: ''
   });
-
-  console.log("selected game 11", selectedGame);
   
   useEffect(() => {
     if (selectedGame?.data?._id === gameId) {
@@ -64,7 +58,6 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
     }
   }, [selectedGame]);
   
-  console.log("area dimension === ", areaDimension);
   useEffect(() => {
     if (selectedGame) {
       setFormData({
@@ -153,7 +146,6 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaveLoading(true);
-    console.log("Updating Game:", formData);
 
     const { length, breadth, selectedArea } = areaDimension;
 const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;

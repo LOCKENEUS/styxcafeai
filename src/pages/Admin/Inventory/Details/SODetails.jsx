@@ -138,8 +138,6 @@ export const SODetails = () => {
         await dispatch(sendMailToVendor(selectedSO))
     };
 
-    console.log("Selected SO:", selectedSO);
-
     if (loading) {
         return (
             <div className="d-flex justify-content-center align-items-center" style={{ height: "70vh" }}>

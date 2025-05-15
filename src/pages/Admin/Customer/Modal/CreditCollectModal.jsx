@@ -20,8 +20,6 @@ const CreditCollectModal = ({ show, onHide, amount, onCollectCash, onCollectOnli
     }
   };
 
-  console.log("amount",amount);
-
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>

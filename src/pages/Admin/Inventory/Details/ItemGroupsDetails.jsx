@@ -30,7 +30,6 @@ const ItemGroupsDetails = () => {
 
   useEffect(() => {
     dispatch(getItemGroupById(id)).then((res) => {
-      console.log("res.payload", res.payload);
     });
   }, [dispatch, id]);
 

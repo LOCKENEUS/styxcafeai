@@ -253,8 +253,6 @@ const CreateClientModal = ({ show, handleClose }) => {
     }
   };
 
-  console.log("selectedClient", selectedClient);
-
   return (
     <>
       <div

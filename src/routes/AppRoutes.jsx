@@ -46,7 +46,7 @@ import { ItemsGroup } from "../components/common/inventory/list/itemsGroup";
 import { ItemCreate } from "../components/common/inventory/create/itemCreate";
 import { IitemGroupCreate } from "../components/common/inventory/create/itemGroupCreate";
 import { VendorCreate } from "../components/common/inventory/vendorCreate";
-import { PurchaseReceived } from "../components/common/inventory/purchaseReceived";
+// import { PurchaseReceived } from "../components/common/inventory/purchaseReceived";
 import { PurchaseOrder } from "../components/common/inventory/purchaseOrder";
 import { PurchaseOrderCreate } from "../components/common/inventory/purchaseOrderCreate";
 import { PurchaseBill } from "../components/common/inventory/purchaseBill";
@@ -55,7 +55,6 @@ import { SaleInvoice } from "../components/common/inventory/saleInvoice";
 import { InvoicePayments } from "../components/common/inventory/invoicePayments";
 import { InventorySetting } from "../components/common/inventory/inventorySetting";
 import { BillPayments } from "../components/common/inventory/billPayments";
-import { VendoreDetails } from "../components/common/inventory/details/vendorDetails";
 import { ItemsDetails } from "../components/common/inventory/details/itemsDetails";
 import { PODetails } from "../components/common/inventory/details/PODetails";
 
@@ -112,6 +111,11 @@ import BookingDetailsPage from "../pages/SuperAdmin/cafe/booking/bookingDetailsp
 import ClientDetailsPage from "../pages/SuperAdmin/cafe/client/clientDetailspage";
 import { ItemGroupDetail } from "../components/common/inventory/details/itemGroupDetail";
 import { EditItem } from "../components/common/inventory/edit/editItem";
+import { VendoreDetails } from "../components/common/inventory/details/vendorDetails";
+import { PoUpdate } from "../components/common/inventory/poUpdate";
+import { PurchaseReceivedCreate } from "../components/common/inventory/PurchaseReceivedCreate";
+import { PurchaseReceived } from "../components/common/inventory/purchaseReceived";
+import { PrDetails } from "../components/common/inventory/prDetails";
 
 
 
@@ -162,8 +166,11 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/Inventory/ItemGroupCreate" element={<IitemGroupCreate />} />
           <Route path="/Inventory/ItemGroupCreate/:id" element={<IitemGroupCreate />} />
           <Route path="/Inventory/vendorCreate" element={<VendorCreate />} />
+          <Route path="/Inventory/Vendor/Edit/:id" element={<VendorCreate />} />
           <Route path="/Inventory/PurchaseOrder" element={<PurchaseOrder />} />
           <Route path="/Inventory/PurchaseReceived" element={<PurchaseReceived />} />
+          <Route path="/Inventory/PurchaseReceivedCreate" element={<PurchaseReceivedCreate />} />
+          <Route path="/Inventory/PurchaseReceive" element={<PrDetails />} />
           <Route path="/Inventory/PurchaseOrderCreate" element={<PurchaseOrderCreate />} />
           <Route path="/Inventory/PurchaseBill" element={<PurchaseBill />} />
           <Route path="/Inventory/BillPayments" element={<BillPayments />} />
@@ -172,11 +179,10 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/Inventory/InvoicePayments" element={<InvoicePayments />} />
           <Route path="/Inventory/InventorySetting" element={<InventorySetting />} />
 
-          <Route path="/Inventory/VendorDetails" element={<VendoreDetails />} />
+          <Route path="/Inventory/VendorDetails/:id" element={<VendoreDetails />} />
           <Route path="/Inventory/ItemDetails" element={<ItemsDetails />} />
           <Route path="/Inventory/PurchaseOrderDetails/:id" element={<PODetails />} />
-
-
+          <Route path="/Inventory/PurchaseOrder/Edit/:id" element={<PoUpdate />} />
 
           <Route path="/superadmin/CafeGames" element={<CafeGames />} />
           <Route path="/superadmin/CreateMembership" element={<CreateMembership />} />

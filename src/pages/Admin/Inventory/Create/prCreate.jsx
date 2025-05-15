@@ -117,11 +117,6 @@ export const PRCreate = () => {
         const receivedQty = inventoryItems[index]?.qty_received || 0;
         const maxQty = orderedQty - receivedQty;
 
-        console.log("Max Quantity:", maxQty);
-        console.log("Entered Quantity:", enteredQty);
-        console.log("index:", index);
-        console.log("Inventory Items:", inventoryItems);
-
         if (enteredQty > maxQty) {
             alert(`You cannot enter more than ${maxQty} units.`);
             setInventoryItems((prevItems) =>
@@ -153,8 +148,6 @@ export const PRCreate = () => {
         try {
             const response = await dispatch(createPurchaseReceive(submitData)).unwrap();
 
-            console.log("Purchase Receive created successfully:", response);
-
             navigate("/admin/inventory/PurchaseReceivedDetails", { state: response?._id });
 
             setFormData({
@@ -169,8 +162,6 @@ export const PRCreate = () => {
             console.error('Error creating purchase receive:', error);
         }
     };
-
-    console.log("Inventory Items:", inventoryItems);
 
     return (
         <Container >

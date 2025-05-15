@@ -69,27 +69,6 @@ const GameForm = ({ showCanvas, handleCloseCanvas, isEditing, editIndex }) => {
     e.preventDefault();
     
     const formDataToSend = new FormData();
-    
-    // // Append all fields except image
-    // Object.entries(formData).forEach(([key, value]) => {
-    //   if (key !== 'image' && value !== null) {
-    //     formDataToSend.append(key, value);
-    //     // Log each appended value for debugging
-    //     console.log(`Appending ${key}: ${value}`);
-    //   }
-    // });
-
-    // // Append image file if exists
-    // if (formData.image instanceof File) {
-    //   formDataToSend.append('image', formData.image);
-    //   console.log(`Appending image: ${formData.image.name}`);
-    // }
-
-    // Log the entire FormData object for debugging
-    for (let pair of formDataToSend.entries()) {
-      console.log(`${pair[0]}: ${pair[1]}`);
-    }
-
     if (isEditing) {
       dispatch(updateGame({ id: formData.id, updatedData: formDataToSend }));
     } else {
@@ -97,7 +76,6 @@ const GameForm = ({ showCanvas, handleCloseCanvas, isEditing, editIndex }) => {
     }
     
     // Log the form data to the console
-    console.log(formData);
     setFormData(initialFormData);
     handleCloseCanvas();
   };

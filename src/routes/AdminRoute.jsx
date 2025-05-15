@@ -22,7 +22,6 @@ const AdminRoute = () => {
   // const userRole = sessionStorage.getItem("userRole");
   const userRole = JSON.parse(sessionStorage.getItem("userRole"));
 
-console.log(userRole);
   return isAuthenticated && (userRole === "admin" || userRole === "superadmin") ? (
     <Outlet />
   ) : (

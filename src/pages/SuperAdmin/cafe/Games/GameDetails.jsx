@@ -59,7 +59,6 @@ const GameDetailsCafe = () => {
   const location = useLocation();
   const { gameId } = location.state || {};
 
-  console.log("your game id here === 99", gameId);
   const [earningData, setEarningData] = useState([]);
   const [showAddSlotOffcanvas, setShowAddSlotOffcanvas] = useState(false);
   const [showEditGameOffcanvas, setShowEditGameOffcanvas] = useState(false);
@@ -85,7 +84,6 @@ const GameDetailsCafe = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const bookings = useSelector((state) => state.bookings.bookings);
-  console.log("booking details -- ", bookings);
 
 const { games } = useSelector((state) => state.games);
 
@@ -198,7 +196,6 @@ const { games } = useSelector((state) => state.games);
     }
   }, [searchTerm, earningData]);
   const dataEarning = useSelector(state => state.bookings.earningData);
-  console.log("earning -- ", dataEarning);
   useEffect(() => {
     dispatch(getBookings(cafeId));
   }, [dispatch, cafeId])
@@ -213,25 +210,9 @@ const { games } = useSelector((state) => state.games);
     }
   }, [isSameGame, dispatch]);
 
-
-  console.log("selected game here 99", selectedGame?.data);
   const cafe_id = selectedGame?.data?.cafe;
-  console.log("your cafeid here", cafe_id);
 
   // compare game id with selected game id
-
-  console.log("your game here 1==", isSameGame);
-
-
-  console.log("your game id here game getGameById ",);
-  console.log("your cafe id game 99", gameId);
-
-
-
-
-
-
-
 
   // ------------------------- Time Slots -----------------------------
 
@@ -242,14 +223,7 @@ const { games } = useSelector((state) => state.games);
     dispatch(getslots(gameId)).finally(() => setShowSlotLoder(false));
   }, [dispatch, gameId]);
 
-
-  console.log("Form State slots Game Details 00:", slots);
-
-
-
   // const getDuration = 
-
-
 
   // ---------------------------  gsap  -----------------------------
   // useEffect(() => {
@@ -264,21 +238,14 @@ const { games } = useSelector((state) => state.games);
   //   // }
   // }, [selectedGame]);
 
-
-
-
   useEffect(() => {
     dispatch(fetchCafes(cafe_id));
   }, [cafe_id, dispatch]);
 
   const cafeDetails = useSelector((state) => state.cafes);
-  console.log("cafe details game 11 00 ==", cafeDetails);
 
   // compare cafeId with cafeDetails.cafeId
   const isCafeIdMatch = cafeDetails.cafes?.find(cafe => cafe._id === cafe_id);
-  console.log("isCafeIdMatch membership ==", isCafeIdMatch);
-
-
 
   const generateWeekdays = () => {
     return ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -313,8 +280,6 @@ const { games } = useSelector((state) => state.games);
 
 
   const filterBookingsEarning = async (eventKey = selectedItem, id = selectedGameId) => {
-    console.log("eventKey == ", eventKey, "gameId == ", id);
-
     setSelectedItem(eventKey);
     setSelectedGameId(id);
 
@@ -344,7 +309,6 @@ const { games } = useSelector((state) => state.games);
 
     try {
       const response = await dispatch(fetchEarning({ id: null, updatedData })).unwrap();
-      console.log("Fetched Data:", response.data);
       setEarningData(response.data);
     } catch (error) {
       console.error("Error fetching earning:", error);
@@ -362,10 +326,7 @@ const { games } = useSelector((state) => state.games);
     setCurrentPageEarning(pageNumber);
   };
 
-  console.log("games 99 == 00", games);
-
   const handleGameIDPass = async (id) => {
-    console.log('Selected Game ID:', id);
     let updatedData = {
       cafeId: cafeId,
       startDate: today,
@@ -375,7 +336,6 @@ const { games } = useSelector((state) => state.games);
 
     try {
       const response = await dispatch(fetchEarning({ id: gameId, updatedData })).unwrap();
-      console.log("Fetched Data:", response.data);
       setEarningData(response.data);
     } catch (error) {
       console.error("Error fetching earning:", error);
@@ -395,7 +355,6 @@ const { games } = useSelector((state) => state.games);
 
     try {
       const response = await dispatch(fetchEarning({ id: null, updatedData: updatedData })).unwrap();
-      console.log("Fetched Data:", response.data);
       setEarningData(response.data);
     } catch (error) {
       console.error("Error fetching earning:", error);

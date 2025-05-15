@@ -22,8 +22,6 @@ const UserRoute = () => {
   const isAuthenticated = sessionStorage.getItem("authToken");
   const userRole = sessionStorage.getItem("userRole");
 
-  console.log("userRole...", userRole)
-
   return isAuthenticated && (userRole === "user" || userRole === "admin" || userRole === "superadmin") ? (
     <Outlet />
   ) : (

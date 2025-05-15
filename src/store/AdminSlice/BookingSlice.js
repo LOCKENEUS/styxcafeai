@@ -255,6 +255,7 @@ export const processOnlinePayment = createAsyncThunk(
                   total,
                   looser,
                   playerCredits,
+                  customer_id: selectedCustomer?._id,
                   adjustment,
                 },
                 {

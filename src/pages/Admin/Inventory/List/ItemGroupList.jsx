@@ -84,7 +84,6 @@ const ItemGroupList = () => {
 
   useEffect(() => {
     dispatch(getItemGroups(cafeId)).then((res) => {
-      console.log("res.payload", res.payload);
     });
   }, [dispatch, cafeId]);
 

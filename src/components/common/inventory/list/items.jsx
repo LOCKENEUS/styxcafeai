@@ -15,8 +15,6 @@ import { getItems } from "../../../../store/slices/inventory";
 import Loader from "../../Loader/Loader";
 import { FcNext, FcPrevious } from "react-icons/fc";
 
-
-
 export const Items = () => {
   const [superAdminId, setSuperAdminId] = useState('');
   useEffect(() => {
@@ -24,8 +22,6 @@ export const Items = () => {
     if (userData) {
       const parsedUser = JSON.parse(userData);
       setSuperAdminId(parsedUser._id);
-      console.log("User ID (_id):-- ", parsedUser._id);
-      console.log("User Name:", parsedUser.name);
     }
   }, []);
   const [searchText, setSearchText] = useState("");
@@ -46,12 +42,7 @@ export const Items = () => {
     // }
   }, [dispatch]);
 
-
-
-
-
-  const itemsList = useSelector((state) => state.inventorySuperAdmin.inventory);
-
+  const itemsList = useSelector((state) => state.inventorySuperAdmin.it);
 
   // const filteredItems = itemsList?.filter((item) =>
   //   item.name?.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -78,8 +69,6 @@ export const Items = () => {
   const totalPages = Math.ceil((filteredItems.length || 0) / itemsPerPage);
   const currentItems = filteredItems.slice(startIndex, startIndex + itemsPerPage);
 
-
-  console.log("currentItems", currentItems);
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
@@ -103,7 +92,6 @@ export const Items = () => {
   // /Inventory/ItemDetails
   const handleShowDetails = (groupId) => {
     // e.preventDefault();
-    console.log("groupId", groupId);
     navigator("/Inventory/itemDetails", { state: { groupId } });
 
   }

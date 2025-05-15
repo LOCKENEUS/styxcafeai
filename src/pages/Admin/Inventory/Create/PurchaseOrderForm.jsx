@@ -102,8 +102,6 @@ const PurchaseOrderForm = () => {
     return { total: subtotal + totalTax, totalTax };
   };
 
-  console.log("products", products)
-
   const updateProduct = (id, field, value) => {
     const updatedProducts = products.map((product) => {
       if (product.id === id) {
@@ -328,8 +326,6 @@ const PurchaseOrderForm = () => {
     }
     handleClose();
   };
-
-  console.log("user_type", userType);
 
   return (
     <Container fluid className="p-4">

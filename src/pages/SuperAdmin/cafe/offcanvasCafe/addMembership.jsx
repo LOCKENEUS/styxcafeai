@@ -6,14 +6,10 @@ import { addMembership } from "../../../../store/slices/MembershipSlice";
 
 
 const AddMembershipOffcanvas = ({ show ,handleClose , cafeId , selectedGameDetails}) => {
-    console.log("selectedMembership offcanvas -----------",cafeId);
-
-
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
     const [details, setDetails] = useState(['']); // Array to store multiple details
    
-  
     const initialFormData = {
       name: '',
       validity: 'Yearly',
@@ -25,7 +21,6 @@ const AddMembershipOffcanvas = ({ show ,handleClose , cafeId , selectedGameDetai
   
     const [formData, setFormData] = useState(initialFormData);
   
-
     const addDetailField = () => {
         setDetails([...details, '']);
       };
@@ -67,8 +62,6 @@ const AddMembershipOffcanvas = ({ show ,handleClose , cafeId , selectedGameDetai
         } finally {
           setIsLoading(false);
         }
-    
-        console.log("this is form data :",formData);
       };   
     return (
         <Offcanvas show={show} onHide={handleClose} placement="end"  style={{ width: "600px" }}>

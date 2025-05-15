@@ -20,8 +20,6 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
   const [width, setWidth] = useState(window.innerWidth < 768 ? "90%" : "50%");
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log("game cafe id ", cafeId);
-
   const initialFormData = {
     name: "",
     type: "Single",
@@ -98,7 +96,6 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
     // for (let pair of formDataToSend.entries()) {
     //   console.log(`${pair[0]}: ${pair[1]}`);
     // }
-    console.log(formData)
 
     try {
       if (isEditing) {
@@ -122,10 +119,6 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
     
   };
 
-
-
-
-  console.log("isEditing", isEditing)
   useEffect(() => {
     if (isEditing && cafeId && game) {
       // Set form data for editing

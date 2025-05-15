@@ -80,9 +80,7 @@ export const InvoiceCreate =()=>{
     if (isEditMode) {
       dispatch(getSOInvoiceById(id))
         .unwrap()
-        .then((soData) => {
-          console.log("SO Data received:", soData);
-          
+        .then((soData) => {          
           setFormData({
             date: soData.date ? new Date(soData.date).toISOString().split('T')[0] : '',
             payment_terms: soData.payment_terms || '',

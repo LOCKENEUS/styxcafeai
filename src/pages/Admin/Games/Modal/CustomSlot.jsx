@@ -193,8 +193,6 @@ const CustomSlotModal = ({ show, handleClose, gameId, date }) => {
       end_time: convertTo24HourFormat(formData.end_time),
     };
 
-    console.log("Payload:", payload);
-
     dispatch(setSlotDataManually(payload));
     navigate(`/admin/bookings/booking-details/${gameId}/0/${date}`);
     handleClose();

@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 
 const GameDeleteModal = ({ show, handleClose, gameId ,cafeId}) => {
 
-    console.log("gameId delete  ",gameId);
     const navigate = useNavigate();
 
     const dispatch = useDispatch();

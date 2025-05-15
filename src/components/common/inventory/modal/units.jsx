@@ -40,7 +40,6 @@ export const Units = ({ show, handleClose, superAdminId }) => {
 
     try {
       await dispatch(addCustomField(formDataSubmit));
-      console.log("Submitted:", formDataSubmit);
       handleClose(); 
       setFormData({
         unitName: "",

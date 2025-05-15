@@ -16,7 +16,6 @@ const ClientDetailsPage = () => {
 
     const location = useLocation();
     const clientId = location.state.clientID;
-    console.log("client id teri vali client id click 99", clientId);
     const baseURL = import.meta.env.VITE_API_URL;
     const [currentPagebooking, setCurrentPagebooking] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
@@ -37,17 +36,12 @@ const ClientDetailsPage = () => {
 
     const clientDetails = useSelector((state) => state.customers.selectedCustomer);
 
-    console.log("details client : - ", clientDetails);
-
     const cafeId = clientDetails?.data?.cafe?._id;
-    console.log("cafe id in client ", cafeId);
 
     useEffect(() => {
         dispatch(getBookings(cafeId));
     }, [dispatch, cafeId]);
     const bookings = useSelector((state) => state.bookings.bookings);
-    console.log("booking details client-- ", bookings);
-
 
     const totalPagesboking = Math.ceil(bookings.length / itemsPerPage);
 
@@ -97,7 +91,6 @@ const ClientDetailsPage = () => {
     }
 
     const handleClientClick = (clientID) => {
-        console.log("client id teri vali client id click ", clientID);
         navigate(`/superadmin/Clients/ClientDetails`, { state: { clientID: clientID } });
     }
 

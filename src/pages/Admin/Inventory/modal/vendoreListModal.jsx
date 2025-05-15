@@ -33,11 +33,9 @@ const VendorsList = ({ showVendorList, handleCloseVendorList,onVendorSelect }) =
 
   // Get vendors data from Redux store
   const vendors = useSelector((state) => state.purchaseOrder);
-  // console.log("vendors",vendors);
   
   // Ensure vendors is an array before filtering
   const vendorsList = vendors?.vendors || [];
-  // console.log("vendorsList",vendorsList);
   
   // Filtering vendors based on search input
   const filteredVendors = vendorsList.filter((vendor) =>
@@ -54,7 +52,6 @@ const VendorsList = ({ showVendorList, handleCloseVendorList,onVendorSelect }) =
   );
 
   const handleVendorSelected = ( vendor_id) => {
-    console.log("Selected vendor: ", vendor_id);
     if (onVendorSelect) {
       onVendorSelect(vendor_id);
     }

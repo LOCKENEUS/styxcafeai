@@ -56,7 +56,6 @@ export const Adminlogin = createAsyncThunk(
       );
 
       const { data } = response;
-      console.log(data);
       if (!data || !data.data) {
         throw new Error("Invalid response structure from server");
       }

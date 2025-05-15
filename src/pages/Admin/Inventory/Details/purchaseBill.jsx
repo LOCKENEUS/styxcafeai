@@ -31,7 +31,6 @@ export const PurchaseBillDetailsAdmin = () => {
     const UserContactN = user?.contact_no;
     const UserAddress = user?.address;
     const UesrPAN = user?.panNo;
-    console.log("userName ----", userName);
 
     // Calculate remaining amount
     const { totalPaidAmount, remainingAmount } = useMemo(() => {

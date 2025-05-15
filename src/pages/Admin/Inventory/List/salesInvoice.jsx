@@ -40,7 +40,6 @@ export const SaleInvoiceInventory = () => {
  
   // Function to handle modal (replace with actual logic)
   const handleShowCreate = () => {
-    console.log("Show create item modal");
     navigator("/admin/Inventory/InvoiceCreate");
   };
 

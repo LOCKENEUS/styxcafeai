@@ -21,8 +21,6 @@ import { toast } from "react-toastify";
 export const EditItem = () => {
     const location = useLocation();
   const { groupId } = location.state || {};
-  console.log("Received groupId:", groupId);
-
 
 //   ======================================
 
@@ -40,14 +38,6 @@ export const EditItem = () => {
     const [itemsLoading, setItemsLoading] = useState(false);
     const [superAdminId, setSuperAdminId] = useState('');
     const customFields = useSelector(state => state.customFields.customFields);
-    // useEffect(() => {
-    //     const token = localStorage.getItem("token");
-    //     if (token) {
-    //       const userData = JSON.parse(token);
-    //       console.log("User ID (_id):", userData._id);
-    //     }
-    //   }, []);
-
     // -----------------------   API CALLS ---------------------------
 
     useEffect(() => {
@@ -57,14 +47,11 @@ export const EditItem = () => {
         }
     }, [dispatch, groupId]);
     const itemsDetails = useSelector((state) => state.inventorySuperAdmin.inventory);
-    console.log("itemsDetails --== 99:", itemsDetails);
     useEffect(() => {
         const userData = sessionStorage.getItem("user");
         if (userData) {
             const parsedUser = JSON.parse(userData);
             setSuperAdminId(parsedUser._id);
-            console.log("User ID (_id):-- ", parsedUser._id);
-            console.log("User Name:", parsedUser.name);
         }
     }, []);
 
@@ -122,26 +109,12 @@ export const EditItem = () => {
     }
   }, [itemsDetails]);
 
-
-
     const taxFieldsList = useSelector((state) => state.taxFieldSlice.taxFields);
-    console.log("Tax Fields:", taxFieldsList);
 
     const unitOptions = customFields.filter(field => field.type === "Unit");
     const manufacturerOptions = customFields.filter(field => field.type === "Manufacturer");
     const brandOptions = customFields.filter(field => field.type === "Brand");
     const vendors = useSelector(state => state.vendors.vendors);
-
-    console.log("Unit Options:", unitOptions);
-    console.log("Manufacturer Options:", manufacturerOptions);
-    console.log("Brand Options:", brandOptions);
-
-
-    // useEffect(() => {
-    //     dispatch(getItems(superAdminId));
-    // })
-
-    // const { items } = useSelector((state) => state.items);
 
     const [formData, setFormData] = useState({
         name: "",
@@ -263,7 +236,6 @@ export const EditItem = () => {
             await dispatch(updateItemsById({ itemsData: formDataToSend, itemId: superAdminId }));
 
             // setSubmitLoading(false);
-            console.log("Submitted data:", formDataToSend);
             // Reset form after successful submission
            
         } catch (error) {

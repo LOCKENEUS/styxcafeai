@@ -19,7 +19,6 @@ const CreateGames = () => {
     const fetchGames = async () => {
       try {
         await dispatch(getGames());
-        console.log("Fetched games:", games);
       } catch (error) {
         console.error("Error fetching games:", error);
       }

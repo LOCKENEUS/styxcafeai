@@ -15,9 +15,6 @@ import { toast } from "react-toastify";
 
 export const Brand = ({ show, handleClose, superAdminId }) => {
   const dispatch = useDispatch();
-
-  console.log("superAdminId brand", superAdminId);
-
   const [formData, setFormData] = useState({
     name: "",
   });

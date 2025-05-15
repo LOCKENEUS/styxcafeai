@@ -22,7 +22,6 @@ const BookingDetailsPage = () => {
   const baseURL = import.meta.env.VITE_API_URL;
   const [loading, setLoading] = useState(<Loader />)
   const [selectedPlayer, setSelectedPlayer] = useState(null);
-  console.log(bookingID);
   const dispatch = useDispatch();
   useEffect(() => {
     setLoading(true);
@@ -31,11 +30,9 @@ const BookingDetailsPage = () => {
 
   const selectedBooking = useSelector((state) => state.bookings);
 
-  console.log("selected booking detalis page ==00", selectedBooking);
   const cafeId = selectedBooking.booking?.cafe;
 
   const items = selectedBooking.booking?.so_id?.items || [];
-  console.log("Item", items);
 
   const isoTime = selectedBooking.booking?.start_time;
   const date = new Date(isoTime);

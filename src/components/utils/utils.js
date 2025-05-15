@@ -38,8 +38,6 @@ export const convertTo12Hour = (time) => {
   const formattedHour = hours % 12 || 12; // Convert 0 to 12 for 12 AM
   const formattedMinute = minutes < 10 ? `0${minutes}` : minutes; // Pad minutes with leading zero if necessary
 
-  console.log("Formatted Time:", `${formattedHour}:${formattedMinute} ${ampm}`); // Debugging line
-  console.log("Original Time:", time); // Debugging line
   return `${formattedHour}:${formattedMinute} ${ampm}`;
 };
 

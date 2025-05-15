@@ -36,21 +36,14 @@ import { setsEqual } from "chart.js/helpers";
 
 
 const ViewDetails = () => {
-
-
-
-
   const [loadingMain, setLoadingMain] = useState(true);
-
   const { games, selectedGame } = useSelector((state) => state.games);
-  console.log("games ID 55 here ====", games?.map(game => game._id), selectedGame?._id);
   const cafes = useSelector(selectCafes);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const cafeId = location.state?.cafeId;
 
-  console.log("Cafe ID from state:", cafeId);
   const [showModal, setShowModal] = useState(false);
   const [cafe, setCafe] = useState(null);
   const [showCanvas, setShowCanvas] = useState(false);
@@ -183,13 +176,10 @@ const ViewDetails = () => {
     }
   }, [searchTerm, earningData]);
   const dataEarning = useSelector(state => state.bookings.earningData);
-  console.log("earning -- ", dataEarning);
   useEffect(() => {
     dispatch(getBookings(cafeId));
   }, [dispatch, cafeId]);
   const bookings = useSelector((state) => state.bookings.bookings);
-  console.log("booking details -- ", bookings);
-
 
   useEffect(() => {
     setLoadingMain(true);
@@ -200,7 +190,6 @@ const ViewDetails = () => {
 
   useEffect(() => {
     if (cafes.length > 0) {
-      // console.log("cafes of kreet ", cafes)
       const selectedCafe = cafes.find(cafe => cafe._id === cafeId);
       if (selectedCafe) {
         setCafe(selectedCafe);
@@ -208,12 +197,9 @@ const ViewDetails = () => {
     }
   }, [cafes, cafeId]);
 
-  // console.log("cafe -- ", cafe)
-
   useEffect(() => {
     dispatch(setSelectedGame(null));
   }, [dispatch]);
-  console.log("selected game -- ", selectedGame)
 
   // -------------- Games --------------
   const gamesDetails = useSelector(state => state.games);
@@ -226,10 +212,6 @@ const ViewDetails = () => {
   }, [cafeId, dispatch]);
   //   games  const POIdGet = useSelector(state => state.purchaseReceiveSlice);
 
-
-
-  console.log("games -- ", gamesDetails);
-
   useEffect(() => {
     if (cafeId) {
       dispatch(getCustomers(cafeId));
@@ -237,7 +219,6 @@ const ViewDetails = () => {
   }, [dispatch, cafeId]);
   // const clientList= useSelector(state => state.        state.customers = action.payload;
   const clientList = useSelector((state) => state.customers.customers);
-  console.log("clientList :--", clientList);
 
   const filteredData = clientList.filter((client) => {
     const query = searchQuery.toLowerCase();
@@ -306,8 +287,6 @@ const ViewDetails = () => {
 
   const handleOpenGameDetails = (gameId) => {
     navigate("/superadmin/Games/cafeGames", { state: { gameId: gameId } });
-
-    // console.log("your game id teri vali game id click ", gameId);
   };
 
   useEffect(() => {
@@ -369,7 +348,6 @@ const ViewDetails = () => {
     }
   }, [cafeId, dispatch]);
 
-  console.log("membershipDetails -- ", memberships);
   const handleCreateNewMembership = () => {
     dispatch(setSelectedMembership(null));
     setShowCanvas(true);
@@ -509,7 +487,6 @@ const ViewDetails = () => {
     navigate(`/superadmin/Bookings/BookingDetails`, { state: { bookingID: bookingID } });
   }
   const handleClientClick = (clientID) => {
-    console.log("client id teri vali client id click ", clientID);
     navigate(`/superadmin/Clients/ClientDetails`, { state: { clientID: clientID } });
   }
   // -------------------  Earning -------------------
@@ -658,7 +635,6 @@ const ViewDetails = () => {
   const handleFetchEarning = async () => {
     try {
       const response = await dispatch(fetchEarning({ id: null, updatedData: requestData })).unwrap();
-      console.log("Fetched Data:", response.data);
       setEarningData(response.data);
     } catch (error) {
       console.error("Error fetching earning:", error);
@@ -668,15 +644,11 @@ const ViewDetails = () => {
   const handleFetchEarningDay = async () => {
     try {
       const response = await dispatch(fetchEarning({ id: null, updatedData: requestData })).unwrap();
-      console.log("Fetched Data:", response.data);
       setEarningData(response.data);
     } catch (error) {
       console.error("Error fetching earning:", error);
     }
   };
-
-
-  console.log("earningData == 00", earningData);
 
   // const filterBookingsEarning = async (eventKey,id) => {
   //   console.log("eventKey == ", eventKey);
@@ -710,7 +682,6 @@ const ViewDetails = () => {
 
   //   try {
   //     const response = await dispatch(fetchEarning({ id: null, updatedData })).unwrap();
-  //     console.log("Fetched Data:", response.data);
   //     setEarningData(response.data);
   //   } catch (error) {
   //     console.error("Error fetching earning:", error);
@@ -718,8 +689,6 @@ const ViewDetails = () => {
   // };
 
   const filterBookingsEarning = async (eventKey = selectedItem, id = selectedGameId) => {
-    console.log("eventKey == ", eventKey, "gameId == ", id);
-
     setSelectedItem(eventKey);
     setSelectedGameId(id);
 
@@ -748,7 +717,6 @@ const ViewDetails = () => {
 
     try {
       const response = await dispatch(fetchEarning({ id: null, updatedData })).unwrap();
-      console.log("Fetched Data:", response.data);
       setEarningData(response.data);
     } catch (error) {
       console.error("Error fetching earning:", error);
@@ -766,10 +734,7 @@ const ViewDetails = () => {
     setCurrentPageEarning(pageNumber);
   };
 
-  console.log("games 99 == 00", games);
-
   const handleGameIDPass = async (id) => {
-    console.log('Selected Game ID:', id);
     let updatedData = {
       cafeId: cafeId,
       startDate: today,
@@ -779,7 +744,6 @@ const ViewDetails = () => {
 
     try {
       const response = await dispatch(fetchEarning({ id: null, updatedData })).unwrap();
-      console.log("Fetched Data:", response.data);
       setEarningData(response.data);
     } catch (error) {
       console.error("Error fetching earning:", error);

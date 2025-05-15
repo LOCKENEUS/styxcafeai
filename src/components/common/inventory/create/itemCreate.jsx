@@ -30,13 +30,6 @@ export const ItemCreate = () => {
 
     const [superAdminId, setSuperAdminId] = useState('');
     const customFields = useSelector(state => state.customFields.customFields);
-    // useEffect(() => {
-    //     const token = localStorage.getItem("token");
-    //     if (token) {
-    //       const userData = JSON.parse(token);
-    //       console.log("User ID (_id):", userData._id);
-    //     }
-    //   }, []);
 
     // -----------------------   API CALLS ---------------------------
     useEffect(() => {
@@ -44,8 +37,6 @@ export const ItemCreate = () => {
         if (userData) {
             const parsedUser = JSON.parse(userData);
             setSuperAdminId(parsedUser._id);
-            console.log("User ID (_id):-- ", parsedUser._id);
-            console.log("User Name:", parsedUser.name);
         }
     }, []);
 
@@ -69,20 +60,12 @@ export const ItemCreate = () => {
 
     }, [dispatch, superAdminId]);
 
-
-
     const taxFieldsList = useSelector((state) => state.taxFieldSlice.taxFields);
-    console.log("Tax Fields:", taxFieldsList);
 
     const unitOptions = customFields.filter(field => field.type === "Unit");
     const manufacturerOptions = customFields.filter(field => field.type === "Manufacturer");
     const brandOptions = customFields.filter(field => field.type === "Brand");
     const vendors = useSelector(state => state.vendors.vendors);
-
-    console.log("Unit Options:", unitOptions);
-    console.log("Manufacturer Options:", manufacturerOptions);
-    console.log("Brand Options:", brandOptions);
-
 
     // useEffect(() => {
     //     dispatch(getItems(superAdminId));
@@ -208,7 +191,6 @@ export const ItemCreate = () => {
 
             await dispatch(addItems(formDataToSend));
             // setSubmitLoading(false);
-            console.log("Submitted data:", formDataToSend);
             // Reset form after successful submission
             setFormData({
                 name: "",
@@ -438,8 +420,8 @@ export const ItemCreate = () => {
                                             onChange={handleChange}
                                             style={inputStyle}
                                         >
-                                            <option value="Taxable">Taxsaple</option>
-                                            <option value="Non-Taxable">Non Taxable</option>
+                                            <option value="Taxable">Taxable</option>
+                                            <option value="Non-Taxable">Non-Taxable</option>
                                         </FormSelect>
                                     </FormGroup>
                                 </Col>

@@ -42,7 +42,6 @@ export const addLocation = createAsyncThunk(
 export const updateLocation = createAsyncThunk(
   "locations/updateLocation",
   async ({ id, updatedData }, thunkAPI) => {
-    console.log("Updated Data from redux:", updatedData);
     try {
       const response = await axios.patch(
         `${BASE_URL}/superadmin/location/${id}`,

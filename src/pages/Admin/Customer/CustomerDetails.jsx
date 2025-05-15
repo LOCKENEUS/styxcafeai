@@ -28,7 +28,7 @@ const CustomerDetails = () => {
   const [creditTotal, setCreditTotal] = useState(0);
   const [amount, setAmount] = useState(0);
   const [activeKey, setActiveKey] = useState("/home");
-  const itemsPerPage = 5; // Number of items to display per page
+  const itemsPerPage = 10; // Number of items to display per page
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
 
   useEffect(() => {
@@ -39,14 +39,11 @@ const CustomerDetails = () => {
     if (selectedCustomer) {
       let creditTotalAmount = 0
       selectedCustomer?.creditHistory.forEach((credit) => {
-        console.log("credit amount to add", credit?.credit);
         creditTotalAmount += credit?.credit
       })
       setCreditTotal(creditTotalAmount)
     }
   }, [dispatch, selectedCustomer]);
-
-  console.log("selectedCustomer total credit", creditTotal);
 
   const handleCheckboxChange = (bookingId, isChecked, creditValue) => {
     if (isChecked) {
@@ -154,9 +151,6 @@ const CustomerDetails = () => {
       collectCustomCreditAmountOnline({ id, amount, customer: selectedCustomer?.data })
     );
   };
-
-  console.log("currentPage", currentPage);
-  console.log("currentPageTransaction", currentPageTransaction);
 
   return (
     <Container className="mt-4">
@@ -267,7 +261,7 @@ const CustomerDetails = () => {
               <Col className="mt-3">
                 <Tab.Content>
                   <Tab.Pane eventKey="/home">
-                    <Card className="p-3 mb-3 d-flex flex-column" style={{ height: "88vh" }}>
+                    <Card className="p-3 d-flex flex-column" style={{ height: "88vh" }}>
                       <div className="flex-grow-1 overflow-auto">
 
                         <div className="d-flex align-items-center justify-content-between">
@@ -336,7 +330,7 @@ const CustomerDetails = () => {
                     </Card>
                   </Tab.Pane>
                   <Tab.Pane eventKey="link-1">
-                    <Card className="p-3 mb-3" style={{ height: "88vh" }}>
+                    <Card className="p-3" style={{ height: "88vh" }}>
                       <div className="d-flex justify-content-between">
                         {/* <h5>Booking History</h5> */}
                         <FormControl
@@ -458,7 +452,7 @@ const CustomerDetails = () => {
                     </Card>
                   </Tab.Pane>
                   <Tab.Pane eventKey="link-2">
-                    <Card className="p-3 mb-3 d-flex flex-column" style={{ height: "88vh" }}>
+                    <Card className="p-3 d-flex flex-column" style={{ height: "88vh" }}>
                       <div className="flex-grow-1 overflow-auto">
 
                         <div className="d-flex align-items-center justify-content-between">

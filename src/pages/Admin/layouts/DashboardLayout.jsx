@@ -23,7 +23,6 @@ const DashboardLayout = ({ setIsAuthenticated }) => {
 
   const toggleSidebar = () => {
     setCollapsed((prev) => !prev);
-    console.log(collapsed);
   };
 
   return (

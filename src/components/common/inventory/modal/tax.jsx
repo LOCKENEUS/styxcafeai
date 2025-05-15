@@ -12,7 +12,7 @@ import { useDispatch } from "react-redux";
 import { useState } from "react";
 import { addTaxField } from "../../../../store/AdminSlice/TextFieldSlice";
 
-export const TaxModal = ({ show, handleClose,superAdminId }) => {
+export const TaxModal = ({ show, handleClose }) => {
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
@@ -21,7 +21,8 @@ export const TaxModal = ({ show, handleClose,superAdminId }) => {
     tax_description: "",
   });
 
-  console.log("superAdminId 00",superAdminId);
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const superAdminId = user?._id;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -33,7 +34,7 @@ export const TaxModal = ({ show, handleClose,superAdminId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const formDataSubmit = {
       tax_name: formData.tax_name,
       tax_rate: formData.tax_rate,
@@ -43,9 +44,9 @@ export const TaxModal = ({ show, handleClose,superAdminId }) => {
 
     try {
       await dispatch(addTaxField(formDataSubmit));
-      console.log("Submitted:", formData);
-      handleClose(); 
+      handleClose();
       setFormData({
+        cafe: superAdminId,
         tax_name: "",
         tax_rate: "",
         tax_description: "",

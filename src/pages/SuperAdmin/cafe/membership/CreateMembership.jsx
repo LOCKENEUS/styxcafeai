@@ -16,13 +16,10 @@ import { fetchCafesID } from "../../../../store/slices/cafeSlice";
 const CreateMembership = () => {
 
   // const cafeId = useParams().cafeId;
-  // console.log("your cafe id membership ", cafeId);
 
   const [loadingMembership, setLoadingMembership] = useState(true);
   const location = useLocation();
   const { cafeId } = location.state || {};
-  console.log("your cafe id membership ", cafeId);
-
 
   const dispatch = useDispatch();
   const { memberships, loading, error, selectedMembership } = useSelector((state) => state.memberships);
@@ -36,14 +33,9 @@ const CreateMembership = () => {
   }, [cafeId, dispatch]);
 
   const cafeDetails = useSelector((state) => state.cafes);
-  console.log("cafe details membership ==", cafeDetails);
 
   // compare cafeId with cafeDetails.cafeId
   const isCafeIdMatch = cafeDetails.cafes?.find(cafe => cafe._id === cafeId);
-  console.log("isCafeIdMatch membership ==", isCafeIdMatch);
-
-
-
 
   useEffect(() => {
     setLoadingMembership(true);
@@ -52,9 +44,6 @@ const CreateMembership = () => {
     }
 
   }, [dispatch, cafeId]);
-  console.log("this is mameber ship sata  :", memberships);
-
-
 
   const handleEdit = (membership) => {
     dispatch(setSelectedMembership(membership));

@@ -5,13 +5,9 @@ import { addGame, updateGame } from "../../../../store/slices/gameSlice";
 import { TiDeleteOutline } from "react-icons/ti";
 
 const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) => {
-
-
-
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  console.log("Cafe ID offcanvas:", cafeId);
   const dispatch = useDispatch();
   // const cafes = useSelector(selectCafes);
   const [imagePreview, setImagePreview] = useState(null);
@@ -39,13 +35,7 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
 
   const [formData, setFormData] = useState(initialFormData);
 
-
-
-
   const handleSubmit = async (e) => {
-
-
-    console.log("submit form ", cafeId);
     e.preventDefault();
     setIsLoading(true);
 
@@ -70,13 +60,7 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
     // Append image file if exists
     if (formData.gameImage instanceof File) {
       formDataToSend.append('gameImage', formData.gameImage);
-      // console.log(`Appending image: ${formData.gameImage.name}`);
     }
-    // Log the entire FormData object for debugging
-    // for (let pair of formDataToSend.entries()) {
-    //   console.log(`${pair[0]}: ${pair[1]}`);
-    // }
-    console.log(formData)
 
     try {
       await dispatch(addGame(formDataToSend));

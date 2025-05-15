@@ -51,10 +51,7 @@ const CreateOffers = ({ cafeId }) => {
   const handleCloseCanvas = () => {
     setShowCanvas(false);
     dispatch(setSelectedOffer(null));
-  };
-
-  console.log("offer data " , offers)
-  
+  };  
 
   return (
     <div className="p-1">

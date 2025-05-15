@@ -199,8 +199,6 @@ const refreshAccessToken = async () => {
     if (res.data.accessToken && res.data.user) {
       const { accessToken: newToken, user } = res.data;
 
-      console.log("New access token received:", newToken);
-      console.log("User Data:", user);
       // Store token in sessionStorage
       sessionStorage.setItem("authToken", newToken);
       sessionStorage.setItem("userRole", user.role);

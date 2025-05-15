@@ -27,13 +27,8 @@ const CafeForm = ({
   formDataState,
 }) => {
 
-
-  console.log("isEditing", isEditing);
-  console.log("cafeData", cafeData);
-
   const dispatch = useDispatch();
   const { locations = [] } = useSelector((state) => state.locations);
-  console.log("Locations", locations);
   const [width, setWidth] = useState(window.innerWidth < 768 ? "80%" : "50%");
 
   const [isLoading, setIsLoading] = useState(false);
@@ -409,8 +404,6 @@ const CafeForm = ({
       address: e.target.value
     }));
   };
-
-  console.log("editingIndex", editingIndex);
 
   return (
     <Offcanvas

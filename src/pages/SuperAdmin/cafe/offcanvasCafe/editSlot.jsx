@@ -7,13 +7,11 @@ import { useDispatch, useSelector } from "react-redux";
 const EditSlotOffcanvas = ({ show, handleClose, slotID }) => {
 
   const [errors, setErrors] = useState({});
-  console.log("slotID ---", slotID);
   const dispatch = useDispatch();
   const slotList = useSelector((state) => state.slots.slots || []);
   const [timeError, setTimeError] = useState({});
   // map slotList _id to slotID
   const shortlistedSlot = slotList.find((slot) => slot._id === slotID);
-  console.log("shortlistedSlot finaly got week  ---", shortlistedSlot);
   const [saveLoder , setSaveLoder] = useState(false);
 
     // const slotList = useSelector((state) => state.slots.slotList || []);
@@ -22,10 +20,7 @@ const EditSlotOffcanvas = ({ show, handleClose, slotID }) => {
 
       
       dispatch(getSlotDetails(slotID));
-    }, [dispatch, slotID]);
-
-    console.log("slots 44---", slotList);
-    
+    }, [dispatch, slotID]);    
   
   const [formState, setFormState] = useState({
     slotName: "",
@@ -52,8 +47,6 @@ const EditSlotOffcanvas = ({ show, handleClose, slotID }) => {
 
   // game_id 
   const GameID= shortlistedSlot?.game_id;
-
-  console.log("GameID find ---", GameID);
   
   const convertTo24HourFormat = (time12h) => {
     if (!time12h) return ""; // Handle empty case

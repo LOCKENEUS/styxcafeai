@@ -130,7 +130,6 @@ export const getPurchaseReceive = createAsyncThunk(
   }
 );
 
-
 export const getPurchaseReceiveList = createAsyncThunk(
   'purchaseReceive/getPurchaseReceiveList',
   async (id, thunkAPI) => {
@@ -149,7 +148,6 @@ export const getPurchaseReceiveList = createAsyncThunk(
     }
   }
 );
-
 
 const purchaseReceiveSlice = createSlice({
   name: 'purchaseReceive',

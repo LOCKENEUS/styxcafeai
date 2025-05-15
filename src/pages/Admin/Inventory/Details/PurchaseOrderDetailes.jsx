@@ -11,7 +11,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { GetPurchaseOrder, sendMailToVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 
 const PurchaseOrderDetails = () => {
-
     const [vendor, setVendor] = useState("");
     const [items, setItems] = useState([]);
     const [taxes, setTaxes] = useState([]);
@@ -52,7 +51,6 @@ const PurchaseOrderDetails = () => {
 
     const handleReceive = () => {
         // Handle receive action here
-        console.log("Receive button clicked");
         navigate("/admin/inventory/purchaseReceivedCreate", { state: selectedPo });
     }
 

@@ -10,7 +10,6 @@ export const InventorySetting = () => {
     const [newBrand, setNewBrand] = useState({ name: "" });
     const [newManufacturer, setNewManufacturer] = useState({ name: "" });
     const [newpaymentTerm, setNewPaymentTerm] = useState({ name: "", noofDays:"" });
-    
 
     const [units, setUnits] = useState([
         { id: 1, name: "pcs", code: "646" },
@@ -36,8 +35,6 @@ export const InventorySetting = () => {
         ]
     );
 
-   
-
     const handleUnitChange = (e) => {
         const { name, value } = e.target;
         setNewUnit({ ...newUnit, [name]: value });
@@ -52,7 +49,6 @@ export const InventorySetting = () => {
         if (newUnit.name && newUnit.code) {
             setUnits([...units, { id: units.length + 1, ...newUnit }]);
             setNewUnit({ name: "", code: "" });
-            console.log(units);
         }
     };
 
@@ -61,7 +57,6 @@ export const InventorySetting = () => {
         if (newBrand.name) {
             setBrands([...brands, { id: brands.length + 1, ...newBrand }]);
             setNewBrand({ name: "" });
-            console.log("brands -------", brands);
         }
     };
 
@@ -70,7 +65,6 @@ export const InventorySetting = () => {
         if (newpaymentTerm.name && newpaymentTerm.noofDays) {
             setPaymentTerm([...paymentTerm, { id: paymentTerm.length + 1, ...newpaymentTerm }]);
             setNewPaymentTerm({ name: "", noofDays:"" });
-            console.log("brands -------", paymentTerm);
         }
     }
 
@@ -79,7 +73,6 @@ export const InventorySetting = () => {
         if (newManufacturer.name) {
             setManufacturers([...manufacturers, { id: manufacturers.length + 1, ...newManufacturer }]);
             setNewBrand({ name: "" });
-            console.log("brands -------", manufacturers);
         }
     }
 

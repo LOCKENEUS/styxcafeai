@@ -33,8 +33,6 @@ export const ItemsGroup = () => {
   // const itemsGroup = useSelector((state) => state.inventorySuperAdmin.inventory) || [];
   const itemsGroupList = useSelector((state) => state.inventorySuperAdmin?.inventory) || [];
 
-  console.log("itemsGroup", itemsGroupList);
-
   const filteredItems = Array.isArray(itemsGroupList)
     ? itemsGroupList.filter((item) =>
       item.group_name?.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -65,7 +63,6 @@ export const ItemsGroup = () => {
 
   // const currentItems = itemsGroup.slice(startIndex, startIndex + itemsPerPage);
   // const currentItems = (itemsGroup || []).slice(startIndex, startIndex + itemsPerPage);
-  console.log("currentItems", currentItems);
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
@@ -77,7 +74,6 @@ export const ItemsGroup = () => {
     navigator("/Inventory/ItemGroupCreate");
   }
   const handleShowDetails = (groupId) => {
-    console.log("groupId  ", groupId);
     navigator("/Inventory/ItemsGroupDetails", { state: { groupId } });
   }
   const handleExportToCSV = () => {

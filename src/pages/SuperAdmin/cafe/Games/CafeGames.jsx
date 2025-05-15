@@ -23,10 +23,7 @@ const CafeGames = () => {
   const location = useLocation();
   const { cafeId } = location.state || {};
 
-  console.log("your cafe id game ", cafeId);
   const baseURL = import.meta.env.VITE_API_URL;
-
-  console.log("your cafe id game -- ", cafeId);
 
   const [lodergames, setLodergames] = useState(true);
   const dispatch = useDispatch();
@@ -55,7 +52,6 @@ const CafeGames = () => {
   }, [cafeId, dispatch]);
   const gamesDetails = useSelector(state => state.games);
   // compare gamesDetails
-  console.log("Fetched games:", gamesDetails);
 
   const handleEdit = async () => {
     setShowCanvas(true);
@@ -86,9 +82,7 @@ const CafeGames = () => {
   };
   const navigate = useNavigate();
   const handleOpenGameDetails = (gameId) => {
-    console.log("your game id", gameId);
     navigate("/superadmin/Games/cafeGames", { state: { gameId: gameId } });
-
   };
 
 
@@ -101,14 +95,9 @@ const CafeGames = () => {
   }, [cafeId, dispatch]);
 
   const cafeDetails = useSelector((state) => state.cafes);
-  console.log("cafe details membership ==", cafeDetails);
 
   // compare cafeId with cafeDetails.cafeId
   const isCafeIdMatch = cafeDetails.cafes?.find(cafe => cafe._id === cafeId);
-  console.log("isCafeIdMatch  cafe ==", isCafeIdMatch);
-
-
-
 
   return (
     <Container fluid>

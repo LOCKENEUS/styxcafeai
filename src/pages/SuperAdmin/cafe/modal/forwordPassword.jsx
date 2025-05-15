@@ -24,7 +24,6 @@ const ForwordPassword = ({ show, handleClose, cafeId }) => {
 
   const cafe = cafes.find((cafe) => cafe._id === cafeId);
   const userEmail = cafe?.email;
-  console.log("cafe reset password userEmail ", userEmail);
 
   const validatePassword = (password) => {
     const regex =

@@ -100,7 +100,6 @@ const SOCreate = () => {
       dispatch(getSOById(id))
         .unwrap()
         .then((soData) => {
-          console.log("SO Data received:", soData);
           
           setFormData({
             date: soData.date ? new Date(soData.date).toISOString().split('T')[0] : '',
@@ -397,7 +396,6 @@ const SOCreate = () => {
     try {
       if (isEditMode) {
         const res = await dispatch(updateSO({ id, soData: submitData })).unwrap();
-        console.log(res)
         if (res?.data?._id) {
           navigate(`/admin/Inventory/SaleOrderDetails/${res._id}`);
         } else {

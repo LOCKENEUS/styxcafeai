@@ -6,8 +6,6 @@ import TimePicker from "react-time-picker";
 import { getGameById } from "../../../../store/slices/gameSlice";
 
 const AddSlotOffcanvas = ({show, handleClose,gameId}) => {
-    console.log("Offcanvas game id",gameId);
-
     const [timeError, setTimeError] = useState(null);
     const [errors, setErrors] = useState({});
     const [formState, setFormState] = useState({
@@ -51,12 +49,6 @@ const AddSlotOffcanvas = ({show, handleClose,gameId}) => {
         }
       }, [ gameId,dispatch]);
     
-    
-      console.log("Form State slots selectedGame pppp:", selectedGame);
-
-    // console.log("Form State slots:", slots);
-    // console.log("Form State slot CafeID:", cafeId);
-  
     const handleChange = (e) => {
       const { name, value } = e.target;
     
@@ -101,7 +93,6 @@ const AddSlotOffcanvas = ({show, handleClose,gameId}) => {
   
     const handleSubmit = async (e) => {
       e.preventDefault();
-      // console.log("Adding Slot:", formState);
     
       // Prepare object to send instead of FormData
       const dataToSend = {

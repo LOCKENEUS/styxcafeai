@@ -380,8 +380,6 @@ const ParchaseBCreate = () => {
     }
   };
 
-  console.log("products", products)
-
   // const handleVendorSelect = (newVendor) => {
   //   const selectedVendorId = newVendor;
   //   const selectedVendor = vendorsList.find(
@@ -472,8 +470,6 @@ const ParchaseBCreate = () => {
       });
     }
   }, [selectedItem]);
-
-  console.log("items", items)
 
   return (
     <Container fluid className="p-4">

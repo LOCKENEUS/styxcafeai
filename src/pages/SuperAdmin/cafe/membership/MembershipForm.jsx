@@ -85,8 +85,6 @@ const MembershipForm = ({ showCanvas, handleCloseCanvas, membership, cafeId, isE
     } finally {
       setIsLoading(false);
     }
-
-    console.log("this is form data :",formData);
   };
 
   const handleClose = () => {

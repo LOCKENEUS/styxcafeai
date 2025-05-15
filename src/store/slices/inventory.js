@@ -29,7 +29,7 @@ export const addItems = createAsyncThunk(
 
 export const getItems = createAsyncThunk(
   "games/getItems",
-  async (itemId, thunkAPI) => {
+  async (thunkAPI) => {
     try {
       const response = await axios.get(
         `${BASE_URL}/superadmin/inventory/item/list`,
@@ -237,17 +237,21 @@ const InventorySlice = createSlice({
         state.error = action.payload;
         toast.error(action.payload || "Failed to add item group");
       })
+
+      // Get items
       .addCase(getItems.pending, (state) => {
         state.status = "loading";
       })
       .addCase(getItems.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.inventory = action.payload;
+        state.it = action.payload;
       })
       .addCase(getItems.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })
+
+      // Get item groups
       .addCase(getItemsGroups.pending, (state) => {
         state.status = "loading";
       })
@@ -271,7 +275,7 @@ const InventorySlice = createSlice({
         state.status = "failed";
         state.error = action.payload;
       })
-      // deleteItemById
+      // deleteItemByIdn
       .addCase(deleteItemById.pending, (state) => {
         state.status = "loading";
       })
@@ -304,8 +308,6 @@ const InventorySlice = createSlice({
          state.error = action.payload;
          toast.error("Item updated failed!");
        });
-       
-
   },
 });
 

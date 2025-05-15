@@ -9,8 +9,6 @@ const AuthWatcher = ({ setIsAuthenticated, children }) => {
     const token = sessionStorage.getItem('authToken');
     const userRole = sessionStorage.getItem('userRole');
 
-    console.log("User Role from authwatcher :", userRole);
-
     if (!token) {
       sessionStorage.removeItem('authToken');
       sessionStorage.removeItem('userRole');
@@ -24,7 +22,6 @@ const AuthWatcher = ({ setIsAuthenticated, children }) => {
     }
 
     try {
-      console.log("Token from authwatcher :", token);
       const payload = JSON.parse(atob(token.split('.')[1]));
       const isExpired = payload.exp * 1000 < Date.now();
 

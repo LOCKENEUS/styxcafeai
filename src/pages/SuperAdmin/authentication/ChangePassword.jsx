@@ -11,7 +11,6 @@ const ChangePassword = () => {
 
   const dispatch = useDispatch();
   const emailFromStore = useSelector((state) => state.auth.email);
-  console.log(emailFromStore);
   const [formData, setFormData] = useState({
     email: emailFromStore,
     newPassword: '',

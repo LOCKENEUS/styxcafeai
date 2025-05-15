@@ -10,7 +10,6 @@ const ViewDetails = ({ location, index, onClose, onDelete, onEdit }) => {
   const dispatch = useDispatch();
   const cafes = useSelector(selectCafes);
   const associatedCafes = cafes.filter(cafe => cafe.location?._id === location._id);
-  console.log("assp", cafes);
   const navigate = useNavigate()
   const handleDeleteClick = () => {
     setShowDeleteModal(true);

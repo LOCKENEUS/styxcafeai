@@ -30,7 +30,6 @@ export const Manufacturer = ({ show, handleClose, superAdminId }) => {
 
     try {
       await dispatch(addCustomField(formDataSubmit));
-      console.log("Submitted:", formDataSubmit);
       // toast.success("Manufacturer added successfully!");
       handleClose();
       setFormData({

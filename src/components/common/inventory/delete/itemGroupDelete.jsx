@@ -10,10 +10,8 @@ export const ItemGroupDeleteModal = ({ show, handleClose, groupId }) => {
  const [deleteLoading, setDeleteLoading] = useState(false);
     const handleDelete = () => {
         // Replace this with your actual delete logic using groupId
-        console.log(`Item with groupId ${groupId} deleted`);
         // try {
         //     dispatch(deleteItemGroupsById(groupId));
-        //     console.log(`Item with groupId ${groupId} deleted`);
             
            
         // } catch (error) {

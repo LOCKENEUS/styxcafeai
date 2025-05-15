@@ -489,7 +489,6 @@ const GameInfo = () => {
                       style={{ cursor: "pointer", padding: "10px" }}
                       onClick={(e) => {
                         e.stopPropagation(); // Stop propagation for the item click
-                        console.log("selected sport", sport);
                         setGameFilter(sport?.name); // Call the handler
                         setFilterDropdownOpen(false)
                       }}

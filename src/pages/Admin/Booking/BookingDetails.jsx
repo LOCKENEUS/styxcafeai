@@ -604,7 +604,6 @@ const BookingDetails = () => {
         modal: {
           escape: true, // Allow closing on ESC
           ondismiss: function () {
-            console.log("Payment closed by user");
             // No booking should be created if payment was closed
           },
         },
@@ -624,7 +623,7 @@ const BookingDetails = () => {
       border: '1px solid grey',
       borderRadius: '8px',
       cursor: 'pointer',
-      padding: '1%',
+      padding: '2px',
       boxShadow: 'none',
       '&:hover': {
         border: 'none'
@@ -937,8 +936,8 @@ const BookingDetails = () => {
                           {selectedMethod}
                         </Dropdown.Toggle>
                         <Dropdown.Menu className="w-100" style={{ background: "e6e3e7", color: "white", border: "none" }}>
-                          <Dropdown.Item eventKey="Online">Online</Dropdown.Item>
-                          <Dropdown.Item eventKey="Offline">Cash</Dropdown.Item>
+                          {!selectedGame?.data?.payLater && (<Dropdown.Item eventKey="Online">Online</Dropdown.Item>)}
+                          {!selectedGame?.data?.payLater && (<Dropdown.Item eventKey="Offline">Cash</Dropdown.Item>)}
                           {selectedGame?.data?.payLater && (
                             <Dropdown.Item eventKey="Pay Later">Pay Later</Dropdown.Item>
                           )}
@@ -956,7 +955,6 @@ const BookingDetails = () => {
                       Select Customers
                     </p>
                   )} */}
-
                 </div>
 
               </div>
@@ -980,7 +978,7 @@ const BookingDetails = () => {
               </Card>
             </Col>
 
-            <Col md={12}>
+            <Col md={12} style={{ marginTop: "8px" }}>
               <div className="bg-white rounded-3 p-0 d-flex flex-column" style={{ height: "89vh" }}>
                 {/* Scrollable Content */}
                 <div

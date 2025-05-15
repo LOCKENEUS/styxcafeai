@@ -11,7 +11,6 @@ import { toast } from "react-toastify";
 
 function EditCafeOffcanvas({ show, handleClose, cafeId }) {
 
-  console.log("selectedCafe offcanvas 99===", cafeId);
   const baseURL = import.meta.env.VITE_API_URL;
 
   const [removedExistingDocs, setRemovedExistingDocs] = useState([]);
@@ -45,10 +44,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
   useEffect(() => {
     dispatch(getLocations());
   }, [dispatch]);
-  console.log("selectedCafe offcanvas call -----------", IDCafeFetch);
   const filteredCafes = IDCafeFetch.cafes?.filter((cafe) => cafe._id === cafeId);
-  console.log("selectedCafe offcanvas call 777 filteredCafes -----------", filteredCafes);
-
 
   useEffect(() => {
     const filteredCafes = IDCafeFetch.cafes?.filter((cafe) => cafe._id === cafeId);
@@ -175,21 +171,15 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
     }));
   };
 
-
-
-
   const togglePasswordVisibility = (e) => {
     e.preventDefault();
 
-
-    console.log("togglePasswordVisibility", cafeId);
     setShowPassword(!showPassword);
   };
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("submit form edit mmm 00", imagePreview);
 
     // all fields are required
     // if(!cafeId || name || email || contact_no || cafe_name || address || website_url || location || description || password || gstNo || panNo || ownershipType || depositAmount || yearsOfContract || officeContactNo){
@@ -308,7 +298,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
 
       // Remove from existing list index
       const updatedDocs = filteredCafes?.document.filter((doc) => doc !== removedDoc);
-      console.log("updatedDocs", updatedDocs);
 
       // Add to removedDocuments state
       setRemovedDocuments((prev) => [...prev, removedDoc]);

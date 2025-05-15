@@ -51,8 +51,6 @@ export const IitemGroupCreate = () => {
         if (userData) {
             const parsedUser = JSON.parse(userData);
             setSuperAdminId(parsedUser._id);
-            console.log("User ID (_id):-- ", parsedUser._id);
-            console.log("User Name:", parsedUser.name);
         }
     }, []);
 
@@ -73,17 +71,10 @@ export const IitemGroupCreate = () => {
     
     const customFields = useSelector(state => state.customFields.customFields);
     const taxFieldsList = useSelector((state) => state.taxFieldSlice.taxFields);
-    console.log("Tax Fields:", taxFieldsList);
 
     const unitOptions = customFields.filter(field => field.type === "Unit");
     const manufacturerOptions = customFields.filter(field => field.type === "Manufacturer");
     const brandOptions = customFields.filter(field => field.type === "Brand");
-
-
-    console.log("Unit Options:", unitOptions);
-    console.log("Manufacturer Options:", manufacturerOptions);
-    console.log("Brand Options:", brandOptions);
-    let rowIndex = 1;
 
     const handleChange = (e) => {
         // const { id, value } = e.target;
@@ -226,7 +217,6 @@ export const IitemGroupCreate = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
         setSubmitLoading(true);
     
         // Basic validation
@@ -252,7 +242,6 @@ export const IitemGroupCreate = () => {
     
             await dispatch(addItemsGroups(payload)).unwrap();
         } catch (error) {
-            console.log(error);
             toast.error('Submission failed');
         } finally {
             setSubmitLoading(false);
