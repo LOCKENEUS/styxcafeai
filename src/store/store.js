@@ -34,6 +34,8 @@ import adminDashboardReducer from "./AdminSlice/DashboardSlice";
 import taxReducer from "./slices/tax";
 import saPurchaseOrderReducer from "./slices/Inventory/poSlice";
 import saPurchaseReceiveReducer from "./slices/Inventory/prSlice";
+import saPurchaseBillReducer from "./slices/Inventory/pbSlice";
+import saSalesOrderReducer from "./slices/Inventory/soSlice";
 
 export const store = configureStore({
   reducer: {
@@ -77,5 +79,7 @@ export const store = configureStore({
     saCustomField: saCustomFieldReducer,
     saPurchaseOrder: saPurchaseOrderReducer,
     saPurchaseReceive: saPurchaseReceiveReducer,
+    saPurchaseBill: saPurchaseBillReducer,
+    saSalesOrder: saSalesOrderReducer,
   },
 });

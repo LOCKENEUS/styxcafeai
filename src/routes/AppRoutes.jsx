@@ -116,6 +116,10 @@ import { PoUpdate } from "../components/common/inventory/poUpdate";
 import { PurchaseReceivedCreate } from "../components/common/inventory/PurchaseReceivedCreate";
 import { PurchaseReceived } from "../components/common/inventory/purchaseReceived";
 import { PrDetails } from "../components/common/inventory/prDetails";
+import { PBCreate } from "../components/common/inventory/PurchaseBillCreate";
+import { PurchaseBillDetails } from "../components/common/inventory/details/PurchaseBill";
+import { CreateSo } from "../components/common/inventory/SalesOrder/CreateSO";
+import { SoDetails } from "../components/common/inventory/SalesOrder/SODetails";
 
 
 
@@ -173,8 +177,13 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/Inventory/PurchaseReceive" element={<PrDetails />} />
           <Route path="/Inventory/PurchaseOrderCreate" element={<PurchaseOrderCreate />} />
           <Route path="/Inventory/PurchaseBill" element={<PurchaseBill />} />
+          <Route path="/Inventory/PurchaseBillCreate" element={<PBCreate />} />
+          <Route path="/Inventory/PurchaseBillCreate/:id" element={<PBCreate />} />
+          <Route path="/Inventory/PurchaseBillDetails/:id" element={<PurchaseBillDetails />} />
           <Route path="/Inventory/BillPayments" element={<BillPayments />} />
           <Route path="/Inventory/SaleOrder" element={<SaleOrder />} />
+          <Route path="/Inventory/SalesOrderCreate" element={<CreateSo />} />
+          <Route path="/Inventory/SalesOrderDetails/:id" element={<SoDetails />} />
           <Route path="/Inventory/SaleInvoice" element={<SaleInvoice />} />
           <Route path="/Inventory/InvoicePayments" element={<InvoicePayments />} />
           <Route path="/Inventory/InventorySetting" element={<InventorySetting />} />
@@ -250,8 +259,6 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
          <Route path="/admin/inventory/vendors/edit/:id" element={<CreateVendorForm />} />
        <Route path="/admin/inventory/vendor-details/:id" element={<VendorDetails />} />
        <Route path="/admin/inventory/item-groups-details" element={<ItemGroupsDetails />} />
-
-
 
           {/* -------------------- Inventory Routes new -------------------------------- */}
           <Route path="/admin/Inventory/dashboard" element={<DashboardInventory />} />

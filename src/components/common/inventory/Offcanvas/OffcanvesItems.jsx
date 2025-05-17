@@ -12,6 +12,7 @@ import { getVendors } from "../../../../store/AdminSlice/Inventory/VendorSlice";
 import Tax from "../../../../pages/Admin/Inventory/modal/Tax";
 import { Units } from "../modal/units";
 import { Brand } from "../modal/brand";
+import { Manufacturer } from "../modal/manufacturer";
 
 
 const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
