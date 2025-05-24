@@ -4,13 +4,12 @@ import companylog from "/assets/inventory/companylogo.png";
 import print from "/assets/inventory/Vector.png";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-// import { getPurchaseReceive } from "../../../../store/AdminSlice/Inventory/purchaseReceive";
 import { useEffect } from "react";
-// import { sendMailToVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
-import { getSaPurchaseReceive } from "../../../store/slices/Inventory/prSlice";
-import { sendMailToVendor } from "../../../store/AdminSlice/Inventory/purchaseOrder";
+import { getPackageDetails } from "../../../../store/slices/Inventory/packSlice";
+// import { getSaPurchaseReceive } from "../../../store/slices/Inventory/prSlice";
+// import { sendMailToVendor } from "../../../store/AdminSlice/Inventory/purchaseOrder";
 
-export const PrDetails = () => {
+export const PackageDetails = () => {
 
     const user = JSON.parse(sessionStorage.getItem("user"));
     const cafeId = user?._id;
@@ -19,29 +18,29 @@ export const PrDetails = () => {
     const UserContactN = user?.contact_no;
     const UserAddress = user?.address;
     const UesrPAN = user?.panNo;
+    const location = useLocation();
+    const pack_id = location.state;
 
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(getSaPurchaseReceive(purchaseReceive));
-    }, [dispatch, cafeId]);
+        dispatch(getPackageDetails(pack_id));
+    }, [dispatch]);
 
-    const POIdGet = useSelector(state => state.saPurchaseReceive.selectedItem);
-    const loading = useSelector(state => state.saPurchaseReceive).loading;
-    const location = useLocation();
-    const purchaseReceive = location.state;
+    const packData = useSelector(state => state.saPackage.selectedPackage);
+    const loading = useSelector(state => state.saPackage).loading;
 
     const handleSendMail = () => {
-        dispatch(sendMailToVendor(POIdGet))
+        dispatch(sendMailToVendor(packData))
     }
 
     const handlePoNavigation = () => {
-        const poId = POIdGet?.refer_id?._id;
+        const poId = packData?.refer_id?._id;
         navigate(`/admin/inventory/purchase-order-details`);
     }
 
     // count items
-    const countItems = POIdGet?.items;
+    const countItems = packData?.items;
 
     if (loading) {
         return (
@@ -60,8 +59,8 @@ export const PrDetails = () => {
                     <div style={{ top: "186px", fontSize: "18px" }}>
                         <Breadcrumb>
                             <BreadcrumbItem href="#">Home</BreadcrumbItem>
-                            <BreadcrumbItem><Link to="admin/inventory/purchaseReceived">Purchase Order  List</Link></BreadcrumbItem>
-                            <BreadcrumbItem active>Purchase Order Details</BreadcrumbItem>
+                            <BreadcrumbItem><Link to="Inventory/Package/List">Sales Package List</Link></BreadcrumbItem>
+                            <BreadcrumbItem active>Sales Package Details</BreadcrumbItem>
                         </Breadcrumb>
                     </div>
                 </Col>
@@ -71,8 +70,8 @@ export const PrDetails = () => {
                         <Row>
                             <Col sm={6} xs={12}>
                                 <h5 className="text-dark p-2" style={{ fontSize: '18px' }}>
-                                    <span>Purchase Receive: </span>
-                                    <span>{POIdGet?.po_no}</span>
+                                    <span>Package No: </span>
+                                    <span>{packData?.po_no}</span>
                                 </h5>
                             </Col>
                             <Col sm={6} xs={12} className="d-flex flex-wrap justify-content-center justify-content-sm-end align-items-center gap-2 text-center">
@@ -86,28 +85,8 @@ export const PrDetails = () => {
                                 </Button>
                                 <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                                     {/* <Image src={sendMail} className="me-2" />  */}
-                                    <Link to={`/Inventory/PurchaseBillCreate/${POIdGet?._id}`} className="text-decoration-none text-dark"><b >+</b>  Create Bill </Link>
+                                    <Link to={`/Inventory/Shipment/${pack_id}`} className="text-decoration-none text-dark"><b >+</b>  Create Shipment </Link>
                                 </Button>
-                            </Col>
-                        </Row>
-                    </Card>
-                </Col>
-
-                <Col sm={12} className="my-2">
-                    <Card className="p-3">
-                        <Row className="align-items-center">
-                            <Col sm={2}>
-                                <img src={companylog} alt="Logo" className="img-fluid" />
-                            </Col>
-                            <Col sm={8}>
-                                <h5>{userName}</h5>
-                                <p className="mb-1">{userEmail} / {UserContactN}</p>
-                                <p className="mb-1">
-                                    {UserAddress}
-                                </p>
-                                <strong>PAN: {UesrPAN}</strong>
-                            </Col>
-                            <Col sm={2} className=" d-flex  ">
                             </Col>
                         </Row>
                     </Card>
@@ -119,16 +98,11 @@ export const PrDetails = () => {
                         <Row>
                             {/* Customer Info */}
                             <Col sm={4}  >
-                                <h5 className="text-primary mb-3" style={{ fontSize: '20px' }}>{POIdGet?.vendor_id?.name}</h5>
+                                <h5 className="text-primary mb-3" style={{ fontSize: '20px' }}>{packData?.vendor_id?.name}</h5>
                                 <Row>
                                     <Col sm={6} >
                                         <span style={{ fontSize: '16px', fontWeight: '500' }}>Billing Address</span>
-                                        <div className="my-3">{POIdGet?.vendor_id?.billingAddress}</div>
-                                    </Col>
-
-                                    <Col sm={6} className="border-end border-3" >
-                                        <span style={{ fontSize: '16px', fontWeight: '500' }}>Shipping Address</span>
-                                        <div className="my-3">{POIdGet?.vendor_id?.shippingAddress}</div>
+                                        <div className="my-3">{packData?.vendor_id?.address}</div>
                                     </Col>
                                 </Row>
                             </Col>
@@ -138,24 +112,22 @@ export const PrDetails = () => {
                                     <Col sm={6}  >
                                         <span className="mb-3" style={{ fontSize: '16px', fontWeight: '500' }}>Delivery Address</span>
                                         <div className="my-3">
-                                            <span style={{ fontSize: '16px' }}>Linganwar</span><br />
-                                            <span>yash123linganwar@gmail.com / 91562173745</span>
-                                            <span>Karve Statue, DP Road, Mayur Colony, Kothrud, Pune, Maharashtra, India</span>
-                                            <span>PAN:</span> ADNP5467B
+                                            <span style={{ fontSize: '16px' }}>Styx Cafe</span><br />
+                                            <span>{user?.email} / {user?.contact}</span>
+                                            <span>{user?.billingAddress}, {user?.city1}, {user?.state1}, {user?.country1} </span>
+                                            <span>PAN:</span> {user?.pan}
                                         </div>
                                     </Col>
 
                                     {/* Order Info */}
                                     <Col sm={6} >
                                         <div className="my-5 mx-2 border-start border-3 p-2 d-flex flex-column gap-2">
-                                            <div><span className="my-1 fw-bold">Received No:</span> <span className="float-end">{POIdGet?.po_no}</span></div>
-                                            <div><span className="my-1 fw-bold" style={{ cursor: 'pointer' }} onClick={handlePoNavigation}>Order No:<b className="text-primary float-end">{POIdGet?.refer_id?.po_no}</b></span></div>
-                                            <div><span className="my-1 fw-bold">Received No:</span> <span className="float-end">{POIdGet?.po_no}</span></div>
+                                            <div><span className="my-1 fw-bold">Package No:</span> <span className="float-end">{packData?.po_no}</span></div>
+                                            <div><span className="my-1 fw-bold" >Packing Date:<b className="float-end">{new Date(packData?.delivery_date).toLocaleDateString()}</b></span></div>
+                                            <div><span className="my-1 fw-bold">Package Status:</span> <span className="float-end">{packData?.status}</span></div>
+                                            <div><span className="my-1 fw-bold" style={{ cursor: 'pointer' }} onClick={handlePoNavigation}>Order No:<b className="text-primary float-end">{packData?.refer_id?.po_no}</b></span></div>
+                                            <div><span className="my-1 fw-bold">Payment Terms:</span> <span className="float-end">{packData?.payment_terms}</span></div>
                                             {/* {new Date(delivery_datedelivery_date).toLocaleDateString()} */}
-                                            <div>
-                                                <span className="my-1 fw-bold">Received Date :</span>{' '}
-                                                <span className="float-end">{new Date(POIdGet?.delivery_date).toLocaleDateString()}</span>
-                                            </div>
                                         </div>
                                     </Col>
                                 </Row>
@@ -196,7 +168,8 @@ export const PrDetails = () => {
                                                         <td>
                                                             Ordered Qty  : {item?.quantity} Nos
                                                         </td>
-                                                        <td>  Received Qty :  {item?.qty_received}</td>
+                                                        <td>  Packed Qty :  {item?.qty_packed}</td>
+                                                        <td>  Shipped Qty :  {item?.qty_shipped}</td>
                                                     </tr>))
                                             ) : (
                                                 <tr>
@@ -217,7 +190,7 @@ export const PrDetails = () => {
                             <Col sm={6} className="p-2 position-relative">
                                 <div><b>Description : </b></div>
                                 <div className="d-none d-sm-block" style={{ height: "2rem" }}>
-                                    {POIdGet?.description}
+                                    {packData?.description}
                                 </div>
                             </Col>
                             <Col sm={6} className="p-2">

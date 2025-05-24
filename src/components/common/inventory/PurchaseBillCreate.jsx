@@ -33,7 +33,6 @@ export const PBCreate = () => {
     ]);
     const [showProductList, setShowProductList] = useState(false);
     const [showTaxModal, setShowTaxModal] = useState(false);
-
     const [selectedClient, setSelectedClient] = useState(null);
     const dispatch = useDispatch();
     const { customFields } = useSelector((state) => state.saCustomField);
@@ -47,7 +46,6 @@ export const PBCreate = () => {
     const user = JSON.parse(sessionStorage.getItem("user"));
 
     const cafeId = user?._id;
-
     const userName = user?.name;
     const userEmail = user?.email;
     const UserContactN = user?.contact_no;
@@ -110,8 +108,8 @@ export const PBCreate = () => {
                     const selectedItem = items.find(item => item._id === value);
                     if (selectedItem) {
                         updatedProduct.price = Math.round(selectedItem.sellingPrice * 100) / 100;
-                        updatedProduct.tax = selectedItem.tax;
-                        const itemTax = taxFields.find(tax => tax._id === selectedItem.tax);
+                        updatedProduct.tax = selectedItem.tax?._id;
+                        const itemTax = taxFields.find(tax => tax._id === selectedItem.tax?._id);
                         updatedProduct.taxRate = itemTax ? Math.round(itemTax.tax_rate * 100) / 100 : 0;
                     }
                     const isDuplicate = products.some(
@@ -122,11 +120,7 @@ export const PBCreate = () => {
                         alert("You have selected the same item.");
                         return product;
                     }
-
-
                 }
-
-
                 if (field === "tax") {
                     const selectedTax = taxFields.find(tax => tax._id === value);
                     updatedProduct.taxRate = selectedTax ? Math.round(selectedTax.tax_rate * 100) / 100 : 0;
@@ -428,15 +422,39 @@ export const PBCreate = () => {
                 </div>
             </Col>
 
+            <Card className="p-3 mb-3 shadow-sm">
+                <Row className="align-items-center">
+                    <Col xs={2}>
+                        <img
+                            src={Lockenelogo}
+                            alt="Logo"
+                            className="img-fluid"
+                        />
+                    </Col>
+                    <Col>
+                        <h5>{user?.name}</h5>
+                        <p className="mb-1">{user?.email} / {user?.contact}</p>
+                        <p className="mb-1">
+                            {user?.address}
+                        </p>
+                        <strong>PAN: {user?.pan}</strong>
+                    </Col>
+                    <Col xs={2} className="text-end">
+                        <span className="text-muted">PO:</span>
+                        <strong className="text-primary"> Draft</strong>
+                    </Col>
+                </Row>
+            </Card>
+
             {/* Client & Delivery Details */}
             <Card className="p-3 shadow-sm">
                 <Row>
                     <Col sm={4} className="d-flex border-end flex-column gap-2">
                         <div className="border-bottom ">
-                            <div className="d-flex flex-row align-items-center justify-content-around mb-3 gap-2">
+                            <div className="d-flex flex-row align-items-center mb-3 gap-2">
                                 <h5 className="text-muted">Vendor :  </h5>
                                 <Button
-                                    style={{ width: "144px", height: "44px", borderStyle: "dashed" }}
+                                    style={{ width: "144px", height: "36px", borderStyle: "dashed" }}
                                     variant="outline-primary"
                                     className="d-flex align-items-center justify-content-center gap-2"
                                     onClick={handleShowVendorList}
@@ -471,10 +489,7 @@ export const PBCreate = () => {
                     <Col sm={4}>
                         <div className="d-flex my-3 flex-row align-items-center gap-2">
                             <h5 className="text-muted">Delivery Address <span className="text-danger">*</span></h5>
-
                         </div>
-
-
                         <div >
                             {/* Radio Buttons */}
                             <div className="d-flex flex-row mb-2 align-items-center gap-2">
@@ -537,7 +552,7 @@ export const PBCreate = () => {
                                             <>
                                                 <div style={{ marginTop: "15px" }} className="d-flex flex-column gap-2">
                                                     <p className="my-0 mx-2">{selectedCafe?.name}</p>
-                                                    <p className="my-0 mx-2">{selectedCafe?.address},</p>  
+                                                    <p className="my-0 mx-2">{selectedCafe?.address},</p>
                                                 </div>
                                             </>
                                         ) : (

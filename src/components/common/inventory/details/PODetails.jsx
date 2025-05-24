@@ -55,7 +55,7 @@
 //                                 <hr className=" bg-dark" />
 
 //                                 <Col sm={5} className="d-flex flex-column text-start">
-//                                     <h3 className="fw-bold">Rupesh Suryvanshi</h3>
+//                                     <h3 className="fw-bold"></h3>
 
 //                                     <div className="mt-2 table-responsive">
 //                                         <Table className="mb-0">
@@ -291,6 +291,7 @@
 
 import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Spinner, Table } from "react-bootstrap";
 import deleteplogo from "/assets/inventory/Vector (1).png";
+import companylog from "/assets/inventory/companylogo.png";
 import receive from "/assets/inventory/solar_card-send-linear.png";
 import print from "/assets/inventory/Vector.png";
 import sendMail from "/assets/inventory/Group.png";
@@ -400,7 +401,7 @@ export const PODetails = () => {
             <Row  data-aos="fade-up" data-aos-duration="500" className="mx-2">
                 {/* Breadcrumb Section */}
                 <Col sm={12} className="my-3">
-                    <div style={{ top: "186px", fontSize: "18px" }}>
+                    <div style={{ top: "186px", fontSize: "14px" }}>
                         <Breadcrumb>
                             <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
                             <BreadcrumbItem><Link to="/admin/inventory/purchase-order-list">Purchase Order List</Link></BreadcrumbItem>
@@ -445,7 +446,7 @@ export const PODetails = () => {
                 </Col>
 
                 {/* Company Info */}
-                {/* <Col sm={12} className="my-2">
+                <Col sm={12} className="my-2">
                     <Card className="p-3">
                         <Row className="align-items-center">
                             <Col sm={2}>
@@ -460,11 +461,11 @@ export const PODetails = () => {
                                 <strong>PAN: {UesrPAN}</strong>
                             </Col>
                             <Col sm={2} className=" d-flex  ">
-                                <span className="p-2 float-right">PO : <b className="text-primary">{selectedPo?.status}</b></span>
+                                {/* <span className="p-2 float-right">PO : <b className="text-primary">{selectedPo?.status}</b></span> */}
                             </Col>
                         </Row>
                     </Card>
-                </Col> */}
+                </Col>
 
                 {/* Customer & Order Details */}
                 <Col sm={12} className="my-2">
@@ -475,7 +476,7 @@ export const PODetails = () => {
                                 <h5 className="text-primary mb-3" style={{ fontSize: '20px' }}>{selectedPo?.vendor_id?.name}</h5>
                                 <Row>
                                     <Col sm={6} >
-                                        <span style={{ fontSize: '16px', fontWeight: '500' }}>Billing Address</span>
+                                        <span style={{ fontSize: '16px', fontWeight: '500'}} className="text-color">Billing Address</span>
                                         <p className="my-1">{vendor?.billingAddress}</p>
                                         <p className="my-1">{vendor?.city1}</p>
                                         <p className="my-1">{vendor?.state1}</p>
@@ -484,7 +485,7 @@ export const PODetails = () => {
                                     </Col>
 
                                     <Col sm={6} className="border-end border-3" >
-                                        <span style={{ fontSize: '16px', fontWeight: '500' }}>Shipping Address</span>
+                                        <span style={{ fontSize: '16px', fontWeight: '500' }} className="text-color">Shipping Address</span>
                                         <p className="my-1">{vendor?.shippingAddress}</p>
                                         <p className="my-1">{vendor?.city2}</p>
                                         <p className="my-1">{vendor?.state2}</p>
@@ -498,7 +499,7 @@ export const PODetails = () => {
                                 <Row>
                                     {/* Delivery Details */}
                                     <Col sm={6} className="pt-6" >
-                                        <span className="mb-3" style={{ fontSize: '16px', fontWeight: '500' }}>Delivery Address</span>
+                                        <span className="mb-3 text-color" style={{ fontSize: '16px', fontWeight: '500' }}>Delivery Address</span>
                                         {selectedPo?.delivery_type === 'Organization' ?
                                             <p className="my-3">{UserAddress}
                                                 <span style={{ fontSize: '16px' }}>{userName}</span><br />

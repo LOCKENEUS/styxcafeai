@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getSOById, deleteSO } from "../../../../store/AdminSlice/Inventory/SoSlice";
+import { deleteSO } from "../../../../store/AdminSlice/Inventory/SoSlice";
 import { addSOInvoice } from "../../../../store/AdminSlice/Inventory/SoInvoiceSlice";
 import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Table, Spinner, Modal } from "react-bootstrap";
 import deleteplogo from "/assets/inventory/Vector (1).png";
@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { sendMailToVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { getsalesOrderById } from "../../../../store/slices/Inventory/soSlice";
+import { createSalesInvoice } from "../../../../store/slices/Inventory/invoiceSlice";
 
 export const SoDetails = () => {
     const navigate = useNavigate();
@@ -61,7 +62,7 @@ export const SoDetails = () => {
                 <body>
                     <div class="container mt-4">
                         <div class="print-header">
-                            <h3>Sales Order: ${selectedSO.so_no}</h3>
+                            <h3>Sales Order: ${selectedSO.po_no}</h3>
                         </div>
                         ${printContent.innerHTML}
                         <div class="row mt-4 no-print">
@@ -88,48 +89,83 @@ export const SoDetails = () => {
         });
     };
 
-    const handleCreateInvoice = () => {
+    console.log("selectedSO", selectedSO);
+
+    const handleCreateInvoice = async () => {
         // Prepare the invoice data from selectedSO
-        const invoiceData = {
-            cafe: selectedSO.cafe?._id,
-            customer_id: selectedSO.customer_id?._id,
-            refer_id: selectedSO._id,
-            date: new Date().toISOString(),
-            shipment_date: "",
-            payment_terms: selectedSO.payment_terms || "",
-            reference: selectedSO.reference || "",
-            delivery_preference: "",
-            sales_person: selectedSO.sales_person || "",
-            description: selectedSO.description || "",
-            internal_team_notes: selectedSO.internal_team_notes || "",
-            subtotal: selectedSO.subtotal || 0,
-            discount_value: selectedSO.discount_value || 0,
-            discount_type: selectedSO.discount_type || "percentage",
-            tax: selectedSO.tax || [],
-            total: selectedSO.total || 0,
-            adjustment_note: selectedSO.adjustment_note || "",
-            adjustment_amount: selectedSO.adjustment_amount || 0,
-            type: "SI",
-            items: selectedSO.items?.map(item => ({
-                id: item.item_id?._id,
-                qty: item.quantity || 0,
-                hsn: item.item_id?.hsn || "",
-                price: item.price || 0,
-                tax: item.tax?._id || null,
-                tax_amt: item.tax_amt || 0,
-                total: item.total || 0
-            })) || []
-        };
+        // const invoiceData = {
+        //     cafe: selectedSO.cafe?._id,
+        //     customer_id: selectedSO.customer_id?._id,
+        //     refer_id: selectedSO._id,
+        //     date: new Date().toISOString(),
+        //     shipment_date: "",
+        //     payment_terms: selectedSO.payment_terms || "",
+        //     reference: selectedSO.reference || "",
+        //     delivery_preference: "",
+        //     sales_person: selectedSO.sales_person || "",
+        //     description: selectedSO.description || "",
+        //     internal_team_notes: selectedSO.internal_team_notes || "",
+        //     subtotal: selectedSO.subtotal || 0,
+        //     discount_value: selectedSO.discount_value || 0,
+        //     discount_type: selectedSO.discount_type || "percentage",
+        //     tax: selectedSO.tax || [],
+        //     total: selectedSO.total || 0,
+        //     adjustment_note: selectedSO.adjustment_note || "",
+        //     adjustment_amount: selectedSO.adjustment_amount || 0,
+        //     type: "SI",
+        //     items: selectedSO.items?.map(item => ({
+        //         id: item.item_id?._id,
+        //         qty: item.quantity || 0,
+        //         hsn: item.item_id?.hsn || "",
+        //         price: item.price || 0,
+        //         tax: item.tax?._id || null,
+        //         tax_amt: item.tax_amt || 0,
+        //         total: item.total || 0
+        //     })) || []
+        // };
 
-        // Add validation before dispatch
-        if (!invoiceData.cafe || !invoiceData.customer_id) {
-            toast.error("Missing required data: Cafe or Customer information");
-            return;
-        }
+        const submitData = new FormData();
 
-        dispatch(addSOInvoice(invoiceData))
+        // Add basic form fields
+        submitData.append('customer_id', selectedSO?.customer_id?._id || '');
+        submitData.append('date', selectedSO.delivery_date);
+        submitData.append('shipment_date', selectedSO.delivery_date);
+        submitData.append('payment_terms', selectedSO.payment_terms || '');
+        submitData.append('reference', selectedSO.reference || '');
+        submitData.append('delivery_preference', selectedSO.delivery_preference || '');
+        submitData.append('sales_person', selectedSO.sales_person || '');
+        submitData.append('description', selectedSO.description || '');
+        submitData.append('internal_team_notes', selectedSO.internal_team_notes || '');
+
+        // Add financial details
+        submitData.append('subtotal', selectedSO.subtotal || 0);
+        submitData.append('discount_value', selectedSO.discount || 0);
+        submitData.append('discount_type', selectedSO.discount_type );
+        submitData.append('refer_id', selectedSO._id || 0);
+
+        // Format tax data - just send array of tax IDs
+        submitData.append('tax', JSON.stringify(selectedSO.tax));
+
+        submitData.append('total', selectedSO.total || 0);
+        submitData.append('adjustment_note', selectedSO.adjustment_note || "");
+        submitData.append('adjustment_amount', selectedSO.adjustment_amount || 0);
+        submitData.append('type', 'SINV');
+
+        // Format items data - updated to send tax ID
+        const formattedItems = selectedSO.items.map(product => ({
+            id: product.item_id,
+            qty: product.quantity,
+            hsn: product.hsn || '',
+            price: product.price,
+            tax: product.tax || '', // Send the tax ID instead of tax rate
+            tax_amt: product.tax_amt || 0,
+            total: product.total
+        }));
+        submitData.append('items', JSON.stringify(formattedItems));
+
+        dispatch(createSalesInvoice(submitData))
             .then(() => {
-                navigate(`/admin/Inventory/SaleInvoiceDetails/${id}`);
+                navigate(`/Inventory/SaleInvoiceDetails/${id}`);
             })
             .catch((error) => {
                 console.error("Error creating invoice:", error);
@@ -171,6 +207,10 @@ export const SoDetails = () => {
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     };
 
+    const handleProductClick = (groupId) => {
+        navigate("/Inventory/itemDetails", { state: { groupId } });
+    };
+
     return (
         <Container >
             <Row className="mx-2">
@@ -179,20 +219,18 @@ export const SoDetails = () => {
                     <div style={{ top: "186px", fontSize: "12px" }}>
                         <Breadcrumb>
                             <BreadcrumbItem>
-                                <Link to="/admin/dashboard">Home</Link>
+                                <Link to="/superadmin/dashboard">Home</Link>
                             </BreadcrumbItem>
                             <BreadcrumbItem>
-                                <Link to="/admin/inventory/dashboard">Inventory</Link>
+                                <Link to="/superadmin/inventory/dashboard">Inventory</Link>
                             </BreadcrumbItem>
                             <BreadcrumbItem>
-                                <Link to="/admin/Inventory/SalesOrder">Sales Order List</Link>
+                                <Link to="/superadmin/Inventory/SalesOrder">Sales Order List</Link>
                             </BreadcrumbItem>
                             <BreadcrumbItem active>SaleOrderDetails</BreadcrumbItem>
                         </Breadcrumb>
                     </div>
                 </Col>
-
-
 
                 <Col sm={12} className="my-2">
                     <Card className="p-3">
@@ -200,7 +238,7 @@ export const SoDetails = () => {
                             <Col sm={6} xs={12}>
                                 <h5 className="text-dark p-2" style={{ fontSize: '18px' }}>
                                     <span>Sales Order: </span>
-                                    <span>{selectedSO.so_no}</span>
+                                    <span>{selectedSO.po_no}</span>
                                 </h5>
                             </Col>
                             <Col sm={6} xs={12} className="d-flex flex-wrap justify-content-center justify-content-sm-end align-items-center gap-2 text-center">
@@ -222,7 +260,7 @@ export const SoDetails = () => {
                                     <Image src={receive} className="me-2" /> Create Invoice
                                 </Button>
                                 <Button
-                                    onClick={() => navigate(`/admin/Inventory/SaleOrderCreate/${id}`)}
+                                    onClick={() => navigate(`/Inventory/SalesOrder/Edit/${id}`)}
                                     className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                                     <Image src={editlogo} className="me-2" /> Edit
                                 </Button>
@@ -233,7 +271,6 @@ export const SoDetails = () => {
 
                 {/* Printable area starts here */}
                 <div id="printableArea">
-
                     {/* Customer & Order Details */}
                     <Col sm={12} className="my-2">
                         <Card className="p-3 shadow-sm">
@@ -287,7 +324,7 @@ export const SoDetails = () => {
                                                 </tr>
                                                 <tr>
                                                     <td className="text-muted">Order Date:</td>
-                                                    <td className="fw-medium">{formatDate(selectedSO.date)}</td>
+                                                    <td className="fw-medium">{formatDate(selectedSO.delivery_date)}</td>
                                                 </tr>
                                                 <tr>
                                                     <td className="text-muted">Payment Terms:</td>
@@ -328,7 +365,7 @@ export const SoDetails = () => {
                                                 {selectedSO.items && selectedSO.items.map((item, index) => (
                                                     <tr key={item._id || index}>
                                                         <td>
-                                                            <b> <Link to={`/admin/inventory/item-details/${item?.item_id?._id}`}> {item?.item_id?.name}</Link></b>
+                                                            <b className="text-primary" onClick={() => handleProductClick(item.item_id)}>{item?.item_id?.name}</b>
                                                             <br />
                                                             HSN : {item.item_id ? item.item_id.hsn : "N/A"}
                                                         </td>

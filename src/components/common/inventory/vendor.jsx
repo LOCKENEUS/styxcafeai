@@ -106,7 +106,17 @@ export const Vendor = () => {
 
             <Col sm={4} className="d-flex">
               <div className="d-flex justify-content-start align-items-start mx-1 my-4" >
-                <h1 style={{ fontFamily: '', fontSize: "18px", fontWeight: '500', lineHeight: "18px" }}>Vendor List</h1>
+                <h1
+                  style={{
+                    textTransform: 'uppercase',
+                    letterSpacing: '5px',
+                    fontWeight: 'bold',
+                    fontSize: '18px',
+                    background: 'linear-gradient(to right,rgb(0, 119, 255),rgb(0, 17, 255))',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent'
+                  }}
+                >Vendor List</h1>
               </div>
             </Col>
 

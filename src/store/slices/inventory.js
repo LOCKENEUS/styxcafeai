@@ -110,6 +110,26 @@ export const getItemsById = createAsyncThunk(
     }
   }
 );
+export const getItemTransactions = createAsyncThunk(
+  "games/getItemTransactions",
+  async (itemId, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/superadmin/inventory/item/transactions/${itemId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Something went wrong"
+      );
+    }
+  }
+);
 // /superadmin/inventory/item-group/:id
 export const getItemsGroupsById = createAsyncThunk(
   "games/getItemsById",
@@ -168,8 +188,6 @@ export const deleteItemById = createAsyncThunk(
 //   }
 // );
 
-
-
 // /superadmin/inventory/item/
 
 export const updateItemsById = createAsyncThunk(
@@ -198,6 +216,7 @@ const InventorySlice = createSlice({
   name: "inventory",
   initialState: {
     it: [],
+    itemTransactions: [],
     selectedinventory: null,
     status: "idle",
     error: null,
@@ -249,6 +268,20 @@ const InventorySlice = createSlice({
       .addCase(getItems.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
+      })
+
+      // Transactions
+      .addCase(getItemTransactions.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getItemTransactions.fulfilled, (state, action) => {
+        state.itemTransactions = action.payload
+        state.status = "succeeded";
+      })
+      .addCase(getItemTransactions.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+        toast.error(action.payload || "Failed to add item");
       })
 
       // Get item groups

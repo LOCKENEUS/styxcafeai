@@ -3,14 +3,14 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import companylog from "/assets/inventory/companylogo.png";
 import { use, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getSaVendors } from "../../../store/slices/Inventory/saVendorSlice";
-import { getSaPOListByVendor, getSaPurchaseOrder } from "../../../store/slices/Inventory/poSlice";
-import { createSaPurchaseReceive } from "../../../store/slices/Inventory/prSlice";
+import { fetchCafes } from "../../../../store/slices/cafeSlice";
+import { getsalesOrderByCafeId, getsalesOrderById } from "../../../../store/slices/Inventory/soSlice";
+import { createPackage } from "../../../../store/slices/Inventory/packSlice";
 
-export const PurchaseReceivedCreate = () => {
+export const CreatePackage = () => {
     const [formData, setFormData] = useState({
-        selectedVendor: "",
-        PurchaseOrder: "",
+        selectedClient: "",
+        salesOrder: "",
         currentDate: new Date().toISOString().split("T")[0],
         description: "",
         inventoryItems: [],
@@ -24,24 +24,26 @@ export const PurchaseReceivedCreate = () => {
             tax: "",
             tax_amt: "",
             amount: "",
-            qty_received: 0,
+            qty_packed: 0,
             hsn: "",
             sku: "",
-            qty_to_receive: 0,
+            qty_to_pack: 0,
         },
     ]);
-    const [poSelected, setPoSelected] = useState("");
-    const [selectedVendor, setSelectedVendor] = useState("");
+    const [soSelected, setSoSelected] = useState("");
+    const [selectedClient, setSelectedClient] = useState("");
     const [taxList, setTaxList] = useState([]);
 
     const dispatch = useDispatch();
     const location = useLocation();
     const navigate = useNavigate();
-    const purchaseOrderData = location.state;
+    // const salesOrderData = location.state;
 
-    const { purchaseOrder, selectedPo, loading, error } = useSelector((state) => state.saPurchaseOrder);
+    const selectedSo = useSelector((state) => state.saSalesOrder.selectedsalesOrder);
 
-    const vendors = useSelector((state) => state.saVendor.vendors);
+    const { salesOrders, loading, error } = useSelector((state) => state.saSalesOrder);
+
+    const cafes = useSelector((state) => state.cafes.cafes);
 
     const user = JSON.parse(sessionStorage.getItem("user"));
     const cafeId = user?._id;
@@ -52,38 +54,38 @@ export const PurchaseReceivedCreate = () => {
     const UesrPAN = user?.panNo;
 
     useEffect(() => {
-        if (purchaseOrderData) {
-            setPoSelected(purchaseOrderData?._id);
-            setSelectedVendor(purchaseOrderData?.vendor_id?._id);
+        if (selectedSo) {
+            setSoSelected(selectedSo?._id);
+            setSelectedClient(selectedSo?.customer_id?._id);
             setFormData((prev) => ({
                 ...prev,
-                selectedVendor: purchaseOrderData?.vendor_id?._id,
+                selectedClient: selectedSo?.customer_id?._id,
                 currentDate: new Date().toISOString().split("T")[0],
             }));
         }
-    }, [purchaseOrderData]);
+    }, [selectedSo]);
 
     useEffect(() => {
-        dispatch(getSaVendors());
-    }, [dispatch, cafeId]);
+        dispatch(fetchCafes());
+    }, [dispatch]);
 
     useEffect(() => {
-        if (selectedVendor) {
-            dispatch(getSaPOListByVendor({ vendor: selectedVendor }));
+        if (selectedClient) {
+            dispatch(getsalesOrderByCafeId(selectedClient));
         }
-    }, [dispatch, selectedVendor]);
+    }, [dispatch, selectedClient]);
 
     useEffect(() => {
-        if (poSelected) {
-            dispatch(getSaPurchaseOrder(poSelected));
+        if (soSelected) {
+            dispatch(getsalesOrderById(soSelected));
         }
-    }, [dispatch, poSelected]);
+    }, [dispatch, soSelected]);
 
     useEffect(() => {
-        if (selectedPo) {
-            setInventoryItems(selectedPo?.items || []);
+        if (selectedSo) {
+            setInventoryItems(selectedSo?.items || []);
         }
-    }, [selectedPo]);
+    }, [selectedSo]);
 
     const handleTaxSubmit = (e) => {
         e.preventDefault();
@@ -93,10 +95,10 @@ export const PurchaseReceivedCreate = () => {
     };
 
     const handleVendorChange = (vendorId) => {
-        setSelectedVendor(vendorId);
+        setSelectedClient(vendorId);
         setFormData((prev) => ({
             ...prev,
-            selectedVendor: vendorId,
+            selectedClient: vendorId,
         }));
     };
 
@@ -115,21 +117,21 @@ export const PurchaseReceivedCreate = () => {
         if (!inventoryItems || !inventoryItems[index]) return; // Prevent errors
 
         const orderedQty = inventoryItems[index]?.quantity || 0;
-        const receivedQty = inventoryItems[index]?.qty_received || 0;
-        const maxQty = orderedQty - receivedQty;
+        const packedQty = inventoryItems[index]?.qty_packed || 0;
+        const maxQty = orderedQty - packedQty;
 
         if (enteredQty > maxQty) {
             alert(`You cannot enter more than ${maxQty} units.`);
             setInventoryItems((prevItems) =>
                 prevItems.map((item, i) =>
-                    i === index ? { ...item, qty_to_receive: maxQty } : item
+                    i === index ? { ...item, qty_to_pack: maxQty } : item
                 )
             );
             return;
         } else {
             setInventoryItems((prevItems) =>
                 prevItems.map((item, i) =>
-                    i === index ? { ...item, qty_to_receive: enteredQty } : item
+                    i === index ? { ...item, qty_to_pack: enteredQty } : item
                 )
             );
         }
@@ -138,32 +140,32 @@ export const PurchaseReceivedCreate = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const submitData = {
-            po_id: selectedPo._id,
-            vendor_id: selectedVendor,
+            so_id: selectedSo._id,
+            vendor_id: selectedClient,
             cafe: cafeId,
-            received_date: formData.currentDate,
+            package_date: formData.currentDate,
             description: formData.description,
             items: inventoryItems,
         };
 
         try {
-            const response = await dispatch(createSaPurchaseReceive(submitData)).unwrap();
-            
-
-            navigate("/admin/inventory/PurchaseReceivedDetails", { state: response?._id });
+            const response = await dispatch(createPackage(submitData)).unwrap();
+            navigate("/Inventory/Package/View", { state: response?._id });
 
             setFormData({
-                selectedVendor: '',
-                PurchaseOrder: '',
+                selectedClient: '',
+                SalesOrder: '',
                 selectedTax: '',
                 currentDate: '',
                 description: '',
             });
         } catch (error) {
             // Handle error
-            console.error('Error creating purchase receive:', error);
+            console.error('Error creating package:', error);
         }
     };
+
+        console.log("soSelected", soSelected);
 
     return (
         <Container >
@@ -173,8 +175,8 @@ export const PurchaseReceivedCreate = () => {
                     <div style={{ top: "186px", fontSize: "12px" }}>
                         <Breadcrumb>
                             <BreadcrumbItem href="#">Home</BreadcrumbItem>
-                            <BreadcrumbItem> <Link to="/admin/inventory/purchaseReceived">Purchase Received List</Link></BreadcrumbItem>
-                            <BreadcrumbItem active>Purchase Received Create</BreadcrumbItem>
+                            <BreadcrumbItem> <Link to="/Inventory/Package">Package List</Link></BreadcrumbItem>
+                            <BreadcrumbItem active>Package Create</BreadcrumbItem>
                         </Breadcrumb>
                     </div>
                 </Col>
@@ -193,6 +195,7 @@ export const PurchaseReceivedCreate = () => {
                                 <strong>PAN: {UesrPAN}</strong>
                             </Col>
                             <Col sm={2} className=" d-flex  ">
+                                {/* <span className="p-2 float-right">PO : <b className="text-primary">{selectedPo?.status}</b></span> */}
                             </Col>
                         </Row>
                     </Card>
@@ -201,36 +204,38 @@ export const PurchaseReceivedCreate = () => {
                     <Card className="p-3 shadow-sm">
                         <Row className="align-items-center">
                             <Col sm={4}>
-                                <FormLabel className="my-3" style={{ fontSize: "16px", fontWeight: "500" }}>Vendor
+                                <FormLabel className="my-3" style={{ fontSize: "16px", fontWeight: "500" }}>Client
                                     <span style={{ color: "red" }}>*</span>
                                 </FormLabel>
                                 <FormSelect aria-label="Default select example"
-                                    value={formData.selectedVendor}
-                                    name="selectedVendor"
+                                    size="sm"
+                                    value={formData.selectedClient}
+                                    name="selectedClient"
                                     onChange={(e) => handleVendorChange(e.target.value)}
                                 >
-                                    <option> select vendor</option>
-                                    {vendors.map((vendor) => (
-                                        <option key={vendor.id} value={vendor._id}>
-                                            {vendor.name}
+                                    <option> select client</option>
+                                    {cafes?.map((cafe) => (
+                                        <option key={cafe._id} value={cafe._id}>
+                                            {cafe.name}
                                         </option>
                                     ))}
                                 </FormSelect>
                             </Col>
                             <Col sm={4}>
                                 <FormLabel className="my-3" style={{ fontSize: "16px", fontWeight: "500" }}>
-                                    Purchase Order <span style={{ color: "red" }}>*</span>
+                                    Sales Order <span style={{ color: "red" }}>*</span>
                                 </FormLabel>
                                 <FormSelect
+                                    size="sm"
                                     aria-label="Default select example"
-                                    name="PurchaseOrder"
-                                    value={poSelected}
-                                    onChange={(e) => setPoSelected(e.target.value)}
+                                    name="SalesOrder"
+                                    value={soSelected}
+                                    onChange={(e) => setSoSelected(e.target.value)}
                                 >
                                     <option value="">
-                                        {selectedVendor && purchaseOrder.length ? "PO found!" : "Select PO No"}
+                                        {selectedClient && salesOrders.length ? "SO found!" : "Select SO No"}
                                     </option>
-                                    {purchaseOrder?.map((po) => (
+                                    {salesOrders?.map((po) => (
                                         <option key={po._id} value={po._id}>
                                             {po.po_no}
                                         </option>
@@ -240,10 +245,11 @@ export const PurchaseReceivedCreate = () => {
 
                             <Col sm={4}>
                                 <FormLabel className="my-3" style={{ fontSize: "16px", fontWeight: "500" }}>
-                                    Received Date
+                                    Package Date
                                     <span style={{ color: "red" }}>*</span>
                                 </FormLabel>
                                 <FormControl
+                                    size="sm"
                                     type="date"
                                     name="currentDate"
                                     value={formData.currentDate}
@@ -255,15 +261,15 @@ export const PurchaseReceivedCreate = () => {
                 </Col >
 
                 <Col sm={12} className="my-2">
-                    {selectedVendor && poSelected && purchaseOrder.length > 0 && <Card className="p-3  shadow-sm">
+                    {selectedClient && soSelected && salesOrders.length > 0 && <Card className="p-3  shadow-sm">
                         <Table responsive className="mb-2">
                             <thead>
                                 <tr>
                                     <th className="w-25">PRODUCT</th>
                                     <th className="w-15"></th>
                                     <th className="w-15">ORDERED</th>
-                                    <th className="w-15">RECEIVED</th>
-                                    <th className="w-30">QTY to RECEIVE</th>
+                                    <th className="w-15">PACKED</th>
+                                    <th className="w-30">QTY to PACK</th>
                                 </tr>
                             </thead>
                             {inventoryItems.length > 0 && (
@@ -277,15 +283,16 @@ export const PurchaseReceivedCreate = () => {
                                             </td>
                                             <td >SKU : {item?.item_id?.sku}</td>
                                             <td >  {item?.quantity} Qty</td>
-                                            <td>{item?.qty_received} Qty</td>
+                                            <td>{item?.qty_packed} Qty</td>
                                             <td>
                                                 <Form.Control
+                                                    size="sm"
                                                     id={`product_qty${item.id}`}
-                                                    value={inventoryItems[index]?.qty_to_receive || ""}
+                                                    value={inventoryItems[index]?.qty_to_pack || ""}
                                                     type="number"
-                                                    placeholder={"0"}
+                                                    placeholder={item.quantity - item.qty_packed}
                                                     min="0"
-                                                    max={item.quantity - item.qty_received}
+                                                    max={item.quantity - item.qty_packed}
                                                     className="mb-3"
                                                     onChange={(e) => handleQtyChange(e, index)}
                                                     onWheel={(e) => e.target.blur()} // 👈 disables scroll on focus
@@ -303,7 +310,7 @@ export const PurchaseReceivedCreate = () => {
                                 <FormControl
                                     as="textarea"
                                     rows={7}
-                                    placeholder="Order received description / instruction...."
+                                    placeholder="Order package description / instruction...."
                                     style={{ border: "1px solid gray" }}
                                     name="description"
                                     value={formData.description}

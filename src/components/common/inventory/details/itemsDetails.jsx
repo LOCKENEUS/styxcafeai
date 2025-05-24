@@ -7,7 +7,7 @@ import { RiEditFill } from "react-icons/ri";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Rectangle389 from "/assets/superAdmin/cafe/Rectangle389.png";
 import { useDispatch, useSelector } from "react-redux";
-import { getItemsById } from "../../../../store/slices/inventory";
+import { getItemsById, getItemTransactions } from "../../../../store/slices/inventory";
 import { ItemDeleteModal } from "../delete/itemDelete";
 import Loader from "../../Loader/Loader";
 
@@ -27,10 +27,15 @@ export const ItemsDetails = () => {
         setMainLoading(false);
       });
     }
+  }, [dispatch]);
+
+  useEffect(() => {
+        dispatch(getItemTransactions(groupId));
 
   }, [dispatch]);
 
   const itemDetails = useSelector((state) => state.inventorySuperAdmin.inventory);
+  const transactionDetails = useSelector((state) => state.inventorySuperAdmin.itemTransactions);
 
   const tableData = [
     {
@@ -87,6 +92,8 @@ export const ItemsDetails = () => {
   const handaleBack = () => {
     navigate("/Inventory/Items");
   }
+
+  console.log("transactionDetails", transactionDetails);
 
   return (
     <Container className="text-center">
@@ -205,10 +212,6 @@ export const ItemsDetails = () => {
                               <Col sm={6} className="my-2">₹{itemDetails.sellingPrice || "---"}</Col>
                             </Row>
                           </Col>
-
-
-
-
                         </Row>
                       </Tab>
                       <Tab eventKey="tabTwo" title="Transaction">
@@ -225,17 +228,17 @@ export const ItemsDetails = () => {
                             </tr>
                           </thead>
                           <tbody>
-                            {tableData.map((row) => (
+                            {transactionDetails.length > 0 && transactionDetails.map((row, index) => (
                               <tr key={row.id}>
-                                <td>{row.id}</td>
+                                <td>{index + 1}</td>
                                 <td nowrap="true" className="text-primary " style={{ cursor: "pointer" }}>
                                   {/* <a href={row.link}>{row.billNo}</a> */}
-                                  {row.billNo}
+                                  {row.refer_data?.po_no}
                                 </td>
-                                <td nowrap="true">{row.qty}</td>
+                                <td nowrap="true">{row.quantity}</td>
                                 <td nowrap="true">{row.price}</td>
-                                <td>{row.status}</td>
-                                <td>{row.datetime}</td>
+                                <td>Draft</td>
+                                <td>{new Date(row.refer_data.delivery_date).toDateString()}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -273,7 +276,7 @@ export const ItemsDetails = () => {
                   <Card className="my-3 p-2" style={{ height: "700px", overflowY: "scroll" }} >
                     <div className="my-3  text-center ">
                       <Image
-                        src={Rectangle389}
+                        src={`${import.meta.env.VITE_API_URL}/${itemDetails.image}`}
                         alt="product image"
                         id="imagePreview"
                         onError={(e) =>
@@ -286,7 +289,7 @@ export const ItemsDetails = () => {
                     </div>
 
                     <div className="text-dark p-2 rounded-2 text-start">
-                      <h5 className="fw-bold d-flex align-items-center mb-4" style={{ fontSize: "16px", fontWeight: "500" }}>
+                      <h5 className="fw-bold d-flex align-items-center mb-4 ms-2" style={{ fontSize: "16px", fontWeight: "500" }}>
                         <b style={{ fontSize: "17px", fontWeight: "700" }}>Stock Details</b>
                       </h5>
 
@@ -294,18 +297,18 @@ export const ItemsDetails = () => {
                         <Col md={6} className="mb-3">
                           <h6 className="fw-bold" style={{ fontSize: "16px" }}>Accounting Stock</h6>
                           <div className="my-3">
-                            <div className="my-1">Stock In Hand &nbsp;: <b>41</b></div>
-                            <div className="my-1">Committed Stock : <b>22</b></div>
-                            <div className="my-1">Available Stock  &nbsp;: <b>63</b></div>
+                            <div className="my-1">Stock In Hand &nbsp;: <b>{itemDetails.stock}</b></div>
+                            <div className="my-1">Committed Stock : <b>0</b></div>
+                            <div className="my-1">Available Stock  &nbsp;: <b>0</b></div>
                           </div>
                         </Col>
 
                         <Col md={6} className="mb-3">
                           <h6 className="fw-bold" style={{ fontSize: "16px" }}>Physical Stock</h6>
                           <div className="my-3">
-                            <div className="my-1">Stock In Hand &nbsp;: <b>41</b></div>
+                            <div className="my-1">Stock In Hand &nbsp;: <b>{itemDetails.stock}</b></div>
                             <div className="my-1">Committed Stock : <b>0</b></div>
-                            <div className="my-1">Available Stock  &nbsp;: <b>41</b></div>
+                            <div className="my-1">Available Stock  &nbsp;: <b>0</b></div>
                           </div>
                         </Col>
                       </Row>
@@ -313,7 +316,7 @@ export const ItemsDetails = () => {
                         <Col xs={6} className="pe-1">
                           <Card className="rounded-2 border p-2 my-3 mx-3 text-center">
                             <h4 style={{ fontSize: "16px" }}>
-                              0 <span >Qty</span>
+                              {itemDetails.qty_to_ship} <span >Qty</span>
                             </h4>
                             <p>To be Shipped</p>
                           </Card>
@@ -321,7 +324,7 @@ export const ItemsDetails = () => {
                         <Col xs={6} className="ps-1">
                           <Card className="rounded-2 border p-2 my-3 mx-3 text-center">
                             <h4>
-                              22 <span >Qty</span>
+                              {itemDetails.qty_to_receive} <span >Qty</span>
                             </h4>
                             <p>To be Received</p>
                           </Card>
@@ -329,7 +332,7 @@ export const ItemsDetails = () => {
                         <Col xs={6} className="pe-1">
                           <Card className="rounded-2 border p-2 my-3 mx-3 text-center">
                             <h4>
-                              0 <span >Qty</span>
+                              {itemDetails.qty_to_invoice} <span >Qty</span>
                             </h4>
                             <p>To be Invoiced</p>
                           </Card>
@@ -337,7 +340,7 @@ export const ItemsDetails = () => {
                         <Col xs={6} className="ps-1">
                           <Card className="rounded-2 border p-2 my-3 mx-3 text-center">
                             <h4>
-                              122 <span >Qty</span>
+                              {itemDetails.qty_to_bill} <span >Qty</span>
                             </h4>
                             <p>To be Billed</p>
                           </Card>

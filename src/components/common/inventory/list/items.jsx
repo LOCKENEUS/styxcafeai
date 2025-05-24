@@ -44,15 +44,6 @@ export const Items = () => {
 
   const itemsList = useSelector((state) => state.inventorySuperAdmin.it);
 
-  // const filteredItems = itemsList?.filter((item) =>
-  //   item.name?.toLowerCase().includes(searchText.toLowerCase()) ||
-  //   item.costPrice?.toString().toLowerCase().includes(searchText.toLowerCase()) ||
-  //   item.stock?.toString().toLowerCase().includes(searchText.toLowerCase()) ||
-  //   item.sku?.toLowerCase().includes(searchText.toLowerCase()) ||
-  //   item.unit?.toLowerCase().includes(searchText.toLowerCase())
-  // ) || [];
-
-
   const filteredItems = Array.isArray(itemsList)
     ? itemsList.filter((item) =>
       item.name?.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -93,11 +84,8 @@ export const Items = () => {
   const handleShowDetails = (groupId) => {
     // e.preventDefault();
     navigator("/Inventory/itemDetails", { state: { groupId } });
-
   }
   const exportToCSV = () => {
-
-
     const headers = ["#", "Item Name", "Price", "Stock", "SKU", "HSN", "Unit", "Dimension"];
     const rows = currentItems.map((row, index) => {
       const dimension = (!row.length || !row.width || !row.height || !row.dimensionUnit)
@@ -129,78 +117,45 @@ export const Items = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-
   };
   return (
-
-
     <Container fluid >
       <Row  >
         <Card.Header className="fw-bold">
-          <Row className="d-flex justify-content-between align-items-center  ">
+          <Row className="d-flex justify-content-between align-items-center">
             <Col sm={8} xs={12} >
               <Breadcrumb>
                 <Breadcrumb.Item href="#" style={{ fontSize: "16px", fontWeight: "500" }}>
-
                   <Link to="/superadmin/dashboard">Home
                   </Link>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }}>
-
                   <Link to="/Inventory/Dashboard"
-                  // state={{ cafeId: cafeId }}
                   >
                     Inventory
                   </Link>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item active style={{ fontSize: "16px", fontWeight: "500" }} > Items List </Breadcrumb.Item>
-
               </Breadcrumb>
-
             </Col>
           </Row>
 
           <Row className="mx-auto">
             <Card className="my-3 mx-auto py-3 px-3 rounded-4" style={{ backgroundColor: "white" }}>
-              <Row className="d-flex  ">
+              <Row className="">
                 <Col sm={4} className="fluid d-flex justify-content-start">
-                  <h1 className="text-center mx-2 mt-2">Items List</h1>
+                  <h1 className="text-center mx-2 mt-2"
+                    style={{
+                      textTransform: 'uppercase',
+                      letterSpacing: '5px',
+                      fontWeight: 'bold',
+                      fontSize: '18px',
+                      background: 'linear-gradient(to right,rgb(0, 119, 255),rgb(0, 17, 255))',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent'
+                    }}
+                  >Items List</h1>
                 </Col>
-                {/* <Col sm={3} className="fluid d-flex justify-content-end">
-          <div className="d-flex justify-content-start align-items-start my-2" >
-
-                <InputGroup className="navbar-input-group " style={{ border: "none" }}>
-                  <InputGroupText className="border-0" style={{ background: "transparent", backgroundColor: "#FAFAFA" }}>
-                    < Image src={gm1} />
-                  </InputGroupText>
-
-                  <FormControl
-                    type="search"
-                    className="search"
-                    size="sm"
-                    placeholder="Search for vendors"
-                    aria-label="Search in docs"
-                    value={searchText}
-                    onChange={(e) => setSearchText(e.target.value)}
-                    
-                    style={{ background: "transparent", backgroundColor: "#FAFAFA",border:"none" }}
-                  />
-
-                  {searchText && (
-                    <InputGroupText
-                      as="a"
-                      href="javascript:;"
-                      onClick={() => setSearchText("")}
-                      
-                    >
-                     
-                    </InputGroupText>
-                  )}
-                </InputGroup>
-
-              </div>
-          
-          </Col> */}
                 <Col sm={8}>
                   <div className="d-flex justify-content-end align-items-center flex-wrap my-2">
                     <InputGroup
@@ -233,13 +188,10 @@ export const Items = () => {
                       )}
                     </InputGroup>
 
-
                     <Button variant="denger" className="btn  px-4 mx-4" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }}
                       onClick={exportToCSV}
                     >
-
                       <Image className="me-2" style={{ width: "22px", height: "22px" }} src={solar_export}
-
                       />
                       Export
                     </Button>

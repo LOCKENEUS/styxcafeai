@@ -1,15 +1,11 @@
-
-
 import { useEffect, useState } from "react";
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect, Image, InputGroup, Row, Spinner } from "react-bootstrap";
+import { Breadcrumb, Button, Card, Col, Container, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect, Image, InputGroup, Row, Spinner } from "react-bootstrap";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
-import { FaPlus, FaStarOfLife } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { Units } from "../modal/units";
-import { fetchItems } from "../../../../store/adminslices/inventory";
 import { useDispatch, useSelector } from "react-redux";
-import { addItems, getItemsById, updateItemsById } from "../../../../store/slices/inventory";
-import add from '/assets/inventory/material-symbols_add-rounded.png'
+import { getItemsById, updateItemsById } from "../../../../store/slices/inventory";
 import { Manufacturer } from "../modal/manufacturer";
 import { Brand } from "../modal/brand";
 import { TaxModal } from "../modal/tax";
@@ -20,25 +16,21 @@ import { toast } from "react-toastify";
 
 export const EditItem = () => {
     const location = useLocation();
-  const { groupId } = location.state || {};
-
-//   ======================================
-
+    const { groupId } = location.state || {};
     const [imagePreview, setImagePreview] = useState('https://fsm.lockene.net/assets/Web-Fsm/images/avtar/3.jpg');
     const [showUnitModal, setShowUnitModal] = useState(false);
     const [showManufacturerModal, setShowManufacturerModal] = useState(false);
     const [showBrandModal, setShowBrandModal] = useState(false);
     const [showTaxModal, setShowTaxModal] = useState(false);
-    const dispatch = useDispatch();
     const [taxPreference, setTaxPreference] = useState('Taxable');
     const [galleryImages, setGalleryImages] = useState([]);
     const [submitLoading, setSubmitLoading] = useState(false);
-    const [galleryFiles, setGalleryFiles] = useState([]); 
-
+    const [galleryFiles, setGalleryFiles] = useState([]);
     const [itemsLoading, setItemsLoading] = useState(false);
     const [superAdminId, setSuperAdminId] = useState('');
     const customFields = useSelector(state => state.customFields.customFields);
-    // -----------------------   API CALLS ---------------------------
+
+    const dispatch = useDispatch();
 
     useEffect(() => {
         setItemsLoading(true);
@@ -75,45 +67,71 @@ export const EditItem = () => {
 
     }, [dispatch, superAdminId]);
 
+    useEffect(() => {
+        if (itemsDetails) {
+            setFormData({
+                // name: itemsDetails?.name,
+                // // hsnCode: "",
+                // sku: itemsDetails?.sku,
+                // unitType: itemsDetails?.unit,
+                // hsnCode: itemsDetails?.hsn,
+                // taxPreference: itemsDetails?.taxable === true ? "Taxable" : "Non-Taxable",
+                // selectedTax: itemsDetails?.tax?._id,
+                // length: itemsDetails?.length,
+                // width: itemsDetails?.width,
+                // height: itemsDetails?.height,
+                // dimension_unit: itemsDetails?.dimension_unit,
+                // weight1: itemsDetails?.weight,
+                // weight_unit: itemsDetails?.weightUnit,
+                // manufacturer: itemsDetails?.manufacturer?._id,
+                // // ean: "",
+                // brand: itemsDetails?.brand?._id,
+                // // upc: "",
+                // // mpn: "",
+                // cost_price: itemsDetails?.costPrice,
+                // selling_price: itemsDetails?.sellingPrice,
+                // vendor: itemsDetails?.preferredVendor?._id,
+                // stock: itemsDetails?.stock,
+                // stock_rate: itemsDetails?.stockRate,
+                // reorder_point: itemsDetails?.reorderPoint,
+                // cafeSellingPrice: itemsDetails?.cafeSellingPrice,
 
-  useEffect(() => {
-    if (itemsDetails) {
-      setFormData({
-        name: itemsDetails?.name ,
-        // hsnCode: "",
-        sku: itemsDetails?.sku,
-        unitType: itemsDetails?.unit,
-        hsnCode: itemsDetails?.hsn,
-        taxPreference: itemsDetails?.taxable === true ? "Taxable" : "Non-Taxable",
-         selectedTax: itemsDetails?.tax?._id,
-        length: itemsDetails?.length,
-        width: itemsDetails?.width,
-        height: itemsDetails?.height,
-        dimension_unit: itemsDetails?.dimension_unit,
-        weight1: itemsDetails?.weight,
-        weight_unit: itemsDetails?.weightUnit,
-        manufacturer: itemsDetails?.manufacturer?._id,
-        // ean: "",
-        brand: itemsDetails?.brand?._id,
-        // upc: "",
-        // mpn: "",
-        cost_price: itemsDetails?.costPrice,
-        selling_price: itemsDetails?.sellingPrice,
-        vendor: itemsDetails?.preferredVendor?._id,
-        stock: itemsDetails?.stock,
-        stock_rate: itemsDetails?.stockRate,
-        reorder_point: itemsDetails?.reorderPoint,
-        cafeSellingPrice: itemsDetails?.cafeSellingPrice,
-      });
-    // galleryFiles:itemsDetails?.image
-    }
-  }, [itemsDetails]);
+                name: itemsDetails.name || '',
+                sku: itemsDetails.sku || '',
+                unitType: itemsDetails?.unit,
+                hsnCode: itemsDetails.hsn || '',
+                taxPreference: itemsDetails.taxable ? 'Taxable' : 'Non-Taxable',
+                selectedTax: itemsDetails.tax?._id || '',
+                length: itemsDetails.length || 0,
+                width: itemsDetails.width || 0,
+                height: itemsDetails.height || 0,
+                dimension_unit: itemsDetails.dimensionUnit || 'cm',
+                weight1: itemsDetails.weight || 0,
+                weight_unit: itemsDetails.weightUnit || 'kg',
+                manufacturer: itemsDetails.manufacturer?._id || '',
+                brand: itemsDetails.brand?._id || '',
+                mpn: itemsDetails.mpn || '',
+                upc: itemsDetails.upc || '',
+                ean: itemsDetails.ean || '',
+                isbn: itemsDetails.isbn || '',
+                cost_price: itemsDetails.costPrice || '',
+                selling_price: itemsDetails.sellingPrice || '',
+                vendor: itemsDetails?.preferredVendor?._id,
+                stock: itemsDetails.stock || 0,
+                stock_rate: itemsDetails.stockRate || 0,
+                reorder_point: itemsDetails.reorderPoint || 0,
+                linking: itemsDetails.linking || 'N',
+                image: itemsDetails.image || null,
+                cafeSellingPrice: itemsDetails?.cafeSellingPrice,
+            });
+            // galleryFiles:itemsDetails?.image
+        }
+    }, [itemsDetails]);
 
     const taxFieldsList = useSelector((state) => state.taxFieldSlice.taxFields);
-
-    const unitOptions = customFields.filter(field => field.type === "Unit");
-    const manufacturerOptions = customFields.filter(field => field.type === "Manufacturer");
-    const brandOptions = customFields.filter(field => field.type === "Brand");
+    const unitOptions = customFields?.filter(field => field.type === "Unit");
+    const manufacturerOptions = customFields?.filter(field => field.type === "Manufacturer");
+    const brandOptions = customFields?.filter(field => field.type === "Brand");
     const vendors = useSelector(state => state.vendors.vendors);
 
     const [formData, setFormData] = useState({
@@ -143,43 +161,30 @@ export const EditItem = () => {
         reorder_point: "",
         selectedTax: "",
         cafeSellingPrice: "",
-
-
     });
 
     const handleChange = (e) => {
-        // const { name, value } = e.target;
-        // setFormData({ ...formData, [name]: value });
-        // taxPreference
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
         if (name === 'taxPreference') {
             setTaxPreference(value);
         }
-
     }
-
 
     const handleTaxPreferenceChange = (e) => {
         setTaxPreference(e.target.value);
     };
 
-    // const handleGalleryChange = (e) => {
-    //     const files = Array.from(e.target.files);
-    //     const previews = files.map((file) => URL.createObjectURL(file));
-    //     setGalleryImages(previews);
-    // };
-
     const handleGalleryChange = (e) => {
         const file = e.target.files[0]; // Only one file
         if (file) {
-          const preview = URL.createObjectURL(file);
-          setGalleryFiles([file]); 
-          setGalleryImages([preview]);
+            const preview = URL.createObjectURL(file);
+            setGalleryFiles([file]);
+            setGalleryImages([preview]);
         }
-      };
-      
+    };
 
+    console.log("formData", formData);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -195,62 +200,83 @@ export const EditItem = () => {
         ) {
             setSubmitLoading(false);
             return toast.error('Please fill all the required fields');
-
-
         }
 
         try {
             const formDataToSend = new FormData();
+            // // formDataToSend.append("groupId", superAdminId);
+            // formDataToSend.append("name", formData.name);
+            // formDataToSend.append("sku", formData.sku);
+            // formDataToSend.append("unit", formData.unitType);
+            // formDataToSend.append("hsn", formData.hsnCode);
+            // formDataToSend.append("taxable", formData.taxPreference === "Taxable");
+            // formDataToSend.append("tax", formData.selectedTax);
+            // formDataToSend.append("length", formData.length);
+            // formDataToSend.append("width", formData.width);
+            // formDataToSend.append("height", formData.height);
+            // formDataToSend.append("dimensionUnit", formData.dimension_unit);
+            // formDataToSend.append("weight", formData.weight1);
+            // formDataToSend.append("weightUnit", formData.weight_unit);
+            // formDataToSend.append("manufacturer", formData.manufacturer);
+            // formDataToSend.append("brand", formData.brand);
+            // formDataToSend.append("costPrice", formData.cost_price);
+            // formDataToSend.append("sellingPrice", formData.selling_price);
+            // formDataToSend.append("preferredVendor", formData.vendor);
+            // formDataToSend.append("stock", formData.stock);
+            // formDataToSend.append("stockRate", formData.stock_rate);
+            // formDataToSend.append("reorderPoint", formData.reorder_point);
+            // formDataToSend.append("cafeSellingPrice", formData.cafeSellingPrice);
 
-            // formDataToSend.append("groupId", superAdminId);
-            formDataToSend.append("name", formData.name);
-            formDataToSend.append("sku", formData.sku);
-            formDataToSend.append("unit", formData.unitType);
-            formDataToSend.append("hsn", formData.hsnCode);
-            formDataToSend.append("taxable", formData.taxPreference === "Taxable");
-            formDataToSend.append("tax", formData.selectedTax);
-            formDataToSend.append("length", formData.length);
-            formDataToSend.append("width", formData.width);
-            formDataToSend.append("height", formData.height);
-            formDataToSend.append("dimensionUnit", formData.dimension_unit);
-            formDataToSend.append("weight", formData.weight1);
-            formDataToSend.append("weightUnit", formData.weight_unit);
-            formDataToSend.append("manufacturer", formData.manufacturer);
-            formDataToSend.append("brand", formData.brand);
-            formDataToSend.append("costPrice", formData.cost_price);
-            formDataToSend.append("sellingPrice", formData.selling_price);
+            formDataToSend.append('name', formData.name);
+            formDataToSend.append('sku', formData.sku);
+            formDataToSend.append('unit', formData.unitType);
+            formDataToSend.append('hsn', parseFloat(formData.hsnCode) || 0);
+            formDataToSend.append('taxable', formData.taxPreference === 'Taxable');
+            formDataToSend.append('tax', formData.selectedTax);
+            formDataToSend.append('length', isNaN(parseFloat(formData.length)) ? 0 : parseFloat(formData.length));
+            formDataToSend.append('width', isNaN(parseFloat(formData.width)) ? 0 : parseFloat(formData.width));
+            formDataToSend.append('height', isNaN(parseFloat(formData.height)) ? 0 : parseFloat(formData.height));
+            formDataToSend.append('dimensionUnit', formData.dimension_unit);
+            formDataToSend.append('weight', isNaN(parseFloat(formData.weight1)) ? 0 : parseFloat(formData.weight1));
+            formDataToSend.append('weightUnit', formData.weight_unit);
+            formDataToSend.append('manufacturer', formData.manufacturer);
+            formDataToSend.append('brand', formData.brand);
+            formDataToSend.append('mpn', formData.mpn);
+            formDataToSend.append('upc', formData.upc);
+            formDataToSend.append('ean', formData.ean);
+            formDataToSend.append('isbn', formData.isbn);
+            formDataToSend.append('costPrice', isNaN(parseFloat(formData.cost_price)) ? 0 : parseFloat(formData.cost_price));
+            formDataToSend.append('sellingPrice', isNaN(parseFloat(formData.selling_price)) ? 0 : parseFloat(formData.selling_price));
             formDataToSend.append("preferredVendor", formData.vendor);
-            formDataToSend.append("stock", formData.stock);
-            formDataToSend.append("stockRate", formData.stock_rate);
-            formDataToSend.append("reorderPoint", formData.reorder_point);
+            formDataToSend.append('stock', isNaN(parseInt(formData.stock)) ? 0 : parseInt(formData.stock, 10));
+            formDataToSend.append('stockRate', isNaN(parseFloat(formData.stock_rate)) ? 0 : parseFloat(formData.stock_rate));
+            formDataToSend.append('reorderPoint', isNaN(parseInt(formData.reorder_point)) ? 0 : parseInt(formData.reorder_point, 10));
+            formDataToSend.append('linking', formData.linking);
             formDataToSend.append("cafeSellingPrice", formData.cafeSellingPrice);
+            if (formData.image) {
+                formDataToSend.append('image', formData.image);
+            }
 
             // Append images
             galleryFiles.forEach((file) => {
                 formDataToSend.append("image", file);
 
             });
-
-
             // await dispatch(updateItemsById(formDataToSend,superAdminId));
-            await dispatch(updateItemsById({ itemsData: formDataToSend, itemId: superAdminId }));
+            await dispatch(updateItemsById({ itemsData: formDataToSend, itemId: groupId }));
 
             // setSubmitLoading(false);
             // Reset form after successful submission
-           
+
         } catch (error) {
             console.error("Error submitting form:", error);
             toast.error("Failed to submit form.");
-            
-        }finally {
+        } finally {
             setSubmitLoading(false);
         }
     };
 
-
-
-   // -----    style -----
-
+    // -----    style -----
     const lableHeader = {
         fontSize: "16px",
         fontWeight: "500",
@@ -263,49 +289,47 @@ export const EditItem = () => {
 
     };
     return (
-         <Container >
+        <Container >
 
-      <Row>
-        <Card.Header className="fw-bold">
-          <Row className="d-flex justify-content-between align-items-center  ">
-            <Col sm={8} xs={12} >
-              <Breadcrumb>
-                <Breadcrumb.Item href="#" style={{ fontSize: "16px", fontWeight: "500" }}>
+            <Row>
+                <Card.Header className="fw-bold">
+                    <Row className="d-flex justify-content-between align-items-center  ">
+                        <Col sm={8} xs={12} >
+                            <Breadcrumb>
+                                <Breadcrumb.Item href="#" style={{ fontSize: "16px", fontWeight: "500" }}>
 
-                  <Link to="/superadmin/dashboard">Home
-                  </Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }}>
+                                    <Link to="/superadmin/dashboard">Home
+                                    </Link>
+                                </Breadcrumb.Item>
+                                <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }}>
 
-                  <Link to="/Inventory/Dashboard"
+                                    <Link to="/Inventory/Dashboard"
 
-                  >
-                    Inventory
-                  </Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }}>
+                                    >
+                                        Inventory
+                                    </Link>
+                                </Breadcrumb.Item>
+                                <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }}>
 
-                  <Link to="/Inventory/Items"
-                  // state={{ cafeId: cafeId }}
-                  >
-                    Items List
-                  </Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Item active style={{ fontSize: "16px", fontWeight: "500" }} > Items Edit</Breadcrumb.Item>
+                                    <Link to="/Inventory/Items"
+                                    // state={{ cafeId: cafeId }}
+                                    >
+                                        Items List
+                                    </Link>
+                                </Breadcrumb.Item>
+                                <Breadcrumb.Item active style={{ fontSize: "16px", fontWeight: "500" }} > Items Edit</Breadcrumb.Item>
 
-              </Breadcrumb>
+                            </Breadcrumb>
 
-            </Col>
-            
-          </Row>
-          <Row className="mx-3 ">
+                        </Col>
+
+                    </Row>
+                    <Row className="mx-3 ">
                         <Card className="my-2 mx-auto py-3 px-3 rounded-4" style={{ backgroundColor: "white" }}>
                             <Row className="d-flex  ">
                                 <Col sm={12} className="fluid d-flex justify-content-start">
                                     <h1 className="text-center mx-2 mt-2">Create Item </h1>
                                 </Col>
-
-
                                 <Col sm={4} className="my-2 px-4 ">
                                     <FormGroup>
                                         <label className="fw-bold my-2" style={lableHeader}>
@@ -320,8 +344,6 @@ export const EditItem = () => {
                                             value={formData.name}
                                             onChange={handleChange}
                                             style={inputStyle}
-
-
                                         />
                                     </FormGroup>
                                 </Col>
@@ -329,7 +351,7 @@ export const EditItem = () => {
                                 <Col sm={4} className="my-2  px-4">
                                     <FormGroup>
                                         <label className="fw-bold my-2" style={lableHeader}>
-                                            SKU 
+                                            SKU
                                             {/* <span className="text-danger ms-1">*</span> */}
                                         </label>
                                         <input
@@ -341,7 +363,7 @@ export const EditItem = () => {
                                             value={formData.sku}
                                             onChange={handleChange}
                                             style={inputStyle}
-                                            
+
                                         />
                                     </FormGroup>
                                 </Col>
@@ -428,7 +450,7 @@ export const EditItem = () => {
                                             onChange={handleChange}
                                             style={inputStyle}
                                         >
-                                            <option value="Taxable">Taxsaple</option>
+                                            <option value="Taxable">Taxable</option>
                                             <option value="Non-Taxable">Non Taxable</option>
                                         </FormSelect>
                                     </FormGroup>
@@ -439,7 +461,7 @@ export const EditItem = () => {
                                         <FormGroup>
                                             <label className="fw-bold my-2" style={lableHeader}>
                                                 Tax
-                                                 {/* <span className="text-danger ms-1">*</span> */}
+                                                {/* <span className="text-danger ms-1">*</span> */}
                                             </label>
                                             <InputGroup >
                                                 <FormSelect
@@ -469,15 +491,13 @@ export const EditItem = () => {
                                                         display: "flex",
                                                         alignItems: "center",
                                                         borderRadius: "8px",
-                                                        border: "1px double #E5EFFF", 
+                                                        border: "1px double #E5EFFF",
                                                     }}
                                                 >
                                                     <FaPlus />
                                                 </Button>
                                                 <TaxModal show={showTaxModal} handleClose={() => setShowTaxModal(false)} superAdminId={superAdminId} />
                                             </InputGroup>
-
-
                                         </FormGroup>
                                     </Col>
                                 )}
@@ -580,13 +600,8 @@ export const EditItem = () => {
                                             </Button>
                                             <Manufacturer show={showManufacturerModal} handleClose={() => setShowManufacturerModal(false)} superAdminId={superAdminId} />
                                         </InputGroup>
-                                        {/* <div id="addTaxFieldContainer" />
-                                        <a className="js-create-field form-link" href="javascript:;">
-                                            <FaPlus /> Add Manufacturer
-                                        </a> */}
                                     </FormGroup>
                                 </Col>
-
 
                                 <Col sm={4} className="my-2">
                                     <FormGroup>
@@ -629,43 +644,10 @@ export const EditItem = () => {
 
                                             <Brand show={showBrandModal} handleClose={() => setShowBrandModal(false)} superAdminId={superAdminId} />
                                         </InputGroup>
-                                        {/* <div />
-                                        <a className="js-create-field form-link" href="javascript:;">
-                                            <FaPlus /> Add Brand
-                                        </a> */}
                                     </FormGroup>
                                 </Col>
-                                {/* <Col sm={4} className="my-2">
-                                    <FormGroup>
-                                        <label className="fw-bold my-2" style={lableHeader}>
-                                            
-                                            MPN
-                                           
-                                        </label>
-                                        <input type="text" className="form-control" placeholder="0 0 0 - 0 0 0" style={inputStyle}
-                                        name='mpn'
-                                        value={formData.mpn}
-                                        onChange={handleChange}
-                                        />
-                                    </FormGroup>
-                                </Col>
-                                <Col sm={4} className="my-2">
-                                    <FormGroup>
-                                        <label className="fw-bold my-2" style={lableHeader}>
-                                           
-                                            UPC
-                                           
-                                        </label>
-                                        <input type="text" className="form-control" placeholder="0 0 0 - 0 0 0" style={inputStyle} 
-                                        name="upc"
-                                        value={formData.upc}
-                                        onChange={handleChange}
-                                        />
-                                    </FormGroup>
-                                </Col> */}
                             </Row>
                         </Card>
-
 
                         <Card className="my-2 mx-auto py-3 px-2 rounded-4" style={{ backgroundColor: "white" }}>
                             <Row className="mx-3">
@@ -731,12 +713,11 @@ export const EditItem = () => {
                                     </FormGroup>
                                 </Col>
 
-
                                 <Col sm={4} className="my-2">
                                     <FormGroup>
                                         <label className="fw-bold my-2" style={lableHeader}>
                                             {/* <FaStarOfLife className="text-danger size-sm" />  */}
-                                            Preferrd Vendor
+                                            Preferred Vendor
                                             {/* <span className="text-danger ms-1 ">*</span> */}
                                         </label>
                                         <InputGroup>
@@ -751,8 +732,6 @@ export const EditItem = () => {
                                                         {vendor.name}
                                                     </option>
                                                 ))}
-
-
                                             </FormSelect>
                                         </InputGroup>
 
@@ -771,7 +750,6 @@ export const EditItem = () => {
                                         label="Tracking Inventory For This Item"
                                         disabled
                                         checked
-
                                     />
                                     <span style={lableHeader}>You cannot enable/disable inventory tracking once you've created transactions for this item</span>
                                 </Col>
@@ -812,10 +790,9 @@ export const EditItem = () => {
                             </Row>
                         </Card>
 
-
                         <Card className="my-2 mx-auto py-3 px-2 rounded-4" style={{ backgroundColor: "white" }}>
                             <Row className="my-1 mx-3">
-          
+
                                 <Col sm={5} className=" my-2">
                                     <Row className="">
                                         <Col sm={12} className="my-2  ">
@@ -831,8 +808,8 @@ export const EditItem = () => {
                                                     id="galleryUpload"
                                                 />
                                                 <label className="form-control border-0 "
-                                                
-                                                htmlFor="galleryUpload" style={{ cursor: 'pointer' }}>
+
+                                                    htmlFor="galleryUpload" style={{ cursor: 'pointer' }}>
                                                     <div
                                                         className="border border-primary p-3 text-center "
                                                         style={{
@@ -847,8 +824,6 @@ export const EditItem = () => {
                                                 </label>
                                             </FormGroup>
                                         </Col>
-
-
                                     </Row>
                                 </Col>
                                 <Col sm={4} className="my-2 d-flex flex-wrap">
@@ -886,8 +861,8 @@ export const EditItem = () => {
                         </Card>
 
                     </Row>
-        </Card.Header>
-      </Row>
-      </Container>
+                </Card.Header>
+            </Row>
+        </Container>
     )
 };

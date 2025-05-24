@@ -14,11 +14,14 @@ import {
   Dropdown,
 } from "react-bootstrap";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
-import { FaCheck, FaRupeeSign, FaTrash } from "react-icons/fa";
-import { BiPlus } from "react-icons/bi";
+import { FaCheck, FaRupeeSign, FaTrash, FaUpload, FaFilePdf } from "react-icons/fa";
+import { BiArrowToLeft, BiPlus } from "react-icons/bi";
 import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems"
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
+import { getCustomFields } from '../../../../store/AdminSlice/CustomField';
+import { getTaxFields } from '../../../../store/AdminSlice/TextFieldSlice';
+import { MdOutlineRemoveCircleOutline } from "react-icons/md";
 import Select from 'react-select';
 import { TaxModal } from "../modal/tax";
 import AddCafe from "../modal/addCafe";
@@ -26,9 +29,9 @@ import { getItems } from "../../../../store/slices/inventory";
 import { getTaxes } from "../../../../store/slices/tax";
 import { fetchCafes } from "../../../../store/slices/cafeSlice";
 import { getSaCustomFields } from "../../../../store/slices/Inventory/customField";
-import { addsalesOrder, getsalesOrderById, updatesalesOrder } from "../../../../store/slices/Inventory/soSlice";
+import { createSalesInvoice, getSalesInvoiceDetails, updateSalesInvoice } from "../../../../store/slices/Inventory/invoiceSlice";
 
-export const CreateSo = () => {
+export const CreateSalesInv = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditMode = !!id;
@@ -100,10 +103,9 @@ export const CreateSo = () => {
 
   useEffect(() => {
     if (isEditMode) {
-      dispatch(getsalesOrderById(id))
+      dispatch(getSalesInvoiceDetails(id))
         .unwrap()
         .then((soData) => {
-
           setFormData({
             date: soData.date ? new Date(soData.date).toISOString().split('T')[0] : '',
             shipment_date: soData.shipment_date ? new Date(soData.shipment_date).toISOString().split('T')[0] : '',
@@ -176,14 +178,6 @@ export const CreateSo = () => {
     setShowClientList(true);
   };
 
-  // Add these new state and calculation functions
-  const priceList = {
-    "34": 34,
-    "3": 3,
-    "4": 4,
-    "1800": 1800,
-  };
-
   const updateProduct = (id, field, value) => {
     const updatedProducts = products.map((product) => {
       if (product.id === id) {
@@ -194,8 +188,8 @@ export const CreateSo = () => {
           if (selectedItem) {
             updatedProduct.price = selectedItem.sellingPrice;
             // Handle null tax case
-            updatedProduct.tax = selectedItem.tax?._id || ''; // Set empty string if tax is null
-            const itemTax = selectedItem.tax ? taxFields.find(tax => tax._id === selectedItem.tax?._id) : null;
+            updatedProduct.tax = selectedItem.tax._id || ''; // Set empty string if tax is null
+            const itemTax = selectedItem.tax ? taxFields.find(tax => tax._id === selectedItem.tax._id) : null;
             updatedProduct.taxRate = itemTax ? itemTax.tax_rate : 0;
           }
         }
@@ -393,27 +387,27 @@ export const CreateSo = () => {
 
     try {
       if (isEditMode) {
-        const res = await dispatch(updatesalesOrder({ id, soData: submitData })).unwrap();
-        if (res?.data?._id) {
-          navigate(`/Inventory/SalesOrderDetails/${res._id}`);
+        const res = await dispatch(updateSalesInvoice({ id, siData: submitData })).unwrap();
+        if (res?._id) {
+          navigate(`/Inventory/SaleInvoice/View/${res._id}`);
         } else {
           console.error('No ID returned from update operation');
         }
       } else {
-        const res = await dispatch(addsalesOrder(submitData)).unwrap();
+        const res = await dispatch(createSalesInvoice(submitData)).unwrap();
         if (res?._id) {
-          navigate(`/Inventory/SalesOrderDetails/${res._id}`);
+          navigate(`/Inventory/SaleInvoice/View/${res._id}`);
         } else {
           console.error('No ID returned from create operation');
         }
       }
     } catch (error) {
-      console.error('Error with Sales Order:', error);
+      console.error('Error with Sales Invoice:', error);
     }
   };
 
   // Update the page title based on mode
-  const pageTitle = isEditMode ? "Edit Sales Order" : "Create Sales Order";
+  const pageTitle = isEditMode ? "Edit Sales Invoice" : "Create Sales Invoice";
 
   // Add this function to format items for react-select
   const formatItemsForSelect = (items) => {
@@ -428,19 +422,18 @@ export const CreateSo = () => {
   return (
     <Container fluid className="p-4">
       <Col sm={12} className="my-3">
-        <div style={{ top: "186px", fontSize: "12px" }}>
+        <div style={{ top: "186px", fontSize: "16px" }}>
           <Breadcrumb>
             <BreadcrumbItem>Home</BreadcrumbItem>
             <BreadcrumbItem>
-              <Link to="/Inventory/SalesOrder">
-                Sales Order List
+              <Link to="/admin/Inventory/SalesInvoice">
+                Sales Invoice List
               </Link>
             </BreadcrumbItem>
             <BreadcrumbItem active>{pageTitle}</BreadcrumbItem>
           </Breadcrumb>
         </div>
       </Col>
-      {/* Client & Delivery Details */}
 
       <Card className="p-3 mb-3 shadow-sm">
         <Row className="align-items-center">
@@ -460,22 +453,23 @@ export const CreateSo = () => {
             <strong>PAN: {user?.pan}</strong>
           </Col>
           <Col xs={2} className="text-end">
-            <span className="text-muted">SO:</span>
-            <strong className="text-primary"> Draft</strong>
+            <span className="text-muted">Invoice:</span>
+            <strong className="text-primary">Draft</strong>
           </Col>
         </Row>
       </Card>
-
+      {/* Client & Delivery Details */}
       <Card className="p-3 shadow-sm">
         <Row>
           <Col md={6} className="d-flex border-end flex-column gap-2">
             <div className="border-bottom ">
               <div className="d-flex flex-row align-items-center mb-3 gap-2">
-                <h5 className="text-muted me-2">Cafe Name Here</h5>
+                <h5 className="text-muted my-auto">Cafe Name Here</h5>
                 <Button
+                size="sm"
                   style={{
                     width: "144px",
-                    height: "44px",
+                    // height: "44px",
                     borderStyle: "dashed",
                   }}
                   variant="outline-primary"
@@ -526,6 +520,7 @@ export const CreateSo = () => {
             <div className="d-flex flex-column gap-2">
               <div className="d-flex flex-row align-items-center gap-2">
                 <Form.Control
+                  size="sm"
                   type="text"
                   name="date"
                   value={formData.date || new Date().toISOString().split('T')[0]}
@@ -538,6 +533,7 @@ export const CreateSo = () => {
                 />
               </div>
               <Form.Select
+                className="form-select form-select-sm"
                 name="sales_person"
                 value={formData.sales_person}
                 onChange={handleInputChange}
@@ -659,7 +655,7 @@ export const CreateSo = () => {
                       </div>
                       <Button
                         onClick={handleShowCreateItem}
-                        className="flex-shrink-0"
+                        className="flex-shrink-0 p-1"
                         style={{
                           width: "40px",
                           height: "38px",
@@ -680,14 +676,15 @@ export const CreateSo = () => {
                   </div>
                 </td>
                 <td>
-
                   <Form.Control
+                  size="sm"
                     type="number"
                     min="1"
                     placeholder="QTY : 1"
                     style={{ border: "1px solid black", width: "100%" }}
                     value={product.quantity}
                     onChange={(e) => updateProduct(product.id, "quantity", e.target.value)}
+                    onWheel={(e) => e.target.blur()}
                   />
                 </td>
                 <td>
@@ -696,19 +693,21 @@ export const CreateSo = () => {
                       <FaRupeeSign />
                     </span>
                     <Form.Control
+                    size="sm"
                       type="number"
                       placeholder="0.00"
                       className="w-100"
                       style={{ paddingLeft: "25px", border: "1px solid black" }}
                       value={product.price}
                       onChange={(e) => updateProduct(product.id, "price", e.target.value)}
+                      onWheel={(e) => e.target.blur()}
                     />
                   </div>
                 </td>
                 <td>
                   <div className="d-flex gap-2">
                     <Form.Select
-                      className="flex-grow-1"
+                      className="form-select form-select-sm flex-grow-1"
                       style={{ border: "1px solid black" }}
                       value={product.tax || ""}
                       onChange={(e) => updateProduct(product.id, "tax", e.target.value)}
@@ -721,7 +720,7 @@ export const CreateSo = () => {
                       ))}
                     </Form.Select>
                     <Button
-                      className="flex-shrink-0"
+                      className="flex-shrink-0 p-1" 
                       style={{ width: "40px", border: "1px solid black", borderStyle: "dashed" }}
                       variant="outline-secondary"
                       onClick={() => setShowTaxModal(true)}
@@ -734,6 +733,7 @@ export const CreateSo = () => {
                       <FaRupeeSign />
                     </span>
                     <Form.Control
+                      size="sm"
                       type="text"
                       className="text-end"
                       value={product.totalTax?.toFixed(2) || "0.00"}
@@ -748,6 +748,7 @@ export const CreateSo = () => {
                       <FaRupeeSign />
                     </span>
                     <Form.Control
+                    size="sm"
                       type="text"
                       placeholder="PRICE : 0.00"
                       className="text-end w-100"
@@ -823,6 +824,7 @@ export const CreateSo = () => {
                     type="number"
                     value={totals.discount}
                     onChange={(e) => setTotals(prev => ({ ...prev, discount: e.target.value }))}
+                    onWheel={(e) => e.target.blur()}
                     placeholder="0.00"
                   />
                   <Form.Select
@@ -839,38 +841,47 @@ export const CreateSo = () => {
               {/* Tax */}
               <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
                 <span>Tax ₹{totals.taxAmount.toFixed(2)}</span>
-                <Dropdown style={{ maxWidth: "200px" }}>
-                  <Dropdown.Toggle variant="outline-primary" style={{ width: "100%" }}>
-                    {totals.selectedTaxes.length ?
-                      `${totals.selectedTaxes.reduce((sum, tax) => sum + tax.rate, 0)}%` :
-                      '0.00% Tax'}
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    {taxFields.map(tax => (
-                      <Dropdown.Item key={tax._id} as="div">
-                        <Form.Check
-                          type="checkbox"
-                          id={`tax-${tax._id}`}
-                          label={`${tax.tax_name} (${tax.tax_rate}%)`}
-                          checked={totals.selectedTaxes.some(t => t.id === tax._id)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setTotals(prev => ({
-                                ...prev,
-                                selectedTaxes: [...prev.selectedTaxes, { id: tax._id, rate: tax.tax_rate }]
-                              }));
-                            } else {
-                              setTotals(prev => ({
-                                ...prev,
-                                selectedTaxes: prev.selectedTaxes.filter(t => t.id !== tax._id)
-                              }));
-                            }
-                          }}
-                        />
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
+                <div className="d-flex gap-2">
+                  <Dropdown style={{ maxWidth: "200px" }}>
+                    <Dropdown.Toggle variant="outline-primary" style={{ width: "100%" }}>
+                      {totals.selectedTaxes.length ?
+                        `${totals.selectedTaxes.reduce((sum, tax) => sum + tax.rate, 0)}%` :
+                        '0.00% Tax'}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      {taxFields.map(tax => (
+                        <Dropdown.Item key={tax._id} as="div">
+                          <Form.Check
+                            type="checkbox"
+                            id={`tax-${tax._id}`}
+                            label={`${tax.tax_name} (${tax.tax_rate}%)`}
+                            checked={totals.selectedTaxes.some(t => t.id === tax._id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setTotals(prev => ({
+                                  ...prev,
+                                  selectedTaxes: [...prev.selectedTaxes, { id: tax._id, rate: tax.tax_rate }]
+                                }));
+                              } else {
+                                setTotals(prev => ({
+                                  ...prev,
+                                  selectedTaxes: prev.selectedTaxes.filter(t => t.id !== tax._id)
+                                }));
+                              }
+                            }}
+                          />
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                  <div
+                    className="py-2 px-3 border border-primary rounded-1 border-dashed"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setShowTaxModal(true)}
+                  >
+                    +
+                  </div>
+                </div>
               </div>
 
               {/* Total */}
@@ -902,6 +913,7 @@ export const CreateSo = () => {
                     placeholder="Adjustment Amount"
                     value={totals.adjustmentAmount}
                     onChange={(e) => setTotals(prev => ({ ...prev, adjustmentAmount: e.target.value }))}
+                    onWheel={(e) => e.target.blur()}
                   />
                 </InputGroup>
               </div>
@@ -951,7 +963,7 @@ export const CreateSo = () => {
           variant="primary"
           onClick={handleSubmit}
         >
-          {isEditMode ? "Update Sales Order" : "Create Sales Order"}
+          {isEditMode ? "Update Sales Invoice" : "Create Sales Invoice"}
         </Button>
       </div>
 
@@ -965,7 +977,7 @@ export const CreateSo = () => {
           <Modal.Title>Required Field Missing</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Please select a client before creating the sales order.</p>
+          <p>Please select a client before creating the sales invoice.</p>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="primary" onClick={() => {

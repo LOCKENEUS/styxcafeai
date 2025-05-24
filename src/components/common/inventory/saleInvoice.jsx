@@ -63,9 +63,6 @@ export const SaleInvoice = () => {
                                 <FaPlus className="me-2" /> New Invoice
                             </Button>
                         </Link>
-
-
-                       
                     </CardHeader>
                     <CardBody>
                         <DataTable
@@ -100,8 +97,6 @@ export const SaleInvoice = () => {
                     </CardBody>
                 </Card>
             </Col>
-
-
         </Container>
     );
 }

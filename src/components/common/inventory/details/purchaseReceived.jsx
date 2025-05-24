@@ -6,7 +6,6 @@ export const PurchaseReceivedDetails = () => {
     return (
 
         <Container className="text-center">
-
             <Row>
                 <div className="d-flex justify-content-center align-items-center">
                     <h1>Purchase Received Details</h1>
@@ -28,8 +27,6 @@ export const PurchaseReceivedDetails = () => {
                                         <Button variant="success"><FaPlus />   Create Bill   </Button>
                                     </div>
                                 </Col>
-
-
                             </Row>
                         </CardHeader>
                         <CardBody>

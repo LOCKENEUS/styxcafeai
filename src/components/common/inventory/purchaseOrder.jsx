@@ -113,7 +113,7 @@
 //                     </CardBody>
 //                 </Card>
 //             </Col>
-            
+
 
 
 //         </Container>
@@ -221,7 +221,7 @@ export const PurchaseOrder = () => {
   }, [dispatch]);
 
   const formattedPOList = Array.isArray(listOfPO)
-  ? listOfPO.map((po, index) => ({
+    ? listOfPO.map((po, index) => ({
       sn: index + 1,
       name: po.po_no,
       user_type: po.user_type,
@@ -231,7 +231,7 @@ export const PurchaseOrder = () => {
       delivery_date: new Date(po.delivery_date).toLocaleDateString(),
       full: po, // Keep original object for view details
     }))
-  : [];
+    : [];
 
   const getRandomColor = (name) => {
     const colors = ["#FAED39", "#FF5733", "#33FF57", "#339FFF", "#FF33F6", "#FFAA33", "#39DDFA", "#3DFF16"];
@@ -262,24 +262,24 @@ export const PurchaseOrder = () => {
   const generateCSV = () => {
     const headers = ["S/N", "Order No", "Vendor", "Amount", "Status", "Delivery Date"];
     const rows = paginatedData.map(item => [
-        item.sn, item.name, item.vendor, item.amount, item.status, item.delivery_date
+      item.sn, item.name, item.vendor, item.amount, item.status, item.delivery_date
     ]);
-    
+
     const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'items_list.csv';
+    a.download = 'purchase_order_list.csv';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-};
+  };
 
   return (
     <Container>
       <Row>
-      <Col sm={12} className="mx-2 my-3">
+        <Col sm={12} className="mx-2 my-3">
           <div style={{ top: "186px", fontSize: "12px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
@@ -294,16 +294,23 @@ export const PurchaseOrder = () => {
         </Col>
 
         <Col data-aos="fade-right" data-aos-duration="1000" sm={12}>
-          <Card className="mx-4 p-3">
+          <Card className="mx-2 p-3">
             <Row className="align-items-center">
               <Col sm={4} className="d-flex my-2">
-                <h1 style={{
-                  fontSize: "20px",
-                  fontWeight: "500",
-                  lineHeight: "18px",
-                }} className="m-0">
-                  Purchase Order List
-                </h1>
+                <h2
+                  style={{
+                    textTransform: 'uppercase',
+                    letterSpacing: '5px',
+                    fontWeight: 'bold',
+                    fontSize: '18px',
+                    background: 'linear-gradient(to right,rgb(0, 119, 255),rgb(0, 17, 255))',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent'
+                  }}
+                  className="m-0"
+                >
+                  PURCHASE ORDER LIST
+                </h2>
               </Col>
 
               <Col sm={3} className="d-flex my-2">
@@ -336,13 +343,13 @@ export const PurchaseOrder = () => {
                 <Button variant="denger" className="btn  px-4 mx-2" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }} onClick={generateCSV}>
                   <Image className="me-2 size-sm" style={{ width: "22px", height: "22px" }} src={solar_export} />
                   Export
-                  
+
                 </Button>
                 <Link to="/Inventory/PurchaseOrderCreate">
-                <Button variant="primary" className="px-4 mx-2" size="sm">
-                  <Image className="me-2" src={add} alt="Add" style={{ width: "22px", height: "22px" }} />
-                  New PO
-                </Button>
+                  <Button variant="primary" className="px-4 mx-2" size="sm">
+                    <Image className="me-2" src={add} alt="Add" style={{ width: "22px", height: "22px" }} />
+                    New PO
+                  </Button>
                 </Link>
               </Col>
             </Row>
@@ -351,20 +358,24 @@ export const PurchaseOrder = () => {
                 <thead style={{ backgroundColor: "#e9f5f8" }}>
                   <tr>
                     {["S/N", "Order No", "Vendor", "Amount", "Status", "Delivery Date"].map((head, idx) => (
-                      <th key={idx} style={{
-                        fontWeight: "500",
-                        fontSize: "clamp(14px, 3vw, 16px)",
-                        padding: "clamp(10px, 2vw, 15px)",
-                        border: "none",
-                        color: "black",
-                      }}>{head}</th>
+                      <th key={idx}
+                        style={{
+                          fontWeight: "500",
+                          fontSize: "clamp(14px, 3vw, 16px)",
+                          padding: "clamp(10px, 2vw, 15px)",
+                          // width: "clamp(200px, 20vw, 200px)",
+                          border: "none",
+                          color: "black",
+                        }}
+                      >{head}
+                      </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody >
                   {loading ? (
                     <tr>
-                      <td colSpan="6" className="text-center py-4"><Loader/></td>
+                      <td colSpan="6" className="text-center py-4"><Loader /></td>
                     </tr>
                   ) : error ? (
                     <tr>
@@ -385,7 +396,7 @@ export const PurchaseOrder = () => {
                         }}>{row.sn}</td>
                         <td>
                           <div className="d-flex align-items-center">
-                            <span
+                            {/* <span
                               className="d-flex justify-content-center align-items-center rounded-circle me-2"
                               style={{
                                 width: "35px",
@@ -396,7 +407,7 @@ export const PurchaseOrder = () => {
                               }}
                             >
                               {row.name.charAt(0)}
-                            </span>
+                            </span> */}
                             <div style={{ color: "#0062FF" }}>{row.name}</div>
                           </div>
                         </td>

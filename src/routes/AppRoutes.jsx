@@ -120,6 +120,18 @@ import { PBCreate } from "../components/common/inventory/PurchaseBillCreate";
 import { PurchaseBillDetails } from "../components/common/inventory/details/PurchaseBill";
 import { CreateSo } from "../components/common/inventory/SalesOrder/CreateSO";
 import { SoDetails } from "../components/common/inventory/SalesOrder/SODetails";
+import { CreatePackage } from "../components/common/inventory/Package/CreatePackage";
+import { PackageList } from "../components/common/inventory/Package/PackageList";
+import { PackageDetails } from "../components/common/inventory/Package/PackageDetails";
+import { CreateShipment } from "../components/common/inventory/Shipment/CreateShipment";
+import { ShipmentList } from "../components/common/inventory/Shipment/ShipmentList";
+import { ShipmentDetails } from "../components/common/inventory/Shipment/ShipmentDetails";
+import { SalesInvList } from "../components/common/inventory/SalesInvoice/SalesInvList";
+import { CreateSalesInv } from "../components/common/inventory/SalesInvoice/CreateSalesInv";
+import { SalesInvDetails } from "../components/common/inventory/SalesInvoice/SalesInvDetails";
+import { CreateSalesReturn } from "../components/common/inventory/SalesReturns/CreateSalesReturn";
+import { SalesReturnDetails } from "../components/common/inventory/SalesReturns/SalesReturnDetails";
+import { SalesReturnList } from "../components/common/inventory/SalesReturns/SalesReturnList";
 
 
 
@@ -183,10 +195,25 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/Inventory/BillPayments" element={<BillPayments />} />
           <Route path="/Inventory/SaleOrder" element={<SaleOrder />} />
           <Route path="/Inventory/SalesOrderCreate" element={<CreateSo />} />
+          <Route path="/Inventory/SalesOrder/Edit/:id" element={<CreateSo />} />
           <Route path="/Inventory/SalesOrderDetails/:id" element={<SoDetails />} />
-          <Route path="/Inventory/SaleInvoice" element={<SaleInvoice />} />
+          <Route path="/Inventory/Package" element={<CreatePackage />} />
+          <Route path="/Inventory/Package/View" element={<PackageDetails />} />
+          <Route path="/Inventory/Package/List" element={<PackageList />} />
+          <Route path="/Inventory/Shipment" element={<CreateShipment />} />
+          <Route path="/Inventory/Shipment/:id" element={<CreateShipment />} />
+          <Route path="/Inventory/Shipment/List" element={<ShipmentList />} />
+          <Route path="/Inventory/Shipment/View" element={<ShipmentDetails />} />
+          <Route path="/Inventory/SaleInvoice" element={<CreateSalesInv />} />
+          <Route path="/Inventory/SaleInvoice/List" element={<SalesInvList />} />
+          <Route path="/Inventory/SaleInvoice/View/:id" element={<SalesInvDetails />} />
+          <Route path="/Inventory/SaleInvoice/Edit/:id" element={<CreateSalesInv />} />
           <Route path="/Inventory/InvoicePayments" element={<InvoicePayments />} />
           <Route path="/Inventory/InventorySetting" element={<InventorySetting />} />
+
+          <Route path="/Inventory/SalesReturn" element={<CreateSalesReturn />} />
+          <Route path="/Inventory/SalesReturn/View/:id" element={<SalesReturnDetails />} />
+          <Route path="/Inventory/SalesReturn/List/" element={<SalesReturnList />} />
 
           <Route path="/Inventory/VendorDetails/:id" element={<VendoreDetails />} />
           <Route path="/Inventory/ItemDetails" element={<ItemsDetails />} />

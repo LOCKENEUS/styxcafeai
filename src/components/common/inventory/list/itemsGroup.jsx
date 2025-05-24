@@ -30,7 +30,6 @@ export const ItemsGroup = () => {
       setMainLoading(false);
     });
   }, [dispatch]);
-  // const itemsGroup = useSelector((state) => state.inventorySuperAdmin.inventory) || [];
   const itemsGroupList = useSelector((state) => state.inventorySuperAdmin?.inventory) || [];
 
   const filteredItems = Array.isArray(itemsGroupList)
@@ -46,13 +45,6 @@ export const ItemsGroup = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentItems = filteredItems.slice(startIndex, startIndex + itemsPerPage);
 
-  // const itemsGroupList = useSelector((state) => state.inventorySuperAdmin.inventory?.data) || [];
-  // const currentItems = Array.isArray(itemsGroupList)
-  //   ? itemsGroupList.slice(startIndex, startIndex + itemsPerPage)
-  //   : [];
-
-
-
   const handlePrev = () => {
     if (currentPage > 1) setCurrentPage((prev) => prev - 1);
   };
@@ -60,9 +52,6 @@ export const ItemsGroup = () => {
   const handleNext = () => {
     if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
   };
-
-  // const currentItems = itemsGroup.slice(startIndex, startIndex + itemsPerPage);
-  // const currentItems = (itemsGroup || []).slice(startIndex, startIndex + itemsPerPage);
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
@@ -105,9 +94,7 @@ export const ItemsGroup = () => {
     document.body.removeChild(link);
   };
 
-
   return (
-
     <Container fluid >
       <Row  >
         <Card.Header className="fw-bold">
@@ -138,7 +125,17 @@ export const ItemsGroup = () => {
             <Card className="my-3 mx-auto py-3 px-3 rounded-4" style={{ backgroundColor: "white" }}>
               <Row className="d-flex  ">
                 <Col sm={4} className="fluid d-flex justify-content-start">
-                  <h1 className="text-center mx-2 mt-2">Group  Item  List</h1>
+                  <h1 className="text-center mx-2 mt-2"
+                    style={{
+                      textTransform: 'uppercase',
+                      letterSpacing: '5px',
+                      fontWeight: 'bold',
+                      fontSize: '18px',
+                      background: 'linear-gradient(to right,rgb(0, 119, 255),rgb(0, 17, 255))',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent'
+                    }}
+                  >Group  Item  List</h1>
                 </Col>
 
                 <Col sm={8}>
@@ -168,17 +165,10 @@ export const ItemsGroup = () => {
                           onClick={() => setSearchText("")}
                           style={{ cursor: "pointer" }}
                         >
-                          {/* <X id="clearSearchResultsIcon" /> */}
                         </InputGroupText>
                       )}
                     </InputGroup>
 
-                    {/* <Button
-                      variant="danger"
-                      className="px-4 mx-2"
-                      size="sm"
-                      style={{ borderColor: "#FF3636", color: "#FF3636" }}
-                    > */}
                     <Button variant="denger" className="btn  px-4 mx-4" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }}
                       onClick={handleExportToCSV}
                     >
@@ -336,7 +326,6 @@ export const ItemsGroup = () => {
                     className="btn btn-light fw-bold"
                     onClick={handlePrev}
                     disabled={currentPage === 1}
-
                   >
                     <FcPrevious />
                   </Button>
@@ -362,5 +351,368 @@ export const ItemsGroup = () => {
   );
 };
 
+
+// import { color } from "chart.js/helpers";
+// import { useEffect, useState } from "react";
+// import { Card, CardBody, CardHeader, Col, Container, Form, FormControl, InputGroup, Button, Breadcrumb, BreadcrumbItem, Row, Image, Pagination, Table } from "react-bootstrap";
+// import InputGroupText from "react-bootstrap/esm/InputGroupText";
+// import DataTable from "react-data-table-component";
+// import { BiSearch, BiSearchAlt } from "react-icons/bi";
+// import { FaPlus } from "react-icons/fa";
+// import { FiSearch } from "react-icons/fi";
+// import { Link, useNavigate } from "react-router-dom";
+// import gm1 from '/assets/inventory/mynaui_search.svg'
+// import solar_export from '/assets/inventory/solar_export-linear.png'
+// import add from '/assets/inventory/material-symbols_add-rounded.png'
+// import { useDispatch, useSelector } from "react-redux";
+// import { getItemsGroups } from "../../../../store/slices/inventory";
+// import { FcNext, FcPrevious } from "react-icons/fc";
+// import Loader from "../../Loader/Loader";
+// import './ItemsGroup.css'; // Import custom CSS
+
+// export const ItemsGroup = () => {
+//   const [searchText, setSearchText] = useState("");
+//   const navigator = useNavigate();
+//   const [searchQuery, setSearchQuery] = useState("");
+//   const [activePage, setActivePage] = useState(1);
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const itemsPerPage = 8;
+//   const [mainLoading, setMainLoading] = useState(false);
+//   const dispatch = useDispatch();
+
+//   useEffect(() => {
+//     setMainLoading(true);
+//     dispatch(getItemsGroups()).finally(() => {
+//       setMainLoading(false);
+//     });
+//   }, [dispatch]);
+
+//   const itemsGroupList = useSelector((state) => state.inventorySuperAdmin?.inventory) || [];
+
+//   const filteredItems = Array.isArray(itemsGroupList)
+//     ? itemsGroupList.filter((item) =>
+//       item.group_name?.toLowerCase().includes(searchText.toLowerCase()) ||
+//       item.unit?.toLowerCase().includes(searchText.toLowerCase()) ||
+//       item.manufacturer?.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+//       item.brand?.name?.toLowerCase().includes(searchText.toLowerCase())
+//     )
+//     : [];
+
+//   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+//   const startIndex = (currentPage - 1) * itemsPerPage;
+//   const currentItems = filteredItems.slice(startIndex, startIndex + itemsPerPage);
+
+//   const handlePrev = () => {
+//     if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+//   };
+
+//   const handleNext = () => {
+//     if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+//   };
+
+//   const handlePageChange = (pageNumber) => {
+//     if (pageNumber >= 1 && pageNumber <= totalPages) {
+//       setCurrentPage(pageNumber);
+//     }
+//   };
+
+//   const handleShowCreate = (e) => {
+//     e.preventDefault();
+//     navigator("/Inventory/ItemGroupCreate");
+//   }
+
+//   const handleShowDetails = (groupId) => {
+//     navigator("/Inventory/ItemsGroupDetails", { state: { groupId } });
+//   }
+
+//   const handleExportToCSV = () => {
+//     const headers = ["#", "Name", "Unit", "Manufacturer", "Brand", "Items"];
+//     const rows = currentItems.map((row, index) => {
+//       return [
+//         index + 1,
+//         row.group_name || "---",
+//         typeof row.unit === "object" ? row.unit?.name || "---" : row.unit || "---",
+//         typeof row.manufacturer?.name === "object" ? row.manufacturer?.name?.en || "---" : row.manufacturer?.name || "---",
+//         typeof row.brand === "object" ? row.brand?.name || "---" : row.brand || "---",
+//         row.length || "---",
+//       ];
+//     });
+
+//     const csvContent = [
+//       headers.join(","),
+//       ...rows.map((row) => row.map(value => `"${value}"`).join(","))
+//     ].join("\n");
+
+//     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+//     const link = document.createElement("a");
+//     const url = URL.createObjectURL(blob);
+//     link.setAttribute("href", url);
+//     link.setAttribute("download", "group_items.csv");
+//     link.style.visibility = "hidden";
+//     document.body.appendChild(link);
+//     link.click();
+//     document.body.removeChild(link);
+//   };
+
+//   return (
+//     <Container fluid className="items-group-container">
+//       <Row>
+//         <Card.Header className="fw-bold">
+//           <Row className="d-flex justify-content-between align-items-center">
+//             <Col xs={12}>
+//               <Breadcrumb className="responsive-breadcrumb">
+//                 <Breadcrumb.Item href="#" className="breadcrumb-item">
+//                   <Link to="/superadmin/dashboard">Home</Link>
+//                 </Breadcrumb.Item>
+//                 <Breadcrumb.Item className="breadcrumb-item">
+//                   <Link to="/Inventory/Dashboard">Inventory</Link>
+//                 </Breadcrumb.Item>
+//                 <Breadcrumb.Item active className="breadcrumb-item">
+//                   Group Item List
+//                 </Breadcrumb.Item>
+//               </Breadcrumb>
+//             </Col>
+//           </Row>
+
+//           <Row className="mx-auto">
+//             <Card className="main-card">
+//               <Row className="header-row">
+//                 <Col xs={12} lg={4} className="title-col">
+//                   <h1 className="page-title">Group Item List</h1>
+//                 </Col>
+
+//                 <Col xs={12} lg={8} className="actions-col">
+//                   <div className="actions-wrapper">
+//                     {/* Search Input */}
+//                     <InputGroup className="search-input-group">
+//                       <InputGroupText className="search-icon">
+//                         <Image src={gm1} alt="Search" />
+//                       </InputGroupText>
+//                       <FormControl
+//                         type="search"
+//                         size="sm"
+//                         placeholder="Search for Group"
+//                         aria-label="Search in docs"
+//                         value={searchText}
+//                         onChange={(e) => setSearchText(e.target.value)}
+//                         className="search-input"
+//                       />
+//                       {searchText && (
+//                         <InputGroupText
+//                           as="a"
+//                           href="#"
+//                           onClick={() => setSearchText("")}
+//                           className="clear-search"
+//                         >
+//                           ×
+//                         </InputGroupText>
+//                       )}
+//                     </InputGroup>
+
+//                     {/* Action Buttons */}
+//                     <div className="action-buttons">
+//                       <Button
+//                         variant="outline-danger"
+//                         className="export-btn"
+//                         size="sm"
+//                         onClick={handleExportToCSV}
+//                       >
+//                         <Image className="btn-icon" src={solar_export} alt="Export" />
+//                         <span className="btn-text">Export</span>
+//                       </Button>
+
+//                       <Button
+//                         type="button"
+//                         variant="primary"
+//                         className="new-group-btn"
+//                         size="sm"
+//                         onClick={handleShowCreate}
+//                       >
+//                         <Image className="btn-icon" src={add} alt="Add" />
+//                         <span className="btn-text">New Group</span>
+//                       </Button>
+//                     </div>
+//                   </div>
+//                 </Col>
+
+//                 {/* Table Section */}
+//                 <Col xs={12} className="table-col">
+//                   <div className="table-wrapper">
+//                     {/* Desktop Table */}
+//                     <div className="desktop-table">
+//                       <Table hover className="responsive-table">
+//                         <thead className="table-header">
+//                           <tr>
+//                             <th className="table-th">#</th>
+//                             <th className="table-th">Name</th>
+//                             <th className="table-th">Unit</th>
+//                             <th className="table-th">Manufacturer</th>
+//                             <th className="table-th">Brand</th>
+//                             <th className="table-th">Items</th>
+//                           </tr>
+//                         </thead>
+//                         <tbody>
+//                           {mainLoading || !itemsGroupList ? (
+//                             <tr>
+//                               <td colSpan={6} className="text-center">
+//                                 <Loader />
+//                               </td>
+//                             </tr>
+//                           ) : itemsGroupList.length === 0 ? (
+//                             <tr>
+//                               <td colSpan="6" className="text-center py-4 text-muted">
+//                                 No items found
+//                               </td>
+//                             </tr>
+//                           ) : (
+//                             currentItems.map((row, index) => {
+//                               const colors = ["#FFB6C1", "#ADD8E6", "#90EE90", "#FFD700", "#FFA07A"];
+//                               const bgColor = colors[index % colors.length];
+//                               const initial = row.group_name?.charAt(0)?.toUpperCase() || "?";
+
+//                               return (
+//                                 <tr key={index} className="table-row">
+//                                   <td className="table-td">{index + 1}</td>
+//                                   <td className="table-td name-cell">
+//                                     <div className="name-content">
+//                                       <div
+//                                         className="avatar"
+//                                         style={{ backgroundColor: bgColor }}
+//                                       >
+//                                         {initial}
+//                                       </div>
+//                                       <span
+//                                         className="group-name"
+//                                         onClick={() => handleShowDetails(row._id)}
+//                                       >
+//                                         {row.group_name}
+//                                       </span>
+//                                     </div>
+//                                   </td>
+//                                   <td className="table-td">
+//                                     {typeof row.unit === "object" ? row.unit?.name || "---" : row.unit || "---"}
+//                                   </td>
+//                                   <td className="table-td">
+//                                     {typeof row.manufacturer?.name === "object"
+//                                       ? row.manufacturer.name.en || "---"
+//                                       : row.manufacturer?.name || "---"}
+//                                   </td>
+//                                   <td className="table-td">
+//                                     {typeof row.brand === "object" ? row.brand?.name || "---" : row.brand || "---"}
+//                                   </td>
+//                                   <td className="table-td">
+//                                     {row.length || "---"}
+//                                   </td>
+//                                 </tr>
+//                               );
+//                             })
+//                           )}
+//                         </tbody>
+//                       </Table>
+//                     </div>
+
+//                     {/* Mobile Cards */}
+//                     <div className="mobile-cards">
+//                       {mainLoading || !itemsGroupList ? (
+//                         <div className="text-center">
+//                           <Loader />
+//                         </div>
+//                       ) : itemsGroupList.length === 0 ? (
+//                         <div className="text-center py-4 text-muted">
+//                           No items found
+//                         </div>
+//                       ) : (
+//                         currentItems.map((row, index) => {
+//                           const colors = ["#FFB6C1", "#ADD8E6", "#90EE90", "#FFD700", "#FFA07A"];
+//                           const bgColor = colors[index % colors.length];
+//                           const initial = row.group_name?.charAt(0)?.toUpperCase() || "?";
+
+//                           return (
+//                             <Card key={index} className="mobile-item-card">
+//                               <Card.Body>
+//                                 <div className="mobile-card-header">
+//                                   <div
+//                                     className="mobile-avatar"
+//                                     style={{ backgroundColor: bgColor }}
+//                                   >
+//                                     {initial}
+//                                   </div>
+//                                   <div className="mobile-card-title">
+//                                     <span
+//                                       className="mobile-group-name"
+//                                       onClick={() => handleShowDetails(row._id)}
+//                                     >
+//                                       {row.group_name}
+//                                     </span>
+//                                     <small className="mobile-index">#{index + 1}</small>
+//                                   </div>
+//                                 </div>
+//                                 <div className="mobile-card-details">
+//                                   <div className="mobile-detail-row">
+//                                     <span className="mobile-label">Unit:</span>
+//                                     <span className="mobile-value">
+//                                       {typeof row.unit === "object" ? row.unit?.name || "---" : row.unit || "---"}
+//                                     </span>
+//                                   </div>
+//                                   <div className="mobile-detail-row">
+//                                     <span className="mobile-label">Manufacturer:</span>
+//                                     <span className="mobile-value">
+//                                       {typeof row.manufacturer?.name === "object"
+//                                         ? row.manufacturer.name.en || "---"
+//                                         : row.manufacturer?.name || "---"}
+//                                     </span>
+//                                   </div>
+//                                   <div className="mobile-detail-row">
+//                                     <span className="mobile-label">Brand:</span>
+//                                     <span className="mobile-value">
+//                                       {typeof row.brand === "object" ? row.brand?.name || "---" : row.brand || "---"}
+//                                     </span>
+//                                   </div>
+//                                   <div className="mobile-detail-row">
+//                                     <span className="mobile-label">Items:</span>
+//                                     <span className="mobile-value">{row.length || "---"}</span>
+//                                   </div>
+//                                 </div>
+//                               </Card.Body>
+//                             </Card>
+//                           );
+//                         })
+//                       )}
+//                     </div>
+//                   </div>
+//                 </Col>
+
+//                 {/* Pagination */}
+//                 <Col xs={12} className="pagination-col">
+//                   <div className="pagination-wrapper">
+//                     <Button
+//                       className="pagination-btn"
+//                       onClick={handlePrev}
+//                       disabled={currentPage === 1}
+//                     >
+//                       <FcPrevious />
+//                     </Button>
+
+//                     <span className="pagination-info">
+//                       Page {currentPage} of {totalPages}
+//                     </span>
+
+//                     <Button
+//                       className="pagination-btn"
+//                       onClick={handleNext}
+//                       disabled={currentPage === totalPages}
+//                     >
+//                       <FcNext />
+//                     </Button>
+//                   </div>
+//                 </Col>
+//               </Row>
+//             </Card>
+//           </Row>
+//         </Card.Header>
+//       </Row>
+//     </Container>
+//   );
+// };
 
 

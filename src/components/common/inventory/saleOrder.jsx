@@ -162,7 +162,7 @@ export const SaleOrder = () => {
   const { salesOrders, loading, error } = useSelector((state) => state.saSalesOrder);
 
   useEffect(() => {
-      dispatch(getsalesOrders());
+    dispatch(getsalesOrders());
   }, [dispatch]);
 
   // Function to handle modal (replace with actual logic)
@@ -306,10 +306,14 @@ export const SaleOrder = () => {
   };
 
   return (
-    <Container className="p-0">
+    // <Container className="p-0">
+    <Container data-aos="fade-right" data-aos-duration="1000" fluid className="mt-2 min-vh-100">
+
       <Row>
-        <Col sm={12} className="mx-2 my-3">
-          <div style={{ top: "186px", fontSize: "12px" }}>
+
+        {/* Items List Card */}
+        <Col sm={12} className="p-4">
+          <div className="p-2" style={{ top: "186px", fontSize: "12px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>
@@ -320,10 +324,6 @@ export const SaleOrder = () => {
               <BreadcrumbItem active>Sales Order List</BreadcrumbItem>
             </Breadcrumb>
           </div>
-        </Col>
-
-        {/* Items List Card */}
-        <Col sm={12}>
           <Card
             data-aos="fade-right"
             data-aos-duration="1000"
@@ -334,9 +334,14 @@ export const SaleOrder = () => {
               <Col sm={4} className="d-flex my-2">
                 <h1
                   style={{
-                    fontSize: "20px",
-                    fontWeight: "500",
-                    lineHeight: "18px",
+                    textTransform: 'uppercase',
+                    letterSpacing: '5px',
+                    fontWeight: 'bold',
+                    fontSize: '18px',
+                    // background: 'linear-gradient(to right,rgb(0, 119, 255),rgb(0, 17, 255))',
+                    background: 'linear-gradient(to right,rgb(0, 119, 255),rgb(0, 17, 255))',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent'
                   }}
                   className="ms-2"
                 >
@@ -357,7 +362,7 @@ export const SaleOrder = () => {
                   <FormControl
                     type="search"
                     size="sm"
-                    placeholder="Search for vendors"
+                    placeholder="Search..."
                     aria-label="Search in docs"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)} // Update searchQuery directly

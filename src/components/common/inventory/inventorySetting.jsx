@@ -113,12 +113,19 @@ export const InventorySetting = () => {
         setManufacturers(manufacturers.filter((manufacturer) => manufacturer.id !== id));
     }
 
-
     return (
         <Container>
             <Row>
-                <div className="d-flex justify-content-center align-items-center mb-4">
-                    <h1>Inventory Customization Settings</h1>
+                <div className="p-4">
+                    <h1    style={{
+                    textTransform: 'uppercase',
+                    letterSpacing: '5px',
+                    fontWeight: 'bold',
+                    fontSize: '18px',
+                    background: 'linear-gradient(to right,rgb(0, 119, 255),rgb(0, 17, 255))',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent'
+                  }}>Inventory Customization Settings</h1>
                 </div>
 
                 <TabContainer id="inventory-tabs" activeKey={activeKey} onSelect={(k) => setActiveKey(k)}>
@@ -142,7 +149,7 @@ export const InventorySetting = () => {
                         <Col sm={10}>
                             <TabContent>
                                 <TabPane eventKey="unit">
-                                    <Card className="rounded-2 p-2 border">
+                                    <Card className="rounded-2 p-4 border">
                                         <Row>
                                             <Col sm={4} className="mb-2">
                                                 <h4 className="mb-4">Create New Unit</h4>
@@ -234,7 +241,7 @@ export const InventorySetting = () => {
                                 </TabPane>
 
                                 <TabPane eventKey="brand">
-                                    <Card className="rounded-2 p-2 border">
+                                    <Card className="rounded-2 p-4 border">
                                         <Row>
                                             <Col sm={4} className="mb-2">
                                                 <h4 className="mb-4">Create New Brand</h4>
@@ -302,7 +309,7 @@ export const InventorySetting = () => {
                                 </TabPane>
 
                                 <TabPane eventKey="manufacturer">
-                                <Card className="rounded-2 p-2 border">
+                                <Card className="rounded-2 p-4 border">
                                         <Row>
                                             <Col sm={4} className="mb-2">
                                                 <h4 className="mb-4">Create New Manufacturer </h4>

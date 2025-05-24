@@ -33,7 +33,34 @@ export const getsalesOrderById = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/superadmin/inventory/so/${id}`
+        `${BASE_URL}/superadmin/inventory/so/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
+    }
+  }
+);
+
+export const getsalesOrderByCafeId = createAsyncThunk(
+  "salesOrder/getsalesOrderByCafeId",
+  async (id, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/superadmin/inventory/so/list/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+          },
+        }
       );
       return response.data.data;
     } catch (error) {
@@ -77,7 +104,12 @@ export const updatesalesOrder = createAsyncThunk(
     try {
       const response = await axios.put(
         `${BASE_URL}/superadmin/inventory/so/${id}`,
-        soData
+        soData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+          },
+        }
       );
       toast.success("Sales Order updated successfully!");
       return response.data.data;
@@ -95,7 +127,14 @@ export const deletesalesOrder = createAsyncThunk(
   "salesOrder/deletesalesOrder",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`${BASE_URL}/superadmin/inventory/so/${id}`);
+      await axios.delete(
+        `${BASE_URL}/superadmin/inventory/so/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+          },
+        }
+      );
       toast.success("Sales Order deleted successfully!");
       return id;
     } catch (error) {
@@ -132,6 +171,19 @@ const soSlice = createSlice({
         state.salesOrders = action.payload;
       })
       .addCase(getsalesOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Get salesOrders by cafeId
+      .addCase(getsalesOrderByCafeId.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getsalesOrderByCafeId.fulfilled, (state, action) => {
+        state.loading = false;
+        state.salesOrders = action.payload;
+      })
+      .addCase(getsalesOrderByCafeId.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

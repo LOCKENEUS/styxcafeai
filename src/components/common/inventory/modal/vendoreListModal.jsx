@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Table, Form, Pagination } from "react-bootstrap";
 import { BiPlus } from "react-icons/bi";
 import { VendorCreateModal } from "./vendorCreate";
-import { GetVendorsList } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch, useSelector } from "react-redux";
 import { getSaVendors } from "../../../../store/slices/Inventory/saVendorSlice";
 // import { getSaVendors } from "../../../../store/slices/inventory/VendorSlice";

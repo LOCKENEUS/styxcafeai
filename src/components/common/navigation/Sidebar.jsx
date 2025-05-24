@@ -42,9 +42,8 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
   return (
     <aside
       ref={sidebarRef}
-      className={`navbar navbar-vertical navbar-fixed navbar-expand-xl navbar-bordered bg-white transition-all duration-300 ${
-        collapsed ? "w-16" : "w-64"
-      }`}
+      className={`navbar navbar-vertical navbar-fixed navbar-expand-xl navbar-bordered bg-white transition-all duration-300 ${collapsed ? "w-16" : "w-64"
+        }`}
       style={{
         position: "fixed",
         left: collapsed ? "-250px" : "0",
@@ -54,76 +53,76 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
         transition: "left 0.3s ease-in-out, width 0.3s ease-in-out",
       }}
     >
-   
+
       <div className="navbar-vertical-container sidebar-scroll-container"
-  style={{
-    overflowY: "auto",
-    paddingTop: "1rem",
-  }}>
+        style={{
+          overflowY: "auto",
+          paddingTop: "1rem",
+        }}>
         <div className="navbar-vertical-footer-offset">
-         
+
 
           {/* Sidebar Content */}
           <div className="navbar-vertical-content">
-    <div id="navbarVerticalMenu" className="nav nav-pills nav-vertical card-navbar-nav">
-    <div className="nav-item">
-            <div className="nav-item-wrapper">
-              <Link
-                className="nav-link rounded py-3 px-3"
-                to="/superadmin/dashboard"
-                style={{
-                  marginLeft: "20px",
-                  color: "#1e3a8a",
-                  transition: "all 0.2s",
-                }}
-              >
-                <BiHomeAlt className="flex-shrink-0 me-3" style={{ fontSize: "1.25rem" }} />                         
-                <span className="nav-link-text flex-grow-1">Dashboard</span>
-              </Link>
-            </div>
-          </div>
-      {navItems.map((item, index) => {
-        const collapseId = `collapse-${index}`;
-        return (
-          <div key={index}>
-            <span className="dropdown-header mt-1">{item.name}</span>
-            <small className="bi-three-dots nav-subtitle-replacer"></small>
-            <div className="navbar-nav nav-compact"></div>
-            <div id="navbarVerticalMenuPagesMenu">
+            <div id="navbarVerticalMenu" className="nav nav-pills nav-vertical card-navbar-nav">
               <div className="nav-item">
-                <a
-                  className="nav-link dropdown-toggle collapsed"
-                  href={`#${collapseId}`}
-                  role="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target={`#${collapseId}`}
-                  aria-expanded="false"
-                  aria-controls={collapseId}
-                >
-                  <item.icon className="me-2" />
-                  <span className="nav-link-title">{item.title}</span>
-                </a>
-
-                <div id={collapseId} className="nav-collapse collapse" data-bs-parent="#navbarVerticalMenuPagesMenu">
-                  {item.subItems.map((subItem, subIndex) => (
-                    <Link
-                      key={subIndex}
-                      to={subItem.path}
-                      className="nav-link"
-                      onClick={() => isMobile && toggleSidebar()}
-                    >
-                      {subItem.title}
-                      {subItem.badge && <span className="badge bg-danger ms-2">{subItem.badge}</span>}
-                    </Link>
-                  ))}
+                <div className="nav-item-wrapper">
+                  <Link
+                    className="nav-link rounded py-3 px-3"
+                    to="/superadmin/dashboard"
+                    style={{
+                      marginLeft: "20px",
+                      color: "#1e3a8a",
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    <BiHomeAlt className="flex-shrink-0 me-3" style={{ fontSize: "1.25rem" }} />
+                    <span className="nav-link-text flex-grow-1">Dashboard</span>
+                  </Link>
                 </div>
               </div>
+              {navItems.map((item, index) => {
+                const collapseId = `collapse-${index}`;
+                return (
+                  <div key={index}>
+                    <span className="dropdown-header mt-1">{item.name}</span>
+                    <small className="bi-three-dots nav-subtitle-replacer"></small>
+                    <div className="navbar-nav nav-compact"></div>
+                    <div id="navbarVerticalMenuPagesMenu">
+                      <div className="nav-item">
+                        <a
+                          className="nav-link dropdown-toggle collapsed"
+                          href={`#${collapseId}`}
+                          role="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target={`#${collapseId}`}
+                          aria-expanded="false"
+                          aria-controls={collapseId}
+                        >
+                          <item.icon className="me-2" />
+                          <span className="nav-link-title">{item.title}</span>
+                        </a>
+
+                        <div id={collapseId} className="nav-collapse collapse" data-bs-parent="#navbarVerticalMenuPagesMenu">
+                          {item.subItems.map((subItem, subIndex) => (
+                            <Link
+                              key={subIndex}
+                              to={subItem.path}
+                              className="nav-link"
+                              onClick={() => isMobile && toggleSidebar()}
+                            >
+                              {subItem.title}
+                              {subItem.badge && <span className="badge bg-danger ms-2">{subItem.badge}</span>}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
-        );
-      })}
-    </div>
-  </div>
 
           {/* Footer section remains unchanged */}
           <div className="navbar-vertical-footer">

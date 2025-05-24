@@ -44,10 +44,7 @@ import { SlCup } from 'react-icons/sl';
     ]
   },
 
-
   // ---------------------------      Inventory Section      ---------------------------
-
-
 // Dashboards
 {
   name :"Inventory Section",
@@ -63,24 +60,16 @@ import { SlCup } from 'react-icons/sl';
     {title: "Purchase Bill", path: "/Inventory/PurchaseBill"},
     {title: "Bill Payments ", path: "/Inventory/BillPayments"},
     {title: "Sale Order", path: "/Inventory/SaleOrder"},
-    {title: "Sale Invoice", path: "/Inventory/SaleInvoice"},
+    {title: "Package", path: "/Inventory/Package/List"},
+    {title: "Shipment", path: "/Inventory/Shipment/List"},
+    {title: "Sale Invoice", path: "/Inventory/SaleInvoice/List"},
+    {title: "Sales Returns", path: "/Inventory/SalesReturn/List"},
     {title: "Invoice Payments", path: "/Inventory/InvoicePayments"},
     {title: "Inventory Setting", path: "/Inventory/InventorySetting"},
-    
-    
   ]
-
-    
 },
 
-
-
 // ----------------------------------------------------------------------------------------------
-
-
-
-
-
   // {
   //   name :"Table Section",
   //   title: "Table",
@@ -108,7 +97,5 @@ import { SlCup } from 'react-icons/sl';
 //     // Add other languages
 //   ]
 // };
-
-
 
 export default navItems

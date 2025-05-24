@@ -2,12 +2,10 @@ import { useEffect, useState } from "react";
 import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect, Image, InputGroup, Row, Spinner } from "react-bootstrap";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { FaPlus, FaStarOfLife } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Units } from "../modal/units";
-import { fetchItems } from "../../../../store/adminslices/inventory";
 import { useDispatch, useSelector } from "react-redux";
 import { addItems } from "../../../../store/slices/inventory";
-import add from '/assets/inventory/material-symbols_add-rounded.png'
 import { Manufacturer } from "../modal/manufacturer";
 import { Brand } from "../modal/brand";
 import { TaxModal } from "../modal/tax";
@@ -21,15 +19,16 @@ export const ItemCreate = () => {
     const [showManufacturerModal, setShowManufacturerModal] = useState(false);
     const [showBrandModal, setShowBrandModal] = useState(false);
     const [showTaxModal, setShowTaxModal] = useState(false);
-    const dispatch = useDispatch();
     const [taxPreference, setTaxPreference] = useState('Taxable');
     const [galleryImages, setGalleryImages] = useState([]);
     const [submitLoading, setSubmitLoading] = useState(false);
     const [galleryFiles, setGalleryFiles] = useState([]); // actual files
 
-
     const [superAdminId, setSuperAdminId] = useState('');
     const customFields = useSelector(state => state.customFields.customFields);
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     // -----------------------   API CALLS ---------------------------
     useEffect(() => {
@@ -50,7 +49,6 @@ export const ItemCreate = () => {
 
         if (superAdminId) {
             dispatch(getTaxFields(superAdminId));
-
         }
     }, [dispatch, superAdminId]);
     useEffect(() => {
@@ -66,12 +64,6 @@ export const ItemCreate = () => {
     const manufacturerOptions = customFields.filter(field => field.type === "Manufacturer");
     const brandOptions = customFields.filter(field => field.type === "Brand");
     const vendors = useSelector(state => state.vendors.vendors);
-
-    // useEffect(() => {
-    //     dispatch(getItems(superAdminId));
-    // })
-
-    // const { items } = useSelector((state) => state.items);
 
     const [formData, setFormData] = useState({
         name: "",
@@ -99,8 +91,6 @@ export const ItemCreate = () => {
         reorder_point: "",
         selectedTax: "",
         cafeSellingPrice: "",
-
-
     });
 
     const handleChange = (e) => {
@@ -115,27 +105,18 @@ export const ItemCreate = () => {
 
     }
 
-
     const handleTaxPreferenceChange = (e) => {
         setTaxPreference(e.target.value);
     };
 
-    // const handleGalleryChange = (e) => {
-    //     const files = Array.from(e.target.files);
-    //     const previews = files.map((file) => URL.createObjectURL(file));
-    //     setGalleryImages(previews);
-    // };
-
     const handleGalleryChange = (e) => {
         const file = e.target.files[0]; // Only one file
         if (file) {
-          const preview = URL.createObjectURL(file);
-          setGalleryFiles([file]); // Save as array for consistency
-          setGalleryImages([preview]);
+            const preview = URL.createObjectURL(file);
+            setGalleryFiles([file]); // Save as array for consistency
+            setGalleryImages([preview]);
         }
-      };
-      
-
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -151,15 +132,11 @@ export const ItemCreate = () => {
         ) {
             setSubmitLoading(false);
             return toast.error('Please fill all the required fields');
-
-
         }
-
 
         try {
             const formDataToSend = new FormData();
 
-            // formDataToSend.append("groupId", superAdminId);
             formDataToSend.append("name", formData.name);
             formDataToSend.append("sku", formData.sku);
             formDataToSend.append("unit", formData.unitType);
@@ -185,11 +162,11 @@ export const ItemCreate = () => {
             // Append images
             galleryFiles.forEach((file) => {
                 formDataToSend.append("image", file);
-
             });
 
-
-            await dispatch(addItems(formDataToSend));
+            const response =await dispatch(addItems(formDataToSend));
+            console.log("response", response);
+            navigate("/Inventory/itemDetails", {state:{ groupId: response.payload.data._id }});
             // setSubmitLoading(false);
             // Reset form after successful submission
             setFormData({
@@ -223,15 +200,13 @@ export const ItemCreate = () => {
         } catch (error) {
             console.error("Error submitting form:", error);
             toast.error("Failed to submit form.");
-            
-        }finally {
+
+        } finally {
             setSubmitLoading(false);
         }
     };
 
-
     // -----    style -----
-
     const lableHeader = {
         fontSize: "16px",
         fontWeight: "500",
@@ -243,7 +218,6 @@ export const ItemCreate = () => {
         border: "1px solid rgb(222, 222, 222)",
 
     };
-
 
     return (
         <Container fluid>
@@ -321,7 +295,7 @@ export const ItemCreate = () => {
                                 <Col sm={4} className="my-2  px-4">
                                     <FormGroup>
                                         <label className="fw-bold my-2" style={lableHeader}>
-                                            SKU 
+                                            SKU
                                             {/* <span className="text-danger ms-1">*</span> */}
                                         </label>
                                         <input
@@ -333,7 +307,7 @@ export const ItemCreate = () => {
                                             value={formData.sku}
                                             onChange={handleChange}
                                             style={inputStyle}
-                                            
+
                                         />
                                     </FormGroup>
                                 </Col>
@@ -431,7 +405,7 @@ export const ItemCreate = () => {
                                         <FormGroup>
                                             <label className="fw-bold my-2" style={lableHeader}>
                                                 Tax
-                                                 {/* <span className="text-danger ms-1">*</span> */}
+                                                {/* <span className="text-danger ms-1">*</span> */}
                                             </label>
                                             <InputGroup >
                                                 <FormSelect
@@ -468,8 +442,6 @@ export const ItemCreate = () => {
                                                 </Button>
                                                 <TaxModal show={showTaxModal} handleClose={() => setShowTaxModal(false)} superAdminId={superAdminId} />
                                             </InputGroup>
-
-
                                         </FormGroup>
                                     </Col>
                                 )}
@@ -538,7 +510,6 @@ export const ItemCreate = () => {
                                         <label className="fw-bold my-2" style={lableHeader}>
                                             {/* <FaStarOfLife className="text-danger size-sm" />  */}
                                             Manufacturer
-
                                         </label>
                                         <InputGroup>
                                             <FormSelect aria-label="Select Tax" style={inputStyle}
@@ -546,7 +517,7 @@ export const ItemCreate = () => {
                                                 value={formData.manufacturer}
                                                 onChange={handleChange}
                                             >
-                                                <option value="MI">MI</option>
+                                                <option value="">Select Manufacturer</option>
                                                 {/* map manufacturerOptions */}
                                                 {manufacturerOptions.map((manufacturer, index) => (
                                                     <option key={manufacturer._id || index} value={manufacturer._id}>
@@ -847,8 +818,8 @@ export const ItemCreate = () => {
                                                     id="galleryUpload"
                                                 />
                                                 <label className="form-control border-0 "
-                                                
-                                                htmlFor="galleryUpload" style={{ cursor: 'pointer' }}>
+
+                                                    htmlFor="galleryUpload" style={{ cursor: 'pointer' }}>
                                                     <div
                                                         className="border border-primary p-3 text-center "
                                                         style={{

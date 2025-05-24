@@ -5,7 +5,6 @@ import { FaRupeeSign, FaTrash } from "react-icons/fa";
 import { TaxModal } from "./modal/tax";
 import PaymentTermsModal from "./modal/PaymentTermsModal";
 import { Link, useParams } from "react-router-dom";
-// import { GetPurchaseOrder, GetVendorsList, UpdatePurchaseOrder, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch, useSelector } from "react-redux";
 import VendorsList from "./modal/vendoreListModal";
 import { getSaPurchaseOrder, updateSaPurchaseOrder } from "../../../store/slices/Inventory/poSlice";
@@ -150,13 +149,6 @@ export const PoUpdate = () => {
   const vendorsList = useSelector((state) => state.saVendor?.vendors);
   const cafes = useSelector((state) => state.cafes.cafes);
 
-  // const lisgetCustomers = useSelector((state) => state.customers?.customers);
-  // const lisgetCustomers = useSelector((state) => state.customers);
-  // const customersList = lisgetCustomers?.customers;
-
-  useEffect(() => {
-
-  }, [dispatch]);
   const handleShow = () => setShow(true);
   const handleClose = () => {
     setShow(false);
@@ -180,8 +172,8 @@ export const PoUpdate = () => {
           const selectedItem = items.find(item => item._id === value);
           if (selectedItem) {
             updatedProduct.price = selectedItem.costPrice;
-            updatedProduct.tax = selectedItem.tax;
-            const itemTax = taxFields.find(tax => tax._id === selectedItem.tax);
+            updatedProduct.tax = selectedItem.tax?._id;
+            const itemTax = taxFields.find(tax => tax._id === selectedItem.tax?._id);
             updatedProduct.taxRate = itemTax ? itemTax.tax_rate : 0;
           }
           const isDuplicate = products.some(

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Breadcrumb, BreadcrumbItem, Dropdown } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Breadcrumb, BreadcrumbItem, Dropdown, Spinner } from "react-bootstrap";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import { FaRupeeSign, FaTrash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import VendorsList from "./modal/vendoreListModal";
-// import { getSaVendors } from "../../../store/slices/inventory/VendorSlice";
 import { toast } from "react-toastify";
 import PaymentTermsModal from "./modal/PaymentTermsModal";
 import { fetchCafes } from "../../../store/slices/cafeSlice";
@@ -15,6 +14,7 @@ import { createSaPurchaseOrder } from "../../../store/slices/Inventory/poSlice";
 import { getSaCustomFields } from "../../../store/slices/Inventory/customField";
 import { TaxModal } from "./modal/tax";
 import { getSaVendors } from "../../../store/slices/Inventory/saVendorSlice";
+import { IoCheckmarkSharp } from "react-icons/io5";
 
 export const PurchaseOrderCreate = () => {
     const [show, setShow] = useState(false);
@@ -27,6 +27,7 @@ export const PurchaseOrderCreate = () => {
     const [products, setProducts] = useState([
         { id: 1, item: "", quantity: 1, hsn: "", sku: "", price: 0, tax: 0, total: 0, totalTax: 0 },
     ]);
+    const [submitLoading, setSubmitLoading] = useState(false);
     const [showTaxModal, setShowTaxModal] = useState(false);
     const [selectedClient, setSelectedClient] = useState(null);
 
@@ -102,11 +103,12 @@ export const PurchaseOrderCreate = () => {
 
                     if (selectedItem) {
                         updatedProduct.price = selectedItem.costPrice;
-                        updatedProduct.tax = selectedItem.tax;
+                        updatedProduct.tax = selectedItem.tax._id;
                         updatedProduct.hsn = selectedItem.hsn || ""; // Set HSN from selected item
                         updatedProduct.sku = selectedItem.sku || ""; // Set SKU from selected item
 
-                        const itemTax = TaxList.find(tax => tax._id === selectedItem.tax);
+                        const itemTax = TaxList.find(tax => tax._id === selectedItem.tax?._id);
+                        console.log("itemTax", itemTax);
                         updatedProduct.taxRate = itemTax ? itemTax.tax_rate : 0;
                     }
 
@@ -229,6 +231,8 @@ export const PurchaseOrderCreate = () => {
 
     // Update the handleSubmit function
     const handleSubmit = async () => {
+
+        setSubmitLoading(true)        
         const submitData = new FormData();
 
         // Add basic form fields
@@ -266,12 +270,13 @@ export const PurchaseOrderCreate = () => {
             tax_amt: product.totalTax || 0,
             total: product.total
         }));
+
         submitData.append('items', JSON.stringify(formattedItems));
 
         try {
             const response = await dispatch(createSaPurchaseOrder(submitData)).unwrap();
-
-            // navigate("/Inventory/purchase-order-details", { state: response });
+            setSubmitLoading(false)        
+            navigate(`/Inventory/PurchaseOrderDetails/${response._id}`);
 
             setFormData({
                 vendorId: '',
@@ -290,6 +295,7 @@ export const PurchaseOrderCreate = () => {
             });
         } catch (error) {
             // Handle error
+            setSubmitLoading(false)        
             console.error('Error creating SO:', error);
         }
     };
@@ -344,25 +350,6 @@ export const PurchaseOrderCreate = () => {
             </Card>
 
             {/* Header Card */}
-            {/* <Card className="p-3 mb-3 shadow-sm">
-        <Row className="align-items-center">
-          <Col xs={2}>
-            <img src={Lockenelogo} alt="Logo" className="img-fluid" />
-          </Col>
-          <Col>
-            <h5>{userName}</h5>
-            <p className="mb-1">{userEmail} / {UserContactN}</p>
-            <p className="mb-1">
-              {UserAddress}
-            </p>
-            <strong>PAN: {UesrPAN}</strong>
-          </Col>
-          <Col xs={2} className="text-end">
-            <span className="text-muted">PO:</span>
-            <strong className="text-primary"> Draft</strong>
-          </Col>
-        </Row>
-      </Card> */}
 
             {/* Client & Delivery Details */}
             <Card className="p-3 shadow-sm">
@@ -372,23 +359,14 @@ export const PurchaseOrderCreate = () => {
                             <div className="d-flex flex-row align-items-center mb-3 gap-2">
                                 <h5 className="text-muted">Vendor :  </h5>
                                 <Button
-                                    style={{ width: "144px", height: "44px", borderStyle: "dashed" }}
+                                    size="sm"
+                                    style={{ width: "144px", height: "36px", borderStyle: "dashed" }}
                                     variant="outline-primary"
                                     className="d-flex align-items-center justify-content-center gap-2"
                                     onClick={handleShowVendorList}
                                 >
-                                    <span>+</span> Add Vendor
+                                    {vendorId ? <span><IoCheckmarkSharp /></span> :<span> <span>+</span> Add Vendor</span>}
                                 </Button>
-                                {/* <Button
-                  style={{ width: "144px", height: "44px", borderStyle: "dashed" }}
-                  variant="outline-primary"
-                  className="d-flex align-items-center justify-content-center gap-2"
-                  onClick={() => {
-                    setUserType("Superadmin");
-                  }}
-                >
-                  Superadmin
-                </Button> */}
                             </div>
                         </div>
                         <Row className="mt-3">
@@ -601,6 +579,7 @@ export const PurchaseOrderCreate = () => {
                                                 style={{ border: "1px solid black", width: "100%" }}
                                                 value={product.quantity}
                                                 onChange={(e) => updateProduct(product.id, "quantity", e.target.value)}
+                                                onWheel={(e) => e.target.blur()}
                                             />
                                         </td>
                                         <td>
@@ -615,6 +594,7 @@ export const PurchaseOrderCreate = () => {
                                                     style={{ paddingLeft: "25px", border: "1px solid black" }}
                                                     value={product.price}
                                                     onChange={(e) => updateProduct(product.id, "price", e.target.value)}
+                                                    onWheel={(e) => e.target.blur()}
                                                 />
                                             </div>
                                         </td>
@@ -740,6 +720,7 @@ export const PurchaseOrderCreate = () => {
                                         value={totals.discount}
                                         onChange={(e) => setTotals(prev => ({ ...prev, discount: e.target.value }))}
                                         placeholder="0.00"
+                                        onWheel={(e) => e.target.blur()}
                                     />
                                     <Form.Select
                                         value={totals.discountType}
@@ -818,6 +799,7 @@ export const PurchaseOrderCreate = () => {
                                         placeholder="Adjustment Amount"
                                         value={totals.adjustmentAmount}
                                         onChange={(e) => setTotals(prev => ({ ...prev, adjustmentAmount: e.target.value }))}
+                                        onWheel={(e) => e.target.blur()}
                                     />
                                 </InputGroup>
                             </div>
@@ -843,24 +825,12 @@ export const PurchaseOrderCreate = () => {
                     </Col>
                 </Row>
             </Card>
-            {/* 
-            {showProductList && (
-                <OffcanvesItemsNewCreate
-                    show={showProductList}
-                    handleClose={() => setShowProductList(false)}
-                />
-            )} */}
+
             <PaymentTermsModal
                 show={showPaymentTerms}
                 handleClose={() => setShowPaymentTerms(false)}
             />
-            {/*}
-            <OffcanvesItemsNewCreate
-                showOffCanvasCreateItem={showOffCanvasCreateItem}
-                handleCloseCreateItem={handleCloseCreateItem}
-            /> */}
             <TaxModal show={showTaxModal} handleClose={() => setShowTaxModal(false)} />
-
             <VendorsList
                 showVendorList={showVendorList}
                 handleCloseVendorList={handleCloseVendorList}
@@ -869,12 +839,13 @@ export const PurchaseOrderCreate = () => {
 
             {/* Add a submit button */}
             <div className="d-flex justify-content-end mt-3">
-                <Button
-                    variant="primary"
-                    onClick={handleSubmit}
-                // disabled={!selectedClient || products.length === 0}
-                >
-                    Submit
+                <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
+                    {submitLoading ? (
+                        <>
+                            <Spinner animation="border" size="sm" className="me-2" /> Saving...
+                        </>
+                    ) : ('Submit')}
+
                 </Button>
             </div>
         </Container>

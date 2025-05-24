@@ -36,6 +36,10 @@ import saPurchaseOrderReducer from "./slices/Inventory/poSlice";
 import saPurchaseReceiveReducer from "./slices/Inventory/prSlice";
 import saPurchaseBillReducer from "./slices/Inventory/pbSlice";
 import saSalesOrderReducer from "./slices/Inventory/soSlice";
+import saPackageReducer from "./slices/Inventory/packSlice";
+import saShipmentReducer from "./slices/Inventory/shipSlice";
+import saSalesInvoiceReducer from "./slices/Inventory/invoiceSlice";
+import saSalesReturnReducer from "./slices/Inventory/returnSlice";
 
 export const store = configureStore({
   reducer: {
@@ -81,5 +85,9 @@ export const store = configureStore({
     saPurchaseReceive: saPurchaseReceiveReducer,
     saPurchaseBill: saPurchaseBillReducer,
     saSalesOrder: saSalesOrderReducer,
+    saPackage: saPackageReducer,
+    saShipment: saShipmentReducer,
+    saSalesInvoice: saSalesInvoiceReducer,
+    saSalesReturn: saSalesReturnReducer
   },
 });
