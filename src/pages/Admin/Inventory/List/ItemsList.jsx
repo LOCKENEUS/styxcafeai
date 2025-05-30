@@ -107,8 +107,8 @@ const ItemsList = () => {
   return (
     <Container fluid className="p-1">
       <Row>
-        <Col xs={12} className="mx-2 mx-md-4 my-3">
-          <div style={{ fontSize: "12px" }}>
+        <Col xs={12} className="mx-2 mx-md-4 mb-3">
+          <div style={{ fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>
@@ -153,7 +153,7 @@ const ItemsList = () => {
                   <FormControl
                     type="search"
                     size="sm"
-                    placeholder="Search for vendors"
+                    placeholder="Search..."
                     aria-label="Search in docs"
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}

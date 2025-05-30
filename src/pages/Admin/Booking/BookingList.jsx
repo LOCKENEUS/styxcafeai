@@ -219,7 +219,7 @@ const BookingList = () => {
     };
 
     return (
-        <div className="container-fluid min-vh-100 px-1 px-md-2">
+        <div className="container-fluid min-vh-100 px-md-2">
             <Row>
                 <Col>
                     <p>

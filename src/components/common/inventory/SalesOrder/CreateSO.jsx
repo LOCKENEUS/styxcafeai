@@ -12,6 +12,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   Dropdown,
+  Spinner,
 } from "react-bootstrap";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import { FaCheck, FaRupeeSign, FaTrash } from "react-icons/fa";
@@ -48,6 +49,7 @@ export const CreateSo = () => {
   const dispatch = useDispatch();
   const { customFields } = useSelector((state) => state.customFields);
   const items = useSelector((state) => state.inventorySuperAdmin.it);
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const { taxFields } = useSelector((state) => state.taxFieldSlice);
   const { loading } = useSelector((state) => state.inventorySuperAdmin);
@@ -392,11 +394,13 @@ export const CreateSo = () => {
     });
 
     try {
+      setSubmitLoading(true);
       if (isEditMode) {
         const res = await dispatch(updatesalesOrder({ id, soData: submitData })).unwrap();
         if (res?.data?._id) {
           navigate(`/Inventory/SalesOrderDetails/${res._id}`);
         } else {
+          setSubmitLoading(false);
           console.error('No ID returned from update operation');
         }
       } else {
@@ -404,10 +408,12 @@ export const CreateSo = () => {
         if (res?._id) {
           navigate(`/Inventory/SalesOrderDetails/${res._id}`);
         } else {
+          setSubmitLoading(false);
           console.error('No ID returned from create operation');
         }
       }
     } catch (error) {
+      setSubmitLoading(false);
       console.error('Error with Sales Order:', error);
     }
   };
@@ -427,8 +433,8 @@ export const CreateSo = () => {
 
   return (
     <Container fluid className="p-4">
-      <Col sm={12} className="my-3">
-        <div style={{ top: "186px", fontSize: "12px" }}>
+      <Col sm={12} className="mb-3">
+        <div style={{ top: "186px", fontSize: "16px" }}>
           <Breadcrumb>
             <BreadcrumbItem>Home</BreadcrumbItem>
             <BreadcrumbItem>
@@ -947,11 +953,20 @@ export const CreateSo = () => {
 
       {/* Add a submit button */}
       <div className="d-flex justify-content-end mt-3">
-        <Button
+        {/* <Button
           variant="primary"
           onClick={handleSubmit}
         >
           {isEditMode ? "Update Sales Order" : "Create Sales Order"}
+        </Button> */}
+
+        <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
+          {submitLoading ? (
+            <>
+              <Spinner animation="border" size="sm" className="me-2" /> Saving...
+            </>
+          ) : (`${isEditMode ? 'Update' : 'Submit'}`)}
+
         </Button>
       </div>
 

@@ -12,14 +12,13 @@ import {
   Image,
   NavItem,
   NavLink,
+  Spinner,
   TabContainer,
   TabContent,
   Table,
   TabPane,
 } from "react-bootstrap";
 import { Nav, Tab, Col, Row } from "react-bootstrap";
-import deleteplogo from "/assets/inventory/Vector (1).png";
-import check from "/assets/inventory/Check.png";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getCustomFields,
@@ -40,6 +39,7 @@ export const InventorySettingAdmin = () => {
   const [newpaymentTerm, setNewPaymentTerm] = useState({ name: "", code: "" });
   const user = JSON.parse(sessionStorage.getItem("user"));
   const cafeId = user?._id;
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   useEffect(() => {
     dispatch(getCustomFields(cafeId));
@@ -64,10 +64,11 @@ export const InventorySettingAdmin = () => {
     setNewBrand({ name: e.target.value });
   };
 
-  const handleUnitSubmit = (e) => {
+  const handleUnitSubmit = async (e) => {
     e.preventDefault();
     if (newUnit.name && newUnit.code) {
-      dispatch(
+      setSubmitLoading(true);
+      await dispatch(
         addCustomField({
           name: newUnit.name,
           code: newUnit.code,
@@ -76,14 +77,16 @@ export const InventorySettingAdmin = () => {
           description: "Custom field for product",
         })
       );
+      setSubmitLoading(false);
       setNewUnit({ name: "", code: "" });
     }
   };
 
-  const handleBrandSubmit = (e) => {
+  const handleBrandSubmit = async (e) => {
     e.preventDefault();
     if (newBrand.name) {
-      dispatch(
+      setSubmitLoading(true);
+      await dispatch(
         addCustomField({
           name: newBrand.name,
           type: "Brand",
@@ -91,14 +94,16 @@ export const InventorySettingAdmin = () => {
           description: "Custom field for product",
         })
       );
+      setSubmitLoading(false);
       setNewBrand({ name: "" });
     }
   };
 
-  const handleManufacturerSubmit = (e) => {
+  const handleManufacturerSubmit = async (e) => {
     e.preventDefault();
     if (newManufacturer.name) {
-      dispatch(
+      setSubmitLoading(true);
+      await dispatch(
         addCustomField({
           name: newManufacturer.name,
           type: "Manufacturer",
@@ -106,14 +111,16 @@ export const InventorySettingAdmin = () => {
           description: "Custom field for product",
         })
       );
+      setSubmitLoading(false);
       setNewManufacturer({ name: "" });
     }
   };
 
-  const handalePaymentTermSubmit = (e) => {
+  const handalePaymentTermSubmit = async (e) => {
     e.preventDefault();
     if (newpaymentTerm.name && newpaymentTerm.code) {
-      dispatch(
+      setSubmitLoading(true);
+      await dispatch(
         addCustomField({
           name: newpaymentTerm.name,
           code: newpaymentTerm.code,
@@ -122,6 +129,7 @@ export const InventorySettingAdmin = () => {
           description: "Custom field for product",
         })
       );
+      setSubmitLoading(false);
       setNewPaymentTerm({ name: "", code: "" });
     }
   };
@@ -160,8 +168,8 @@ export const InventorySettingAdmin = () => {
   return (
     <Container fluid>
       <Row>
-      <Col sm={12} className="mx-2 my-3">
-          <div style={{ top: "186px", fontSize: "12px" }}>
+        <Col sm={12} className="mx-2 mt-3">
+          <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>
@@ -174,7 +182,7 @@ export const InventorySettingAdmin = () => {
           </div>
         </Col>
 
-        <TabContainer 
+        <TabContainer
           id="inventory-tabs"
           activeKey={activeKey}
           onSelect={(k) => setActiveKey(k)}
@@ -238,7 +246,7 @@ export const InventorySettingAdmin = () => {
                     <Col xs={12} md={4} lg={3}>
                       <Card className="rounded-4 p-1 border h-100">
                         <div className="my-3 mx-3">
-                          <h4 className="mb-4">Create New Unit</h4> 
+                          <h4 className="mb-4">Create New Unit</h4>
                           <Form autoComplete="off" onSubmit={handleUnitSubmit}>
                             <FormGroup className="mb-3">
                               <FormLabel>Unit Name</FormLabel>
@@ -262,18 +270,25 @@ export const InventorySettingAdmin = () => {
                                 required
                               />
                             </FormGroup>
-                            <Button
+                            {/* <Button
                               className="my-3 float-end"
                               type="submit"
                               variant="primary"
                             >
                               Submit
+                            </Button> */}
+                            <Button variant="primary" type="submit" className=" my-2 float-end">
+                              {submitLoading ? (
+                                <>
+                                  <Spinner animation="border" size="sm" className="me-2" /> Saving...
+                                </>
+                              ) : ('Submit')}
                             </Button>
                           </Form>
                         </div>
                       </Card>
                     </Col>
-                    
+
                     <Col xs={12} md={8} lg={9}>
                       <Card className="rounded-4 p-2 border h-100">
                         <div className="my-3 mx-3">
@@ -282,7 +297,7 @@ export const InventorySettingAdmin = () => {
                             <Table className="border-none" hover size="sm">
                               <thead>
                                 <tr>
-                                  <th></th>
+                                  {/* <th></th> */}
                                   <th>Name</th>
                                   <th>Unit Code</th>
                                   <th>Action</th>
@@ -291,7 +306,7 @@ export const InventorySettingAdmin = () => {
                               <tbody>
                                 {units.map((unit) => (
                                   <tr key={unit._id}>
-                                    <td>{unit._id}</td>
+                                    {/* <td>{unit._id}</td> */}
                                     <td>
                                       <FormControl
                                         type="text"
@@ -359,12 +374,20 @@ export const InventorySettingAdmin = () => {
                                 required
                               />
                             </FormGroup>
-                            <Button
+                            {/* <Button
                               className="my-3 float-end"
                               type="submit"
                               variant="primary"
                             >
                               Submit
+                            </Button> */}
+                            <Button variant="primary" type="submit" className=" my-2 float-end">
+                              {submitLoading ? (
+                                <>
+                                  <Spinner animation="border" size="sm" className="me-2" /> Saving...
+                                </>
+                              ) : ('Submit')}
+
                             </Button>
                           </Form>
                         </div>
@@ -378,7 +401,7 @@ export const InventorySettingAdmin = () => {
                             <Table className="border-none" hover size="sm">
                               <thead>
                                 <tr>
-                                  <th></th>
+                                  {/* <th></th> */}
                                   <th>Name</th>
                                   <th>Action</th>
                                 </tr>
@@ -386,7 +409,7 @@ export const InventorySettingAdmin = () => {
                               <tbody>
                                 {brands.map((brand) => (
                                   <tr key={brand._id}>
-                                    <td>{brand._id}</td>
+                                    {/* <td>{brand._id}</td> */}
                                     <td>
                                       <FormControl
                                         type="text"
@@ -445,12 +468,21 @@ export const InventorySettingAdmin = () => {
                                 required
                               />
                             </FormGroup>
-                            <Button
+                            {/* <Button
                               className="my-3 float-end"
                               type="submit"
                               variant="primary"
                             >
                               Submit
+                            </Button> */}
+
+                            <Button variant="primary" type="submit" className=" my-2 float-end">
+                              {submitLoading ? (
+                                <>
+                                  <Spinner animation="border" size="sm" className="me-2" /> Saving...
+                                </>
+                              ) : ('Submit')}
+
                             </Button>
                           </Form>
                         </div>
@@ -464,7 +496,7 @@ export const InventorySettingAdmin = () => {
                             <Table className="border-none" hover size="sm">
                               <thead>
                                 <tr>
-                                  <th></th>
+                                  {/* <th></th> */}
                                   <th>Name</th>
                                   <th>Action</th>
                                 </tr>
@@ -472,7 +504,7 @@ export const InventorySettingAdmin = () => {
                               <tbody>
                                 {manufacturers.map((manufacturer) => (
                                   <tr key={manufacturer._id}>
-                                    <td>{manufacturer._id}</td>
+                                    {/* <td>{manufacturer._id}</td> */}
                                     <td>
                                       <FormControl
                                         type="text"
@@ -541,12 +573,21 @@ export const InventorySettingAdmin = () => {
                                 required
                               />
                             </FormGroup>
-                            <Button
+                            {/* <Button
                               className="my-3 float-end"
                               type="submit"
                               variant="primary"
                             >
                               Submit
+                            </Button> */}
+
+                            <Button variant="primary" type="submit" className=" my-2 float-end">
+                              {submitLoading ? (
+                                <>
+                                  <Spinner animation="border" size="sm" className="me-2" /> Saving...
+                                </>
+                              ) : ('Submit')}
+
                             </Button>
                           </Form>
                         </div>
@@ -560,7 +601,7 @@ export const InventorySettingAdmin = () => {
                             <Table className="border-none" hover size="sm">
                               <thead>
                                 <tr>
-                                  <th></th>
+                                  {/* <th></th> */}
                                   <th>Name</th>
                                   <th>Days</th>
                                   <th>Action</th>
@@ -569,7 +610,7 @@ export const InventorySettingAdmin = () => {
                               <tbody>
                                 {paymentTerms.map((term) => (
                                   <tr key={term._id}>
-                                    <td>{term._id}</td>
+                                    {/* <td>{term._id}</td> */}
                                     <td>
                                       <FormControl
                                         type="text"

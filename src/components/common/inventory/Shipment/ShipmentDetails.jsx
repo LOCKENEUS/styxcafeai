@@ -35,7 +35,7 @@ export const ShipmentDetails = () => {
 
   const handlePoNavigation = () => {
     const poId = shipmentData?.refer_id?._id;
-    navigate(`Inventory/PurchaseOrderDetails`);
+    navigate(`/Inventory/SalesOrderDetails/${poId}`);
   }
 
   const handleItemNavigation = (id) => {
@@ -54,17 +54,15 @@ export const ShipmentDetails = () => {
     );
   }
 
-  console.log("countItems", countItems)
-
   return (
     <Container >
       <Row className="mx-2">
         {/* Breadcrumb Section */}
-        <Col sm={12} className="my-3">
+        <Col sm={12} className="mt-3">
           <div style={{ top: "186px", fontSize: "18px" }}>
             <Breadcrumb>
-              <BreadcrumbItem href="#">Home</BreadcrumbItem>
-              <BreadcrumbItem><Link to="Inventory/Shipment">Shipment List</Link></BreadcrumbItem>
+              <BreadcrumbItem href="/superadmin/dashboard">Home</BreadcrumbItem>
+              <BreadcrumbItem><Link to="/Inventory/Shipment/List">Shipment List</Link></BreadcrumbItem>
               <BreadcrumbItem active>Shipment Details</BreadcrumbItem>
             </Breadcrumb>
           </div>
@@ -88,10 +86,32 @@ export const ShipmentDetails = () => {
                 <Button className="d-flex align-items-center" onClick={handleSendMail} style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                   <Image src={sendMail} className="me-2" /> Send Email
                 </Button>
-                {/* <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
-                  <Image src={sendMail} className="me-2" /> 
-                  <Link to={`/Inventory/PurchaseBillCreate/${shipmentData?._id}`} className="text-decoration-none text-dark"><b >+</b>  Create Bill </Link>
-                </Button> */}
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+
+        <Col sm={12} className="my-2">
+          <Card className="p-3 shadow-sm">
+            <Row className="align-items-center">
+              <Col xs={2}>
+                <img
+                  src={companylog}
+                  alt="Logo"
+                  className="img-fluid"
+                />
+              </Col>
+              <Col>
+                <h5>{user?.name}</h5>
+                <p className="mb-1">{user?.email} / {user?.contact}</p>
+                <p className="mb-1">
+                  {user?.address}
+                </p>
+                <strong>PAN: {user?.pan}</strong>
+              </Col>
+              <Col xs={2} className="text-end">
+                <span className="text-muted">PO:</span>
+                <strong className="text-primary"> Draft</strong>
               </Col>
             </Row>
           </Card>
@@ -165,29 +185,29 @@ export const ShipmentDetails = () => {
                         countItems.map((item, index) => (
                           <React.Fragment key={index}>
                             <tr>
-                              <td colSpan="5" className="fw-bold bg-light text-primary py-2">
+                              <td colSpan="5" className="fw-bold bg-light text-secondary py-2">
                                 {item.po_no}
                               </td>
                             </tr>
                             {item.items.map((subItem, subIndex) => (
-                                <tr key={index}>
-                              <td onClick={() => handleItemNavigation(subItem?.item_id?._id)}>
-                                {/* <b>{item?.item_id?.name}</b> */}
-                                <b>
-                                  {subItem?.item_id?.name}
-                                </b>  
-                                <br />
-                                HSN : {subItem?.item_id?.hsn}
-                              </td>
-                              <td>
-                                SKU : {subItem?.item_id?.sku}
-                              </td>
-                              <td>
-                                Ordered Qty  : {subItem?.quantity} Nos
-                              </td>
-                              <td>  Packed Qty :  {subItem?.qty_packed}</td>
-                              <td>  Shipped Qty :  {subItem?.qty_shipped}</td>
-                            </tr>
+                              <tr key={index}>
+                                <td className="pointer-cursor text-primary" onClick={() => handleItemNavigation(subItem?.item_id?._id)}>
+                                  {/* <b>{item?.item_id?.name}</b> */}
+                                  <b>
+                                    {subItem?.item_id?.name}
+                                  </b>
+                                  <br />
+                                  HSN : {subItem?.item_id?.hsn}
+                                </td>
+                                <td>
+                                  SKU : {subItem?.item_id?.sku}
+                                </td>
+                                <td>
+                                  Ordered Qty  : {subItem?.quantity} Nos
+                                </td>
+                                <td>  Packed Qty :  {subItem?.qty_packed}</td>
+                                <td>  Shipped Qty :  {subItem?.qty_shipped}</td>
+                              </tr>
                             ))}
                           </React.Fragment>
                         ))

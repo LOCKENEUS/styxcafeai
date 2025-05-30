@@ -64,6 +64,10 @@
   -webkit-text-fill-color: #000 !important;
 }
 
+.pointer-cursor {
+  cursor: pointer;
+}
+
 .text-color {
   color: #333333;
   font-weight: 600;

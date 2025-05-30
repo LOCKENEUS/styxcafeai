@@ -132,6 +132,28 @@ export const GetPOList = createAsyncThunk(
   }
 );
 
+// cafe PO with styxcafe 
+export const GetCafePOList = createAsyncThunk(
+  "purchaseOrder/GetCafePOList",
+  async (id, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/inventory/po/cafe/list/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
+    }
+  }
+);
+
 // Purchase orders by vendor
 export const GetPOListByVendor = createAsyncThunk(
   "purchaseOrder/GetPOListByVendor",
@@ -211,6 +233,22 @@ export const sendMailToVendor = createAsyncThunk(
   }
 );
 
+export const getStyxData = createAsyncThunk(
+  'purchaseOrder/getStyxData',
+  async (__, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/user`, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+      console.log("response", response.data)
+      return response.data.data;
+    } catch (error) {
+      toast.error('Failed to fetch Styx data');
+      return rejectWithValue(error.response?.data?.message || error.message || "Failed to fetch Styx data");
+    }
+  }
+);
+
 // /admin/inventory/item
 const OPSlice = createSlice({
   name: "purchaseOrder",
@@ -218,6 +256,7 @@ const OPSlice = createSlice({
     purchaseOrder: [],
     selectedItem: null,
     selectedPo: null,
+    styxData: null,
     loading: false,
     error: null,
   },
@@ -241,6 +280,35 @@ const OPSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+
+      // Get cafe PO with superadmin 
+        .addCase(GetCafePOList.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(GetCafePOList.fulfilled, (state, action) => {
+        state.loading = false;
+        state.purchaseOrder = action.payload;
+      })
+      .addCase(GetCafePOList.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Get cafe PO with superadmin 
+      .addCase(getStyxData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getStyxData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.styxData = action.payload;
+      })
+      .addCase(getStyxData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
       // Create vendor
       .addCase(CreateVendor.pending, (state) => {
         state.loading = true;

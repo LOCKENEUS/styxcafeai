@@ -97,8 +97,7 @@ const VendorList = () => {
       "S/N,Vendor Name,Email,Company,Billing Address,Shipping Address\n";
     const csvRows = filteredVendors.map(
       (vendor, index) =>
-        `${index + 1},${vendor.name},${vendor.email},${vendor.company},${
-          vendor.billingAddress
+        `${index + 1},${vendor.name},${vendor.email},${vendor.company},${vendor.billingAddress
         },${vendor.shippingAddress}`
     );
 
@@ -144,8 +143,8 @@ const VendorList = () => {
   return (
     <Container fluid className="px-3">
       <Row>
-        <Col sm={12} className="mx-md-4 my-3">
-          <div style={{ top: "186px" , fontSize: "12px" }}>
+        <Col sm={12} className="mx-md-4 mb-3">
+          <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>
@@ -186,7 +185,7 @@ const VendorList = () => {
                   <FormControl
                     type="search"
                     size="sm"
-                    placeholder="Search for vendors"
+                    placeholder="Search..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     style={{ backgroundColor: "#FAFAFA", border: "none" }}
@@ -238,161 +237,161 @@ const VendorList = () => {
 
               <Col xs={12} style={{ marginTop: "30px" }}>
                 <div className="table-responsive">
-                {loading ? (
-                                <div className="text-center p-4">
-                                  <Loader />
-                                </div>
-                              ) : (
-                  <Table
-                    striped
-                    hover
-                    style={{ minWidth: "600px", marginTop: "2rem" }}
-                  >
-                    <thead
-                      className="no-uppercase"
-                      style={{ backgroundColor: "#0062FF0D" }}
+                  {loading ? (
+                    <div className="text-center p-4">
+                      <Loader />
+                    </div>
+                  ) : (
+                    <Table
+                      striped
+                      hover
+                      style={{ minWidth: "600px", marginTop: "2rem" }}
                     >
-                      <tr>
-                        {[
-                          "S/N",
-                          "Vendor Name",
-                          "Company",
-                          "Billing Address",
-                          "Shipping Address",
-                          "Actions",
-                        ].map((header, index) => (
-                          <th
-                            key={index}
-                            style={{
-                              fontSize: "0.9rem",
-                              color: "black",
-                              textAlign: "center",
-                            }}
-                          >
-                            {" "}
-                            <h4> {header} </h4>{" "}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody style={{ backgroundColor: "#F5F5F5" }}>
-                      {filteredVendors.length === 0 ? (
+                      <thead
+                        className="no-uppercase"
+                        style={{ backgroundColor: "#0062FF0D" }}
+                      >
                         <tr>
-                          <td colSpan="6" className="text-center py-4">
-                            No vendors found
-                          </td>
+                          {[
+                            "S/N",
+                            "Vendor Name",
+                            "Company",
+                            "Billing Address",
+                            "Shipping Address",
+                            "Actions",
+                          ].map((header, index) => (
+                            <th
+                              key={index}
+                              style={{
+                                fontSize: "0.9rem",
+                                color: "black",
+                                textAlign: "center",
+                              }}
+                            >
+                              {" "}
+                              <h4> {header} </h4>{" "}
+                            </th>
+                          ))}
                         </tr>
-                      ) : (
-                        filteredVendors
-                          .slice(
-                            (activePage - 1) * itemsPerPage,
-                            activePage * itemsPerPage
-                          )
-                          .map((vendor, index) => (
-                            <tr key={vendor._id}>
-                              <td>
-                                {(activePage - 1) * itemsPerPage + index + 1}
-                              </td>
-                              <td>
-                                <div className="d-flex gap-2 align-items-center">
-                                  <div
-                                    style={{
-                                      width: "40px",
-                                      height: "40px",
-                                      borderRadius: "50%",
-                                      backgroundColor: getRandomColor(index),
-                                      color: "white",
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      marginRight: "10px",
-                                    }}
-                                  >
-                                    {getInitials(vendor.name)}
-                                  </div>
-                                  <div>
-                                    <Link
-                                      to={`/admin/inventory/vendor-details/${vendor._id}`}
-                                      className="fw-bold text-primary"
+                      </thead>
+                      <tbody style={{ backgroundColor: "#F5F5F5" }}>
+                        {filteredVendors.length === 0 ? (
+                          <tr>
+                            <td colSpan="6" className="text-center py-4">
+                              No vendors found
+                            </td>
+                          </tr>
+                        ) : (
+                          filteredVendors
+                            .slice(
+                              (activePage - 1) * itemsPerPage,
+                              activePage * itemsPerPage
+                            )
+                            .map((vendor, index) => (
+                              <tr key={vendor._id}>
+                                <td style={{ textAlign: "center" }}>
+                                  {(activePage - 1) * itemsPerPage + index + 1}
+                                </td>
+                                <td style={{ textAlign: "center" }}>
+                                  <div className="d-flex gap-2 align-items-center ps-4">
+                                    <div
+                                      style={{
+                                        width: "40px",
+                                        height: "40px",
+                                        borderRadius: "50%",
+                                        backgroundColor: getRandomColor(index),
+                                        color: "white",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        marginRight: "10px",
+                                      }}
                                     >
-                                      {vendor.name}
-                                    </Link>
-                                    <br />
-                                    <small>{vendor.email}</small>
+                                      {getInitials(vendor.name)}
+                                    </div>
+                                    <div>
+                                      <Link
+                                        to={`/admin/inventory/vendor-details/${vendor._id}`}
+                                        className="fw-bold text-primary"
+                                      >
+                                        {vendor.name}
+                                      </Link>
+                                      <br />
+                                      <small>{vendor.email}</small>
+                                    </div>
                                   </div>
-                                </div>
-                              </td>
-                              <td>{vendor.company}</td>
-                              <td>{vendor.billingAddress}</td>
-                              <td>{vendor.shippingAddress}</td>
-                              <td>
-                                <Button
-                                  variant="link"
-                                  className="text-primary"
-                                  onClick={() =>
-                                    setActiveDropdownId(
-                                      activeDropdownId === vendor._id
-                                        ? null
-                                        : vendor._id
-                                    )
-                                  }
-                                >
-                                  <FaEdit
-                                    style={{
-                                      color: "#0062FF",
-                                      fontSize: "1.2rem",
-                                    }}
-                                  />
-                                </Button>
+                                </td>
+                                <td style={{ textAlign: "center" }}>{vendor.company}</td>
+                                <td style={{ textAlign: "center" }}>{vendor.billingAddress}</td>
+                                <td style={{ textAlign: "center" }}>{vendor.shippingAddress}</td>
+                                <td style={{ textAlign: "center" }}>
+                                  <Button
+                                    variant="link"
+                                    className="text-primary"
+                                    onClick={() =>
+                                      setActiveDropdownId(
+                                        activeDropdownId === vendor._id
+                                          ? null
+                                          : vendor._id
+                                      )
+                                    }
+                                  >
+                                    <FaEdit
+                                      style={{
+                                        color: "#0062FF",
+                                        fontSize: "1.2rem",
+                                      }}
+                                    />
+                                  </Button>
 
-                                {activeDropdownId === vendor._id && (
-                                  <div
-                                    ref={editDropdownRef}
-                                    style={{
-                                      position: "absolute",
-                                      right: "0",
-                                      top: "100%",
-                                      backgroundColor: "white",
-                                      boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
-                                      borderRadius: "4px",
-                                      zIndex: 1000,
-                                      minWidth: "clamp(120px, 30vw, 150px)",
-                                    }}
-                                  >
-                                    <Link
-                                      to={`/admin/inventory/vendors/edit/${vendor._id}`}
-                                      style={{ textDecoration: "none" }}
+                                  {activeDropdownId === vendor._id && (
+                                    <div
+                                      ref={editDropdownRef}
+                                      style={{
+                                        position: "absolute",
+                                        right: "0",
+                                        top: "100%",
+                                        backgroundColor: "white",
+                                        boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+                                        borderRadius: "4px",
+                                        zIndex: 1000,
+                                        minWidth: "clamp(120px, 30vw, 150px)",
+                                      }}
                                     >
+                                      <Link
+                                        to={`/admin/inventory/vendors/edit/${vendor._id}`}
+                                        style={{ textDecoration: "none" }}
+                                      >
+                                        <div
+                                          style={{
+                                            padding: "clamp(8px, 2vw, 10px)",
+                                            cursor: "pointer",
+                                            color: "#0062FF",
+                                            borderBottom: "1px solid #eee",
+                                          }}
+                                        >
+                                          Edit Vendor
+                                        </div>
+                                      </Link>
                                       <div
                                         style={{
                                           padding: "clamp(8px, 2vw, 10px)",
                                           cursor: "pointer",
-                                          color: "#0062FF",
-                                          borderBottom: "1px solid #eee",
+                                          color: "#FF0000",
                                         }}
+                                        onClick={() => handleDelete(vendor._id)}
                                       >
-                                        Edit Vendor
+                                        Delete Vendor
                                       </div>
-                                    </Link>
-                                    <div
-                                      style={{
-                                        padding: "clamp(8px, 2vw, 10px)",
-                                        cursor: "pointer",
-                                        color: "#FF0000",
-                                      }}
-                                      onClick={() => handleDelete(vendor._id)}
-                                    >
-                                      Delete Vendor
                                     </div>
-                                  </div>
-                                )}
-                              </td>
-                            </tr>
-                          ))
-                      )}
-                    </tbody>
-                  </Table>
-                              )}
+                                  )}
+                                </td>
+                              </tr>
+                            ))
+                        )}
+                      </tbody>
+                    </Table>
+                  )}
                 </div>
               </Col>
             </Row>

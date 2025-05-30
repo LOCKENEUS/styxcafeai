@@ -1,23 +1,25 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Modal, Breadcrumb, BreadcrumbItem, Dropdown } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Modal, Breadcrumb, BreadcrumbItem, Dropdown, ButtonGroup } from "react-bootstrap";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import { FaRupeeSign, FaTrash } from "react-icons/fa";
 import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems"
 import Tax from "../modal/Tax";
 import PaymentTermsModal from "../modal/PaymentTermsModal";
 import { Link, useParams } from "react-router-dom";
-import { GetPurchaseOrder, GetVendorsList, UpdatePurchaseOrder, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { GetPurchaseOrder, getStyxData, GetVendorsList, UpdatePurchaseOrder, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch, useSelector } from "react-redux";
 import AddClint from "../modal/AddClint";
 import VendorsList from "../modal/vendoreListModal";
 import { getItems } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
 import { getCustomers } from "../../../../store/AdminSlice/CustomerSlice";
+import { getItems as getSuperItems } from "../../../../store/slices/inventory";
 
 export const PurchaseOrderUpdate = () => {
   const [show, setShow] = useState(false);
   const [showClientList, setShowClientList] = useState(true);
   const [showOffCanvasCreateItem, setShowOffCanvasCreateItem] = useState(false);
+  const [userType, setUserType] = useState("Superadmin");
   const handleShowCreateItem = () => setShowOffCanvasCreateItem(true);
   const handleCloseCreateItem = () => setShowOffCanvasCreateItem(false);
   const [showPaymentTerms, setShowPaymentTerms] = useState(false);
@@ -57,9 +59,18 @@ export const PurchaseOrderUpdate = () => {
   const { customFields } = useSelector((state) => state.customFields);
   const selectedPo = useSelector((state) => state.purchaseOrder.selectedPo);
   const { taxFields } = useSelector((state) => state.taxFieldSlice);
-  const { items, loading } = useSelector((state) => state.items);
+  const { loading } = useSelector((state) => state.items);
+  let items = []
+  if (userType === "Superadmin") {
+    items = useSelector((state) => state.inventorySuperAdmin.it);
+  } else {
+    items = useSelector((state) => state.items.items);
+  }
   const [showVendorList, setShowVendorList] = useState(false);
-  const handleShowVendorList = () => setShowVendorList(true);
+  const handleShowVendorList = () =>{ 
+    setUserType("Vendor");
+    setShowVendorList(true)
+  };
   const handleCloseVendorList = () => setShowVendorList(false);
   const [vendorSelected, setVendorSelected] = useState([]);
   const [selectedOption, setSelectedOption] = useState("Organization");
@@ -76,6 +87,7 @@ export const PurchaseOrderUpdate = () => {
 
   // Filter payment terms from custom fields
   const paymentTerms = customFields.filter(field => field.type === 'Payment Terms');
+  const {styxData} = useSelector((state) => state.purchaseOrder);
 
   useEffect(() => {
     if (id) {
@@ -84,7 +96,18 @@ export const PurchaseOrderUpdate = () => {
   }, [id])
 
   useEffect(() => {
+    if (userType === "Superadmin") {
+      dispatch(getSuperItems());
+    } else {
+      dispatch(getItems(cafeId));
+    }
+  }, [userType])
+
+  useEffect(() => {
     if (selectedPo) {
+      if (selectedPo?.vendor_id === null) {
+        setUserType("Superadmin")
+      }
       setFormData({
         vendorId: selectedPo?.vendor_id?._id,
         delivery_type: selectedPo?.delivery_type,
@@ -135,7 +158,10 @@ export const PurchaseOrderUpdate = () => {
     }
   }, [selectedPo])
 
+  console.log("styxData", styxData)
+
   useEffect(() => {
+    dispatch(getStyxData());
     dispatch(GetVendorsList(cafeId));
     dispatch(getTaxFields(cafeId));
     dispatch(getItems(cafeId));
@@ -372,6 +398,8 @@ export const PurchaseOrderUpdate = () => {
     handleClose();
   };
 
+  console.log("userType", userType);
+
   return (
     <Container fluid className="p-4">
       <Col sm={12} className="my-3">
@@ -408,7 +436,7 @@ export const PurchaseOrderUpdate = () => {
       <Card className="p-3 shadow-sm">
         <Row>
           <Col sm={4} className="d-flex border-end flex-column gap-2">
-            <div className="border-bottom ">
+            {/* <div className="border-bottom ">
               <div className="d-flex flex-row align-items-center justify-content-around mb-3 gap-2">
                 <h5 className="text-muted">Vendor :  </h5>
                 <Button
@@ -420,10 +448,36 @@ export const PurchaseOrderUpdate = () => {
                   <span>+</span> Add Vendor
                 </Button>
               </div>
+            </div> */}
+
+            <div className="d-flex flex-row align-items-center mb-3 gap-2">
+              <h5 className="text-muted pt-1">Vendor:</h5>
+
+              <Dropdown as={ButtonGroup}>
+                <Dropdown.Toggle
+                  variant="outline-primary"
+                  style={{ width: "144px", height: "30px", borderStyle: "dashed" }}
+                  className="d-flex align-items-center justify-content-center"
+                >
+                  {userType === "Superadmin" ? "StyxCafe" : userType === "Vendor" ? vendorSelected?.name : "Select Vendor"}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={handleShowVendorList}>
+                    Add Vendor
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => {
+                    setVendorSelected(null);
+                    setUserType("Superadmin")
+                  }}>
+                    StyxCafe
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             </div>
             <Row className="mt-3">
               <p>{vendorSelected?.name || "Vendor Name"}</p>
-
+              {/* 
               <Col md={5}>
                 <h6 style={{ fontSize: "1rem" }}>Billing Address</h6>
                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.city1 || "Billing City"}</p>
@@ -438,7 +492,39 @@ export const PurchaseOrderUpdate = () => {
                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state2 || "Shipping State"}</p>
                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.pincode2 || "Shipping Pincode"}</p>
                 <p className="mb-0" style={{ fontSize: "0.9rem" }}>{vendorSelected?.country2 || "Shipping Country"}</p>
-              </Col>
+              </Col> */}
+
+              {userType === "Vendor" && <Col md={6}>
+                <h6 style={{ fontSize: "1rem" }}>Billing Address</h6>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.city1 || "Billing City"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state1 || "Billing State"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.pincode1 || "Billing Pincode"}</p>
+                <p className="mb-0" style={{ fontSize: "0.9rem" }}>{vendorSelected?.country1 || "Billing Country"}</p>
+              </Col>}
+
+              {userType === "Superadmin" && <Col md={6}>
+                <h6 style={{ fontSize: "1rem" }}>Billing Address</h6>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{styxData?.city1 || "Billing City"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{styxData?.state1 || "Billing State"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{styxData?.pincode1 || "Billing Pincode"}</p>
+                <p className="mb-0" style={{ fontSize: "0.9rem" }}>{styxData?.country1 || "Billing Country"}</p>
+              </Col>}
+
+              {userType === "Vendor" && <Col md={6}>
+                <h6 style={{ fontSize: "1rem" }}>Shipping Address</h6>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.city2 || "Shipping City"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state2 || "Shipping State"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.pincode2 || "Shipping Pincode"}</p>
+                <p className="mb-0" style={{ fontSize: "0.9rem" }}>{vendorSelected?.country2 || "Shipping Country"}</p>
+              </Col>}
+
+              {userType === "Superadmin" && <Col md={6}>
+                <h6 style={{ fontSize: "1rem" }}>Shipping Address</h6>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{styxData?.city2 || "Shipping City"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{styxData?.state2 || "Shipping State"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{styxData?.pincode2 || "Shipping Pincode"}</p>
+                <p className="mb-0" style={{ fontSize: "0.9rem" }}>{styxData?.country2 || "Shipping Country"}</p>
+              </Col>}
             </Row>
           </Col>
 
@@ -470,7 +556,6 @@ export const PurchaseOrderUpdate = () => {
                   }
                   style={{ fontWeight: "bold", color: "black" }}
                   className="custom-radio-dark"
-
                 />
               </div>
 
@@ -623,6 +708,7 @@ export const PurchaseOrderUpdate = () => {
                     style={{ border: "1px solid black", width: "100%" }}
                     value={product.quantity}
                     onChange={(e) => updateProduct(product.id, "quantity", e.target.value)}
+                    onWheel={(e) => e.target.blur()}
                   />
                 </td>
                 <td>
@@ -637,6 +723,7 @@ export const PurchaseOrderUpdate = () => {
                       style={{ paddingLeft: "25px", border: "1px solid black" }}
                       value={product.price}
                       onChange={(e) => updateProduct(product.id, "price", e.target.value)}
+                      onWheel={(e) => e.target.blur()}
                     />
                   </div>
                 </td>
@@ -759,6 +846,7 @@ export const PurchaseOrderUpdate = () => {
                     type="number"
                     value={totals.discount}
                     onChange={(e) => setTotals(prev => ({ ...prev, discount: e.target.value }))}
+                    onWheel={(e) => e.target.blur()}
                     placeholder="0.00"
                   />
                   <Form.Select
@@ -777,7 +865,7 @@ export const PurchaseOrderUpdate = () => {
                 <span>Tax &#40;<FaRupeeSign />{totals.taxAmount.toFixed(2)}&#41;</span>
                 <Dropdown style={{ maxWidth: "200px" }}>
                   <Dropdown.Toggle variant="outline-primary" style={{ width: "100%" }}>
-                  {totals.selectedTaxes.length ?
+                    {totals.selectedTaxes.length ?
                       `${totals.selectedTaxes.reduce((sum, tax) => sum + tax.rate, 0)}% Tax`
                       : '0.00% Tax'}
                   </Dropdown.Toggle>
@@ -838,6 +926,7 @@ export const PurchaseOrderUpdate = () => {
                     placeholder="Adjustment Amount"
                     value={totals.adjustmentAmount}
                     onChange={(e) => setTotals(prev => ({ ...prev, adjustmentAmount: e.target.value }))}
+                    onWheel={(e) => e.target.blur()}
                   />
                 </InputGroup>
               </div>

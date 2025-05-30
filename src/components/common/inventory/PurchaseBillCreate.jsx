@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Modal, Breadcrumb, BreadcrumbItem, Dropdown } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Modal, Breadcrumb, BreadcrumbItem, Dropdown, Spinner } from "react-bootstrap";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import { FaFilePdf, FaRupeeSign, FaTrash, FaUpload } from "react-icons/fa";
 import { BiArrowToLeft, BiPlus } from "react-icons/bi";
 import OffcanvesItemsNewCreate from "./Offcanvas/OffcanvesItems"
 import PaymentTermsModal from "./modal/PaymentTermsModal";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import VendorsList from "./modal/vendoreListModal";
 import { TaxModal } from "./modal/tax";
@@ -34,7 +34,6 @@ export const PBCreate = () => {
     const [showProductList, setShowProductList] = useState(false);
     const [showTaxModal, setShowTaxModal] = useState(false);
     const [selectedClient, setSelectedClient] = useState(null);
-    const dispatch = useDispatch();
     const { customFields } = useSelector((state) => state.saCustomField);
     const items = useSelector((state) => state.inventorySuperAdmin.it);
     const { taxFields } = useSelector((state) => state.taxFieldSlice);
@@ -43,8 +42,14 @@ export const PBCreate = () => {
     const handleCloseVendorList = () => setShowVendorList(false);
     const [vendorSelected, setVendorSelected] = useState([]);
     const [vendorId, setVendorId] = useState("");
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const [submitLoading, setSubmitLoading] = useState(false);
 
+    const dispatch = useDispatch();
+    const location = useLocation();
+
+    const pr_id = location.state;
+
+    const user = JSON.parse(sessionStorage.getItem("user"));
     const cafeId = user?._id;
     const userName = user?.name;
     const userEmail = user?.email;
@@ -253,7 +258,6 @@ export const PBCreate = () => {
         }));
     };
 
-
     // Add this useEffect to fetch data when id is present
     useEffect(() => {
         if (id) {
@@ -319,6 +323,70 @@ export const PBCreate = () => {
         }
     }, [id, dispatch]);
 
+    useEffect(() => {
+        if (pr_id) {
+            dispatch(getPurchaseBillById(pr_id))
+                .unwrap()
+                .then((data) => {
+                    // Set vendor data
+                    setVendorSelected(data.vendor_id);
+                    setVendorId(data.vendor_id._id);
+
+                    // Set form data including delivery type and customer
+                    setFormData({
+                        ...formData,
+                        delivery_type: data.delivery_type || 'organization',
+                        date: new Date(data.delivery_date).toISOString().split('T')[0] || data.delivery_date || '',
+                        payment_terms: data.payment_terms || '',
+                        reference: data.reference || '',
+                        shipment_preference: data.shipment_preference || '',
+                        description: data.description || '',
+                        internal_team_notes: data.internal_team_notes || '',
+                        customer_id: data.customer_id?._id || ''
+                    });
+
+                    // Set selected customer if delivery type is customer
+                    if (data.delivery_type === 'customer' && data.customer_id) {
+                        setSelectedCustomer(data.customer_id);
+                    }
+
+                    // Set products
+                    if (data.items && data.items.length > 0) {
+                        const formattedProducts = data.items.map((item, index) => ({
+                            id: index + 1,
+                            item: item.item_id._id,
+                            quantity: item.qty_received,
+                            price: item.price,
+                            tax: item.tax?._id || '',
+                            taxRate: item.tax?.tax_rate || 0,
+                            total: item.total,
+                            totalTax: item.tax_amt,
+                            hsn: item.item_id.hsn
+                        }));
+                        setProducts(formattedProducts);
+                    }
+
+                    // Set totals
+                    setTotals({
+                        subtotal: data.subtotal || 0,
+                        discount: data.discount_value || 0,
+                        discountType: data.discount_type || 'percentage',
+                        taxAmount: data.items.reduce((sum, item) => sum + (item.tax_amt || 0), 0),
+                        selectedTaxes: data.tax?.map(tax => ({
+                            id: tax._id,
+                            rate: tax.tax_rate
+                        })) || [],
+                        total: data.total || 0,
+                        adjustmentNote: data.adjustment_note || '',
+                        adjustmentAmount: data.adjustment_amount || 0
+                    });
+                })
+                .catch((error) => {
+                    console.error('Error fetching purchase bill:', error);
+                });
+        }
+    }, [pr_id, dispatch]);
+
     // Update handleSubmit to handle both create and update
     const handleSubmit = async () => {
         const submitData = {
@@ -332,6 +400,7 @@ export const PBCreate = () => {
             internal_team_notes: formData.internal_team_notes,
             // Add customer_id when delivery type is Customer
             ...(formData.delivery_type === "Customer" && { customer_id: formData.customer_id }),
+            ...(pr_id && pr_id !== "undefined" && { refer_id: pr_id }),
 
             // Financial details
             subtotal: Math.round(totals.subtotal * 100) / 100,
@@ -355,6 +424,7 @@ export const PBCreate = () => {
         };
 
         try {
+            setSubmitLoading(true);
             if (id) {
                 await dispatch(updatePurchaseBill({ id, billData: submitData })).unwrap().then((res) => {
                     navigate(`/Inventory/PurchaseBillDetails/${res._id}`);
@@ -365,28 +435,10 @@ export const PBCreate = () => {
                 });
             }
         } catch (error) {
+            setSubmitLoading(false);
             console.error('Error saving Purchase Bill:', error);
         }
     };
-
-    // const handleVendorSelect = (newVendor) => {
-    //   const selectedVendorId = newVendor;
-    //   const selectedVendor = vendorsList.find(
-    //     (vendor) => vendor?._id == selectedVendorId
-    //   );
-    //   if (selectedVendor) {
-    //     setVendorSelected(selectedVendor);
-    //     setFormData({
-    //       ...formData,
-    //       vendor_id: selectedVendor?._id,
-    //     });
-    //     setVendorId(selectedVendor?._id);
-    //   }
-    //   handleClose();
-    //   setVendorId(newVendor._id);
-    //   console.log("Selected vendor ID:---", vendorId);
-    // };
-
 
     const handleVendorSelect = (newVendorId) => {
         const selectedVendor = vendorsList.find((vendor) => vendor?._id == newVendorId);
@@ -412,8 +464,8 @@ export const PBCreate = () => {
 
     return (
         <Container fluid className="p-4">
-            <Col sm={12} className="my-3">
-                <div style={{ top: "186px", fontSize: "12px" }}>
+            <Col sm={12} className="mb-3 ">
+                <div style={{ top: "186px", fontSize: "16px" }}>
                     <Breadcrumb>
                         <BreadcrumbItem ><Link to="/superadmin/dashboard">Home</Link></BreadcrumbItem>
                         <BreadcrumbItem><Link to="/Inventory/PurchaseBill">Purchase Bill List</Link></BreadcrumbItem>
@@ -452,7 +504,7 @@ export const PBCreate = () => {
                     <Col sm={4} className="d-flex border-end flex-column gap-2">
                         <div className="border-bottom ">
                             <div className="d-flex flex-row align-items-center mb-3 gap-2">
-                                <h5 className="text-muted">Vendor :  </h5>
+                                <h5 className="text-color">Vendor :  </h5>
                                 <Button
                                     style={{ width: "144px", height: "36px", borderStyle: "dashed" }}
                                     variant="outline-primary"
@@ -465,9 +517,8 @@ export const PBCreate = () => {
                         </div>
                         <Row className="mt-3">
                             <p style={{ fontSize: "1.2rem", fontWeight: "600" }} className="text-primary">{vendorSelected?.name || "Vendor Name"}</p>
-
                             <Col md={5}>
-                                <h6 style={{ fontSize: "1rem" }}>Billing Address</h6>
+                                <p className="text-color" style={{ fontSize: "1rem" }}>Billing Address</p>
                                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.city1 || "Billing City"}</p>
                                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state1 || "Billing State"}</p>
                                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.pincode1 || "Billing Pincode"}</p>
@@ -475,7 +526,7 @@ export const PBCreate = () => {
                             </Col>
 
                             <Col md={5}>
-                                <h6 style={{ fontSize: "1rem" }}>Shipping Address</h6>
+                                <p className="text-color" style={{ fontSize: "1rem" }}>Shipping Address</p>
                                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.city2 || "Shipping City"}</p>
                                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state2 || "Shipping State"}</p>
                                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.pincode2 || "Shipping Pincode"}</p>
@@ -488,7 +539,7 @@ export const PBCreate = () => {
 
                     <Col sm={4}>
                         <div className="d-flex my-3 flex-row align-items-center gap-2">
-                            <h5 className="text-muted">Delivery Address <span className="text-danger">*</span></h5>
+                            <h5 className="text-color">Delivery Address <span className="text-danger">*</span></h5>
                         </div>
                         <div >
                             {/* Radio Buttons */}
@@ -941,11 +992,20 @@ export const PBCreate = () => {
 
             {/* Add a submit button */}
             <div className="d-flex justify-content-end mt-3">
-                <Button
+                {/* <Button
                     variant="primary"
                     onClick={handleSubmit}
                 >
                     {id ? 'Update' : 'Submit'}
+                </Button> */}
+
+                <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
+                    {submitLoading ? (
+                        <>
+                            <Spinner animation="border" size="sm" className="me-2" /> Saving...
+                        </>
+                    ) : (`${id ? 'Update' : 'Submit'}`)}
+
                 </Button>
             </div>
         </Container>

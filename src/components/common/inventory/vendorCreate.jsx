@@ -934,17 +934,12 @@ export const VendorCreate = () => {
         <Container data-aos="fade-up" data-aos-duration="700">
             <Row
                 style={{
-                    marginTop: "50px",
+                    marginTop: "30px",
                     // backgroundColor:"#F2F2F2",height:"100vh" 
-
                 }}
             >
-
-
-                <Col sm={12} className="d-flex "  >
-                    {/* style={{top:"110px" , left:"700px"}} */}
-
-                    <div style={{ top: "186px" }}>
+                <Col sm={12} className="d-flex"  >
+                    <div style={{ top: "186px", fontSize: "16px" }}>
                         <Breadcrumb  >
                             <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
                             <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
@@ -952,16 +947,11 @@ export const VendorCreate = () => {
                             <BreadcrumbItem active>Vendor Create</BreadcrumbItem>
                         </Breadcrumb>
                     </div>
-
                 </Col>
 
-
-
                 <Form onSubmit={handleSubmit}>
-
-
                     {/* <Row> */}
-                    <Card className="shadow p-4 my-4">
+                    <Card className="shadow p-4 mb-4">
                         <Row>
                             <div className="d-flex justify-content-start align-items-start">
                                 <h1>Vendor Create</h1>
@@ -970,12 +960,10 @@ export const VendorCreate = () => {
                             <Col sm={6} className="my-2">
                                 <FormGroup>
                                     <label className="fw-bold my-2">
-
                                         Vendor Name
                                         <span className="text-danger ms-1 ">*</span>
                                     </label>
                                     <input
-
                                         type="text"
                                         className={`form-control ${errors.vendorName ? 'is-invalid' : ''}`}
                                         id="vendorName"
@@ -991,12 +979,9 @@ export const VendorCreate = () => {
                             <Col sm={6} className="my-2">
                                 <FormGroup>
                                     <label className="fw-bold my-2">
-
                                         Company Name
-
                                     </label>
                                     <input
-
                                         type="text"
                                         className={`form-control ${errors.companyName ? 'is-invalid' : ''}`}
                                         id="companyName"
@@ -1012,12 +997,10 @@ export const VendorCreate = () => {
                             <Col sm={6} className="my-2">
                                 <FormGroup>
                                     <label className="fw-bold my-2">
-
                                         Vendor Email
                                         <span className="text-danger ms-1 ">*</span>
                                     </label>
                                     <input
-
                                         type="email"
                                         className={`form-control ${errors.vendorEmail ? 'is-invalid' : ''}`}
                                         id="vendorEmail"
@@ -1033,12 +1016,9 @@ export const VendorCreate = () => {
                             <Col sm={6} className="my-2">
                                 <FormGroup>
                                     <label className="fw-bold my-2">
-
                                         Vendor Phone
-
                                     </label>
                                     <input
-
                                         type="text"
                                         className={`form-control ${errors.vendorPhone ? 'is-invalid' : ''}`}
                                         id="vendorPhone"
@@ -1062,9 +1042,6 @@ export const VendorCreate = () => {
                             </Col>
                         </Row>
                     </Card>
-
-
-
                     {/* Billing Address */}
 
                     <Card className="shadow p-4 my-4">
@@ -1072,8 +1049,6 @@ export const VendorCreate = () => {
                             <div className="d-flex justify-content-start align-items-start">
                                 <h1>Billing Address <span className="text-danger ms-1 ">*</span></h1>
                             </div>
-
-
 
                             <Col sm={12} className="my-2">
                                 <FormGroup>
@@ -1143,7 +1118,6 @@ export const VendorCreate = () => {
                                         ))}
                                     </FormSelect>
                                 </FormGroup>
-
                             </Col>
 
                             <Col sm={6} className="my-2">
@@ -1168,7 +1142,6 @@ export const VendorCreate = () => {
                                         ))}
                                     </FormSelect>
                                 </FormGroup>
-
                             </Col>
 
                             <Col sm={6} className="my-2">
@@ -1192,13 +1165,11 @@ export const VendorCreate = () => {
                                         ))}
                                     </FormSelect>
                                 </FormGroup>
-
                             </Col>
                             <Col sm={6} className="my-2">
                                 <FormGroup>
                                     <label className="fw-bold my-2">
                                         Zipcode
-
                                     </label>
                                     <input
                                         type="text"
@@ -1216,13 +1187,7 @@ export const VendorCreate = () => {
                         </Row>
                     </Card>
 
-
-
-
-
-
                     {/* Shipping Address */}
-
                     <Card className="shadow p-4 my-4">
                         <Row>
                             <div className="d-flex justify-content-between align-items-center mb-3">
@@ -1236,12 +1201,9 @@ export const VendorCreate = () => {
                                 </Button>
                             </div>
 
-
-
                             <Col sm={12} className="my-2">
                                 <FormGroup>
                                     <label className="fw-bold my-2">
-
                                         Address
                                     </label>
                                     <GooglePlacesAutocomplete
@@ -1302,7 +1264,6 @@ export const VendorCreate = () => {
                                         ))}
                                     </FormSelect>
                                 </FormGroup>
-
                             </Col>
 
                             <Col sm={6} className="my-2">
@@ -1327,7 +1288,6 @@ export const VendorCreate = () => {
                                         ))}
                                     </FormSelect>
                                 </FormGroup>
-
                             </Col>
 
                             <Col sm={6} className="my-2">
@@ -1351,7 +1311,6 @@ export const VendorCreate = () => {
                                         ))}
                                     </FormSelect>
                                 </FormGroup>
-
                             </Col>
                             <Col sm={6} >
                                 <FormGroup>
@@ -1375,21 +1334,16 @@ export const VendorCreate = () => {
                         </Row>
                     </Card>
 
-
-
                     <Card className="shadow p-4 my-4">
                         <Row>
                             <div className="d-flex justify-content-start align-items-start">
                                 <h1>Other Details</h1>
                             </div>
 
-
-
                             <Col sm={6} >
                                 <FormGroup>
                                     <label className="fw-bold my-2">
                                         Government ID
-
                                     </label>
                                     <input
                                         type="text"
@@ -1435,11 +1389,8 @@ export const VendorCreate = () => {
                                     />
                                 )}
                             </Col>
-
                         </Row>
                     </Card>
-
-
                     {/* Bank Details */}
 
                     <Card className="shadow p-4 my-4">
@@ -1447,9 +1398,6 @@ export const VendorCreate = () => {
                             <div className="d-flex justify-content-start align-items-start">
                                 <h1>Bank Details</h1>
                             </div>
-
-
-
 
                             <Col sm={6} className="my-2" >
                                 <FormGroup>
@@ -1475,7 +1423,6 @@ export const VendorCreate = () => {
                                 <FormGroup>
                                     <label className="fw-bold my-2">
                                         Account Number
-
                                     </label>
                                     <input
                                         type="text"
@@ -1494,7 +1441,6 @@ export const VendorCreate = () => {
                                 <FormGroup>
                                     <label className="fw-bold my-2">
                                         IFSC/SWIFT/BIC
-
                                     </label>
                                     <input
                                         type="text"
@@ -1523,10 +1469,9 @@ export const VendorCreate = () => {
                                         <div className="invalid-feedback">{errors.accounttype}</div>
                                     )}
                                 </FormGroup>
-
                             </Col>
 
-                            <Col sm={12} className="d-flex justify-content-center">
+                            <Col sm={12} className="d-flex justify-content-end">
                                 <Button
                                     variant="primary"
                                     type="submit"
@@ -1539,12 +1484,8 @@ export const VendorCreate = () => {
 
                         </Row>
                     </Card>
-
                     {/* </Row> */}
-
-
                 </Form>
-
             </Row>
         </Container>
     )

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Breadcrumb, Button, Card, Col, Container, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect, Image, InputGroup, Row, Spinner } from "react-bootstrap";
+import { Breadcrumb, Button, Card, Col, Container, Form, FormCheck, FormControl, FormGroup, FormSelect, Image, InputGroup, Row, Spinner } from "react-bootstrap";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { FaPlus } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Units } from "../modal/units";
 import { useDispatch, useSelector } from "react-redux";
 import { getItemsById, updateItemsById } from "../../../../store/slices/inventory";
@@ -31,6 +31,7 @@ export const EditItem = () => {
     const customFields = useSelector(state => state.customFields.customFields);
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     useEffect(() => {
         setItemsLoading(true);
@@ -54,48 +55,19 @@ export const EditItem = () => {
     }, [dispatch, superAdminId]);
 
     useEffect(() => {
-
         if (superAdminId) {
             dispatch(getTaxFields(superAdminId));
-
         }
     }, [dispatch, superAdminId]);
     useEffect(() => {
         if (superAdminId) {
             dispatch(getVendors(superAdminId));
         }
-
     }, [dispatch, superAdminId]);
 
     useEffect(() => {
         if (itemsDetails) {
             setFormData({
-                // name: itemsDetails?.name,
-                // // hsnCode: "",
-                // sku: itemsDetails?.sku,
-                // unitType: itemsDetails?.unit,
-                // hsnCode: itemsDetails?.hsn,
-                // taxPreference: itemsDetails?.taxable === true ? "Taxable" : "Non-Taxable",
-                // selectedTax: itemsDetails?.tax?._id,
-                // length: itemsDetails?.length,
-                // width: itemsDetails?.width,
-                // height: itemsDetails?.height,
-                // dimension_unit: itemsDetails?.dimension_unit,
-                // weight1: itemsDetails?.weight,
-                // weight_unit: itemsDetails?.weightUnit,
-                // manufacturer: itemsDetails?.manufacturer?._id,
-                // // ean: "",
-                // brand: itemsDetails?.brand?._id,
-                // // upc: "",
-                // // mpn: "",
-                // cost_price: itemsDetails?.costPrice,
-                // selling_price: itemsDetails?.sellingPrice,
-                // vendor: itemsDetails?.preferredVendor?._id,
-                // stock: itemsDetails?.stock,
-                // stock_rate: itemsDetails?.stockRate,
-                // reorder_point: itemsDetails?.reorderPoint,
-                // cafeSellingPrice: itemsDetails?.cafeSellingPrice,
-
                 name: itemsDetails.name || '',
                 sku: itemsDetails.sku || '',
                 unitType: itemsDetails?.unit,
@@ -184,8 +156,6 @@ export const EditItem = () => {
         }
     };
 
-    console.log("formData", formData);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         // loder 
@@ -204,29 +174,6 @@ export const EditItem = () => {
 
         try {
             const formDataToSend = new FormData();
-            // // formDataToSend.append("groupId", superAdminId);
-            // formDataToSend.append("name", formData.name);
-            // formDataToSend.append("sku", formData.sku);
-            // formDataToSend.append("unit", formData.unitType);
-            // formDataToSend.append("hsn", formData.hsnCode);
-            // formDataToSend.append("taxable", formData.taxPreference === "Taxable");
-            // formDataToSend.append("tax", formData.selectedTax);
-            // formDataToSend.append("length", formData.length);
-            // formDataToSend.append("width", formData.width);
-            // formDataToSend.append("height", formData.height);
-            // formDataToSend.append("dimensionUnit", formData.dimension_unit);
-            // formDataToSend.append("weight", formData.weight1);
-            // formDataToSend.append("weightUnit", formData.weight_unit);
-            // formDataToSend.append("manufacturer", formData.manufacturer);
-            // formDataToSend.append("brand", formData.brand);
-            // formDataToSend.append("costPrice", formData.cost_price);
-            // formDataToSend.append("sellingPrice", formData.selling_price);
-            // formDataToSend.append("preferredVendor", formData.vendor);
-            // formDataToSend.append("stock", formData.stock);
-            // formDataToSend.append("stockRate", formData.stock_rate);
-            // formDataToSend.append("reorderPoint", formData.reorder_point);
-            // formDataToSend.append("cafeSellingPrice", formData.cafeSellingPrice);
-
             formDataToSend.append('name', formData.name);
             formDataToSend.append('sku', formData.sku);
             formDataToSend.append('unit', formData.unitType);
@@ -260,17 +207,12 @@ export const EditItem = () => {
             // Append images
             galleryFiles.forEach((file) => {
                 formDataToSend.append("image", file);
-
             });
             // await dispatch(updateItemsById(formDataToSend,superAdminId));
             await dispatch(updateItemsById({ itemsData: formDataToSend, itemId: groupId }));
-
-            // setSubmitLoading(false);
-            // Reset form after successful submission
-
+            navigate('/Inventory/itemDetails', { state: { groupId } });
         } catch (error) {
             console.error("Error submitting form:", error);
-            toast.error("Failed to submit form.");
         } finally {
             setSubmitLoading(false);
         }
@@ -286,7 +228,6 @@ export const EditItem = () => {
         padding: "13px",
         fontSize: "16px",
         border: "1px solid rgb(222, 222, 222)",
-
     };
     return (
         <Container >
@@ -318,9 +259,7 @@ export const EditItem = () => {
                                     </Link>
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item active style={{ fontSize: "16px", fontWeight: "500" }} > Items Edit</Breadcrumb.Item>
-
                             </Breadcrumb>
-
                         </Col>
 
                     </Row>
@@ -507,17 +446,19 @@ export const EditItem = () => {
                                         <label className="fw-bold my-2" style={lableHeader}>Dimensions</label>
                                         <InputGroup className="gap-2">
                                             <FormControl type="number" name="length" placeholder="Length"
-
                                                 value={formData.length}
                                                 onChange={handleChange}
+                                                onWheel={(e) => e.target.blur()} // Prevents scroll on number input
                                                 style={inputStyle} />
                                             <FormControl type="number" name="width" placeholder="Width"
                                                 value={formData.width}
                                                 onChange={handleChange}
+                                                onWheel={(e) => e.target.blur()} // Prevents scroll on number input
                                                 style={inputStyle} />
                                             <FormControl type="number" name="height" placeholder="height"
                                                 value={formData.height}
                                                 onChange={handleChange}
+                                                onWheel={(e) => e.target.blur()} // Prevents scroll on number input
                                                 style={inputStyle} />
                                             <FormSelect name="dimension_unit" style={inputStyle}
                                                 value={formData.dimension_unit}
@@ -541,6 +482,7 @@ export const EditItem = () => {
                                                 name="weight1"
                                                 value={formData.weight1}
                                                 onChange={handleChange}
+                                                onWheel={(e) => e.target.blur()}
                                                 id="weight"
                                                 placeholder="Enter weight"
                                                 style={inputStyle}
@@ -657,9 +599,7 @@ export const EditItem = () => {
                                             Cost Price <span className="text-danger">*</span>
                                         </label>
                                         <InputGroup className="gap-2">
-
                                             <InputGroupText style={inputStyle} >₹</InputGroupText>
-
                                             <FormControl
                                                 type="number"
                                                 name="cost_price"
@@ -667,6 +607,7 @@ export const EditItem = () => {
                                                 placeholder="00.00"
                                                 style={inputStyle}
                                                 onChange={handleChange}
+                                                onWheel={(e) => e.target.blur()}
                                             />
                                         </InputGroup>
                                     </FormGroup>
@@ -687,6 +628,7 @@ export const EditItem = () => {
                                                 name="selling_price"
                                                 placeholder="00.00"
                                                 onChange={handleChange}
+                                                onWheel={(e) => e.target.blur()}
                                             />
                                         </InputGroup>
                                     </FormGroup>
@@ -708,6 +650,7 @@ export const EditItem = () => {
                                                 name="cafeSellingPrice"
                                                 placeholder="00.00"
                                                 onChange={handleChange}
+                                                onWheel={(e) => e.target.blur()}
                                             />
                                         </InputGroup>
                                     </FormGroup>
@@ -734,7 +677,6 @@ export const EditItem = () => {
                                                 ))}
                                             </FormSelect>
                                         </InputGroup>
-
                                     </FormGroup>
                                 </Col>
                             </Row>
@@ -760,6 +702,7 @@ export const EditItem = () => {
                                         <input className="form-control mt-2" type="number" name="stock"
                                             value={formData.stock}
                                             onChange={handleChange}
+                                            onWheel={(e) => e.target.blur()} // Prevents scroll on number input
                                             placeholder="100" style={inputStyle} />
                                     </FormGroup>
                                 </Col>
@@ -773,6 +716,7 @@ export const EditItem = () => {
                                                 type="number"
                                                 value={formData.stock_rate}
                                                 onChange={handleChange}
+                                                onWheel={(e) => e.target.blur()} // Prevents scroll on number input
                                                 placeholder="00.00" style={inputStyle} />
                                         </InputGroup>
                                     </FormGroup>
@@ -784,6 +728,7 @@ export const EditItem = () => {
                                         <FormControl className="form-control mt-2" type="number"
                                             value={formData.reorder_point}
                                             onChange={handleChange}
+                                            onWheel={(e) => e.target.blur()}
                                             name="reorder_point" placeholder="000" style={inputStyle} />
                                     </FormGroup>
                                 </Col>
@@ -792,7 +737,6 @@ export const EditItem = () => {
 
                         <Card className="my-2 mx-auto py-3 px-2 rounded-4" style={{ backgroundColor: "white" }}>
                             <Row className="my-1 mx-3">
-
                                 <Col sm={5} className=" my-2">
                                     <Row className="">
                                         <Col sm={12} className="my-2  ">
@@ -859,7 +803,6 @@ export const EditItem = () => {
                                 </Col>
                             </Row>
                         </Card>
-
                     </Row>
                 </Card.Header>
             </Row>

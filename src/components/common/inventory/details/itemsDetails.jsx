@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Tabs, Tab, Container, Row, Col, Card, CardHeader, Button, Table, Image, Breadcrumb } from "react-bootstrap";
-import { CiEdit } from "react-icons/ci";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
 import { RiEditFill } from "react-icons/ri";
@@ -37,72 +36,18 @@ export const ItemsDetails = () => {
   const itemDetails = useSelector((state) => state.inventorySuperAdmin.inventory);
   const transactionDetails = useSelector((state) => state.inventorySuperAdmin.itemTransactions);
 
-  const tableData = [
-    {
-      id: 1,
-      billNo: "SINV-004",
-      qty: "18 Nos",
-      price: "₹ 499",
-      status: "Draft",
-      datetime: "2025-02-07",
-      // link: "https://fsm.lockene.net/Web/Inventory/InvoiceDetails/12",
-    },
-    {
-      id: 2,
-      billNo: "SINV-003",
-      qty: "50 Nos",
-      price: "₹ 499",
-      status: "Paid",
-      datetime: "2025-02-07",
-      // link: "https://fsm.lockene.net/Web/Inventory/InvoiceDetails/6",
-    },
-    {
-      id: 3,
-      billNo: "PB-004",
-      qty: "8 Nos",
-      price: "₹ 245",
-      status: "Paid",
-      datetime: "2025-02-07",
-      // link: "https://fsm.lockene.net/Web/Inventory/PBDetails/25",
-    },
-  ];
-
-  const data = [
-    { id: 1, quantity: "10 Nos", description: "Order is received", datetime: "2025-02-08 10:57:01" },
-    { id: 2, quantity: "10 Nos", description: "Order is received", datetime: "2025-02-08 10:56:41" },
-    { id: 3, quantity: "20 Nos", description: "Purchase order created", datetime: "2025-02-08 10:56:13" },
-    { id: 4, quantity: "50 Nos", description: "", datetime: "2025-02-08 10:53:00" },
-    { id: 5, quantity: "18 Nos", description: "Shipping invoice created", datetime: "2025-02-07 11:18:21" },
-    { id: 6, quantity: "10 Nos", description: "Order is shipped", datetime: "2025-02-07 11:18:07" },
-    { id: 7, quantity: "8 Nos", description: "Order is shipped", datetime: "2025-02-07 11:17:41" },
-    { id: 8, quantity: "8 Nos", description: "Order is packed", datetime: "2025-02-07 11:17:15" },
-    { id: 9, quantity: "10 Nos", description: "Order is packed", datetime: "2025-02-07 11:16:23" },
-    { id: 10, quantity: "18 Nos", description: "Sales order created", datetime: "2025-02-07 11:15:56" },
-    { id: 11, quantity: "50 Nos", description: "Shipping invoice created", datetime: "2025-02-07 11:08:20" },
-    { id: 12, quantity: "50 Nos", description: "Order is shipped", datetime: "2025-02-07 11:06:40" },
-    { id: 13, quantity: "50 Nos", description: "Order is packed", datetime: "2025-02-07 11:04:19" },
-    { id: 14, quantity: "50 Nos", description: "Sales order created", datetime: "2025-02-07 11:03:42" },
-    { id: 15, quantity: "8 Nos", description: "Received order bill created", datetime: "2025-02-07 10:59:59" },
-    { id: 16, quantity: "8 Nos", description: "Order is received", datetime: "2025-02-07 10:57:55" },
-    { id: 17, quantity: "10 Nos", description: "Purchase order created", datetime: "2025-02-07 10:57:47" },
-    { id: 18, quantity: "80 Nos", description: "Order is received", datetime: "2025-02-07 10:56:43" },
-    { id: 19, quantity: "100 Nos", description: "Purchase order created", datetime: "2025-02-07 10:56:08" },
-  ];
-
   const handaleBack = () => {
     navigate("/Inventory/Items");
   }
-
-  console.log("transactionDetails", transactionDetails);
 
   return (
     <Container className="text-center">
 
       <Row>
-        <Card.Header className="fw-bold">
+        <Card.Header className="fw-bold py-0 py-md-2">
           <Row className="d-flex justify-content-between align-items-center  ">
             <Col sm={8} xs={12} >
-              <Breadcrumb>
+              <Breadcrumb className="ms-3">
                 <Breadcrumb.Item href="#" style={{ fontSize: "16px", fontWeight: "500" }}>
 
                   <Link to="/superadmin/dashboard">Home
@@ -110,24 +55,18 @@ export const ItemsDetails = () => {
                 </Breadcrumb.Item>
                 <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }}>
 
-                  <Link to="/Inventory/Dashboard"
-
-                  >
+                  <Link to="/Inventory/Dashboard">
                     Inventory
                   </Link>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }}>
-
                   <Link to="/Inventory/Items"
-                  // state={{ cafeId: cafeId }}
                   >
                     Items List
                   </Link>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item active style={{ fontSize: "16px", fontWeight: "500" }} > Items Details</Breadcrumb.Item>
-
               </Breadcrumb>
-
             </Col>
           </Row>
         </Card.Header>
@@ -141,7 +80,7 @@ export const ItemsDetails = () => {
           </div>
         ) : (
           <>
-            <Col md={12} className="my-2">
+            <Col md={12} className="my-0 my-md-2">
               <Card className="my-2">
                 <CardHeader as="h5">
                   <Row >
@@ -167,7 +106,7 @@ export const ItemsDetails = () => {
               <Row>
 
                 <Col sm={7}>
-                  <Card className="my-3 px-4  " style={{ height: "700px", overflowY: "scroll" }} >
+                  <Card className="my-3 px-4" style={{ height: "700px", overflowY: "scroll" }} >
                     <Tabs
                       id="vendor-tabs"
                       activeKey={key}
@@ -180,36 +119,36 @@ export const ItemsDetails = () => {
                         <Row>
                           <Col sm={12} className="mb-2">
                             <Row className="mb-3 mx-4">
-                              <Col sm={6} className="justify-content-start align-items-start my-2"><strong className="float-start">SKU</strong></Col>
-                              <Col sm={6} className="my-2">{itemDetails.sku || "---"}</Col>
+                              <Col sm={6} xs={3} className="justify-content-start align-items-start my-2"><strong className="float-start">SKU</strong></Col>
+                              <Col sm={6} xs={9} className="my-2">{itemDetails.sku || "---"}</Col>
 
-                              <Col sm={6} className="my-2"><strong className="float-start">Unit</strong></Col>
-                              <Col sm={6} className="my-2">{itemDetails.unit || "---"}</Col>
+                              <Col sm={6} xs={3} className="my-2"><strong className="float-start">Unit</strong></Col>
+                              <Col sm={6} xs={9} className="my-2">{itemDetails.unit || "---"}</Col>
 
-                              <Col sm={6} className="my-2"><strong className="float-start">Dimension</strong></Col>
-                              <Col sm={6} className="my-2">
+                              <Col sm={6} xs={3} className="my-2"><strong className="float-start">Dimension</strong></Col>
+                              <Col sm={6} xs={9} className="my-2">
                                 {(!itemDetails.length || !itemDetails.width || !itemDetails.height || !itemDetails.dimensionUnit)
                                   ? '---'
                                   : `${itemDetails.length} x ${itemDetails.width} x ${itemDetails.height} ${itemDetails.dimensionUnit}`}
                               </Col>
 
-                              <Col sm={6} className="my-2"><strong className="float-start">Weight</strong></Col>
-                              <Col sm={6} className="my-2">{itemDetails.weight || "---"}</Col>
+                              <Col sm={6} xs={3} className="my-2"><strong className="float-start">Weight</strong></Col>
+                              <Col sm={6} xs={9} className="my-2">{itemDetails.weight || "---"}</Col>
 
-                              <Col sm={6} className="my-2"><strong className="float-start">Manufacturer</strong></Col>
-                              <Col sm={6} className="my-2">{itemDetails.manufacturer?.name || "---"}</Col>
+                              <Col sm={6} xs={3} className="my-2"><strong className="float-start">Manufacturer</strong></Col>
+                              <Col sm={6} xs={9} className="my-2">{itemDetails.manufacturer?.name || "---"}</Col>
 
-                              <Col sm={6} className="my-2"><strong className="float-start">Brand</strong></Col>
-                              <Col sm={6} className="my-2">{itemDetails.brand?.name || itemDetails.brand || "---"}</Col>
+                              <Col sm={6} xs={3} className="my-2"><strong className="float-start">Brand</strong></Col>
+                              <Col sm={6} xs={9} className="my-2">{itemDetails.brand?.name || itemDetails.brand || "---"}</Col>
                             </Row>
 
                             <h5 className="fw-bold mt-4 mx-5 border-top py-4 border-bottom border-dark text-start" style={{ fontSize: "16px", fontWeight: "500" }}>Purchase Information</h5>
                             <Row className="mb-3 mx-4">
-                              <Col sm={6} className="my-2"><strong className="float-start">Cost Price</strong></Col>
-                              <Col sm={6} className="my-2">₹{itemDetails.costPrice || "---"}</Col>
+                              <Col sm={6} xs={5} className="my-2"><strong className="float-start">Cost Price</strong></Col>
+                              <Col sm={6} xs={7} className="my-2">₹{itemDetails.costPrice || "---"}</Col>
 
-                              <Col sm={6} className="my-2"><strong className="float-start">Selling Price</strong></Col>
-                              <Col sm={6} className="my-2">₹{itemDetails.sellingPrice || "---"}</Col>
+                              <Col sm={6} xs={5} className="my-2"><strong className="float-start">Selling Price</strong></Col>
+                              <Col sm={6} xs={7} className="my-2">₹{itemDetails.sellingPrice || "---"}</Col>
                             </Row>
                           </Col>
                         </Row>
@@ -256,12 +195,12 @@ export const ItemsDetails = () => {
                             </tr>
                           </thead>
                           <tbody>
-                            {data.map((item) => (
+                            {transactionDetails.map((item, index) => (
                               <tr key={item.id}>
-                                <td>{item.id}</td>
+                                <td>{index + 1}</td>
                                 <td>{item.quantity}</td>
                                 <td>{item.description || "-"}</td>
-                                <td>{item.datetime}</td>
+                                <td>{new Date(item.refer_data.delivery_date).toDateString()}</td>
                               </tr>
                             ))}
                           </tbody>

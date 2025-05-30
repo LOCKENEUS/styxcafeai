@@ -293,13 +293,13 @@ export const SalesInvList = () => {
     <Container data-aos="fade-right" data-aos-duration="1000" fluid className="mt-4 min-vh-100">
       <Row>
         <Col sm={12} className="mx-2 my-3">
-          <div style={{ top: "186px", fontSize: "12px" }}>
+          <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
-                <Link to="/admin/dashboard">Home</Link>
+                <Link to="/">Home</Link>
               </BreadcrumbItem>
               <BreadcrumbItem>
-                <Link to="/admin/inventory/dashboard">Inventory</Link>
+                <Link to="/Inventory/dashboard">Inventory</Link>
               </BreadcrumbItem>
               <BreadcrumbItem active>Sales Invoice List</BreadcrumbItem>
             </Breadcrumb>
@@ -343,7 +343,7 @@ export const SalesInvList = () => {
                   <FormControl
                     type="search"
                     size="sm"
-                    placeholder="Search for Sales Invoice"
+                    placeholder="Search..."
                     aria-label="Search in docs"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}

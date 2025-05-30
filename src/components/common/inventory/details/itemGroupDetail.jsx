@@ -25,29 +25,23 @@ export const ItemGroupDetail = () => {
     }
     return (
         <Container className="text-center">
-
             <Row>
                 <Card.Header className="fw-bold">
                     <Row className="d-flex justify-content-between align-items-center  ">
                         <Col sm={8} xs={12} >
                             <Breadcrumb>
                                 <Breadcrumb.Item href="#" style={{ fontSize: "16px", fontWeight: "500" }}>
-
                                     <Link to="/superadmin/dashboard">Home
                                     </Link>
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }}>
-
                                     <Link to="/Inventory/Dashboard"
-
                                     >
                                         Inventory
                                     </Link>
                                 </Breadcrumb.Item>
                                 <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }}>
-
                                     <Link to="/Inventory/ItemsGroup"
-                                    // state={{ cafeId: cafeId }}
                                     >
                                         Items Groups List
                                     </Link>
@@ -55,7 +49,6 @@ export const ItemGroupDetail = () => {
                                 <Breadcrumb.Item active style={{ fontSize: "16px", fontWeight: "500" }} > Items Group Details</Breadcrumb.Item>
 
                             </Breadcrumb>
-
                         </Col>
                     </Row>
                 </Card.Header>
@@ -93,8 +86,6 @@ export const ItemGroupDetail = () => {
                             <Col sm={6} className="my-2">{itemGroupDetails?.manufacturer?.name || "---"}</Col>
                             <Col sm={6} className="justify-content-start align-items-start my-2"><strong className="float-start">Brand</strong></Col>
                             <Col sm={6} className="my-2">{itemGroupDetails?.brand?.name || "---"}</Col>
-
-
                         </Row>
                     </Card>
                 </Col>

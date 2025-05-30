@@ -1,4 +1,4 @@
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormControl, FormLabel, FormSelect, Row, Table } from "react-bootstrap";
+import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormControl, FormLabel, FormSelect, Row, Spinner, Table } from "react-bootstrap";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import companylog from "/assets/inventory/companylogo.png";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
@@ -6,7 +6,6 @@ import { use, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCafes } from "../../../../store/slices/cafeSlice";
 import { getsalesOrderByCafeId, getsalesOrderById } from "../../../../store/slices/Inventory/soSlice";
-import { createShipment } from "../../../../store/slices/Inventory/shipSlice";
 import { createSalesReturn } from "../../../../store/slices/Inventory/returnSlice";
 
 export const CreateSalesReturn = () => {
@@ -38,6 +37,7 @@ export const CreateSalesReturn = () => {
     const [soSelected, setSoSelected] = useState("");
     const [selectedClient, setSelectedClient] = useState("");
     const [taxList, setTaxList] = useState([]);
+    const [submitLoading, setSubmitLoading] = useState(false);
 
     const dispatch = useDispatch();
     const location = useLocation();
@@ -150,9 +150,9 @@ export const CreateSalesReturn = () => {
         };
 
         try {
+            setSubmitLoading(true);
             const response = await dispatch(createSalesReturn(submitData)).unwrap();
-            // navigate("/Inventory/PackageDetails", { state: response?._id });
-
+            navigate(`/Inventory/SalesReturn/View/${response._id}`);
             setFormData({
                 selectedClient: '',
                 SalesOrder: '',
@@ -162,6 +162,7 @@ export const CreateSalesReturn = () => {
             });
         } catch (error) {
             // Handle error
+            setSubmitLoading(false);
             console.error('Error creating package:', error);
         }
     };
@@ -174,14 +175,12 @@ export const CreateSalesReturn = () => {
         }
     };
 
-    console.log("selectedSo", selectedSo);
-
     return (
         <Container >
             <Row className="mx-2">
                 {/* Breadcrumb Section */}
-                <Col sm={12} className="my-3">
-                    <div style={{ top: "186px", fontSize: "12px" }}>
+                <Col sm={12} className="mt-3">
+                    <div style={{ top: "186px", fontSize: "16px" }}>
                         <Breadcrumb>
                             <BreadcrumbItem href="#">Home</BreadcrumbItem>
                             <BreadcrumbItem> <Link to="/Inventory/Package">Package List</Link></BreadcrumbItem>
@@ -192,29 +191,29 @@ export const CreateSalesReturn = () => {
 
                 <Col xs={12} className="my-2">
 
-                <Card className="p-3 shadow-sm">
-                    <Row className="align-items-center">
-                        <Col xs={2}>
-                            <img
-                                src={Lockenelogo}
-                                alt="Logo"
-                                className="img-fluid"
-                            />
-                        </Col>
-                        <Col>
-                            <h5>{user?.name}</h5>
-                            <p className="mb-1">{user?.email} / {user?.contact}</p>
-                            <p className="mb-1">
-                                {user?.address}
-                            </p>
-                            <strong>PAN: {user?.pan}</strong>
-                        </Col>
-                        <Col xs={2} className="text-end">
-                            <span className="text-muted">Invoice:</span>
-                            <strong className="text-primary">Draft</strong>
-                        </Col>
-                    </Row>
-                </Card>
+                    <Card className="p-3 shadow-sm">
+                        <Row className="align-items-center">
+                            <Col xs={2}>
+                                <img
+                                    src={Lockenelogo}
+                                    alt="Logo"
+                                    className="img-fluid"
+                                />
+                            </Col>
+                            <Col>
+                                <h5>{user?.name}</h5>
+                                <p className="mb-1">{user?.email} / {user?.contact}</p>
+                                <p className="mb-1">
+                                    {user?.address}
+                                </p>
+                                <strong>PAN: {user?.pan}</strong>
+                            </Col>
+                            <Col xs={2} className="text-end">
+                                <span className="text-muted">Invoice:</span>
+                                <strong className="text-primary">Draft</strong>
+                            </Col>
+                        </Row>
+                    </Card>
 
                 </Col>
 
@@ -385,7 +384,14 @@ export const CreateSalesReturn = () => {
                                 />
                             </Col>
                             <Col sm={12} className="my-3 d-flex justify-content-end">
-                                <Button type="submit " onClick={handleSubmit} style={{ padding: "10px 35px", fontSize: "14px" }}>Submit</Button>
+                                {/* <Button type="submit " onClick={handleSubmit} style={{ padding: "10px 35px", fontSize: "14px" }}>Submit</Button> */}
+                                <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
+                                    {submitLoading ? (
+                                        <>
+                                            <Spinner animation="border" size="sm" className="me-2" /> Saving...
+                                        </>
+                                    ) : ('Submit')}
+                                </Button>
                             </Col>
                         </Row>
                     </Card>}

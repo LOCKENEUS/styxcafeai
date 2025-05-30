@@ -17,7 +17,7 @@ import gm1 from "/assets/inventory/mynaui_search.svg";
 import solar_export from "/assets/inventory/solar_export-linear.png";
 import add from "/assets/inventory/material-symbols_add-rounded.png";
 import { Link, useNavigate } from "react-router-dom";
-import { CreateVendor, GetPOList } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { CreateVendor, GetPOList, getStyxData } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../../../components/common/Loader/Loader";
 
@@ -30,18 +30,19 @@ const PurchaseOrderList = () => {
   const dispatch = useDispatch();
 
   const { selectedItem, loading, error } = useSelector((state) => state.purchaseOrder);
+  const { styxData } = useSelector((state) => state.purchaseOrder);
   const listOfPO = selectedItem;
   const user = JSON.parse(sessionStorage.getItem("user"));
 
   useEffect(() => {
-    
     if (user?._id) {
       dispatch(GetPOList(user._id));
     }
+    dispatch(getStyxData());
   }, [dispatch]);
 
   const formattedPOList = Array.isArray(listOfPO)
-  ? listOfPO.map((po, index) => ({
+    ? listOfPO.map((po, index) => ({
       sn: index + 1,
       name: po.po_no,
       user_type: po.user_type,
@@ -51,7 +52,7 @@ const PurchaseOrderList = () => {
       delivery_date: new Date(po.delivery_date).toLocaleDateString(),
       full: po, // Keep original object for view details
     }))
-  : [];
+    : [];
 
   const getRandomColor = (name) => {
     const colors = ["#FAED39", "#FF5733", "#33FF57", "#339FFF", "#FF33F6", "#FFAA33", "#39DDFA", "#3DFF16"];
@@ -65,7 +66,6 @@ const PurchaseOrderList = () => {
 
   const handleShowDetails = (item) => {
     navigate("/admin/inventory/purchase-order-details", { state: item });
-    
   };
 
   const filteredList = formattedPOList.filter((item) =>
@@ -86,10 +86,9 @@ const PurchaseOrderList = () => {
   const generateCSV = () => {
     const headers = ["S/N", "Order No", "Vendor", "Amount", "Status", "Delivery Date"];
     const rows = paginatedData.map(item => [
-        item.sn, item.name, item.vendor, item.amount, item.status, item.delivery_date
+      item.sn, item.name, item.vendor, item.amount, item.status, item.delivery_date
     ]);
-    
-    
+
     const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
@@ -99,13 +98,13 @@ const PurchaseOrderList = () => {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-};
+  };
 
   return (
     <Container>
       <Row>
-      <Col sm={12} className="mx-2 my-3">
-          <div style={{ top: "186px", fontSize: "12px" }}>
+        <Col sm={12} className="mx-2 my-3 px-5">
+          <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>
@@ -140,7 +139,7 @@ const PurchaseOrderList = () => {
 
                   <FormControl
                     type="search"
-                    placeholder="Search Purchase Order"
+                    placeholder="Search..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     style={{ backgroundColor: "#FAFAFA", border: "none" }}
@@ -161,7 +160,7 @@ const PurchaseOrderList = () => {
                 <Button variant="denger" className="btn  px-4 mx-2" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }} onClick={generateCSV}>
                   <Image className="me-2 size-sm" style={{ width: "22px", height: "22px" }} src={solar_export} />
                   Export
-                  
+
                 </Button>
                 <Button variant="primary" className="px-4 mx-2" size="sm" onClick={handleShowCreate}>
                   <Image className="me-2" src={add} alt="Add" style={{ width: "22px", height: "22px" }} />
@@ -187,7 +186,7 @@ const PurchaseOrderList = () => {
                 <tbody >
                   {loading ? (
                     <tr>
-                      <td colSpan="6" className="text-center py-4"><Loader/></td>
+                      <td colSpan="6" className="text-center py-4"><Loader /></td>
                     </tr>
                   ) : error ? (
                     <tr>
@@ -223,7 +222,7 @@ const PurchaseOrderList = () => {
                             <div style={{ color: "#0062FF" }}>{row.name}</div>
                           </div>
                         </td>
-                        <td>{row?.user_type === "Vendor" ? row?.vendor : "Superadmin"}</td>
+                        <td>{row?.user_type === "Vendor" ? row?.vendor : styxData?.name}</td>
                         <td>&#8377; {row.amount}</td>
                         <td>{row.status}</td>
                         <td>{row.delivery_date}</td>

@@ -1,29 +1,17 @@
 import { Button, Modal, Spinner } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-// import { deleteItemById, deleteItemGroupsById } from "../../../../store/slices/inventory";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export const ItemGroupDeleteModal = ({ show, handleClose, groupId }) => {
- const dispatch = useDispatch();
- const navigate = useNavigate();
- const [deleteLoading, setDeleteLoading] = useState(false);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [deleteLoading, setDeleteLoading] = useState(false);
     const handleDelete = () => {
-        // Replace this with your actual delete logic using groupId
-        // try {
-        //     dispatch(deleteItemGroupsById(groupId));
-            
-           
-        // } catch (error) {
-        //     console.error("Error deleting item group", error);
-        // }
-        // finally {
-            setDeleteLoading(false);
-            handleClose();
-            navigate("/Inventory/ItemsGroup");
-            setTimeout(() => handleClose(), 100);
-        // }
-        // handleClose();
+        setDeleteLoading(false);
+        handleClose();
+        navigate("/Inventory/ItemsGroup");
+        setTimeout(() => handleClose(), 100);
     };
 
     return (
@@ -41,14 +29,14 @@ export const ItemGroupDeleteModal = ({ show, handleClose, groupId }) => {
                 <Button variant="danger" onClick={handleDelete}>
                     {deleteLoading ? (
                         <>
-                        <Spinner
-                            as="span"
-                            animation="border"
-                            size="sm"
-                            role="status"
-                            aria-hidden="true"
-                        />
-                        Deleting</>
+                            <Spinner
+                                as="span"
+                                animation="border"
+                                size="sm"
+                                role="status"
+                                aria-hidden="true"
+                            />
+                            Deleting</>
                     ) : (
                         "Delete"
                     )}

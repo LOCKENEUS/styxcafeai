@@ -584,7 +584,7 @@ const BookingDetails = () => {
 
             const verifyData = await verifyResponse.json();
             if (verifyData.success) {
-              navigate(`/admin/booking/checkout/${result?.data?._id}");`);
+              navigate(`/admin/booking/checkout/${result?.data?._id}`);
             } else {
               await dispatch(deleteBooking(result?.data?._id)); // Remove booking if verification fails
               alert("Payment Verification Failed");

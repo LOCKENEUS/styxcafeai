@@ -145,14 +145,14 @@ export const SalesReturnList = () => {
   return (
     <Container data-aos="fade-right" data-aos-duration="1000" fluid className="mt-4 min-vh-100">
       <Row>
-        <Col sm={12} className="mx-2 my-3">
-          <div style={{ top: "186px", fontSize: "12px" }}>
+        <Col sm={12} className="mx-2 my-3 px-5">
+          <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
-                <Link to="/admin/dashboard">Home</Link>
+                <Link to="/">Home</Link>
               </BreadcrumbItem>
               <BreadcrumbItem>
-                <Link to="/admin/inventory/dashboard">Inventory</Link>
+                <Link to="/Inventory/dashboard">Inventory</Link>
               </BreadcrumbItem>
               <BreadcrumbItem active>Sales Return List</BreadcrumbItem>
             </Breadcrumb>
@@ -167,11 +167,6 @@ export const SalesReturnList = () => {
               {/* Title */}
               <Col sm={4} className="d-flex my-2">
                 <h2
-                  // style={{
-                  //   fontSize: "20px",
-                  //   fontWeight: "500",
-                  //   lineHeight: "18px",
-                  // }}
                   style={{
                     textTransform: 'uppercase',
                     letterSpacing: '5px',
@@ -201,7 +196,7 @@ export const SalesReturnList = () => {
                   <FormControl
                     type="search"
                     size="sm"
-                    placeholder="Search for package shipping"
+                    placeholder="Search..."
                     aria-label="Search in docs"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}

@@ -8,16 +8,17 @@ import {
   ModalFooter,
   ModalHeader,
   Row,
+  Spinner,
 } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { addCustomField } from "../../../../store/AdminSlice/CustomField";
-import { toast } from "react-toastify";
 
 export const Brand = ({ show, handleClose, superAdminId }) => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     name: "",
   });
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -34,17 +35,19 @@ export const Brand = ({ show, handleClose, superAdminId }) => {
       name: formData.name,
       cafe: superAdminId,
       type: "Brand",
-
     };
 
     try {
+      setSubmitLoading(true);
       await dispatch(addCustomField(formDataSubmit));
       // toast.success("Brand added successfully!");
+      setSubmitLoading(false);
       handleClose();
       setFormData({
         name: "",
       })
     } catch (error) {
+      setSubmitLoading(false);
       console.error("Error submitting brand:", error);
       // toast.error("Failed to add brand.");
     }
@@ -92,8 +95,16 @@ export const Brand = ({ show, handleClose, superAdminId }) => {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" type="submit">
+          {/* <Button variant="primary" type="submit">
             Save
+          </Button> */}
+          <Button variant="primary" type="submit" className=" my-2 float-end">
+            {submitLoading ? (
+              <>
+                <Spinner animation="border" size="sm" className="me-2" /> Saving...
+              </>
+            ) : ('Save')}
+
           </Button>
         </ModalFooter>
       </form>

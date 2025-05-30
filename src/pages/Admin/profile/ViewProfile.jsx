@@ -14,8 +14,8 @@ const ViewProfile = () => {
         {/* Profile Section */}
         <Col md={4}>
           <Card
-            className="p-2 shadow-sm"
-            style={{ backgroundColor: "transparent" }}
+            className="p-3 shadow-sm"
+            style={{ backgroundColor: "#f8f9fa" }}
           >
             <div className="text-center">
               <Image
@@ -108,8 +108,8 @@ const ViewProfile = () => {
         {/* Franchise Details */}
         <Col md={8}>
           <Card
-            className="p-2 shadow-sm"
-            style={{ backgroundColor: "transparent" }}
+            className="p-3 shadow-sm"
+            style={{ backgroundColor: "#f8f9fa" }}
           >
             <h5>Franchise Details</h5>
             <hr />
@@ -157,8 +157,8 @@ const ViewProfile = () => {
           <Row className="mt-4">
             <Col>
               <Card
-                className="p-2 shadow-sm"
-                style={{ backgroundColor: "transparent" }}
+                className="p-3 shadow-sm"
+                style={{ backgroundColor: "#f8f9fa" }}
               >
                 <h5>Payment Status</h5>
                 <hr />

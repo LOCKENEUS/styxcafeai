@@ -20,6 +20,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { getPurchaseReceiveList } from "../../../../store/AdminSlice/Inventory/purchaseReceive";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../../../components/common/Loader/Loader";
+import { getStyxData } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 
 export const PurchaseReceivedAdmin = () => {
 
@@ -29,9 +30,11 @@ export const PurchaseReceivedAdmin = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getPurchaseReceiveList(cafeId));
+    dispatch(getStyxData());
   }, [dispatch, cafeId])
 
   const POIdGetList = useSelector(state => state.purchaseReceiveSlice);
+  const { styxData } = useSelector((state) => state.purchaseOrder);
   const loading = POIdGetList.loading;
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
@@ -56,7 +59,7 @@ export const PurchaseReceivedAdmin = () => {
       sn: index + 1,
       _id: item?._id,
       name: item?.po_no || "N/A",
-      vendor: item?.vendor_id?.name || "N/A",
+      vendor: item?.vendor_id?.name || styxData?.name || "N/A",
       status: item?.status || "Draft",
       deliveredDate: item?.delivery_date
         ? new Date(item.delivery_date).toISOString().split("T")[0]
@@ -146,8 +149,8 @@ export const PurchaseReceivedAdmin = () => {
   return (
     <Container data-aos="fade-right" data-aos-duration="1000" fluid className="mt-4 min-vh-100">
       <Row>
-      <Col sm={12} className="mx-2 my-3">
-          <div style={{ top: "186px", fontSize: "12px" }}>
+      <Col sm={12} className="mx-2 mb-3 px-5">
+          <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>
@@ -192,7 +195,7 @@ export const PurchaseReceivedAdmin = () => {
                   <FormControl
                     type="search"
                     size="sm"
-                    placeholder="Search for Purchase Received "
+                    placeholder="Search..."
                     aria-label="Search in docs"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}

@@ -107,7 +107,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                     <BiSearch />
                   </div>
 
-                  <input type="search" className="js-form-search form-control" placeholder="Search in front" aria-label="Search in front" data-hs-form-search-options="{
+                  <input type="search" className="js-form-search form-control" placeholder="Search..." aria-label="Search in front" data-hs-form-search-options="{
                         &quot;clearIcon&quot;: &quot;#clearSearchResultsIcon&quot;,
                         &quot;dropMenuElement&quot;: &quot;#searchDropdownMenu&quot;,
                         &quot;dropMenuOffset&quot;: 20,
@@ -136,7 +136,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                           <BiSearch />
                         </div>
 
-                        <input type="search" className="form-control" placeholder="Search in front" aria-label="Search in front" />
+                        <input type="search" className="form-control" placeholder="Search..." aria-label="Search in front" />
                         <a className="input-group-append input-group-text" href="javascript:;">
                           <i className="bi-x-lg"></i>
                         </a>

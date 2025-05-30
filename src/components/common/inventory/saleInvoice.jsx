@@ -32,7 +32,6 @@ export const SaleInvoice = () => {
     );
 
     return (
-
         <Container>
             <div className="d-flex justify-content-center align-items-center">
                 <h1>Sales Invoice List</h1>

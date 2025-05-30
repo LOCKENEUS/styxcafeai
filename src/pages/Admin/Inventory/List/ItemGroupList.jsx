@@ -90,8 +90,8 @@ const ItemGroupList = () => {
   return (
     <Container fluid className="px-3">
       <Row>
-        <Col sm={12} className="mx-md-4 my-3">
-          <div style={{ top: "186px",  fontSize: "12px" }}>
+        <Col sm={12} className="mx-md-4 mb-3">
+          <div style={{ top: "186px",  fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>
@@ -136,7 +136,7 @@ const ItemGroupList = () => {
                   <FormControl
                     type="search"
                     size="sm"
-                    placeholder="Search for item groups"
+                    placeholder="Search..."
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
                     style={{ backgroundColor: "#FAFAFA", border: "none" }}

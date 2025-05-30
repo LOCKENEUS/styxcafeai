@@ -38,7 +38,7 @@ export const SalesReturnDetails = () => {
   const shipmentData = useSelector(state => state.saSalesReturn.selectedItem);
   const loading = useSelector(state => state.saShipment).loading;
   const location = useLocation();
-  const {id} = useParams();
+  const { id } = useParams();
   const shipment = id;
 
   const handleSendMail = () => {
@@ -47,7 +47,7 @@ export const SalesReturnDetails = () => {
 
   const handlePoNavigation = () => {
     const poId = shipmentData?.refer_id?._id;
-    navigate(`Inventory/PurchaseOrderDetails`);
+    navigate(`/Inventory/SalesOrderDetails/${poId}`);
   }
 
   const handleItemNavigation = (id) => {
@@ -55,7 +55,7 @@ export const SalesReturnDetails = () => {
   }
 
   // count items
-  const countItems = shipmentData?.pack_id;
+  const countItems = shipmentData?.ship_id;
 
   if (loading) {
     return (
@@ -66,18 +66,16 @@ export const SalesReturnDetails = () => {
     );
   }
 
-  console.log("countItems", countItems)
-
   return (
     <Container >
       <Row className="mx-2">
         {/* Breadcrumb Section */}
-        <Col sm={12} className="my-3">
-          <div style={{ top: "186px", fontSize: "18px" }}>
+        <Col sm={12} className="mt-3">
+          <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
-              <BreadcrumbItem href="#">Home</BreadcrumbItem>
-              <BreadcrumbItem><Link to="Inventory/Shipment">Shipment List</Link></BreadcrumbItem>
-              <BreadcrumbItem active>Shipment Details</BreadcrumbItem>
+              <BreadcrumbItem href="/">Home</BreadcrumbItem>
+              <BreadcrumbItem><Link to="/Inventory/SalesReturn/List">Sales Return List</Link></BreadcrumbItem>
+              <BreadcrumbItem active>Sales Return Details</BreadcrumbItem>
             </Breadcrumb>
           </div>
         </Col>
@@ -87,7 +85,7 @@ export const SalesReturnDetails = () => {
             <Row>
               <Col sm={6} xs={12}>
                 <h5 className="text-dark p-2" style={{ fontSize: '18px' }}>
-                  <span>Shipping No: </span>
+                  <span>Return No : </span>
                   <span>{shipmentData?.po_no}</span>
                 </h5>
               </Col>
@@ -100,39 +98,35 @@ export const SalesReturnDetails = () => {
                 <Button className="d-flex align-items-center" onClick={handleSendMail} style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
                   <Image src={sendMail} className="me-2" /> Send Email
                 </Button>
-                <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
-                  {/* <Image src={sendMail} className="me-2" />  */}
-                  <Link to={`/admin/inventory/GenerateBill/${shipmentData?._id}`} className="text-decoration-none text-dark"><b >+</b>  Create Bill </Link>
-                </Button>
               </Col>
             </Row>
           </Card>
         </Col>
 
         <Col sm={12} className="my-2">
-              <Card className="p-3 mb-3 shadow-sm">
-        <Row className="align-items-center">
-          <Col xs={2}>
-            <img
-              src={Lockenelogo}
-              alt="Logo"
-              className="img-fluid"
-            />
-          </Col>
-          <Col>
-            <h5>{user?.name}</h5>
-            <p className="mb-1">{user?.email} / {user?.contact}</p>
-            <p className="mb-1">
-              {user?.address}
-            </p>
-            <strong>PAN: {user?.pan}</strong>
-          </Col>
-          <Col xs={2} className="text-end">
-            <span className="text-muted">Invoice:</span>
-            <strong className="text-primary">Draft</strong>
-          </Col>
-        </Row>
-      </Card>
+          <Card className="p-3 shadow-sm">
+            <Row className="align-items-center">
+              <Col xs={2}>
+                <img
+                  src={Lockenelogo}
+                  alt="Logo"
+                  className="img-fluid"
+                />
+              </Col>
+              <Col>
+                <h5>{user?.name}</h5>
+                <p className="mb-1">{user?.email} / {user?.contact}</p>
+                <p className="mb-1">
+                  {user?.address}
+                </p>
+                <strong>PAN: {user?.pan}</strong>
+              </Col>
+              <Col xs={2} className="text-end">
+                <span className="text-muted">Invoice:</span>
+                <strong className="text-primary">Draft</strong>
+              </Col>
+            </Row>
+          </Card>
         </Col>
 
         {/* Customer & Order Details */}
@@ -140,45 +134,30 @@ export const SalesReturnDetails = () => {
           <Card className="p-3 shadow-sm">
             <Row>
               {/* Customer Info */}
-              <Col sm={4}  >
+              <Col sm={6}  >
                 <h5 className="text-primary mb-3" style={{ fontSize: '20px' }}>{shipmentData?.vendor_id?.name}</h5>
+                <h5 className="text-muted mb-3" style={{ fontSize: '16px' }}>{shipmentData?.vendor_id?.email} / {shipmentData?.vendor_id?.contact_no}</h5>
                 <Row>
                   <Col sm={6} >
-                    <span style={{ fontSize: '16px', fontWeight: '500' }}>Billing Address</span>
+                    <span className="text-color" style={{ fontSize: '16px' }}>From Address</span>
                     <div className="my-3">{shipmentData?.vendor_id?.address}</div>
                   </Col>
                 </Row>
               </Col>
-              <Col sm={8} >
-                <Row>
-                  {/* Delivery Details */}
-                  <Col sm={6}  >
-                    <span className="mb-3" style={{ fontSize: '16px', fontWeight: '500' }}>Delivery Address</span>
-                    <div className="my-3">
-                      <span style={{ fontSize: '16px' }}>Styx Cafe</span><br />
-                      <span>{user?.email} / {user?.contact}</span>
-                      <span>{user?.billingAddress}, {user?.city1}, {user?.state1}, {user?.country1} </span>
-                      <span>PAN:</span> {user?.pan}
-                    </div>
-                  </Col>
-
-                  {/* Order Info */}
-                  <Col sm={6} >
-                    <div className="my-5 mx-2 border-start border-3 p-2 d-flex flex-column gap-2">
-                      <div><span className="my-1 fw-bold">Shipping No:</span> <span className="float-end">{shipmentData?.po_no}</span></div>
-                      <div><span className="my-1 fw-bold">Shipping Date:</span> <span className="float-end">{new Date(shipmentData?.delivery_date).toLocaleDateString()}</span></div>
-                      <div><span className="my-1 fw-bold">Shipping Status:</span> <span className="float-end">{shipmentData?.status}</span></div>
-
-                      <div><span className="my-1 fw-bold" style={{ cursor: 'pointer' }} onClick={handlePoNavigation}>Order No:<b className="text-primary float-end">{shipmentData?.refer_id?.po_no}</b></span></div>
-                      <div><span className="my-1 fw-bold">Payment Terms:</span> <span className="float-end">{shipmentData?.refer_id?.payment_terms}</span></div>
-                      {/* {new Date(delivery_datedelivery_date).toLocaleDateString()} */}
-                      <div>
-                        <span className="my-1 fw-bold">Reference :</span>{' '}
-                        <span className="float-end">{shipmentData?.refer_id?.reference}</span>
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
+              <Col sm={6} >
+                <div className="mx-2 border-start border-3 px-2 d-flex flex-column gap-2">
+                  <div><span className="my-1 fw-bold">Return No:</span> <span className="float-end">{shipmentData?.po_no}</span></div>
+                  <div><span className="my-1 fw-bold">Return Date:</span> <span className="float-end">{new Date(shipmentData?.delivery_date).toLocaleDateString()}</span></div>
+                  <div>
+                    <span className="my-1 fw-bold">
+                      Order No:
+                    </span>
+                    <span
+                      className="float-end text-primary pointer-cursor"
+                      onClick={() => navigate(`/Inventory/SalesOrderDetails/${shipmentData?.refer_id?._id}`)}>{shipmentData?.refer_id?.po_no}
+                    </span>
+                  </div>
+                </div>
               </Col>
             </Row>
           </Card>
@@ -208,24 +187,24 @@ export const SalesReturnDetails = () => {
                               </td>
                             </tr>
                             {item.items.map((subItem, subIndex) => (
-                                <tr key={index}>
-                              <td onClick={() => handleItemNavigation(subItem?.item_id?._id)}>
-                                {/* <b>{item?.item_id?.name}</b> */}
-                                <b>
-                                  {subItem?.item_id?.name}
-                                </b>  
-                                <br />
-                                HSN : {subItem?.item_id?.hsn}
-                              </td>
-                              <td>
-                                SKU : {subItem?.item_id?.sku}
-                              </td>
-                              <td>
-                                Ordered Qty  : {subItem?.quantity} Nos
-                              </td>
-                              <td>  Packed Qty :  {subItem?.qty_packed}</td>
-                              <td>  Shipped Qty :  {subItem?.qty_shipped}</td>
-                            </tr>
+                              <tr key={index}>
+                                <td className="pointer-cursor text-primary" onClick={() => handleItemNavigation(subItem?.item_id?._id)}>
+                                  {/* <b>{item?.item_id?.name}</b> */}
+                                  <b>
+                                    {subItem?.item_id?.name}
+                                  </b>
+                                  <br />
+                                  HSN : {subItem?.item_id?.hsn}
+                                </td>
+                                <td>
+                                  SKU : {subItem?.item_id?.sku}
+                                </td>
+                                <td>
+                                  Ordered Qty  : {subItem?.quantity} Nos
+                                </td>
+                                <td>  Packed Qty :  {subItem?.qty_packed}</td>
+                                <td>  Shipped Qty :  {subItem?.qty_shipped}</td>
+                              </tr>
                             ))}
                           </React.Fragment>
                         ))

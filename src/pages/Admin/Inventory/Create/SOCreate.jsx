@@ -12,6 +12,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   Dropdown,
+  Spinner,
 } from "react-bootstrap";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import { FaCheck, FaRupeeSign, FaTrash, FaUpload, FaFilePdf } from "react-icons/fa";
@@ -41,6 +42,7 @@ const SOCreate = () => {
   const [products, setProducts] = useState([
     { id: 1, item: "", quantity: 1, price: 0, tax: 0, total: 0, totalTax: 0 },
   ]);
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [showProductList, setShowProductList] = useState(false);
   const [showTaxModal, setShowTaxModal] = useState(false);
   const [taxList, setTaxList] = useState([]);
@@ -52,7 +54,7 @@ const SOCreate = () => {
   const user = JSON.parse(sessionStorage.getItem("user"));
   const cafeId = user?._id;
   const [latestTax, setLatestTax] = useState(null);
-  const [isMobile, setIsMobile] = useState(false); 
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -79,7 +81,7 @@ const SOCreate = () => {
       }
       return product;
     });
-    
+
     setProducts(updatedProducts);
 
     // Also add the new tax to selected taxes for the total calculation
@@ -100,7 +102,7 @@ const SOCreate = () => {
       dispatch(getSOById(id))
         .unwrap()
         .then((soData) => {
-          
+
           setFormData({
             date: soData.date ? new Date(soData.date).toISOString().split('T')[0] : '',
             shipment_date: soData.shipment_date ? new Date(soData.shipment_date).toISOString().split('T')[0] : '',
@@ -111,27 +113,27 @@ const SOCreate = () => {
             description: soData.description || '',
             internal_team_notes: soData.internal_team_notes || ''
           });
-          
+
           if (soData.customer_id) {
             setSelectedClient(soData.customer_id);
           }
-          
+
           if (soData.items && soData.items.length > 0) {
             const formattedProducts = soData.items.map((item, index) => {
               // Handle tax object, tax ID, or null tax
-              const taxId = item.tax ? 
-                (typeof item.tax === 'object' ? item.tax._id : item.tax) : 
+              const taxId = item.tax ?
+                (typeof item.tax === 'object' ? item.tax._id : item.tax) :
                 '';
-              
-              const taxRate = item.tax ? 
-                (typeof item.tax === 'object' ? 
-                  item.tax.tax_rate : 
+
+              const taxRate = item.tax ?
+                (typeof item.tax === 'object' ?
+                  item.tax.tax_rate :
                   taxFields.find(t => t._id === item.tax)?.tax_rate || 0) :
                 0;
-              
+
               return {
                 id: index + 1,
-                item: item.item_id?._id || '', 
+                item: item.item_id?._id || '',
                 itemName: item.item_id?.name || '',
                 quantity: item.quantity || 1,
                 price: item.price || 0,
@@ -144,7 +146,7 @@ const SOCreate = () => {
             });
             setProducts(formattedProducts);
           }
-          
+
           // Set tax totals
           setTotals({
             subtotal: soData.subtotal || 0,
@@ -156,7 +158,7 @@ const SOCreate = () => {
             adjustmentNote: soData.adjustment_note || '',
             adjustmentAmount: soData.adjustment_amount || 0
           });
-          
+
           if (soData.internal_team_file && soData.internal_team_file.length > 0) {
             // Handle existing files if needed
           }
@@ -251,7 +253,7 @@ const SOCreate = () => {
   const calculateTotals = () => {
     // Calculate subtotal from products
     const subtotal = products.reduce((sum, product) => sum + (product.total), 0);
-    
+
     // Calculate discount
     let discountAmount = 0;
     if (totals.discountType === 'Percentage') {
@@ -366,7 +368,7 @@ const SOCreate = () => {
     submitData.append('subtotal', totals.subtotal.toString());
     submitData.append('discount_value', totals.discount.toString());
     submitData.append('discount_type', totals.discountType.toLowerCase());
-    
+
     // Format tax data - just send array of tax IDs
     const taxIds = totals.selectedTaxes.map(tax => tax.id);
     submitData.append('tax', JSON.stringify(taxIds));
@@ -394,11 +396,13 @@ const SOCreate = () => {
     });
 
     try {
+      setSubmitLoading(true);
       if (isEditMode) {
         const res = await dispatch(updateSO({ id, soData: submitData })).unwrap();
         if (res?.data?._id) {
           navigate(`/admin/Inventory/SaleOrderDetails/${res._id}`);
         } else {
+          setSubmitLoading(false);
           console.error('No ID returned from update operation');
         }
       } else {
@@ -406,17 +410,19 @@ const SOCreate = () => {
         if (res?._id) {
           navigate(`/admin/Inventory/SaleOrderDetails/${res._id}`);
         } else {
+          setSubmitLoading(false);
           console.error('No ID returned from create operation');
         }
       }
     } catch (error) {
+      setSubmitLoading(false);
       console.error('Error with Sales Order:', error);
     }
   };
 
   // Update the page title based on mode
   const pageTitle = isEditMode ? "Edit Sales Order" : "Create Sales Order";
-  
+
   // Add this function to format items for react-select
   const formatItemsForSelect = (items) => {
     return items.map(item => ({
@@ -429,8 +435,8 @@ const SOCreate = () => {
 
   return (
     <Container fluid className="p-4">
-      <Col sm={12} className="my-3">
-        <div style={{ top: "186px", fontSize: "12px" }}>
+      <Col sm={12} className="mb-3">
+        <div style={{ top: "186px", fontSize: "16px" }}>
           <Breadcrumb>
             <BreadcrumbItem>Home</BreadcrumbItem>
             <BreadcrumbItem>
@@ -480,17 +486,17 @@ const SOCreate = () => {
                   className="d-flex align-items-center justify-content-center gap-2"
                   onClick={handleShow}
                 >
-                  <span> { selectedClient ? <FaCheck/> : <BiPlus/>}</span>
-                  { selectedClient ? "Client" : "Add Client"}
+                  <span> {selectedClient ? <FaCheck /> : <BiPlus />}</span>
+                  {selectedClient ? "Client" : "Add Client"}
                 </Button>
               </div>
             </div>
-            <Row className="mt-3"> 
-              <Col style={{ fontSize: "1rem" , color:"black" }} md={5}>
+            <Row className="mt-3">
+              <Col style={{ fontSize: "1rem", color: "black" }} md={5}>
                 {selectedClient ? selectedClient.name : "Client Name"}
               </Col>
-              <Col style={{ fontSize: "1rem", color:"black" }} md={7}>
-                {selectedClient 
+              <Col style={{ fontSize: "1rem", color: "black" }} md={7}>
+                {selectedClient
                   ? `${selectedClient.email} / ${selectedClient.contact_no}`
                   : "example@gmail.com / 00-0000-0000"}
               </Col>
@@ -550,9 +556,9 @@ const SOCreate = () => {
                 />
               </div> */}
 
-         
 
-        
+
+
 
               {/* <Form.Control
                 name="delivery_preference"
@@ -578,7 +584,7 @@ const SOCreate = () => {
       <Card className="p-3 mt-3 shadow-sm">
         <Table responsive>
           <thead>
-          <tr className={` ${isMobile && "d-flex"} `}>
+            <tr className={` ${isMobile && "d-flex"} `}>
               <th className="w-25">PRODUCT</th>
               <th className="w-15">QUANTITY</th>
               <th className="w-15">PRICE</th>
@@ -604,7 +610,7 @@ const SOCreate = () => {
                           value={
                             product.item
                               ? formatItemsForSelect(items).find(option => option.value === product.item) ||
-                                (product.itemName ? { value: product.item, label: product.itemName } : null)
+                              (product.itemName ? { value: product.item, label: product.itemName } : null)
                               : null
                           }
                           onChange={(selectedOption) => {
@@ -640,11 +646,14 @@ const SOCreate = () => {
                             }),
                             placeholder: (baseStyles) => ({
                               ...baseStyles,
-                              color: '#6c757d'
+                              color: '#6c757d',
+                              padding: '6px'
                             }),
                             input: (baseStyles) => ({
                               ...baseStyles,
-                              color: 'black'
+                              color: 'black',
+                              padding: '6px'
+
                             }),
                             singleValue: (baseStyles) => ({
                               ...baseStyles,
@@ -652,11 +661,11 @@ const SOCreate = () => {
                             }),
                             option: (baseStyles, { isFocused, isSelected }) => ({
                               ...baseStyles,
-                              backgroundColor: isSelected 
-                                ? '#0d6efd' 
-                                : isFocused 
-                                ? '#e9ecef' 
-                                : null,
+                              backgroundColor: isSelected
+                                ? '#0d6efd'
+                                : isFocused
+                                  ? '#e9ecef'
+                                  : null,
                               color: isSelected ? 'white' : 'black',
                               ':active': {
                                 backgroundColor: '#0d6efd',
@@ -684,12 +693,12 @@ const SOCreate = () => {
                       <Button
                         onClick={handleShowCreateItem}
                         className="flex-shrink-0"
-                        style={{ 
-                          width: "40px", 
-                          height: "38px",
-                          border: "1px solid black", 
+                        style={{
+                          width: "40px",
+                          height: "42px",
+                          border: "1px solid black",
                           borderStyle: "dashed",
-                          marginTop: "auto" 
+                          marginTop: "auto"
                         }}
                         variant="outline-secondary"
                       >
@@ -704,7 +713,7 @@ const SOCreate = () => {
                   </div>
                 </td>
                 <td>
-                  
+
                   <Form.Control
                     type="number"
                     min="1"
@@ -839,8 +848,8 @@ const SOCreate = () => {
 
               {/* Discount */}
               <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
-                <span>Discount (₹{totals.discountType === 'Percentage' 
-                  ? Math.round((totals.subtotal * totals.discount) / 100).toFixed(2) 
+                <span>Discount (₹{totals.discountType === 'Percentage'
+                  ? Math.round((totals.subtotal * totals.discount) / 100).toFixed(2)
                   : parseFloat(totals.discount || 0).toFixed(2)})</span>
                 <div className="d-flex gap-2" style={{ maxWidth: "200px" }}>
                   <Form.Control
@@ -865,8 +874,8 @@ const SOCreate = () => {
                 <span>Tax ₹{totals.taxAmount.toFixed(2)}</span>
                 <Dropdown style={{ maxWidth: "200px" }}>
                   <Dropdown.Toggle variant="outline-primary" style={{ width: "100%" }}>
-                    {totals.selectedTaxes.length ? 
-                      `${totals.selectedTaxes.reduce((sum, tax) => sum + tax.rate, 0)}%` : 
+                    {totals.selectedTaxes.length ?
+                      `${totals.selectedTaxes.reduce((sum, tax) => sum + tax.rate, 0)}%` :
                       '0.00% Tax'}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
@@ -949,7 +958,7 @@ const SOCreate = () => {
               style={{ border: "1px solid gray" }}
             />
           </Col>
-              {/* Add a Attachment */}
+          {/* Add a Attachment */}
           {/* <Col className="" md={6}>
             <div
               className="rounded d-flex flex-column align-items-center justify-content-center p-4"
@@ -1008,9 +1017,9 @@ const SOCreate = () => {
         </Row>
       </Card>
 
-      <AddClint 
-        show={show} 
-        handleClose={handleClose} 
+      <AddClint
+        show={show}
+        handleClose={handleClose}
         onClientSelect={handleClientSelect}
       />
       {showProductList && (
@@ -1020,29 +1029,37 @@ const SOCreate = () => {
         />
       )}
 
-      <Tax 
-        show={showTaxModal} 
+      <Tax
+        show={showTaxModal}
         handleClose={() => setShowTaxModal(false)}
         onCreated={handleTaxCreated}
       />
-      <OffcanvesItemsNewCreate 
-        showOffCanvasCreateItem={showOffCanvasCreateItem} 
-        handleCloseCreateItem={handleCloseCreateItem} 
+      <OffcanvesItemsNewCreate
+        showOffCanvasCreateItem={showOffCanvasCreateItem}
+        handleCloseCreateItem={handleCloseCreateItem}
       />
 
       {/* Add a submit button */}
       <div className="d-flex justify-content-end mt-3">
-        <Button
+        {/* <Button
           variant="primary"
           onClick={handleSubmit}
         >
           {isEditMode ? "Update Sales Order" : "Create Sales Order"}
+        </Button> */}
+
+        <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
+          {submitLoading ? (
+            <>
+              <Spinner animation="border" size="sm" className="me-2" /> Saving...
+            </>
+          ) : (isEditMode ? "Update" : "Submit")}
         </Button>
       </div>
 
       {/* Validation Modal */}
-      <Modal 
-        show={showValidationModal} 
+      <Modal
+        show={showValidationModal}
         onHide={() => setShowValidationModal(false)}
         centered
       >
@@ -1064,7 +1081,6 @@ const SOCreate = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-
     </Container>
   );
 };

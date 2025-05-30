@@ -14,8 +14,6 @@ export const ItemDeleteModal = ({ show, handleClose, groupId }) => {
         setDeleteLoading(true);
         try {
             await dispatch(deleteItemById(groupId));
-
-
         } catch (error) {
             console.error("Error deleting item group", error);
         }
@@ -26,7 +24,6 @@ export const ItemDeleteModal = ({ show, handleClose, groupId }) => {
             setTimeout(() => handleClose(), 100);
         }
     };
-
 
     return (
         <Modal show={show} onHide={handleClose} centered>
@@ -52,7 +49,6 @@ export const ItemDeleteModal = ({ show, handleClose, groupId }) => {
                         "Delete"
                     )}
                 </Button>
-
             </div>
         </Modal>
     );

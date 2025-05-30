@@ -1,11 +1,12 @@
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormControl, FormLabel, FormSelect, Row, Table } from "react-bootstrap";
+import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormControl, FormLabel, FormSelect, Row, Spinner, Table } from "react-bootstrap";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import companylog from "/assets/inventory/companylogo.png";
 import { use, useEffect, useState } from "react";
 import { getVendors } from "../../../../store/AdminSlice/Inventory/VendorSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { GetPOListByVendor, GetPurchaseOrder } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { GetCafePOList, GetPOListByVendor, GetPurchaseOrder } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { createPurchaseReceive } from "../../../../store/AdminSlice/Inventory/purchaseReceive";
+import { toast } from "react-toastify";
 
 export const PRCreate = () => {
     const [formData, setFormData] = useState({
@@ -33,6 +34,8 @@ export const PRCreate = () => {
     const [poSelected, setPoSelected] = useState("");
     const [selectedVendor, setSelectedVendor] = useState("");
     const [taxList, setTaxList] = useState([]);
+    const [vendorType, setVendorType] = useState("");
+    const [submitLoading, setSubmitLoading] = useState(false);
 
     const dispatch = useDispatch();
     const location = useLocation();
@@ -48,7 +51,6 @@ export const PRCreate = () => {
     const UserContactN = user?.contact_no;
     const UserAddress = user?.address;
     const UesrPAN = user?.panNo;
-
 
     useEffect(() => {
         if (purchaseOrderData) {
@@ -73,6 +75,12 @@ export const PRCreate = () => {
     }, [dispatch, selectedVendor]);
 
     useEffect(() => {
+        if (vendorType === "StyxCafe") {
+            dispatch(GetCafePOList(cafeId));
+        }
+    }, [dispatch, vendorType]);
+
+    useEffect(() => {
         if (poSelected) {
             dispatch(GetPurchaseOrder(poSelected));
         }
@@ -91,12 +99,33 @@ export const PRCreate = () => {
         setShowTaxModal(false);
     };
 
+    // const handleVendorChange = (vendorId) => {
+    //     if (vendorId === "StyxCafe") {
+    //         setVendorType("StyxCafe");
+    //         return;
+    //     }
+    //     setVendorType("");
+    //     setSelectedVendor(vendorId);
+    //     setFormData((prev) => ({
+    //         ...prev,
+    //         selectedVendor: vendorId,
+    //     }));
+    // };
+
     const handleVendorChange = (vendorId) => {
         setSelectedVendor(vendorId);
         setFormData((prev) => ({
             ...prev,
             selectedVendor: vendorId,
         }));
+
+        if (vendorId === "StyxCafe") {
+            setVendorType("StyxCafe");
+            dispatch(GetCafePOList(cafeId));
+        } else {
+            setVendorType("");
+            dispatch(GetPOListByVendor({ id: cafeId, vendor: vendorId }));
+        }
     };
 
     const handleChange = (e) => {
@@ -146,6 +175,7 @@ export const PRCreate = () => {
         };
 
         try {
+            setSubmitLoading(true);
             const response = await dispatch(createPurchaseReceive(submitData)).unwrap();
 
             navigate("/admin/inventory/PurchaseReceivedDetails", { state: response?._id });
@@ -159,6 +189,8 @@ export const PRCreate = () => {
             });
         } catch (error) {
             // Handle error
+            setSubmitLoading(false);
+            toast.error(error.message);
             console.error('Error creating purchase receive:', error);
         }
     };
@@ -167,8 +199,8 @@ export const PRCreate = () => {
         <Container >
             <Row className="mx-2">
                 {/* Breadcrumb Section */}
-                <Col sm={12} className="my-3">
-                    <div style={{ top: "186px", fontSize: "12px" }}>
+                <Col sm={12} className="mt-3">
+                    <div style={{ top: "186px", fontSize: "16px" }}>
                         <Breadcrumb>
                             <BreadcrumbItem href="#">Home</BreadcrumbItem>
                             <BreadcrumbItem> <Link to="/admin/inventory/purchaseReceived">Purchase Received List</Link></BreadcrumbItem>
@@ -210,6 +242,7 @@ export const PRCreate = () => {
                                     onChange={(e) => handleVendorChange(e.target.value)}
                                 >
                                     <option> select vendor</option>
+                                    <option value="StyxCafe">StyxCafe</option>
                                     {vendors.map((vendor) => (
                                         <option key={vendor.id} value={vendor._id}>
                                             {vendor.name}
@@ -288,6 +321,7 @@ export const PRCreate = () => {
                                                     max={item.quantity - item.qty_received}
                                                     className="mb-3"
                                                     onChange={(e) => handleQtyChange(e, index)}
+                                                    onWheel={(e) => e.target.blur()}
                                                 />
                                             </td>
                                         </tr>
@@ -310,7 +344,14 @@ export const PRCreate = () => {
                                 />
                             </Col>
                             <Col sm={12} className="my-3 d-flex justify-content-end">
-                                <Button type="submit " onClick={handleSubmit} style={{ padding: "10px 35px", fontSize: "14px" }}>Submit</Button>
+                                {/* <Button type="submit " onClick={handleSubmit} style={{ padding: "10px 35px", fontSize: "14px" }}>Submit</Button> */}
+                                <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
+                                    {submitLoading ? (
+                                        <>
+                                            <Spinner animation="border" size="sm" className="me-2" /> Saving...
+                                        </>
+                                    ) : ('Submit')}
+                                </Button>
                             </Col>
                         </Row>
                     </Card>}

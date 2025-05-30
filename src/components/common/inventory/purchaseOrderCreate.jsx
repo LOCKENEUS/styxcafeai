@@ -15,6 +15,7 @@ import { getSaCustomFields } from "../../../store/slices/Inventory/customField";
 import { TaxModal } from "./modal/tax";
 import { getSaVendors } from "../../../store/slices/Inventory/saVendorSlice";
 import { IoCheckmarkSharp } from "react-icons/io5";
+import OffcanvesItems from "./Offcanvas/OffcanvesItems";
 
 export const PurchaseOrderCreate = () => {
     const [show, setShow] = useState(false);
@@ -50,9 +51,9 @@ export const PurchaseOrderCreate = () => {
 
     const userName = user?.name;
     const userEmail = user?.email;
-    const UserContactN = user?.contact_no;
+    const UserContactN = user?.contact;
     const UserAddress = user?.address;
-    const UesrPAN = user?.panNo;
+    const UesrPAN = user?.pan;
 
     // Filter payment terms from custom fields
     const paymentTerms = customFields.filter(field => field.type === 'Payment Terms');
@@ -232,7 +233,7 @@ export const PurchaseOrderCreate = () => {
     // Update the handleSubmit function
     const handleSubmit = async () => {
 
-        setSubmitLoading(true)        
+        setSubmitLoading(true)
         const submitData = new FormData();
 
         // Add basic form fields
@@ -275,7 +276,7 @@ export const PurchaseOrderCreate = () => {
 
         try {
             const response = await dispatch(createSaPurchaseOrder(submitData)).unwrap();
-            setSubmitLoading(false)        
+            setSubmitLoading(false)
             navigate(`/Inventory/PurchaseOrderDetails/${response._id}`);
 
             setFormData({
@@ -295,7 +296,7 @@ export const PurchaseOrderCreate = () => {
             });
         } catch (error) {
             // Handle error
-            setSubmitLoading(false)        
+            setSubmitLoading(false)
             console.error('Error creating SO:', error);
         }
     };
@@ -315,8 +316,8 @@ export const PurchaseOrderCreate = () => {
 
     return (
         <Container fluid className="p-4">
-            <Col sm={12} className="my-3">
-                <div style={{ top: "186px", fontSize: "12px" }}>
+            <Col sm={12} className="mb-3">
+                <div style={{ top: "186px", fontSize: "16px" }}>
                     <Breadcrumb>
                         <BreadcrumbItem >Home</BreadcrumbItem>
                         <BreadcrumbItem><Link to="/admin/inventory/purchase-order-list">Purchase Order List</Link></BreadcrumbItem>
@@ -365,7 +366,7 @@ export const PurchaseOrderCreate = () => {
                                     className="d-flex align-items-center justify-content-center gap-2"
                                     onClick={handleShowVendorList}
                                 >
-                                    {vendorId ? <span><IoCheckmarkSharp /></span> :<span> <span>+</span> Add Vendor</span>}
+                                    {vendorId ? <span><IoCheckmarkSharp /></span> : <span> <span>+</span> Add Vendor</span>}
                                 </Button>
                             </div>
                         </div>
@@ -837,6 +838,11 @@ export const PurchaseOrderCreate = () => {
                 onVendorSelect={handleVendorSelect}
             />
 
+            <OffcanvesItems
+                showOffCanvasCreateItem={showOffCanvasCreateItem}
+                handleCloseCreateItem={handleCloseCreateItem}
+            />
+
             {/* Add a submit button */}
             <div className="d-flex justify-content-end mt-3">
                 <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
@@ -845,7 +851,6 @@ export const PurchaseOrderCreate = () => {
                             <Spinner animation="border" size="sm" className="me-2" /> Saving...
                         </>
                     ) : ('Submit')}
-
                 </Button>
             </div>
         </Container>

@@ -8,7 +8,7 @@ import companylog from "/assets/inventory/companylogo.png";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { GetPurchaseOrder, sendMailToVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { GetPurchaseOrder, getStyxData, sendMailToVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 
 const PurchaseOrderDetails = () => {
     const [vendor, setVendor] = useState("");
@@ -20,6 +20,8 @@ const PurchaseOrderDetails = () => {
     const navigate = useNavigate();
     const purchaseOrder = location.state;
     const selectedPo = useSelector((state) => state.purchaseOrder.selectedPo);
+    const { styxData } = useSelector((state) => state.purchaseOrder);
+
     const loading = useSelector((state) => state.purchaseOrder.loading);
     const user = JSON.parse(sessionStorage.getItem("user"));
     const POId = purchaseOrder?._id;
@@ -31,6 +33,7 @@ const PurchaseOrderDetails = () => {
     const UesrPAN = user?.panNo;
 
     useEffect(() => {
+        getStyxData();
         dispatch(GetPurchaseOrder(POId));
     }, [dispatch]);
 
@@ -181,25 +184,43 @@ const PurchaseOrderDetails = () => {
                         <Row>
                             {/* Customer Info */}
                             <Col sm={4}  >
-                                <h5 className="text-primary mb-3" style={{ fontSize: '20px' }}>{selectedPo?.vendor_id?.name}</h5>
+                                <h5 className="text-primary mb-3" style={{ fontSize: '20px' }}>{vendor ? selectedPo?.vendor_id?.name : styxData?.name}</h5>
                                 <Row>
-                                    <Col sm={6} >
+                                    {vendor && <Col sm={6} >
                                         <span style={{ fontSize: '16px', fontWeight: '500' }}>Billing Address</span>
                                         <p className="my-1">{vendor?.billingAddress}</p>
                                         <p className="my-1">{vendor?.city1}</p>
                                         <p className="my-1">{vendor?.state1}</p>
                                         <p className="my-1">{vendor?.pincode1}</p>
                                         <p className="my-1">{vendor?.country1}</p>
-                                    </Col>
+                                    </Col>}
 
-                                    <Col sm={6} className="border-end border-3" >
+                                    {!vendor && <Col sm={6} >
+                                        <span style={{ fontSize: '16px', fontWeight: '500' }}>Billing Address</span>
+                                        <p className="my-1">{styxData?.billingAddress}</p>
+                                        <p className="my-1">{styxData?.city1}</p>
+                                        <p className="my-1">{styxData?.state1}</p>
+                                        <p className="my-1">{styxData?.pincode1}</p>
+                                        <p className="my-1">{styxData?.country1}</p>
+                                    </Col>}
+
+                                    {vendor && <Col sm={6} className="border-end border-3" >
                                         <span style={{ fontSize: '16px', fontWeight: '500' }}>Shipping Address</span>
                                         <p className="my-1">{vendor?.shippingAddress}</p>
                                         <p className="my-1">{vendor?.city2}</p>
                                         <p className="my-1">{vendor?.state2}</p>
                                         <p className="my-1">{vendor?.pincode2}</p>
                                         <p className="my-1">{vendor?.country2}</p>
-                                    </Col>
+                                    </Col>}
+
+                                    {!vendor && <Col sm={6} className="border-end border-3" >
+                                        <span style={{ fontSize: '16px', fontWeight: '500' }}>Shipping Address</span>
+                                        <p className="my-1">{styxData?.shippingAddress}</p>
+                                        <p className="my-1">{styxData?.city2}</p>
+                                        <p className="my-1">{styxData?.state2}</p>
+                                        <p className="my-1">{styxData?.pincode2}</p>
+                                        <p className="my-1">{styxData?.country2}</p>
+                                    </Col>}
                                 </Row>
                             </Col>
 

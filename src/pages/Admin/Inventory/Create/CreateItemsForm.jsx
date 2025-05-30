@@ -325,17 +325,10 @@ const CreateItemsForm = () => {
 
   return (
     <Container data-aos="fade-up" data-aos-duration="700">
-    <Row
-        style={{
-            marginTop: "50px",
-            // backgroundColor:"#F2F2F2",height:"100vh" 
-        }}
-    >
-
+    <Row style={{ marginTop: "10px" }}>
         <Col sm={12} className="d-flex "  >
             {/* style={{top:"110px" , left:"700px"}} */}
-
-            <div style={{ top: "186px", fontSize: "12px" }}>
+            <div style={{ top: "186px", fontSize: "16px" }}>
                 <Breadcrumb  >
                     <BreadcrumbItem  ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
                     <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
@@ -343,11 +336,11 @@ const CreateItemsForm = () => {
                     <BreadcrumbItem active>{isEditMode ? 'Edit Item' : 'Create Item'}</BreadcrumbItem>
                 </Breadcrumb>
             </div>
-
         </Col>
+
         <Form onSubmit={handleSubmitData}>
             {/* <Row> */}
-            <Card className="shadow p-4 my-4">
+            <Card className="shadow p-4 mb-4">
                 <Row>
                     <div className="d-flex justify-content-start align-items-start">
                         <h1>{isEditMode ? 'Edit Item' : 'Create New Item'}</h1>

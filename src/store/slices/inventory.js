@@ -225,7 +225,6 @@ const InventorySlice = createSlice({
     setSelectedInventory(state, action) {
       state.selectedinventory = action.payload;
     },
-
   },
   extraReducers: (builder) => {
     builder
@@ -330,8 +329,9 @@ const InventorySlice = createSlice({
          state.status = "loading";
        })
        .addCase(updateItemsById.fulfilled, (state, action) => {
+        console.log("state", state);
          state.status = "succeeded";
-         state.inventory = state.inventory.filter(
+         state.selectedinventory = state.it.filter(
            (item) => item._id !== action.payload
          );
          toast.success("Item updated successfully!");

@@ -152,8 +152,8 @@ const BillPaymentList = () => {
     return (
       <Container fluid className="mt-4 min-vh-100">
         <Row>
-        <Col sm={12} className="mx-2 my-3">
-          <div style={{ top: "186px", fontSize: "12px" }}>
+        <Col sm={12} className="mx-2 mb-3 px-5">
+          <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>
@@ -197,7 +197,7 @@ const BillPaymentList = () => {
                     <FormControl
                       type="search"
                       size="sm"
-                      placeholder="Search for Bill Payment " 
+                      placeholder="Search..." 
                       aria-label="Search in docs"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)} 

@@ -89,43 +89,9 @@ export const SoDetails = () => {
         });
     };
 
-    console.log("selectedSO", selectedSO);
-
     const handleCreateInvoice = async () => {
-        // Prepare the invoice data from selectedSO
-        // const invoiceData = {
-        //     cafe: selectedSO.cafe?._id,
-        //     customer_id: selectedSO.customer_id?._id,
-        //     refer_id: selectedSO._id,
-        //     date: new Date().toISOString(),
-        //     shipment_date: "",
-        //     payment_terms: selectedSO.payment_terms || "",
-        //     reference: selectedSO.reference || "",
-        //     delivery_preference: "",
-        //     sales_person: selectedSO.sales_person || "",
-        //     description: selectedSO.description || "",
-        //     internal_team_notes: selectedSO.internal_team_notes || "",
-        //     subtotal: selectedSO.subtotal || 0,
-        //     discount_value: selectedSO.discount_value || 0,
-        //     discount_type: selectedSO.discount_type || "percentage",
-        //     tax: selectedSO.tax || [],
-        //     total: selectedSO.total || 0,
-        //     adjustment_note: selectedSO.adjustment_note || "",
-        //     adjustment_amount: selectedSO.adjustment_amount || 0,
-        //     type: "SI",
-        //     items: selectedSO.items?.map(item => ({
-        //         id: item.item_id?._id,
-        //         qty: item.quantity || 0,
-        //         hsn: item.item_id?.hsn || "",
-        //         price: item.price || 0,
-        //         tax: item.tax?._id || null,
-        //         tax_amt: item.tax_amt || 0,
-        //         total: item.total || 0
-        //     })) || []
-        // };
 
         const submitData = new FormData();
-
         // Add basic form fields
         submitData.append('customer_id', selectedSO?.customer_id?._id || '');
         submitData.append('date', selectedSO.delivery_date);
@@ -140,12 +106,11 @@ export const SoDetails = () => {
         // Add financial details
         submitData.append('subtotal', selectedSO.subtotal || 0);
         submitData.append('discount_value', selectedSO.discount || 0);
-        submitData.append('discount_type', selectedSO.discount_type );
+        submitData.append('discount_type', selectedSO.discount_type);
         submitData.append('refer_id', selectedSO._id || 0);
 
         // Format tax data - just send array of tax IDs
         submitData.append('tax', JSON.stringify(selectedSO.tax));
-
         submitData.append('total', selectedSO.total || 0);
         submitData.append('adjustment_note', selectedSO.adjustment_note || "");
         submitData.append('adjustment_amount', selectedSO.adjustment_amount || 0);
@@ -165,7 +130,7 @@ export const SoDetails = () => {
 
         dispatch(createSalesInvoice(submitData))
             .then(() => {
-                navigate(`/Inventory/SaleInvoiceDetails/${id}`);
+                navigate(`/Inventory/SaleInvoice/View/${id}`);
             })
             .catch((error) => {
                 console.error("Error creating invoice:", error);
@@ -215,25 +180,25 @@ export const SoDetails = () => {
         <Container >
             <Row className="mx-2">
                 {/* Breadcrumb Section */}
-                <Col sm={12} className="mx-2 my-3">
-                    <div style={{ top: "186px", fontSize: "12px" }}>
+                <Col sm={12} className="mx-2 mt-3">
+                    <div style={{ top: "186px", fontSize: "16px" }}>
                         <Breadcrumb>
                             <BreadcrumbItem>
                                 <Link to="/superadmin/dashboard">Home</Link>
                             </BreadcrumbItem>
                             <BreadcrumbItem>
-                                <Link to="/superadmin/inventory/dashboard">Inventory</Link>
+                                <Link to="/Inventory/dashboard">Inventory</Link>
                             </BreadcrumbItem>
                             <BreadcrumbItem>
-                                <Link to="/superadmin/Inventory/SalesOrder">Sales Order List</Link>
+                                <Link to="/Inventory/SaleOrder">Sales Order List</Link>
                             </BreadcrumbItem>
                             <BreadcrumbItem active>SaleOrderDetails</BreadcrumbItem>
                         </Breadcrumb>
                     </div>
                 </Col>
 
-                <Col sm={12} className="my-2">
-                    <Card className="p-3">
+                <Col sm={12} className="mt-2">
+                    <Card className="p-3 mb-2 shadow-sm">
                         <Row>
                             <Col sm={6} xs={12}>
                                 <h5 className="text-dark p-2" style={{ fontSize: '18px' }}>
@@ -267,6 +232,30 @@ export const SoDetails = () => {
                             </Col>
                         </Row>
                     </Card>
+
+                    <Card className="p-3 shadow-sm">
+                        <Row className="align-items-center">
+                            <Col xs={2}>
+                                <img
+                                    src={companylog}
+                                    alt="Logo"
+                                    className="img-fluid"
+                                />
+                            </Col>
+                            <Col>
+                                <h5>{user?.name}</h5>
+                                <p className="mb-1">{user?.email} / {user?.contact}</p>
+                                <p className="mb-1">
+                                    {user?.address}
+                                </p>
+                                <strong>PAN: {user?.pan}</strong>
+                            </Col>
+                            <Col xs={2} className="text-end">
+                                <span className="text-muted">PO:</span>
+                                <strong className="text-primary"> Draft</strong>
+                            </Col>
+                        </Row>
+                    </Card>
                 </Col>
 
                 {/* Printable area starts here */}
@@ -279,7 +268,7 @@ export const SoDetails = () => {
                                 <Col sm={6}>
                                     <div className="mb-4">
                                         <h5 className="text-primary" style={{ fontSize: '22px', fontWeight: '600' }}>
-                                            {selectedSO.customer_id ? selectedSO.customer_id.name : "Rupesh Suryvanshi"}
+                                            {selectedSO.customer_id ? selectedSO.customer_id.name : selectedSO?.cafe?.name}
                                         </h5>
                                     </div>
                                     <Row>
@@ -289,19 +278,20 @@ export const SoDetails = () => {
                                                     Billing Address
                                                 </h6>
                                                 <p className="text-muted mb-0" style={{ fontSize: '14px', lineHeight: '1.6' }}>
-                                                    Nagpur Division,<br />
-                                                    Maharashtra, India
+                                                    {/* {selectedSO?.cafe?.address} */}
+                                                    {selectedSO.customer_id ? selectedSO.customer_id.address : selectedSO?.cafe?.address}
                                                 </p>
                                             </div>
                                         </Col>
+                                        
                                         <Col sm={6}>
                                             <div className="mb-4 ps-4 border-start">
                                                 <h6 className="text-dark mb-3" style={{ fontSize: '16px', fontWeight: '600' }}>
                                                     Shipping Address
                                                 </h6>
                                                 <p className="text-muted mb-0" style={{ fontSize: '14px', lineHeight: '1.6' }}>
-                                                    Nagpur Division,<br />
-                                                    Maharashtra, India
+                                                    {/* {selectedSO?.cafe?.address} */}
+                                                    {selectedSO.customer_id ? selectedSO.customer_id.address : selectedSO?.cafe?.address}
                                                 </p>
                                             </div>
                                         </Col>
@@ -365,7 +355,7 @@ export const SoDetails = () => {
                                                 {selectedSO.items && selectedSO.items.map((item, index) => (
                                                     <tr key={item._id || index}>
                                                         <td>
-                                                            <b className="text-primary" onClick={() => handleProductClick(item.item_id)}>{item?.item_id?.name}</b>
+                                                            <b className="text-primary pointer-cursor" onClick={() => handleProductClick(item.item_id)}>{item?.item_id?.name}</b>
                                                             <br />
                                                             HSN : {item.item_id ? item.item_id.hsn : "N/A"}
                                                         </td>

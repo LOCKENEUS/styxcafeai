@@ -38,10 +38,10 @@ export const SODetails = () => {
     const handlePrint = () => {
         const printContent = document.getElementById('printableArea');
         const originalContents = document.body.innerHTML;
-        
+
         // Create a new window for printing
         const printWindow = window.open('', '_blank');
-        
+
         // Add necessary styles for printing
         printWindow.document.write(`
             <html>
@@ -72,7 +72,7 @@ export const SODetails = () => {
                 </body>
             </html>
         `);
-        
+
         printWindow.document.close();
     };
 
@@ -126,15 +126,15 @@ export const SODetails = () => {
         }
 
         dispatch(addSOInvoice(invoiceData))
-        .then(() => {
-            navigate(`/admin/Inventory/SaleInvoiceDetails/${id}`);
-        })
-        .catch((error) => {
-            console.error("Error creating invoice:", error);
-        });
+            .then(() => {
+                navigate(`/admin/Inventory/SaleInvoiceDetails/${id}`);
+            })
+            .catch((error) => {
+                console.error("Error creating invoice:", error);
+            });
     };
 
-    const handleSendMail =  async () => {
+    const handleSendMail = async () => {
         await dispatch(sendMailToVendor(selectedSO))
     };
 
@@ -171,75 +171,73 @@ export const SODetails = () => {
 
     return (
         <Container >
-           <Row className="mx-2">
-    {/* Breadcrumb Section */}
-    <Col sm={12} className="mx-2 my-3">
-          <div style={{ top: "186px", fontSize: "12px" }}>
-            <Breadcrumb>
-              <BreadcrumbItem>
-                <Link to="/admin/dashboard">Home</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <Link to="/admin/inventory/dashboard">Inventory</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <Link to="/admin/Inventory/SalesOrder">Sales Order List</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem active>SaleOrderDetails</BreadcrumbItem>
-            </Breadcrumb>
-          </div>
-        </Col>
-
-
-    
-    <Col sm={12} className="my-2">
-        <Card className="p-3">
-            <Row>
-                <Col sm={6} xs={12}>
-                    <h5 className="text-dark p-2" style={{ fontSize:'18px' }}>
-                        <span>Sales Order: </span>
-                        <span>{selectedSO.so_no}</span>
-                    </h5>
+            <Row className="mx-2">
+                {/* Breadcrumb Section */}
+                <Col sm={12} className="mx-2">
+                    <div style={{ top: "186px", fontSize: "16px" }}>
+                        <Breadcrumb>
+                            <BreadcrumbItem>
+                                <Link to="/admin/dashboard">Home</Link>
+                            </BreadcrumbItem>
+                            <BreadcrumbItem>
+                                <Link to="/admin/inventory/dashboard">Inventory</Link>
+                            </BreadcrumbItem>
+                            <BreadcrumbItem>
+                                <Link to="/admin/Inventory/SalesOrder">Sales Order List</Link>
+                            </BreadcrumbItem>
+                            <BreadcrumbItem active>SaleOrderDetails</BreadcrumbItem>
+                        </Breadcrumb>
+                    </div>
                 </Col>
-                <Col sm={6} xs={12} className="d-flex flex-wrap justify-content-center justify-content-sm-end align-items-center gap-2 text-center">
-                    <Button 
-                        className="d-flex align-items-center" 
-                        style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}
-                        onClick={handlePrint}
-                    >
-                        <Image src={print} className="me-2" /> Print
-                    </Button>
-                    <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }} onClick={handleSendMail}>
-                        <Image src={sendMail} className="me-2" /> Send Email
-                    </Button>
-                    <Button 
-                        className="d-flex align-items-center" 
-                        style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}
-                        onClick={handleCreateInvoice}
-                    >
-                        <Image src={receive} className="me-2" /> Create Invoice
-                    </Button>
-                    <Button
-                    onClick={() => navigate(`/admin/Inventory/SaleOrderCreate/${id}`)}
-                    className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
-                        <Image src={editlogo} className="me-2" /> Edit
-                    </Button>
-                    {/* <Button 
+
+                <Col sm={12} className="my-2">
+                    <Card className="p-3">
+                        <Row>
+                            <Col sm={6} xs={12}>
+                                <h5 className="text-dark p-2" style={{ fontSize: '18px' }}>
+                                    <span>Sales Order: </span>
+                                    <span>{selectedSO.so_no}</span>
+                                </h5>
+                            </Col>
+                            <Col sm={6} xs={12} className="d-flex flex-wrap justify-content-center justify-content-sm-end align-items-center gap-2 text-center">
+                                <Button
+                                    className="d-flex align-items-center"
+                                    style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}
+                                    onClick={handlePrint}
+                                >
+                                    <Image src={print} className="me-2" /> Print
+                                </Button>
+                                <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }} onClick={handleSendMail}>
+                                    <Image src={sendMail} className="me-2" /> Send Email
+                                </Button>
+                                <Button
+                                    className="d-flex align-items-center"
+                                    style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}
+                                    onClick={handleCreateInvoice}
+                                >
+                                    <Image src={receive} className="me-2" /> Create Invoice
+                                </Button>
+                                <Button
+                                    onClick={() => navigate(`/admin/Inventory/SaleOrderCreate/${id}`)}
+                                    className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
+                                    <Image src={editlogo} className="me-2" /> Edit
+                                </Button>
+                                {/* <Button 
                         onClick={() => setShowDeleteModal(true)}
                         className="d-flex align-items-center" 
                         style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}
                     >
                         <Image src={deleteplogo} />
                     </Button> */}
+                            </Col>
+                        </Row>
+                    </Card>
                 </Col>
-            </Row>
-        </Card>
-    </Col>
 
-    {/* Printable area starts here */}
-    <div id="printableArea">
-        {/* Company Info */}
-        {/* <Col sm={12} className="my-2">
+                {/* Printable area starts here */}
+                <div id="printableArea">
+                    {/* Company Info */}
+                    {/* <Col sm={12} className="my-2">
             <Card className="p-3">
                 <Row className="align-items-center">
                     <Col sm={2}>
@@ -260,174 +258,174 @@ export const SODetails = () => {
             </Card>
         </Col> */}
 
-        {/* Customer & Order Details */}
-        <Col sm={12} className="my-2">
-            <Card className="p-3 shadow-sm">
-                <Row>
-                    {/* Customer Info */}
-                    <Col sm={6}>
-                        <div className="mb-4">
-                            <h5 className="text-primary" style={{fontSize: '22px', fontWeight: '600'}}>
-                                {selectedSO.customer_id ? selectedSO.customer_id.name : "Rupesh Suryvanshi"}
-                            </h5>
-                        </div>
-                        <Row>
-                            <Col sm={6}>
-                                <div className="mb-4">
-                                    <h6 className="text-dark mb-3" style={{fontSize: '16px', fontWeight: '600'}}>
-                                        Billing Address
-                                    </h6>
-                                    <p className="text-muted mb-0" style={{fontSize: '14px', lineHeight: '1.6'}}>
-                                        Nagpur Division,<br/>
-                                        Maharashtra, India
-                                    </p>
-                                </div>
-                            </Col>
-                            <Col sm={6}>
-                                <div className="mb-4 ps-4 border-start">
-                                    <h6 className="text-dark mb-3" style={{fontSize: '16px', fontWeight: '600'}}>
-                                        Shipping Address
-                                    </h6>
-                                    <p className="text-muted mb-0" style={{fontSize: '14px', lineHeight: '1.6'}}>
-                                        Nagpur Division,<br/>
-                                        Maharashtra, India
-                                    </p>
-                                </div>
-                            </Col>
-                        </Row>
-                    </Col>
+                    {/* Customer & Order Details */}
+                    <Col sm={12} className="my-2">
+                        <Card className="p-3 shadow-sm">
+                            <Row>
+                                {/* Customer Info */}
+                                <Col sm={6}>
+                                    <div className="mb-4">
+                                        <h5 className="text-primary" style={{ fontSize: '22px', fontWeight: '600' }}>
+                                            {selectedSO.customer_id ? selectedSO.customer_id.name : "Rupesh Suryvanshi"}
+                                        </h5>
+                                    </div>
+                                    <Row>
+                                        <Col sm={6}>
+                                            <div className="mb-4">
+                                                <h6 className="text-dark mb-3" style={{ fontSize: '16px', fontWeight: '600' }}>
+                                                    Billing Address
+                                                </h6>
+                                                <p className="text-muted mb-0" style={{ fontSize: '14px', lineHeight: '1.6' }}>
+                                                    Nagpur Division,<br />
+                                                    Maharashtra, India
+                                                </p>
+                                            </div>
+                                        </Col>
+                                        <Col sm={6}>
+                                            <div className="mb-4 ps-4 border-start">
+                                                <h6 className="text-dark mb-3" style={{ fontSize: '16px', fontWeight: '600' }}>
+                                                    Shipping Address
+                                                </h6>
+                                                <p className="text-muted mb-0" style={{ fontSize: '14px', lineHeight: '1.6' }}>
+                                                    Nagpur Division,<br />
+                                                    Maharashtra, India
+                                                </p>
+                                            </div>
+                                        </Col>
+                                    </Row>
+                                </Col>
 
-                    <Col sm={6}>
-                        <div className="text-end mb-4">
-                            <h6 className="text-dark" style={{fontSize: '16px'}}>
-                                Order No: <span className="text-primary fw-bold">{selectedSO.so_no}</span>
-                            </h6>
-                        </div>
+                                <Col sm={6}>
+                                    <div className="text-end mb-4">
+                                        <h6 className="text-dark" style={{ fontSize: '16px' }}>
+                                            Order No: <span className="text-primary fw-bold">{selectedSO.so_no}</span>
+                                        </h6>
+                                    </div>
 
-                        <div className="order-details ms-auto" style={{maxWidth: '400px'}}>
-                            <table className="table table-borderless">
-                                <tbody>
-                                    <tr>
-                                        <td className="text-muted" style={{width: '50%'}}>Sales Order No:</td>
-                                        <td className="fw-medium">{selectedSO.so_no}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="text-muted">Order Date:</td>
-                                        <td className="fw-medium">{formatDate(selectedSO.date)}</td>
-                                    </tr>
-                                    {/* <tr>
+                                    <div className="order-details ms-auto" style={{ maxWidth: '400px' }}>
+                                        <table className="table table-borderless">
+                                            <tbody>
+                                                <tr>
+                                                    <td className="text-muted" style={{ width: '50%' }}>Sales Order No:</td>
+                                                    <td className="fw-medium">{selectedSO.so_no}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td className="text-muted">Order Date:</td>
+                                                    <td className="fw-medium">{formatDate(selectedSO.date)}</td>
+                                                </tr>
+                                                {/* <tr>
                                         <td className="text-muted">Shipment Date:</td>
                                         <td className="fw-medium">{formatDate(selectedSO.shipment_date)}</td>
                                     </tr> */}
-                                    <tr>
-                                        <td className="text-muted">Payment Terms:</td>
-                                        <td className="fw-medium">{selectedSO.payment_terms || "Cash"}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="text-muted">Reference:</td>
-                                        <td className="fw-medium">{selectedSO.reference || "N/A"}</td>
-                                    </tr>
-                                    {/* <tr>
+                                                <tr>
+                                                    <td className="text-muted">Payment Terms:</td>
+                                                    <td className="fw-medium">{selectedSO.payment_terms || "Cash"}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td className="text-muted">Reference:</td>
+                                                    <td className="fw-medium">{selectedSO.reference || "N/A"}</td>
+                                                </tr>
+                                                {/* <tr>
                                         <td className="text-muted">Delivery Preference:</td>
                                         <td className="fw-medium">{selectedSO.delivery_preference || "Standard"}</td>
                                     </tr> */}
-                                    <tr>
-                                        <td className="text-muted">Sales Person:</td>
-                                        <td className="fw-medium">{selectedSO.sales_person || "N/A"}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                                                <tr>
+                                                    <td className="text-muted">Sales Person:</td>
+                                                    <td className="fw-medium">{selectedSO.sales_person || "N/A"}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </Col>
+                            </Row>
+                        </Card>
                     </Col>
-                </Row>
-            </Card>
-        </Col>
 
-        <Col sm={12} className="my-2">
-        <Card className="p-3 shadow-sm">
-            <Row>
-            <Col sm={12}>
-             <div className="table-responsive">
-             <Table className="text-center align-middle">
-                <thead className="text-start" >
-                  <tr style={{ borderBottom: "2px solid #dee2e6" }}>
-                    <th className="fw-bold">PRODUCT</th>
-                    <th className="fw-bold">QUANTITY</th>
-                    <th className="fw-bold">PRICE</th>
-                    <th className="fw-bold">TAX</th>
-                    <th className="fw-bold">TOTAL</th>
-                  </tr>
-                </thead>
-                <tbody className="text-start">
-                  {selectedSO.items && selectedSO.items.map((item, index) => (
-                    <tr key={item._id || index}>
-                      <td>
-                      <b> <Link to={`/admin/inventory/item-details/${item?.item_id?._id}`}> {item?.item_id?.name}</Link></b>
-                      <br />
-                        HSN : {item.item_id ? item.item_id.hsn : "N/A"}
-                      </td>
-                      <td>
-                        SKU : {item.item_id ? item.item_id.sku : "N/A"} <br />
-                        Qty : {item.quantity} Nos
-                      </td>
-                      <td>Price : ₹{item.price}</td>
-                      <td>{item?.tax?.tax_rate}%</td>
-                      <td>Total : ₹{item.total}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-             </div>
-            </Col>
-          </Row>
-          <Row className="mt-4 border-top border-3 p-2">
-            <Col sm={6} className="border-end border-3">
-              <p>
-                <b>Description:</b> {selectedSO.description || "N/A"}
-              </p>
-            </Col>
-            <Col sm={6} className="text-end">
-              <p className="border-bottom border-3 p-3">
-                <b>Subtotal:</b> ₹{selectedSO.subtotal}
-              </p>
-              <p className="border-bottom border-3 p-3">
-                <b>Discount:</b>{" "}
-                <span className="text-primary" style={{ cursor: "pointer" }}>
-                  {selectedSO.discount_value}%
-                </span>{" "}
-                ₹{(selectedSO.subtotal * selectedSO.discount_value / 100).toFixed(2)}
-              </p>
-              <p className="border-bottom border-3 p-3">
-                <b>Tax:</b> {selectedSO.tax && selectedSO.tax.length > 0 ? 
-                  selectedSO.tax.map((tax, index) => (
-                    <span key={index}>
-                      {tax.tax_name} ({tax.tax_rate}%)
-                      {index < selectedSO.tax.length - 1 ? ', ' : ''}
-                    </span>
-                  )) : 'N/A'}
-              </p>
-              <p className="border-bottom border-3 p-3">
-                <b>Total:</b> ₹{selectedSO.total}
-              </p>
-            </Col>
-            </Row>
-        </Card>
-        </Col>
-        <Col sm={12} className="my-2">
-                    <Card className="p-3 shadow-sm">
-                        <h5 className="mb-3" style={{ fontSize: '20px' }}>Terms and Condition </h5>
-                        <div className="table-responsive">
-                        <b>{selectedSO.internal_team_notes || "Terms and Condition not applied" }</b>
-                          {/* { 
+                    <Col sm={12} className="my-2">
+                        <Card className="p-3 shadow-sm">
+                            <Row>
+                                <Col sm={12}>
+                                    <div className="table-responsive">
+                                        <Table className="text-center align-middle">
+                                            <thead className="text-start" >
+                                                <tr style={{ borderBottom: "2px solid #dee2e6" }}>
+                                                    <th className="fw-bold">PRODUCT</th>
+                                                    <th className="fw-bold">QUANTITY</th>
+                                                    <th className="fw-bold">PRICE</th>
+                                                    <th className="fw-bold">TAX</th>
+                                                    <th className="fw-bold">TOTAL</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="text-start">
+                                                {selectedSO.items && selectedSO.items.map((item, index) => (
+                                                    <tr key={item._id || index}>
+                                                        <td>
+                                                            <b> <Link to={`/admin/inventory/item-details/${item?.item_id?._id}`}> {item?.item_id?.name}</Link></b>
+                                                            <br />
+                                                            HSN : {item.item_id ? item.item_id.hsn : "N/A"}
+                                                        </td>
+                                                        <td>
+                                                            SKU : {item.item_id ? item.item_id.sku : "N/A"} <br />
+                                                            Qty : {item.quantity} Nos
+                                                        </td>
+                                                        <td>Price : ₹{item.price}</td>
+                                                        <td>{item?.tax?.tax_rate}%</td>
+                                                        <td>Total : ₹{item.total}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </Table>
+                                    </div>
+                                </Col>
+                            </Row>
+                            <Row className="mt-4 border-top border-3 p-2">
+                                <Col sm={6} className="border-end border-3">
+                                    <p>
+                                        <b>Description:</b> {selectedSO.description || "N/A"}
+                                    </p>
+                                </Col>
+                                <Col sm={6} className="text-end">
+                                    <p className="border-bottom border-3 p-3">
+                                        <b>Subtotal:</b> ₹{selectedSO.subtotal}
+                                    </p>
+                                    <p className="border-bottom border-3 p-3">
+                                        <b>Discount:</b>{" "}
+                                        <span className="text-primary" style={{ cursor: "pointer" }}>
+                                            {selectedSO.discount_value}%
+                                        </span>{" "}
+                                        ₹{(selectedSO.subtotal * selectedSO.discount_value / 100).toFixed(2)}
+                                    </p>
+                                    <p className="border-bottom border-3 p-3">
+                                        <b>Tax:</b> {selectedSO.tax && selectedSO.tax.length > 0 ?
+                                            selectedSO.tax.map((tax, index) => (
+                                                <span key={index}>
+                                                    {tax.tax_name} ({tax.tax_rate}%)
+                                                    {index < selectedSO.tax.length - 1 ? ', ' : ''}
+                                                </span>
+                                            )) : 'N/A'}
+                                    </p>
+                                    <p className="border-bottom border-3 p-3">
+                                        <b>Total:</b> ₹{selectedSO.total}
+                                    </p>
+                                </Col>
+                            </Row>
+                        </Card>
+                    </Col>
+                    <Col sm={12} className="my-2">
+                        <Card className="p-3 shadow-sm">
+                            <h5 className="mb-3" style={{ fontSize: '20px' }}>Terms and Condition </h5>
+                            <div className="table-responsive">
+                                <b>{selectedSO.internal_team_notes || "Terms and Condition not applied"}</b>
+                                {/* { 
                             !selectedSO.internal_team_notes === "" ?                            
                             <b>{selectedSO.internal_team_notes}</b> :
                             <b className="mx-auto">Terms and Condition not applied</b>
                         
                         } */}
-                        </div>
-                    </Card>
-                </Col>
-        {/* <Col sm={12} className="my-2">
+                            </div>
+                        </Card>
+                    </Col>
+                    {/* <Col sm={12} className="my-2">
             <Card className=" p-3 shadow-sm">
                 <h5 className=" mb-3" style={{ fontSize:'20px' }}>Package Details</h5>
                 <div className="table-responsive">
@@ -451,32 +449,32 @@ export const SODetails = () => {
               </Table>
                 </div>
             </Card>
-        </Col> */} 
-    </div>
-    {/* Printable area ends here */}
-    
-    {/* Delete Confirmation Modal */}
-    <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
-        <Modal.Header closeButton>
-            <Modal.Title>Confirm Delete</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-            Are you sure you want to delete this sales order? This action cannot be undone.
-        </Modal.Body>
-        <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-                Cancel
-            </Button>
-            <Button 
-                variant="danger" 
-                onClick={handleDelete}
-                disabled={loading}
-            >
-                {loading ? <Spinner animation="border" size="sm" /> : 'Delete'}
-            </Button>
-        </Modal.Footer>
-    </Modal>
-    </Row>
+        </Col> */}
+                </div>
+                {/* Printable area ends here */}
+
+                {/* Delete Confirmation Modal */}
+                <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Confirm Delete</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        Are you sure you want to delete this sales order? This action cannot be undone.
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="danger"
+                            onClick={handleDelete}
+                            disabled={loading}
+                        >
+                            {loading ? <Spinner animation="border" size="sm" /> : 'Delete'}
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </Row>
 
 
         </Container>

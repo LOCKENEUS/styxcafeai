@@ -1,4 +1,4 @@
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormControl, FormLabel, FormSelect, Row, Table } from "react-bootstrap";
+import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormControl, FormLabel, FormSelect, Row, Spinner, Table } from "react-bootstrap";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import companylog from "/assets/inventory/companylogo.png";
 import { use, useEffect, useState } from "react";
@@ -33,6 +33,7 @@ export const PurchaseReceivedCreate = () => {
     const [poSelected, setPoSelected] = useState("");
     const [selectedVendor, setSelectedVendor] = useState("");
     const [taxList, setTaxList] = useState([]);
+    const [submitLoading, setSubmitLoading] = useState(false);
 
     const dispatch = useDispatch();
     const location = useLocation();
@@ -47,9 +48,9 @@ export const PurchaseReceivedCreate = () => {
     const cafeId = user?._id;
     const userName = user?.name;
     const userEmail = user?.email;
-    const UserContactN = user?.contact_no;
+    const UserContactN = user?.contact;
     const UserAddress = user?.address;
-    const UesrPAN = user?.panNo;
+    const UesrPAN = user?.pan;
 
     useEffect(() => {
         if (purchaseOrderData) {
@@ -137,6 +138,7 @@ export const PurchaseReceivedCreate = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSubmitLoading(true);
         const submitData = {
             po_id: selectedPo._id,
             vendor_id: selectedVendor,
@@ -148,9 +150,7 @@ export const PurchaseReceivedCreate = () => {
 
         try {
             const response = await dispatch(createSaPurchaseReceive(submitData)).unwrap();
-            
-
-            navigate("/admin/inventory/PurchaseReceivedDetails", { state: response?._id });
+            navigate("/Inventory/PurchaseReceive", { state: response?._id });
 
             setFormData({
                 selectedVendor: '',
@@ -161,6 +161,7 @@ export const PurchaseReceivedCreate = () => {
             });
         } catch (error) {
             // Handle error
+            setSubmitLoading(false);
             console.error('Error creating purchase receive:', error);
         }
     };
@@ -169,11 +170,11 @@ export const PurchaseReceivedCreate = () => {
         <Container >
             <Row className="mx-2">
                 {/* Breadcrumb Section */}
-                <Col sm={12} className="my-3">
-                    <div style={{ top: "186px", fontSize: "12px" }}>
+                <Col sm={12} className="mt-3">
+                    <div style={{ top: "186px", fontSize: "16px" }}>
                         <Breadcrumb>
-                            <BreadcrumbItem href="#">Home</BreadcrumbItem>
-                            <BreadcrumbItem> <Link to="/admin/inventory/purchaseReceived">Purchase Received List</Link></BreadcrumbItem>
+                            <BreadcrumbItem href="/">Home</BreadcrumbItem>
+                            <BreadcrumbItem> <Link to="/Inventory/PurchaseReceived">Purchase Received List</Link></BreadcrumbItem>
                             <BreadcrumbItem active>Purchase Received Create</BreadcrumbItem>
                         </Breadcrumb>
                     </div>
@@ -311,7 +312,14 @@ export const PurchaseReceivedCreate = () => {
                                 />
                             </Col>
                             <Col sm={12} className="my-3 d-flex justify-content-end">
-                                <Button type="submit " onClick={handleSubmit} style={{ padding: "10px 35px", fontSize: "14px" }}>Submit</Button>
+                                {/* <Button type="submit " onClick={handleSubmit} style={{ padding: "10px 35px", fontSize: "14px" }}>Submit</Button> */}
+                                <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
+                                    {submitLoading ? (
+                                        <>
+                                            <Spinner animation="border" size="sm" className="me-2" /> Saving...
+                                        </>
+                                    ) : ('Submit')}
+                                </Button>
                             </Col>
                         </Row>
                     </Card>}

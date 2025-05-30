@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Card, Form, Row, Col, Table } from "react-bootstrap";
-import { BiPlus, BiArrowToLeft, BiCross } from "react-icons/bi";
+import { BiPlus, BiArrowToLeft } from "react-icons/bi";
 import { useDispatch } from 'react-redux';
-import { addCustomer, searchCustomers } from "../../../../store/AdminSlice/CustomerSlice";
-import { CgCross } from 'react-icons/cg';
+import { addCustomer } from "../../../../store/AdminSlice/CustomerSlice";
 import { RxCross1 } from 'react-icons/rx';
 import { fetchCafes } from '../../../../store/slices/cafeSlice';
 

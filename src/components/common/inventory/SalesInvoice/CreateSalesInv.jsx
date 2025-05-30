@@ -12,6 +12,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   Dropdown,
+  Spinner,
 } from "react-bootstrap";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import { FaCheck, FaRupeeSign, FaTrash, FaUpload, FaFilePdf } from "react-icons/fa";
@@ -19,8 +20,6 @@ import { BiArrowToLeft, BiPlus } from "react-icons/bi";
 import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems"
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { getCustomFields } from '../../../../store/AdminSlice/CustomField';
-import { getTaxFields } from '../../../../store/AdminSlice/TextFieldSlice';
 import { MdOutlineRemoveCircleOutline } from "react-icons/md";
 import Select from 'react-select';
 import { TaxModal } from "../modal/tax";
@@ -58,6 +57,7 @@ export const CreateSalesInv = () => {
   const cafeId = user?._id;
   const [latestTax, setLatestTax] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -342,7 +342,6 @@ export const CreateSalesInv = () => {
     }
 
     const submitData = new FormData();
-
     // Add basic form fields
     submitData.append('customer_id', selectedCafe?._id || '');
     submitData.append('date', formData.date);
@@ -386,11 +385,13 @@ export const CreateSalesInv = () => {
     });
 
     try {
+      setSubmitLoading(true);
       if (isEditMode) {
         const res = await dispatch(updateSalesInvoice({ id, siData: submitData })).unwrap();
         if (res?._id) {
           navigate(`/Inventory/SaleInvoice/View/${res._id}`);
         } else {
+          setSubmitLoading(false);
           console.error('No ID returned from update operation');
         }
       } else {
@@ -398,10 +399,12 @@ export const CreateSalesInv = () => {
         if (res?._id) {
           navigate(`/Inventory/SaleInvoice/View/${res._id}`);
         } else {
+          setSubmitLoading(false);
           console.error('No ID returned from create operation');
         }
       }
     } catch (error) {
+      setSubmitLoading(false);
       console.error('Error with Sales Invoice:', error);
     }
   };
@@ -424,9 +427,9 @@ export const CreateSalesInv = () => {
       <Col sm={12} className="my-3">
         <div style={{ top: "186px", fontSize: "16px" }}>
           <Breadcrumb>
-            <BreadcrumbItem>Home</BreadcrumbItem>
+            <BreadcrumbItem><Link to="/">Home</Link></BreadcrumbItem>
             <BreadcrumbItem>
-              <Link to="/admin/Inventory/SalesInvoice">
+              <Link to="/Inventory/SaleInvoice/List">
                 Sales Invoice List
               </Link>
             </BreadcrumbItem>
@@ -466,7 +469,7 @@ export const CreateSalesInv = () => {
               <div className="d-flex flex-row align-items-center mb-3 gap-2">
                 <h5 className="text-muted my-auto">Cafe Name Here</h5>
                 <Button
-                size="sm"
+                  size="sm"
                   style={{
                     width: "144px",
                     // height: "44px",
@@ -677,7 +680,7 @@ export const CreateSalesInv = () => {
                 </td>
                 <td>
                   <Form.Control
-                  size="sm"
+                    size="sm"
                     type="number"
                     min="1"
                     placeholder="QTY : 1"
@@ -693,7 +696,7 @@ export const CreateSalesInv = () => {
                       <FaRupeeSign />
                     </span>
                     <Form.Control
-                    size="sm"
+                      size="sm"
                       type="number"
                       placeholder="0.00"
                       className="w-100"
@@ -720,7 +723,7 @@ export const CreateSalesInv = () => {
                       ))}
                     </Form.Select>
                     <Button
-                      className="flex-shrink-0 p-1" 
+                      className="flex-shrink-0 p-1"
                       style={{ width: "40px", border: "1px solid black", borderStyle: "dashed" }}
                       variant="outline-secondary"
                       onClick={() => setShowTaxModal(true)}
@@ -748,7 +751,7 @@ export const CreateSalesInv = () => {
                       <FaRupeeSign />
                     </span>
                     <Form.Control
-                    size="sm"
+                      size="sm"
                       type="text"
                       placeholder="PRICE : 0.00"
                       className="text-end w-100"
@@ -959,11 +962,18 @@ export const CreateSalesInv = () => {
 
       {/* Add a submit button */}
       <div className="d-flex justify-content-end mt-3">
-        <Button
+        {/* <Button
           variant="primary"
           onClick={handleSubmit}
         >
           {isEditMode ? "Update Sales Invoice" : "Create Sales Invoice"}
+        </Button> */}
+        <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
+          {submitLoading ? (
+            <>
+              <Spinner animation="border" size="sm" className="me-2" /> Saving...
+            </>
+          ) : (`${isEditMode ? 'Update': 'Submit'}`)}
         </Button>
       </div>
 

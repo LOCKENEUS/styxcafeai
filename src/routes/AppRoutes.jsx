@@ -224,9 +224,6 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/superadmin/CreateMembership" element={<CreateMembership />} />
           <Route path="/superadmin/Bookings/BookingDetails" element={<BookingDetailsPage />} />
           <Route path="/superadmin/Clients/ClientDetails" element={<ClientDetailsPage />} />
-
-
-
         </Route>
       </Route>
 

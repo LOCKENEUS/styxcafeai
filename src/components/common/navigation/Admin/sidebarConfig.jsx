@@ -82,7 +82,6 @@ const navItems = [
     title: "Inventory",
     icon: MdOutlineInventory,
     subItems: [
-     
       {
         label: "Inventory",
         sub :[
@@ -111,7 +110,6 @@ const navItems = [
           { title: "Invoice Payment", path: "/admin/Inventory/InvoicePayment"},
 
         ]
-      
       },
       {
         label: "Settings",

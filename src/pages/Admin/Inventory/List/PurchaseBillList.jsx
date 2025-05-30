@@ -20,11 +20,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getPBills } from "../../../../store/AdminSlice/Inventory/PBillSlice";
 import Loader from "../../../../components/common/Loader/Loader";
+import { getStyxData } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 
 const PurchaseBillList = () => {
   const [searchText, setSearchText] = useState("");
   const dispatch = useDispatch();
   const { bills, loading, error } = useSelector((state) => state.pBill);
+  const { styxData } = useSelector((state) => state.purchaseOrder);
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [activePage, setActivePage] = useState(1);
@@ -34,6 +36,7 @@ const PurchaseBillList = () => {
   const cafeId = user?._id;
   useEffect(() => {
     dispatch(getPBills(cafeId)).unwrap()
+    dispatch(getStyxData());
   }, [dispatch]);
 
   // Function to handle modal (replace with actual logic)
@@ -47,7 +50,6 @@ const PurchaseBillList = () => {
     return colors[index];
   };
   
-
   const columns = [
     {
       name: "SN",
@@ -83,7 +85,7 @@ const PurchaseBillList = () => {
         </div>
       ),
     },
-    { name: "vendor", selector: (row) => row.vendor_id?.name, sortable: true },
+    { name: "vendor", selector: (row) => row.vendor_id?.name || styxData.name, sortable: true },
     { name: " Status", selector: (row) => row.status || "Pending", sortable: true },
     { name: "Total", selector: (row) => `₹ ${row.total}`, sortable: true },
 
@@ -130,8 +132,8 @@ const PurchaseBillList = () => {
   return (
     <Container  fluid className="mt-4 min-vh-100">
       <Row>
-      <Col sm={12} className="mx-2 my-3">
-          <div style={{ top: "186px", fontSize: "12px" }}>
+      <Col sm={12} className="mx-2 mb-3 px-5">
+          <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>
@@ -174,7 +176,7 @@ const PurchaseBillList = () => {
                   <FormControl
                     type="search"
                     size="sm"
-                    placeholder="Search for Purchase Received " 
+                    placeholder="Search..." 
                     aria-label="Search in docs"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)} 

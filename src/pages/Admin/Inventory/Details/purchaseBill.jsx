@@ -9,8 +9,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getPBillById } from "../../../../store/AdminSlice/Inventory/PBillSlice";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import CollectPayment from "../modal/CollectBillPayment";
-import {  getPurchaseBillPaymentById } from "../../../../store/AdminSlice/Inventory/CollectPurchaseBill";
-import { sendMailToVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { getPurchaseBillPaymentById } from "../../../../store/AdminSlice/Inventory/CollectPurchaseBill";
+import { getStyxData, sendMailToVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 
 export const PurchaseBillDetailsAdmin = () => {
     const dispatch = useDispatch();
@@ -23,11 +23,12 @@ export const PurchaseBillDetailsAdmin = () => {
     const { selectedPayment, loading: paymentLoading, error: paymentError } = useSelector(
         (state) => state.purchaseBill
     );
+    const { styxData } = useSelector((state) => state.purchaseOrder);
 
     const cafeId = user?._id;
-  
-    const userName= user?.name;
-    const userEmail= user?.email;
+
+    const userName = user?.name;
+    const userEmail = user?.email;
     const UserContactN = user?.contact_no;
     const UserAddress = user?.address;
     const UesrPAN = user?.panNo;
@@ -54,6 +55,7 @@ export const PurchaseBillDetailsAdmin = () => {
 
     useEffect(() => {
         if (id) {
+            dispatch(getStyxData());
             dispatch(getPBillById(id));
         }
     }, [dispatch, id]);
@@ -79,7 +81,7 @@ export const PurchaseBillDetailsAdmin = () => {
     };
 
     const handleSendMail = async () => {
-       await dispatch(sendMailToVendor(selectedBill))
+        await dispatch(sendMailToVendor(selectedBill))
     }
 
     const handleModalClose = () => {
@@ -136,12 +138,12 @@ export const PurchaseBillDetailsAdmin = () => {
 
     if (loading) {
         return (
-          <Container className="d-flex justify-content-center align-items-center min-vh-100">
-            <Spinner animation="border" color="primary" role="status">
-            </Spinner>
-          </Container>
+            <Container className="d-flex justify-content-center align-items-center min-vh-100">
+                <Spinner animation="border" color="primary" role="status">
+                </Spinner>
+            </Container>
         );
-      }
+    }
 
     if (!selectedBill) {
         return <div>No data found</div>;
@@ -171,9 +173,9 @@ export const PurchaseBillDetailsAdmin = () => {
                                 </h5>
                             </Col>
                             <Col sm={6} xs={12} className="d-flex flex-wrap justify-content-center justify-content-sm-end align-items-center gap-2 text-center">
-                                <Button 
-                                    className="d-flex align-items-center" 
-                                    style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }} 
+                                <Button
+                                    className="d-flex align-items-center"
+                                    style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}
                                     onClick={handlePrint}
                                     title="Print > More Settings > Page Size > Select A3"
                                 >
@@ -183,18 +185,18 @@ export const PurchaseBillDetailsAdmin = () => {
                                     <Image src={sendMail} className="me-2" /> Send Email
                                 </Button>
                                 <Button
-                  onClick={() =>
-                    navigate(`/admin/inventory/PurchaseBillCreate/${selectedBill._id}`)
-                  }
-                  className="d-flex align-items-center"
-                  style={{
-                    backgroundColor: "#FAFAFA",
-                    color: "black",
-                    border: "none",
-                  }}
-                >
-                  <Image src={editlogo} className="me-2" /> Edit
-                </Button>
+                                    onClick={() =>
+                                        navigate(`/admin/inventory/PurchaseBillCreate/${selectedBill._id}`)
+                                    }
+                                    className="d-flex align-items-center"
+                                    style={{
+                                        backgroundColor: "#FAFAFA",
+                                        color: "black",
+                                        border: "none",
+                                    }}
+                                >
+                                    <Image src={editlogo} className="me-2" /> Edit
+                                </Button>
                             </Col>
                         </Row>
                     </Card>
@@ -203,43 +205,50 @@ export const PurchaseBillDetailsAdmin = () => {
                 {/* Printable area starts here */}
                 <div id="printableArea">
                     {/* Company Info */}
-                    {/* <Col sm={12} className="my-2">
-                    <Card className="p-3 mb-3 shadow-sm">
-            <Row className="align-items-center">
-              <Col xs={2}>
-                <img src={Lockenelogo} alt="Logo" className="img-fluid" />
-              </Col>
-              <Col>
-                <h5>{userName}</h5>
-                <p className="mb-1">{userEmail} / {UserContactN}</p>
-                <p className="mb-1">
-                  {UserAddress}
-                </p>
-                <strong>PAN: {UesrPAN}</strong>
-              </Col>
-              <Col xs={2} className="text-end">
-                <span className="text-muted">PO:</span>
-                <strong className="text-primary"> Draft</strong>
-              </Col>
-            </Row>
-          </Card>
-                    </Col> */}
-
                     {/* Vendor & Order Details */}
                     <Col sm={12} className="my-2">
                         <Card className="p-3 shadow-sm">
                             <Row>
                                 <Col sm={4}>
-                                    <h5 className="text-primary mb-3" style={{ fontSize: '20px' }}>{selectedBill.vendor_id?.name}</h5>
+                                    <h5 className="text-primary mb-3" style={{ fontSize: '20px' }}>
+                                        {selectedBill.vendor_id ? selectedBill.vendor_id.name : styxData?.name}
+                                    </h5>
                                     <Row>
-                                        <Col sm={6}>
+                                        {selectedBill?.vendor_id && <Col sm={6} >
                                             <span style={{ fontSize: '16px', fontWeight: '500' }}>Billing Address</span>
-                                            <p className="my-3">{selectedBill.vendor_id?.billingAddress}</p>
-                                        </Col>
-                                        <Col sm={6} className="border-end border-3">
+                                            <p className="my-1">{selectedBill?.vendor_id?.billingAddress}</p>
+                                            <p className="my-1">{selectedBill?.vendor_id?.city1}</p>
+                                            <p className="my-1">{selectedBill?.vendor_id?.state1}</p>
+                                            <p className="my-1">{selectedBill?.vendor_id?.pincode1}</p>
+                                            <p className="my-1">{selectedBill?.vendor_id?.country1}</p>
+                                        </Col>}
+
+                                        {!selectedBill?.vendor_id && <Col sm={6} >
+                                            <span style={{ fontSize: '16px', fontWeight: '500' }}>Billing Address</span>
+                                            <p className="my-1">{styxData?.billingAddress}</p>
+                                            <p className="my-1">{styxData?.city1}</p>
+                                            <p className="my-1">{styxData?.state1}</p>
+                                            <p className="my-1">{styxData?.pincode1}</p>
+                                            <p className="my-1">{styxData?.country1}</p>
+                                        </Col>}
+
+                                        {selectedBill?.vendor_id && <Col sm={6} className="border-end border-3" >
                                             <span style={{ fontSize: '16px', fontWeight: '500' }}>Shipping Address</span>
-                                            <p className="my-3">{selectedBill.vendor_id?.shippingAddress}</p>
-                                        </Col>
+                                            <p className="my-1">{selectedBill?.vendor_id?.shippingAddress}</p>
+                                            <p className="my-1">{selectedBill?.vendor_id?.city2}</p>
+                                            <p className="my-1">{selectedBill?.vendor_id?.state2}</p>
+                                            <p className="my-1">{selectedBill?.vendor_id?.pincode2}</p>
+                                            <p className="my-1">{selectedBill?.vendor_id?.country2}</p>
+                                        </Col>}
+
+                                        {!selectedBill?.vendor_id && <Col sm={6} className="border-end border-3" >
+                                            <span style={{ fontSize: '16px', fontWeight: '500' }}>Shipping Address</span>
+                                            <p className="my-1">{styxData?.shippingAddress}</p>
+                                            <p className="my-1">{styxData?.city2}</p>
+                                            <p className="my-1">{styxData?.state2}</p>
+                                            <p className="my-1">{styxData?.pincode2}</p>
+                                            <p className="my-1">{styxData?.country2}</p>
+                                        </Col>}
                                     </Row>
                                 </Col>
 
@@ -248,21 +257,22 @@ export const PurchaseBillDetailsAdmin = () => {
                                         <Col sm={6}>
                                             <span className="mb-3" style={{ fontSize: '16px', fontWeight: '500' }}>Delivery Address</span>
                                             <p className="my-3">
-                                                {
-                                                    selectedBill.delivery_type === "customer" ?<>
-                                                     <span>Address:</span><span>{selectedBill.customer_id?.address}</span><br />
-                                                <span>City:</span> {selectedBill.customer_id?.city}<br />
-                                                <span>State:</span> {selectedBill.customer_id?.state}<br />
-                                                <span>Country:</span> {selectedBill.customer_id?.country} <br />
-                                                    </> :
-                                                    <>
-                                                    <h4>Organization Address</h4>
-                                                    <span>{UserAddress}</span>
-                                                    </>
-
+                                                {selectedBill?.delivery_type === 'organization' ?
+                                                    <p className="my-3">{UserAddress}
+                                                        <span style={{ fontSize: '16px' }}>{userName}</span><br />
+                                                        <span>{userEmail} / {UserContactN}</span>
+                                                        <br />
+                                                        <span>{UserAddress}</span>
+                                                        <br />
+                                                        <span>PAN:</span> {UesrPAN}
+                                                    </p>
+                                                    :
+                                                    <p className="my-3">
+                                                        <span style={{ fontSize: '16px' }}>{selectedBill?.customer_id?.name}</span><br />
+                                                        <span>{selectedBill?.customer_id?.address} / {selectedBill?.customer_id?.contact_no}</span>
+                                                    </p>
                                                 }
-                                                
-                                                </p>
+                                            </p>
                                         </Col>
 
                                         <Col sm={6}>
@@ -350,7 +360,7 @@ export const PurchaseBillDetailsAdmin = () => {
                                                 <td className="fw-bold text-start">Balance</td>
                                                 <td>
                                                     {remainingAmount <= 0 ? (
-                                                        <span style={{fontWeight:"600"}} className="text-success">Amount Paid</span>
+                                                        <span style={{ fontWeight: "600" }} className="text-success">Amount Paid</span>
                                                     ) : (
                                                         <Button
                                                             onClick={handleCollectData}
@@ -369,15 +379,13 @@ export const PurchaseBillDetailsAdmin = () => {
                                                     />
                                                 </td>
                                             </tr>
-
-
                                         </tbody>
                                     </Table>
                                 </Col>
                             </Row>
                         </Card>
                     </Col>
-                    
+
                     {/* <Col sm={12} className="my-2">
                         <Card className=" p-3 shadow-sm">
                             <h5 className=" mb-3" style={{ fontSize:'20px' }}>Paid Payment Details</h5>

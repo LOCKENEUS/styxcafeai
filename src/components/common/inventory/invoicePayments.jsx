@@ -252,8 +252,8 @@ export const InvoicePayments = () => {
     return (
         <Container data-aos="fade-right" data-aos-duration="1000" fluid className="mt-4 min-vh-100">
             <Row>
-                <Col sm={12} className="mx-2 my-3">
-                    <div style={{ top: "186px", fontSize: "12px" }}>
+                <Col sm={12} className="mx-2 my-3 px-5">
+                    <div style={{ top: "186px", fontSize: "16px" }}>
                         <Breadcrumb>
                             <BreadcrumbItem>
                                 <Link to="/superadmin/dashboard">Home</Link>

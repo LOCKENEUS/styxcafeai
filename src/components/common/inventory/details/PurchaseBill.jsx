@@ -24,8 +24,6 @@ export const PurchaseBillDetails = () => {
         (state) => state.purchaseBill
     );
 
-    const cafeId = user?._id;
-
     const userName = user?.name;
     const userEmail = user?.email;
     const UserContactN = user?.contact_no;
@@ -151,11 +149,11 @@ export const PurchaseBillDetails = () => {
         <Container>
             <Row className="mx-2">
                 {/* Breadcrumb Section */}
-                <Col sm={12} className="my-3">
+                <Col sm={12} className="mt-3">
                     <div style={{ top: "186px", fontSize: "18px" }}>
                         <Breadcrumb>
-                            <BreadcrumbItem >Home</BreadcrumbItem>
-                            <BreadcrumbItem><Link to="/admin/inventory/purchase-bill-list">Purchase Bill  List</Link></BreadcrumbItem>
+                            <BreadcrumbItem ><Link to="/superadmin/dashboard">Home</Link></BreadcrumbItem>
+                            <BreadcrumbItem><Link to="/Inventory/PurchaseBill">Purchase Bill  List</Link></BreadcrumbItem>
                             <BreadcrumbItem active>Purchase Bill Details</BreadcrumbItem>
                         </Breadcrumb>
                     </div>
@@ -205,6 +203,24 @@ export const PurchaseBillDetails = () => {
 
                     {/* Vendor & Order Details */}
                     <Col sm={12} className="my-2">
+                        <Card className="p-3 shadow-sm mb-2"> 
+                            <Row className="align-items-center">
+                                <Col sm={2}>
+                                    <img src={Lockenelogo} alt="Logo" className="img-fluid" />
+                                </Col>
+                                <Col sm={8}>
+                                    <h5>{userName}</h5>
+                                    <p className="mb-1">{userEmail} / {UserContactN}</p>
+                                    <p className="mb-1">
+                                        {UserAddress}
+                                    </p>
+                                    <strong>PAN: {UesrPAN}</strong>
+                                </Col>
+                                <Col sm={2} className=" d-flex  ">
+                                    {/* <span className="p-2 float-right">PO : <b className="text-primary">{selectedPo?.status}</b></span> */}
+                                </Col>
+                            </Row>
+                        </Card>
                         <Card className="p-3 shadow-sm">
                             <Row>
                                 <Col sm={4}>
@@ -237,9 +253,7 @@ export const PurchaseBillDetails = () => {
                                                             <h4>Organization Address</h4>
                                                             <span>{UserAddress}</span>
                                                         </>
-
                                                 }
-
                                             </p>
                                         </Col>
 
@@ -280,7 +294,9 @@ export const PurchaseBillDetails = () => {
                                                 {selectedBill.items?.map((item, index) => (
                                                     <tr key={index}>
                                                         <td>
-                                                            <b>{item.item_id?.name}</b><br />
+                                                            <b className="text-primary" style={{ cursor: 'pointer' }} onClick={() => navigate(`/Inventory/ItemDetails`, { state: { groupId: item.item_id?._id } })}>
+                                                                {item.item_id?.name}
+                                                            </b><br />
                                                             HSN: {item.item_id?.hsn}
                                                         </td>
                                                         <td>
@@ -347,8 +363,6 @@ export const PurchaseBillDetails = () => {
                                                     />
                                                 </td>
                                             </tr>
-
-
                                         </tbody>
                                     </Table>
                                 </Col>

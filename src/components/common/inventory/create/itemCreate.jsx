@@ -46,7 +46,6 @@ export const ItemCreate = () => {
     }, [dispatch, superAdminId]);
 
     useEffect(() => {
-
         if (superAdminId) {
             dispatch(getTaxFields(superAdminId));
         }
@@ -55,11 +54,9 @@ export const ItemCreate = () => {
         if (superAdminId) {
             dispatch(getVendors(superAdminId));
         }
-
     }, [dispatch, superAdminId]);
 
     const taxFieldsList = useSelector((state) => state.taxFieldSlice.taxFields);
-
     const unitOptions = customFields.filter(field => field.type === "Unit");
     const manufacturerOptions = customFields.filter(field => field.type === "Manufacturer");
     const brandOptions = customFields.filter(field => field.type === "Brand");
@@ -94,15 +91,11 @@ export const ItemCreate = () => {
     });
 
     const handleChange = (e) => {
-        // const { name, value } = e.target;
-        // setFormData({ ...formData, [name]: value });
-        // taxPreference
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
         if (name === 'taxPreference') {
             setTaxPreference(value);
         }
-
     }
 
     const handleTaxPreferenceChange = (e) => {
@@ -136,7 +129,6 @@ export const ItemCreate = () => {
 
         try {
             const formDataToSend = new FormData();
-
             formDataToSend.append("name", formData.name);
             formDataToSend.append("sku", formData.sku);
             formDataToSend.append("unit", formData.unitType);
@@ -165,7 +157,6 @@ export const ItemCreate = () => {
             });
 
             const response =await dispatch(addItems(formDataToSend));
-            console.log("response", response);
             navigate("/Inventory/itemDetails", {state:{ groupId: response.payload.data._id }});
             // setSubmitLoading(false);
             // Reset form after successful submission
@@ -216,23 +207,13 @@ export const ItemCreate = () => {
         padding: "13px",
         fontSize: "16px",
         border: "1px solid rgb(222, 222, 222)",
-
     };
 
     return (
         <Container fluid>
             <Row>
                 <Card.Header className="fw-bold">
-                    <Row className="d-flex justify-content-between align-items-center  "
-                    // style={{
-                    //     position: "sticky",
-                    //     top: '70px',
-                    //     zIndex: 1000,
-                    // backgroundColor: "#fff",
-                    // paddingTop: "10px",
-                    // paddingBottom: "10px",
-                    // borderBottom: "1px solid #dee2e6",
-                    // }}
+                    <Row className="d-flex justify-content-between align-items-center"
                     >
                         <Col sm={8} xs={12} className="mx-4">
                             <Breadcrumb>
@@ -362,7 +343,6 @@ export const ItemCreate = () => {
                             </Row>
                         </Card>
 
-
                         <Card className="my-2 mx-auto py-3 px-2 rounded-4" style={{ backgroundColor: "white" }}>
                             <Row className="mx-3">
                                 <Col sm={4} className="my-2  ">
@@ -451,16 +431,18 @@ export const ItemCreate = () => {
                                         <label className="fw-bold my-2" style={lableHeader}>Dimensions</label>
                                         <InputGroup className="gap-2">
                                             <FormControl type="number" name="length" placeholder="Length"
-
                                                 value={formData.length}
                                                 onChange={handleChange}
+                                                onWheel={(e) => e.target.blur()} // Prevents scroll on number input
                                                 style={inputStyle} />
                                             <FormControl type="number" name="width" placeholder="Width"
                                                 value={formData.width}
                                                 onChange={handleChange}
+                                                onWheel={(e) => e.target.blur()} // Prevents scroll on number input
                                                 style={inputStyle} />
                                             <FormControl type="number" name="height" placeholder="height"
                                                 value={formData.height}
+                                                onWheel={(e) => e.target.blur()} // Prevents scroll on number input
                                                 onChange={handleChange}
                                                 style={inputStyle} />
                                             <FormSelect name="dimension_unit" style={inputStyle}
@@ -485,6 +467,7 @@ export const ItemCreate = () => {
                                                 name="weight1"
                                                 value={formData.weight1}
                                                 onChange={handleChange}
+                                                onWheel={(e) => e.target.blur()} // Prevents scroll on number input
                                                 id="weight"
                                                 placeholder="Enter weight"
                                                 style={inputStyle}
@@ -500,7 +483,6 @@ export const ItemCreate = () => {
                                                 <option value="lb">lb</option>
                                                 <option value="oz">oz</option>
                                             </FormSelect>
-
                                         </InputGroup>
                                     </FormGroup>
                                 </Col>
@@ -543,13 +525,8 @@ export const ItemCreate = () => {
                                             </Button>
                                             <Manufacturer show={showManufacturerModal} handleClose={() => setShowManufacturerModal(false)} superAdminId={superAdminId} />
                                         </InputGroup>
-                                        {/* <div id="addTaxFieldContainer" />
-                                        <a className="js-create-field form-link" href="javascript:;">
-                                            <FaPlus /> Add Manufacturer
-                                        </a> */}
                                     </FormGroup>
                                 </Col>
-
 
                                 <Col sm={4} className="my-2">
                                     <FormGroup>
@@ -571,7 +548,6 @@ export const ItemCreate = () => {
                                                         {brand.name}
                                                     </option>
                                                 ))}
-
                                             </FormSelect>
                                             <Button
                                                 type="button"
@@ -589,46 +565,12 @@ export const ItemCreate = () => {
                                             >
                                                 <FaPlus />
                                             </Button>
-
                                             <Brand show={showBrandModal} handleClose={() => setShowBrandModal(false)} superAdminId={superAdminId} />
                                         </InputGroup>
-                                        {/* <div />
-                                        <a className="js-create-field form-link" href="javascript:;">
-                                            <FaPlus /> Add Brand
-                                        </a> */}
                                     </FormGroup>
                                 </Col>
-                                {/* <Col sm={4} className="my-2">
-                                    <FormGroup>
-                                        <label className="fw-bold my-2" style={lableHeader}>
-                                            
-                                            MPN
-                                           
-                                        </label>
-                                        <input type="text" className="form-control" placeholder="0 0 0 - 0 0 0" style={inputStyle}
-                                        name='mpn'
-                                        value={formData.mpn}
-                                        onChange={handleChange}
-                                        />
-                                    </FormGroup>
-                                </Col>
-                                <Col sm={4} className="my-2">
-                                    <FormGroup>
-                                        <label className="fw-bold my-2" style={lableHeader}>
-                                           
-                                            UPC
-                                           
-                                        </label>
-                                        <input type="text" className="form-control" placeholder="0 0 0 - 0 0 0" style={inputStyle} 
-                                        name="upc"
-                                        value={formData.upc}
-                                        onChange={handleChange}
-                                        />
-                                    </FormGroup>
-                                </Col> */}
                             </Row>
                         </Card>
-
 
                         <Card className="my-2 mx-auto py-3 px-2 rounded-4" style={{ backgroundColor: "white" }}>
                             <Row className="mx-3">
@@ -645,6 +587,7 @@ export const ItemCreate = () => {
                                                 type="number"
                                                 name="cost_price"
                                                 value={formData.cost_price}
+                                                onWheel={(e) => e.target.blur()} // Prevents scroll on number input
                                                 placeholder="00.00"
                                                 style={inputStyle}
                                                 onChange={handleChange}
@@ -658,13 +601,12 @@ export const ItemCreate = () => {
                                             Selling Price <span className="text-danger">*</span>
                                         </label>
                                         <InputGroup className="gap-2">
-
                                             <InputGroupText style={inputStyle}>₹</InputGroupText>
-
                                             <FormControl
                                                 style={inputStyle}
                                                 type="number"
                                                 value={formData.selling_price}
+                                                onWheel={(e) => e.target.blur()} // Prevents scroll on number input
                                                 name="selling_price"
                                                 placeholder="00.00"
                                                 onChange={handleChange}
@@ -679,9 +621,7 @@ export const ItemCreate = () => {
                                             Cafe Selling Price <span className="text-danger">*</span>
                                         </label>
                                         <InputGroup className="gap-2">
-
                                             <InputGroupText style={inputStyle}>₹</InputGroupText>
-
                                             <FormControl
                                                 style={inputStyle}
                                                 type="number"
@@ -689,11 +629,11 @@ export const ItemCreate = () => {
                                                 name="cafeSellingPrice"
                                                 placeholder="00.00"
                                                 onChange={handleChange}
+                                                onWheel={(e) => e.target.blur()} // Prevents scroll on number input
                                             />
                                         </InputGroup>
                                     </FormGroup>
                                 </Col>
-
 
                                 <Col sm={4} className="my-2">
                                     <FormGroup>
@@ -714,11 +654,8 @@ export const ItemCreate = () => {
                                                         {vendor.name}
                                                     </option>
                                                 ))}
-
-
                                             </FormSelect>
                                         </InputGroup>
-
                                     </FormGroup>
                                 </Col>
                             </Row>
@@ -745,6 +682,7 @@ export const ItemCreate = () => {
                                         <input className="form-control mt-2" type="number" name="stock"
                                             value={formData.stock}
                                             onChange={handleChange}
+                                            onWheel={(e) => e.target.blur()} // Prevents scroll on number input
                                             placeholder="100" style={inputStyle} />
                                     </FormGroup>
                                 </Col>
@@ -758,6 +696,7 @@ export const ItemCreate = () => {
                                                 type="number"
                                                 value={formData.stock_rate}
                                                 onChange={handleChange}
+                                                onWheel={(e) => e.target.blur()} // Prevents scroll on number input
                                                 placeholder="00.00" style={inputStyle} />
                                         </InputGroup>
                                     </FormGroup>
@@ -769,40 +708,15 @@ export const ItemCreate = () => {
                                         <FormControl className="form-control mt-2" type="number"
                                             value={formData.reorder_point}
                                             onChange={handleChange}
+                                            onWheel={(e) => e.target.blur()} // Prevents scroll on number input
                                             name="reorder_point" placeholder="000" style={inputStyle} />
                                     </FormGroup>
                                 </Col>
                             </Row>
                         </Card>
 
-
                         <Card className="my-2 mx-auto py-3 px-2 rounded-4" style={{ backgroundColor: "white" }}>
                             <Row className="my-1 mx-3">
-                                {/* <Col sm={3} className="my-2 ">
-                                    <lable className="fw-bold my-2" style={lableHeader}>Link with Website</lable>
-                                    <div className="form-group mt-4 m-t-15 m-checkbox-inline mb-3 custom-radio-ml">
-                                        <FormCheck
-                                            type="radio"
-                                            id="radioinline1"
-                                            name="linking"
-                                            value="Y"
-                                            label="Yes"
-                                            inline
-                                        />
-                                        <FormCheck
-                                            type="radio"
-                                            id="radioinline2"
-                                            name="linking"
-                                            value="N"
-                                            label="No"
-                                            inline
-                                            defaultChecked
-                                        />
-                                    </div>
-                                </Col> */}
-
-
-
                                 <Col sm={5} className=" my-2">
                                     <Row className="">
                                         <Col sm={12} className="my-2  ">
@@ -818,7 +732,6 @@ export const ItemCreate = () => {
                                                     id="galleryUpload"
                                                 />
                                                 <label className="form-control border-0 "
-
                                                     htmlFor="galleryUpload" style={{ cursor: 'pointer' }}>
                                                     <div
                                                         className="border border-primary p-3 text-center "
@@ -834,8 +747,6 @@ export const ItemCreate = () => {
                                                 </label>
                                             </FormGroup>
                                         </Col>
-
-
                                     </Row>
                                 </Col><Col sm={4} className="my-2 d-flex flex-wrap">
                                     {galleryImages.length > 0 &&
@@ -870,12 +781,9 @@ export const ItemCreate = () => {
                                 </Col>
                             </Row>
                         </Card>
-
                     </Row>
                 </Card.Header>
             </Row>
-
         </Container>
-
     );
 }

@@ -12,6 +12,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   Dropdown,
+  ButtonGroup,
 } from "react-bootstrap";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import { FaFilePdf, FaRupeeSign, FaTrash, FaUpload } from "react-icons/fa";
@@ -64,9 +65,11 @@ const ParchaseBCreate = () => {
   const handleCloseVendorList = () => setShowVendorList(false);
   const [vendorSelected, setVendorSelected] = useState([]);
   const [vendorId, setVendorId] = useState("");
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const [userType, setUserType] = useState("Superadmin");
+
   const { selectedItem } = useSelector((state) => state.purchaseReceiveSlice);
 
+  const user = JSON.parse(sessionStorage.getItem("user"));
   const cafeId = user?._id;
 
   const userName = user?.name;
@@ -74,7 +77,7 @@ const ParchaseBCreate = () => {
   const UserContactN = user?.contact_no;
   const UserAddress = user?.address;
   const UesrPAN = user?.panNo;
-  const [isMobile, setIsMobile] = useState(false); 
+  const [isMobile, setIsMobile] = useState(false);
 
   // Filter payment terms from custom fields
   const paymentTerms = customFields.filter(
@@ -259,9 +262,9 @@ const ParchaseBCreate = () => {
     // Calculate final total
     const total = Math.round(
       subtotal -
-        discountAmount +
-        taxAmount +
-        (parseFloat(totals.adjustmentAmount) || 0)
+      discountAmount +
+      taxAmount +
+      (parseFloat(totals.adjustmentAmount) || 0)
     );
 
     setTotals((prev) => ({
@@ -398,15 +401,28 @@ const ParchaseBCreate = () => {
   //   console.log("Selected vendor ID:---", vendorId);
   // };
 
-  const handleVendorSelect = (newVendorId) => {
-    const selectedVendor = vendorsList.find(
-      (vendor) => vendor?._id == newVendorId
-    );
+  // const handleVendorSelect = (newVendorId) => {
+  //   const selectedVendor = vendorsList.find(
+  //     (vendor) => vendor?._id == newVendorId
+  //   );
+  //   if (selectedVendor) {
+  //     setVendorSelected(selectedVendor);
+  //     setFormData({
+  //       ...formData,
+  //       vendor_id: selectedVendor?._id,
+  //     });
+  //     setVendorId(selectedVendor?._id);
+  //   }
+  //   handleClose();
+  // };
+
+    const handleVendorSelect = (newVendorId) => {
+    const selectedVendor = vendorsList.find((vendor) => vendor?._id == newVendorId);
     if (selectedVendor) {
       setVendorSelected(selectedVendor);
       setFormData({
         ...formData,
-        vendor_id: selectedVendor?._id,
+        vendor_id: selectedVendor?._id, 
       });
       setVendorId(selectedVendor?._id);
     }
@@ -430,14 +446,17 @@ const ParchaseBCreate = () => {
   useEffect(() => {
     if (selectedItem) {
       // Set vendor data
-      const vendor = selectedItem.vendor_id;
+      const vendor = selectedItem?.vendor_id;
+      if(!vendor || vendor == null || vendor == undefined) {
+        setUserType("Superadmin")
+      }
       setVendorSelected(vendor);
-      setVendorId(vendor._id);
+      setVendorId(vendor?._id);
 
       // Set form data
       setFormData({
         ...formData,
-        vendor_id: vendor._id,
+        vendor_id: vendor?._id,
         delivery_type: selectedItem.delivery_type || "organization",
         date: selectedItem.delivery_date?.split("T")[0] || "",
         description: selectedItem.description || "",
@@ -470,6 +489,8 @@ const ParchaseBCreate = () => {
       });
     }
   }, [selectedItem]);
+
+  console.log("vendorSelected", vendorSelected);
 
   return (
     <Container fluid className="p-4">
@@ -511,7 +532,7 @@ const ParchaseBCreate = () => {
       <Card className="p-3 shadow-sm">
         <Row>
           <Col sm={4} className="d-flex border-end flex-column gap-2">
-            <div className="border-bottom ">
+            {/* <div className="border-bottom ">
               <div className="d-flex flex-row align-items-center justify-content-around mb-3 gap-2">
                 <h5 className="text-muted">Vendor : </h5>
                 <Button
@@ -527,7 +548,34 @@ const ParchaseBCreate = () => {
                   <span>+</span> Add Vendor
                 </Button>
               </div>
+            </div> */}
+
+            <div className="d-flex flex-row align-items-center mb-3 gap-2">
+              <h5 className="text-muted pt-1">Vendor:</h5>
+
+              <Dropdown as={ButtonGroup}>
+                <Dropdown.Toggle
+                  variant="outline-primary"
+                  style={{ width: "144px", height: "30px", borderStyle: "dashed" }}
+                  className="d-flex align-items-center justify-content-center"
+                >
+                  {userType === "Superadmin" ? "StyxCafe" : userType === "Vendor" ? vendorSelected?.name : "Select Vendor"}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={handleShowVendorList}>
+                    Add Vendor
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => {
+                    setVendorSelected(null);
+                    setUserType("Superadmin")
+                  }}>
+                    StyxCafe
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             </div>
+
             <Row className="mt-3">
               <p
                 style={{ fontSize: "1.2rem", fontWeight: "600" }}
@@ -756,7 +804,7 @@ const ParchaseBCreate = () => {
       <Card className="p-3 mt-3 shadow-sm">
         <Table responsive>
           <thead>
-          <tr className={` ${isMobile && "d-flex"} `}>
+            <tr className={` ${isMobile && "d-flex"} `}>
               <th className="w-25">PRODUCT</th>
               <th className="w-15">QUANTITY</th>
               <th className="w-15">PRICE</th>
@@ -1016,9 +1064,9 @@ const ParchaseBCreate = () => {
                   >
                     {totals.selectedTaxes.length
                       ? `${totals.selectedTaxes.reduce(
-                          (sum, tax) => sum + tax.rate,
-                          0
-                        )}%`
+                        (sum, tax) => sum + tax.rate,
+                        0
+                      )}%`
                       : "0.00% Tax"}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>

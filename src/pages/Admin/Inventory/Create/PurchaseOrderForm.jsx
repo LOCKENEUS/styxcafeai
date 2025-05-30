@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Breadcrumb, BreadcrumbItem, Dropdown } from "react-bootstrap";
+import React, { use, useEffect, useState } from "react";
+import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Breadcrumb, BreadcrumbItem, Dropdown, ButtonGroup, Spinner } from "react-bootstrap";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import { FaRupeeSign, FaTrash } from "react-icons/fa";
 import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems"
 import Tax from "../modal/Tax";
 import PaymentTermsModal from "../modal/PaymentTermsModal";
 import { Link, useNavigate } from "react-router-dom";
-import { CreatePurchaseOrder, GetVendorsList, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { CreatePurchaseOrder, getStyxData, GetVendorsList, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch, useSelector } from "react-redux";
 import AddClint from "../modal/AddClint";
 import VendorsList from "../modal/vendoreListModal";
@@ -14,6 +14,8 @@ import { getItems } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
 import { getCustomers } from "../../../../store/AdminSlice/CustomerSlice";
 import { toast } from "react-toastify";
+
+import { getItems as getSuperItems } from "../../../../store/slices/inventory";
 
 const PurchaseOrderForm = () => {
   const [show, setShow] = useState(false);
@@ -34,13 +36,9 @@ const PurchaseOrderForm = () => {
   const navigate = useNavigate();
   const { customFields } = useSelector((state) => state.customFields);
   const { taxFields } = useSelector((state) => state.taxFieldSlice);
-  const { items, loading } = useSelector((state) => state.items);
-  const [showVendorList, setShowVendorList] = useState(false);
-  const handleShowVendorList = () => {
-    setUserType("Vendor");
-    setShowVendorList(true);
-  }
-  const handleCloseVendorList = () => setShowVendorList(false);
+  const { styxData } = useSelector((state) => state.purchaseOrder);
+
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [vendorSelected, setVendorSelected] = useState([]);
   const [selectedOption, setSelectedOption] = useState("Organization");
   const [userType, setUserType] = useState("Superadmin");
@@ -49,28 +47,54 @@ const PurchaseOrderForm = () => {
   const user = JSON.parse(sessionStorage.getItem("user"));
 
   const cafeId = user?._id;
-
   const userName = user?.name;
   const userEmail = user?.email;
   const UserContactN = user?.contact_no;
   const UserAddress = user?.address;
   const UesrPAN = user?.panNo;
 
+  let items = []
+  if (userType === "Superadmin") {
+    items = useSelector((state) => state.inventorySuperAdmin.it);
+        const formattedItems = items.map(item => ({
+      ...item,
+      costPrice: `${item.sellingPrice}`,
+    }));
+    items = formattedItems
+  } else {
+    items = useSelector((state) => state.items.items);
+  }
+  const { loading } = useSelector((state) => state.items);
+  const [showVendorList, setShowVendorList] = useState(false);
+  const handleShowVendorList = () => {
+    setUserType("Vendor");
+    setShowVendorList(true);
+  }
+  const handleCloseVendorList = () => setShowVendorList(false);
+
   // Filter payment terms from custom fields
   const paymentTerms = customFields.filter(field => field.type === 'Payment Terms');
 
   useEffect(() => {
+    dispatch(getStyxData())
     dispatch(GetVendorsList(cafeId));
     dispatch(getTaxFields(cafeId));
-    dispatch(getItems(cafeId));
+    // dispatch(getItems(cafeId));
   }, [dispatch]);
+
+  useEffect(() => {
+    if (userType === "Superadmin") {
+      dispatch(getSuperItems());
+    } else {
+      dispatch(getItems(cafeId));
+    }
+  }, [userType])
   const vendorsList = useSelector((state) => state.purchaseOrder?.vendors);
   // const lisgetCustomers = useSelector((state) => state.customers?.customers);
   const lisgetCustomers = useSelector((state) => state.customers);
   const customersList = lisgetCustomers?.customers;
 
-  const [isMobile, setIsMobile] = useState(false); 
-
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -112,11 +136,11 @@ const PurchaseOrderForm = () => {
 
           if (selectedItem) {
             updatedProduct.price = selectedItem.costPrice;
-            updatedProduct.tax = selectedItem.tax;
+            updatedProduct.tax = selectedItem.tax?._id;
             updatedProduct.hsn = selectedItem.hsn || ""; // Set HSN from selected item
             updatedProduct.sku = selectedItem.sku || ""; // Set SKU from selected item
 
-            const itemTax = taxFields.find(tax => tax._id === selectedItem.tax);
+            const itemTax = taxFields.find(tax => tax._id === selectedItem.tax?._id);
             updatedProduct.taxRate = itemTax ? itemTax.tax_rate : 0;
           }
 
@@ -287,6 +311,7 @@ const PurchaseOrderForm = () => {
     submitData.append('items', JSON.stringify(formattedItems));
 
     try {
+      setSubmitLoading(true);
       const response = await dispatch(CreatePurchaseOrder(submitData)).unwrap();
 
       navigate("/admin/inventory/purchase-order-details", { state: response });
@@ -309,10 +334,10 @@ const PurchaseOrderForm = () => {
       });
     } catch (error) {
       // Handle error
+      setSubmitLoading(false);
       console.error('Error creating SO:', error);
     }
   };
-
 
   const handleVendorSelect = (newVendorId) => {
     const selectedVendor = vendorsList.find((vendor) => vendor?._id == newVendorId);
@@ -328,9 +353,9 @@ const PurchaseOrderForm = () => {
   };
 
   return (
-    <Container fluid className="p-4">
+    <Container fluid className="p-4 pt-0">
       <Col sm={12} className="my-3">
-        <div style={{ top: "186px", fontSize: "12px" }}>
+        <div style={{ top: "186px", fontSize: "16px" }}>
           <Breadcrumb>
             <BreadcrumbItem >Home</BreadcrumbItem>
             <BreadcrumbItem><Link to="/admin/inventory/purchase-order-list">Purchase Order List</Link></BreadcrumbItem>
@@ -364,7 +389,7 @@ const PurchaseOrderForm = () => {
         <Row>
           <Col sm={4} className="d-flex border-end flex-column gap-2">
             <div className="border-bottom ">
-              <div className="d-flex flex-row align-items-center mb-3 gap-2">
+              {/* <div className="d-flex flex-row align-items-center mb-3 gap-2">
                 <h5 className="text-muted">Vendor :  </h5>
                 <Button
                   style={{ width: "144px", height: "44px", borderStyle: "dashed" }}
@@ -374,7 +399,7 @@ const PurchaseOrderForm = () => {
                 >
                   <span>+</span> Add Vendor
                 </Button>
-                {/* <Button
+                <Button
                   style={{ width: "144px", height: "44px", borderStyle: "dashed" }}
                   variant="outline-primary"
                   className="d-flex align-items-center justify-content-center gap-2"
@@ -383,27 +408,70 @@ const PurchaseOrderForm = () => {
                   }}
                 >
                   Superadmin
-                </Button> */}
+                </Button>
+              </div> */}
+
+              <div className="d-flex flex-row align-items-center mb-3 gap-2">
+                <h5 className="text-muted pt-1">Vendor:</h5>
+
+                <Dropdown as={ButtonGroup}>
+                  <Dropdown.Toggle
+                    variant="outline-primary"
+                    style={{ width: "144px", height: "30px", borderStyle: "dashed" }}
+                    className="d-flex align-items-center justify-content-center"
+                  >
+                    {userType === "Superadmin" ? "StyxCafe" : userType === "Vendor" ? vendorSelected?.name : "Select Vendor"}
+                  </Dropdown.Toggle>
+
+                  <Dropdown.Menu>
+                    <Dropdown.Item onClick={handleShowVendorList}>
+                      Add Vendor
+                    </Dropdown.Item>
+                    <Dropdown.Item onClick={() => {
+                      setVendorSelected(null);
+                      setUserType("Superadmin")
+                    }}>
+                      StyxCafe
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
               </div>
+
             </div>
             <Row className="mt-3">
-              <p>{vendorSelected?.name || "Vendor Name"}</p>
+              <p>{userType === "Superadmin" ? "StyxCafe" : userType === "Vendor" && vendorSelected?.name || "Vendor Name"}</p>
 
-              <Col md={6}>
+              {userType === "Vendor" && <Col md={6}>
                 <h6 style={{ fontSize: "1rem" }}>Billing Address</h6>
                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.city1 || "Billing City"}</p>
                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state1 || "Billing State"}</p>
                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.pincode1 || "Billing Pincode"}</p>
                 <p className="mb-0" style={{ fontSize: "0.9rem" }}>{vendorSelected?.country1 || "Billing Country"}</p>
-              </Col>
+              </Col>}
 
-              <Col md={6}>
+              {userType === "Superadmin" && <Col md={6}>
+                <h6 style={{ fontSize: "1rem" }}>Billing Address</h6>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{styxData?.city1 || "Billing City"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{styxData?.state1 || "Billing State"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{styxData?.pincode1 || "Billing Pincode"}</p>
+                <p className="mb-0" style={{ fontSize: "0.9rem" }}>{styxData?.country1 || "Billing Country"}</p>
+              </Col>}
+
+              {userType === "Vendor" && <Col md={6}>
                 <h6 style={{ fontSize: "1rem" }}>Shipping Address</h6>
                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.city2 || "Shipping City"}</p>
                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state2 || "Shipping State"}</p>
                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.pincode2 || "Shipping Pincode"}</p>
                 <p className="mb-0" style={{ fontSize: "0.9rem" }}>{vendorSelected?.country2 || "Shipping Country"}</p>
-              </Col>
+              </Col>}
+
+              {userType === "Superadmin" && <Col md={6}>
+                <h6 style={{ fontSize: "1rem" }}>Shipping Address</h6>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{styxData?.city2 || "Shipping City"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{styxData?.state2 || "Shipping State"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{styxData?.pincode2 || "Shipping Pincode"}</p>
+                <p className="mb-0" style={{ fontSize: "0.9rem" }}>{styxData?.country2 || "Shipping Country"}</p>
+              </Col>}
             </Row>
           </Col>
 
@@ -551,7 +619,7 @@ const PurchaseOrderForm = () => {
       <Card className="p-3 mt-3 shadow-sm">
         <div>
           <div className="table-responsive">
-            <Table> 
+            <Table>
               <thead>
                 <tr className={` ${isMobile && "d-flex"} `}>
                   <th className="w-25">PRODUCT</th>
@@ -597,6 +665,7 @@ const PurchaseOrderForm = () => {
                         style={{ border: "1px solid black", width: "100%" }}
                         value={product.quantity}
                         onChange={(e) => updateProduct(product.id, "quantity", e.target.value)}
+                        onWheel={(e) => e.target.blur()}
                       />
                     </td>
                     <td>
@@ -611,6 +680,7 @@ const PurchaseOrderForm = () => {
                           style={{ paddingLeft: "25px", border: "1px solid black" }}
                           value={product.price}
                           onChange={(e) => updateProduct(product.id, "price", e.target.value)}
+                          onWheel={(e) => e.target.blur()}
                         />
                       </div>
                     </td>
@@ -735,6 +805,7 @@ const PurchaseOrderForm = () => {
                     type="number"
                     value={totals.discount}
                     onChange={(e) => setTotals(prev => ({ ...prev, discount: e.target.value }))}
+                    onWheel={(e) => e.target.blur()}
                     placeholder="0.00"
                   />
                   <Form.Select
@@ -814,6 +885,7 @@ const PurchaseOrderForm = () => {
                     placeholder="Adjustment Amount"
                     value={totals.adjustmentAmount}
                     onChange={(e) => setTotals(prev => ({ ...prev, adjustmentAmount: e.target.value }))}
+                    onWheel={(e) => e.target.blur()}
                   />
                 </InputGroup>
               </div>
@@ -869,12 +941,20 @@ const PurchaseOrderForm = () => {
 
       {/* Add a submit button */}
       <div className="d-flex justify-content-end mt-3">
-        <Button
+        {/* <Button
           variant="primary"
           onClick={handleSubmit}
         // disabled={!selectedClient || products.length === 0}
         >
           Submit
+        </Button> */}
+
+        <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
+          {submitLoading ? (
+            <>
+              <Spinner animation="border" size="sm" className="me-2" /> Saving...
+            </>
+          ) : ('Submit')}
         </Button>
       </div>
     </Container>

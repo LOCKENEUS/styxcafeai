@@ -127,14 +127,14 @@ export const PurchaseBill = () => {
   return (
     <Container fluid className="mt-4 min-vh-100">
       <Row>
-        <Col sm={12} className="mx-2 my-3">
-          <div style={{ top: "186px", fontSize: "12px" }}>
+        <Col sm={12} className="mx-2 my-3 px-5">
+          <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/superadmin/dashboard">Home</Link>
               </BreadcrumbItem>
               <BreadcrumbItem>
-                <Link to="/superadmin/inventory/dashboard">Inventory</Link>
+                <Link to="/Inventory/dashboard">Inventory</Link>
               </BreadcrumbItem>
               <BreadcrumbItem active>Purchase Bill List</BreadcrumbItem>
             </Breadcrumb>
@@ -176,7 +176,7 @@ export const PurchaseBill = () => {
                   <FormControl
                     type="search"
                     size="sm"
-                    placeholder="Search for Purchase Received "
+                    placeholder="Search..."
                     aria-label="Search in docs"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}

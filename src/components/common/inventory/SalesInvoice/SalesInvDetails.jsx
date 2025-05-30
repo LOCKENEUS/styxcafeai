@@ -199,13 +199,13 @@ export const SalesInvDetails = () => {
                     <div style={{ top: "186px", fontSize: "12px" }}>
                         <Breadcrumb>
                             <BreadcrumbItem>
-                                <Link to="/admin/dashboard">Home</Link>
+                                <Link to="/">Home</Link>
                             </BreadcrumbItem>
                             <BreadcrumbItem>
-                                <Link to="/admin/inventory/dashboard">Inventory</Link>
+                                <Link to="/Inventory/dashboard">Inventory</Link>
                             </BreadcrumbItem>
                             <BreadcrumbItem>
-                                <Link to="/admin/Inventory/SalesOrder">Sales Invoice List</Link>
+                                <Link to="/Inventory/SaleInvoice/List">Sales Invoice List</Link>
                             </BreadcrumbItem>
                             <BreadcrumbItem active>SalesInvoiceDetails</BreadcrumbItem>
                         </Breadcrumb>

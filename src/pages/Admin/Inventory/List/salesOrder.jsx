@@ -113,7 +113,7 @@ export const SalesOrder = () => {
       sortable: true,
       cell: (row) => (
         <span>
-          {row.total ? row.total : "N/A"}
+          ₹ {row.total ? row.total : "-"}
         </span>
       ),
     },
@@ -198,10 +198,10 @@ export const SalesOrder = () => {
   };
 
   return (
-    <Container className="p-0">
+    <Container className="p-4">
       <Row>
-        <Col sm={12} className="mx-2 my-3">
-          <div style={{ top: "186px", fontSize: "12px" }}>
+        <Col sm={12} className="mx-2 mb-3 px-3">
+          <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>
@@ -249,7 +249,7 @@ export const SalesOrder = () => {
                   <FormControl
                     type="search"
                     size="sm"
-                    placeholder="Search for vendors"
+                    placeholder="Search..."
                     aria-label="Search in docs"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)} // Update searchQuery directly
@@ -272,7 +272,7 @@ export const SalesOrder = () => {
               <Col sm={5} className="d-flex justify-content-end text-end my-2">
                 <Button
                   variant="denger"
-                  className="btn px-4 mx-2"
+                  className="btn px-4 mx-2 border border-danger text-danger"
                   size="sm"
                   onClick={handleExport}
                 >

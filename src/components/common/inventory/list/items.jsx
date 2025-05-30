@@ -1,11 +1,7 @@
 import { color } from "chart.js/helpers";
 import { useEffect, useState } from "react";
-import { Card, CardBody, CardHeader, Col, Container, Form, FormControl, InputGroup, Button, Breadcrumb, BreadcrumbItem, Row, Image, Pagination, Table } from "react-bootstrap";
+import { Card, Col, Container, FormControl, InputGroup, Button, Breadcrumb, Row, Image, Table } from "react-bootstrap";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
-import DataTable from "react-data-table-component";
-import { BiSearch, BiSearchAlt } from "react-icons/bi";
-import { FaPlus } from "react-icons/fa";
-import { FiSearch } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import gm1 from '/assets/inventory/mynaui_search.svg'
 import solar_export from '/assets/inventory/solar_export-linear.png'
@@ -140,7 +136,7 @@ export const Items = () => {
             </Col>
           </Row>
 
-          <Row className="mx-auto">
+          <Row className="mx-auto d-none d-md-block">
             <Card className="my-3 mx-auto py-3 px-3 rounded-4" style={{ backgroundColor: "white" }}>
               <Row className="">
                 <Col sm={4} className="fluid d-flex justify-content-start">
@@ -342,24 +338,8 @@ export const Items = () => {
                           )
                         }
                       </tbody>
-
-
                     </Table>
                   </div>
-
-                  {/* <Pagination className="mt-3 justify-content-end">
-                    <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
-                    {[...Array(totalPages)].map((_, idx) => (
-                      <Pagination.Item
-                        key={idx}
-                        active={idx + 1 === currentPage}
-                        onClick={() => handlePageChange(idx + 1)}
-                      >
-                        {idx + 1}
-                      </Pagination.Item>
-                    ))}
-                    <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
-                  </Pagination> */}
                   <Col sm={12} className="d-flex justify-content-end align-items-center mt-3">
                     <Button
                       className="btn btn-light fw-bold"
@@ -382,12 +362,120 @@ export const Items = () => {
                       <FcNext />
                     </Button>
                   </Col>
-
-
                 </Col>
               </Row>
             </Card>
           </Row>
+
+          {/*  mobile view */}
+          {/* Mobile View */}
+          <div className="d-block d-md-none">
+            <div className="px-3 mb-3">
+              <InputGroup className="mb-2">
+                <InputGroup.Text style={{ backgroundColor: "#FAFAFA", border: "none" }}>
+                  <Image src={gm1} />
+                </InputGroup.Text>
+                <FormControl
+                  placeholder="Search for items"
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  style={{ backgroundColor: "#FAFAFA", border: "none" }}
+                />
+              </InputGroup>
+              <div className="d-flex justify-content-between">
+                <Button variant="outline-danger" size="sm" onClick={exportToCSV}>
+                  <Image className="me-2" style={{ width: "20px" }} src={solar_export} />
+                  Export
+                </Button>
+                <Button variant="primary" size="sm" onClick={handleShowCreate}>
+                  <Image className="me-2" style={{ width: "20px" }} src={add} />
+                  New Item
+                </Button>
+              </div>
+            </div>
+
+            {/* Items Card List */}
+            <div className="px-3">
+              {mainLoading || !itemsList ? (
+                <div className="text-center my-5"><Loader /></div>
+              ) : currentItems.length > 0 ? (
+                currentItems.map((item, index) => {
+                  const colors = ["#FFB6C1", "#ADD8E6", "#90EE90", "#FFD700", "#FFA07A"];
+                  const bgColor = colors[index % colors.length];
+                  const initial = item.name?.charAt(0)?.toUpperCase() || "?";
+
+                  return (
+                    <Card key={index} className="mb-3 shadow-sm rounded-4">
+                      <Card.Body>
+                        <div className="d-flex align-items-center mb-2">
+                          <div
+                            style={{
+                              backgroundColor: bgColor,
+                              color: "#fff",
+                              borderRadius: "50%",
+                              width: "40px",
+                              height: "40px",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              fontSize: "20px",
+                              fontWeight: "800",
+                              marginRight: "10px",
+                            }}
+                          >
+                            {initial}
+                          </div>
+                          <div>
+                            <h6
+                              className="m-0 fw-bold"
+                              style={{ color: "rgb(0, 98, 255)", cursor: "pointer" }}
+                              onClick={() => handleShowDetails(item._id)}
+                            >
+                              {item.name}
+                            </h6>
+                            <small className="text-muted">SKU: {item.sku || "----"}</small>
+                          </div>
+                        </div>
+                        <div className="mb-1"><strong>Price:</strong> ₹ {item.costPrice || "----"}</div>
+                        <div className="mb-1"><strong>Stock:</strong> {item.stock || "----"}</div>
+                        <div className="mb-1"><strong>HSN:</strong> {item.hsn || "----"}</div>
+                        <div className="mb-1"><strong>Unit:</strong> {item.unit || "----"}</div>
+                        <div>
+                          <strong>Dimension:</strong>{" "}
+                          {(!item.length || !item.width || !item.height || !item.dimensionUnit)
+                            ? "---"
+                            : `${item.length} x ${item.width} x ${item.height} ${item.dimensionUnit}`}
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  );
+                })
+              ) : (
+                <div className="text-center text-muted">No Items Found</div>
+              )}
+            </div>
+
+            {/* Mobile Pagination */}
+            <div className="d-flex justify-content-center align-items-center my-3">
+              <Button
+                className="btn btn-light fw-bold"
+                onClick={handlePrev}
+                disabled={currentPage === 1}
+              >
+                <FcPrevious />
+              </Button>
+              <span className="mx-3">
+                Page {currentPage} of {totalPages}
+              </span>
+              <Button
+                className="btn btn-light"
+                onClick={handleNext}
+                disabled={currentPage === totalPages}
+              >
+                <FcNext />
+              </Button>
+            </div>
+          </div>
         </Card.Header>
       </Row>
     </Container>

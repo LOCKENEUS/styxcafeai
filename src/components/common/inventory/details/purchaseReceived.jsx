@@ -19,18 +19,14 @@ export const PurchaseReceivedDetails = () => {
                                 </Col>
                                 <Col sm={6} className="d-flex justify-content-end">
                                     <div className="d-flex flex-wrap gap-2">
-                                        {/* <Button variant="outline-dark"><IoArrowBackOutline className="me-2"/>Back</Button> */}
                                         <Button variant="outline-dark">Send Mail</Button>
                                         <Button variant="success"><BsFillPrinterFill className="me-2" />Print</Button>
-                                        {/* <Button variant="outline-dark"><FaBoxOpen className="me-2" />Receive</Button>
-                                         <Button variant="success"><RiEditFill className="me-2" />Edit</Button> */}
                                         <Button variant="success"><FaPlus />   Create Bill   </Button>
                                     </div>
                                 </Col>
                             </Row>
                         </CardHeader>
                         <CardBody>
-                            {/* style={{ backgroundColor: "#c3edf3" }} */}
                             <Row >
                                 <Col sm={2} className="d-flex justify-content-center" >
                                     <Image src="https://fsm.lockene.net/uploads/logo/favicon.png" style={{ width: "65px", height: "65px ", objectFit: "cover", marginTop: "20px" }} />
@@ -77,19 +73,15 @@ export const PurchaseReceivedDetails = () => {
                                     </div>
                                 </Col>
                                 <Col sm={7} className="d-flex flex-column text-start">
-
                                     <Row className="bg-light">
                                         <Col sm={5} className="d-flex flex-column text-start mt-3">
-
                                             <h4 className="text-decoration-underline">Delivery Address</h4>
                                             <div className="d-flex flex-column justify-content-start text-start">
                                                 <p className="fw-bold">Lockene</p>
                                                 <p className="my-1">yash123linganwar@gmail.com / 91562173745</p>
                                                 <p className="my-1">Karve Statue, DP Road, Mayur Colony, Kothrud, Pune, Maharashtra, India</p>
                                                 <p className="my-1">Pune Division, Maharashtra-411058, India</p>
-
                                             </div>
-
                                         </Col>
                                         <Col sm={7} className="d-flex flex-column text-start mt-3">
 
@@ -122,15 +114,11 @@ export const PurchaseReceivedDetails = () => {
 
                                                             </td>
                                                         </tr>
-
-
                                                     </tbody>
                                                 </Table>
                                             </div>
                                         </Col>
                                     </Row>
-
-
                                 </Col>
 
 
@@ -165,11 +153,9 @@ export const PurchaseReceivedDetails = () => {
                                     </Row>
                                 </Col>
                             </Row>
-
                         </CardBody>
                     </Card>
                 </Col>
-
             </Row>
         </Container>
     )

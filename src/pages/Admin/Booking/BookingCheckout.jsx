@@ -2219,21 +2219,6 @@ const BookingCheckout = () => {
                     </div>
                   </Col>
 
-                  {/* <Col md={6} className="p-0 bg-white" style={{ borderRadius: "10px", width: "48%" }}>
-                    <div className="d-flex p-3" style={{ border: "none" }}>
-                      
-                      <div className="mb-0 text-color">
-                        Start
-                        <div className="ms-2 muted-text">{booking?.start_time ? new Date(booking?.start_time).toLocaleTimeString() : "-"}</div>
-                      </div>
-                      <div className="mb-0 text-color">
-                        End
-                        <div className="ms-2 muted-text"> {booking?.end_time ? new Date(booking?.end_time).toLocaleTimeString() : "-"}</div>
-                      </div>
-                      
-                    </div>
-                  </Col> */}
-
                   <Col md={6} className="p-0 bg-white" style={{ borderRadius: "10px", width: "48%" }}>
                     <div className="d-flex p-3" style={{ border: "none" }}>
                       <div>
@@ -2251,10 +2236,6 @@ const BookingCheckout = () => {
                       </div>
                     </div>
                   </Col>
-
-                  {/* <Col md={6} className="p-3 bg-white d-flex gap-4" style={{ borderRadius: "10px", width: "48%" }}>
-                    <h3 className="text-color pt-2"> ₹ 512</h3>
-                  </Col> */}
 
                   <Col md={6} sm={12} className="p-3 bg-white d-flex gap-4" style={{ borderRadius: "10px", width: "48%" }}>
                     <div>
@@ -2279,14 +2260,19 @@ const BookingCheckout = () => {
                     </div>
                   </Col>
                 </Row>
+
+
+                {/* Mobile View */}
+
+
               </div>
               : (
-                selectedGame?.payLater &&
-                <div className="rounded shadow-sm w-100 right-padding-responsive left-margin-responsive" style={{ marginLeft: "10px", paddingRight: "8px" }}>
+                selectedGame?.payLater &&<>
+                <div className="rounded shadow-sm w-100 d-none d-md-flex" style={{ marginLeft: "10px", paddingRight: "8px" }}>
                   <Row className="mt-1 gap-0">
                     <Col md={6} className="p-0">
                       <div className="bg-white d-flex p-3 gap-1" style={{ borderRadius: "10px", width: "100%" }}>
-                        <div className="d-flex gap-4 custom-gap-responsive" style={{ border: "none" }}>
+                        <div className="d-flex gap-4" style={{ border: "none" }}>
                           <div>
                             <img src="/assets/Admin/Game/Notification.svg" alt="Game Timer" />
                           </div>
@@ -2298,7 +2284,7 @@ const BookingCheckout = () => {
                             </div>
                           </div>
                         </div>
-                        <div className="d-flex justify-content-around align-items-center gap-4 custom-gap-responsive">
+                        <div className="d-flex justify-content-around align-items-center gap-4">
                           {isRunning || isPaused ? (
                             <Button
                               size="sm"
@@ -2314,7 +2300,7 @@ const BookingCheckout = () => {
                             <Button
                               size="sm"
                               variant="outline-primary"
-                              className="start-btn-responsive mt-2"
+                              className="mt-2"
                               disabled={booking?.total_time > 0 && booking?.timer_status === "Stopped"}
                               style={{ border: "2px dashed", width: "100%", height: "40px", padding: "2px", marginLeft: "30px" }}
                               onClick={handleStartTimer}
@@ -2484,7 +2470,212 @@ const BookingCheckout = () => {
                       </div>
                     </Col>
                   </Row>
-                </div>
+               </div>
+
+                <div className="rounded shadow-sm w-100" style={{ paddingRight: "8px" }}>
+                    <Row className="mt-1 d-md-none d-flex flex-column gap-2">
+                    <Col md={6} className="pe-0">
+                      <div className="bg-white d-flex p-3 gap-1" style={{ borderRadius: "10px", width: "100%" }}>
+                        <div className="d-flex gap-4 custom-gap-responsive" style={{ border: "none" }}>
+                          <div>
+                            <img src="/assets/Admin/Game/Notification.svg" alt="Game Timer" />
+                          </div>
+                          <div className="text-color my-auto">
+                            <div>Total Time</div>
+                            <div className="text-color fs-4">
+                              <span className="">{Math.floor(currentTime / 60)} m</span> : {" "}
+                              <span className="">{currentTime % 60} s</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="d-flex justify-content-around align-items-center gap-4 custom-gap-responsive">
+                          {isRunning || isPaused ? (
+                            <Button
+                              size="sm"
+                              variant="outline-danger"
+                              className="px-2"
+                              style={{ border: "2px dashed rgb(255, 68, 0)", width: "50%", paddingRight: "10px", marginLeft: "30px" }}
+                              onClick={() => setShowConfirm(true)} // Show confirmation modal
+                            >
+                              Stop
+                            </Button>
+                          ) : (
+                            !isPaused &&
+                            <Button
+                              size="sm"
+                              variant="outline-primary"
+                              className="start-btn-responsive mt-2"
+                              disabled={booking?.total_time > 0 && booking?.timer_status === "Stopped"}
+                              style={{ border: "2px dashed", width: "100%", height: "40px", padding: "2px", marginLeft: "30px" }}
+                              onClick={handleStartTimer}
+                            >
+                              <FaClock size={16} style={{ marginRight: "5px" }} />
+                              <span>Start</span>
+                            </Button>
+                          )}
+
+                          {
+                            !isRunning ? (
+                              <VscDebugContinue
+                                size={48}
+                                className="text-success mt-2"
+                                style={{ marginLeft: "5%", cursor: "pointer" }}
+                                onClick={handleResumeTimer}
+                              />
+                            ) : (
+                              <FaPause
+                                size={32}
+                                className="text-danger mt-2"
+                                style={{ marginLeft: "5%", cursor: "pointer" }}
+                                onClick={handlePauseTimer}
+                              />
+                            )
+                          }
+                        </div>
+                      </div>
+                    </Col>
+
+                    <Col md={6} className="pe-0">
+                      <div className="bg-white d-flex p-3" style={{ borderRadius: "10px", width: "100%" }}>
+                        <div className="d-flex" style={{ border: "none", width: "100%" }}>
+                          <div>
+                            <img src="/assets/Admin/Game/Notification2.svg" alt="Game Timer" />
+                          </div>
+                          <div className="d-flex gap-2" style={{ width: "100%" }}>
+                            <div className="mb-0 muted-text w-50">
+                              <div className="px-2" style={{ borderRight: "1px solid grey" }}>Start</div> <div className="text-color px-2" style={{ borderRight: "1px solid grey" }}>{booking?.start_time ? new Date(booking?.start_time).toLocaleTimeString() : new Date(tempStartTime).toLocaleTimeString()}</div>
+                            </div>
+                            <div className="mb-0 muted-text w-50 text-center">
+                              <div>End</div> <div className="text-color">{booking?.end_time ? new Date(booking?.end_time).toLocaleTimeString() : ""}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Col>
+
+                    <Col md={6} className="pe-0">
+                      <div className="bg-white d-flex p-3 gap-2" style={{ borderRadius: "10px", width: "100%" }}>
+                        <div>
+                          <img src="/assets/Admin/Game/Notification3.svg" alt="Game Timer" />
+                        </div>
+                        <div className="d-flex flex-column m-auto" style={{ width: "100%" }}>
+                          <div>
+                            Charges
+                          </div>
+                          <div className="text-color fs-4">
+                            ₹ {priceToPay}
+                          </div>
+                        </div>
+                      </div>
+                    </Col>
+
+                    <Col md={6} className="pe-0">
+                      <div className="bg-white d-flex p-3" style={{ borderRadius: "10px", width: "100%" }}>
+                        <div>
+                          <img src="/assets/Admin/Game/Notification4.svg" alt="Game Timer" />
+                        </div>
+
+                        {looserPlayer && (
+                          <div className="mx-4 my-auto" style={{ width: "100%" }}>
+                            <div className="fw-bold">Looser </div>
+                            <div className="text-color fs-5">
+                              {looserPlayer.name}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="px-2 my-auto">
+                          <small>Select looser</small>
+                        </div>
+
+                        <OverlayTrigger
+                          placement="left"
+                          show={showTooltip}
+                          onToggle={(isVisible) => setShowTooltip(isVisible)}
+                          overlay={
+                            <Tooltip
+                              id="player-list-tooltip"
+                              onMouseEnter={() => setShowTooltip(true)}
+                              onMouseLeave={() => setShowTooltip(false)}
+                            >
+                              <h6 className="m-2 p-2 text-light border-bottom">Select Looser Player</h6>
+                              <ul className="m-2 p-2 list-unstyled">
+                                {selectedCustomer && (
+                                  <li
+                                    className="fw-bold p-1"
+                                    onClick={() => {
+                                      setLooserPlayer(selectedCustomer);
+                                      setShowTooltip(false);
+                                    }}
+                                    // style={{ cursor: "pointer" }}
+                                    style={{
+                                      cursor: "pointer",
+                                      transition: "all 0.2s ease-in-out",
+                                      backgroundColor: "transparent",
+                                      color: "white",
+                                    }}
+                                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f8f9fa", e.currentTarget.style.color = "black")}
+                                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent", e.currentTarget.style.color = "white")}
+                                  >
+                                    {selectedCustomer?.name} (Customer)
+                                  </li>
+                                )}
+                                {players?.length > 0 ? (
+                                  players.map((player, index) => (
+                                    <li
+                                      key={index}
+                                      className="p-1"
+                                      onClick={() => handleSelectLooserPlayer(player)}
+                                      style={{
+                                        cursor: "pointer",
+                                        transition: "all 0.2s ease-in-out",
+                                        backgroundColor: "transparent",
+                                        color: "white",
+                                      }}
+                                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f8f9fa", e.currentTarget.style.color = "black")}
+                                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent", e.currentTarget.style.color = "white")}
+                                    >
+                                      {player.name}
+                                    </li>
+                                  ))
+                                ) : (
+                                  <li className="muted-text">No Players</li>
+                                )}
+                              </ul>
+                            </Tooltip>
+                          }
+                        >
+                          <Stack
+                            direction="horizontal"
+                            gap={2}
+                            className="align-items-center mt-2 float-end px-6"
+                            onMouseEnter={() => setShowTooltip(true)}
+                            onMouseLeave={() => setShowTooltip(false)}
+                          >
+                            <div className="d-flex">
+                              <Image src={userProfile} roundedCircle width={35} height={35} className="border" />
+                              {players &&
+                                players.slice(0, maxVisiblePlayers).map((player, index) => (
+                                  <Image
+                                    src={player.customerProfile || userProfile}
+                                    roundedCircle
+                                    width={35}
+                                    height={35}
+                                    className="border ms-n3"
+                                    key={index}
+                                  />
+                                ))}
+                              {players?.length > maxVisiblePlayers && (
+                                <span className="fw-bold muted-text ms-2">+{players.length - maxVisiblePlayers}</span>
+                              )}
+                            </div>
+                          </Stack>
+                        </OverlayTrigger>
+                      </div>
+                    </Col>
+                  </Row>
+               </div>
+               </>
               )
             :
             <></>

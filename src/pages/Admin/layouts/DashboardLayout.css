@@ -15,8 +15,9 @@
 
 .content-wrapper {
   background-color: #F1F1F1;
+  /* background-color: rgb(230, 227, 232); */
   padding: 20px;
-  height: 100vh;
+  height: auto;
   margin-top: 60px; /* Navbar height */
 }
 

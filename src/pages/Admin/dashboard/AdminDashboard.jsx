@@ -265,7 +265,7 @@ const AdminDashboard = () => {
     
       </Row>
 
-      {/* Mobile Bookings Card */}
+      {/* Mobile Bookings Card
       <div className="d-md-none mb-4">
         <Card.Body>
           <ListGroup variant="flush">
@@ -297,7 +297,7 @@ const AdminDashboard = () => {
             </ListGroup.Item>
           </ListGroup>
         </Card.Body>
-      </div>
+      </div> */}
 
       <Row className="g-4">
         {/* Left Column */}

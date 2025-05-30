@@ -213,7 +213,7 @@ export const SaleOrder = () => {
     },
     {
       name: "Client",
-      selector: (row) => row.customer_id?.name || "N/A",
+      selector: (row) => row.customer_id?.name || row?.cafe?.name,
       sortable: true,
     },
     {
@@ -222,7 +222,7 @@ export const SaleOrder = () => {
       sortable: true,
       cell: (row) => (
         <span>
-          {row.total ? row.total : "N/A"}
+         ₹ {row.total ? row.total : "N/A"}
         </span>
       ),
     },
@@ -308,18 +308,16 @@ export const SaleOrder = () => {
   return (
     // <Container className="p-0">
     <Container data-aos="fade-right" data-aos-duration="1000" fluid className="mt-2 min-vh-100">
-
       <Row>
-
         {/* Items List Card */}
         <Col sm={12} className="p-4">
-          <div className="p-2" style={{ top: "186px", fontSize: "12px" }}>
+          <div className="p-2" style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
-                <Link to="/admin/dashboard">Home</Link>
+                <Link to="/superadmin/dashboard">Home</Link>
               </BreadcrumbItem>
               <BreadcrumbItem>
-                <Link to="/admin/inventory/dashboard">Inventory</Link>
+                <Link to="/Inventory/dashboard">Inventory</Link>
               </BreadcrumbItem>
               <BreadcrumbItem active>Sales Order List</BreadcrumbItem>
             </Breadcrumb>
@@ -385,7 +383,7 @@ export const SaleOrder = () => {
               <Col sm={5} className="d-flex justify-content-end text-end my-2">
                 <Button
                   variant="denger"
-                  className="btn px-4 mx-2"
+                  className="btn px-4 mx-2 border-1 border-danger text-danger"
                   size="sm"
                   onClick={handleExport}
                 >

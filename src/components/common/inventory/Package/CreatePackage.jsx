@@ -1,4 +1,4 @@
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormControl, FormLabel, FormSelect, Row, Table } from "react-bootstrap";
+import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormControl, FormLabel, FormSelect, Row, Spinner, Table } from "react-bootstrap";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import companylog from "/assets/inventory/companylogo.png";
 import { use, useEffect, useState } from "react";
@@ -33,16 +33,14 @@ export const CreatePackage = () => {
     const [soSelected, setSoSelected] = useState("");
     const [selectedClient, setSelectedClient] = useState("");
     const [taxList, setTaxList] = useState([]);
+    const [submitLoading, setSubmitLoading] = useState(false);
 
     const dispatch = useDispatch();
     const location = useLocation();
     const navigate = useNavigate();
-    // const salesOrderData = location.state;
 
     const selectedSo = useSelector((state) => state.saSalesOrder.selectedsalesOrder);
-
     const { salesOrders, loading, error } = useSelector((state) => state.saSalesOrder);
-
     const cafes = useSelector((state) => state.cafes.cafes);
 
     const user = JSON.parse(sessionStorage.getItem("user"));
@@ -149,6 +147,7 @@ export const CreatePackage = () => {
         };
 
         try {
+            setSubmitLoading(true);
             const response = await dispatch(createPackage(submitData)).unwrap();
             navigate("/Inventory/Package/View", { state: response?._id });
 
@@ -161,18 +160,17 @@ export const CreatePackage = () => {
             });
         } catch (error) {
             // Handle error
+            setSubmitLoading(true);
             console.error('Error creating package:', error);
         }
     };
-
-        console.log("soSelected", soSelected);
 
     return (
         <Container >
             <Row className="mx-2">
                 {/* Breadcrumb Section */}
-                <Col sm={12} className="my-3">
-                    <div style={{ top: "186px", fontSize: "12px" }}>
+                <Col sm={12} className="mt-3">
+                    <div style={{ top: "186px", fontSize: "16px" }}>
                         <Breadcrumb>
                             <BreadcrumbItem href="#">Home</BreadcrumbItem>
                             <BreadcrumbItem> <Link to="/Inventory/Package">Package List</Link></BreadcrumbItem>
@@ -318,7 +316,14 @@ export const CreatePackage = () => {
                                 />
                             </Col>
                             <Col sm={12} className="my-3 d-flex justify-content-end">
-                                <Button type="submit " onClick={handleSubmit} style={{ padding: "10px 35px", fontSize: "14px" }}>Submit</Button>
+                                {/* <Button type="submit " onClick={handleSubmit} style={{ padding: "10px 35px", fontSize: "14px" }}>Submit</Button> */}
+                                <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
+                                    {submitLoading ? (
+                                        <>
+                                            <Spinner animation="border" size="sm" className="me-2" /> Saving...
+                                        </>
+                                    ) : ('Submit')}
+                                </Button>
                             </Col>
                         </Row>
                     </Card>}

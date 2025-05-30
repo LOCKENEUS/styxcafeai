@@ -1,12 +1,9 @@
 import { useState, useEffect } from "react";
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect, Image, InputGroup, Offcanvas, Row } from "react-bootstrap";
-import InputGroupText from "react-bootstrap/esm/InputGroupText";
-import { FaPlus, FaStarOfLife, FaTrash } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
-import { getItemById, addItem, updateItem } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
+import { Button, Col, Form, FormControl, FormGroup, FormLabel, FormSelect, InputGroup, Offcanvas, Row, Spinner } from "react-bootstrap";
+import { FaPlus } from "react-icons/fa";
+import { addItem, } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { useDispatch, useSelector } from "react-redux";
-
-import { getCustomFields, deleteCustomField } from "../../../../store/AdminSlice/CustomField";
+import { getCustomFields } from "../../../../store/AdminSlice/CustomField";
 import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
 import { getVendors } from "../../../../store/AdminSlice/Inventory/VendorSlice";
 import Tax from "../../../../pages/Admin/Inventory/modal/Tax";
@@ -14,14 +11,13 @@ import { Units } from "../modal/units";
 import { Brand } from "../modal/brand";
 import { Manufacturer } from "../modal/manufacturer";
 
-
 const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
   const dispatch = useDispatch();
-
   const [imagePreview, setImagePreview] = useState('https://fsm.lockene.net/assets/Web-Fsm/images/avtar/3.jpg');
   const [showUnitModal, setShowUnitModal] = useState(false);
   const [showTaxModal, setShowTaxModal] = useState(false);
   const [showManufacturerModal, setShowManufacturerModal] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     sku: '',
@@ -46,23 +42,41 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
     linking: 'Y',
     image: null,
   })
+  const [superAdminId, setSuperAdminId] = useState('');
   const [showBrandModal, setShowBrandModal] = useState(false);
   const [showTaxFields, setShowTaxFields] = useState(true);
   const customFields = useSelector(state => state.customFields.customFields);
   const taxFields = useSelector(state => state.taxFieldSlice.taxFields);
-  const cafeId = JSON.parse(sessionStorage.getItem("user"))?._id;
-  const vendors = useSelector(state => state.vendors.vendors);
-
-  // Organize custom fields by type
+  const taxFieldsList = useSelector((state) => state.taxFieldSlice.taxFields);
   const unitOptions = customFields.filter(field => field.type === "Unit");
   const manufacturerOptions = customFields.filter(field => field.type === "Manufacturer");
   const brandOptions = customFields.filter(field => field.type === "Brand");
+  const vendors = useSelector(state => state.vendors.vendors);
 
   useEffect(() => {
-    dispatch(getCustomFields(cafeId));
-    dispatch(getTaxFields(cafeId));
-    dispatch(getVendors(cafeId));
-  }, [dispatch, cafeId]);
+    const userData = sessionStorage.getItem("user");
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      setSuperAdminId(parsedUser._id);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (superAdminId) {
+      dispatch(getCustomFields(superAdminId));
+    }
+  }, [dispatch, superAdminId]);
+
+  useEffect(() => {
+    if (superAdminId) {
+      dispatch(getTaxFields(superAdminId));
+    }
+  }, [dispatch, superAdminId]);
+  useEffect(() => {
+    if (superAdminId) {
+      dispatch(getVendors(superAdminId));
+    }
+  }, [dispatch, superAdminId]);
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -99,7 +113,6 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
     e.preventDefault();
 
     const formDataToSend = new FormData();
-    formDataToSend.append('cafe', cafeId);
     formDataToSend.append('name', formData.name);
     formDataToSend.append('sku', formData.sku);
     formDataToSend.append('unit', formData.unit);
@@ -120,10 +133,6 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
     formDataToSend.append('isbn', formData.isbn);
     formDataToSend.append('costPrice', parseFloat(formData.costPrice));
     formDataToSend.append('sellingPrice', parseFloat(formData.sellingPrice));
-    // formDataToSend.append('preferredVendor', formData.preferredVendor);
-    // formDataToSend.append('stock', parseInt(formData.stock, 10));
-    // formDataToSend.append('stockRate', parseFloat(formData.stock_rate));
-    // formDataToSend.append('reorderPoint', parseInt(formData.reorder_point, 10));
     formDataToSend.append('linking', formData.linking);
     if (formData.image) {
       formDataToSend.append('image', formData.image);
@@ -132,6 +141,7 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
     formDataToSend.append('is_deleted', false);
 
     try {
+      setSubmitLoading(true);
       await dispatch(addItem(formDataToSend)).then(() => {
 
         setFormData({
@@ -155,22 +165,17 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
           isbn: '',
           costPrice: '',
           sellingPrice: '',
-          // preferredVendor: '',
-          // stock: '',
-          // stock_rate: '',
-          // reorder_point: '',
           linking: 'Y',
           image: null,
-
         });
+        setSubmitLoading(false);
         handleCloseCreateItem();
       });
     } catch (error) {
+      setSubmitLoading(false);
       console.error('Error adding item:', error);
     }
   };
-
-
 
   return (
     <Offcanvas
@@ -187,9 +192,7 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
       <Offcanvas.Body>
         <Form onSubmit={handleSubmitData}>
           {/* Basic Information Card */}
-
           <Row>
-
             <Col sm={6} className="mb-3">
               <FormGroup>
                 <FormLabel className="fw-bold">
@@ -253,7 +256,6 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
                 </InputGroup>
               </FormGroup>
             </Col>
-
 
             <Col sm={6} className="mb-3">
               <FormGroup>
@@ -516,7 +518,6 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
               </FormGroup>
             </Col>
 
-
             <Col sm={6} className="mb-3">
               <FormGroup>
                 <FormLabel className="fw-bold">
@@ -560,99 +561,30 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
             </Col>
 
             {/* <Col sm={6} className="mb-3">
-                <FormGroup>
-                  <FormLabel className="fw-bold">
-                    Preferred Vendor
-                  </FormLabel>
-                  <FormSelect
-                    name="preferredVendor"
-                    value={formData.preferredVendor}
-                    onChange={handleChange}
-                  >
-                    <option value="">Select vendor</option>
-                    {vendors.map((vendor, index) => (
-                      <option key={index} value={vendor._id}>{vendor.name}</option>
-                    ))}
-                  </FormSelect>
-                </FormGroup>
-              </Col>
-            
-
-         
-              <Col sm={6} className="mb-3">
-                <FormGroup>
-                  <FormLabel className="fw-bold">
-                    Opening Stock
-                  </FormLabel>
-                  <FormControl
-                    type="tel"
-                    id="stock"
-                    name="stock"
-                    placeholder="Enter stock"
-                    value={formData.stock}
-                    onChange={handleChange}
-                  />
-                </FormGroup>
-              </Col>
-
-              <Col sm={6} className="mb-3">
-                <FormGroup>
-                  <FormLabel className="fw-bold">
-                    Stock Rate
-                  </FormLabel>
-                  <FormControl
-                    type="number"
-                    id="stock_rate"
-                    name="stock_rate"
-                    placeholder="Enter stock rate"
-                    value={formData.stock_rate}
-                    onChange={handleChange}
-                  />
-                </FormGroup>
-              </Col>
-
-              <Col sm={6} className="mb-3">
-                <FormGroup>
-                  <FormLabel className="fw-bold">
-                    Reorder Point
-                  </FormLabel>
-                  <FormControl
-                    type="number"
-                    id="reorder_point"
-                    name="reorder_point"
-                    placeholder="Enter reorder point"
-                    value={formData.reorder_point}
-                    onChange={handleChange}
-                  />
-                </FormGroup>
-              </Col> */}
-
-<Col sm={6} className="mb-3">
-  <Form.Label htmlFor="linking">Link with Website</Form.Label>
-  <div className="form-group mt-2 mb-3 d-flex gap-3">
-    <Form.Check
-      type="radio"
-      id="linkingradioinline1"
-      name="linking"
-      label="Yes"
-      value="Y"
-      checked={formData.linking === 'Y'}
-      onChange={(e) => setFormData((prev) => ({ ...prev, linking: e.target.value }))}
-      className="mb-0"
-    />
-    <Form.Check
-      type="radio"
-      id="linkingradioinline2"
-      name="linking"
-      label="No"
-      value="N"
-      checked={formData.linking === 'N'}
-      onChange={(e) => setFormData((prev) => ({ ...prev, linking: e.target.value }))}
-      className="mb-0"
-    />
-  </div>
-</Col>
-
+              <Form.Label htmlFor="linking">Link with Website</Form.Label>
+              <div className="form-group mt-2 mb-3 d-flex gap-3">
+                <Form.Check
+                  type="radio"
+                  id="linkingradioinline1"
+                  name="linking"
+                  label="Yes"
+                  value="Y"
+                  checked={formData.linking === 'Y'}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, linking: e.target.value }))}
+                  className="mb-0"
+                />
+                <Form.Check
+                  type="radio"
+                  id="linkingradioinline2"
+                  name="linking"
+                  label="No"
+                  value="N"
+                  checked={formData.linking === 'N'}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, linking: e.target.value }))}
+                  className="mb-0"
+                />
+              </div>
+            </Col> */}
 
             <Col sm={3} className="mb-3">
               <FormGroup>
@@ -677,11 +609,19 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
             </Col>
           </Row>
 
-
           {/* Submit Buttons */}
           <div className="d-flex gap-2">
-            <Button variant="primary" type="submit">
+            {/* <Button variant="primary" type="submit">
               Submit
+            </Button> */}
+
+            <Button variant="primary" type="submit" className="float-end">
+              {submitLoading ? (
+                <>
+                  <Spinner animation="border" size="sm" className="me-2" /> Saving...
+                </>
+              ) : ('Submit')}
+
             </Button>
             <Button variant="secondary" onClick={handleCloseCreateItem}>
               Cancel
@@ -697,7 +637,6 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
       </Offcanvas.Body>
     </Offcanvas>
   );
-
 };
 
 export default OffcanvesItems;

@@ -1,4 +1,4 @@
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormControl, FormLabel, FormSelect, Row, Table } from "react-bootstrap";
+import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormControl, FormLabel, FormSelect, Row, Spinner, Table } from "react-bootstrap";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import companylog from "/assets/inventory/companylogo.png";
 import { use, useEffect, useState } from "react";
@@ -37,6 +37,7 @@ export const CreateShipment = () => {
     const [soSelected, setSoSelected] = useState("");
     const [selectedClient, setSelectedClient] = useState("");
     const [taxList, setTaxList] = useState([]);
+    const [submitLoading, setSubmitLoading] = useState(false);
 
     const dispatch = useDispatch();
     const location = useLocation();
@@ -52,9 +53,9 @@ export const CreateShipment = () => {
     const cafeId = user?._id;
     const userName = user?.name;
     const userEmail = user?.email;
-    const UserContactN = user?.contact_no;
+    const UserContactN = user?.contact;
     const UserAddress = user?.address;
-    const UesrPAN = user?.panNo;
+    const UesrPAN = user?.pan;
 
     useEffect(() => {
         if (id) {
@@ -162,6 +163,7 @@ export const CreateShipment = () => {
         };
 
         try {
+            setSubmitLoading(true);
             const response = await dispatch(createShipment(submitData)).unwrap();
             navigate("/Inventory/Shipment/View", { state: response?._id });
 
@@ -174,6 +176,7 @@ export const CreateShipment = () => {
             });
         } catch (error) {
             // Handle error
+            setSubmitLoading(false);
             console.error('Error creating package:', error);
         }
     };
@@ -186,16 +189,14 @@ export const CreateShipment = () => {
         }
     };
 
-    console.log("packages", selectedSo.packages)
-
     return (
         <Container >
             <Row className="mx-2">
                 {/* Breadcrumb Section */}
-                <Col sm={12} className="my-3">
-                    <div style={{ top: "186px", fontSize: "12px" }}>
+                <Col sm={12} className="mt-3">
+                    <div style={{ top: "186px", fontSize: "16px" }}>
                         <Breadcrumb>
-                            <BreadcrumbItem href="#">Home</BreadcrumbItem>
+                            <BreadcrumbItem href="/superadmin/dashboard">Home</BreadcrumbItem>
                             <BreadcrumbItem> <Link to="/Inventory/Package">Shipment List</Link></BreadcrumbItem>
                             <BreadcrumbItem active>Package Shipment Create</BreadcrumbItem>
                         </Breadcrumb>
@@ -209,12 +210,21 @@ export const CreateShipment = () => {
                                 <img src={companylog} alt="Logo" className="img-fluid" />
                             </Col>
                             <Col sm={8}>
-                                <h5>{userName}</h5>
+                                {/* <h5>{userName}</h5>
                                 <p className="mb-1">{userEmail} / {UserContactN}</p>
                                 <p className="mb-1">
                                     {UserAddress}
                                 </p>
-                                <strong>PAN: {UesrPAN}</strong>
+                                <strong>PAN: {UesrPAN}</strong> */}
+
+                                <p className="my-3">{UserAddress}
+                                    <span stynle={{ fontSize: '16px' }}>{userName}</span><br />
+                                    <span>{userEmail} / {UserContactN}</span>
+                                    <br />
+                                    <span>{UserAddress}</span>
+                                    <br />
+                                    <span>PAN:</span> {UesrPAN}
+                                </p>
                             </Col>
                             <Col sm={2} className=" d-flex  ">
                                 {/* <span className="p-2 float-right">PO : <b className="text-primary">{selectedPo?.status}</b></span> */}
@@ -269,22 +279,6 @@ export const CreateShipment = () => {
                                     Package No
                                     <span style={{ color: "red" }}>*</span>
                                 </FormLabel>
-                                {/* <div className="d-flex flex-wrap gap-2">
-                                    {selectedSo?.packages?.map((pkg, index) => (
-                                        <div key={index}>
-                                            <label>
-                                                <input
-                                                    type="checkbox"
-                                                    style={{ height: "18px", width: "20px" }}
-                                                    checked={selectedPack.includes(pkg._id)}
-                                                    value={pkg._id}
-                                                    onChange={(e) => handlePackageCheck(pkg._id, e.target.checked)}
-                                                />
-                                                {pkg.po_no}
-                                            </label>
-                                        </div>
-                                    ))}
-                                </div> */}
                                 <div className="d-flex flex-wrap gap-2">
                                     {selectedSo?.packages?.map((pkg, index) => (
                                         <div key={index}
@@ -389,6 +383,7 @@ export const CreateShipment = () => {
                                                                 onChange={(e) =>
                                                                     handleQtyChange(e, pkg._id, item._id)
                                                                 }
+                                                                onWheel={(e) => e.target.blur()}
                                                             />
                                                         </td>
                                                     </tr>
@@ -413,7 +408,14 @@ export const CreateShipment = () => {
                                 />
                             </Col>
                             <Col sm={12} className="my-3 d-flex justify-content-end">
-                                <Button type="submit " onClick={handleSubmit} style={{ padding: "10px 35px", fontSize: "14px" }}>Submit</Button>
+                                {/* <Button type="submit " onClick={handleSubmit} style={{ padding: "10px 35px", fontSize: "14px" }}>Submit</Button> */}
+                                <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
+                                    {submitLoading ? (
+                                        <>
+                                            <Spinner animation="border" size="sm" className="me-2" /> Saving...
+                                        </>
+                                    ) : ('Submit')}
+                                </Button>
                             </Col>
                         </Row>
                     </Card>}

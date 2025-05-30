@@ -1,4 +1,4 @@
-import { Button, Col, FormGroup, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "react-bootstrap";
+import { Button, Col, FormGroup, Modal, ModalBody, ModalFooter, ModalHeader, Row, Spinner } from "react-bootstrap";
 import { addCustomField } from "../../../../store/AdminSlice/CustomField";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -6,10 +6,11 @@ import { toast } from "react-toastify";
 
 export const Manufacturer = ({ show, handleClose, superAdminId }) => {
   const dispatch = useDispatch();
-
   const [formData, setFormData] = useState({
     name: "",
   });
+
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -29,15 +30,17 @@ export const Manufacturer = ({ show, handleClose, superAdminId }) => {
     };
 
     try {
+      setSubmitLoading(true);
       await dispatch(addCustomField(formDataSubmit));
+      setSubmitLoading(false);
       // toast.success("Manufacturer added successfully!");
       handleClose();
       setFormData({
         name: "",
       })
     } catch (error) {
+      setSubmitLoading(false);
       console.error("Error submitting manufacturer field:", error);
-     
     }
   };
 
@@ -85,8 +88,16 @@ export const Manufacturer = ({ show, handleClose, superAdminId }) => {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" type="submit">
+          {/* <Button variant="primary" type="submit">
             Save
+          </Button> */}
+          <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
+            {submitLoading ? (
+              <>
+                <Spinner animation="border" size="sm" className="me-2" /> Saving...
+              </>
+            ) : ('Save')}
+
           </Button>
         </ModalFooter>
       </form>

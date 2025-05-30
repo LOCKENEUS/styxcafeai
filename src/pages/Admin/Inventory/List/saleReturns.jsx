@@ -156,10 +156,10 @@ export const InvoicePaymentInventory = () => {
   ) || [];
 
   return (
-    <Container className="p-0">
+    <Container className="p-4">
       <Row>
-        <Col sm={12} className="mx-2 my-3">
-          <div style={{ top: "186px", fontSize: "12px" }}>
+        <Col sm={12} className="mx-2 mb-3">
+          <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem href="#">Home</BreadcrumbItem>
               <BreadcrumbItem href="#">Sales</BreadcrumbItem>
@@ -186,7 +186,7 @@ export const InvoicePaymentInventory = () => {
                   <FormControl
                     type="search"
                     size="sm"
-                    placeholder="Search payments..."
+                    placeholder="Search..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     style={{ backgroundColor: "#FAFAFA", border: "none" }}

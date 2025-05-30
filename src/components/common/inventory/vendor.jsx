@@ -84,9 +84,9 @@ export const Vendor = () => {
 
   return (
     <Container>
-      <Row style={{ marginTop: "50px" }}>
+      <Row style={{ marginTop: "16px" }}>
 
-        <Col sm={12} className="d-flex "  >
+        <Col sm={12} className="d-flex" style={{ fontSize: "16px" }} >
           <div style={{ top: "186px" }}>
             <Breadcrumb  >
               <BreadcrumbItem href="#">Home</BreadcrumbItem>
@@ -96,17 +96,15 @@ export const Vendor = () => {
               <BreadcrumbItem active>Vendor List</BreadcrumbItem>
             </Breadcrumb>
           </div>
-
         </Col>
 
         {/* ----------------------------------------------------------------------------------------------------------------------------- */}
 
-        <Card style={{ marginLeft: "10px" }}>
+        <Card style={{ marginLeft: "10px" }} className="shadow-sm my-3">
           <Row>
-
             <Col sm={4} className="d-flex">
               <div className="d-flex justify-content-start align-items-start mx-1 my-4" >
-                <h1
+                {/* <h1
                   style={{
                     textTransform: 'uppercase',
                     letterSpacing: '5px',
@@ -116,7 +114,19 @@ export const Vendor = () => {
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent'
                   }}
-                >Vendor List</h1>
+                >Vendor List</h1> */}
+
+                 <h1 className="text-center mx-2 mt-2"
+                    style={{
+                      textTransform: 'uppercase',
+                      letterSpacing: '5px',
+                      fontWeight: 'bold',
+                      fontSize: '18px',
+                      background: 'linear-gradient(to right,rgb(0, 119, 255),rgb(0, 17, 255))',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent'
+                    }}
+                  >Vendor List</h1>
               </div>
             </Col>
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Modal, Breadcrumb, BreadcrumbItem, Dropdown } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Form, InputGroup, Table, Modal, Breadcrumb, BreadcrumbItem, Dropdown, ButtonGroup, Spinner } from "react-bootstrap";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import { FaFilePdf, FaRupeeSign, FaTrash, FaUpload } from "react-icons/fa";
 import { BiArrowToLeft, BiPlus } from "react-icons/bi";
@@ -9,7 +9,7 @@ import Tax from "../modal/Tax";
 // import AddClint from "../modal/vendorListModal";
 import PaymentTermsModal from "../modal/PaymentTermsModal";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { CreatePurchaseOrder, GetVendorsList, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { CreatePurchaseOrder, getStyxData, GetVendorsList, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch, useSelector } from "react-redux";
 import AddClint from "../modal/AddClint";
 import VendorsList from "../modal/vendoreListModal";
@@ -17,6 +17,7 @@ import { getItems } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
 import { getCustomers } from "../../../../store/AdminSlice/CustomerSlice";
 import { addPBill, getPBillById, updatePBill } from "../../../../store/AdminSlice/Inventory/PBillSlice";
+import { getItems as getSuperItems } from "../../../../store/slices/inventory";
 
 const PurchaseBillCreate = () => {
   const [show, setShow] = useState(false);
@@ -26,40 +27,50 @@ const PurchaseBillCreate = () => {
   const handleShowCreateItem = () => setShowOffCanvasCreateItem(true);
   const handleCloseCreateItem = () => setShowOffCanvasCreateItem(false);
   const [showPaymentTerms, setShowPaymentTerms] = useState(false);
-  const navigate = useNavigate();
-  const [isMobile, setIsMobile] = useState(false); 
-
-
+  const [isMobile, setIsMobile] = useState(false);
   const [products, setProducts] = useState([
     { id: 1, item: "", quantity: 1, price: 0, tax: 0, total: 0, totalTax: 0 },
   ]);
   const [showProductList, setShowProductList] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [showTaxModal, setShowTaxModal] = useState(false);
-
   const [selectedClient, setSelectedClient] = useState(null);
+  const [userType, setUserType] = useState("Superadmin");
+
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { customFields } = useSelector((state) => state.customFields);
   const { taxFields } = useSelector((state) => state.taxFieldSlice);
-  const { items, loading } = useSelector((state) => state.items);
+  const { loading } = useSelector((state) => state.items);
+  let items = []
+  if (userType === "Superadmin") {
+    items = useSelector((state) => state.inventorySuperAdmin.it);
+  } else {
+    items = useSelector((state) => state.items.items);
+  }
   const [showVendorList, setShowVendorList] = useState(false);
-  const handleShowVendorList = () => setShowVendorList(true);
+  const handleShowVendorList = () => {
+    setUserType("Vendor");
+    setShowVendorList(true);
+  }
   const handleCloseVendorList = () => setShowVendorList(false);
   const [vendorSelected, setVendorSelected] = useState([]);
   const [vendorId, setVendorId] = useState("");
-  const user = JSON.parse(sessionStorage.getItem("user"));
- 
-  const cafeId = user?._id;
 
-  const userName= user?.name;
-  const userEmail= user?.email;
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const cafeId = user?._id;
+  const userName = user?.name;
+  const userEmail = user?.email;
   const UserContactN = user?.contact_no;
   const UserAddress = user?.address;
   const UesrPAN = user?.panNo;
 
   // Filter payment terms from custom fields
   const paymentTerms = customFields.filter(field => field.type === 'Payment Terms');
+  const { styxData } = useSelector(state => state.purchaseOrder);
 
   useEffect(() => {
+    getStyxData();
     dispatch(GetVendorsList(cafeId));
     dispatch(getTaxFields(cafeId));
     dispatch(getItems(cafeId));
@@ -76,6 +87,14 @@ const PurchaseBillCreate = () => {
       dispatch(getCustomers(cafeId));
     }
   }, [dispatch]);
+
+  useEffect(() => {
+    if (userType === "Superadmin") {
+      dispatch(getSuperItems());
+    } else {
+      dispatch(getItems(cafeId));
+    }
+  }, [userType])
 
   useEffect(() => {
     const handleResize = () => {
@@ -105,8 +124,8 @@ const PurchaseBillCreate = () => {
   const calculateTotal = (price, quantity, tax) => {
     const subtotal = Math.round(price * quantity * 100) / 100;
     const totalTax = Math.round((subtotal * tax) / 100 * 100) / 100;
-    return { 
-      total: Math.round((subtotal + totalTax) * 100) / 100, 
+    return {
+      total: Math.round((subtotal + totalTax) * 100) / 100,
       totalTax: totalTax
     };
   };
@@ -119,7 +138,7 @@ const PurchaseBillCreate = () => {
         if (field === "item") {
           const selectedItem = items.find(item => item._id === value);
           if (selectedItem) {
-            updatedProduct.price = Math.round(selectedItem.sellingPrice * 100) / 100;
+            updatedProduct.price = Math.round(selectedItem.costPrice * 100) / 100;
             updatedProduct.tax = selectedItem.tax;
             const itemTax = taxFields.find(tax => tax._id === selectedItem.tax);
             updatedProduct.taxRate = itemTax ? Math.round(itemTax.tax_rate * 100) / 100 : 0;
@@ -127,15 +146,12 @@ const PurchaseBillCreate = () => {
           const isDuplicate = products.some(
             (product) => product.id !== id && product.item === value
           );
-      
+
           if (isDuplicate) {
             alert("You have selected the same item.");
-            return product; 
+            return product;
           }
-          
-         
         }
-        
 
         if (field === "tax") {
           const selectedTax = taxFields.find(tax => tax._id === value);
@@ -152,10 +168,9 @@ const PurchaseBillCreate = () => {
 
         return updatedProduct;
       }
-      
+
       return product;
     });
-
     setProducts(updatedProducts);
   };
 
@@ -171,10 +186,6 @@ const PurchaseBillCreate = () => {
   const handleClientSelect = (client) => {
     setSelectedClient(client);
   };
-
-  // Update the payment terms section in your existing JSX
-
-  // Add the payment terms modal
 
   const [totals, setTotals] = useState({
     subtotal: 0,
@@ -269,7 +280,6 @@ const PurchaseBillCreate = () => {
     }));
   };
 
-  
   // Add this useEffect to fetch data when id is present
   useEffect(() => {
     if (id) {
@@ -277,8 +287,8 @@ const PurchaseBillCreate = () => {
         .unwrap()
         .then((data) => {
           // Set vendor data
-          setVendorSelected(data.vendor_id);
-          setVendorId(data.vendor_id._id);
+          setVendorSelected(data?.vendor_id);
+          setVendorId(data?.vendor_id?._id);
 
           // Set form data including delivery type and customer
           setFormData({
@@ -290,7 +300,7 @@ const PurchaseBillCreate = () => {
             shipment_preference: data.shipment_preference || '',
             description: data.description || '',
             internal_team_notes: data.internal_team_notes || '',
-            customer_id: data.customer_id?._id || ''
+            customer_id: data?.customer_id?._id || ''
           });
 
           // Set selected customer if delivery type is customer
@@ -349,7 +359,7 @@ const PurchaseBillCreate = () => {
       internal_team_notes: formData.internal_team_notes,
       // Add customer_id when delivery type is Customer
       ...(formData.delivery_type === "Customer" && { customer_id: formData.customer_id }),
-      
+
       // Financial details
       subtotal: Math.round(totals.subtotal * 100) / 100,
       discount_value: Math.round(totals.discount * 100) / 100,
@@ -372,6 +382,7 @@ const PurchaseBillCreate = () => {
     };
 
     try {
+      setSubmitLoading(true);
       if (id) {
         await dispatch(updatePBill({ id, billData: submitData })).unwrap().then((res) => {
           navigate(`/admin/inventory/PurchaseBillDetails/${res._id}`);
@@ -382,10 +393,10 @@ const PurchaseBillCreate = () => {
         });
       }
     } catch (error) {
+      setSubmitLoading(false);
       console.error('Error saving Purchase Bill:', error);
     }
   };
-
 
   // const handleVendorSelect = (newVendor) => {
   //   const selectedVendorId = newVendor;
@@ -405,14 +416,13 @@ const PurchaseBillCreate = () => {
   //   console.log("Selected vendor ID:---", vendorId);
   // };
 
-
   const handleVendorSelect = (newVendorId) => {
     const selectedVendor = vendorsList.find((vendor) => vendor?._id == newVendorId);
     if (selectedVendor) {
       setVendorSelected(selectedVendor);
       setFormData({
         ...formData,
-        vendor_id: selectedVendor?._id, 
+        vendor_id: selectedVendor?._id,
       });
       setVendorId(selectedVendor?._id);
     }
@@ -434,8 +444,8 @@ const PurchaseBillCreate = () => {
 
   return (
     <Container fluid className="p-4">
-      <Col sm={12} className="my-3">
-        <div style={{ top: "186px", fontSize: "12px" }}>
+      <Col sm={12} className="mb-3">
+        <div style={{ top: "186px", fontSize: "16px" }}>
           <Breadcrumb>
             <BreadcrumbItem >Home</BreadcrumbItem>
             <BreadcrumbItem><Link to="/admin/inventory/purchase-bill-list">Purchase Bill List</Link></BreadcrumbItem>
@@ -468,7 +478,7 @@ const PurchaseBillCreate = () => {
       <Card className="p-3 shadow-sm">
         <Row>
           <Col sm={4} className="d-flex border-end flex-column gap-2">
-            <div className="border-bottom ">
+            {/* <div className="border-bottom ">
               <div className="d-flex flex-row align-items-center justify-content-around mb-3 gap-2">
                 <h5 className="text-muted">Vendor :  </h5>
                 <Button
@@ -480,11 +490,39 @@ const PurchaseBillCreate = () => {
                   <span>+</span> Add Vendor
                 </Button>
               </div>
+            </div> */}
+
+            <div className="d-flex flex-row align-items-center mb-3 gap-2">
+              <h5 className="text-muted pt-1">Vendor:</h5>
+
+              <Dropdown as={ButtonGroup}>
+                <Dropdown.Toggle
+                  variant="outline-primary"
+                  style={{ width: "144px", height: "30px", borderStyle: "dashed" }}
+                  className="d-flex align-items-center justify-content-center"
+                >
+                  {userType === "Superadmin" ? "StyxCafe" : userType === "Vendor" ? vendorSelected?.name : "Select Vendor"}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={handleShowVendorList}>
+                    Add Vendor
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => {
+                    setVendorSelected(null);
+                    setUserType("Superadmin")
+                  }}>
+                    StyxCafe
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             </div>
             <Row className="mt-3">
-              <p style={{fontSize:"1.2rem" , fontWeight:"600"}} className="text-primary">{vendorSelected?.name || "Vendor Name"}</p>
+              <p style={{ fontSize: "1.2rem", fontWeight: "600" }} className="text-primary">
+                {vendorSelected ? vendorSelected?.name : styxData?.name}
+              </p>
 
-              <Col md={5}>
+              {/* <Col md={5}>
                 <h6 style={{ fontSize: "1rem" }}>Billing Address</h6>
                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.city1 || "Billing City"}</p>
                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state1 || "Billing State"}</p>
@@ -498,7 +536,39 @@ const PurchaseBillCreate = () => {
                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state2 || "Shipping State"}</p>
                 <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.pincode2 || "Shipping Pincode"}</p>
                 <p className="mb-0" style={{ fontSize: "0.9rem" }}>{vendorSelected?.country2 || "Shipping Country"}</p>
-              </Col>
+              </Col> */}
+
+              {userType === "Vendor" && <Col md={6}>
+                <h6 style={{ fontSize: "1rem" }}>Billing Address</h6>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.city1 || "Billing City"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state1 || "Billing State"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.pincode1 || "Billing Pincode"}</p>
+                <p className="mb-0" style={{ fontSize: "0.9rem" }}>{vendorSelected?.country1 || "Billing Country"}</p>
+              </Col>}
+
+              {userType === "Superadmin" && <Col md={6}>
+                <h6 style={{ fontSize: "1rem" }}>Billing Address</h6>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{styxData?.city1 || "Billing City"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{styxData?.state1 || "Billing State"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{styxData?.pincode1 || "Billing Pincode"}</p>
+                <p className="mb-0" style={{ fontSize: "0.9rem" }}>{styxData?.country1 || "Billing Country"}</p>
+              </Col>}
+
+              {userType === "Vendor" && <Col md={6}>
+                <h6 style={{ fontSize: "1rem" }}>Shipping Address</h6>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.city2 || "Shipping City"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.state2 || "Shipping State"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{vendorSelected?.pincode2 || "Shipping Pincode"}</p>
+                <p className="mb-0" style={{ fontSize: "0.9rem" }}>{vendorSelected?.country2 || "Shipping Country"}</p>
+              </Col>}
+
+              {userType === "Superadmin" && <Col md={6}>
+                <h6 style={{ fontSize: "1rem" }}>Shipping Address</h6>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{styxData?.city2 || "Shipping City"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{styxData?.state2 || "Shipping State"}</p>
+                <p className="mb-1" style={{ fontSize: "0.9rem" }}>{styxData?.pincode2 || "Shipping Pincode"}</p>
+                <p className="mb-0" style={{ fontSize: "0.9rem" }}>{styxData?.country2 || "Shipping Country"}</p>
+              </Col>}
             </Row>
 
 
@@ -514,31 +584,31 @@ const PurchaseBillCreate = () => {
             <div >
               {/* Radio Buttons */}
               <div className="d-flex flex-row mb-2 align-items-center gap-2">
-              <Form.Check
-                checked={formData.delivery_type === "organization"}
-                type="radio"
-                name="delivery_type" 
-                label="Organization"
-                value="organization"
-                onChange={(e) =>
-                  setFormData({ ...formData, delivery_type: e.target.value })
-                }
-                style={{ fontWeight: "bold", color: "black" }}
-                // check by default
-                defaultChecked
+                <Form.Check
+                  checked={formData.delivery_type === "organization"}
+                  type="radio"
+                  name="delivery_type"
+                  label="Organization"
+                  value="organization"
+                  onChange={(e) =>
+                    setFormData({ ...formData, delivery_type: e.target.value })
+                  }
+                  style={{ fontWeight: "bold", color: "black" }}
+                  // check by default
+                  defaultChecked
 
-              />
-              <Form.Check
-                type="radio"
-                name="delivery_type"
-                label="Customer"
-                value="customer"
-                checked={formData.delivery_type === "customer"}
-                onChange={(e) =>
-                  setFormData({ ...formData, delivery_type: e.target.value })
-                }
-                style={{ fontWeight: "bold", color: "black" }}
-              />
+                />
+                <Form.Check
+                  type="radio"
+                  name="delivery_type"
+                  label="Customer"
+                  value="customer"
+                  checked={formData.delivery_type === "customer"}
+                  onChange={(e) =>
+                    setFormData({ ...formData, delivery_type: e.target.value })
+                  }
+                  style={{ fontWeight: "bold", color: "black" }}
+                />
               </div>
 
 
@@ -557,8 +627,8 @@ const PurchaseBillCreate = () => {
 
               {formData.delivery_type === "customer" && (
                 <>
-                  <Form.Select 
-                    className="my-3" 
+                  <Form.Select
+                    className="my-3"
                     onChange={handleCustomerSelect}
                     value={selectedCustomer?._id || ''}
                   >
@@ -665,7 +735,7 @@ const PurchaseBillCreate = () => {
       <Card className="p-3 mt-3 shadow-sm">
         <Table responsive>
           <thead>
-          <tr className={` ${isMobile && "d-flex"} `}>
+            <tr className={` ${isMobile && "d-flex"} `}>
               <th className="w-25">PRODUCT</th>
               <th className="w-15">QUANTITY</th>
               <th className="w-15">PRICE</th>
@@ -687,7 +757,7 @@ const PurchaseBillCreate = () => {
                       <option value="">Select Item</option>
                       {items.map((item) => (
                         <option key={item._id} value={item._id}>
-                          {item.name} (₹{item.sellingPrice})
+                          {item.name} (₹{item.costPrice})
                         </option>
                       ))}
                     </Form.Select>
@@ -861,7 +931,7 @@ const PurchaseBillCreate = () => {
                 <Dropdown style={{ maxWidth: "200px" }}>
                   <Dropdown.Toggle variant="outline-primary" style={{ width: "100%" }}>
                     {totals.selectedTaxes.length ?
- `${totals.selectedTaxes.reduce((sum, tax) => sum + tax.rate, 0)}%` :                      '0.00% Tax'}
+                      `${totals.selectedTaxes.reduce((sum, tax) => sum + tax.rate, 0)}%` : '0.00% Tax'}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     {taxFields.map(tax => (
@@ -1043,16 +1113,21 @@ const PurchaseBillCreate = () => {
 
       {/* Add a submit button */}
       <div className="d-flex justify-content-end mt-3">
-        <Button
+        {/* <Button
           variant="primary"
           onClick={handleSubmit}
         >
           {id ? 'Update' : 'Submit'}
+        </Button> */}
+
+        <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
+          {submitLoading ? (
+            <>
+              <Spinner animation="border" size="sm" className="me-2" /> Saving...
+            </>
+          ) : (id ? 'Update' : 'Submit')}
         </Button>
       </div>
-
-      
-
     </Container>
   );
 };

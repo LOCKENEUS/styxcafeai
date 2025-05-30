@@ -241,7 +241,7 @@ export const PurchaseOrder = () => {
 
   const handleShowDetails = (item) => {
     // navigate("/admin/inventory/purchase-order-details", { state: item });
-    navigate(`/Inventory/PurchaseOrderDetails/${item._id}`, { state: item });
+    navigate(`/Inventory/PurchaseOrderDetails/${item._id}`);
   };
 
   const filteredList = formattedPOList.filter((item) =>
@@ -280,13 +280,13 @@ export const PurchaseOrder = () => {
     <Container>
       <Row>
         <Col sm={12} className="mx-2 my-3">
-          <div style={{ top: "186px", fontSize: "12px" }}>
+          <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
-                <Link to="/admin/dashboard">Home</Link>
+                <Link to="/superadmin/dashboard">Home</Link>
               </BreadcrumbItem>
               <BreadcrumbItem>
-                <Link to="/admin/inventory/dashboard">Inventory</Link>
+                <Link to="/Inventory/dashboard">Inventory</Link>
               </BreadcrumbItem>
               <BreadcrumbItem active>Purchase Order List</BreadcrumbItem>
             </Breadcrumb>
