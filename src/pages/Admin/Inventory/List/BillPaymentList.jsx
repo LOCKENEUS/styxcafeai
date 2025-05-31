@@ -20,6 +20,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getPurchaseBillPayments } from "../../../../store/AdminSlice/Inventory/CollectPurchaseBill";
 import Loader from "../../../../components/common/Loader/Loader";
+import Volleyball from "../../../../components/utils/Animations/Volleyball";
 
 const BillPaymentList = () => {
     const navigate = useNavigate();

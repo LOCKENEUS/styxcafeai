@@ -83,7 +83,7 @@ const UsersTable = () => {
                       <span className="avatar-initials">{user.avatar.initials}</span>
                     </div>
                   )}
-                  <div>
+                  <div>n
                     <div className="h5 mb-0">
                       {user.name}
                       {user.endorsed && (

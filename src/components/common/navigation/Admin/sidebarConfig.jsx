@@ -138,7 +138,7 @@ const navItems = [
       {
         label: "",
         sub: [
-        // { title: "Sales Report", path: "/admin/reports/sales" },
+        { title: "Sales Report", path: "/admin/reports" },
         // { title: "Usage Analytics", path: "/admin/reports/analytics" }
         ]
       },

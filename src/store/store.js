@@ -40,6 +40,7 @@ import saPackageReducer from "./slices/Inventory/packSlice";
 import saShipmentReducer from "./slices/Inventory/shipSlice";
 import saSalesInvoiceReducer from "./slices/Inventory/invoiceSlice";
 import saSalesReturnReducer from "./slices/Inventory/returnSlice";
+import cafeReportReducer from "./AdminSlice/reports";
 
 export const store = configureStore({
   reducer: {
@@ -75,6 +76,7 @@ export const store = configureStore({
     // bookings
     bookings: bookingsReducer,
     timer: timerReducer,
+    cafeReport: cafeReportReducer,
 
     // super admin
     inventorySuperAdmin: InventorySlice,

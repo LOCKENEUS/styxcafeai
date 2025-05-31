@@ -132,12 +132,7 @@ import { SalesInvDetails } from "../components/common/inventory/SalesInvoice/Sal
 import { CreateSalesReturn } from "../components/common/inventory/SalesReturns/CreateSalesReturn";
 import { SalesReturnDetails } from "../components/common/inventory/SalesReturns/SalesReturnDetails";
 import { SalesReturnList } from "../components/common/inventory/SalesReturns/SalesReturnList";
-
-
-
-
-
-
+import { Reports } from "../pages/Admin/Reports/Reports";
 
 const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
   const [locations, setLocations] = useState([]);
@@ -309,6 +304,9 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
 
           {/* <Route path="/admin/inventory/BillPaymentDetails" element={<BillPaymentDetails />} /> */}
           <Route path="/admin/inventory/PurchaseOrderUpdate/:id" element={<PurchaseOrderUpdate />} />
+
+          {/* Reports section */}
+          <Route path="/admin/reports" element={<Reports/>} />
         </Route>
       </Route>
 

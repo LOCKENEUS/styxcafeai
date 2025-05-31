@@ -85,7 +85,6 @@ export const Vendor = () => {
   return (
     <Container>
       <Row style={{ marginTop: "16px" }}>
-
         <Col sm={12} className="d-flex" style={{ fontSize: "16px" }} >
           <div style={{ top: "186px" }}>
             <Breadcrumb  >
