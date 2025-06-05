@@ -192,20 +192,33 @@ export const Reports = () => {
     );
 
     // Add summary row for collection data
+
     const summaryRow = [
       "", // SN
-      "Total Collection",
-      "", // Bookings
-      "", // Slot
-      "", // Booking Type
-      "", // Payment Mode
-      cafeReport?.total_amount ?? "",
-      cafeReport?.total_paid ?? "",
-      cafeReport?.total_bookings ?? "",
-      cafeReport?.credit ?? ""
+      "Total Earning",
+      bookingsReport?.total_amount ?? ""
     ].join(",");
 
-    const csvContent = [header, ...rows, summaryRow].join("\r\n");
+    const paidAmountRow = [
+      "", // SN
+      "Total Paid Amount",
+      bookingsReport?.paid_amount ?? ""
+    ].join(",");
+
+    const creditAmountRow = [
+      "", // SN
+      "Credit Amount",
+      bookingsReport?.credit_amount ?? ""
+    ].join(",");
+
+    const totalBookingsRow = [
+      "", // SN
+      "Total Bookings",
+      bookingsReport?.total_bookings ?? ""
+    ].join(",");
+
+
+    const csvContent = [header, ...rows, summaryRow, paidAmountRow, creditAmountRow, totalBookingsRow].join("\r\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
@@ -214,6 +227,8 @@ export const Reports = () => {
     link.click();
     document.body.removeChild(link);
   }
+
+  console.log("formData", formData);
 
   return (
     <div className="container-fluid">
@@ -254,6 +269,16 @@ export const Reports = () => {
               </div>
 
               <form className="row g-3">
+                <div className="col-6 col-sm-6 col-md-3">
+                  <label className="form-label fw-semibold">Start Date</label>
+                  <input type="date" name="start_date" value={formData.start_date} className="form-control rounded-2" onChange={(e) => setFormData({ ...formData, start_date: e.target.value })} />
+                </div>
+
+                <div className="col-6 col-sm-6 col-md-3">
+                  <label className="form-label fw-semibold">End Date</label>
+                  <input type="date" name="end_date" className="form-control rounded-2" value={formData.end_date} onChange={(e) => setFormData({ ...formData, end_date: e.target.value })} />
+                </div>
+
                 <div className="col-6 col-sm-6 col-md-3">
                   <label className="form-label fw-semibold">Sort By Game</label>
                   <Select
@@ -331,16 +356,6 @@ export const Reports = () => {
                 </div>
 
                 <div className="col-6 col-sm-6 col-md-3">
-                  <label className="form-label fw-semibold">Start Date</label>
-                  <input type="date" name="start_date" value={formData.start_date} className="form-control rounded-2" onChange={(e) => setFormData({ ...formData, start_date: e.target.value })} />
-                </div>
-
-                <div className="col-6 col-sm-6 col-md-3">
-                  <label className="form-label fw-semibold">End Date</label>
-                  <input type="date" name="end_date" className="form-control rounded-2" value={formData.end_date} onChange={(e) => setFormData({ ...formData, end_date: e.target.value })} />
-                </div>
-
-                <div className="col-6 col-sm-6 col-md-3">
                   <label className="form-label fw-semibold">Day</label>
                   <select name="day" className="form-select rounded-2" value={formData.day || ''}
                     onChange={(e) =>
@@ -390,11 +405,22 @@ export const Reports = () => {
 
               <hr />
 
-              <div className="col-12 d-flex justify-content-between mt-3">
-                <div><h3>Total Earnings: &#8377; {cafeReport?.total_amount}</h3></div>
-                <div><h3>Total Paid Amount: &#8377; {cafeReport?.total_paid}</h3></div>
-                <div><h3>Credit Amount: &#8377; {cafeReport?.credit}</h3></div>
-                <div><h3>Total Bookings: &#8377; {cafeReport?.total_bookings}</h3></div>
+              <div className="col-12 d-none d-md-flex justify-content-between mt-3">
+                <div className='rounded-pill px-3 py-2' style={{ backgroundColor: "#dbf9e0", color: "white" }}><h3 className='mb-0'>Total Earnings: &#8377; {cafeReport?.total_amount || 0}</h3></div>
+                <div className='rounded-pill px-3 py-2' style={{ backgroundColor: "#def1fa", color: "white" }}><h3 className='mb-0'>Total Paid Amount: &#8377; {cafeReport?.paid_amount || 0}</h3></div>
+                <div className='rounded-pill px-3 py-2' style={{ backgroundColor: "#fbe0e4", color: "white" }}><h3 className='mb-0'>Credit Amount: &#8377; {cafeReport?.credit_amount || 0}</h3></div>
+                <div className='rounded-pill px-3 py-2' style={{ backgroundColor: "#f6defa", color: "white" }}><h3 className='mb-0'>Total Bookings: {cafeReport?.total_bookings || 0}</h3></div>
+              </div>
+
+              <div className="col-12 d-flex d-md-none justify-content-between mt-3">
+                <div>
+                  <div><h5>Total Earnings: &#8377; {cafeReport?.total_amount || 0}</h5></div>
+                  <div><h5>Total Paid Amount: &#8377; {cafeReport?.total_paid || 0}</h5></div>
+                </div>
+                <div>
+                  <div><h5>Credit Amount: &#8377; {cafeReport?.credit || 0}</h5></div>
+                  <div><h5>Total Bookings: &#8377; {cafeReport?.total_bookings || 0}</h5></div>
+                </div>
               </div>
 
               <div className="col-12 table-responsive">
@@ -402,6 +428,7 @@ export const Reports = () => {
                   columns={columns}
                   data={filteredItems}
                   highlightOnHover
+                  pagination
                   responsive
                   persistTableHead
                   customStyles={{
@@ -430,7 +457,7 @@ export const Reports = () => {
                 />
               </div>
             </div>
-            <div className="d-flex justify-content-end mt-3">
+            {/* <div className="d-flex justify-content-end mt-3">
               <ul className="pagination">
                 <li className={`page-item ${activePage === 1 ? 'disabled' : ''}`}>
                   <button
@@ -456,7 +483,7 @@ export const Reports = () => {
                   </button>
                 </li>
               </ul>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

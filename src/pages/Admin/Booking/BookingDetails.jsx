@@ -54,6 +54,7 @@ const BookingDetails = () => {
   const [showOnCredit, setShowOnCredit] = useState(false);
   const [activeTab, setActiveTab] = useState("checkout");
   const [showClientModal, setShowClientModal] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Payment Options");
   const [selectedMethod, setSelectedMethod] = useState("Payment Options");
   const [selectedItems, setSelectedItems] = useState([]);
@@ -633,13 +634,13 @@ const BookingDetails = () => {
   };
 
   return (
-    <Container fluid className="p-4 ">
+    <Container fluid className="p-4">
       <h6 className="mb-3 muted-text">
-        Home / Purchase / Vendor List/{" "}
-        <span className="text-primary">Purchase Order</span>
+        Home / Bookings/{" "}
+        <span className="text-primary">Booking Details</span>
       </h6>
       <Row>
-        <Col style={{ height: "100%" }} md={4} lg={3}>
+        <Col style={{ height: "100%" }} className="px-0 px-md-2" md={4} lg={3}>
           <div className="d-flex gap-3 zero-gap">
             <InputGroup className="mb-3 ">
               <InputGroup.Text className="bg-white p-3 rounded-start">
@@ -653,6 +654,42 @@ const BookingDetails = () => {
               />
             </InputGroup>
 
+            {searchTerm.length > 2 && filteredCustomers.length > 0 && (<>
+              {/* Mobile View */}
+              {/* <ListGroup className="position-absolute d-block d-md-none shadow bg-white mt-7 ms-7" style={{ width: "65%" }}>
+
+                {filteredCustomers.map((customer) => (
+                  <ListGroup.Item
+                    key={customer.id}
+                    style={{ cursor: "pointer" }}
+                    action
+                    onClick={() => {
+                      setSelectedCustomer(customer)
+                      setSearchTerm('')
+                    }}
+                  >
+                    {customer.name} - {customer.contact_no}
+                  </ListGroup.Item>
+                ))}
+              </ListGroup> */}
+              <ul className="list-group position-absolute d-block d-md-none shadow bg-white mt-7 ms-7" style={{ width: "65%" }}>
+                {filteredCustomers.map((customer) => (
+                  <li
+                    key={customer.id}
+                    className="py-2 px-2 list-group-item"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      setIsExpanded(true);
+                      setSelectedCustomer(customer);
+                      setSearchTerm('');
+                    }}
+                  >
+                    {customer.name} - {customer.contact_no}
+                  </li>
+                ))}
+              </ul>
+            </>)}
+
             <Button
               variant="white"
               className="mb-3 rounded border d-flex align-items-center gap-2"
@@ -662,8 +699,8 @@ const BookingDetails = () => {
             </Button>
           </div>
 
-          {searchTerm.length > 2 && filteredCustomers.length > 0 && (
-            <ListGroup className="position-absolute shadow bg-white z-index-100" style={{ width: "18%" }}>
+          {searchTerm.length > 2 && filteredCustomers.length > 0 && (<>
+            <ListGroup className="position-absolute d-none d-md-block shadow bg-white z-index-100" style={{ width: "18%" }}>
 
               {filteredCustomers.map((customer) => (
                 <ListGroup.Item
@@ -679,14 +716,32 @@ const BookingDetails = () => {
                 </ListGroup.Item>
               ))}
             </ListGroup>
-          )}
+
+            {/* Mobile View */}
+            <ListGroup className="position-absolute shadow bg-white" style={{ width: "80%" }}>
+              {/* 
+              {filteredCustomers.map((customer) => (
+                <ListGroup.Item
+                  key={customer.id}
+                  style={{ cursor: "pointer" }}
+                  action
+                  onClick={() => {
+                    setSelectedCustomer(customer)
+                    setSearchTerm('')
+                  }}
+                >
+                  {customer.name} - {customer.contact_no}
+                </ListGroup.Item>
+              ))} */}
+            </ListGroup>
+          </>)}
 
           <ClientModel
             show={showClientModal}
             handleClose={() => setShowClientModal(false)}
           />
 
-          <div className="bg-white rounded-3 p-3 responsive-height">
+          <div className="bg-white d-none d-md-block rounded-3 p-3 responsive-height mt-1">
             <div className="customer-list">
               <small>Recent Customers </small>
               {!selectedCustomer ? (
@@ -742,10 +797,6 @@ const BookingDetails = () => {
                         type="text"
                         placeholder="Enter player name"
                         value={searchCustTerm}
-                        // onChange={(e) => {
-                        //   setNewPlayer({ ...newPlayer, name: e.target.value });
-                        //   setSearchCustTerm(e.target.value);
-                        // }}
                         onChange={(e) => {
                           const name = e.target.value.replace(/[^a-zA-Z\s]/g, ""); // Allow only letters and spaces
                           setNewPlayer({ ...newPlayer, name });
@@ -774,7 +825,6 @@ const BookingDetails = () => {
                         placeholder="Enter contact number"
                         maxLength={10}
                         value={newPlayer.contact_no}
-                        // onChange={(e) => setNewPlayer({ ...newPlayer, contact_no: e.target.value })}
                         onChange={(e) => {
                           const contact_no = e.target.value.replace(/\D/g, ""); // Allow only numeric input
                           setNewPlayer({ ...newPlayer, contact_no });
@@ -822,10 +872,411 @@ const BookingDetails = () => {
               )}
             </div>
           </div>
-        </Col>
 
-        {/* <Col md={9}> */}
-        {/* <Row> */}
+
+          {/* <div className="bg-white rounded-3 p-3">
+  {!isExpanded ? (
+    <div className="d-flex justify-content-between align-items-center">
+      <small>Select Customer</small>
+      <Button 
+        variant="outline-primary" 
+        size="sm"
+        onClick={() => setIsExpanded(true)}
+      >
+        <BsPlus size={20} />
+      </Button>
+    </div>
+  ) : (
+    <div className="customer-list" style={{ maxHeight: selectedCustomer ? 'auto' : '200px', overflowY: 'auto' }}>
+      <div className="d-flex justify-content-between align-items-center mb-2">
+        <small>Recent Customers</small>
+        <Button 
+          variant="link" 
+          size="sm"
+          onClick={() => {
+            setIsExpanded(false);
+            setSelectedCustomer(null);
+          }}
+        >
+          <RxCross2 size={16} />
+        </Button>
+      </div>
+      
+      {!selectedCustomer ? (
+        filteredCustomers.length > 0 ? (
+          filteredCustomers.map((customer, index) => (
+            <div
+              key={index}
+              className={`d-flex align-items-center p-2 mb-2 cursor-pointer hover-bg-light rounded ${
+                selectedCustomer === customer ? "bg-light" : ""
+              }`}
+              onClick={() => {
+                setSelectedCustomer(customer);
+                setIsExpanded(true);
+              }}
+              style={{ cursor: "pointer" }}
+            >
+              <img
+                src={customer.customerProfile ? `${backend_url}/${customer.customerProfile}` : profile_pic}
+                alt=""
+                className="rounded-circle me-3"
+                width="40"
+                height="40"
+              />
+              <div>
+                <h6 className="mb-0">{customer.name}</h6>
+                <small className="muted-text">
+                  {customer.email || customer.phone}
+                </small>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center mt-4">No customers available</div>
+        )
+      ) : (
+        <>
+          <div className="d-flex align-items-center p-2 mb-2 rounded" style={{ background: "#F4F4F4" }}>
+            <img
+              src={
+                selectedCustomer.customerProfile
+                  ? `${backend_url}/${selectedCustomer.customerProfile}`
+                  : profile_pic
+              }
+              alt=""
+              className="rounded-circle me-3"
+              width="40"
+              height="40"
+            />
+            <div>
+              <h6 className="mb-0">{selectedCustomer.name}</h6>
+              <small className="muted-text">
+                {selectedCustomer.email || selectedCustomer.phone}
+              </small>
+            </div>
+          </div>
+
+          {showInput ? (
+            <div className="mb-2 d-flex flex-column gap-2">
+              <Form.Control
+                type="text"
+                placeholder="Enter player name"
+                value={searchCustTerm}
+                onChange={(e) => {
+                  const name = e.target.value.replace(/[^a-zA-Z\s]/g, "");
+                  setNewPlayer({ ...newPlayer, name });
+                  setSearchCustTerm(name);
+                }}
+              />
+
+              {searchedCustomers.length > 0 && (
+                <ul className="list-unstyled bg-white border rounded shadow-sm max-h-40 overflow-y-auto">
+                  {searchedCustomers.map((customer, index) => (
+                    <li
+                      key={index}
+                      onClick={() => handleSelectCustomer(customer)}
+                      className="p-2 hover-bg-primary hover-text-white cursor-pointer"
+                      style={{ cursor: "pointer" }}
+                    >
+                      {customer?.name} - {customer?.contact_no}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <Form.Control
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                placeholder="Enter contact number"
+                maxLength={10}
+                value={newPlayer.contact_no}
+                onChange={(e) => {
+                  const contact_no = e.target.value.replace(/\D/g, "");
+                  setNewPlayer({ ...newPlayer, contact_no });
+                }}
+              />
+              <Button variant="primary" onClick={handleAddPlayer}>
+                Add
+              </Button>
+            </div>
+          ) : (
+            selectedGame?.data?.type === "Multiplayer" && (
+              <Button
+                variant="outline-primary"
+                className="d-flex w-100 align-items-center justify-content-center p-1 border-dashed"
+                style={{
+                  border: "2px dashed #007bff",
+                  borderRadius: "10px",
+                  color: "#007bff",
+                  fontWeight: "bold",
+                  backgroundColor: "transparent",
+                }}
+                onClick={() => setShowInput(true)}
+              >
+                <BsPlus className="me-2" size={20} />
+                Add Players
+              </Button>
+            )
+          )}
+
+          {teamMembers.length > 0 && (
+            <div className="mt-3 mx-2">
+              <h5 className="text-color">No of Candidates ({teamMembers.length + 1})</h5>
+              {teamMembers.map((player, index) => (
+                <div key={index} className="mt-2 d-flex justify-content-between align-items-center">
+                  <span>
+                    {player.name} - {player.contact_no}
+                  </span>
+                  <RxCross2 
+                    size={16} 
+                    className="text-danger" 
+                    style={{ cursor: "pointer" }} 
+                    onClick={() => handleRemovePlayer(player.id)} 
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  )}
+</div> */}
+
+
+          <div className="bg-white d-block d-md-none rounded-3 p-3">
+            {!isExpanded ? (
+              <div className="d-flex justify-content-between align-items-center">
+                <small>Select Customer</small>
+                <Button
+                  variant="outline-primary"
+                  size="sm"
+                  onClick={() => setIsExpanded(true)}
+                >
+                  <BsPlus size={20} />
+                </Button>
+              </div>
+            ) : (
+              <div className="customer-list" style={{ maxHeight: selectedCustomer ? 'auto' : '200px', overflowY: 'auto' }}>
+                {/* Sticky header when no customer is selected */}
+                {!selectedCustomer && (
+                  <div
+                    className="sticky-top bg-white pt-2 pb-1 mb-1"
+                    style={{
+                      zIndex: 1,
+                      borderBottom: '1px solid #eee'
+                    }}
+                  >
+                    <div className="d-flex justify-content-between align-items-center">
+                      <small className="fw-bold">Recent Customers</small>
+                      <Button
+                        variant="link"
+                        size="sm"
+                        className="p-0"
+                        onClick={() => {
+                          setIsExpanded(false);
+                          setSelectedCustomer(null);
+                        }}
+                      >
+                        <RxCross2 size={16} />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Customer list content */}
+                {!selectedCustomer ? (
+                  filteredCustomers.length > 0 ? (
+                    <div style={{ marginTop: '0.5rem' }}>
+                      {filteredCustomers.map((customer, index) => (
+                        <div
+                          key={index}
+                          className={`d-flex align-items-center p-2 mb-2 cursor-pointer hover-bg-light rounded ${selectedCustomer === customer ? "bg-light" : ""
+                            }`}
+                          onClick={() => {
+                            setSelectedCustomer(customer);
+                            setIsExpanded(true);
+                          }}
+                          style={{ cursor: "pointer" }}
+                        >
+                          <img
+                            src={customer.customerProfile ? `${backend_url}/${customer.customerProfile}` : profile_pic}
+                            alt=""
+                            className="rounded-circle me-3"
+                            width="40"
+                            height="40"
+                          />
+                          <div>
+                            <h6 className="mb-0">{customer.name}</h6>
+                            <small className="muted-text">
+                              {customer.email || customer.phone}
+                            </small>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center mt-4">No customers available</div>
+                  )
+                ) : (
+                  <>
+                    {/* Selected customer view */}
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <small>{selectedCustomer ? "Selected Customer" : "Recent Customers"}</small>
+                      <Button
+                        variant="link"
+                        size="sm"
+                        onClick={() => {
+                          setIsExpanded(false);
+                          setSelectedCustomer(null);
+                        }}
+                      >
+                        <RxCross2 size={16} />
+                      </Button>
+                    </div>
+
+                    <div className="d-flex align-items-center p-2 mb-2 rounded" style={{ background: "#F4F4F4" }}>
+                      <img
+                        src={
+                          selectedCustomer.customerProfile
+                            ? `${backend_url}/${selectedCustomer.customerProfile}`
+                            : profile_pic
+                        }
+                        alt=""
+                        className="rounded-circle me-3"
+                        width="40"
+                        height="40"
+                      />
+                      <div>
+                        <h6 className="mb-0">{selectedCustomer.name}</h6>
+                        <small className="muted-text">
+                          {selectedCustomer.email || selectedCustomer.phone}
+                        </small>
+                      </div>
+                    </div>
+
+                    {showInput ? (
+                      <div className="mb-2 d-flex flex-column gap-2">
+                        <Form.Control
+                          type="text"
+                          placeholder="Enter player name"
+                          value={searchCustTerm}
+                          onChange={(e) => {
+                            const name = e.target.value.replace(/[^a-zA-Z\s]/g, "");
+                            setNewPlayer({ ...newPlayer, name });
+                            setSearchCustTerm(name);
+                          }}
+                        />
+
+                        {searchedCustomers.length > 0 && (
+                          <ul className="list-unstyled bg-white border rounded shadow-sm max-h-40 overflow-y-auto">
+                            {searchedCustomers.map((customer, index) => (
+                              <li
+                                key={index}
+                                onClick={() => handleSelectCustomer(customer)}
+                                className="p-2 hover-bg-primary hover-text-white cursor-pointer"
+                                style={{ cursor: "pointer" }}
+                              >
+                                {customer?.name} - {customer?.contact_no}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        <Form.Control
+                          type="text"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          placeholder="Enter contact number"
+                          maxLength={10}
+                          value={newPlayer.contact_no}
+                          onChange={(e) => {
+                            const contact_no = e.target.value.replace(/\D/g, "");
+                            setNewPlayer({ ...newPlayer, contact_no });
+                          }}
+                        />
+                        <Button variant="primary" onClick={handleAddPlayer}>
+                          Add
+                        </Button>
+                      </div>
+                    ) : (
+                      selectedGame?.data?.type === "Multiplayer" && (
+                        <Button
+                          variant="outline-primary"
+                          className="d-flex w-100 align-items-center justify-content-center p-1 border-dashed"
+                          style={{
+                            border: "2px dashed #007bff",
+                            borderRadius: "10px",
+                            color: "#007bff",
+                            fontWeight: "bold",
+                            backgroundColor: "transparent",
+                          }}
+                          onClick={() => setShowInput(true)}
+                        >
+                          <BsPlus className="me-2" size={20} />
+                          Add Players
+                        </Button>
+                      )
+                    )}
+
+                    {teamMembers.length > 0 && (
+                      <div className="mt-3 mx-2">
+                        <h5 className="text-color">No of Candidates ({teamMembers.length + 1})</h5>
+                        {teamMembers.map((player, index) => (
+                          <div key={index} className="mt-2 d-flex justify-content-between align-items-center">
+                            <span>
+                              {player.name} - {player.contact_no}
+                            </span>
+                            <RxCross2
+                              size={16}
+                              className="text-danger"
+                              style={{ cursor: "pointer" }}
+                              onClick={() => handleRemovePlayer(player.id)}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </Col>
 
         <Col md={4} lg={4} className="p-1">
           <Row>
@@ -847,7 +1298,6 @@ const BookingDetails = () => {
                     </span>
                   </div>
 
-                  {/* {selectedCustomer ? ( */}
                   <>
                     <Row className="mb-5">
                       <Col xs={6} className="muted-text"></Col>
@@ -887,28 +1337,17 @@ const BookingDetails = () => {
                         {selectedGame?.data?.type === "Multiplayer" ? teamMembers.length + 1 : 1}            </Col>
                     </Row>
                   </>
-                  {/* // ) : (
-                  //   <div className="d-flex justify-content-center mt-6 align-items-center h-100">
-                  //     <p className="muted-text mb-0">Select Customers</p>
-                  //   </div>
-                  // )} */}
                 </div>
               </div>
             </Col>
             <Col md={12}>
-              <div className="d-flex gap-0 rounded-2" style={{ minHeight: "46vh" }}>
+              <div className="d-none d-md-flex gap-0 rounded-2" style={{ minHeight: "46vh" }}>
                 <div className="bg-white p-4 w-100 border-end border-2 rounded-3" style={{ minHeight: "57%" }}>
-                  {/* {selectedCustomer ? ( */}
                   <>
                     <div className="mb-5 d-flex justify-content-between">
                       <span className="text-color">Game Price:</span>
                       <span className="muted-text">₹ {slot?.slot_price ? slot.slot_price : selectedGame?.data?.price}</span>
                     </div>
-
-                    {/* <div className="mb-5 d-flex justify-content-between">
-                        <span className="text-color">Total Amount:</span>
-                        <span className="muted-text">₹ {priceToPay}</span>
-                      </div> */}
 
                     <div className="mb-5 d-flex justify-content-between">
                       <span className="text-color">Items Total:</span>
@@ -919,11 +1358,6 @@ const BookingDetails = () => {
                       <span className="text-color">Extra Charge:</span>
                       <span className="muted-text">₹ 00.00</span>
                     </div>
-                    {/* 
-                      <div className="mb-5 d-flex justify-content-between">
-                        <span className="text-color">GST:</span>
-                        <span className="muted-text">₹ 00.00</span>
-                      </div> */}
 
                     <div className="mb-5 d-flex justify-content-between">
                       <span className="text-color">TOTAL:</span>
@@ -941,22 +1375,53 @@ const BookingDetails = () => {
                           {selectedGame?.data?.payLater && (
                             <Dropdown.Item eventKey="Pay Later">Pay Later</Dropdown.Item>
                           )}
-                          {/* {!selectedGame?.data?.payLater && (
-                              <Dropdown.Item eventKey="On Credit">On Credit</Dropdown.Item>
-                            )} */}
                         </Dropdown.Menu>
                       </Dropdown>
-                      {/* <Button style={{background: "#00B72BCC", color: "#fff"}} className="btn border-0 w-100" onClick={() => setShowCreditModal(!showCreditModal)}>Payment Options</Button> */}
+                    </div>
+                  </>
+                </div>
+              </div>
+
+              {/* mobile view */}
+              <div className="d-flex d-md-none gap-0 rounded-2">
+                <div className="bg-white p-4 w-100 border-end border-2 rounded-3" style={{ minHeight: "57%" }}>
+                  <>
+                    <div className="mb-5 d-flex justify-content-between">
+                      <span className="text-color">Game Price:</span>
+                      <span className="muted-text">₹ {slot?.slot_price ? slot.slot_price : selectedGame?.data?.price}</span>
                     </div>
 
-                  </>
-                  {/* ) : (
-                    <p className="muted-text d-flex justify-content-center align-items-center h-100 w-100 mb-0">
-                      Select Customers
-                    </p>
-                  )} */}
-                </div>
+                    <div className="mb-5 d-flex justify-content-between">
+                      <span className="text-color">Items Total:</span>
+                      <span className="muted-text">₹ {addOnTotal}</span>
+                    </div>
 
+                    <div className="mb-5 d-flex justify-content-between">
+                      <span className="text-color">Extra Charge:</span>
+                      <span className="muted-text">₹ 00.00</span>
+                    </div>
+
+                    <div className="mb-5 d-flex justify-content-between">
+                      <span className="text-color">TOTAL:</span>
+                      <span className="text-primary fw-bold">₹ {priceToPay}</span>
+                    </div>
+
+                    <div className="mb-4">
+                      <Dropdown onSelect={handleSelect} className="w-100">
+                        <Dropdown.Toggle style={{ background: "#00B72BCC", color: "white", border: "none" }} id="dropdown-basic" className="w-100 text-center">
+                          {selectedMethod}
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu className="w-100" style={{ background: "e6e3e7", color: "white", border: "none" }}>
+                          {!selectedGame?.data?.payLater && (<Dropdown.Item eventKey="Online">Online</Dropdown.Item>)}
+                          {!selectedGame?.data?.payLater && (<Dropdown.Item eventKey="Offline">Cash</Dropdown.Item>)}
+                          {selectedGame?.data?.payLater && (
+                            <Dropdown.Item eventKey="Pay Later">Pay Later</Dropdown.Item>
+                          )}
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </div>
+                  </>
+                </div>
               </div>
             </Col>
           </Row>

@@ -39,11 +39,19 @@ const CustomerDetails = () => {
     if (selectedCustomer) {
       let creditTotalAmount = 0
       selectedCustomer?.creditHistory.forEach((credit) => {
+        if (credit?.status === "Unpaid") {
+          console.log("Credit:", credit?.credit)
         creditTotalAmount += credit?.credit
+        }
+        if (credit?.status === "Unpaid" && credit?.paid_amount > 0) {
+          creditTotalAmount -= credit?.paid_amount
+        }
       })
       setCreditTotal(creditTotalAmount)
     }
   }, [dispatch, selectedCustomer]);
+
+  console.log("credit total", creditTotal);
 
   const handleCheckboxChange = (bookingId, isChecked, creditValue) => {
     if (isChecked) {
@@ -271,7 +279,7 @@ const CustomerDetails = () => {
                             placeholder="Search by Booking ID or Game"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="form-control shadow-lg w-50 mb-3"
+                            className="form-control shadow-none shadow-lg w-100 w-md-50 mb-3"
                           />
                         </div>
                         <div className="table-responsive">
@@ -339,9 +347,9 @@ const CustomerDetails = () => {
                           placeholder="Search by Booking ID or Game"
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
-                          className="form-control shadow-lg w-50 mb-3"
+                          className="form-control shadow-lg w-100 w-md-50 mb-3"
                         />
-                        <Button size="sm" variant="primary" className="float-end m-2 mb-3" onClick={() => setShowCollectModal(true)}>Custom Credit Collection</Button>
+                        <Button size="sm" variant="primary" className="float-end m-0 m-md-2 mb-3" onClick={() => setShowCollectModal(true)}>Custom Credit Collection</Button>
                       </div>
                       <div><span className="float-end px-3 text-color fs-4">Credit: ₹{creditTotal}</span></div>
                       <div className="table-responsive">
@@ -372,7 +380,7 @@ const CustomerDetails = () => {
                           <tbody>
                             {selectedCustomer?.creditHistory.length > 0 ? (
                               selectedCustomer?.creditHistory.map((credit, index) => (
-                                <tr key={credit._id}>
+                               credit.status !== "Paid" && <tr key={credit._id}>
                                   <td>{index + 1}</td>
                                   <td style={{ fontWeight: "600", color: "blue", cursor: "pointer" }} onClick={() => navigate(`/admin/booking/checkout/${credit.booking_id}`)} >{credit.booking_no}</td>
                                   <td>{credit.game_name}</td>
@@ -381,7 +389,7 @@ const CustomerDetails = () => {
                                   <td>₹ {credit.total}</td>
                                   <td>
                                     <span >
-                                      ₹ {credit.credit}
+                                      ₹ {credit.credit - (credit.paid_amount || 0)}
                                     </span>
                                   </td>
                                   {collectMode && <td className="text-center">

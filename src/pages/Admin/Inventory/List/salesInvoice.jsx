@@ -36,15 +36,15 @@ export const SaleInvoiceInventory = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activePage, setActivePage] = useState(1);
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(3 / itemsPerPage); 
- 
+  const totalPages = Math.ceil(3 / itemsPerPage);
+
   // Function to handle modal (replace with actual logic)
   const handleShowCreate = () => {
     navigator("/admin/Inventory/InvoiceCreate");
   };
 
   const getRandomColor = (name) => {
-    const colors = ["#FAED39", "#FF5733", "#33FF57", "#339FFF", "#FF33F6", "#FFAA33","#39DDFA","#3DFF16"];
+    const colors = ["#FAED39", "#FF5733", "#33FF57", "#339FFF", "#FF33F6", "#FFAA33", "#39DDFA", "#3DFF16"];
     let index = name.charCodeAt(0) % colors.length; // Generate a consistent index
     return colors[index];
   };
@@ -84,20 +84,20 @@ export const SaleInvoiceInventory = () => {
         </div>
       ),
     },
-    { 
-      name: "Sales Person", 
-      selector: (row) => row?.customer_id?.name, 
-      sortable: true 
+    {
+      name: "Sales Person",
+      selector: (row) => row?.customer_id?.name,
+      sortable: true
     },
-    { 
-      name: "Total", 
-      selector: (row) => row.total, 
-      sortable: true 
+    {
+      name: "Total",
+      selector: (row) => row.total,
+      sortable: true
     },
-    { 
-      name: "Date", 
-      selector: (row) => new Date(row.date).toLocaleDateString(), 
-      sortable: true 
+    {
+      name: "Date",
+      selector: (row) => new Date(row.date).toLocaleDateString(),
+      sortable: true
     },
   ];
 
@@ -120,12 +120,12 @@ export const SaleInvoiceInventory = () => {
   const handleExport = () => {
     // Define CSV headers
     const csvHeader = "S/N,Invoice No,Sales Person,Total,Date\n";
-    
+
     // Convert invoices data to CSV rows
     const csvRows = filteredItems.map((invoice, index) => {
       // Format the date
       const date = new Date(invoice.date);
-      const formattedDate = date instanceof Date && !isNaN(date) 
+      const formattedDate = date instanceof Date && !isNaN(date)
         ? `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`
         : "N/A";
 
@@ -153,9 +153,9 @@ export const SaleInvoiceInventory = () => {
   };
 
   return (
-    <Container className="p-0"> 
+    <Container className="p-0">
       <Row>
-      <Col sm={12} className="mx-2 my-3 px-5">
+        <Col sm={12} className="mx-2 my-3 mb-0 px-5">
           <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
@@ -220,18 +220,18 @@ export const SaleInvoiceInventory = () => {
               </Col>
 
               {/* Action Buttons */}
-              <Col sm={5} className="d-flex justify-content-end text-end my-2">
-                <Button 
-                  variant="denger" 
-                  className="btn px-4 mx-2" 
-                  size="sm" 
+              <Col sm={5} className="d-flex justify-content-between justify-content-md-end text-end my-2">
+                <Button
+                  variant="denger"
+                  className="btn px-4 mx-2"
+                  size="sm"
                   style={{ borderColor: "#FF3636", color: "#FF3636" }}
                   onClick={handleExport}
                 >
-                  <Image 
-                    className="me-2 size-sm" 
-                    style={{ width: "22px", height: "22px" }} 
-                    src={solar_export} 
+                  <Image
+                    className="me-2 size-sm"
+                    style={{ width: "22px", height: "22px" }}
+                    src={solar_export}
                   />
                   Export
                 </Button>
@@ -246,35 +246,41 @@ export const SaleInvoiceInventory = () => {
                 </Button>
               </Col>
 
-              <Col sm={12} style={{marginTop:"30px"}}>
-                              {loading ? (
-                                <div className="text-center p-4">
-                                  <Loader />
-                                </div>
-                              ) : (
-                <DataTable
-                  columns={columns}
-                  data={filteredItems}
-                  progressPending={loading}
-                  highlightOnHover
-                  responsive
-                  pagination
-                  paginationPerPage={10}
-                  paginationRowsPerPageOptions={[10, 20, 30, 40]}
-                  persistTableHead
-                  customStyles={{
-                    rows: { style: { backgroundColor: "#ffffff", padding: 'clamp(10px, 2vw, 15px)',
-                      border: 'none',
-                      fontSize: '14px',} },
-                    headCells: {
-                      style: { backgroundColor: "#e9f5f8", padding: 'clamp(10px, 2vw, 15px)',
+              <Col sm={12} style={{ marginTop: "30px" }}>
+                {loading ? (
+                  <div className="text-center p-4">
+                    <Loader />
+                  </div>
+                ) : (
+                  <DataTable
+                    columns={columns}
+                    data={filteredItems}
+                    progressPending={loading}
+                    highlightOnHover
+                    responsive
+                    pagination
+                    paginationPerPage={10}
+                    paginationRowsPerPageOptions={[10, 20, 30, 40]}
+                    persistTableHead
+                    customStyles={{
+                      rows: {
+                        style: {
+                          backgroundColor: "#ffffff", padding: 'clamp(10px, 2vw, 15px)',
                           border: 'none',
-                          fontSize: 'clamp(14px, 3vw, 16px)', },
-                    },
-                    table: { style: { borderRadius: "5px", overflow: "hidden" } },
-                  }}
-                />
-                              )}
+                          fontSize: '14px',
+                        }
+                      },
+                      headCells: {
+                        style: {
+                          backgroundColor: "#e9f5f8", padding: 'clamp(10px, 2vw, 15px)',
+                          border: 'none',
+                          fontSize: 'clamp(14px, 3vw, 16px)',
+                        },
+                      },
+                      table: { style: { borderRadius: "5px", overflow: "hidden" } },
+                    }}
+                  />
+                )}
               </Col>
             </Row>
           </Card></Col>

@@ -168,7 +168,7 @@ export const InventorySettingAdmin = () => {
   return (
     <Container fluid>
       <Row>
-        <Col sm={12} className="mx-2 mt-3">
+        <Col sm={12} className="mt-3 mb-0">
           <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
@@ -187,8 +187,8 @@ export const InventorySettingAdmin = () => {
           activeKey={activeKey}
           onSelect={(k) => setActiveKey(k)}
         >
-          <Row className="justify-content-center">
-            <Col xs={12} md={8} lg={5} className="tabs-responsive-side my-4">
+          {/* <Row className="justify-content-center"> */}
+            <Col className="tabs-responsive-side mb-3 mb-md-4">
               <Card className="rounded-4 p-1 border">
                 <Nav variant="pills" className="nav-material flex-wrap justify-content-center">
                   <NavItem>
@@ -662,7 +662,7 @@ export const InventorySettingAdmin = () => {
                 </TabPane>
               </TabContent>
             </Col>
-          </Row>
+          {/* </Row> */}
         </TabContainer>
       </Row>
     </Container>

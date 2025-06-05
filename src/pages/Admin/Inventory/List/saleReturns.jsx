@@ -156,9 +156,9 @@ export const InvoicePaymentInventory = () => {
   ) || [];
 
   return (
-    <Container className="p-4">
+    <Container className="p-2 p-md-4">
       <Row>
-        <Col sm={12} className="mx-2 mb-3">
+        <Col sm={12} className="mx-2 mb-0 mb-md-3">
           <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem href="#">Home</BreadcrumbItem>

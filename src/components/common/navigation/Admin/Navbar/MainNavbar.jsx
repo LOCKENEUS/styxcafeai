@@ -1,8 +1,6 @@
 // components/Navbar.jsx
 import { Navbar, Container, Button } from 'react-bootstrap';
 import { BiBell, BiChevronRight, BiMoon, BiSearch, BiSun } from 'react-icons/bi';
-import { FaLocationPinLock } from 'react-icons/fa6';
-import { MdOutlineFitbit } from 'react-icons/md';
 import { PiMapPinBold } from 'react-icons/pi';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -10,14 +8,26 @@ import { GiHamburgerMenu } from 'react-icons/gi';
 import { HiChevronDoubleLeft } from 'react-icons/hi';
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from "gsap";
+import { useDispatch, useSelector } from 'react-redux';
+import { getSearchData } from '../../../../../store/AdminSlice/DashboardSlice';
 
 const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
+  const [showDropdown, setShowDropdown] = useState(false);
   const [profilePic, setProfilePic] = useState("/assets/profile/user_avatar.jpg");
+  const [searchTerm, setSearchTerm] = useState("");
+  const dispatch = useDispatch();
   const navigate = useNavigate();//+
   const logoRef = useRef(null);
 
+  const { searchResults } = useSelector((state) => state.adminDashboard);
   const user = JSON.parse(sessionStorage.getItem("user"));
   const backend_url = import.meta.env.VITE_API_URL
+
+  useEffect(() => {
+    if (searchTerm?.length >= 3) {
+      dispatch(getSearchData(searchTerm)); // Replace with your actual action
+    }
+  }, [searchTerm, dispatch]);
 
   useEffect(() => {
     if (user) {
@@ -97,33 +107,22 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
         {/* Desktop Navigation (above 970px) */}
         <div className="d-none d-lg-block">
           {/* Search Bar */}
-          <div className="navbar-nav-wrap-content-start">
-
-
+          {/* <div className="navbar-nav-wrap-content-start">
             <div className="dropdown ms-2">
               <div className="">
                 <div className="input-group input-group-merge input-group-borderless input-group-hover-light navbar-input-group">
                   <div className="input-group-prepend input-group-text">
                     <BiSearch />
                   </div>
-
-                  <input type="search" className="js-form-search form-control" placeholder="Search..." aria-label="Search in front" data-hs-form-search-options="{
-                        &quot;clearIcon&quot;: &quot;#clearSearchResultsIcon&quot;,
-                        &quot;dropMenuElement&quot;: &quot;#searchDropdownMenu&quot;,
-                        &quot;dropMenuOffset&quot;: 20,
-                        &quot;toggleIconOnFocus&quot;: true,
-                        &quot;activeClass&quot;: &quot;focus&quot;
-                      }"/>
+                  <input
+                    type="search"
+                    className="js-form-search form-control"
+                    placeholder="Search..."
+                    aria-label="Search in front"
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
+                  />
                 </div>
-                {/* <button className="js-form-search js-form-search-mobile-toggle btn btn-ghost-secondary btn-icon rounded-circle " type="button" data-hs-form-search-options="{
-                        &quot;clearIcon&quot;: &quot;#clearSearchResultsIcon&quot;,
-                        &quot;dropMenuElement&quot;: &quot;#searchDropdownMenu&quot;,
-                        &quot;dropMenuOffset&quot;: 20,
-                        &quot;toggleIconOnFocus&quot;: true,
-                        &quot;activeClass&quot;: &quot;focus&quot;
-                      }">
-             <BiSearch/>
-            </button> */}
               </div>
 
               <div id="searchDropdownMenu" className="hs-form-search-menu-content dropdown-menu dropdown-menu-form-search navbar-dropdown-menu-borderless animated hs-form-search-menu-hidden hs-form-search-menu-initialized">
@@ -136,7 +135,14 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                           <BiSearch />
                         </div>
 
-                        <input type="search" className="form-control" placeholder="Search..." aria-label="Search in front" />
+                        <input
+                          type="search"
+                          className="js-form-search form-control"
+                          placeholder="Search..."
+                          aria-label="Search in front"
+                          value={searchTerm}
+                          onChange={e => setSearchTerm(e.target.value)}
+                        />
                         <a className="input-group-append input-group-text" href="javascript:;">
                           <i className="bi-x-lg"></i>
                         </a>
@@ -150,16 +156,206 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                   <a className="card-footer text-center" >
                     See all results   <BiChevronRight />   <i className="bi-chevron-right small"></i>
                   </a>
-
                 </div>
               </div>
-
-
             </div>
+          </div> */}
 
+          <div className="navbar-nav-wrap-content-start">
+            <div className="dropdown ms-2">
+              <div className="position-relative" style={{ width: '300px' /* adjust width as needed */ }}>
+                <div className="input-group input-group-merge input-group-borderless input-group-hover-light navbar-input-group">
+                  <div className="input-group-prepend input-group-text">
+                    <BiSearch />
+                  </div>
 
+                  <input
+                    type="search"
+                    className="js-form-search form-control"
+                    placeholder="Search..."
+                    aria-label="Search in front"
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
+                    onFocus={() => setShowDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+                  />
+                </div>
+
+                {/* Dropdown appears just below the input box */}
+                {showDropdown && searchResults?.games?.length > 0 && (
+                  <ul
+                    className="dropdown-menu show shadow-sm overflow-auto"
+                    style={{
+                      display: 'block',
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      right: 0,
+                      zIndex: 1000,
+                      maxHeight: '250px',
+                                            width: '330px', // Adjust width as needed
+                      scrollbarWidth: 'none',      // Firefox
+                      msOverflowStyle: 'none', 
+                    }}
+                  >
+                    {searchResults.games.map((item, index) => (
+                      <li
+                        key={index}
+                        className="dropdown-item"
+                        onChange={() => {
+                          setSearchTerm(item.name);
+                          setShowDropdown(false);
+                        }}
+                      >
+                        <Link to={`/admin/games/${item._id}`} className="text-decoration-none text-dark">
+                          <strong>{item.name}</strong>{' '}
+                          <small className="text-muted">({item.type})</small>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {showDropdown && searchResults?.bookings?.length > 0 && (
+                  <ul
+                    className="dropdown-menu show shadow-sm overflow-auto"
+                    style={{
+                      display: 'block',
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      right: 0,
+                      zIndex: 1000,
+                      maxHeight: '250px',
+                      width: '330px', // Adjust width as needed
+                      scrollbarWidth: 'none',      // Firefox
+                      msOverflowStyle: 'none',     // IE 10+
+                    }}
+                  >
+                    {searchResults.bookings.map((item, index) => (
+                      <li
+                        key={index}
+                        className="dropdown-item"
+                        onClick={() => {
+                          setSearchTerm(item.name);
+                          setShowDropdown(false);
+                        }}
+                      >
+                        <Link to={`/admin/booking/checkout/${item._id}`} className="text-decoration-none text-dark">
+                          <strong>{item.booking_id}</strong>{' '}
+                          <small className="text-muted">({item.booking_type})</small>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {showDropdown && searchResults?.customers?.length > 0 && (
+                  <ul
+                    className="dropdown-menu show shadow-sm overflow-auto"
+                    style={{
+                      display: 'block',
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      right: 0,
+                      zIndex: 1000,
+                      maxHeight: '250px',
+                                            width: '330px', // Adjust width as needed
+                      scrollbarWidth: 'none',      // Firefox
+                      msOverflowStyle: 'none', 
+                    }}
+                  >
+                    {searchResults.customers.map((item, index) => (
+                      <li
+                        key={index}
+                        className="dropdown-item"
+                        onClick={() => {
+                          setSearchTerm(item.name);
+                          setShowDropdown(false);
+                        }}
+                      >
+                        <Link to={`/admin/users/customer-details/${item._id}`} className="text-decoration-none text-dark">
+                          <strong>{item.name}</strong>{' '}
+                          <small className="text-muted">({item.email || "No email"})</small>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {showDropdown && searchResults?.items?.length > 0 && (
+                  <ul
+                    className="dropdown-menu show shadow-sm overflow-auto"
+                    style={{
+                      display: 'block',
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      right: 0,
+                      zIndex: 1000,
+                      maxHeight: '250px',
+                      width: '400px', // Adjust width as needed
+                                            width: '330px', // Adjust width as needed
+                      scrollbarWidth: 'none',      // Firefox
+                      msOverflowStyle: 'none', 
+                    }}
+                  >
+                    {searchResults?.items.map((item, index) => (
+                      <li
+                        key={index}
+                        className="dropdown-item"
+                        onClick={() => {
+                          setSearchTerm(item.name);
+                          setShowDropdown(false);
+                        }}
+                      >
+                        <Link to={`/admin/inventory/item-details/${item._id}`} className="text-decoration-none text-dark">
+                          <strong> {item.name}</strong>{' '}
+                          <small className="text-muted">( &#8377; {item.sellingPrice})</small>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {showDropdown && searchResults?.itemGroups?.length > 0 && (
+                  <ul
+                    className="dropdown-menu show shadow-sm overflow-auto"
+                    style={{
+                      display: 'block',
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      right: 0,
+                      zIndex: 1000,
+                      maxHeight: '250px',
+                      width: '400px', // Adjust width as needed
+                                            width: '330px', // Adjust width as needed
+                      scrollbarWidth: 'none',      // Firefox
+                      msOverflowStyle: 'none', 
+                    }}
+                  >
+                    {searchResults?.itemGroups.map((item, index) => (
+                      <li
+                        key={index}
+                        className="dropdown-item"
+                        onClick={() => {
+                          setSearchTerm(item.group_name);
+                          setShowDropdown(false);
+                        }}
+                      >
+                        <Link to={`/admin/inventory/item-group-details/${item._id}`} className="text-decoration-none text-dark">
+                          <strong> {item.group_name}</strong>{' '}
+                          <small className="text-muted">({item.items?.length} items)</small>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
           </div>
-
 
         </div>
 
@@ -203,7 +399,6 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                     {/* Add your recent search items here */}
                     <div className="dropdown-divider"></div>
                   </div>
-
                   <a className="card-footer text-center" href="#">
                     See all results <BiChevronRight />
                   </a>
@@ -219,7 +414,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
             <li className="nav-item">
               <div className="dropdown">
                 <button type="button" className="btn btn-ghost-secondary btn-icon rounded-circle" id="navbarNotificationsDropdownMobile" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" data-bs-dropdown-animation="">
-                  <BiBell style={{ fontSize: "1.3rem" }} />
+                  <BiBell style={{ fontSize: "1.5rem" }} />
                   <span className="btn-status btn-sm-status btn-status-danger"></span>
                 </button>
 
@@ -265,11 +460,10 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                   <div className="dropdown-item-text">
                     <div className="d-flex align-items-center">
                       <div className="avatar avatar-sm avatar-circle">
-                        {/* <img className="avatar-img" src={profilePic} alt="Image Description" /> */}
                         <img className="avatar-img" src={profilePic} alt="Image Description" onError={(e) => {
-                      e.target.onerror = null; // prevents infinite loop if fallback also fails
-                      e.target.src = "/assets/profile/user_avatar.jpg"; // replace with your fallback path
-                    }} />
+                          e.target.onerror = null; // prevents infinite loop if fallback also fails
+                          e.target.src = "/assets/profile/user_avatar.jpg"; // replace with your fallback path
+                        }} />
                       </div>
                       <div className="flex-grow-1 ms-3">
                         <h5 className="mb-0">{user?.name}</h5>
@@ -277,14 +471,10 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                       </div>
                     </div>
                   </div>
-
                   <div className="dropdown-divider"></div>
-
                   <Link className="dropdown-item" to="/admin/profile">Profile &amp; account</Link>
                   <a className="dropdown-item" href="#">Settings</a>
-
                   <div className="dropdown-divider"></div>
-
                   <div className="dropdown">
                     <a className="navbar-dropdown-submenu-item dropdown-item dropdown-toggle" href="javascript:;" id="navSubmenuPagesAccountDropdown2" data-bs-toggle="dropdown" aria-expanded="false">Customization</a>
 
@@ -294,9 +484,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                       <a className="dropdown-item" href="#">Customize Front</a>
                     </div>
                   </div>
-
                   <div className="dropdown-divider"></div>
-
                   <a onClick={handleLogout} className="dropdown-item">Sign out</a>
                 </div>
               </div>
@@ -305,33 +493,17 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
         </div>
 
         <div className="navbar-nav-wrap-content-end m-0">
-
           <ul className="navbar-nav" style={{ gap: "2rem" }}>
-
             <li className="nav-item d-none d-md-block">
-
               <div className="dropdown">
-                {/* <button type="button" className="btn btn-ghost-secondary btn-icon  rounded-circle" id="navbarNotificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" data-bs-dropdown-animation="">
-                  <BiBell style={{ fontSize: "1.3rem" }} />
-                  <span className="btn-status btn-sm-status btn-status-danger"></span>
-                </button> */}
-
-
                 <div className="dropdown-menu dropdown-menu-end dropdown-card navbar-dropdown-menu navbar-dropdown-menu-borderless" aria-labelledby="navbarNotificationsDropdown" style={{ width: "25rem" }}>
                   <div className="card">
-
                     <div className="card-header card-header-content-between">
                       <h4 className="card-title mb-0">Notifications</h4>
-
-
                       <div className="dropdown">
                         <button type="button" className="btn btn-icon btn-sm btn-ghost-secondary rounded-circle" id="navbarNotificationsDropdownSettings" data-bs-toggle="dropdown" aria-expanded="false">
-
                         </button>
-
-
                       </div>
-
                     </div>
 
                     <ul className="list-group list-group-flush navbar-card-list-group" style={{ maxHeight: '200px', overflowY: 'auto', scrollbarWidth: 'thin', msOverflowStyle: 'none' }}>
@@ -394,10 +566,8 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
 
             </li>
             <li className="nav-item d-none d-none d-md-block">
-
               <div className="dropdown">
                 <button type="button" className="btn " id="navbarAppsDropdown">
-
                   <sapn className='d-flex align-items-center justify-content-center'> <PiMapPinBold style={{ fontSize: "1.3rem" }} /> {user?.location?.city}</sapn>
                 </button>
               </div>
@@ -428,43 +598,15 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                       </div>
                     </div>
                   </div>
-
                   <div className="dropdown-divider"></div>
-
-
-
                   <Link className="dropdown-item" to="/admin/profile">Profile &amp; account</Link>
-                  {/* <a className="dropdown-item" href="#">Settings</a> */}
-
                   <div className="dropdown-divider"></div>
-
-                  {/* <div className="dropdown">
-                    <a className="navbar-dropdown-submenu-item dropdown-item dropdown-toggle" href="javascript:;" id="navSubmenuPagesAccountDropdown2" data-bs-toggle="dropdown" aria-expanded="false">Customization</a>
-
-                    <div className="dropdown-menu dropdown-menu-end navbar-dropdown-menu navbar-dropdown-menu-borderless navbar-dropdown-sub-menu" aria-labelledby="navSubmenuPagesAccountDropdown2">
-                      <a className="dropdown-item" href="#">
-                        Invite people
-                      </a>
-                      <a className="dropdown-item" href="#">
-                        Analytics
-                        <i className="bi-box-arrow-in-up-right"></i>
-                      </a>
-                      <a className="dropdown-item" href="#">
-                        Customize Front
-                        <i className="bi-box-arrow-in-up-right"></i>
-                      </a>
-                    </div>
-                  </div> */}
-
                   <div className="dropdown-divider"></div>
-
                   <a onClick={handleLogout} style={{ cursor: "pointer" }} className="dropdown-item">Sign out</a>
                 </div>
               </div>
-
             </li>
           </ul>
-
         </div>
       </div>
     </header>

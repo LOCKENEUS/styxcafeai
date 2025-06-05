@@ -198,9 +198,9 @@ export const SalesOrder = () => {
   };
 
   return (
-    <Container className="p-4">
+    <Container className="p-2 p-md-4">
       <Row>
-        <Col sm={12} className="mx-2 mb-3 px-3">
+        <Col sm={12} className="mx-2 mb-0 mb-md-3 px-3">
           <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
@@ -223,7 +223,7 @@ export const SalesOrder = () => {
           >
             <Row className="align-items-center">
               {/* Title */}
-              <Col sm={4} className="d-flex my-2">
+              <Col sm={4} className="d-flex my-3 my-md-2">
                 <h1
                   style={{
                     fontSize: "20px",
@@ -269,7 +269,7 @@ export const SalesOrder = () => {
               </Col>
 
               {/* Action Buttons */}
-              <Col sm={5} className="d-flex justify-content-end text-end my-2">
+              <Col sm={5} className="d-flex justify-content-between justify-content-md-end text-end my-2">
                 <Button
                   variant="denger"
                   className="btn px-4 mx-2 border border-danger text-danger"

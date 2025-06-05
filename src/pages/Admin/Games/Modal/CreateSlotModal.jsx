@@ -145,6 +145,8 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
+          <Row>
+            <Col xs={12} className="mb-3">
           <Form.Group className="mb-3">
             <Form.Label style={labelStyle}>Day</Form.Label>
             <Form.Select name="day" value={formData.day} onChange={handleChange} style={inputStyle} required>
@@ -158,17 +160,14 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
               <option value="Sunday">Sunday</option>
             </Form.Select>
           </Form.Group>
+          </Col>
 
-          {/* <Row className="mb-2">
-            <Col>
-            </Col>
-          </Row> */}
-
+          <Col xs={6} className="mb-3">
           <Form.Group>
             <Form.Label style={labelStyle}>Start Time<span className="text-danger">*</span></Form.Label>
             <Row className="mb-2">
-              <Col>
-                <Form.Select value={startTimeParts.hour} onChange={(e) =>
+              <Col className="">
+                <Form.Select className="p-2" value={startTimeParts.hour} onChange={(e) =>
                   setStartTimeParts({ ...startTimeParts, hour: e.target.value })
                 }>
                   <option value="">HH</option>
@@ -178,8 +177,8 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
                   })}
                 </Form.Select>
               </Col>
-              <Col>
-                <Form.Select value={startTimeParts.minute} onChange={(e) =>
+              <Col className="px-0">
+                <Form.Select className="p-2" value={startTimeParts.minute} onChange={(e) =>
                   setStartTimeParts({ ...startTimeParts, minute: e.target.value })
                 }>
                   <option value="">MM</option>
@@ -189,8 +188,8 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
                   })}
                 </Form.Select>
               </Col>
-              <Col>
-                <Form.Select value={startTimeParts.period} onChange={(e) =>
+              <Col className="px-0">
+                <Form.Select className="p-2" value={startTimeParts.period} onChange={(e) =>
                   setStartTimeParts({ ...startTimeParts, period: e.target.value })
                 }>
 
@@ -200,12 +199,14 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
               </Col>
             </Row>
           </Form.Group>
+          </Col>
 
+          <Col xs={6} className="mb-3">
           <Form.Group>
             <Form.Label style={labelStyle}>End Time<span className="text-danger">*</span></Form.Label>
             <Row className="mb-2">
-              <Col>
-                <Form.Select value={endTimeParts.hour} onChange={(e) =>
+              <Col className="px-0">
+                <Form.Select className="p-2" value={endTimeParts.hour} onChange={(e) =>
                   setEndTimeParts({ ...endTimeParts, hour: e.target.value })
                 }>
 
@@ -216,8 +217,8 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
                   })}
                 </Form.Select>
               </Col>
-              <Col>
-                <Form.Select value={endTimeParts.minute} onChange={(e) =>
+              <Col className="px-0">
+                <Form.Select className="p-2" value={endTimeParts.minute} onChange={(e) =>
                   setEndTimeParts({ ...endTimeParts, minute: e.target.value })
                 }>
 
@@ -228,8 +229,8 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
                   })}
                 </Form.Select>
               </Col>
-              <Col>
-                <Form.Select value={endTimeParts.period} onChange={(e) =>
+              <Col className="px-0">
+                <Form.Select className="p-2" value={endTimeParts.period} onChange={(e) =>
                   setEndTimeParts({ ...endTimeParts, period: e.target.value })
                 }>
 
@@ -239,16 +240,20 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
               </Col>
             </Row>
           </Form.Group>
+          </Col>
 
+          <Col xs={12}>
           <Form.Group className="mb-3">
             <Form.Label style={labelStyle}>Slot Price</Form.Label>
             <Form.Control type="number" name="slot_price" value={formData.slot_price} onChange={handleChange} style={inputStyle} placeholder="Enter Slot Price" required />
           </Form.Group>
+          </Col>
 
           <div className="d-flex justify-content-end">
             <Button variant="secondary" className="me-2" onClick={handleClose}>Cancel</Button>
             <Button variant="primary" type="submit">{slot?._id ? "Update Slot" : "Create Slot"}</Button>
           </div>
+          </Row>
         </Form>
       </Modal.Body>
     </Modal>

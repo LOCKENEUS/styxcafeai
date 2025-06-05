@@ -20,7 +20,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getPurchaseBillPayments } from "../../../../store/AdminSlice/Inventory/CollectPurchaseBill";
 import Loader from "../../../../components/common/Loader/Loader";
-import Volleyball from "../../../../components/utils/Animations/Volleyball";
+import Volleyball from "../../../../components/utils/Animations/SplashAnimation";
+import SplashAnimation from "../../../../components/utils/Animations/SplashAnimation";
 
 const BillPaymentList = () => {
     const navigate = useNavigate();
@@ -153,12 +154,12 @@ const BillPaymentList = () => {
     return (
       <Container fluid className="mt-4 min-vh-100">
         <Row>
-        <Col sm={12} className="mx-2 mb-3 px-5">
+        <Col sm={12} className="mx-2 mb-0 mb-md-3 px-2 px-md-5">
           <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>
-              </BreadcrumbItem>
+              </BreadcrumbItem> 
               <BreadcrumbItem>
                 <Link to="/admin/inventory/dashboard">Inventory</Link>
               </BreadcrumbItem>
@@ -169,7 +170,7 @@ const BillPaymentList = () => {
 
           {/* Items List Card */}
           <Col data-aos="fade-right" data-aos-duration="1000" sm={12}>
-            <Card  className="mx-4 p-3">
+            <Card  className="mx-0 mx-md-4 p-3">
               <Row className="align-items-center">
                 {/* Title */}
                 <Col sm={4} className="d-flex my-2">
@@ -265,7 +266,8 @@ const BillPaymentList = () => {
                   />
                 </Col>
               </Row>
-            </Card></Col>
+            </Card>
+            </Col>
         </Row>
       </Container>
     );

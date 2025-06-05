@@ -295,7 +295,7 @@ const GameInfo = () => {
           className="d-flex d-md-none flex-column justify-content-around p-2 p-md-3"
           style={{ backgroundColor: "transparent" }}
         >
-          <h5 className="fw-600 fs-5 fs-md-3" style={{ fontWeight: "600" }}>
+          <h5 className="fw-600 fs-4 fs-md-3" style={{ fontWeight: "600" }}>
             {selectedGame?.data?.name}
           </h5>
 
@@ -341,12 +341,12 @@ const GameInfo = () => {
           </div>
 
           <div className="mt-3">
-            <img
+            {/* <img
               src="/assets/Admin/Game/price.svg"
               className="mb-2"
               alt="price"
               style={{ width: "24px", height: "24px" }}
-            />
+            /> */}
             <span
               className="fw-bold text-primary"
               style={{ fontSize: "20px" }}

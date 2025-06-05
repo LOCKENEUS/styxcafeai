@@ -33,7 +33,8 @@ const Login = ({ setIsAuthenticated }) => {
 
       if (result && result.token) {
         setIsAuthenticated(true);
-        navigate('/admin/dashboard');
+        // navigate('/admin/dashboard');
+        navigate('/splash')
       }
     } catch (error) {
       console.error("Login failed:", error);

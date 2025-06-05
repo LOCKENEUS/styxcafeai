@@ -21,7 +21,7 @@ const PublicRoute = ({ isAuthenticated }) => {
     if (userRole === "superadmin") {
       return <Navigate to="/superadmin/dashboard" replace />;
     } else if (userRole === "admin") {
-      return <Navigate to="/admin/dashboard" replace />;
+      return <Navigate to="/splash" replace />;
     } else if (userRole === "user") {
       return <Navigate to="/user/dashboard" replace />;
     }

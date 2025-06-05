@@ -149,7 +149,7 @@ export const PurchaseReceivedAdmin = () => {
   return (
     <Container data-aos="fade-right" data-aos-duration="1000" fluid className="mt-4 min-vh-100">
       <Row>
-      <Col sm={12} className="mx-2 mb-3 px-5">
+        <Col sm={12} className="mx-2 mb-0 mb-md-3 px-2 px-md-5">
           <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
@@ -165,8 +165,7 @@ export const PurchaseReceivedAdmin = () => {
 
         {/* Items List Card */}
         <Col sm={12}>
-
-          <Card className="mx-4 p-3">
+          <Card className="mx-1 mx-md-4 mt-0 p-3">
             <Row className="align-items-center">
               {/* Title */}
               <Col sm={4} className="d-flex my-2">
@@ -211,13 +210,12 @@ export const PurchaseReceivedAdmin = () => {
                       ✖
                     </InputGroupText>
                   )}
-
                 </InputGroup>
               </Col>
 
               {/* Action Buttons */}
-              <Col sm={5} className="d-flex justify-content-end text-end my-2">
-                <Button variant="denger" className="btn  px-4 mx-2" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }} onClick={handleExport}>
+              <Col sm={5} className="d-flex justify-content-between justify-content-md-end text-end my-2">
+                <Button variant="denger" className="btn px-4 mx-2" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }} onClick={handleExport}>
                   <Image className="me-2 size-sm" style={{ width: "22px", height: "22px" }} src={solar_export} />
                   Export
                 </Button>
@@ -238,7 +236,7 @@ export const PurchaseReceivedAdmin = () => {
                   data={filteredItems}
                   progressPending={loading}
                   progressComponent={<div><Loader /></div>}
-                  
+
                   // pagination
                   highlightOnHover
                   responsive

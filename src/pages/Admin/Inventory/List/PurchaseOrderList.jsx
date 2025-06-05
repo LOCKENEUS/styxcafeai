@@ -103,7 +103,7 @@ const PurchaseOrderList = () => {
   return (
     <Container>
       <Row>
-        <Col sm={12} className="mx-2 my-3 px-5">
+        <Col sm={12} className="mx-2 my-3 mb-0 px-2 px-md-5">
           <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
@@ -118,7 +118,7 @@ const PurchaseOrderList = () => {
         </Col>
 
         <Col data-aos="fade-right" data-aos-duration="1000" sm={12}>
-          <Card className="mx-4 p-3">
+          <Card className="mx-1 mx-md-4 p-3">
             <Row className="align-items-center">
               <Col sm={4} className="d-flex my-2">
                 <h1 style={{
@@ -156,8 +156,8 @@ const PurchaseOrderList = () => {
                 </InputGroup>
               </Col>
 
-              <Col sm={5} className="d-flex justify-content-end text-end my-2">
-                <Button variant="denger" className="btn  px-4 mx-2" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }} onClick={generateCSV}>
+              <Col sm={5} className="d-flex justify-content-between justify-content-md-end text-end my-2">
+                <Button variant="denger" className="btn px-4 mx-2" size="sm" style={{ borderColor: "#FF3636", color: "#FF3636" }} onClick={generateCSV}>
                   <Image className="me-2 size-sm" style={{ width: "22px", height: "22px" }} src={solar_export} />
                   Export
 

@@ -132,7 +132,7 @@ const PurchaseBillList = () => {
   return (
     <Container  fluid className="mt-4 min-vh-100">
       <Row>
-      <Col sm={12} className="mx-2 mb-3 px-5">
+      <Col sm={12} className="mx-2 mb-0 mb-md-3 px-2 px-md-5">
           <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
@@ -148,7 +148,7 @@ const PurchaseBillList = () => {
 
         {/* Items List Card */}
         <Col data-aos="fade-right" data-aos-duration="1000" sm={12}>
-          <Card className="mx-4 p-3">
+          <Card className="mx-0 mx-md-4 p-3">
             <Row className="align-items-center">
               {/* Title */}
               <Col sm={4} className="d-flex my-2">
@@ -195,7 +195,7 @@ const PurchaseBillList = () => {
               </Col>
 
               {/* Action Buttons */}
-              <Col sm={5} className="d-flex justify-content-end text-end my-2">
+              <Col sm={5} className="d-flex justify-content-between justify-content-md-end text-end my-2">
                 <Button 
                   variant="denger" 
                   className="btn px-4 mx-2" 

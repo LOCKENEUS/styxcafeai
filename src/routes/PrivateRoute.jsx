@@ -18,6 +18,5 @@ const PrivateRoute = () => {
   return isAuthenticated && userRole === "superadmin" ? <Outlet /> : <Navigate to="/admin/login" replace />;
 };
 
-
 export default PrivateRoute;
 

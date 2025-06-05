@@ -84,7 +84,7 @@ const CreditSplit = ({ show,
   return (
     <Modal show={show} onHide={handleClose} centered>
       <div className="modal-content rounded-2">
-        <Modal.Header style={{ backgroundColor: "", padding: "20px" }} className="d-flex ">
+        <Modal.Header style={{ backgroundColor: "", padding: "20px 20px 0px 20px" }} className="d-flex ">
           <Modal.Title>
             {allPlayers?.length > 2 && <Button variant="primary" className="fw-bold" onClick={handleSplitAmount}>
               <LuSplit size={16} className="" /> Split Expenses
@@ -102,6 +102,7 @@ const CreditSplit = ({ show,
             </Button>
             }
             <span style={{ background: "#FF00000D", color: "#FF0000", padding: "12px", marginLeft: "190px" }} className="rounded-2"> <BsCurrencyRupee /> <span className="fw-bold ms-1">{currentTotal}</span></span>
+            {isAmountSplit && <div className="text-info fw-light fs-6">Click add button to assign credit amount</div>}
           </Modal.Title>
           <Button variant="close" onClick={handleClose} className="ms-auto"></Button>
         </Modal.Header>

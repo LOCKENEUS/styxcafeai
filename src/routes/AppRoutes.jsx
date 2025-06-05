@@ -88,7 +88,7 @@ import { InventorySettingAdmin } from "../pages/Admin/Inventory/List/inventorySe
 import { SODetails } from "../pages/Admin/Inventory/Details/SODetails";
 import { SIDetails } from "../pages/Admin/Inventory/Details/SIDetails";
 import { IPDetails } from "../pages/Admin/Inventory/Details/IPDetails";
-import  SOCreate  from "../pages/Admin/Inventory/Create/SOCreate";
+import SOCreate from "../pages/Admin/Inventory/Create/SOCreate";
 import { InvoiceCreate } from "../pages/Admin/Inventory/Create/invoiceCreate";
 import BillPaymentList from "../pages/Admin/Inventory/List/BillPaymentList";
 import PurchaseBillList from "../pages/Admin/Inventory/List/PurchaseBillList";
@@ -97,7 +97,7 @@ import { PRCreate } from "../pages/Admin/Inventory/Create/prCreate";
 import { PurchaseReceivedDetails } from "../pages/Admin/Inventory/Details/purchaseReceived ";
 import { PurchaseBillDetailsAdmin } from "../pages/Admin/Inventory/Details/purchaseBill";
 import BookGames from "../pages/Admin/Booking/BookGames";
-import  PurchaseBillCreate  from "../pages/Admin/Inventory/Create/PBCreate";
+import PurchaseBillCreate from "../pages/Admin/Inventory/Create/PBCreate";
 // import { BillPaymentDetails } from "../pages/Admin/Inventory/Details/billPayment";
 import BookingCheckout from "../pages/Admin/Booking/BookingCheckout";
 import { PurchaseOrderUpdate } from "../pages/Admin/Inventory/Update/PurchaseOrderUpdate ";
@@ -133,6 +133,8 @@ import { CreateSalesReturn } from "../components/common/inventory/SalesReturns/C
 import { SalesReturnDetails } from "../components/common/inventory/SalesReturns/SalesReturnDetails";
 import { SalesReturnList } from "../components/common/inventory/SalesReturns/SalesReturnList";
 import { Reports } from "../pages/Admin/Reports/Reports";
+import SplashAnimation from "../components/utils/Animations/SplashAnimation";
+import { BookingsReport } from "../pages/Admin/Reports/BookingsReport";
 
 const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
   const [locations, setLocations] = useState([]);
@@ -225,6 +227,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
       {/*-------------------- Admin Routes-------------------------------- */}
       <Route element={<AdminRoute isAuthenticated={isAuthenticated} />}>
         <Route element={<AdminLayout setIsAuthenticated={setIsAuthenticated} />}>
+          <Route path="/splash" element={<SplashAnimation />} />
           <Route path="/admin/profile" element={<ViewProfile />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
@@ -275,9 +278,9 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/inventory/bill-payments" element={<BillPaymentList />} />
           <Route path="/admin/inventory/item-details/:id" element={<ItemDetails />} />
           <Route path="/admin/inventory/edit/:id" element={<CreateItemsForm />} />
-         <Route path="/admin/inventory/vendors/edit/:id" element={<CreateVendorForm />} />
-       <Route path="/admin/inventory/vendor-details/:id" element={<VendorDetails />} />
-       <Route path="/admin/inventory/item-groups-details" element={<ItemGroupsDetails />} />
+          <Route path="/admin/inventory/vendors/edit/:id" element={<CreateVendorForm />} />
+          <Route path="/admin/inventory/vendor-details/:id" element={<VendorDetails />} />
+          <Route path="/admin/inventory/item-groups-details" element={<ItemGroupsDetails />} />
 
           {/* -------------------- Inventory Routes new -------------------------------- */}
           <Route path="/admin/Inventory/dashboard" element={<DashboardInventory />} />
@@ -306,7 +309,8 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/inventory/PurchaseOrderUpdate/:id" element={<PurchaseOrderUpdate />} />
 
           {/* Reports section */}
-          <Route path="/admin/reports" element={<Reports/>} />
+          <Route path="/admin/reports" element={<Reports />} />
+          <Route path="/admin/bookings/report" element={<BookingsReport />} />
         </Route>
       </Route>
 
@@ -328,7 +332,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
                 ? sessionStorage.getItem("userRole") === "superadmin"
                   ? "/superadmin/dashboard"
                   : sessionStorage.getItem("userRole") === "admin"
-                    ? "/admin/dashboard"
+                    ? "/splash"
                     : "/admin/login"
                 : "/admin/login"
             }
@@ -345,7 +349,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
                 ? sessionStorage.getItem("userRole") === "superadmin"
                   ? "/superadmin/dashboard"
                   : sessionStorage.getItem("userRole") === "admin"
-                    ? "/admin/dashboard"
+                    ? "/splash"
                     : "/user/dashboard"
                 : "/admin/login"
             }
