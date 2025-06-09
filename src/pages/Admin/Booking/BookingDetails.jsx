@@ -41,7 +41,6 @@ const BookingDetails = () => {
   const [options, setOptions] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [showCreditModal, setShowCreditModal] = useState(false);
-  const [showCustomSlot, setShowCustomSlot] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCustTerm, setSearchCustTerm] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
@@ -59,6 +58,7 @@ const BookingDetails = () => {
   const [selectedMethod, setSelectedMethod] = useState("Payment Options");
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
+  const isMobile = window.innerWidth <= 768;
 
   const backend_url = import.meta.env.VITE_API_URL;
   const dispatch = useDispatch();
@@ -656,22 +656,6 @@ const BookingDetails = () => {
 
             {searchTerm.length > 2 && filteredCustomers.length > 0 && (<>
               {/* Mobile View */}
-              {/* <ListGroup className="position-absolute d-block d-md-none shadow bg-white mt-7 ms-7" style={{ width: "65%" }}>
-
-                {filteredCustomers.map((customer) => (
-                  <ListGroup.Item
-                    key={customer.id}
-                    style={{ cursor: "pointer" }}
-                    action
-                    onClick={() => {
-                      setSelectedCustomer(customer)
-                      setSearchTerm('')
-                    }}
-                  >
-                    {customer.name} - {customer.contact_no}
-                  </ListGroup.Item>
-                ))}
-              </ListGroup> */}
               <ul className="list-group position-absolute d-block d-md-none shadow bg-white mt-7 ms-7" style={{ width: "65%" }}>
                 {filteredCustomers.map((customer) => (
                   <li
@@ -873,177 +857,6 @@ const BookingDetails = () => {
             </div>
           </div>
 
-
-          {/* <div className="bg-white rounded-3 p-3">
-  {!isExpanded ? (
-    <div className="d-flex justify-content-between align-items-center">
-      <small>Select Customer</small>
-      <Button 
-        variant="outline-primary" 
-        size="sm"
-        onClick={() => setIsExpanded(true)}
-      >
-        <BsPlus size={20} />
-      </Button>
-    </div>
-  ) : (
-    <div className="customer-list" style={{ maxHeight: selectedCustomer ? 'auto' : '200px', overflowY: 'auto' }}>
-      <div className="d-flex justify-content-between align-items-center mb-2">
-        <small>Recent Customers</small>
-        <Button 
-          variant="link" 
-          size="sm"
-          onClick={() => {
-            setIsExpanded(false);
-            setSelectedCustomer(null);
-          }}
-        >
-          <RxCross2 size={16} />
-        </Button>
-      </div>
-      
-      {!selectedCustomer ? (
-        filteredCustomers.length > 0 ? (
-          filteredCustomers.map((customer, index) => (
-            <div
-              key={index}
-              className={`d-flex align-items-center p-2 mb-2 cursor-pointer hover-bg-light rounded ${
-                selectedCustomer === customer ? "bg-light" : ""
-              }`}
-              onClick={() => {
-                setSelectedCustomer(customer);
-                setIsExpanded(true);
-              }}
-              style={{ cursor: "pointer" }}
-            >
-              <img
-                src={customer.customerProfile ? `${backend_url}/${customer.customerProfile}` : profile_pic}
-                alt=""
-                className="rounded-circle me-3"
-                width="40"
-                height="40"
-              />
-              <div>
-                <h6 className="mb-0">{customer.name}</h6>
-                <small className="muted-text">
-                  {customer.email || customer.phone}
-                </small>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="text-center mt-4">No customers available</div>
-        )
-      ) : (
-        <>
-          <div className="d-flex align-items-center p-2 mb-2 rounded" style={{ background: "#F4F4F4" }}>
-            <img
-              src={
-                selectedCustomer.customerProfile
-                  ? `${backend_url}/${selectedCustomer.customerProfile}`
-                  : profile_pic
-              }
-              alt=""
-              className="rounded-circle me-3"
-              width="40"
-              height="40"
-            />
-            <div>
-              <h6 className="mb-0">{selectedCustomer.name}</h6>
-              <small className="muted-text">
-                {selectedCustomer.email || selectedCustomer.phone}
-              </small>
-            </div>
-          </div>
-
-          {showInput ? (
-            <div className="mb-2 d-flex flex-column gap-2">
-              <Form.Control
-                type="text"
-                placeholder="Enter player name"
-                value={searchCustTerm}
-                onChange={(e) => {
-                  const name = e.target.value.replace(/[^a-zA-Z\s]/g, "");
-                  setNewPlayer({ ...newPlayer, name });
-                  setSearchCustTerm(name);
-                }}
-              />
-
-              {searchedCustomers.length > 0 && (
-                <ul className="list-unstyled bg-white border rounded shadow-sm max-h-40 overflow-y-auto">
-                  {searchedCustomers.map((customer, index) => (
-                    <li
-                      key={index}
-                      onClick={() => handleSelectCustomer(customer)}
-                      className="p-2 hover-bg-primary hover-text-white cursor-pointer"
-                      style={{ cursor: "pointer" }}
-                    >
-                      {customer?.name} - {customer?.contact_no}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <Form.Control
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                placeholder="Enter contact number"
-                maxLength={10}
-                value={newPlayer.contact_no}
-                onChange={(e) => {
-                  const contact_no = e.target.value.replace(/\D/g, "");
-                  setNewPlayer({ ...newPlayer, contact_no });
-                }}
-              />
-              <Button variant="primary" onClick={handleAddPlayer}>
-                Add
-              </Button>
-            </div>
-          ) : (
-            selectedGame?.data?.type === "Multiplayer" && (
-              <Button
-                variant="outline-primary"
-                className="d-flex w-100 align-items-center justify-content-center p-1 border-dashed"
-                style={{
-                  border: "2px dashed #007bff",
-                  borderRadius: "10px",
-                  color: "#007bff",
-                  fontWeight: "bold",
-                  backgroundColor: "transparent",
-                }}
-                onClick={() => setShowInput(true)}
-              >
-                <BsPlus className="me-2" size={20} />
-                Add Players
-              </Button>
-            )
-          )}
-
-          {teamMembers.length > 0 && (
-            <div className="mt-3 mx-2">
-              <h5 className="text-color">No of Candidates ({teamMembers.length + 1})</h5>
-              {teamMembers.map((player, index) => (
-                <div key={index} className="mt-2 d-flex justify-content-between align-items-center">
-                  <span>
-                    {player.name} - {player.contact_no}
-                  </span>
-                  <RxCross2 
-                    size={16} 
-                    className="text-danger" 
-                    style={{ cursor: "pointer" }} 
-                    onClick={() => handleRemovePlayer(player.id)} 
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      )}
-    </div>
-  )}
-</div> */}
-
-
           <div className="bg-white d-block d-md-none rounded-3 p-3">
             {!isExpanded ? (
               <div className="d-flex justify-content-between align-items-center">
@@ -1241,49 +1054,14 @@ const BookingDetails = () => {
               </div>
             )}
           </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         </Col>
 
-        <Col md={4} lg={4} className="p-1">
+        <Col md={4} lg={4} className="p-1" style={{ height: "90vh" }}>
           <Row>
             <Col md={12} className="d-none d-md-block" style={{ height: "9vh" }}></Col>
             <Col md={12}>
               <div
-                style={{ height: selectedCustomer ? "auto" : "40vh" }}
+                style={{ minHeight: selectedCustomer ? "60%" : "50%" }}
                 className="bg-white rounded-3 p-1 mb-2 position-relative"
               >
                 <div className="px-3">
@@ -1299,7 +1077,7 @@ const BookingDetails = () => {
                   </div>
 
                   <>
-                    <Row className="mb-5">
+                    <Row className="mb-2">
                       <Col xs={6} className="muted-text"></Col>
                       <Col xs={6} className="text-color"></Col>
                     </Row>
@@ -1341,8 +1119,8 @@ const BookingDetails = () => {
               </div>
             </Col>
             <Col md={12}>
-              <div className="d-none d-md-flex gap-0 rounded-2" style={{ minHeight: "46vh" }}>
-                <div className="bg-white p-4 w-100 border-end border-2 rounded-3" style={{ minHeight: "57%" }}>
+              <div className="d-none d-md-flex gap-0 rounded-2" style={{ minHeight: "54vh" }}>
+                <div className="bg-white p-4 w-100 border-end border-2 rounded-3" style={{ minHeight: "65%" }}>
                   <>
                     <div className="mb-5 d-flex justify-content-between">
                       <span className="text-color">Game Price:</span>
@@ -1444,7 +1222,7 @@ const BookingDetails = () => {
             </Col>
 
             <Col md={12} style={{ marginTop: "8px" }}>
-              <div className="bg-white rounded-3 p-0 d-flex flex-column" style={{ height: "89vh" }}>
+              <div className="bg-white rounded-3 p-0 d-flex flex-column" style={{ height: isMobile ? "auto" : "90vh" }}>
                 {/* Scrollable Content */}
                 <div
                   style={{
@@ -1459,17 +1237,140 @@ const BookingDetails = () => {
                   <div className="fs-4 text-color mx-2">Items ({selectedItems?.length})</div>
                   <div>
                     {selectedItems.map((product, index) => (
-                      <div
-                        key={index}
-                        className="position-relative d-flex mb-2 border-bottom border-2"
-                        style={{ width: "100%", background: '#F9F9F9' }}
-                      >
+                      <>
+                        <div
+                          key={index}
+                          className="position-relative d-none d-md-flex mb-2 border-bottom border-2"
+                          style={{ width: "100%", background: '#F9F9F9' }}
+                        >
+                          {/* Product Card */}
+                          <div
+                            className="fs-6"
+                            style={{ background: "#F9F9F9", width: "100%", padding: "12px", height: "10%" }}
+                          >
+                            <div className="d-flex justify-content-between align-items-center p-2">
+                              {/* Product Info */}
+                              <div style={{ flex: 1 }}>
+                                <div
+                                  style={{
+                                    maxHeight: "20px",
+                                    overflowY: "auto",
+                                    scrollbarWidth: "none", // Firefox
+                                    msOverflowStyle: "none", // IE
+                                    color: "#333333",
+                                    fontWeight: "500",
+                                    fontSize: "14px",
+                                  }}
+                                  onWheel={(e) => e.stopPropagation()}
+                                >
+                                  {product.item}
+                                </div>
+                                <div className="muted-text small mb-1">₹{product.price} each</div>
+                              </div>
+
+                              {/* Quantity Controls */}
+                              <div style={{ flex: 1 }}>
+                                <div className="d-flex align-items-center gap-1">
+                                  <Button
+                                    variant="light"
+                                    size="sm"
+                                    onClick={() =>
+                                      updateProduct(
+                                        product.id,
+                                        "quantity",
+                                        Math.max(0, Number(product.quantity) - 1)
+                                      )
+                                    }
+                                  >
+                                    −
+                                  </Button>
+
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    value={product.quantity}
+                                    style={{
+                                      width: "50px",
+                                      height: "28px",
+                                      fontSize: "12px",
+                                      textAlign: "center",
+                                      padding: "2px 4px",
+                                      border: "1px solid #ccc",
+                                    }}
+                                    onChange={(e) =>
+                                      updateProduct(product.id, "quantity", Number(e.target.value))
+                                    }
+                                  />
+
+                                  <Button
+                                    variant="light"
+                                    size="sm"
+                                    onClick={() =>
+                                      updateProduct(
+                                        product.id,
+                                        "quantity",
+                                        Number(product.quantity) + 1
+                                      )
+                                    }
+                                  >
+                                    +
+                                  </Button>
+                                </div>
+                              </div>
+
+                              {/* Tax & Total */}
+                              <div className="text-end ms-3" style={{ minWidth: "120px" }}>
+                                <div className="">
+                                  Tax ({product?.tax?.tax_rate || 0}%):{" "}
+                                  <span className="fw-semibold">₹{product.totalTax}</span>
+                                </div>
+                                <div className="fw-semibold">Total: ₹{product.total}</div>
+                              </div>
+                            </div>
+                            <div className="text-end">
+                              {/* Trash Icon */}
+                              <span
+                                className=""
+                                style={{
+                                  top: "20px",
+                                  right: "10px",
+                                  color: "red",
+                                }}
+                                onClick={() => {
+                                  const updatedProducts = selectedItems.filter((_, i) => i !== index);
+                                  setSelectedItems(updatedProducts);
+
+                                  const updatedSelectedIds = selectedIds.filter((id) => id !== product.id);
+                                  setSelectedIds(updatedSelectedIds);
+
+                                  // Recalculate the addOnTotal
+                                  const newTotal = updatedProducts.reduce((sum, item) => sum + item.total, 0);
+                                  setAddOnTotal(newTotal);
+
+                                  // Update the payable amount if needed
+                                  setPayableAmount((prevPayable) => prevPayable - product.total);
+                                }}
+                              >
+                                <TbTrash
+                                  style={{
+                                    top: "15px",
+                                    right: "-30px",
+                                    zIndex: 2,
+                                    cursor: "pointer"
+                                  }}
+                                  size={20}
+                                />
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
                         {/* Product Card */}
                         <div
-                          className="fs-6"
-                          style={{ background: "#F9F9F9", width: "100%", padding: "12px", height: "10%" }}
+                          className="fs-6 d-bock d-md-none"
+                          style={{ background: "#F9F9F9", width: "100%", padding: "8px", height: "8%", borderBottom: "1px solid #ddd" }}
                         >
-                          <div className="d-flex justify-content-between align-items-center p-2">
+                          <div className="d-flex justify-content-between align-items-center px-2 py-0">
                             {/* Product Info */}
                             <div style={{ flex: 1 }}>
                               <div
@@ -1491,7 +1392,7 @@ const BookingDetails = () => {
 
                             {/* Quantity Controls */}
                             <div style={{ flex: 1 }}>
-                              <div className="d-flex align-items-center gap-1">
+                              <div className="d-flex align-items-center gap-1 ms-2">
                                 <Button
                                   variant="light"
                                   size="sm"
@@ -1540,18 +1441,15 @@ const BookingDetails = () => {
                             </div>
 
                             {/* Tax & Total */}
-                            <div className="text-end ms-3" style={{ minWidth: "120px" }}>
+                            <div className="text-center" style={{ minWidth: "120px" }}>
                               <div className="">
                                 Tax ({product?.tax?.tax_rate || 0}%):{" "}
                                 <span className="fw-semibold">₹{product.totalTax}</span>
                               </div>
                               <div className="fw-semibold">Total: ₹{product.total}</div>
                             </div>
-                          </div>
-                          <div className="text-end">
-                            {/* Trash Icon */}
-                            <span
-                              className=""
+                               <span
+                              className="mx-2"
                               style={{
                                 top: "20px",
                                 right: "10px",
@@ -1583,8 +1481,13 @@ const BookingDetails = () => {
                               />
                             </span>
                           </div>
+                          {/* <div className="text-end"> */}
+                            {/* Trash Icon */}
+                         
+                         
+                          {/* </div> */}
                         </div>
-                      </div>
+                      </>
                     ))}
                   </div>
                 </div>

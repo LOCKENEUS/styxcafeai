@@ -376,7 +376,7 @@ export const Items = () => {
                   <Image src={gm1} />
                 </InputGroup.Text>
                 <FormControl
-                  placeholder="Search for items"
+                  placeholder="Search..."
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
                   style={{ backgroundColor: "#FAFAFA", border: "none" }}

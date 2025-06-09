@@ -146,7 +146,7 @@ export const ItemsGroup = () => {
                       <FormControl
                         type="search"
                         size="sm"
-                        placeholder="Search for Group "
+                        placeholder="Search..."
                         aria-label="Search in docs"
                         value={searchText}
                         onChange={(e) => setSearchText(e.target.value)}

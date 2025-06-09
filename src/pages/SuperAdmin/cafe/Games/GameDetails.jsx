@@ -47,8 +47,6 @@ import areaSize from '/assets/superAdmin/cafe/areaSize.png';
 import payLater from '/assets/superAdmin/cafe/payLater.png';
 import commission from '/assets/superAdmin/cafe/commission.png';
 import { fetchCafes, fetchCafesID } from "../../../../store/slices/cafeSlice";
-import { FaPlus } from "react-icons/fa";
-import { GoPlus } from "react-icons/go";
 import EditSlotOffcanvas from "../offcanvasCafe/editSlot";
 import { fetchEarning, getBookings } from "../../../../store/AdminSlice/BookingSlice";
 
@@ -70,9 +68,9 @@ const GameDetailsCafe = () => {
   const [totalEarning, setTotalEarning] = useState(null);
   const [selectedItem, setSelectedItem] = useState("Today");
   const [filteredEarningData, setFilteredEarningData] = useState([]);
-    const [selectedGameId, setSelectedGameId] = useState('All');
+  const [selectedGameId, setSelectedGameId] = useState('All');
   const [customStartDate, setCustomStartDate] = useState(null);
-    const [customEndDate, setCustomEndDate] = useState(null);
+  const [customEndDate, setCustomEndDate] = useState(null);
   const [today, setToday] = useState(() => {
     const d = new Date();
     const year = d.getFullYear();
@@ -84,14 +82,7 @@ const GameDetailsCafe = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const bookings = useSelector((state) => state.bookings.bookings);
-
-const { games } = useSelector((state) => state.games);
-
-  // const { game } = useSelector((state) => state.game);
-  // useEffect(() => {
-  //   dispatch(getGames(gameId));
-  // })
-  // console.log("your game here 0==", game);
+  const { games } = useSelector((state) => state.games);
 
   const { selectedGame } = useSelector((state) => state.games);
   const game = selectedGame?.data;
@@ -223,21 +214,6 @@ const { games } = useSelector((state) => state.games);
     dispatch(getslots(gameId)).finally(() => setShowSlotLoder(false));
   }, [dispatch, gameId]);
 
-  // const getDuration = 
-
-  // ---------------------------  gsap  -----------------------------
-  // useEffect(() => {
-  //   // if (selectedGame?.data) {
-  //   gsap.from(".game-detail-animate", {
-  //     y: 50,
-  //     delay: 3,
-  //     duration: 1,
-
-  //   }
-  //   );
-  //   // }
-  // }, [selectedGame]);
-
   useEffect(() => {
     dispatch(fetchCafes(cafe_id));
   }, [cafe_id, dispatch]);
@@ -274,11 +250,6 @@ const { games } = useSelector((state) => state.games);
   };
 
   // --------------------------- Earning -----------------------------
-
-
- 
-
-
   const filterBookingsEarning = async (eventKey = selectedItem, id = selectedGameId) => {
     setSelectedItem(eventKey);
     setSelectedGameId(id);
@@ -378,9 +349,7 @@ const { games } = useSelector((state) => state.games);
                   </Link>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item active style={{ fontSize: "16px", fontWeight: "500" }} > Game</Breadcrumb.Item>
-
               </Breadcrumb>
-
             </Col>
 
             <Col sm={4} xs={12} className="mb-3">
@@ -400,16 +369,6 @@ const { games } = useSelector((state) => state.games);
                 </div>
               </Card>
             </Col>
-
-            {/* <Button variant="primary" className="rounded-3" onClick={() => {
-                dispatch(setSelectedGame(null));
-                setFormData(null);
-                setShowCanvas(true);
-              }}>
-                <Image src={Add} alt="CafeCall" className="mx-1   " style={{ objectFit: "cover", width: "26.25px", height: "26.25px" }} />
-                Create  Game
-              </Button> */}
-
           </Row>
         </Card.Header>
 
@@ -421,11 +380,7 @@ const { games } = useSelector((state) => state.games);
                 <Loader />
               </div>
             ) : (
-
               <>
-
-
-
                 <Card className=" ">
 
                   <Row className="my-3 mx-1">
@@ -447,8 +402,6 @@ const { games } = useSelector((state) => state.games);
 
                         </Col>
                         <Col sm={3} className="d-flex justify-content-end">
-
-
                           <Button
                             onClick={() => setShowEditGameOffcanvas(true)}
                             className="px-3  me-2"
@@ -480,10 +433,7 @@ const { games } = useSelector((state) => state.games);
                               style={{ objectFit: "cover", width: "12px", height: "13px" }}
                             />
                           </Button>
-
                         </Col>
-
-
                         <Col sm={12} className="my-5 " >
 
                           <Card className="border-2 rounded-2 ">
@@ -495,8 +445,6 @@ const { games } = useSelector((state) => state.games);
                         beginner or a seasoned athlete, pickleball offers a perfect mix of strategy, agility, and social interaction.
                         Ideal for doubles or singles, the game is both competitive and friendly — making it a favorite in sports cafés,
                         clubs, and community centers around the world.`}
-
-
                             </p>
 
                           </Card>
@@ -646,9 +594,6 @@ const { games } = useSelector((state) => state.games);
                             </span>
 
                           </div>
-
-
-
                         </Col>
                       </Row>
                     </Col>
@@ -656,9 +601,7 @@ const { games } = useSelector((state) => state.games);
 
                 </Card>
               </>
-
             )}
-
         </Col>
 
         <Col sm={12}  >
@@ -723,9 +666,9 @@ const { games } = useSelector((state) => state.games);
                       color: activeKey === 'earning' ? '#0d6efd' : '#6c757d',
                       padding: '1rem 1rem',
                     }}
-                   
+
                   >
-                    Earning
+                   Cafe Earning
                   </div>
                 </Nav.Link>
                 {activeKey === 'earning' && (
@@ -746,11 +689,9 @@ const { games } = useSelector((state) => state.games);
           </Card>
 
 
-          <Card className="my-4 h-100" style={{ maxHeight: "600px", overflow:"auto" }}>
-
+          <Card className="my-4 h-100" style={{ maxHeight: "600px", overflow: "auto" }}>
             {activeKey === 'slotTime' && (
               <Row className="my-3 mx-1 align-items-center">
-
 
                 <Col xs={6} sm={8} className="my-2">
                   {/* <h4 className="mx-2 my-1" style={{ fontSize: "20px", fontWeight: "600" }}>TIME SLOTS</h4> */}
@@ -775,7 +716,6 @@ const { games } = useSelector((state) => state.games);
                     ) : (
 
                       <>
-
                         <ButtonGroup className="d-flex flex-wrap justify-content-center gap-2">
                           {weekdays.map((day) => (
                             <Button
@@ -796,7 +736,6 @@ const { games } = useSelector((state) => state.games);
                                 <Card className=" mx-1  my-3">
                                   <Table responsive className="my-0">
                                     <tbody>
-
                                       <tr key={slot._id}>
                                         <td style={{ width: '160px' }}>
                                           <div className="my-2">
@@ -836,7 +775,6 @@ const { games } = useSelector((state) => state.games);
                                               alt="Delete"
                                               style={{ objectFit: "cover", width: "12px", height: "14px" }}
                                               className="mx-3"
-
                                             />
                                           </div>
                                           <EditSlotOffcanvas show={showEditSlotOffcanvas} handleClose={() => setShowEditSlotOffcanvas(false)} slotID={slotID} />
@@ -876,7 +814,7 @@ const { games } = useSelector((state) => state.games);
                                     <tbody>
 
                                       <tr key={slot._id}>
-                                        <td style={{ width: '160px' }}>
+                                        <td style={{ width: '180px' }}>
                                           <div className="my-2">
                                             {slot.start_time} - {slot.end_time}
                                           </div>
@@ -934,7 +872,6 @@ const { games } = useSelector((state) => state.games);
                                           </Button>
                                         </td>
                                       </tr>
-
                                     </tbody>
                                   </Table>
                                 </Card>
@@ -942,9 +879,7 @@ const { games } = useSelector((state) => state.games);
 
                             </Col>
                           </Row>
-
                         )}
-
 
                         {activeDay === "Tuesday" && (
                           <Row className="my-1">
@@ -955,7 +890,7 @@ const { games } = useSelector((state) => state.games);
                                     <tbody>
 
                                       <tr key={slot._id}>
-                                        <td style={{ width: '160px' }}>
+                                        <td style={{ width: '180px' }}>
                                           <div className="my-2" >
                                             {slot.start_time} - {slot.end_time}
                                           </div>
@@ -1033,7 +968,7 @@ const { games } = useSelector((state) => state.games);
                                     <tbody>
 
                                       <tr key={slot._id}>
-                                        <td style={{ width: '160px' }}>
+                                        <td style={{ width: '180px' }}>
                                           <div className="my-2">
                                             {slot.start_time} - {slot.end_time}
                                           </div>
@@ -1111,7 +1046,7 @@ const { games } = useSelector((state) => state.games);
                                     <tbody>
 
                                       <tr key={slot._id}>
-                                        <td style={{ width: '160px' }}>
+                                        <td style={{ width: '180px' }}>
                                           <div className="my-2">
                                             {slot.start_time} - {slot.end_time}
                                           </div>
@@ -1189,7 +1124,7 @@ const { games } = useSelector((state) => state.games);
                                     <tbody>
 
                                       <tr key={slot._id}>
-                                        <td style={{ width: '160px' }}>
+                                        <td style={{ width: '180px' }}>
                                           <div className="my-2">
                                             {slot.start_time} - {slot.end_time}
                                           </div>
@@ -1268,7 +1203,7 @@ const { games } = useSelector((state) => state.games);
                                     <tbody>
 
                                       <tr key={slot._id}>
-                                        <td style={{ width: '160px' }}>
+                                        <td style={{ width: '180px' }}>
                                           <div className="my-2">
                                             {slot.start_time} - {slot.end_time}
                                           </div>
@@ -1306,7 +1241,6 @@ const { games } = useSelector((state) => state.games);
                                               alt="Delete"
                                               style={{ objectFit: "cover", width: "12px", height: "14px" }}
                                               className="mx-3"
-
                                             />
                                           </div>
                                           <EditSlotOffcanvas show={showEditSlotOffcanvas} handleClose={() => setShowEditSlotOffcanvas(false)} slotID={slotID} />
@@ -1334,388 +1268,197 @@ const { games } = useSelector((state) => state.games);
 
                             </Col>
                           </Row>
-
                         )}
                       </>
-
                     )
                   }
-
-
-
-
-
-
-
                 </Col>
-
-
-
               </Row>
             )}
 
             {activeKey === 'earning' && (
               <Row className="d-flex flex-wrap justify-content-between p-2 mx-1 my-3" >
-               
-               <Col sm={5} className=" justify-content-start align-items-start">
-                                   <Row className="align-items-center">
-                                     <Col sm={6} className="mb-2 mb-sm-0">
-                                       <DropdownButton
-                                         id="dropdown-item-button"
-                                         title={selectedItem || "Select"}
-                                         variant="outline-dark"
-                                         onSelect={(eventKey) => filterBookingsEarning(eventKey, selectedGameId)}
-                                         style={{ width: '100%' }}
-                                       >
-                                         <Dropdown.Item as="button" eventKey="" disabled>Select</Dropdown.Item>
-                                         <Dropdown.Item eventKey="Today" as="button">Today</Dropdown.Item>
-                                         <Dropdown.Item eventKey="This Week" as="button">This Week</Dropdown.Item>
-                                         <Dropdown.Item eventKey="Current Month" as="button">Current Month</Dropdown.Item>
-                                         <Dropdown.Item eventKey="Custom Date" as="button">Custom Date</Dropdown.Item>
-                                       </DropdownButton>
-                                     </Col>
-               
-                                     <Col sm={6}>
-                                       {/* <Form.Select
-                                         aria-label="Default select example"
-                                         value={selectedGameId}
-                                         onChange={(e) => {
-                                           const selectedId = e.target.value;
-                                           setSelectedGameId(selectedId);
-                                           filterBookingsEarning(selectedItem, selectedId); // Pass current selectedItem (Today/This Week) + new Game ID
-                                         }}
-                                       >
-                                         <option value="All">All</option>
-                                         {games?.map((game) => (
-                                           <option key={game._id} value={game._id}>
-                                             {game.name}
-                                           </option>
-                                         ))}
-                                       </Form.Select> */}
-                                     </Col>
-                                   </Row>
-                                 </Col>
-                                 <Col sm={6} className="d-flex justify-content-end my-2">
-                                   <h4 className="my-3" style={{ fontWeight: "600", fontSize: "16px", color: "#0062FF" }}>
-                                     Total Earning : ₹ {totalEarning || earningData.reduce((sum, booking) => sum + (booking?.totalAmountPaid || 0), 0)}
-                                   </h4>
-                                 </Col>
-                                 <Col sm={5} className=" alingn-items-end my-2">
-                                   <div className="d-flex justify-content-end">
-                                     <input
-                                       type="search"
-                                       className="form-control me-2"
-                                       placeholder="Search"
-                                       aria-label="Search"
-                                       value={searchTerm}
-                                       onChange={(e) => setSearchTerm(e.target.value)}
-                                     />
-                                   </div>
-                                 </Col>
-               
-                                 {/* <Col sm={6} className="my-3 alingn-items-end">
-                                   <Table hover responsive>
-                                     <thead className="table-light">
-                                       <tr>
-                                         <th className="fw-bold">S/N</th>
-                                         <th className="fw-bold">Booking Id</th>
-                                         <th className="fw-bold">Name</th>
-                                         <th className="fw-bold">Sports</th>
-                                         <th className="fw-bold">Players</th>
-                                         <th className="fw-bold">Mode</th>
-                                         <th className="fw-bold">Time/Date</th>
-                                         <th className="fw-bold">Price</th>
-                                       </tr>
-                                     </thead>
-                                     <tbody>
-                                       {filteredBookingsEarning?.length > 0 ? (
-                                         filteredBookingsEarning.map((booking, idx) => (
-                                           <tr key={idx}>
-                                             <td>{idx + 1}</td>
-                                             <td>
-                                               <span
-                                                 className="text-primary fw-bold"
-                                                 style={{ cursor: "pointer" }}
-                                                 onClick={() => handleBookingClick(booking._id)}
-                                               >
-                                                 {booking.booking_id}
-                                               </span>
-                                             </td>
-                                             <td>{booking.customerName}</td>
-                                             <td>{booking.game_id?.name}</td>
-                                             <td>{booking.players?.length || "---"}</td>
-                                             <td>
-                                               <span
-                                                 className="d-flex align-items-center w-75 justify-content-center"
-                                                 style={{
-                                                   backgroundColor:
-                                                     booking.status === "Pending"
-                                                       ? "#FFF3CD"
-                                                       : booking.mode === "Online"
-                                                         ? "#03D41414"
-                                                         : "#FF00000D",
-                                                   borderRadius: "20px",
-                                                   padding: "5px 10px",
-                                                   color:
-                                                     booking.status === "Pending"
-                                                       ? "#856404"
-                                                       : booking.mode === "Online"
-                                                         ? "#00AF0F"
-                                                         : "orange",
-                                                 }}
-                                               >
-                                                 <div
-                                                   style={{
-                                                     width: "10px",
-                                                     height: "10px",
-                                                     borderRadius: "50%",
-                                                     backgroundColor:
-                                                       booking.status === "Pending"
-                                                         ? "#856404"
-                                                         : booking.mode === "Online"
-                                                           ? "#03D414"
-                                                           : "orange",
-                                                     marginRight: "5px",
-                                                   }}
-                                                 />
-                                                 {booking?.status === "Pending" ? "Pending" : booking?.mode}
-                                               </span>
-                                             </td>
-                                             <td>
-                                               {formatDate(booking.slot_date)}
-                                               <br />
-                                               ₹{" "}
-                                               {booking?.booking_type === "Regular"
-                                                 ? `${convertTo12Hour(booking?.slot_id?.start_time)} - ${convertTo12Hour(booking?.slot_id?.end_time)}`
-                                                 : `${convertTo12Hour(booking?.custom_slot?.start_time)} - ${convertTo12Hour(booking?.custom_slot?.end_time)}`}
-                                             </td>
-                                             <td>₹ {booking.gamePrice}</td>
-                                           </tr>
-                                         ))
-                                       ) : (
-                                         <tr>
-                                           <td colSpan="8" className="text-center">
-                                             No data found
-                                           </td>
-                                         </tr>
-                                       )}
-                                     </tbody>
-                                   </Table>
-                                   <div className="d-flex justify-content-end align-items-center my-4">
-               
-                                     <Button
-                                       style={{
-                                         backgroundColor: "white",
-                                         border: "1px solid #dee2e6",
-                                         padding: "0.25rem 0.5rem",
-                                         borderRadius: "0.375rem",
-                                       }}
-                                       onClick={handlePrevclientBooking}
-                                       disabled={currentPagebooking === 1}
-                                     >
-                                       <GrFormPrevious style={{ color: "black", fontSize: "20px" }} />
-                                     </Button>
-                                     <span className="d-flex align-items-center mx-2 gap-2">
-                                       <Button
-                                         style={{
-                                           backgroundColor: currentPagebooking === 1 ? "#0062ff" : "white",
-                                           color: currentPagebooking === 1 ? "white" : "black",
-                                           border: "1px solid #dee2e6",
-                                           borderRadius: "0.375rem",
-                                           padding: "0.25rem 0.6rem",
-                                         }}
-                                       >
-                                         1
-                                       </Button>
-               
-                                       <Button
-                                         style={{
-                                           backgroundColor: currentPagebooking === 2 ? "#0062ff" : "white",
-                                           color: currentPagebooking === 2 ? "white" : "black",
-                                           border: "1px solid #dee2e6",
-                                           borderRadius: "0.375rem",
-                                           padding: "0.25rem 0.6rem",
-                                         }}
-                                       >
-                                         2
-                                       </Button>
-                                       <span style={{ fontSize: "16px", fontWeight: "500" }}>...</span>
-                                       <Button
-                                         style={{
-                                           backgroundColor: currentPagebooking === totalPagesboking ? "#0062ff" : "white",
-                                           color: currentPagebooking === totalPagesboking ? "white" : "black",
-                                           border: "1px solid #dee2e6",
-                                           borderRadius: "0.375rem",
-                                           padding: "0.25rem 0.6rem",
-                                         }}
-                                       >
-                                         {totalPagesboking}
-                                       </Button>
-                                     </span>
-               
-                                     <Button
-                                       style={{
-                                         backgroundColor: "white",
-                                         border: "1px solid #dee2e6",
-                                         padding: "0.25rem 0.5rem",
-                                         borderRadius: "0.375rem",
-                                       }}
-                                       onClick={handleNextclientBooking}
-                                       disabled={currentPagebooking === totalPagesboking}
-                                     >
-                                       <MdOutlineNavigateNext style={{ color: "black", fontSize: "20px" }} />
-                                     </Button>
-                                   </div>
-                                 </Col> */}
-                                 {selectedItem === "Custom Date" && (
-                                   <Col sm={7} className="d-flex justify-content-end my-2">
-                                     <Form.Control
-                                       type={customStartDate ? "date" : "text"}
-                                       value={customStartDate}
-                                       onChange={(e) => setCustomStartDate(e.target.value)}
-                                       onFocus={(e) => e.target.type = 'date'}
-                                       onBlur={(e) => {
-                                         if (!e.target.value) e.target.type = 'text';
-                                       }}
-                                       className="me-2"
-                                       placeholder="Start Date"
-                                     />
-                                     <Form.Control
-                                       type={customEndDate ? "date" : "text"}
-                                       value={customEndDate}
-                                       onChange={(e) => setCustomEndDate(e.target.value)}
-                                       onFocus={(e) => e.target.type = 'date'}
-                                       onBlur={(e) => {
-                                         if (!e.target.value) e.target.type = 'text';
-                                       }}
-                                       placeholder="End Date"
-                                       min={customStartDate}
-                                     />
-                                     {customStartDate && customEndDate && (
-                                       <Button className="ms-2" onClick={() => filterBookingsEarning("Custom Date")}>
-                                         Filter
-                                       </Button>
-                                     )}
-                                   </Col>
-                                 )}
-                                 <Col sm={12} className="my-3 alingn-items-end">
-                                   <Table hover responsive>
-                                     <thead className="table-light">
-                                       <tr>
-                                         <th className="fw-bold">S.No</th>
-                                         <th className="fw-bold">Date</th>
-                                         <th className="fw-bold">Game Collection</th>
-                                         <th className="fw-bold">Total </th>
-                                       </tr>
-                                     </thead>
-                                     <tbody>
-                                       {(currentItems.length > 0 ? currentItems : (filteredEarningData.length > 0 ? filteredEarningData : earningData)).length > 0 ? (
-                                         (currentItems.length > 0 ? currentItems : (filteredEarningData.length > 0 ? filteredEarningData : earningData)).map((date, index) => (
-                                           <tr key={index}>
-                                             <td>{index + 1}</td>
-                                             <td>
-                                               <span className="me-3 my-2" style={{ width: "100px", display: "inline-block" }}>
-                                                 {date.date}
-                                               </span>
-                                             </td>
-                                             <td>
-                                               {Object.entries(date.games).map(([gameName, gameDetails], idx) => (
-                                                 <div key={idx} className="my-2">
-                                                   <span className="me-3" style={{ width: "190px", display: "inline-block" }}>
-                                                     {gameName}
-                                                   </span>
-                                                   <span className="me-3" style={{ width: "80px", display: "inline-block" }}>
-                                                     {gameDetails.count} play
-                                                   </span>
-                                                   <span style={{ width: "80px", display: "inline-block" }}>
-                                                     ₹ {gameDetails.amountPaid}
-                                                   </span>
-                                                 </div>
-                                               ))}
-                                             </td>
-                                             <td>₹ {date.totalAmountPaid}</td>
-                                           </tr>
-                                         ))
-                                       ) : (
-                                         <tr>
-                                           <td colSpan="4" className="text-center py-3">
-                                             No Data Found
-                                           </td>
-                                         </tr>
-                                       )}
-                                     </tbody>
-               
-                                   </Table>
-                                   {totalPagesEarning > 1 && (
-                                     <Pagination className="justify-content-end my-5">
-                                       <Pagination.Prev
-                                         onClick={() => handlePageChange(currentPageEarning - 1)}
-                                         disabled={currentPageEarning === 1}
-                                       />
-               
-                                       {/* Show the first page */}
-                                       {currentPageEarning > 3 && (
-                                         <Pagination.Item onClick={() => handlePageChange(1)}>
-                                           1
-                                         </Pagination.Item>
-                                       )}
-               
-                                       {/* Show "..." if the pages are more than 3 and the current page isn't too close to the beginning */}
-                                       {currentPageEarning > 3 && <Pagination.Ellipsis />}
-               
-                                       {/* Show the current page and a range of surrounding pages */}
-                                       {[...Array(totalPagesEarning)].map((_, idx) => {
-                                         const pageNum = idx + 1;
-               
-                                         if (
-                                           (pageNum >= currentPageEarning - 1 && pageNum <= currentPageEarning + 1) ||
-                                           pageNum === 1 ||
-                                           pageNum === totalPagesEarning
-                                         ) {
-                                           return (
-                                             <Pagination.Item
-                                               key={pageNum}
-                                               active={pageNum === currentPageEarning}
-                                               onClick={() => handlePageChange(pageNum)}
-                                             >
-                                               {pageNum}
-                                             </Pagination.Item>
-                                           );
-                                         }
-               
-                                         return null;
-                                       })}
-               
-                                       {/* Show "..." if the pages are more than 3 and the current page isn't too close to the end */}
-                                       {currentPageEarning < totalPagesEarning - 2 && <Pagination.Ellipsis />}
-               
-                                       {/* Show the last page */}
-                                       {currentPageEarning < totalPagesEarning - 2 && (
-                                         <Pagination.Item onClick={() => handlePageChange(totalPagesEarning)}>
-                                           {totalPagesEarning}
-                                         </Pagination.Item>
-                                       )}
-               
-                                       <Pagination.Next
-                                         onClick={() => handlePageChange(currentPageEarning + 1)}
-                                         disabled={currentPageEarning === totalPagesEarning}
-                                       />
-                                     </Pagination>
-                                   )}
-               
-               
-               
-               
-                                 </Col>
+
+                <Col sm={5} className=" justify-content-start align-items-start">
+                  <Row className="align-items-center">
+                    <Col sm={6} className="mb-2 mb-sm-0">
+                      <DropdownButton
+                        id="dropdown-item-button"
+                        title={selectedItem || "Select"}
+                        variant="outline-dark"
+                        onSelect={(eventKey) => filterBookingsEarning(eventKey, selectedGameId)}
+                        style={{ width: '100%' }}
+                      >
+                        <Dropdown.Item as="button" eventKey="" disabled>Select</Dropdown.Item>
+                        <Dropdown.Item eventKey="Today" as="button">Today</Dropdown.Item>
+                        <Dropdown.Item eventKey="This Week" as="button">This Week</Dropdown.Item>
+                        <Dropdown.Item eventKey="Current Month" as="button">Current Month</Dropdown.Item>
+                        <Dropdown.Item eventKey="Custom Date" as="button">Custom Date</Dropdown.Item>
+                      </DropdownButton>
+                    </Col>
+
+                    <Col sm={6}>
+                    </Col>
+                  </Row>
+                </Col>
+                <Col sm={6} className="d-flex justify-content-end my-2">
+                  <h4 className="my-3" style={{ fontWeight: "600", fontSize: "16px", color: "#0062FF" }}>
+                    Total Earning : ₹ {totalEarning || earningData.reduce((sum, booking) => sum + (booking?.totalAmountPaid || 0), 0)}
+                  </h4>
+                </Col>
+                <Col sm={5} className=" alingn-items-end my-2">
+                  <div className="d-flex justify-content-end">
+                    <input
+                      type="search"
+                      className="form-control me-2"
+                      placeholder="Search"
+                      aria-label="Search"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </div>
+                </Col>
+
+                {selectedItem === "Custom Date" && (
+                  <Col sm={7} className="d-flex justify-content-end my-2">
+                    <Form.Control
+                      type={customStartDate ? "date" : "text"}
+                      value={customStartDate}
+                      onChange={(e) => setCustomStartDate(e.target.value)}
+                      onFocus={(e) => e.target.type = 'date'}
+                      onBlur={(e) => {
+                        if (!e.target.value) e.target.type = 'text';
+                      }}
+                      className="me-2"
+                      placeholder="Start Date"
+                    />
+                    <Form.Control
+                      type={customEndDate ? "date" : "text"}
+                      value={customEndDate}
+                      onChange={(e) => setCustomEndDate(e.target.value)}
+                      onFocus={(e) => e.target.type = 'date'}
+                      onBlur={(e) => {
+                        if (!e.target.value) e.target.type = 'text';
+                      }}
+                      placeholder="End Date"
+                      min={customStartDate}
+                    />
+                    {customStartDate && customEndDate && (
+                      <Button className="ms-2" onClick={() => filterBookingsEarning("Custom Date")}>
+                        Filter
+                      </Button>
+                    )}
+                  </Col>
+                )}
+                <Col sm={12} className="my-3 alingn-items-end">
+                  <Table hover responsive>
+                    <thead className="table-light">
+                      <tr>
+                        <th className="fw-bold">S.No</th>
+                        <th className="fw-bold">Date</th>
+                        <th className="fw-bold">Game Collection</th>
+                        <th className="fw-bold">Total </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(currentItems.length > 0 ? currentItems : (filteredEarningData.length > 0 ? filteredEarningData : earningData)).length > 0 ? (
+                        (currentItems.length > 0 ? currentItems : (filteredEarningData.length > 0 ? filteredEarningData : earningData)).map((date, index) => (
+                          <tr key={index}>
+                            <td>{index + 1}</td>
+                            <td>
+                              <span className="me-3 my-2" style={{ width: "100px", display: "inline-block" }}>
+                                {date.date}
+                              </span>
+                            </td>
+                            <td>
+                              {Object.entries(date.games).map(([gameName, gameDetails], idx) => (
+                                <div key={idx} className="my-2">
+                                  <span className="me-3" style={{ width: "190px", display: "inline-block" }}>
+                                    {gameName}
+                                  </span>
+                                  <span className="me-3" style={{ width: "80px", display: "inline-block" }}>
+                                    {gameDetails.count} play
+                                  </span>
+                                  <span style={{ width: "80px", display: "inline-block" }}>
+                                    ₹ {gameDetails.amountPaid}
+                                  </span>
+                                </div>
+                              ))}
+                            </td>
+                            <td>₹ {date.totalAmountPaid}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="4" className="text-center py-3">
+                            No Data Found
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+
+                  </Table>
+                  {totalPagesEarning > 1 && (
+                    <Pagination className="justify-content-end my-5">
+                      <Pagination.Prev
+                        onClick={() => handlePageChange(currentPageEarning - 1)}
+                        disabled={currentPageEarning === 1}
+                      />
+
+                      {/* Show the first page */}
+                      {currentPageEarning > 3 && (
+                        <Pagination.Item onClick={() => handlePageChange(1)}>
+                          1
+                        </Pagination.Item>
+                      )}
+
+                      {/* Show "..." if the pages are more than 3 and the current page isn't too close to the beginning */}
+                      {currentPageEarning > 3 && <Pagination.Ellipsis />}
+
+                      {/* Show the current page and a range of surrounding pages */}
+                      {[...Array(totalPagesEarning)].map((_, idx) => {
+                        const pageNum = idx + 1;
+
+                        if (
+                          (pageNum >= currentPageEarning - 1 && pageNum <= currentPageEarning + 1) ||
+                          pageNum === 1 ||
+                          pageNum === totalPagesEarning
+                        ) {
+                          return (
+                            <Pagination.Item
+                              key={pageNum}
+                              active={pageNum === currentPageEarning}
+                              onClick={() => handlePageChange(pageNum)}
+                            >
+                              {pageNum}
+                            </Pagination.Item>
+                          );
+                        }
+
+                        return null;
+                      })}
+
+                      {/* Show "..." if the pages are more than 3 and the current page isn't too close to the end */}
+                      {currentPageEarning < totalPagesEarning - 2 && <Pagination.Ellipsis />}
+
+                      {/* Show the last page */}
+                      {currentPageEarning < totalPagesEarning - 2 && (
+                        <Pagination.Item onClick={() => handlePageChange(totalPagesEarning)}>
+                          {totalPagesEarning}
+                        </Pagination.Item>
+                      )}
+
+                      <Pagination.Next
+                        onClick={() => handlePageChange(currentPageEarning + 1)}
+                        disabled={currentPageEarning === totalPagesEarning}
+                      />
+                    </Pagination>
+                  )}
+                </Col>
               </Row>
-
             )}
-
           </Card>
         </Col>
-
-
-
       </Row>
 
       <AddSlotOffcanvas

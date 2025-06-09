@@ -441,7 +441,7 @@ const AdminDashboard = () => {
                 <ListGroup variant="flush">
                   {recentBookings.map((booking) => (
                     <ListGroup.Item key={booking.id} className="border-bottom py-3 booking-item">
-                      <div className="d-flex gap-3">
+                      <div className="d-flex gap-3" onClick={() => navigate(`/admin/booking/checkout/${booking._id}`)} style={{ cursor: 'pointer' }}>
                         <div style={{ width: '60px', height: '60px' }}>
                           <img
                             src={`${backend_url}/${booking?.game_id?.gameImage}` || gm1}

@@ -883,6 +883,7 @@ const CafeForm = ({
                   placeholder="Enter Deposit Amount"
                   value={formDataState.depositAmount || ''}
                   onChange={handleChange}
+                  onWheel={(e) => e.target.blur()} // Prevents scrolling when using number input
                   className="py-2 border-2"
                 />
               </Form.Group>
@@ -903,6 +904,7 @@ const CafeForm = ({
                   placeholder="Enter Years of Contract"
                   value={formDataState.yearsOfContract || ''}
                   onChange={handleChange}
+                  onWheel={(e) => e.target.blur()} // Prevents scrolling when using number input
                   className="py-2 border-2"
                   required
                 />

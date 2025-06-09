@@ -25,7 +25,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
 
   useEffect(() => {
     if (searchTerm?.length >= 3) {
-      dispatch(getSearchData(searchTerm)); // Replace with your actual action
+      dispatch(getSearchData(searchTerm));
     }
   }, [searchTerm, dispatch]);
 
@@ -106,60 +106,6 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
         </div>
         {/* Desktop Navigation (above 970px) */}
         <div className="d-none d-lg-block">
-          {/* Search Bar */}
-          {/* <div className="navbar-nav-wrap-content-start">
-            <div className="dropdown ms-2">
-              <div className="">
-                <div className="input-group input-group-merge input-group-borderless input-group-hover-light navbar-input-group">
-                  <div className="input-group-prepend input-group-text">
-                    <BiSearch />
-                  </div>
-                  <input
-                    type="search"
-                    className="js-form-search form-control"
-                    placeholder="Search..."
-                    aria-label="Search in front"
-                    value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div id="searchDropdownMenu" className="hs-form-search-menu-content dropdown-menu dropdown-menu-form-search navbar-dropdown-menu-borderless animated hs-form-search-menu-hidden hs-form-search-menu-initialized">
-                <div className="card">
-
-                  <div className="card-body-height">
-                    <div className="d-lg-none">
-                      <div className="input-group input-group-merge navbar-input-group mb-5">
-                        <div className="input-group-prepend input-group-text">
-                          <BiSearch />
-                        </div>
-
-                        <input
-                          type="search"
-                          className="js-form-search form-control"
-                          placeholder="Search..."
-                          aria-label="Search in front"
-                          value={searchTerm}
-                          onChange={e => setSearchTerm(e.target.value)}
-                        />
-                        <a className="input-group-append input-group-text" href="javascript:;">
-                          <i className="bi-x-lg"></i>
-                        </a>
-                      </div>
-                    </div>
-
-                    <span className="dropdown-header">Recent searches</span>
-                    <div className="dropdown-divider"></div>
-                  </div>
-
-                  <a className="card-footer text-center" >
-                    See all results   <BiChevronRight />   <i className="bi-chevron-right small"></i>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div> */}
 
           <div className="navbar-nav-wrap-content-start">
             <div className="dropdown ms-2">
@@ -173,7 +119,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                     type="search"
                     className="js-form-search form-control"
                     placeholder="Search..."
-                    aria-label="Search in front"
+                    aria-label="Search..."
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
                     onFocus={() => setShowDropdown(true)}

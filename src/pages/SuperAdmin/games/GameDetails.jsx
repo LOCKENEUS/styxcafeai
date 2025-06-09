@@ -4,14 +4,12 @@ import {
   Form,
   Row,
   Col,
-  Table,
   Card,
   Image,
   Modal,
 } from "react-bootstrap";
-import { BiEdit, BiTrash } from "react-icons/bi";
 import { useDispatch, useSelector } from 'react-redux';
-import { updateGame, deleteGame, setSelectedGame } from '../../../store/slices/gameSlice';
+import { deleteGame } from '../../../store/slices/gameSlice';
 
 const GameDetails = ({ game, onClose, onEdit }) => {
   const dispatch = useDispatch();

@@ -155,8 +155,6 @@ const CafeManager = () => {
     setShowCanvas(true);
   };
 
-
-
   const handleEdit = () => {
     if (selectedCafe) {
       setFormDataState({
@@ -206,7 +204,6 @@ const CafeManager = () => {
       */}
 
       {showDetails && selectedCafe ? (
-
 
         <Navigate to={`/superadmin/cafe/viewdetails/`} 
         state={{ cafeId: selectedCafe._id }} 

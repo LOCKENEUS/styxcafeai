@@ -295,9 +295,6 @@ const LocationForm = ({
           </Row>
 
           <Row className="mb-2 g-4">
-         
-
-
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label className="fw-bold text-secondary">City
