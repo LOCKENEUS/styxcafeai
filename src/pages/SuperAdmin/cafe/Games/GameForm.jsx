@@ -216,6 +216,7 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
                 name="price"
                 value={formData.price}
                 onChange={handleInputChange}
+                onWheel={(e) => e.target.blur()}
                 required
                 className="py-2 border-2"
                 placeholder="Enter price amount"

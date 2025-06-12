@@ -407,7 +407,7 @@ export const Reports = () => {
 
               <div className="col-12 d-none d-md-flex justify-content-between mt-3">
                 <div className='rounded-pill px-3 py-2' style={{ backgroundColor: "#dbf9e0", color: "white" }}><h3 className='mb-0'>Total Earnings: &#8377; {cafeReport?.total_amount || 0}</h3></div>
-                <div className='rounded-pill px-3 py-2' style={{ backgroundColor: "#def1fa", color: "white" }}><h3 className='mb-0'>Total Paid Amount: &#8377; {cafeReport?.paid_amount || 0}</h3></div>
+                <div className='rounded-pill px-3 py-2' style={{ backgroundColor: "#def1fa", color: "white" }}><h3 className='mb-0'>Total Paid Amount: &#8377; {cafeReport?.total_paid || 0}</h3></div>
                 <div className='rounded-pill px-3 py-2' style={{ backgroundColor: "#fbe0e4", color: "white" }}><h3 className='mb-0'>Credit Amount: &#8377; {cafeReport?.credit_amount || 0}</h3></div>
                 <div className='rounded-pill px-3 py-2' style={{ backgroundColor: "#f6defa", color: "white" }}><h3 className='mb-0'>Total Bookings: {cafeReport?.total_bookings || 0}</h3></div>
               </div>

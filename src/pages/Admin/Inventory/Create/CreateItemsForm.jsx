@@ -3,7 +3,7 @@ import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormChe
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { FaPlus, FaStarOfLife, FaTrash } from "react-icons/fa";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import {  getItemById, addItem, updateItem } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
+import { getItemById, addItem, updateItem } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import Tax from "../modal/Tax";
 import Manufacturer from "../modal/Manufacturer";
@@ -62,7 +62,7 @@ const CreateItemsForm = () => {
     const [latestCreatedManufacturer, setLatestCreatedManufacturer] = useState(null);
     const [latestCreatedBrand, setLatestCreatedBrand] = useState(null);
     const [latestCreatedTax, setLatestCreatedTax] = useState(null);
-    
+
     // Organize custom fields by type
     const unitOptions = customFields.filter(field => field.type === "Unit");
     const manufacturerOptions = customFields.filter(field => field.type === "Manufacturer");
@@ -135,7 +135,7 @@ const CreateItemsForm = () => {
         dispatch(getCustomFields(cafeId));
         dispatch(getTaxFields(cafeId));
         dispatch(getVendors(cafeId));
-        
+
         // Fetch item data when in edit mode
         if (isEditMode) {
             dispatch(getItemById(id))
@@ -169,7 +169,7 @@ const CreateItemsForm = () => {
                         linking: itemData.linking || 'N',
                         image: itemData.image || null,
                     });
-                    
+
                     if (itemData.image) {
                         setImagePreview(`${import.meta.env.VITE_API_URL}/${itemData.image}`);
                     }
@@ -249,7 +249,7 @@ const CreateItemsForm = () => {
 
     const handleSubmitData = async (e) => {
         e.preventDefault();
-        
+
         if (!validateForm()) {
             return;
         }
@@ -317,533 +317,539 @@ const CreateItemsForm = () => {
     };
 
     if (loading) {
-      <Container className="d-flex justify-content-center align-items-center min-vh-100">
-        <Spinner animation="border" role="status">
-        </Spinner>
-      </Container>
+        <Container className="d-flex justify-content-center align-items-center min-vh-100">
+            <Spinner animation="border" role="status">
+            </Spinner>
+        </Container>
     }
 
-  return (
-    <Container data-aos="fade-up" data-aos-duration="700">
-    <Row style={{ marginTop: "10px" }}>
-        <Col sm={12} className="d-flex "  >
-            {/* style={{top:"110px" , left:"700px"}} */}
-            <div style={{ top: "186px", fontSize: "16px" }}>
-                <Breadcrumb  >
-                    <BreadcrumbItem  ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
-                    <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
-                    <BreadcrumbItem ><Link to="/admin/inventory/items-list">Item List</Link></BreadcrumbItem>
-                    <BreadcrumbItem active>{isEditMode ? 'Edit Item' : 'Create Item'}</BreadcrumbItem>
-                </Breadcrumb>
-            </div>
-        </Col>
-
-        <Form onSubmit={handleSubmitData}>
-            {/* <Row> */}
-            <Card className="shadow p-4 mb-4">
-                <Row>
-                    <div className="d-flex justify-content-start align-items-start">
-                        <h1>{isEditMode ? 'Edit Item' : 'Create New Item'}</h1>
+    return (
+        <Container data-aos="fade-up" data-aos-duration="700">
+            <Row style={{ marginTop: "10px" }}>
+                <Col sm={12} className="d-flex "  >
+                    {/* style={{top:"110px" , left:"700px"}} */}
+                    <div style={{ top: "186px", fontSize: "16px" }}>
+                        <Breadcrumb  >
+                            <BreadcrumbItem  ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
+                            <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
+                            <BreadcrumbItem ><Link to="/admin/inventory/items-list">Item List</Link></BreadcrumbItem>
+                            <BreadcrumbItem active>{isEditMode ? 'Edit Item' : 'Create Item'}</BreadcrumbItem>
+                        </Breadcrumb>
                     </div>
-                    <Col sm={6} className="my-2">
-                        <FormGroup>
-                            <label className="fw-bold my-2">
-                                {/* <FaStarOfLife className="text-danger size-sm" /> */}
-                                Name
-                                <span className="text-danger ms-1 ">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                className={`form-control ${errors.name ? 'is-invalid' : ''}`}
-                                id="name"
-                                placeholder="Enter item name"
-                                value={formData.name}
-                                onChange={handleChange}
-                            />
-                            {errors.name && <div className="invalid-feedback">{errors.name}</div>}
-                        </FormGroup>
-                    </Col>
+                </Col>
 
-                    <Col sm={6} className="my-2">
-                        <FormGroup>
-                            <label className="fw-bold my-2">
-                                {/* <FaStarOfLife className="text-danger size-sm" />  */}
-                                SKU
-                                {/* <span className="text-danger ms-1 ">*</span> */}
-                            </label>
-                            <input
-                                type="text"
-                                className={`form-control ${errors.sku ? 'is-invalid' : ''}`}
-                                id="sku"
-                                placeholder="SKU"
-                                value={formData.sku}
-                                onChange={handleChange}
-                            
-                            />
-                            {/* {errors.sku && <div className="invalid-feedback">{errors.sku}</div>} */}
-                        </FormGroup>
-                    </Col>
+                <Form onSubmit={handleSubmitData}>
+                    {/* <Row> */}
+                    <Card className="shadow p-4 mb-4">
+                        <Row>
+                            <div className="d-flex justify-content-start align-items-start">
+                                <h1>{isEditMode ? 'Edit Item' : 'Create New Item'}</h1>
+                            </div>
+                            <Col sm={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+                                        {/* <FaStarOfLife className="text-danger size-sm" /> */}
+                                        Name
+                                        <span className="text-danger ms-1 ">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className={`form-control ${errors.name ? 'is-invalid' : ''}`}
+                                        id="name"
+                                        placeholder="Enter item name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                    />
+                                    {errors.name && <div className="invalid-feedback">{errors.name}</div>}
+                                </FormGroup>
+                            </Col>
 
-                    <Col sm={6} className="my-2">
-                    <label className="fw-bold my-2">
-                                {/* <FaStarOfLife className="text-danger size-sm" /> */}
-                                Unit
-                                <span className="text-danger ms-1 ">*</span>
-                            </label>
-                        <FormGroup className="d-flex justify-content-between gap-3 align-items-center">
-                           
-                            <InputGroup>
-                                <FormSelect
-                                    name="unit"
-                                    aria-label="Select unit"
-                                    value={formData.unit}
-                                    onChange={handleSelectChange}
-                                    className={`form-control ${errors.unit ? 'is-invalid' : ''}`}
-                                >
-                                    {errors.unit && <div className="invalid-feedback">{errors.unit}</div>}
-                                    <option value="">Select Unit</option>
-                                    {unitOptions.map(unit => (
-                                        <option key={unit._id} value={unit.name}>
-                                            {unit.name} 
-                                            <div>
-                                            <FaTrash 
-                                                className="text-danger ms-2" 
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    handleDeleteUnit(unit._id);
+                            <Col sm={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+                                        {/* <FaStarOfLife className="text-danger size-sm" />  */}
+                                        SKU
+                                        {/* <span className="text-danger ms-1 ">*</span> */}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className={`form-control ${errors.sku ? 'is-invalid' : ''}`}
+                                        id="sku"
+                                        placeholder="SKU"
+                                        value={formData.sku}
+                                        onChange={handleChange}
+
+                                    />
+                                    {/* {errors.sku && <div className="invalid-feedback">{errors.sku}</div>} */}
+                                </FormGroup>
+                            </Col>
+
+                            <Col sm={6} className="my-2">
+                                <label className="fw-bold my-2">
+                                    {/* <FaStarOfLife className="text-danger size-sm" /> */}
+                                    Unit
+                                    <span className="text-danger ms-1 ">*</span>
+                                </label>
+                                <FormGroup className="d-flex justify-content-between gap-3 align-items-center">
+
+                                    <InputGroup>
+                                        <FormSelect
+                                            name="unit"
+                                            aria-label="Select unit"
+                                            value={formData.unit}
+                                            onChange={handleSelectChange}
+                                            className={`form-control ${errors.unit ? 'is-invalid' : ''}`}
+                                        >
+                                            {errors.unit && <div className="invalid-feedback">{errors.unit}</div>}
+                                            <option value="">Select Unit</option>
+                                            {unitOptions.map(unit => (
+                                                <option key={unit._id} value={unit.name}>
+                                                    {unit.name}
+                                                    <div>
+                                                        <FaTrash
+                                                            className="text-danger ms-2"
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                handleDeleteUnit(unit._id);
+                                                            }}
+                                                        />
+
+                                                    </div>
+
+                                                </option>
+                                            ))}
+                                        </FormSelect>
+                                    </InputGroup>
+                                    <div id="addUnitFieldContainer" />
+                                    {/* Link to open the modal */}
+                                    <Button className="d-flex justify-content-end align-items-center" style={{ width: "40px", padding: '12px', border: "1px dashed blue", height: "40px", borderStyle: "dashed" }} variant="outline-secondary" onClick={() => setShowUnitModal(true)}>
+                                        <FaPlus className="text-primary" size={30} />
+                                    </Button>
+
+
+                                    {/* Modal Component */}
+                                    <Units
+                                        show={showUnitModal}
+                                        handleClose={() => setShowUnitModal(false)}
+                                        onCreated={(unitData) => setLatestCreatedUnit({ ...unitData, type: 'Unit' })}
+                                    />
+                                </FormGroup>
+                            </Col>
+                        </Row>
+
+                    </Card>
+
+
+                    {/* ------------------------------------------------------------------------------------- */}
+
+                    <Card className="shadow p-4 my-4">
+                        <Row>
+                            <Col md={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+                                        {/* <FaStarOfLife className="text-danger size-sm" />  */}
+                                        HSN Code
+                                        {/* <span className="text-danger ms-1 ">*</span> */}
+                                    </label>
+                                    <input
+                                        type="number"
+                                        className={`form-control ${errors.hsnCode ? 'is-invalid' : ''}`}
+                                        id="hsnCode"
+                                        placeholder="HSN Code"
+                                        value={formData.hsnCode}
+                                        onChange={handleChange}
+                                        onWheel={(e) => e.target.blur()}
+                                    />
+                                    {/* {errors.hsnCode && <div className="invalid-feedback">{errors.hsnCode}</div>} */}
+                                </FormGroup>
+                            </Col>
+
+                            <Col md={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+                                        Tax Preference
+                                    </label>
+                                    <FormSelect
+                                        aria-label="Select Tax Preference"
+                                        value={formData.taxPreference}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                taxPreference: value,
+                                            }));
+                                            setShowTaxFields(value !== "Non-Taxable");
+                                        }}
+                                    >
+                                        <option value="Taxable">Taxable</option>
+                                        <option value="Non-Taxable">Non-Taxable</option>
+                                    </FormSelect>
+                                </FormGroup>
+                            </Col>
+                            {showTaxFields && (
+                                <Col md={6} className="my-2">
+                                    <label className="fw-bold my-2">
+                                        {/* <FaStarOfLife className="text-danger size-sm" />  */}
+                                        Tax
+                                    </label>
+
+                                    <FormGroup className="d-flex justify-content-between gap-3 align-items-center">
+                                        <InputGroup>
+                                            <FormSelect
+                                                aria-label="Select Tax"
+                                                value={formData.selectedTax}
+                                                onChange={(e) => {
+                                                    const selectedTax = taxFields.find(tax => tax._id === e.target.value);
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        selectedTax: e.target.value,
+                                                        tax_id: e.target.value // Add tax_id to form data
+                                                    }));
                                                 }}
-                                            />
+                                            >
+                                                <option value="">Select Tax</option>
+                                                {taxFields.map(tax => (
+                                                    <option key={tax._id} value={tax._id}>
+                                                        {tax.tax_name} ({tax.tax_rate}%)
+                                                    </option>
+                                                ))}
+                                            </FormSelect>
+                                        </InputGroup>
+                                        <div id="addTaxFieldContainer" />
+                                        <Button
+                                            className="d-flex justify-content-end align-items-center"
+                                            style={{ width: "40px", padding: '12px', border: "1px solid blue", height: "40px", borderStyle: "dashed" }}
+                                            variant="outline-secondary"
+                                            onClick={() => setShowTaxModal(true)}
+                                        >
+                                            <FaPlus className="text-primary" size={30} />
+                                        </Button>
+                                        <Tax show={showTaxModal} handleClose={() => setShowTaxModal(false)} onCreated={(taxData) => setLatestCreatedTax(taxData)} />
+                                    </FormGroup>
+                                </Col>
+                            )}
 
-                                            </div>
-                                          
-                                        </option>
-                                    ))}
-                                </FormSelect>
-                            </InputGroup>
-                            <div id="addUnitFieldContainer" />
-                            {/* Link to open the modal */}
-                            <Button className="d-flex justify-content-end align-items-center"  style={{width:"40px", padding:'12px', border:"1px dashed blue", height:"40px", borderStyle:"dashed"}} variant="outline-secondary" onClick={() => setShowUnitModal(true)}>
-                                <FaPlus className="text-primary" size={30} />
-                            </Button>
-                           
+                            <Col sm={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">Dimensions</label>
+                                    <InputGroup>
+                                        <FormControl
+                                            type="number"
+                                            id="length"
+                                            placeholder="Length"
+                                            value={formData.length}
+                                            onChange={handleChange}
+                                            onWheel={(e) => e.target.blur()}
+                                        />
+                                        <FormControl
+                                            type="number"
+                                            id="width"
+                                            placeholder="Width"
+                                            value={formData.width}
+                                            onChange={handleChange}
+                                            onWheel={(e) => e.target.blur()}
+                                        />
+                                        <FormControl
+                                            type="number"
+                                            id="height"
+                                            placeholder="Height"
+                                            value={formData.height}
+                                            onChange={handleChange}
+                                            onWheel={(e) => e.target.blur()}
+                                        />
+                                        <FormSelect
+                                            name="dimension_unit"
+                                            value={formData.dimension_unit}
+                                            onChange={handleSelectChange}
+                                        >
+                                            <option value="mm">mm</option>
+                                            <option value="cm">cm</option>
+                                            <option value="m">m</option>
+                                            <option value="inch">inch</option>
+                                            <option value="feet">feet</option>
+                                        </FormSelect>
+                                    </InputGroup>
+                                </FormGroup>
+                            </Col>
+                            <Col sm={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2" htmlFor="weight">Weight</label>
+                                    <InputGroup>
+                                        <FormControl
+                                            type="number"
+                                            name="weight"
+                                            id="weight"
+                                            placeholder="Enter weight"
+                                            value={formData.weight}
+                                            onChange={handleChange}
+                                        />
 
-                            {/* Modal Component */}
-                            <Units 
-                                show={showUnitModal} 
-                                handleClose={() => setShowUnitModal(false)} 
-                                onCreated={(unitData) => setLatestCreatedUnit({ ...unitData, type: 'Unit' })} 
-                            />
-                        </FormGroup>
-                    </Col>
-                </Row>
+                                        <FormSelect
+                                            name="weight_unit"
+                                            id="weight_unit"
+                                            value={formData.weight_unit}
+                                            onChange={handleSelectChange}
+                                        >
+                                            <option value="kg">kg</option>
+                                            <option value="g">g</option>
+                                            <option value="t">t</option>
+                                            <option value="lb">lb</option>
+                                            <option value="oz">oz</option>
+                                        </FormSelect>
 
-            </Card>
+                                    </InputGroup>
+                                </FormGroup>
+                            </Col>
+
+                            <Col md={6} className="my-2">
+                                <label className="fw-bold my-2">
+                                    {/* <FaStarOfLife className="text-danger size-sm" />  */}
+                                    Manufacturer
+
+                                </label>
+                                <FormGroup className="d-flex justify-content-between gap-3 align-items-center">
+
+                                    <InputGroup>
+                                        <FormSelect
+                                            name="manufacturer"
+                                            aria-label="Select Manufacturer"
+                                            value={formData.manufacturer}
+                                            onChange={handleSelectChange}
+                                        >
+                                            <option value="">Select Manufacturer</option>
+                                            {manufacturerOptions.map(manufacturer => (
+                                                <option key={manufacturer._id} value={manufacturer._id}>
+                                                    {manufacturer.name}
+                                                    <FaTrash
+                                                        className="text-danger ms-2"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            handleDeleteManufacturer(manufacturer._id);
+                                                        }}
+                                                    />
+                                                </option>
+                                            ))}
+                                        </FormSelect>
+                                    </InputGroup>
+                                    <div id="addTaxFieldContainer" />
+                                    <Button className="d-flex justify-content-end align-items-center" style={{ width: "40px", padding: '12px', border: "1px solid blue", height: "40px", borderStyle: "dashed" }} variant="outline-secondary" onClick={() => setShowManufacturerModal(true)}>
+                                        <FaPlus className="text-primary" size={30} />
+                                    </Button>
+                                </FormGroup>
+                                <Manufacturer show={showManufacturerModal} handleClose={() => setShowManufacturerModal(false)} onCreated={(manufacturerData) => setLatestCreatedManufacturer({ ...manufacturerData, type: 'Manufacturer' })} />
+                            </Col>
 
 
-            {/* ------------------------------------------------------------------------------------- */}
+                            <Col md={6} className="my-2">
+                                <label className="fw-bold my-2">
+                                    {/* <FaStarOfLife className="text-danger size-sm" /> */}
+                                    Brand
+                                </label>
+                                <FormGroup className="d-flex justify-content-between gap-3 align-items-center">
 
-            <Card className="shadow p-4 my-4">
-                <Row>
-                    <Col md={6} className="my-2">
-                    <FormGroup>
-                    <label className="fw-bold my-2">
-                                {/* <FaStarOfLife className="text-danger size-sm" />  */}
-                                HSN Code
-                                {/* <span className="text-danger ms-1 ">*</span> */}
-                            </label>
-                            <input
-                                type="number"
-                                className={`form-control ${errors.hsnCode ? 'is-invalid' : ''}`}
-                                id="hsnCode"
-                                placeholder="HSN Code"
-                                value={formData.hsnCode}
-                                onChange={handleChange}
-                                
-                                
-                            />
-                            {/* {errors.hsnCode && <div className="invalid-feedback">{errors.hsnCode}</div>} */}
-                        </FormGroup>
-                    </Col>
+                                    <InputGroup>
+                                        <FormSelect
+                                            name="brand"
+                                            aria-label="Select Brand"
+                                            value={formData.brand}
+                                            onChange={handleSelectChange}
+                                        >
+                                            <option value="">Select Brand</option>
+                                            {brandOptions.map(brand => (
+                                                <option key={brand._id} value={brand._id}>
+                                                    {brand.name}
+                                                    <FaTrash
+                                                        className="text-danger ms-2"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            handleDeleteBrand(brand._id);
+                                                        }}
+                                                    />
+                                                </option>
+                                            ))}
+                                        </FormSelect>
+                                    </InputGroup>
+                                    <div />
+                                    <Button className="d-flex justify-content-end align-items-center" style={{ width: "40px", padding: '12px', border: "1px solid blue", height: "40px", borderStyle: "dashed" }} variant="outline-secondary" onClick={() => setShowBrandModal(true)}>
+                                        <FaPlus className="text-primary" size={30} />
+                                    </Button>
+                                </FormGroup>
+                                <Brand show={showBrandModal} handleClose={() => setShowBrandModal(false)} onCreated={(brandData) => setLatestCreatedBrand({ ...brandData, type: 'Brand' })} />
+                            </Col>
+                            <Col md={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+                                        {/* <FaStarOfLife className="text-danger size-sm" />  */}
+                                        MPN
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="mpn"
+                                        placeholder="0 0 0 - 0 0 0"
+                                        value={formData.mpn}
+                                        onChange={handleChange}
+                                    />
+                                </FormGroup>
+                            </Col>
+                            <Col md={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+                                        {/* <FaStarOfLife className="text-danger size-sm" />  */}
+                                        UPC
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="upc"
+                                        placeholder="0 0 0 - 0 0 0"
+                                        value={formData.upc}
+                                        onChange={handleChange}
+                                    />
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                    </Card>
 
-                    <Col md={6} className="my-2">
-                        <FormGroup>
-                            <label className="fw-bold my-2">
-                                Tax Preference
-                            </label>
-                            <FormSelect
-                                aria-label="Select Tax Preference"
-                                value={formData.taxPreference}
-                                onChange={(e) => {
-                                    const value = e.target.value;
-                                    setFormData((prev) => ({
-                                        ...prev,
-                                        taxPreference: value,
-                                    }));
-                                    setShowTaxFields(value !== "Non-Taxable");
-                                }}
-                            >
-                                <option value="Taxable">Taxable</option>
-                                <option value="Non-Taxable">Non-Taxable</option>
-                            </FormSelect>
-                        </FormGroup>
-                    </Col>
-                    {showTaxFields && (
-                    <Col md={6} className="my-2">
-                    <label className="fw-bold my-2">
-                                {/* <FaStarOfLife className="text-danger size-sm" />  */}
-                                Tax
-                               
-                            </label>
-                   
-                        <FormGroup className="d-flex justify-content-between gap-3 align-items-center">
-                            <InputGroup>
-                                <FormSelect 
-                                    aria-label="Select Tax"
-                                    value={formData.selectedTax}
-                                    onChange={(e) => {
-                                        const selectedTax = taxFields.find(tax => tax._id === e.target.value);
-                                        setFormData(prev => ({
-                                            ...prev,
-                                            selectedTax: e.target.value,
-                                            tax_id: e.target.value // Add tax_id to form data
-                                        }));
-                                    }}
-                                >
-                                    <option value="">Select Tax</option>
-                                    {taxFields.map(tax => (
-                                        <option key={tax._id} value={tax._id}>
-                                            {tax.tax_name} ({tax.tax_rate}%)
-                                        </option>
-                                    ))}
-                                </FormSelect>
-                            </InputGroup>
-                            <div id="addTaxFieldContainer" />
-                            <Button 
-                                className="d-flex justify-content-end align-items-center" 
-                                style={{ width: "40px", padding: '12px', border: "1px solid blue", height: "40px", borderStyle: "dashed" }} 
-                                variant="outline-secondary" 
-                                onClick={() => setShowTaxModal(true)}
-                            >
-                                <FaPlus className="text-primary" size={30} />
-                            </Button>
-                            <Tax show={showTaxModal} handleClose={() => setShowTaxModal(false)} onCreated={(taxData) => setLatestCreatedTax(taxData)} />
-                        </FormGroup>
-                    </Col>
-                    )}
 
-                    <Col sm={6} className="my-2">
-                        <FormGroup>
-                            <label className="fw-bold my-2">Dimensions</label>
-                            <InputGroup>
-                                <FormControl
-                                    type="number"
-                                    id="length"
-                                    placeholder="Length"
-                                    value={formData.length}
-                                    onChange={handleChange}
+                    <Card className="shadow my-4 p-4">
+                        <Row>
+                            <Col sm={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+                                        Cost Price <span className="text-danger">*</span>
+                                    </label>
+                                    <InputGroup>
+                                        <InputGroupText>₹</InputGroupText>
+                                        <FormControl
+                                            type="number"
+                                            id="costPrice"
+                                            placeholder="00.00"
+                                            value={formData.costPrice}
+                                            onChange={handleChange}
+                                            onWheel={(e) => e.target.blur()}
+                                            className={`form-control ${errors.costPrice ? 'is-invalid' : ''}`}
+
+                                        />
+                                        {errors.costPrice && <div className="invalid-feedback">{errors.costPrice}</div>}
+
+                                    </InputGroup>
+                                </FormGroup>
+                            </Col>
+                            <Col sm={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+                                        Selling Price <span className="text-danger">*</span>
+                                    </label>
+                                    <InputGroup>
+                                        <InputGroupText>₹</InputGroupText>
+                                        <FormControl
+                                            type="number"
+                                            id="sellingPrice"
+                                            placeholder="00.00"
+                                            value={formData.sellingPrice}
+                                            onChange={handleChange}
+                                            onWheel={(e) => e.target.blur()}
+                                            className={`form-control ${errors.sellingPrice ? 'is-invalid' : ''}`}
+                                        />
+                                        {errors.sellingPrice && <div className="invalid-feedback">{errors.sellingPrice}</div>}
+                                    </InputGroup>
+                                </FormGroup>
+                            </Col>
+
+                            <Col md={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+                                        Preferred Vendor
+                                    </label>
+                                    <InputGroup>
+                                        <FormSelect
+                                            name="preferredVendor"
+                                            aria-label="Select Vendor"
+                                            value={formData.preferredVendor}
+                                            onChange={handleSelectChange}
+                                        >
+                                            <option value="">Select Vendor</option>
+                                            {vendors.map(vendor => (
+                                                <option key={vendor._id} value={vendor._id}>
+                                                    {vendor.name}
+                                                </option>
+                                            ))}
+                                        </FormSelect>
+                                    </InputGroup>
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                    </Card>
+
+
+                    <Card className="shadow my-4 p-4">
+                        <Row>
+                            <Col sm={12} className="my-2">
+                                <FormCheck
+                                    type="checkbox"
+                                    id="checkbox3"
+                                    label="Tracking Inventory For This Item"
+                                    disabled
+                                    checked
                                 />
-                                <FormControl
-                                    type="number"
-                                    id="width"
-                                    placeholder="Width"
-                                    value={formData.width}
-                                    onChange={handleChange}
-                                />
-                                <FormControl
-                                    type="number"
-                                    id="height"
-                                    placeholder="Height"
-                                    value={formData.height}
-                                    onChange={handleChange}
-                                />
-                                <FormSelect
-                                    name="dimension_unit"
-                                    value={formData.dimension_unit}
-                                    onChange={handleSelectChange}
-                                >
-                                    <option value="mm">mm</option>
-                                    <option value="cm">cm</option>
-                                    <option value="m">m</option>
-                                    <option value="inch">inch</option>
-                                    <option value="feet">feet</option>
-                                </FormSelect>
-                            </InputGroup>
-                        </FormGroup>
-                    </Col>
-                    <Col sm={6} className="my-2">
-                        <FormGroup>
-                            <label className="fw-bold my-2" htmlFor="weight">Weight</label>
-                            <InputGroup>
-                                <FormControl
-                                    type="number"
-                                    name="weight"
-                                    id="weight"
-                                    placeholder="Enter weight"
-                                    value={formData.weight}
-                                    onChange={handleChange}
-                                />
+                                <span>You cannot enable/disable inventory tracking once you've created transactions for this item</span>
+                            </Col>
 
-                                <FormSelect
-                                    name="weight_unit"
-                                    id="weight_unit"
-                                    value={formData.weight_unit}
-                                    onChange={handleSelectChange}
-                                >
-                                    <option value="kg">kg</option>
-                                    <option value="g">g</option>
-                                    <option value="t">t</option>
-                                    <option value="lb">lb</option>
-                                    <option value="oz">oz</option>
-                                </FormSelect>
+                            <Col sm={6} className="my-2">
+                                <FormGroup controlId="stock">
+                                    <FormLabel>Opening Stock</FormLabel>
+                                    <FormControl
+                                        type="number"
+                                        name="stock"
+                                        placeholder="100"
+                                        value={formData.stock}
+                                        onChange={handleChange}
+                                        onWheel={(e) => e.target.blur()}
+                                    />
+                                </FormGroup>
+                            </Col>
 
-                            </InputGroup>
-                        </FormGroup>
-                    </Col>
+                            <Col sm={6} className="my-2">
+                                <FormGroup controlId="stock_rate">
+                                    <FormLabel>Opening Stock (Rate Per Unit)</FormLabel>
+                                    <InputGroup>
+                                        <InputGroupText>₹</InputGroupText>
+                                        <FormControl
+                                            type="number"
+                                            name="stock_rate"
+                                            placeholder="00.00"
+                                            value={formData.stock_rate}
+                                            onChange={handleChange}
+                                            onWheel={(e) => e.target.blur()}
+                                        />
+                                    </InputGroup>
+                                </FormGroup>
+                            </Col>
 
-                    <Col md={6} className="my-2">
-                    <label className="fw-bold my-2">
-                                {/* <FaStarOfLife className="text-danger size-sm" />  */}
-                                Manufacturer
-
-                            </label>
-                    <FormGroup className="d-flex justify-content-between gap-3 align-items-center">
-                
-                            <InputGroup>
-                                <FormSelect
-                                    name="manufacturer"
-                                    aria-label="Select Manufacturer"
-                                    value={formData.manufacturer}
-                                    onChange={handleSelectChange}
-                                >
-                                    <option value="">Select Manufacturer</option>
-                                    {manufacturerOptions.map(manufacturer => (
-                                        <option key={manufacturer._id} value={manufacturer._id}>
-                                            {manufacturer.name}
-                                            <FaTrash 
-                                                className="text-danger ms-2" 
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    handleDeleteManufacturer(manufacturer._id);
-                                                }}
-                                            />
-                                        </option>
-                                    ))}
-                                </FormSelect>
-                            </InputGroup>
-                            <div id="addTaxFieldContainer" />
-                            <Button className="d-flex justify-content-end align-items-center" style={{ width: "40px", padding: '12px', border: "1px solid blue", height: "40px", borderStyle: "dashed" }} variant="outline-secondary" onClick={() => setShowManufacturerModal(true)}>
-                                <FaPlus className="text-primary" size={30} />
-                            </Button>
-                        </FormGroup>
-                        <Manufacturer show={showManufacturerModal} handleClose={() => setShowManufacturerModal(false)} onCreated={(manufacturerData) => setLatestCreatedManufacturer({ ...manufacturerData, type: 'Manufacturer' })} />
-                    </Col>
-
-
-                    <Col md={6} className="my-2">
-                    <label className="fw-bold my-2">
-                                {/* <FaStarOfLife className="text-danger size-sm" /> */}
-                                Brand
-                            </label>
-                    <FormGroup className="d-flex justify-content-between gap-3 align-items-center">
-                  
-                            <InputGroup>
-                                <FormSelect
-                                    name="brand"
-                                    aria-label="Select Brand"
-                                    value={formData.brand}
-                                    onChange={handleSelectChange}
-                                >
-                                    <option value="">Select Brand</option>
-                                    {brandOptions.map(brand => (
-                                        <option key={brand._id} value={brand._id}>
-                                            {brand.name}
-                                            <FaTrash 
-                                                className="text-danger ms-2" 
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    handleDeleteBrand(brand._id);
-                                                }}
-                                            />
-                                        </option>
-                                    ))}
-                                </FormSelect>
-                            </InputGroup>
-                            <div />
-                            <Button className="d-flex justify-content-end align-items-center" style={{ width: "40px", padding: '12px', border: "1px solid blue", height: "40px", borderStyle: "dashed" }} variant="outline-secondary" onClick={() => setShowBrandModal(true)}>
-                                <FaPlus className="text-primary" size={30} />
-                            </Button>
-                        </FormGroup>
-                        <Brand show={showBrandModal} handleClose={() => setShowBrandModal(false)} onCreated={(brandData) => setLatestCreatedBrand({ ...brandData, type: 'Brand' })} />
-                    </Col>
-                    <Col md={6} className="my-2">
-                        <FormGroup>
-                            <label className="fw-bold my-2">
-                                {/* <FaStarOfLife className="text-danger size-sm" />  */}
-                                MPN
-                            </label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="mpn"
-                                placeholder="0 0 0 - 0 0 0"
-                                value={formData.mpn}
-                                onChange={handleChange}
-                            />
-                        </FormGroup>
-                    </Col>
-                    <Col md={6} className="my-2">
-                        <FormGroup>
-                            <label  className="fw-bold my-2">
-                                {/* <FaStarOfLife className="text-danger size-sm" />  */}
-                                UPC
-                            </label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="upc"
-                                placeholder="0 0 0 - 0 0 0"
-                                value={formData.upc}
-                                onChange={handleChange}
-                            />
-                        </FormGroup>
-                    </Col>
-                </Row>
-            </Card>
-
-
-            <Card className="shadow my-4 p-4">
-                <Row>
-                    <Col sm={6} className="my-2">
-                        <FormGroup>
-                            <label className="fw-bold my-2">
-                                Cost Price <span className="text-danger">*</span>
-                            </label>
-                            <InputGroup>
-                                <InputGroupText>₹</InputGroupText>
-                                <FormControl
-                                    type="number"
-                                    id="costPrice"
-                                    placeholder="00.00"
-                                    value={formData.costPrice}
-                                    onChange={handleChange}
-                                    className={`form-control ${errors.costPrice ? 'is-invalid' : ''}`}
-                                    
-                                />
-                            {errors.costPrice && <div className="invalid-feedback">{errors.costPrice}</div>}
-
-                            </InputGroup>
-                        </FormGroup>
-                    </Col>
-                    <Col sm={6} className="my-2">
-                        <FormGroup>
-                            <label className="fw-bold my-2">
-                                Selling Price <span className="text-danger">*</span>
-                            </label>
-                            <InputGroup>
-                                <InputGroupText>₹</InputGroupText>
-                                <FormControl
-                                    type="number"
-                                    id="sellingPrice"
-                                    placeholder="00.00"
-                                    value={formData.sellingPrice}
-                                    onChange={handleChange}
-                                    className={`form-control ${errors.sellingPrice ? 'is-invalid' : ''}`}
-                                />
-                            {errors.sellingPrice && <div className="invalid-feedback">{errors.sellingPrice}</div>}
-                            </InputGroup>
-                        </FormGroup>
-                    </Col>
-
-                    <Col md={6} className="my-2">
-                        <FormGroup>
-                            <label className="fw-bold my-2">
-                                Preferred Vendor
-                            </label>
-                            <InputGroup>
-                                <FormSelect
-                                    name="preferredVendor"
-                                    aria-label="Select Vendor"
-                                    value={formData.preferredVendor}
-                                    onChange={handleSelectChange}
-                                >
-                                    <option value="">Select Vendor</option>
-                                    {vendors.map(vendor => (
-                                        <option key={vendor._id} value={vendor._id}>
-                                            {vendor.name}
-                                        </option>
-                                    ))}
-                                </FormSelect>
-                            </InputGroup>
-                        </FormGroup>
-                    </Col>
-                </Row>
-            </Card>
-
-
-            <Card className="shadow my-4 p-4">
-                <Row>
-                    <Col sm={12} className="my-2">
-                        <FormCheck
-                            type="checkbox"
-                            id="checkbox3"
-                            label="Tracking Inventory For This Item"
-                            disabled
-                            checked
-                        />
-                        <span>You cannot enable/disable inventory tracking once you've created transactions for this item</span>
-                    </Col>
-
-                    <Col sm={6} className="my-2">
-                        <FormGroup controlId="stock">
-                            <FormLabel>Opening Stock</FormLabel>
-                            <FormControl
-                                type="number"
-                                name="stock"
-                                placeholder="100"
-                                value={formData.stock}
-                                onChange={handleChange}
-                            />
-                        </FormGroup>
-                    </Col>
-
-                    <Col sm={6} className="my-2">
-                        <FormGroup controlId="stock_rate">
-                            <FormLabel>Opening Stock (Rate Per Unit)</FormLabel>
-                            <InputGroup>
-                                <InputGroupText>₹</InputGroupText>
-                                <FormControl
-                                    type="number"
-                                    name="stock_rate"
-                                    placeholder="00.00"
-                                    value={formData.stock_rate}
-                                    onChange={handleChange}
-                                />
-                            </InputGroup>
-                        </FormGroup>
-                    </Col>
-
-                    <Col sm={6} className="my-2">
-                        <FormGroup controlId="reorder_point">
-                            <FormLabel>Reorder Point</FormLabel>
-                            <FormControl
-                                type="number"
-                                name="reorder_point"
-                                placeholder="000"
-                                value={formData.reorder_point}
-                                onChange={handleChange}
-                            />
-                        </FormGroup>
-                    </Col>
-                </Row>
-            </Card>
+                            <Col sm={6} className="my-2">
+                                <FormGroup controlId="reorder_point">
+                                    <FormLabel>Reorder Point</FormLabel>
+                                    <FormControl
+                                        type="number"
+                                        name="reorder_point"
+                                        placeholder="000"
+                                        value={formData.reorder_point}
+                                        onChange={handleChange}
+                                        onWheel={(e) => e.target.blur()}
+                                    />
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                    </Card>
 
 
 
 
 
-            <Card className="shadow my-4 p-4">
-                <Row>
-                    {/* <Col sm={3} className="my-2">
+                    <Card className="shadow my-4 p-4">
+                        <Row>
+                            {/* <Col sm={3} className="my-2">
                         <FormLabel htmlFor="linking">Link with Website</FormLabel>
                         <div className="form-group m-t-15 m-checkbox-inline mb-3 custom-radio-ml">
                             <FormCheck
@@ -869,50 +875,50 @@ const CreateItemsForm = () => {
                         </div>
                     </Col> */}
 
-                    <Col sm={4} className="my-2">
-                        <FormLabel htmlFor="imageLabel">Product Image</FormLabel>
-                        <FormControl
-                            type="file"
-                            name="image"
-                            accept=".jpg, .jpeg, .png"
-                            id="imageLabel"
-                            onChange={handleImageChange}
-                        />
-                    </Col>
+                            <Col sm={4} className="my-2">
+                                <FormLabel htmlFor="imageLabel">Product Image</FormLabel>
+                                <FormControl
+                                    type="file"
+                                    name="image"
+                                    accept=".jpg, .jpeg, .png"
+                                    id="imageLabel"
+                                    onChange={handleImageChange}
+                                />
+                            </Col>
 
-                    <Col sm={5} className="my-2">
-                        <Image
-                            src={imagePreview}
-                            alt="product image"
-                            fluid
-                            style={{ width: '100px', aspectRatio: '1', objectFit: 'cover' }}
-                            onError={(e) => e.target.src = ''}
-                        />
-                    </Col>
+                            <Col sm={5} className="my-2">
+                                <Image
+                                    src={imagePreview}
+                                    alt="product image"
+                                    fluid
+                                    style={{ width: '100px', aspectRatio: '1', objectFit: 'cover' }}
+                                    onError={(e) => e.target.src = ''}
+                                />
+                            </Col>
 
-                    <Col sm={12} className="my-2 btn-lg">
-                        <Button variant="primary" type="submit" className="my-2" disabled={loading}>
-                            {loading ? 'Submitting...' : (isEditMode ? 'Update' : 'Submit')}
-                        </Button>
-                        <Button 
-                            variant="secondary" 
-                            className="my-2 ms-2" 
-                            onClick={() => navigate(-1)}
-                        >
-                            Cancel
-                        </Button>
-                    </Col>
-                </Row>
-            </Card>
+                            <Col sm={12} className="my-2 btn-lg">
+                                <Button variant="primary" type="submit" className="my-2" disabled={loading}>
+                                    {loading ? 'Submitting...' : (isEditMode ? 'Update' : 'Submit')}
+                                </Button>
+                                <Button
+                                    variant="secondary"
+                                    className="my-2 ms-2"
+                                    onClick={() => navigate(-1)}
+                                >
+                                    Cancel
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Card>
 
 
-            {/* </Row> */}
+                    {/* </Row> */}
 
-        </Form>
-    </Row>
+                </Form>
+            </Row>
 
-</Container>
-  )
+        </Container>
+    )
 }
 
 export default CreateItemsForm

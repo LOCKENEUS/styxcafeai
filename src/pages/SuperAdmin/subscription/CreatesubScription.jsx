@@ -12,7 +12,6 @@ import {
 import ViewDetails from './ViewDetails';
 import SubscriptionForm from './SubscriptionForm';
 
-
 const CreatesubScription = () => {
   const dispatch = useDispatch();
   const { subscriptions, selectedSubscription } = useSelector((state) => state.subscriptions);

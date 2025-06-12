@@ -71,7 +71,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
                     className="nav-link rounded py-3 px-3"
                     to="/superadmin/dashboard"
                     style={{
-                      marginLeft: "20px",
+                      // marginLeft: "20px",
                       color: "#1e3a8a",
                       transition: "all 0.2s",
                     }}

@@ -150,7 +150,7 @@ const BookingEdit = () => {
         if (slotId) {
             dispatch(getSlotDetails({ id: slotId }));
         }
-        if (gameId && slotId) {
+        if (gameId || slotId) {
             if (slot?.slot_price) {
                 setPayableAmount(slot?.slot_price)
                 setPriceToPay(slot?.slot_price)
@@ -160,6 +160,19 @@ const BookingEdit = () => {
             }
         }
     }, [dispatch, gameId, slotId]);
+
+    
+    useEffect(() => {
+        if (slot) {
+            if (slot?.slot_price) {
+                setPayableAmount(slot?.slot_price)
+                setPriceToPay(slot?.slot_price)
+            } else {
+                setPayableAmount(selectedGame?.price)
+                setPriceToPay(selectedGame?.price)
+            }
+        }
+    }, [dispatch, slot]);
 
     const handleAddPlayer = async () => {
         const submittedData = new FormData();
@@ -276,6 +289,10 @@ const BookingEdit = () => {
             return aStart - bStart;
         });
     };
+
+    console.log("payableAmount", payableAmount);
+    console.log("gameId", gameId);
+    console.log("slotId", slotId);
 
     return (
         <Container fluid className="p-4 ">

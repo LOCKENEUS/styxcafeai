@@ -4,8 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { Button, Col, Form, Offcanvas, Row, Spinner } from "react-bootstrap";
 import { getGameById, updateGame } from "../../../../store/slices/gameSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { TiDeleteOutline } from "react-icons/ti";
-import Rectangle389 from '/assets/superAdmin/cafe/Rectangle389.png';
 
 const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
   const [errors, setErrors] = useState({});
@@ -24,8 +22,8 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
     details: "",
     image: "",
     length: '',
-  breadth: '',
-  selectedArea: ''
+    breadth: '',
+    selectedArea: ''
 
   })
   const [saveLoading, setSaveLoading] = useState(false);
@@ -39,25 +37,25 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
     breadth: '',
     selectedArea: ''
   });
-  
+
   useEffect(() => {
     if (selectedGame?.data?._id === gameId) {
-      const sizeString = selectedGame?.data?.size; 
-    
-    if (sizeString) {
-      const sizeParts = sizeString.split(' '); 
-      
-      if (sizeParts.length === 4) {
-        setAreaDimension({
-          length: sizeParts[0],
-          breadth: sizeParts[2],
-          selectedArea: sizeParts[3]
-        });
+      const sizeString = selectedGame?.data?.size;
+
+      if (sizeString) {
+        const sizeParts = sizeString.split(' ');
+
+        if (sizeParts.length === 4) {
+          setAreaDimension({
+            length: sizeParts[0],
+            breadth: sizeParts[2],
+            selectedArea: sizeParts[3]
+          });
+        }
       }
     }
-    }
   }, [selectedGame]);
-  
+
   useEffect(() => {
     if (selectedGame) {
       setFormData({
@@ -97,9 +95,6 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
       [name]: value
     }));
 
-
-    
-
     // Validation for number of players
     if (name === 'players' && formData.type === 'Multiplayer') {
       const num = parseInt(value);
@@ -121,17 +116,7 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
       }));
       setErrors(prev => ({ ...prev, players: '' }));
     }
-
-
   };
-
-  // const handleFileChange = (e) => {
-  //   const file = e.target.files[0];
-  //   setFormData((prev) => ({
-  //       ...prev,
-  //       image: file,
-  //     }));
-  // };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -141,23 +126,18 @@ const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
     }
   };
 
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaveLoading(true);
 
     const { length, breadth, selectedArea } = areaDimension;
-const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
-
-
+    const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
 
     if (formData.type === "Single ") {
       // return 1 to the 'players' field if it's a single player game pass 1
       formData.players = '1';
 
     }
-
     const formDataToSend = new FormData();
     formDataToSend.append('_id', gameId);
     formDataToSend.append('name', formData.name);
@@ -177,7 +157,6 @@ const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
       formDataToSend.append("gameImage", formData.image);
     }
 
-
     try {
       await dispatch(updateGame({ id: gameId, updatedData: formDataToSend }));
       handleClose();
@@ -190,20 +169,6 @@ const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
     finally {
       setSaveLoading(false);
     }
-
-    // setFormData({
-    //   name: "",
-    //   type: "Single player",
-    //   price: "",
-    //   zone: "Indoor",
-    //   size: "",
-    //   players: "",
-    //   commission: "",
-    //   cancellation: "Yes",
-    //   payLater: "Yes",
-    //   details: "",
-    //   image: ""
-    // });
   };
 
   return (
@@ -264,8 +229,6 @@ const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
                     <div className="invalid-feedback d-block">{errors.players}</div>
                   )}
                 </Form.Group>
-
-
               )}
 
             </Col>
@@ -279,58 +242,59 @@ const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
+                onWheel={(e) => e.target.blur()}
                 required
                 className="py-2 border-2"
                 placeholder="Enter price amount"
               />
             </Col>
             <Col md={6}>
-            <Form.Label htmlFor="gamePrice" className="fw-bold text-secondary">Area of Game
+              <Form.Label htmlFor="gamePrice" className="fw-bold text-secondary">Area of Game
                 <span className="text-danger">*</span>
               </Form.Label>
-            <Row className="g-1">
-  <Col sm={4}>
-    <Form.Control
-      type="number"
-      name="length"
-      value={areaDimension.length}
-      onChange={handleChange}
-      placeholder="length"
-      required
-    />
-  </Col>
+              <Row className="g-1">
+                <Col sm={4}>
+                  <Form.Control
+                    type="number"
+                    name="length"
+                    value={areaDimension.length}
+                    onWheel={(e) => e.target.blur()}
+                    onChange={handleChange}
+                    placeholder="length"
+                    required
+                  />
+                </Col>
 
-  <Col sm={4}>
-    <Form.Control
-      type="number"
-      name="breadth"
-      value={areaDimension.breadth}
-      onChange={handleChange}
-      placeholder="breadth"
-      required
-    />
-  </Col>
+                <Col sm={4}>
+                  <Form.Control
+                    type="number"
+                    name="breadth"
+                    value={areaDimension.breadth}
+                    onWheel={(e) => e.target.blur()}
+                    onChange={handleChange}
+                    placeholder="breadth"
+                    required
+                  />
+                </Col>
 
-  <Col sm={4}>
-    <Form.Select
-      name="selectedArea"
-      value={areaDimension.selectedArea}
-      onChange={handleChange}
-      required
-    >
-      <option value="">Select Area</option>
-      <option value="ft">Feet (ft)</option>
-      <option value="in">Inches (in)</option>
-      <option value="yd">Yards (yd)</option>
-      <option value="m">Meters (m)</option>
-      <option value="cm">Centimeters (cm)</option>
-    </Form.Select>
-  </Col>
-</Row>
-
+                <Col sm={4}>
+                  <Form.Select
+                    name="selectedArea"
+                    value={areaDimension.selectedArea}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Select Area</option>
+                    <option value="ft">Feet (ft)</option>
+                    <option value="in">Inches (in)</option>
+                    <option value="yd">Yards (yd)</option>
+                    <option value="m">Meters (m)</option>
+                    <option value="cm">Centimeters (cm)</option>
+                  </Form.Select>
+                </Col>
+              </Row>
             </Col>
           </Row>
-
           <Row className="mb-2 g-4">
             <Col md={6}>
               <Form.Label htmlFor="gameZone" className="fw-bold text-secondary">Zone of Game</Form.Label>
@@ -356,17 +320,14 @@ const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
                   type="number"
                   name="commission"
                   value={formData.commission}
+                  onWheel={(e) => e.target.blur()}
                   onChange={handleChange}
                   required
                   className="py-2 border-2"
                   placeholder="Enter commission percentage"
                 />
-
-
               </Form.Group>
             </Col>
-
-
           </Row>
 
           <Row className="mb-2 g-4">
@@ -401,7 +362,6 @@ const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
           </Row>
 
           <Row className="mb-2 g-4">
-
             <Col md={6}>
               <Form.Label className="fw-bold text-secondary d-block">
                 Upload Image <span className="text-danger">*</span>
@@ -416,8 +376,6 @@ const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
                   onChange={handleFileChange}
 
                 />
-
-
                 <div className="d-flex justify-content-center align-items-center">
                   <label
                     htmlFor="fileUploadLocation"
@@ -441,25 +399,11 @@ const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
                       style={{ maxHeight: '100px', maxWidth: '100px' }}
 
                     />
-                    {/* <TiDeleteOutline
-                      className="text-danger position-absolute top-0 end-0 bg-white rounded-circle"
-                      onClick={() =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          image: '',
-                        }))
-                      }
-                      style={{ cursor: 'pointer' }}
-                    /> */}
                   </div>
                 )}
               </div>
             </Col>
-
           </Row>
-
-
-
           <Form.Group className="mb-2">
             <Form.Label htmlFor="gameDetails" className="fw-bold text-secondary">Game Details
               <span className="text-danger">*</span>
@@ -477,25 +421,23 @@ const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
             />
           </Form.Group>
 
-
-
           <div className="d-flex justify-content-end gap-3 mt-4">
             <Button variant="success" type="submit" >
               {
-                saveLoading ?(
+                saveLoading ? (
                   <>
-                  <Spinner
-                    animation="border"
-                    role="status"
-                    size="sm"
-                    className="me-2"
-                  />
-                  Saving...
-                </>
-            
-              ) : (
-              "Save Game"
-              )
+                    <Spinner
+                      animation="border"
+                      role="status"
+                      size="sm"
+                      className="me-2"
+                    />
+                    Saving...
+                  </>
+
+                ) : (
+                  "Save Game"
+                )
               }
             </Button>
             <Button variant="outline-secondary" onClick={handleClose} className="px-4 py-2 fw-bold">
@@ -503,10 +445,8 @@ const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
             </Button>
           </div>
         </Form>
-
       </Offcanvas.Body>
     </Offcanvas>
-
   )
 };
 export default EditGameOffcanvas;

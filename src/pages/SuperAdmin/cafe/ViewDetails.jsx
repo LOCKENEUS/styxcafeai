@@ -3,22 +3,12 @@ import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { deleteCafe, fetchCafes, selectCafes } from "../../../store/slices/cafeSlice";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import CafeGames from "./Games/CafeGames";
-import CreateOffers from "./Offers/CreateOffers";
-import { getGames, setSelectedGame } from '../../../store/slices/gameSlice';
-import CafeForm from './CafeForm';
-import CreateMembership from "./membership/CreateMembership";
+import { getGames, getGamesCommission, setSelectedGame } from '../../../store/slices/gameSlice';
 import Rectangle389 from '/assets/superAdmin/cafe/Rectangle389.png'
 import edit from "/assets/superAdmin/cafe/edit.png";
-import profile from "/assets/profile/user_avatar.jpg";
-import call from "/assets/superAdmin/cafe/call (2).png";
-import Notification from "/assets/superAdmin/cafe/notification.png";
-import Message from "/assets/superAdmin/cafe/message.png";
 import Add from "/assets/superAdmin/cafe/formkit_add.png";
 import FrameKing from '/assets/superAdmin/cafe/FrameKing.png';
 import { getMembershipsByCafeId, setSelectedMembership } from "../../../store/slices/MembershipSlice";
-import GameForm from "./Games/GameForm";
-import { FaCrown } from "react-icons/fa";
 import AddGamesOffcanvas from "./offcanvasCafe/addGames";
 import AddMembershipOffcanvas from "./offcanvasCafe/addMembership";
 import EditCafeOffcanvas from "./offcanvasCafe/editCafe";
@@ -32,9 +22,6 @@ import { fetchEarning, getBookings } from "../../../store/AdminSlice/BookingSlic
 import { convertTo12Hour, formatDate } from "../../../components/utils/utils";
 import { setsEqual } from "chart.js/helpers";
 
-
-
-
 const ViewDetails = () => {
   const [loadingMain, setLoadingMain] = useState(true);
   const { games, selectedGame } = useSelector((state) => state.games);
@@ -43,6 +30,10 @@ const ViewDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const cafeId = location.state?.cafeId;
+
+  
+  const [currentPageCommission, setCurrentPageCommission] = useState(1);
+  const itemsPerPageCommission = 5;
 
   const [showModal, setShowModal] = useState(false);
   const [cafe, setCafe] = useState(null);
@@ -73,6 +64,8 @@ const ViewDetails = () => {
   const [filteredEarningData, setFilteredEarningData] = useState([]);
   const [selectedGameId, setSelectedGameId] = useState('All');
   const [earningData, setEarningData] = useState([]);
+  const [commissionSelectedItem, setCommissionSelectedItem] = useState("Today");
+  const [commissionSelectedGameId, setCommissionSelectedGameId] = useState("All");
   const [today, setToday] = useState(() => {
     const d = new Date();
     const year = d.getFullYear();
@@ -121,7 +114,6 @@ const ViewDetails = () => {
     return `${year}-${month}-01`; // Always 01 for start of month
   })();
 
-
   const monthEndDate = (() => {
     const now = new Date();
     const year = now.getFullYear();
@@ -139,7 +131,14 @@ const ViewDetails = () => {
     cafeId: cafeId,
     startDate: today,
     endDate: today,
-    gameId: ""
+    gameId: "",
+  });
+
+  const [commissionFilter, setCommissionFilter] = useState({
+    filter: cafeId,
+    startDate: today,
+    endDate: today,
+    game: "",
   });
 
   const [currentPageEarning, setCurrentPageEarning] = useState(1);
@@ -203,7 +202,7 @@ const ViewDetails = () => {
 
   // -------------- Games --------------
   const gamesDetails = useSelector(state => state.games);
-  const { selectedGameDetails } = useSelector((state) => state.games);
+  const { selectedGameDetails, commission } = useSelector((state) => state.games);
   useEffect(() => {
     if (cafeId) {
       setLodergames(true);
@@ -231,16 +230,8 @@ const ViewDetails = () => {
     );
   });
 
-  
-
-
   // --------------------- gallery ---------------------
-
-
-
-
   const [currentIndexGallery, setCurrentIndexGallery] = useState(0);
-
   const cardsPerPageGallery = 3;
 
   // Set selected cafe
@@ -329,12 +320,7 @@ const ViewDetails = () => {
         card.replaceWith(card.cloneNode(true));
       });
     };
-
-
-
-
   }, []);
-
 
   // -------------- Membership --------------
   const { memberships, loading, error, selectedMembership } = useSelector((state) => state.memberships);
@@ -365,7 +351,6 @@ const ViewDetails = () => {
       setCurrentIndexMembership(prev => prev - membershipCardsPerPage);
     }
   };
-
 
   const handleDelete = () => {
     setShowModal(true);
@@ -401,17 +386,11 @@ const ViewDetails = () => {
       </div>
     );
   }
-
   const baseURL = import.meta.env.VITE_API_URL;
   const imagePaths = cafe.cafeImage ? cafe.cafeImage.map(path => baseURL + "/" + path.trim()) : [];
 
-
-
   // -----------------------    client Details -----------------------
   const itemsPerPage = 10;
-
-
-
   const totalPages = Math.ceil(clientList.length / itemsPerPage);
 
   const handleNextclient = () => {
@@ -430,9 +409,6 @@ const ViewDetails = () => {
 
   // -----------------------    client Details -----------------------
 
-
-
-
   const paginatedData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -441,14 +417,6 @@ const ViewDetails = () => {
   // -------------------  Booking -------------------
   const totalPagesboking = Math.ceil(bookings.length / itemsPerPage);
 
-  // Calculate paginated data
-  // const paginatedDataBooking = bookings.slice(
-  //   (currentPagebooking - 1) * itemsPerPage,
-  //   currentPagebooking * itemsPerPage
-  // );
-
-  // const clientList = useSelector((state) => state.customers.customers);
-  
   const filteredBookings = bookings.filter((booking) => {
     const searchValue = searchQueryBooking.toLowerCase();
     return (
@@ -457,15 +425,15 @@ const ViewDetails = () => {
       booking.game_id?.name?.toLowerCase().includes(searchValue) ||
       booking.players?.length?.toString().toLowerCase().includes(searchValue) ||
       booking?.gamePrice?.toString().toLowerCase().includes(searchValue) ||
-      booking.status ?.toLowerCase().includes(searchValue) ||           
-      booking.mode?.toLowerCase().includes(searchValue) ||    
+      booking.status?.toLowerCase().includes(searchValue) ||
+      booking.mode?.toLowerCase().includes(searchValue) ||
       booking.slot_date?.toString().toLowerCase().includes(searchValue) ||
       (booking?.slot_id?.start_time && convertTo12Hour(booking.slot_id.start_time)?.toLowerCase().includes(searchValue)) ||
-    (booking?.slot_id?.end_time && convertTo12Hour(booking.slot_id.end_time)?.toLowerCase().includes(searchValue))
+      (booking?.slot_id?.end_time && convertTo12Hour(booking.slot_id.end_time)?.toLowerCase().includes(searchValue))
       // booking.slot_id?.duration?.toString().toLowerCase().includes(searchValue)
     );
   });
-  
+
   const paginatedDataBooking = filteredBookings.slice(
     (currentPagebooking - 1) * itemsPerPage,
     currentPagebooking * itemsPerPage
@@ -562,24 +530,7 @@ const ViewDetails = () => {
     setTotalEarning(earnings);
   };
 
-
-
-  // const filteredBookingsEarning = bookings||filteredBookingsset.filter((booking) => {
-  //   const searchValue = searchQuery.toLowerCase();
-
-  //   return (
-  //     booking.booking_id?.toString().toLowerCase().includes(searchValue) ||
-  //     booking.customerName?.toLowerCase().includes(searchValue) ||
-  //     booking.game_id?.name?.toLowerCase().includes(searchValue) ||
-  //     booking.players?.length?.toString().toLowerCase().includes(searchValue) ||
-  //     booking.status?.toLowerCase().includes(searchValue) ||
-  //     booking.slot_date?.toString().toLowerCase().includes(searchValue) ||
-  //     booking.slot_id?.start_time?.toString().toLowerCase().includes(searchValue) ||
-  //     booking.slot_id?.end_time?.toString().toLowerCase().includes(searchValue) ||
-  //     booking.slot_id?.duration?.toString().toLowerCase().includes(searchValue)
-  //   );
-  // });
-  const filteredBookingsEarning = (filteredBookingsset.length > 0 ? filteredBookingsset : bookings).filter((booking) => {
+  const filteredBookingsEarning = (filteredBookingsset?.length > 0 ? filteredBookingsset : bookings).filter((booking) => {
     const searchValue = searchQuery.toLowerCase();
     const slotDate = new Date(booking.slot_date);
 
@@ -591,15 +542,15 @@ const ViewDetails = () => {
     return (
       // isWithinDateRange &&
       // (
-        booking.booking_id?.toString().toLowerCase().includes(searchValue) ||
-        booking.customerName?.toLowerCase().includes(searchValue) ||
-        booking.game_id?.name?.toLowerCase().includes(searchValue) ||
-        booking.players?.length?.toString().toLowerCase().includes(searchValue) ||
-        booking.status?.toLowerCase().includes(searchValue) ||
-        booking.slot_date?.toString().toLowerCase().includes(searchValue) ||
-        booking.slot_id?.start_time?.toString().toLowerCase().includes(searchValue) ||
-        booking.slot_id?.end_time?.toString().toLowerCase().includes(searchValue) ||
-        booking.slot_id?.duration?.toString().toLowerCase().includes(searchValue)
+      booking.booking_id?.toString().toLowerCase().includes(searchValue) ||
+      booking.customerName?.toLowerCase().includes(searchValue) ||
+      booking.game_id?.name?.toLowerCase().includes(searchValue) ||
+      booking.players?.length?.toString().toLowerCase().includes(searchValue) ||
+      booking.status?.toLowerCase().includes(searchValue) ||
+      booking.slot_date?.toString().toLowerCase().includes(searchValue) ||
+      booking.slot_id?.start_time?.toString().toLowerCase().includes(searchValue) ||
+      booking.slot_id?.end_time?.toString().toLowerCase().includes(searchValue) ||
+      booking.slot_id?.duration?.toString().toLowerCase().includes(searchValue)
       // )
     );
   });
@@ -617,7 +568,7 @@ const ViewDetails = () => {
     { gameName: "PUBG", gamePlay: 3, price: 20, date: "02/01/2023" },
   ];
 
-  const groupedByDate = gameCollection.reduce((acc, game) => {
+  const groupedByDate = gameCollection?.reduce((acc, game) => {
     if (!acc[game.date]) {
       acc[game.date] = [];
     }
@@ -627,11 +578,6 @@ const ViewDetails = () => {
 
   const dates = Object.keys(groupedByDate);
 
-  // const handleFetchEarning = () => {
-  //   dispatch(fetchEarning({ id: null, updatedData: requestData }));
-
-  //   console.log("requestData", requestData);
-  // };
   const handleFetchEarning = async () => {
     try {
       const response = await dispatch(fetchEarning({ id: null, updatedData: requestData })).unwrap();
@@ -641,52 +587,23 @@ const ViewDetails = () => {
     }
   };
 
-  const handleFetchEarningDay = async () => {
+  const handleFetchCommission = async () => {
     try {
-      const response = await dispatch(fetchEarning({ id: null, updatedData: requestData })).unwrap();
+      const response = await dispatch(getGamesCommission({ updatedData: requestData })).unwrap();
       setEarningData(response.data);
     } catch (error) {
       console.error("Error fetching earning:", error);
     }
   };
 
-  // const filterBookingsEarning = async (eventKey,id) => {
-  //   console.log("eventKey == ", eventKey);
-  //   setSelectedItem(eventKey);
-
-  //   let updatedData = {
-  //     cafeId: cafeId,
-  //     startDate: today,
-  //     endDate: today,
-  //     gameId: id,
-  //   };
-
-  //   if (eventKey === "Current Month") {
-  //     updatedData.startDate = monthStartDate;
-  //     updatedData.endDate = monthEndDate;
-  //     updatedData.gameId = id;
-  //   } else if (eventKey === "This Week") {
-  //     updatedData.startDate = weekStartDate;
-  //     updatedData.endDate = weekEndDate;
-  //     updatedData.gameId = id;
-  //   } else if (eventKey === "Today") {
-  //     updatedData.startDate = today;
-  //     updatedData.endDate = today;
-  //     updatedData.gameId = id;
-  //   } else if (eventKey === "Custom Date") {
-  //     updatedData.startDate = customStartDate;
-  //     updatedData.endDate = customEndDate;
-  //     updatedData.gameId = id;
-  //   }
-  //   setRequestData(updatedData);
-
-  //   try {
-  //     const response = await dispatch(fetchEarning({ id: null, updatedData })).unwrap();
-  //     setEarningData(response.data);
-  //   } catch (error) {
-  //     console.error("Error fetching earning:", error);
-  //   }
-  // };
+  const handleFetchEarningDay = async () => {
+    try {
+      const response = await dispatch(fetchEarning({ cafeId: cafeId, updatedData: requestData })).unwrap();
+      setEarningData(response.data);
+    } catch (error) {
+      console.error("Error fetching earning:", error);
+    }
+  };
 
   const filterBookingsEarning = async (eventKey = selectedItem, id = selectedGameId) => {
     setSelectedItem(eventKey);
@@ -723,12 +640,12 @@ const ViewDetails = () => {
     }
   };
 
-  const dataToDisplay = filteredEarningData.length > 0 ? filteredEarningData : earningData;
+  const dataToDisplay = filteredEarningData?.length > 0 ? filteredEarningData : earningData;
   const indexOfLastItem = currentPageEarning * itemsPerPageEarning;
   const indexOfFirstItem = indexOfLastItem - itemsPerPageEarning;
-  const currentItems = dataToDisplay.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = dataToDisplay?.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPagesEarning = Math.ceil(dataToDisplay.length / itemsPerPageEarning);
+  const totalPagesEarning = Math.ceil(dataToDisplay?.length / itemsPerPageEarning);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPageEarning(pageNumber);
@@ -750,6 +667,67 @@ const ViewDetails = () => {
     }
 
   };
+
+
+  const commissionDataArray = commission?.data || [];
+  const totalPagesCommission = Math.ceil(commissionDataArray.length / itemsPerPageCommission);
+  const indexOfLastCommission = currentPageCommission * itemsPerPageCommission;
+  const indexOfFirstCommission = indexOfLastCommission - itemsPerPageCommission;
+  const currentCommissionItems = commissionDataArray.slice(indexOfFirstCommission, indexOfLastCommission);
+
+
+
+
+
+
+
+
+  const commissionData = async (eventKey = selectedItem, id = selectedGameId) => {
+
+    console.log("eventKey", eventKey);
+    setSelectedItem(eventKey);
+    setSelectedGameId(id);
+
+    let updatedData = {
+      cafeId: cafeId,
+      startDate: today,
+      endDate: today,
+      game: id === 'All' ? null : id, // If All, no filter on game
+    };
+
+    if (eventKey === "Current Month") {
+      updatedData.filter = "this_month",
+        updatedData.startDate = monthStartDate;
+      updatedData.endDate = monthEndDate;
+    } else if (eventKey === "This Week") {
+      updatedData.filter = "this_week";
+      updatedData.startDate = weekStartDate;
+      updatedData.endDate = weekEndDate;
+    } else if (eventKey === "Today") {
+      updatedData.filter = "today";
+      updatedData.startDate = today;
+      updatedData.endDate = today;
+    } else if (eventKey === "Custom Date") {
+      updatedData.filter = "custom_date";
+      updatedData.startDate = customStartDate;
+      updatedData.endDate = customEndDate;
+    }
+
+    setCommissionFilter(updatedData);
+
+    try {
+      const response = await dispatch(getGamesCommission({ cafeId, updatedData })).unwrap();
+      setEarningData(response.data);
+    } catch (error) {
+      console.error("Error fetching earning:", error);
+    }
+  };
+
+
+
+
+
+  console.log("commission data", commission)
 
 
   return (
@@ -1006,14 +984,12 @@ const ViewDetails = () => {
                 </Nav.Link>
                 {activeKey === 'Game' && (
                   <div
-
                     style={{
                       margin: '0 15px ',
                       width: '40%',
                       height: '2px',
                       backgroundColor: '#0d6efd',
                       borderRadius: '2px',
-
                     }}
                   />
                 )}
@@ -1148,6 +1124,41 @@ const ViewDetails = () => {
                 {activeKey === 'earning' && (
                   <div
 
+                    style={{
+                      margin: '0 18px ',
+                      width: '40%',
+                      height: '2px',
+                      backgroundColor: '#0d6efd',
+                      borderRadius: '2px',
+
+                    }}
+                  />
+                )}
+              </Nav.Item>
+
+              <Nav.Item style={{ textAlign: 'center' }}>
+                <Nav.Link
+                  eventKey="commission"
+                  style={{
+                    padding: 0,
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                  }}
+                  onClick={handleFetchCommission}
+                >
+                  <div
+                    style={{
+                      fontWeight: activeKey === 'commission' ? '600' : '400',
+                      fontSize: '16px',
+                      color: activeKey === 'commission' ? '#0d6efd' : '#6c757d',
+                      padding: '1rem 1rem',
+                    }}
+                  >
+                    Commission
+                  </div>
+                </Nav.Link>
+                {activeKey === 'commission' && (
+                  <div
                     style={{
                       margin: '0 18px ',
                       width: '40%',
@@ -1299,7 +1310,7 @@ const ViewDetails = () => {
 
                       <>
 
-                        {games.length > 0 ? (
+                        {games?.length > 0 ? (
                           [...games].reverse().map((game, index) => (
                             <Col className="my-2 " key={index} xs={12} sm={6} md={6} lg={6} >
                               <Card className="rounded-4 h-100  gsap-card-move " style={{
@@ -1391,7 +1402,7 @@ const ViewDetails = () => {
 
                     ) : (
                       <>
-                        {memberships && memberships.length > 0 ? (
+                        {memberships && memberships?.length > 0 ? (
                           <Row className="d-flex flex-wrap justify-content-start mx-2 ">
                             {[...memberships].reverse().map((membership, index, arr) => (
                               <Col
@@ -1496,7 +1507,7 @@ const ViewDetails = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {(paginatedData.length > 0 ? paginatedData : clientList).map((client, idx) => (
+                        {(paginatedData?.length > 0 ? paginatedData : clientList).map((client, idx) => (
                           <tr key={idx}>
                             <td>{idx + 1}</td>
                             <td><span className="text-primary fw-bold " style={{ cursor: "pointer" }} onClick={() => handleClientClick(client._id)}>{client.name}</span></td>
@@ -1667,7 +1678,7 @@ const ViewDetails = () => {
                             </td>
                             <td>
                               {formatDate(booking.slot_date)}<br />
-                             
+
                               {/* {
                                 booking?.booking_type === "Regular"
                                   ? `${convertTo12Hour(booking?.slot_id?.start_time)} - ${convertTo12Hour(booking?.slot_id?.end_time)}`
@@ -1676,7 +1687,7 @@ const ViewDetails = () => {
 
                               {convertTo12Hour(booking?.slot_id?.start_time || booking?.custom_slot?.start_time)}
                               - {convertTo12Hour(booking?.slot_id?.end_time || booking?.custom_slot?.end_time)}
-                              
+
                             </td>
                             <td>
                               ₹ {booking.gamePrice}
@@ -1758,220 +1769,6 @@ const ViewDetails = () => {
               {/* earning */}
 
               {activeKey === "earning" && (
-                // <Row className="d-flex flex-wrap justify-content-center p-2 mx-1 my-3">
-                //   <Col sm={6} className="align-items-center">
-                //     <DropdownButton
-                //       id="dropdown-item-button"
-                //       title={selectedItem}
-                //       variant="outline-dark"
-                //       onSelect={(eventKey) => filterBookings(eventKey)}
-                //       style={{ width: '400px' }}
-                //     >
-                //       <Dropdown.Item as="button" eventKey="" disabled >Select</Dropdown.Item>
-                //       <Dropdown.Item eventKey="Day" as="button">Day</Dropdown.Item>
-                //       <Dropdown.Item eventKey="Week" as="button">Week</Dropdown.Item>
-                //       <Dropdown.Item eventKey="Month" as="button">Month</Dropdown.Item>
-                //     </DropdownButton>
-
-                //   </Col>
-                //   <Col sm={6} className=" alingn-items-end ">
-                //     <div className="d-flex justify-content-end">
-                //       <input
-                //         type="search"
-                //         className="form-control me-2"
-                //         placeholder="Search"
-                //         aria-label="Search"
-                //         value={searchQuery}
-                //         onChange={(e) => setSearchQuery(e.target.value)}
-                //       />
-                //     </div>
-                //   </Col>
-                //   <Col sm={6} className="d-flex justify-content-start my-2">
-                //     <Form.Control
-                //       type={startDate ? "date" : "text"}
-                //       value={startDate}
-                //       onChange={(e) => setStartDate(e.target.value)}
-                //       onFocus={(e) => e.target.type = 'date'}
-                //       onBlur={(e) => {
-                //         if (!e.target.value) e.target.type = 'text'
-                //       }}
-                //       className="me-2"
-                //       placeholder="Start Date"
-
-                //     />
-                //     <Form.Control
-                //       type={startDate ? "date" : "text"}
-                //       value={endDate}
-                //       onFocus={(e) => e.target.type = 'date'}
-                //       onBlur={(e) => {
-                //         if (!e.target.value) e.target.type = 'text'
-                //       }}
-                //       onChange={(e) => setEndDate(e.target.value)}
-                //       placeholder="End Date"
-                //     />
-                //   </Col>
-                //   <Col sm={6} className="d-flex justify-content-end my-2">
-                //     <h4 className="my-3" style={{ fontWeight: "600", fontSize: "16px", color: "#0062FF" }}>
-                //       Total Earning : ₹ {totalEarning || bookings.reduce((sum, booking) => sum + (booking?.gamePrice || 0), 0)}
-                //     </h4>
-                //   </Col>
-                //   <Col sm={12} className="my-3 alingn-items-end">
-                //     <Table hover responsive>
-                //       <thead className="table-light">
-                //         <tr>
-                //           <th className="fw-bold">S/N</th>
-                //           <th className="fw-bold">Booking Id</th>
-                //           <th className="fw-bold">Name</th>
-                //           <th className="fw-bold">Sports</th>
-                //           <th className="fw-bold">Players</th>
-                //           <th className="fw-bold">Mode</th>
-                //           <th className="fw-bold">Time/Date</th>
-                //           <th className="fw-bold">Price</th>
-                //         </tr>
-                //       </thead>
-                //       <tbody>
-                //         {filteredBookingsEarning?.length > 0 ? (
-                //           filteredBookingsEarning.map((booking, idx) => (
-                //             <tr key={idx}>
-                //               <td>{idx + 1}</td>
-                //               <td>
-                //                 <span
-                //                   className="text-primary fw-bold"
-                //                   style={{ cursor: "pointer" }}
-                //                   onClick={() => handleBookingClick(booking._id)}
-                //                 >
-                //                   {booking.booking_id}
-                //                 </span>
-                //               </td>
-                //               <td>{booking.customerName}</td>
-                //               <td>{booking.game_id?.name}</td>
-                //               <td>{booking.players?.length || "---"}</td>
-                //               <td>
-                //                 <span
-                //                   className="d-flex align-items-center w-75 justify-content-center"
-                //                   style={{
-                //                     backgroundColor:
-                //                       booking.status === "Pending"
-                //                         ? "#FFF3CD"
-                //                         : booking.mode === "Online"
-                //                           ? "#03D41414"
-                //                           : "#FF00000D",
-                //                     borderRadius: "20px",
-                //                     padding: "5px 10px",
-                //                     color:
-                //                       booking.status === "Pending"
-                //                         ? "#856404"
-                //                         : booking.mode === "Online"
-                //                           ? "#00AF0F"
-                //                           : "orange",
-                //                   }}
-                //                 >
-                //                   <div
-                //                     style={{
-                //                       width: "10px",
-                //                       height: "10px",
-                //                       borderRadius: "50%",
-                //                       backgroundColor:
-                //                         booking.status === "Pending"
-                //                           ? "#856404"
-                //                           : booking.mode === "Online"
-                //                             ? "#03D414"
-                //                             : "orange",
-                //                       marginRight: "5px",
-                //                     }}
-                //                   />
-                //                   {booking?.status === "Pending" ? "Pending" : booking?.mode}
-                //                 </span>
-                //               </td>
-                //               <td>
-                //                 {formatDate(booking.slot_date)}
-                //                 <br />
-                //                 ₹{" "}
-                //                 {booking?.booking_type === "Regular"
-                //                   ? `${convertTo12Hour(booking?.slot_id?.start_time)} - ${convertTo12Hour(booking?.slot_id?.end_time)}`
-                //                   : `${convertTo12Hour(booking?.custom_slot?.start_time)} - ${convertTo12Hour(booking?.custom_slot?.end_time)}`}
-                //               </td>
-                //               <td>₹ {booking.gamePrice}</td>
-                //             </tr>
-                //           ))
-                //         ) : (
-                //           <tr>
-                //             <td colSpan="8" className="text-center">
-                //               No data found
-                //             </td>
-                //           </tr>
-                //         )}
-                //       </tbody>
-                //     </Table>
-                //     <div className="d-flex justify-content-end align-items-center my-4">
-
-                //       <Button
-                //         style={{
-                //           backgroundColor: "white",
-                //           border: "1px solid #dee2e6",
-                //           padding: "0.25rem 0.5rem",
-                //           borderRadius: "0.375rem",
-                //         }}
-                //         onClick={handlePrevclientBooking}
-                //         disabled={currentPagebooking === 1}
-                //       >
-                //         <GrFormPrevious style={{ color: "black", fontSize: "20px" }} />
-                //       </Button>              
-                //       <span className="d-flex align-items-center mx-2 gap-2">
-                //         <Button
-                //           style={{
-                //             backgroundColor: currentPagebooking === 1 ? "#0062ff" : "white",
-                //             color: currentPagebooking === 1 ? "white" : "black",
-                //             border: "1px solid #dee2e6",
-                //             borderRadius: "0.375rem",
-                //             padding: "0.25rem 0.6rem",
-                //           }}
-                //         >
-                //           1
-                //         </Button>
-
-                //         <Button
-                //           style={{
-                //             backgroundColor: currentPagebooking === 2 ? "#0062ff" : "white",
-                //             color: currentPagebooking === 2 ? "white" : "black",
-                //             border: "1px solid #dee2e6",
-                //             borderRadius: "0.375rem",
-                //             padding: "0.25rem 0.6rem",
-                //           }}
-                //         >
-                //           2
-                //         </Button>
-                //         <span style={{ fontSize: "16px", fontWeight: "500" }}>...</span>
-                //         <Button
-                //           style={{
-                //             backgroundColor: currentPagebooking === totalPagesboking ? "#0062ff" : "white",
-                //             color: currentPagebooking === totalPagesboking ? "white" : "black",
-                //             border: "1px solid #dee2e6",
-                //             borderRadius: "0.375rem",
-                //             padding: "0.25rem 0.6rem",
-                //           }}
-                //         >
-                //           {totalPagesboking}
-                //         </Button>
-                //       </span>
-
-                //       <Button
-                //         style={{
-                //           backgroundColor: "white",
-                //           border: "1px solid #dee2e6",
-                //           padding: "0.25rem 0.5rem",
-                //           borderRadius: "0.375rem",
-                //         }}
-                //         onClick={handleNextclientBooking}
-                //         disabled={currentPagebooking === totalPagesboking}
-                //       >
-                //         <MdOutlineNavigateNext style={{ color: "black", fontSize: "20px" }} />
-                //       </Button>
-                //     </div>
-                //   </Col>
-                // </Row>
-
-
                 <Row className="d-flex flex-wrap justify-content-between p-2 mx-1 my-3" >
                   <Col sm={5} className=" justify-content-start align-items-start">
                     <Row className="align-items-center">
@@ -2013,7 +1810,7 @@ const ViewDetails = () => {
                   </Col>
                   <Col sm={6} className="d-flex justify-content-end my-2">
                     <h4 className="my-3" style={{ fontWeight: "600", fontSize: "16px", color: "#0062FF" }}>
-                      Total Earning : ₹ {totalEarning || earningData.reduce((sum, booking) => sum + (booking?.totalAmountPaid || 0), 0)}
+                      Total Earning : ₹ {totalEarning || earningData?.reduce((sum, booking) => sum + (booking?.totalAmountPaid || 0), 0)}
                     </h4>
                   </Col>
                   <Col sm={5} className=" alingn-items-end my-2">
@@ -2029,160 +1826,6 @@ const ViewDetails = () => {
                     </div>
                   </Col>
 
-                  {/* <Col sm={6} className="my-3 alingn-items-end">
-                    <Table hover responsive>
-                      <thead className="table-light">
-                        <tr>
-                          <th className="fw-bold">S/N</th>
-                          <th className="fw-bold">Booking Id</th>
-                          <th className="fw-bold">Name</th>
-                          <th className="fw-bold">Sports</th>
-                          <th className="fw-bold">Players</th>
-                          <th className="fw-bold">Mode</th>
-                          <th className="fw-bold">Time/Date</th>
-                          <th className="fw-bold">Price</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredBookingsEarning?.length > 0 ? (
-                          filteredBookingsEarning.map((booking, idx) => (
-                            <tr key={idx}>
-                              <td>{idx + 1}</td>
-                              <td>
-                                <span
-                                  className="text-primary fw-bold"
-                                  style={{ cursor: "pointer" }}
-                                  onClick={() => handleBookingClick(booking._id)}
-                                >
-                                  {booking.booking_id}
-                                </span>
-                              </td>
-                              <td>{booking.customerName}</td>
-                              <td>{booking.game_id?.name}</td>
-                              <td>{booking.players?.length || "---"}</td>
-                              <td>
-                                <span
-                                  className="d-flex align-items-center w-75 justify-content-center"
-                                  style={{
-                                    backgroundColor:
-                                      booking.status === "Pending"
-                                        ? "#FFF3CD"
-                                        : booking.mode === "Online"
-                                          ? "#03D41414"
-                                          : "#FF00000D",
-                                    borderRadius: "20px",
-                                    padding: "5px 10px",
-                                    color:
-                                      booking.status === "Pending"
-                                        ? "#856404"
-                                        : booking.mode === "Online"
-                                          ? "#00AF0F"
-                                          : "orange",
-                                  }}
-                                >
-                                  <div
-                                    style={{
-                                      width: "10px",
-                                      height: "10px",
-                                      borderRadius: "50%",
-                                      backgroundColor:
-                                        booking.status === "Pending"
-                                          ? "#856404"
-                                          : booking.mode === "Online"
-                                            ? "#03D414"
-                                            : "orange",
-                                      marginRight: "5px",
-                                    }}
-                                  />
-                                  {booking?.status === "Pending" ? "Pending" : booking?.mode}
-                                </span>
-                              </td>
-                              <td>
-                                {formatDate(booking.slot_date)}
-                                <br />
-                                ₹{" "}
-                                {booking?.booking_type === "Regular"
-                                  ? `${convertTo12Hour(booking?.slot_id?.start_time)} - ${convertTo12Hour(booking?.slot_id?.end_time)}`
-                                  : `${convertTo12Hour(booking?.custom_slot?.start_time)} - ${convertTo12Hour(booking?.custom_slot?.end_time)}`}
-                              </td>
-                              <td>₹ {booking.gamePrice}</td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan="8" className="text-center">
-                              No data found
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </Table>
-                    <div className="d-flex justify-content-end align-items-center my-4">
-
-                      <Button
-                        style={{
-                          backgroundColor: "white",
-                          border: "1px solid #dee2e6",
-                          padding: "0.25rem 0.5rem",
-                          borderRadius: "0.375rem",
-                        }}
-                        onClick={handlePrevclientBooking}
-                        disabled={currentPagebooking === 1}
-                      >
-                        <GrFormPrevious style={{ color: "black", fontSize: "20px" }} />
-                      </Button>
-                      <span className="d-flex align-items-center mx-2 gap-2">
-                        <Button
-                          style={{
-                            backgroundColor: currentPagebooking === 1 ? "#0062ff" : "white",
-                            color: currentPagebooking === 1 ? "white" : "black",
-                            border: "1px solid #dee2e6",
-                            borderRadius: "0.375rem",
-                            padding: "0.25rem 0.6rem",
-                          }}
-                        >
-                          1
-                        </Button>
-
-                        <Button
-                          style={{
-                            backgroundColor: currentPagebooking === 2 ? "#0062ff" : "white",
-                            color: currentPagebooking === 2 ? "white" : "black",
-                            border: "1px solid #dee2e6",
-                            borderRadius: "0.375rem",
-                            padding: "0.25rem 0.6rem",
-                          }}
-                        >
-                          2
-                        </Button>
-                        <span style={{ fontSize: "16px", fontWeight: "500" }}>...</span>
-                        <Button
-                          style={{
-                            backgroundColor: currentPagebooking === totalPagesboking ? "#0062ff" : "white",
-                            color: currentPagebooking === totalPagesboking ? "white" : "black",
-                            border: "1px solid #dee2e6",
-                            borderRadius: "0.375rem",
-                            padding: "0.25rem 0.6rem",
-                          }}
-                        >
-                          {totalPagesboking}
-                        </Button>
-                      </span>
-
-                      <Button
-                        style={{
-                          backgroundColor: "white",
-                          border: "1px solid #dee2e6",
-                          padding: "0.25rem 0.5rem",
-                          borderRadius: "0.375rem",
-                        }}
-                        onClick={handleNextclientBooking}
-                        disabled={currentPagebooking === totalPagesboking}
-                      >
-                        <MdOutlineNavigateNext style={{ color: "black", fontSize: "20px" }} />
-                      </Button>
-                    </div>
-                  </Col> */}
                   {selectedItem === "Custom Date" && (
                     <Col sm={7} className="d-flex justify-content-end my-2">
                       <Form.Control
@@ -2225,8 +1868,8 @@ const ViewDetails = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {(currentItems.length > 0 ? currentItems : (filteredEarningData.length > 0 ? filteredEarningData : earningData)).length > 0 ? (
-                          (currentItems.length > 0 ? currentItems : (filteredEarningData.length > 0 ? filteredEarningData : earningData)).map((date, index) => (
+                        {(currentItems?.length > 0 ? currentItems : (filteredEarningData?.length > 0 ? filteredEarningData : earningData)).length > 0 ? (
+                          (currentItems?.length > 0 ? currentItems : (filteredEarningData?.length > 0 ? filteredEarningData : earningData)).map((date, index) => (
                             <tr key={index}>
                               <td>{index + 1}</td>
                               <td>
@@ -2235,7 +1878,8 @@ const ViewDetails = () => {
                                 </span>
                               </td>
                               <td>
-                                {Object.entries(date.games).map(([gameName, gameDetails], idx) => (
+                                {/* {Object.entries(date?.games).map(([gameName, gameDetails], idx) => ( */}
+                                {Object.entries(date?.games || {}).map(([gameName, gameDetails], idx) => (
                                   <div key={idx} className="my-2">
                                     <span className="me-3" style={{ width: "190px", display: "inline-block" }}>
                                       {gameName}
@@ -2318,10 +1962,202 @@ const ViewDetails = () => {
                         />
                       </Pagination>
                     )}
+                  </Col>
+                </Row>
+              )}
 
+              {/* Commission */}
+              {activeKey === "commission" && (
+                <Row className="d-flex flex-wrap justify-content-between p-2 mx-1 my-3" >
+                  <Col sm={5} className=" justify-content-start align-items-start">
+                    <Row className="align-items-center">
+                      <Col sm={6} className="mb-2 mb-sm-0">
+                        <DropdownButton
+                          id="dropdown-item-button"
+                          title={commissionSelectedItem || "Select"}
+                          variant="outline-dark"
+                          onSelect={(eventKey) => {
+                            setCommissionSelectedItem(eventKey);
+                            commissionData(eventKey, commissionSelectedGameId);
+                          }}
+                          style={{ width: '100%' }}
+                        >
+                          <Dropdown.Item as="button" eventKey="" disabled>Select</Dropdown.Item>
+                          <Dropdown.Item eventKey="Today" as="button">Today</Dropdown.Item>
+                          <Dropdown.Item eventKey="This Week" as="button">This Week</Dropdown.Item>
+                          <Dropdown.Item eventKey="Current Month" as="button">Current Month</Dropdown.Item>
+                          <Dropdown.Item eventKey="Custom Date" as="button">Custom Date</Dropdown.Item>
+                        </DropdownButton>
+                      </Col>
 
+                      <Col sm={6}>
+                        {/* <Form.Select
+                          aria-label="Default select example"
+                          value={selectedGameId}
+                          onChange={(e) => {
+                            const selectedId = e.target.value;
+                            setSelectedGameId(selectedId);
+                            commissionData(selectedItem, selectedId); // Pass current selectedItem (Today/This Week) + new Game ID
+                          }}
+                        >
+                          <option value="All">All</option>
+                          {games?.map((game) => (
+                            <option key={game._id} value={game._id}>
+                              {game.name}
+                            </option>
+                          ))}
+                        </Form.Select> */}
 
+                        <Form.Select
+                          aria-label="Default select example"
+                          value={commissionSelectedGameId}
+                          onChange={(e) => {
+                            const selectedId = e.target.value;
+                            setCommissionSelectedGameId(selectedId);
+                            commissionData(commissionSelectedItem, selectedId);
+                          }}
+                        >
+                          <option value="All">All</option>
+                          {games?.map((game) => (
+                            <option key={game._id} value={game._id}>
+                              {game.name}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </Col>
+                    </Row>
+                  </Col>
+                  <Col sm={6} className="d-flex justify-content-end my-2">
+                    <h4 className="my-3" style={{ fontWeight: "600", fontSize: "16px", color: "#0062FF" }}>
+                      Total Commission : ₹ {Math.round(commission?.totalCommission) || 0}
+                    </h4>
+                  </Col>
+                  <Col sm={5} className=" alingn-items-end my-2">
+                    <div className="d-flex justify-content-end">
+                      <input
+                        type="search"
+                        className="form-control me-2"
+                        placeholder="Search"
+                        aria-label="Search"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                    </div>
+                  </Col>
 
+                  {selectedItem === "Custom Date" && (
+                    <Col sm={7} className="d-flex justify-content-end my-2">
+                      <Form.Control
+                        type={customStartDate ? "date" : "text"}
+                        value={customStartDate}
+                        onChange={(e) => setCustomStartDate(e.target.value)}
+                        onFocus={(e) => e.target.type = 'date'}
+                        onBlur={(e) => {
+                          if (!e.target.value) e.target.type = 'text';
+                        }}
+                        className="me-2"
+                        placeholder="Start Date"
+                      />
+                      <Form.Control
+                        type={customEndDate ? "date" : "text"}
+                        value={customEndDate}
+                        onChange={(e) => setCustomEndDate(e.target.value)}
+                        onFocus={(e) => e.target.type = 'date'}
+                        onBlur={(e) => {
+                          if (!e.target.value) e.target.type = 'text';
+                        }}
+                        placeholder="End Date"
+                        min={customStartDate}
+                      />
+                      {customStartDate && customEndDate && (
+                        <Button className="ms-2" onClick={() => commissionData("Custom Date")}>
+                          Filter
+                        </Button>
+                      )}
+                    </Col>
+                  )}
+                  <Col sm={12} className="my-3 alingn-items-end">
+                    <Table hover responsive>
+                      <thead className="table-light">
+                        <tr>
+                          <th className="fw-bold">S.No</th>
+                          <th className="fw-bold">Game</th>
+                          <th className="fw-bold">Commission</th>
+                          {/* <th className="fw-bold">Total </th> */}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {/* {commission?.data?.length > 0 ? (
+                          (commission?.data).map((data, index) => (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>
+                                <span className="me-3 my-2" style={{ width: "100px", display: "inline-block" }}>
+                                  {data?.game_id?.name}
+                                </span>
+                              </td>
+                              <td>
+                                <span className="me-3 my-2" style={{ width: "100px", display: "inline-block" }}>
+                                  ₹ {Math.round(data?.commission)}
+                                </span>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="4" className="text-center py-3">
+                              No Data Found
+                            </td>
+                          </tr>
+                        )} */}
+
+                        {currentCommissionItems.length > 0 ? (
+                          currentCommissionItems.map((data, index) => (
+                            <tr key={indexOfFirstCommission + index}>
+                              <td>{indexOfFirstCommission + index + 1}</td>
+                              <td>
+                                <span className="me-3 my-2" style={{ width: "100px", display: "inline-block" }}>
+                                  {data?.game_id?.name}
+                                </span>
+                              </td>
+                              <td>
+                                <span className="me-3 my-2" style={{ width: "100px", display: "inline-block" }}>
+                                  ₹ {Math.round(data?.commission)}
+                                </span>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="4" className="text-center py-3">
+                              No Data Found
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+
+                    </Table>
+                    {totalPagesCommission > 1 && (
+                      <Pagination className="justify-content-end my-5">
+                        <Pagination.Prev
+                          onClick={() => setCurrentPageCommission(currentPageCommission - 1)}
+                          disabled={currentPageCommission === 1}
+                        />
+                        {[...Array(totalPagesCommission)].map((_, idx) => (
+                          <Pagination.Item
+                            key={idx + 1}
+                            active={idx + 1 === currentPageCommission}
+                            onClick={() => setCurrentPageCommission(idx + 1)}
+                          >
+                            {idx + 1}
+                          </Pagination.Item>
+                        ))}
+                        <Pagination.Next
+                          onClick={() => setCurrentPageCommission(currentPageCommission + 1)}
+                          disabled={currentPageCommission === totalPagesCommission}
+                        />
+                      </Pagination>
+                    )}
                   </Col>
                 </Row>
               )}

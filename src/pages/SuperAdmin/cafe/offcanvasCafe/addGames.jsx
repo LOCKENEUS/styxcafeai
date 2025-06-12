@@ -227,6 +227,7 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
                 name="price"
                 value={formData.price}
                 onChange={handleInputChange}
+                onWheel={(e) => e.target.blur()}
                 required
                 className="py-2 border-2"
                 placeholder="Enter price amount"
@@ -236,20 +237,6 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
               <Form.Label htmlFor="gameSize" className="fw-bold text-secondary">Area of dimensions
                 <span className="text-danger">*</span>
               </Form.Label>
-              {/* <Form.Control
-                id="gameSize"
-                type="text"
-                name="size"
-                value={formData.size}
-                onChange={handleInputChange}
-                required
-                className="py-2 border-2"
-                placeholder="Enter game size (e.g., 10x10 ft)"
-              />
-               {errors.size && (
-                <div className="invalid-feedback d-block">{errors.size}</div>
-              )} */}
-
               <Row className="g-1">
                 <Col sm={4}>
 
@@ -258,28 +245,25 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
                     name="length"
                     value={formData.length}
                     onChange={handleInputChange}
+                    onWheel={(e) => e.target.blur()}
                     placeholder="length"
                     required
                   />
-
                 </Col>
 
                 <Col sm={4}>
-
-
                   <Form.Control
                     type="number"
                     name="breadth"
                     value={formData.breadth}
                     onChange={handleInputChange}
+                    onWheel={(e) => e.target.blur()}
                     placeholder="breadth"
                     required
                   />
-
                 </Col>
 
                 <Col sm={4}>
-
                   <Form.Select
                     name="selectedArea"
                     value={formData.selectedArea}
@@ -296,8 +280,6 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
 
                 </Col>
               </Row>
-
-
             </Col>
           </Row>
 
@@ -325,26 +307,18 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
                   name="commission"
                   value={formData.commission}
                   onChange={handleInputChange}
+                  onWheel={(e) => e.target.blur()}
                   required
                   className="py-2 border-2"
                   placeholder="Enter commission percentage"
                 />
-                {/* Display calculated commission */}
-                {/* {formData.price && formData.commission && (
-                  <div className="mt-2 text-secondary">
-                    Calculated Commission: ${(formData.price * (formData.commission / 100)).toFixed(2)}
-                  </div>
-                )} */}
                 {formData.price !== '' && formData.commission !== '' && !isNaN(formData.price) && !isNaN(formData.commission) && (
                   <div className="mt-2 text-secondary">
                     Calculated Commission: ${((Number(formData.price) * (Number(formData.commission) / 100)).toFixed(2))}
                   </div>
                 )}
-
               </Form.Group>
             </Col>
-
-
           </Row>
 
           <Row className="mb-2 g-4">
@@ -403,27 +377,6 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
                       Choose File
                     </label>
                   </div>
-                  {/* {imagePreview && (
-                    <div className="d-flex position-relative align-items-center gap-2">
-                      <img
-                        src={imagePreview || "/placeholder.svg"}
-                        alt="Preview"
-                        className="img-thumbnail"
-                        style={{ width: "300px" }}
-                      />
-                      <div
-                        onClick={handleRemoveImage}
-                        className="py-1"
-                        style={{
-                          position: "absolute",
-                          top: "-15px",
-                          right: "-10px",
-                        }}
-                      >
-                        <TiDeleteOutline color="red" size={35} />
-                      </div>
-                    </div>
-                  )} */}
                 </div>
               </div>
             </Col>
@@ -471,8 +424,6 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
               placeholder="Describe the game details..."
             />
           </Form.Group>
-
-
 
           <div className="d-flex justify-content-end gap-3 mt-4">
             <Button variant="success" type="submit" disabled={isLoading}>

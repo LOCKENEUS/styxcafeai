@@ -756,6 +756,7 @@ export const InvoiceCreate = () => {
                         updateProduct(product.id, "quantity", 1);
                       }
                     }}
+                    onWheel={(e) => e.target.blur()} // Prevents input from changing on scroll
                   />
                 </td>
                 <td>
@@ -770,6 +771,7 @@ export const InvoiceCreate = () => {
                       style={{ paddingLeft: "25px", border: "1px solid black" }}
                       value={product.price}
                       onChange={(e) => updateProduct(product.id, "price", e.target.value)}
+                      onWheel={(e) => e.target.blur()} // Prevents input from changing on scroll
                     />
                   </div>
                 </td>
@@ -889,6 +891,7 @@ export const InvoiceCreate = () => {
                     type="number"
                     value={totals.discount}
                     onChange={(e) => setTotals(prev => ({ ...prev, discount: e.target.value }))}
+                    onWheel={(e) => e.target.blur()} // Prevents input from changing on scroll
                     placeholder="0.00"
                   />
                   <Form.Select
@@ -967,6 +970,7 @@ export const InvoiceCreate = () => {
                     placeholder="Adjustment Amount"
                     value={totals.adjustmentAmount}
                     onChange={(e) => setTotals(prev => ({ ...prev, adjustmentAmount: e.target.value }))}
+                    onWheel={(e) => e.target.blur()} // Prevents input from changing on scroll
                   />
                 </InputGroup>
               </div>

@@ -203,7 +203,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
                 className="nav-link rounded py-3 px-3"
                 to="/admin/dashboard"
                 style={{
-                  marginLeft: "20px",
+                  // marginLeft: "20px",
                   color: "#1e3a8a",
                   backgroundColor: location.pathname === "/admin/dashboard" ? "#F4F4F4" : "transparent",
                   fontWeight: location.pathname === "/admin/dashboard" ? "600" : "normal",

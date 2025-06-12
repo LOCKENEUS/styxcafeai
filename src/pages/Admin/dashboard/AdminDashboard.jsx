@@ -5,6 +5,8 @@ import user_check from '/assets/Admin/Dashboard/solar_user-check-bold.svg';
 import rupee_circle from '/assets/Admin/Dashboard/mynaui_rupee-circle-solid.svg';
 import { BsXCircle, BsCheckCircle, BsCalculator, BsCalendar3, BsSearch } from 'react-icons/bs';
 import { MdOutlineArrowOutward } from 'react-icons/md';
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+gsap.registerPlugin(ScrollTrigger);
 
 import gm1 from '/assets/Admin/Dashboard/GamesImage/gm1.png'
 import gm2 from '/assets/Admin/Dashboard/GamesImage/gm2.png'
@@ -52,7 +54,7 @@ const AdminDashboard = () => {
   const gamesRef = useRef(null);
   const tournamentsRef = useRef(null);
   const containerRef = useRef(null);
-  
+
   const backend_url = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -60,23 +62,23 @@ const AdminDashboard = () => {
     dispatch(getAdminDashboardData(cafeId)).unwrap()
     // Scroll to top on mount
     window.scrollTo(0, 0);
-    
+
     if (cafeId) {
       dispatch(getGames(cafeId));
     }
   }, [dispatch, cafeId]);
 
   useEffect(() => {
-      if(adminDashboard) {
-        setRecentBookings(adminDashboard?.recentBookings);
-      }
+    if (adminDashboard) {
+      setRecentBookings(adminDashboard?.recentBookings);
+    }
   }, [adminDashboard]);
 
   // Animation effects
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Initial state
-      gsap.set([containerRef.current, ".summary-card", ".game-card", ".tournament-card", ".booking-item"], { 
+      gsap.set([containerRef.current, ".summary-card", ".game-card", ".tournament-card", ".booking-item"], {
         opacity: 0,
         y: 20
       });
@@ -136,10 +138,20 @@ const AdminDashboard = () => {
         delay: 0.4
       });
 
+      // Only animate if elements exist
+      if (document.querySelectorAll('.game-card').length > 0) {
+        gsap.to(".game-card", { /* ... */ });
+      }
+      if (document.querySelectorAll('.tournament-card').length > 0) {
+        gsap.to(".tournament-card", { /* ... */ });
+      }
+      if (document.querySelectorAll('.booking-item').length > 0) {
+        gsap.to(".booking-item", { /* ... */ });
+      }
     }, containerRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [games, recentBookings]);
 
   return (
     <Container fluid className="p-2" ref={containerRef}>
@@ -159,110 +171,110 @@ const AdminDashboard = () => {
 
       {/* Summary Cards */}
       <Row className="g-0 mb-4 ms-lg-2 ms-0" ref={summaryCardsRef}>
-          <Col xs={6} md={3}>
-            <div className="summary-card" style={{ borderStartStartRadius: '12px', borderEndStartRadius: '12px' }}>
-            <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100' style={{borderRight: '1px solid #E0E0E0'}}>
-                <span className='d-flex align-items-center justify-content-center rounded-4'
-                  style={{ width: '50px', height: '50px', background:"#F0D4000D" }}>
-                  <img src={user_check} alt="User Check Icon" />
-                </span>
-                <div>
-                  <small className="text-dashboard-sm">Total Online Bookings</small>
-                  <h2 className="mt-2">{adminDashboard?.totalOnlineBookings}</h2>
-                </div>
-              </div>
-
-              <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
-                <small className="text-dashboard-sm">Total Online Bookings</small>
-                <div className='d-flex align-items-center justify-content-between mt-2'>
-                  <span className='d-flex align-items-center justify-content-center rounded-4'
-                    style={{ width: '50px', height: '50px', background: "#00AF0F0D" }}>
-                    <img src={user_check} alt="user check icon"/>
-                  </span>
-                  <h2 className="mb-0">{adminDashboard?.totalOnlineBookings || 0}</h2>
-                </div>
+        <Col xs={6} md={3}>
+          <div className="summary-card" style={{ borderStartStartRadius: '12px', borderEndStartRadius: '12px' }}>
+            <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100' style={{ borderRight: '1px solid #E0E0E0' }}>
+              <span className='d-flex align-items-center justify-content-center rounded-4'
+                style={{ width: '50px', height: '50px', background: "#F0D4000D" }}>
+                <img src={user_check} alt="User Check Icon" />
+              </span>
+              <div className='pointer-cursor' onClick={() => navigate('/admin/bookings')}>
+                <small className="text-dashboard-sm">Total Bookings</small>
+                <h2 className="mt-2">{adminDashboard?.totalBookings}</h2>
               </div>
             </div>
-          </Col>
 
-          <Col xs={6} md={3}>
-            <div className="summary-card">
-              <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100' style={{borderRight: '1px solid #E0E0E0'}}>
+            <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
+              <small className="text-dashboard-sm">Total Online Bookings</small>
+              <div className='d-flex align-items-center justify-content-between mt-2'>
                 <span className='d-flex align-items-center justify-content-center rounded-4'
-                  style={{ width: '50px', height: '50px', background:"#F0D4000D" }}>
-                  <img src={user_forbid_fil} alt="User forbid fill" />
+                  style={{ width: '50px', height: '50px', background: "#00AF0F0D" }}>
+                  <img src={user_check} alt="user check icon" />
                 </span>
-                <div>
-                  <small className="text-dashboard-sm">Total Waiting Bookings</small>
-                  <h2 className="mt-2">{adminDashboard?.totalWaitingBookings}</h2>
-                </div>
+                <h2 className="mb-0">{adminDashboard?.totalOnlineBookings || 0}</h2>
               </div>
+            </div>
+          </div>
+        </Col>
 
-              <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
+        <Col xs={6} md={3}>
+          <div className="summary-card">
+            <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100' style={{ borderRight: '1px solid #E0E0E0' }}>
+              <span className='d-flex align-items-center justify-content-center rounded-4'
+                style={{ width: '50px', height: '50px', background: "#F0D4000D" }}>
+                <img src={user_forbid_fil} alt="User forbid fill" />
+              </span>
+              <div className='pointer-cursor' onClick={() => navigate('/admin/bookings', { state: { cancelled: 'Pending' } })}>
                 <small className="text-dashboard-sm">Total Waiting Bookings</small>
-                <div className='d-flex align-items-center justify-content-between mt-2'>
-                  <span className='d-flex align-items-center justify-content-center rounded-4'
-                    style={{ width: '50px', height: '50px', background: "#F0D4000D" }}>
-                    <img src={user_forbid_fil} alt="user forbid icon"/>
-                  </span>
-                  <h2 className="mb-0">{adminDashboard?.totalWaitingBookings || 0}</h2>
-                </div>
+                <h2 className="mt-2">{adminDashboard?.totalWaitingBookings}</h2>
               </div>
             </div>
-          </Col>
 
-          <Col xs={6} md={3}>
-            <div className="summary-card">
-              <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100' style={{borderRight: '1px solid #E0E0E0'}}>
+            <div className='mobile-view d-md-none d-flex flex-column p-2 w-100 cursor-pointer' onClick={() => navigate('/admin/bookings', { state: { cancelled: 'Pending' } })} >
+              <small className="text-dashboard-sm">Total Waiting Bookings</small>
+              <div className='d-flex align-items-center justify-content-between mt-2'>
                 <span className='d-flex align-items-center justify-content-center rounded-4'
-                  style={{ width: '50px', height: '50px', background:"#FF00000D" }}>
+                  style={{ width: '50px', height: '50px', background: "#F0D4000D" }}>
+                  <img src={user_forbid_fil} alt="user forbid icon" />
+                </span>
+                <h2 className="mb-0">{adminDashboard?.totalWaitingBookings || 0}</h2>
+              </div>
+            </div>
+          </div>
+        </Col>
+
+        <Col xs={6} md={3}>
+          <div className="summary-card">
+            <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100' style={{ borderRight: '1px solid #E0E0E0' }}>
+              <span className='d-flex align-items-center justify-content-center rounded-4'
+                style={{ width: '50px', height: '50px', background: "#FF00000D" }}>
+                <img src={user_x_fill} alt="cancel icon" />
+              </span>
+              <div className='pointer-cursor' onClick={() => navigate('/admin/bookings', { state: { cancelled: "Yes" } })}>
+                <small className="text-dashboard-sm">Total Cancelled Bookings</small>
+                <h2 className="mt-2">{adminDashboard?.totalCancelledBookings || 0}</h2>
+              </div>
+            </div>
+
+            <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
+              <small className="text-dashboard-sm">Total Cancel Bookings</small>
+              <div className='d-flex align-items-center justify-content-between mt-2 pointer-cursor' onClick={() => navigate('/admin/bookings', { state: { cancelled: "Yes" } })}>
+                <span className='d-flex align-items-center justify-content-center rounded-4'
+                  style={{ width: '50px', height: '50px', background: "#FF00000D" }}>
                   <img src={user_x_fill} alt="cancel icon" />
                 </span>
-                <div>
-                  <small className="text-dashboard-sm">Total Cancel Bookings</small>
-                  <h2 className="mt-2">{adminDashboard?.totalCncelledBookings || 0}</h2>
-                </div>
-              </div>
-
-              <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
-                <small className="text-dashboard-sm">Total Cancel Bookings</small>
-                <div className='d-flex align-items-center justify-content-between mt-2'>
-                  <span className='d-flex align-items-center justify-content-center rounded-4'
-                    style={{ width: '50px', height: '50px', background: "#FF00000D" }}>
-                    <img src={user_x_fill} alt="cancel icon"/>
-                  </span>
-                  <h2 className="mb-0">{adminDashboard?.totalCncelledBookings || 0}</h2>
-                </div>
+                <h2 className="mb-0">{adminDashboard?.totalCancelledBookings || 0}</h2>
               </div>
             </div>
-          </Col>
+          </div>
+        </Col>
 
-          <Col xs={6} md={3}>
-            <div className="summary-card" style={{ borderEndEndRadius: '12px', borderStartEndRadius: '12px' }}>
-              <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100'>
+        <Col xs={6} md={3}>
+          <div className="summary-card" style={{ borderEndEndRadius: '12px', borderStartEndRadius: '12px' }}>
+            <div className='desktop-view d-none d-md-flex align-items-center justify-content-around p-2 w-100'>
+              <span className='d-flex align-items-center justify-content-center rounded-4'
+                style={{ width: '50px', height: '50px', background: "#00D5ED0D" }}>
+                <img src={rupee_circle} alt="rupee icon" />
+              </span>
+              <div>
+                <small className="text-dashboard-sm">Total Payments</small>
+                <h2 className="mt-2">{adminDashboard?.totalAmount || 0}</h2>
+              </div>
+            </div>
+
+            <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
+              <small className="text-dashboard-sm">Total Payments</small>
+              <div className='d-flex align-items-center justify-content-between mt-2'>
                 <span className='d-flex align-items-center justify-content-center rounded-4'
-                  style={{ width: '50px', height: '50px', background:"#00D5ED0D" }}>
+                  style={{ width: '50px', height: '50px', background: "#00D5ED0D" }}>
                   <img src={rupee_circle} alt="rupee icon" />
                 </span>
-                <div>
-                  <small className="text-dashboard-sm">Total Payments</small>
-                  <h2 className="mt-2">{adminDashboard?.totalAmount || 0}</h2>
-                </div>
-              </div>
-
-              <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
-                <small className="text-dashboard-sm">Total Payments</small>
-                <div className='d-flex align-items-center justify-content-between mt-2'>
-                  <span className='d-flex align-items-center justify-content-center rounded-4'
-                    style={{ width: '50px', height: '50px', background: "#00D5ED0D" }}>
-                    <img src={rupee_circle} alt="rupee icon"/>
-                  </span>
-                  <h2 className="mb-0">{adminDashboard?.totalAmount || 0}</h2>
-                </div>
+                <h2 className="mb-0">{adminDashboard?.totalAmount || 0}</h2>
               </div>
             </div>
-          </Col>
-    
+          </div>
+        </Col>
+
       </Row>
 
       {/* Mobile Bookings Card
@@ -305,129 +317,129 @@ const AdminDashboard = () => {
           {/* Listed Games */}
           {/* <Card className="border-0" ref={gamesRef}>
             <Card.Body> */}
-              <div className="d-flex justify-content-between mb-1 align-items-center">
-                <Card.Title style={{ fontSize: "1.2rem" }} >Listed Games</Card.Title>
-                <Link to="/admin/games/recommended" className="text-primary" style={{ cursor: 'pointer', fontWeight: "bold" }}>View All</Link>
-              </div>
-              {games.length > 0 ? (
-                <div className="horizontal-scroll">
-                  <Row className="flex-nowrap" style={{ margin: '0 -0.5rem' }}>
-                    {games.slice(0, 3).map((game) => (
-                      <Col key={game._id} xs={10} sm={6} md={6} lg={4} style={{ padding: '0 0.5rem' }}>
-                        <Card className="border-0 h-100 game-card" style={{ 
-                          transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                          willChange: 'transform'
-                        }}>
-                          <Card.Img
-                            variant="top"
-                            src={`${import.meta.env.VITE_API_URL}/${game.gameImage}`}
-                            alt={game.name}
-                            style={{
-                              height: '150px',
-                              objectFit: 'cover'
-                            }}
-                          />
-                          <Card.Body>
-                            <Card.Title className="h6">{game.name}</Card.Title>
-                            <Card.Text>
-                              <small className="text-success">
-                                ● {game.type} ({game.size} players)
-                              </small>
-                            </Card.Text>
-                            <div className="d-flex justify-content-between align-items-center mb-2">
-                              <span className="text-primary px-2 py-1 rounded-pill" style={{ backgroundColor: '#FAFAFA', fontSize: '0.9rem' }}>₹{game.price}/Person</span>
-                              <button
-                                className="btn btn-primary rounded-circle"
-                                style={{ width: '35px', height: '35px', padding: 0 }}
-                                onClick={() => navigate(`/admin/games/${game._id}`)}
-                              >
-                                <MdOutlineArrowOutward />
-                              </button>
-                            </div>
-                          </Card.Body>
-                        </Card>
-                      </Col>
-                    ))}
-                  </Row>
-                </div>
-              ) : (
-                <div className="text-center py-4">
-                  <img 
-                    src={Nogame} 
-                    alt="No games found" 
-                    style={{ width: '100px', opacity: 0.7 }}
-                  />
-                  <h5 className="mt-3 text-muted">No Games Listed</h5>
-                  <p className="text-muted">Add your first game to get started</p>
-                  <button 
-                    className="btn btn-primary mt-2"
-                    onClick={() => navigate('/admin/games/create-new-game/')}
-                  >
-                    Add Game
-                  </button>
-                </div>
-              )}
-            {/* </Card.Body>
+          <div className="d-flex justify-content-between mb-1 align-items-center">
+            <Card.Title style={{ fontSize: "1.2rem" }} >Listed Games</Card.Title>
+            <Link to="/admin/games/recommended" className="text-primary" style={{ cursor: 'pointer', fontWeight: "bold" }}>View All</Link>
+          </div>
+          {games.length > 0 ? (
+            <div className="horizontal-scroll">
+              <Row className="flex-nowrap" style={{ margin: '0 -0.5rem' }}>
+                {games.slice(0, 3).map((game) => (
+                  <Col key={game._id} xs={10} sm={6} md={6} lg={4} style={{ padding: '0 0.5rem' }}>
+                    <Card className="border-0 h-100 game-card" style={{
+                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                      willChange: 'transform'
+                    }}>
+                      <Card.Img
+                        variant="top"
+                        src={`${import.meta.env.VITE_API_URL}/${game.gameImage}`}
+                        alt={game.name}
+                        style={{
+                          height: '150px',
+                          objectFit: 'cover'
+                        }}
+                      />
+                      <Card.Body>
+                        <Card.Title className="h6">{game.name}</Card.Title>
+                        <Card.Text>
+                          <small className="text-success">
+                            ● {game.type} ({game.size} players)
+                          </small>
+                        </Card.Text>
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                          <span className="text-primary px-2 py-1 rounded-pill" style={{ backgroundColor: '#FAFAFA', fontSize: '0.9rem' }}>₹{game.price}/Person</span>
+                          <button
+                            className="btn btn-primary rounded-circle"
+                            style={{ width: '35px', height: '35px', padding: 0 }}
+                            onClick={() => navigate(`/admin/games/${game._id}`)}
+                          >
+                            <MdOutlineArrowOutward />
+                          </button>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            </div>
+          ) : (
+            <div className="text-center py-4">
+              <img
+                src={Nogame}
+                alt="No games found"
+                style={{ width: '100px', opacity: 0.7 }}
+              />
+              <h5 className="mt-3 text-muted">No Games Listed</h5>
+              <p className="text-muted">Add your first game to get started</p>
+              <button
+                className="btn btn-primary mt-2"
+                onClick={() => navigate('/admin/games/create-new-game/')}
+              >
+                Add Game
+              </button>
+            </div>
+          )}
+          {/* </Card.Body>
           </Card> */}
           {/* Tournaments */}
           {/* <Card className="border-0 mt-4" ref={tournamentsRef}>
             <Card.Body> */}
-              <div className="d-flex mb-1 mt-3 justify-content-between align-items-center">
-                <Card.Title style={{ fontSize: "1.2rem", marginBottom: "0.8rem" }}>Tournaments</Card.Title>
-                <span className="text-primary" style={{ cursor: 'pointer', fontWeight: "bold" }}>View All</span>
-              </div>
-              <div className="horizontal-scroll">
-                <Row className="flex-nowrap" style={{ margin: '0 -0.5rem' }}>
-                  {tournaments.map((tournament) => (
-                    <Col key={tournament.title} xs={10} sm={6} md={6} lg={6} style={{ padding: '0 0.5rem' }}>
-                      <Card className="border-0 tournament-card" style={{ 
-                        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                        willChange: 'transform'
-                      }}>
-                        <div className="position-relative">
-                          <Card.Img
-                            variant="top"
-                            src={tournament.image}
-                            alt={tournament.title}
-                            style={{
-                              height: '200px',
-                              objectFit: 'cover'
-                            }}
-                          />
-                          {tournament.isLive && (
-                            <Badge
-                              bg="success"
-                              className="position-absolute top-0 start-0 m-3"
-                              style={{ fontSize: '0.7rem', padding: '0.25em 0.5em' }}
-                            >
-                              Live Tournament
-                            </Badge>
-                          )}
-                        </div>
-                        <Card.Body>
-                          <Card.Title className="mb-2">{tournament.title}</Card.Title>
-                          <small className="text-muted d-block mb-3">
-                            <BsCalendar3 className='me-2' />
-                            {tournament.datetime}
-                          </small>
-                          <div className="d-flex justify-content-between align-items-center">
-                            <span className="text-primary px-3 py-2 rounded-pill" style={{ backgroundColor: '#FAFAFA' }}>
-                              ₹ {tournament.price}/Person
-                            </span>
-                            <button
-                              className="btn btn-primary rounded-circle"
-                              style={{ width: '40px', height: '40px', padding: 0 }}
-                            >
-                              <MdOutlineArrowOutward />
-                            </button>
-                          </div>
-                        </Card.Body>
-                      </Card>
-                    </Col>
-                  ))}
-                </Row>
-              </div>
-            {/* </Card.Body>
+          <div className="d-flex mb-1 mt-3 justify-content-between align-items-center">
+            <Card.Title style={{ fontSize: "1.2rem", marginBottom: "0.8rem" }}>Tournaments</Card.Title>
+            <span className="text-primary" style={{ cursor: 'pointer', fontWeight: "bold" }}>View All</span>
+          </div>
+          <div className="horizontal-scroll">
+            <Row className="flex-nowrap" style={{ margin: '0 -0.5rem' }}>
+              {tournaments.map((tournament) => (
+                <Col key={tournament.title} xs={10} sm={6} md={6} lg={6} style={{ padding: '0 0.5rem' }}>
+                  <Card className="border-0 tournament-card" style={{
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    willChange: 'transform'
+                  }}>
+                    <div className="position-relative">
+                      <Card.Img
+                        variant="top"
+                        src={tournament.image}
+                        alt={tournament.title}
+                        style={{
+                          height: '200px',
+                          objectFit: 'cover'
+                        }}
+                      />
+                      {tournament.isLive && (
+                        <Badge
+                          bg="success"
+                          className="position-absolute top-0 start-0 m-3"
+                          style={{ fontSize: '0.7rem', padding: '0.25em 0.5em' }}
+                        >
+                          Live Tournament
+                        </Badge>
+                      )}
+                    </div>
+                    <Card.Body>
+                      <Card.Title className="mb-2">{tournament.title}</Card.Title>
+                      <small className="text-muted d-block mb-3">
+                        <BsCalendar3 className='me-2' />
+                        {tournament.datetime}
+                      </small>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <span className="text-primary px-3 py-2 rounded-pill" style={{ backgroundColor: '#FAFAFA' }}>
+                          ₹ {tournament.price}/Person
+                        </span>
+                        <button
+                          className="btn btn-primary rounded-circle"
+                          style={{ width: '40px', height: '40px', padding: 0 }}
+                        >
+                          <MdOutlineArrowOutward />
+                        </button>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          </div>
+          {/* </Card.Body>
           </Card> */}
         </Col>
 
@@ -437,38 +449,38 @@ const AdminDashboard = () => {
           <div className="d-none d-md-block" style={{ marginRight: '15px' }}>
             {/* <Card className="border-0">
               <Card.Body> */}
-                <Card.Title style={{ fontSize: "1.2rem", marginBottom: "0.8rem" }} className="mb-2">Recent Bookings</Card.Title>
-                <ListGroup variant="flush">
-                  {recentBookings.map((booking) => (
-                    <ListGroup.Item key={booking.id} className="border-bottom py-3 booking-item">
-                      <div className="d-flex gap-3" onClick={() => navigate(`/admin/booking/checkout/${booking._id}`)} style={{ cursor: 'pointer' }}>
-                        <div style={{ width: '60px', height: '60px' }}>
-                          <img
-                            src={`${backend_url}/${booking?.game_id?.gameImage}` || gm1}
-                            alt={booking?.game_id?.name}
-                            style={{
-                              width: '100%',
-                              height: '100%',
-                              objectFit: 'cover',
-                              borderRadius: '8px'
-                            }}
-                          />
-                        </div>
-                        <div className="flex-grow-1">
-                          <h6 className="mb-1">{booking?.customer_id?.name}</h6>
-                          <small className="text-muted d-block">{booking?.game_id?.name}</small>
-                          <small className="text-muted d-block">{formatDate(booking.slot_date)}</small>
-                          <small className="text-muted d-block">Price: &#8377; {booking.type === 'Regular' ? (booking?.slot_id?.slot_price || booking?.game_id?.price) : (booking?.custom_slot?.slot_price || booking?.game_id?.price)}</small>
-                        </div>
-                        {/* <div className="d-flex gap-2 align-items-center">
+            <Card.Title style={{ fontSize: "1.2rem", marginBottom: "0.8rem" }} className="mb-2">Recent Bookings</Card.Title>
+            <ListGroup variant="flush">
+              {recentBookings.map((booking) => (
+                <ListGroup.Item key={booking._id} className="border-bottom py-3 booking-item">
+                  <div className="d-flex gap-3" onClick={() => navigate(`/admin/booking/checkout/${booking._id}`)} style={{ cursor: 'pointer' }}>
+                    <div style={{ width: '60px', height: '60px' }}>
+                      <img
+                        src={`${backend_url}/${booking?.game_id?.gameImage}` || gm1}
+                        alt={booking?.game_id?.name}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          borderRadius: '8px'
+                        }}
+                      />
+                    </div>
+                    <div className="flex-grow-1">
+                      <h6 className="mb-1">{booking?.customer_id?.name}</h6>
+                      <small className="text-muted d-block">{booking?.game_id?.name}</small>
+                      <small className="text-muted d-block">{formatDate(booking.slot_date)}</small>
+                      <small className="text-muted d-block">Price: &#8377; {booking.type === 'Regular' ? (booking?.slot_id?.slot_price || booking?.game_id?.price) : (booking?.custom_slot?.slot_price || booking?.game_id?.price)}</small>
+                    </div>
+                    {/* <div className="d-flex gap-2 align-items-center">
                           <BsXCircle className="text-danger" style={{ fontSize: '1.2rem', cursor: 'pointer' }} />
                           <BsCheckCircle className="text-success" style={{ fontSize: '1.2rem', cursor: 'pointer' }} />
                         </div> */}
-                      </div>
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
-              {/* </Card.Body>
+                  </div>
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+            {/* </Card.Body>
             </Card> */}
           </div>
           {/* Other Tournaments */}

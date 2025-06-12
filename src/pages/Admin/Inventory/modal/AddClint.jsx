@@ -107,9 +107,6 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
         <span style={{fontSize:"20px", fontWeight:"500"}}>
           {showClientList ? "Choose a client" : "Create New Client"}
         </span>
-  
-
-
           {
             !showClientList ?
             <Button 
@@ -199,9 +196,9 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                     required
                     type="text"
                     name="fullName"
+                    placeholder="Enter full name"
                     value={newClient.fullName}
                     onChange={handleChange}
-                    
                   />
                 </Form.Group>
               </Col>
@@ -212,6 +209,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                     required
                     type="tel"
                     name="contactNumber"
+                    placeholder="Enter contact number"
                     value={newClient.contactNumber}
                     onChange={handleChange}
                     
@@ -228,6 +226,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                     required
                     type="email"
                     name="email"
+                    placeholder="Enter email"
                     value={newClient.email}
                     onChange={handleChange}
                     
@@ -240,6 +239,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                   <Form.Control
                     type="text"
                     name="address"
+                    placeholder="Enter address"
                     value={newClient.address}
                     onChange={handleChange}
                     
@@ -272,6 +272,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                   <Form.Control
                     type="text"
                     name="country"
+                    placeholder="Enter country"
                     value={newClient.country}
                     onChange={handleChange}
                     
@@ -284,6 +285,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                   <Form.Control
                     type="text"
                     name="state"
+                    placeholder="Enter state"
                     value={newClient.state}
                     onChange={handleChange}
                     
@@ -296,6 +298,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                   <Form.Control
                     type="text"
                     name="city"
+                    placeholder="Enter city"
                     value={newClient.city}
                     onChange={handleChange}
                     
@@ -331,6 +334,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                   <Form.Control
                     type="number"
                     name="creditLimit"
+                    placeholder="Enter credit limit"
                     value={newClient.creditLimit}
                     onChange={handleChange}
                     className="rounded-2"

@@ -30,7 +30,7 @@ const VendorsList = ({ showVendorList, handleCloseVendorList, onVendorSelect }) 
 
   // Get vendors data from Redux store
   const vendorsList = useSelector((state) => state.saVendor.vendors) || [];;
-  
+
   // Filtering vendors based on search input
   const filteredVendors = vendorsList.filter((vendor) =>
     Object.values(vendor).some((value) =>
@@ -45,13 +45,12 @@ const VendorsList = ({ showVendorList, handleCloseVendorList, onVendorSelect }) 
     currentPage * itemsPerPage
   );
 
-  const handleVendorSelected = ( vendor_id) => {
+  const handleVendorSelected = (vendor_id) => {
     if (onVendorSelect) {
       onVendorSelect(vendor_id);
     }
     handleCloseVendorList();
   };
- 
 
   return (
     <>
@@ -105,7 +104,7 @@ const VendorsList = ({ showVendorList, handleCloseVendorList, onVendorSelect }) 
                     <td>{vendor.city1}</td>
                     <td>
                       <Button variant="success" size="sm"
-                      onClick={() => handleVendorSelected(vendor._id)}
+                        onClick={() => handleVendorSelected(vendor._id)}
                       >
                         <BiPlus size={20} />
                       </Button>
@@ -121,7 +120,6 @@ const VendorsList = ({ showVendorList, handleCloseVendorList, onVendorSelect }) 
               )}
             </tbody>
           </Table>
-          
 
 
           {/* Pagination Controls */}

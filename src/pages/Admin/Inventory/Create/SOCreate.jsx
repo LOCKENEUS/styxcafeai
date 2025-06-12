@@ -721,6 +721,7 @@ const SOCreate = () => {
                     style={{ border: "1px solid black", width: "100%" }}
                     value={product.quantity}
                     onChange={(e) => updateProduct(product.id, "quantity", e.target.value)}
+                    onWheel={(e) => e.target.blur()}
                   />
                 </td>
                 <td>
@@ -735,6 +736,7 @@ const SOCreate = () => {
                       style={{ paddingLeft: "25px", border: "1px solid black" }}
                       value={product.price}
                       onChange={(e) => updateProduct(product.id, "price", e.target.value)}
+                      onWheel={(e) => e.target.blur()}
                     />
                   </div>
                 </td>
@@ -856,6 +858,7 @@ const SOCreate = () => {
                     type="number"
                     value={totals.discount}
                     onChange={(e) => setTotals(prev => ({ ...prev, discount: e.target.value }))}
+                    onWheel={(e) => e.target.blur()}
                     placeholder="0.00"
                   />
                   <Form.Select
@@ -935,6 +938,7 @@ const SOCreate = () => {
                     placeholder="Adjustment Amount"
                     value={totals.adjustmentAmount}
                     onChange={(e) => setTotals(prev => ({ ...prev, adjustmentAmount: e.target.value }))}
+                    onWheel={(e) => e.target.blur()}
                   />
                 </InputGroup>
               </div>

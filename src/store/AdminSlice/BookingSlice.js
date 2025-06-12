@@ -454,6 +454,7 @@ const bookingslice = createSlice({
         state.bookings = state.bookings.filter(
           (loc) => loc._id !== action.payload
         ); // Use _id instead of id
+        toast.success("Booking deleted successfully");
       })
       .addCase(deleteBooking.rejected, (state, action) => {
         state.loading = false;

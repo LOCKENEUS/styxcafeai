@@ -165,6 +165,7 @@ const ClientModel = ({ show, handleClose, clientId = null }) => {
                     name="creditLimit"
                     value={formData.creditLimit}
                     onChange={handleChange}
+                    onWheel={(e) => e.target.blur()}
                     className="rounded-2"
                     style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
                   />

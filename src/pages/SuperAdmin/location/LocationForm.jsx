@@ -331,6 +331,7 @@ const LocationForm = ({
                   placeholder="Latitude"
                   value={formData.lat}
                   onChange={handleInputChange}
+                  onWheel={(e) => e.target.blur()}
                   required
                   className="py-2 border-2"
                   aria-label="Latitude"
@@ -343,6 +344,7 @@ const LocationForm = ({
                   placeholder="Longitude"
                   value={formData.long}
                   onChange={handleInputChange}
+                  onWheel={(e) => e.target.blur()}
                   required
                   className="py-2 border-2"
                   aria-label="Longitude"

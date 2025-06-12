@@ -245,7 +245,7 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
           <Col xs={12}>
           <Form.Group className="mb-3">
             <Form.Label style={labelStyle}>Slot Price</Form.Label>
-            <Form.Control type="number" name="slot_price" value={formData.slot_price} onChange={handleChange} style={inputStyle} placeholder="Enter Slot Price" required />
+            <Form.Control type="number" name="slot_price" value={formData.slot_price} onChange={handleChange} onWheel={(e) => e.target.blur()} style={inputStyle} placeholder="Enter Slot Price" required />
           </Form.Group>
           </Col>
 

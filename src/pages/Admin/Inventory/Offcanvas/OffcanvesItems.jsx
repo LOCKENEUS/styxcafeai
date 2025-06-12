@@ -169,8 +169,6 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
     }
   };
 
-
-
   return (
     <Offcanvas
       show={showOffCanvasCreateItem}
@@ -186,9 +184,7 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
       <Offcanvas.Body>
         <Form onSubmit={handleSubmitData}>
           {/* Basic Information Card */}
-
           <Row>
-
             <Col sm={6} className="mb-3">
               <FormGroup>
                 <FormLabel className="fw-bold">
@@ -267,6 +263,7 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
                   placeholder="HSN Code"
                   value={formData.hsnCode}
                   onChange={handleChange}
+                  onWheel={(e) => e.target.blur()}
                   required
                 />
               </FormGroup>
@@ -341,6 +338,7 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
                     placeholder="Length"
                     value={formData.length}
                     onChange={handleChange}
+                    onWheel={(e) => e.target.blur()}
                   />
                   <FormControl
                     type="number"
@@ -348,6 +346,7 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
                     placeholder="Width"
                     value={formData.width}
                     onChange={handleChange}
+                    onWheel={(e) => e.target.blur()}
                   />
                   <FormControl
                     type="number"
@@ -355,6 +354,7 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
                     placeholder="Height"
                     value={formData.height}
                     onChange={handleChange}
+                    onWheel={(e) => e.target.blur()}
                   />
                   <FormSelect
                     name="dimension_unit"
@@ -383,6 +383,7 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
                     placeholder="Enter weight"
                     value={formData.weight}
                     onChange={handleChange}
+                    onWheel={(e) => e.target.blur()}
                   />
                   <FormSelect
                     name="weight_unit"
@@ -515,7 +516,6 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
               </FormGroup>
             </Col>
 
-
             <Col sm={6} className="mb-3">
               <FormGroup>
                 <FormLabel className="fw-bold">
@@ -531,6 +531,7 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
                     placeholder="00.00"
                     value={formData.costPrice}
                     onChange={handleChange}
+                    onWheel={(e) => e.target.blur()}
                     required
                   />
                 </InputGroup>
@@ -552,106 +553,38 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
                     placeholder="00.00"
                     value={formData.sellingPrice}
                     onChange={handleChange}
+                    onWheel={(e) => e.target.blur()}
                     required
                   />
                 </InputGroup>
               </FormGroup>
             </Col>
 
-            {/* <Col sm={6} className="mb-3">
-                <FormGroup>
-                  <FormLabel className="fw-bold">
-                    Preferred Vendor
-                  </FormLabel>
-                  <FormSelect
-                    name="preferredVendor"
-                    value={formData.preferredVendor}
-                    onChange={handleChange}
-                  >
-                    <option value="">Select vendor</option>
-                    {vendors.map((vendor, index) => (
-                      <option key={index} value={vendor._id}>{vendor.name}</option>
-                    ))}
-                  </FormSelect>
-                </FormGroup>
-              </Col>
-            
-
-         
-              <Col sm={6} className="mb-3">
-                <FormGroup>
-                  <FormLabel className="fw-bold">
-                    Opening Stock
-                  </FormLabel>
-                  <FormControl
-                    type="tel"
-                    id="stock"
-                    name="stock"
-                    placeholder="Enter stock"
-                    value={formData.stock}
-                    onChange={handleChange}
-                  />
-                </FormGroup>
-              </Col>
-
-              <Col sm={6} className="mb-3">
-                <FormGroup>
-                  <FormLabel className="fw-bold">
-                    Stock Rate
-                  </FormLabel>
-                  <FormControl
-                    type="number"
-                    id="stock_rate"
-                    name="stock_rate"
-                    placeholder="Enter stock rate"
-                    value={formData.stock_rate}
-                    onChange={handleChange}
-                  />
-                </FormGroup>
-              </Col>
-
-              <Col sm={6} className="mb-3">
-                <FormGroup>
-                  <FormLabel className="fw-bold">
-                    Reorder Point
-                  </FormLabel>
-                  <FormControl
-                    type="number"
-                    id="reorder_point"
-                    name="reorder_point"
-                    placeholder="Enter reorder point"
-                    value={formData.reorder_point}
-                    onChange={handleChange}
-                  />
-                </FormGroup>
-              </Col> */}
-
-<Col sm={6} className="mb-3">
-  <Form.Label htmlFor="linking">Link with Website</Form.Label>
-  <div className="form-group mt-2 mb-3 d-flex gap-3">
-    <Form.Check
-      type="radio"
-      id="linkingradioinline1"
-      name="linking"
-      label="Yes"
-      value="Y"
-      checked={formData.linking === 'Y'}
-      onChange={(e) => setFormData((prev) => ({ ...prev, linking: e.target.value }))}
-      className="mb-0"
-    />
-    <Form.Check
-      type="radio"
-      id="linkingradioinline2"
-      name="linking"
-      label="No"
-      value="N"
-      checked={formData.linking === 'N'}
-      onChange={(e) => setFormData((prev) => ({ ...prev, linking: e.target.value }))}
-      className="mb-0"
-    />
-  </div>
-</Col>
-
+            <Col sm={6} className="mb-3">
+              <Form.Label htmlFor="linking">Link with Website</Form.Label>
+              <div className="form-group mt-2 mb-3 d-flex gap-3">
+                <Form.Check
+                  type="radio"
+                  id="linkingradioinline1"
+                  name="linking"
+                  label="Yes"
+                  value="Y"
+                  checked={formData.linking === 'Y'}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, linking: e.target.value }))}
+                  className="mb-0"
+                />
+                <Form.Check
+                  type="radio"
+                  id="linkingradioinline2"
+                  name="linking"
+                  label="No"
+                  value="N"
+                  checked={formData.linking === 'N'}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, linking: e.target.value }))}
+                  className="mb-0"
+                />
+              </div>
+            </Col>
 
             <Col sm={3} className="mb-3">
               <FormGroup>

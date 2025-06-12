@@ -349,6 +349,7 @@ const BookingDetails = () => {
         items: mappedItems,
         custom_slot: slot,
         booking_type: booking_type,
+        game_amount: slot?.slot_price ? slot.slot_price : selectedGame?.data?.price
       };
       if (showOnCredit) {
         let limit = selectedCustomer?.creditLimit - selectedCustomer?.creditAmount
@@ -398,7 +399,8 @@ const BookingDetails = () => {
         players: teamMembers,
         items: mappedItems,
         custom_slot: slot,
-        booking_type: booking_type
+        booking_type: booking_type,
+        
       };
 
       const response = await dispatch(addBooking(bookingData)).unwrap()
@@ -451,16 +453,6 @@ const BookingDetails = () => {
     } else {
       alert("Customer is already added!");
     }
-  };
-
-  const handlePayableAmountChange = (e) => {
-    const inputValue = parseFloat(e.target.value);
-
-    const newPayableAmount = Math.max(0, Math.min(priceToPay, inputValue || 0));
-    const newCreditAmount = priceToPay - newPayableAmount;
-
-    setPayableAmount(newPayableAmount);
-    setCreditAmount(newCreditAmount);
   };
 
   const handleCreditChange = (id, newCredit) => {
@@ -562,6 +554,7 @@ const BookingDetails = () => {
               items: mappedItems,
               custom_slot: slot,
               booking_type: booking_type,
+              game_amount: slot?.slot_price ? slot.slot_price : selectedGame?.data?.price
             };
 
             const result = await dispatch(addBooking(bookingData)).unwrap();
@@ -1300,6 +1293,7 @@ const BookingDetails = () => {
                                     onChange={(e) =>
                                       updateProduct(product.id, "quantity", Number(e.target.value))
                                     }
+                                    onWheel={(e) => e.target.blur()}
                                   />
 
                                   <Button

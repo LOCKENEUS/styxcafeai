@@ -98,10 +98,31 @@ export const deleteGame = createAsyncThunk(
   }
 );
 
+export const getGamesCommission = createAsyncThunk(
+  "games/getGamesCommission",
+  async ({cafeId, updatedData}, thunkAPI) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/superadmin/game/commission/${cafeId}`,
+        updatedData,
+        {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Something went wrong"
+      );
+    }
+  }
+);
+
 const gameSlice = createSlice({
   name: "games",
   initialState: {
     games: [],
+    commission: [],
     selectedGame: null,
     status: "idle",
     error: null,
@@ -168,7 +189,20 @@ const gameSlice = createSlice({
       })
       .addCase(deleteGame.fulfilled, (state, action) => {
         state.games = state.games.filter((game) => game.id !== action.payload);
-      });
+      })
+
+      // Fetch games commission
+      .addCase(getGamesCommission.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getGamesCommission.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.commission = action.payload;
+      })
+      .addCase(getGamesCommission.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
   },
 });
 

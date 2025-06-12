@@ -17,7 +17,7 @@ import {
 } from "react-icons/fa";
 import { FiFilter } from "react-icons/fi";
 import nobookings from "/assets/Admin/Game/nobookings.png";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getGameById, getGames } from "../../../store/slices/gameSlice";
 import { getBookings } from "../../../store/AdminSlice/BookingSlice";
@@ -29,6 +29,7 @@ const BookingList = () => {
     const { gameId } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const user = JSON.parse(sessionStorage.getItem("user"));
     const cafeId = user?._id;
@@ -47,6 +48,16 @@ const BookingList = () => {
     const editDropdownRef = useRef(null);
     const [activePage, setActivePage] = useState(1);
     const itemsPerPage = 10;
+
+    const cancelled = location?.state?.cancelled
+
+    useEffect(() => {
+        if (cancelled === "Yes") {
+            setSelectedFilter("Cancelled");
+        } else if (cancelled === "Pending") {
+            setSelectedFilter("Pending");
+        }
+    }, [cancelled])
 
     useEffect(() => {
         const user = JSON.parse(sessionStorage.getItem('user'));
@@ -115,6 +126,16 @@ const BookingList = () => {
                     normalizeDate(booking.slot_date).getTime() === new Date(today.getTime() - 86400000).getTime()
                 );
 
+            case "Cancelled":
+                return bookings?.filter((booking) =>
+                    booking.status === "Cancelled"
+                );
+
+            case "Pending":
+                return bookings?.filter((booking) =>
+                    booking.status === "Pending"
+                );
+
             case "Monday":
             case "Tuesday":
             case "Wednesday":
@@ -123,7 +144,7 @@ const BookingList = () => {
                     getDayName(booking.slot_date) === filter
                 );
 
-            case "All Bookings":
+            case "All":
             default:
                 return bookings;
         }
@@ -152,7 +173,7 @@ const BookingList = () => {
             });
             setCollection(collectionAmount);
         }
-    }, [dispatch, dropdownOpen]);
+    }, [dispatch, filteredBookings]);
 
     const toggleFilterDropdown = () => {
         setFilterDropdownOpen(!filterDropdownOpen);
@@ -193,7 +214,7 @@ const BookingList = () => {
     }, [dispatch, gameId]);
 
     const bookingOptions = [
-        "All Bookings",
+        "All",
         "Tomorrow",
         "Today",
         "Yesterday",
@@ -201,6 +222,7 @@ const BookingList = () => {
         "Tuesday",
         "Wednesday",
         "Thursday",
+        "Cancelled"
     ];
 
     const handleFilterChange = (option, e) => {
@@ -223,7 +245,7 @@ const BookingList = () => {
             <Row>
                 <Col>
                     <p>
-                        <Link to="/admin/games/Bookings">Home/Games/Bookings</Link> /{" "}
+                        Home / Games / <Link to="/admin/games/Bookings">Bookings</Link>{" "}
                     </p>
                 </Col>
             </Row>
@@ -231,7 +253,7 @@ const BookingList = () => {
                 className="mb-3 d-flex justify-content-between"
                 style={{ backgroundColor: "transparent" }}
             >
-                <Col xs={12} md={6}>
+                <Col xs={12} md={6} className="d-flex">
                     <div
                         onClick={(e) => {
                             e.stopPropagation();
@@ -243,12 +265,13 @@ const BookingList = () => {
                             display: "flex",
                             alignItems: "center",
                             gap: "10px",
-                            marginBottom: "15px",
+                            marginTop: "20px",
+                            marginLeft: "20px",
                         }}
                         ref={bookingDropdownRef}
                     >
                         <div>
-                            <h4>{selectedFilter}'s Bookings</h4>
+                            <h4>{selectedFilter === "All" ? "All Bookings" : `${selectedFilter} Bookings`}</h4>
                             <p>{filteredBookings.length} Bookings</p>
                         </div>
                         <div>{dropdownOpen ? <FaChevronUp /> : <FaChevronDown />}</div>
@@ -276,8 +299,23 @@ const BookingList = () => {
                             </ul>
                         )}
                     </div>
+                    <div className="ms-5 pointer-cursor text-info my-auto"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleFilterChange("Cancelled", e);
+                        }}>
+                        Cancelled Bookings
+                    </div>
 
+                    <div className="ms-5 pointer-cursor text-info my-auto"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleFilterChange("Pending", e);
+                        }}>
+                        Waiting Bookings
+                    </div>
                 </Col>
+
                 <Col
                     xs={12}
                     md={6}
@@ -318,6 +356,21 @@ const BookingList = () => {
                                 zIndex: 1000,
                             }}
                         >
+                            <li
+                                style={{
+                                    cursor: "pointer",
+                                    padding: "10px",
+                                    backgroundColor: gameFilter === "All" ? "#0062FF" : "transparent", // Highlight selected game filter
+                                    color: gameFilter === "All" ? "white" : "black", // Change text color for the selected game filter
+                                }}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setGameFilter("All");
+                                    setFilterDropdownOpen(false)
+                                }}
+                            >
+                                All Games
+                            </li>
                             {games.length > 0 && games.map((sport, index) => (
                                 <li
                                     key={index}
@@ -387,6 +440,11 @@ const BookingList = () => {
                             <th
                                 style={{ textTransform: "none", border: "none", fontSize: "1rem", color: "black" }}
                             >
+                                Status
+                            </th>
+                            <th
+                                style={{ textTransform: "none", border: "none", fontSize: "1rem", color: "black" }}
+                            >
                                 Total
                             </th>
                         </tr>
@@ -399,7 +457,7 @@ const BookingList = () => {
                                         {index + 1}
                                     </td>
                                     <td
-                                    className="text-center p-0 p-md-2"
+                                        className="text-center p-0 p-md-2"
                                         style={{
                                             border: "none",
                                             minWidth: "100px",
@@ -422,12 +480,12 @@ const BookingList = () => {
                                             {booking.booking_id}
                                         </Link>
                                     </td>
-                                    <td 
-                                    className="text-center p-0 p-md-2"
-                                    style={{
-                                        border: "none", minWidth: "150px", alignContent: "center",
-                                        alignContent: "center",
-                                    }}>
+                                    <td
+                                        className="text-center p-0 p-md-2"
+                                        style={{
+                                            border: "none", minWidth: "150px", alignContent: "center",
+                                            alignContent: "center",
+                                        }}>
                                         <div className="d-flex align-items-center">
                                             <img
                                                 src={profile}
@@ -458,62 +516,87 @@ const BookingList = () => {
                                         className="align-middle p-0 p-md-2"
                                         style={{ border: "none", minWidth: "140px" }}
                                     >
+                                        {booking?.status === "Cancelled" ? "-" :
+                                            <div>
+                                                <div style={{ display: "flex", alignItems: "center" }}>
+                                                    <span
+                                                        className="d-flex align-items-center w-75 justify-content-center"
+                                                        style={{
+                                                            backgroundColor:
+                                                                booking.status === "Pending" ? "#FFF3CD"
+                                                                    :
+                                                                    booking.mode === "Online"
+                                                                        ? "#03D41414"
+                                                                        : "#FF00000D",
+                                                            borderRadius: "20px",
+                                                            padding: "5px 10px",
+                                                            color:
+                                                                booking.status === "Pending" ? "#856404"
+                                                                    :
+                                                                    booking.mode === "Online" ? "#00AF0F" : "orange",
+                                                        }}
+                                                    >
+                                                        <div
+                                                            style={{
+                                                                width: "10px",
+                                                                height: "10px",
+                                                                borderRadius: "50%",
+                                                                backgroundColor:
+                                                                    booking.status === "Pending" ? "#856404"
+                                                                        : booking.mode === "Online"
+                                                                            ? "#03D414"
+                                                                            : "orange",
+                                                                marginRight: "5px",
+                                                            }}
+                                                        />
+                                                        {booking?.status === "Pending" ? "Pending" : booking?.mode}
+                                                    </span>
+                                                </div>
+                                                {/* <span style={{ fontSize: "0.6rem", color: "green", paddingLeft: "5px" }}>
+                                                    {
+                                                        (booking?.game_id?.payLater && booking?.start_time && !booking?.end_time)
+                                                            ||
+                                                            (() => {
+                                                                const now = new Date();
+                                                                const slotDate = new Date(booking?.slot_date);
+                                                                const [startHour, startMinute] = (booking?.slot_id?.start_time ? booking?.slot_id?.start_time : booking?.custom_slot?.start_time).split(":").map(Number);
+                                                                const [endHour, endMinute] = (booking?.slot_id?.end_time ? booking?.slot_id?.end_time : booking?.custom_slot?.end_time).split(":").map(Number);
 
-                                        <div style={{ display: "flex", alignItems: "center" }}>
+                                                                const startDateTime = new Date(slotDate);
+                                                                startDateTime.setHours(startHour, startMinute, 0, 0);
 
-                                            <span
-                                                className="d-flex align-items-center w-75 justify-content-center"
-                                                style={{
-                                                    backgroundColor:
-                                                        booking.status === "Pending" ? "#FFF3CD"
-                                                            :
-                                                            booking.mode === "Online"
-                                                                ? "#03D41414"
-                                                                : "#FF00000D",
-                                                    borderRadius: "20px",
-                                                    padding: "5px 10px",
-                                                    color:
-                                                        booking.status === "Pending" ? "#856404"
-                                                            :
-                                                            booking.mode === "Online" ? "#00AF0F" : "orange",
-                                                }}
-                                            >
-                                                <div
-                                                    style={{
-                                                        width: "10px",
-                                                        height: "10px",
-                                                        borderRadius: "50%",
-                                                        backgroundColor:
-                                                            booking.status === "Pending" ? "#856404"
-                                                                : booking.mode === "Online"
-                                                                    ? "#03D414"
-                                                                    : "orange",
-                                                        marginRight: "5px",
-                                                    }}
-                                                />
-                                                {booking?.status === "Pending" ? "Pending" : booking?.mode}
-                                            </span>
-                                        </div>
-                                        <span style={{ fontSize: "0.6rem", color: "green", paddingLeft: "5px" }}>
-                                            {
-                                                (booking?.game_id?.payLater && booking?.start_time && !booking?.end_time)
-                                                    ||
-                                                    (() => {
-                                                        const now = new Date();
-                                                        const slotDate = new Date(booking?.slot_date);
-                                                        const [startHour, startMinute] = (booking?.slot_id?.start_time ? booking?.slot_id?.start_time : booking?.custom_slot?.start_time).split(":").map(Number);
-                                                        const [endHour, endMinute] = (booking?.slot_id?.end_time ? booking?.slot_id?.end_time : booking?.custom_slot?.end_time).split(":").map(Number);
+                                                                const endDateTime = new Date(slotDate);
+                                                                endDateTime.setHours(endHour, endMinute, 0, 0);
 
-                                                        const startDateTime = new Date(slotDate);
-                                                        startDateTime.setHours(startHour, startMinute, 0, 0);
+                                                                return (!booking?.game_id?.payLater && now >= startDateTime && now <= endDateTime);
+                                                            })() ? "Game Running" : <></>
+                                                    }
+                                                </span> */}
 
-                                                        const endDateTime = new Date(slotDate);
-                                                        endDateTime.setHours(endHour, endMinute, 0, 0);
+                                                {
+                                                    (booking?.game_id?.payLater && booking?.start_time && !booking?.end_time) ||
+                                                        (() => {
+                                                            const now = new Date();
+                                                            const slotDate = new Date(booking?.slot_date);
+                                                            const [startHour, startMinute] = (booking?.slot_id?.start_time || booking?.custom_slot?.start_time || "00:00").split(":").map(Number);
+                                                            const [endHour, endMinute] = (booking?.slot_id?.end_time || booking?.custom_slot?.end_time || "00:00").split(":").map(Number);
 
-                                                        return (!booking?.game_id?.payLater && now >= startDateTime && now <= endDateTime);
-                                                    })() ? "Game Running" : ""
-                                            }
-                                        </span>
+                                                            const startDateTime = new Date(slotDate);
+                                                            startDateTime.setHours(startHour, startMinute, 0, 0);
+
+                                                            const endDateTime = new Date(slotDate);
+                                                            endDateTime.setHours(endHour, endMinute, 0, 0);
+
+                                                            return (!booking?.game_id?.payLater && now >= startDateTime && now <= endDateTime);
+                                                        })()
+                                                        ? (
+                                                            <span style={{ fontSize: "0.6rem", color: "green", paddingLeft: "5px" }}>
+                                                                Game Running
+                                                            </span>
+                                                        )
+                                                        : null
+                                                }
+                                            </div>}
                                     </td>
                                     <td
                                         className="align-middle p-0 p-md-2"
@@ -527,6 +610,13 @@ const BookingList = () => {
 
                                         {convertTo12Hour(booking?.slot_id?.start_time || booking?.custom_slot?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time || booking?.custom_slot?.end_time)}
 
+                                    </td>
+
+                                    <td
+                                        className="align-middle p-0 p-md-2"
+                                        style={{ border: "none", minWidth: "120px", color: booking.status === "Cancelled" ? "red" : booking.status === "Paid" ? "green" : "orange" }}
+                                    >
+                                        {booking?.status}
                                     </td>
                                     <td
                                         className="align-middle p-0 p-md-2"
@@ -561,4 +651,3 @@ const BookingList = () => {
 };
 
 export default BookingList;
-

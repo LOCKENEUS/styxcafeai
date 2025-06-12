@@ -60,11 +60,40 @@ export const getCafeBookingsReport = createAsyncThunk(
   }
 );
 
+export const getCommissionReport = createAsyncThunk(
+  "cafeReports/getCommissionReport",
+  async ({__, filterData}, thunkAPI) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/admin/reports/commission/data`,
+        filterData,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem(
+              "authToken"
+            )}`,
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      console.error("API error:", error);
+      toast.error(
+        "Error fetching report data: " +
+          (error.response?.data?.message || "Something went wrong")
+      );
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
+    }
+  }
+);
+
 const cafeReportSlice = createSlice({
   name: "cafeReport",
   initialState: {
     cafeReport: null,
     bookingsReport: null,
+    commissionReport: null,
     loading: false,
     error: null,
   },
@@ -97,6 +126,19 @@ const cafeReportSlice = createSlice({
         state.bookingsReport = action.payload;
       })
       .addCase(getCafeBookingsReport.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(getCommissionReport.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getCommissionReport.fulfilled, (state, action) => {
+        state.loading = false;
+        state.commissionReport = action.payload;
+      })
+      .addCase(getCommissionReport.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

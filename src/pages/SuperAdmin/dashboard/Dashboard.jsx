@@ -44,6 +44,7 @@ import { SlCalender } from "react-icons/sl";
 import { useDispatch, useSelector } from "react-redux";
 import { getDashboardData } from "../../../store/slices/dashboardSlice";
 import { useNavigate } from "react-router-dom";
+import { GrCafeteria } from "react-icons/gr";
 
 // import 'bootstrap/dist/css/bootstrap.min.css';
 // import './CafeDashboard.css'; // For custom CSS
@@ -85,6 +86,7 @@ const CafeManagementDashboard = () => {
   const [showCardInfo, setShowCardInfo] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [monthlyCommission, setMonthlyCommission] = useState([]);
+  const [weeklyRevenue, setWeeklyRevenue] = useState([]);
   const { dashboardData } = useSelector((state) => state.saDashboard);
 
   const dispatch = useDispatch();
@@ -96,10 +98,17 @@ const CafeManagementDashboard = () => {
 
   useEffect(() => {
     if (dashboardData?.monthlyCommissions) {
-      const commissions = dashboardData.monthlyCommissions.map(item => item.totalCommission || 0);
+      const commissions = dashboardData.monthlyCommissions.map(item => Math.round(item.totalCommission) || 0);
       setMonthlyCommission(commissions);
     }
+
+    if (dashboardData?.weeklyRevenue) {
+      const commissions = dashboardData.weeklyRevenue.map(item => Math.round(item.totalCommission) || 0);
+      setWeeklyRevenue(commissions);
+    }
   }, [dashboardData]);
+
+  console.log("weeklyRevenue", weeklyRevenue);
 
   const fixedBookingData = {
     1: 2,   // April 1 - 2 slots booked
@@ -158,37 +167,6 @@ const CafeManagementDashboard = () => {
     },
   ];
 
-  const recentCustomers = [
-    {
-      id: 1,
-      name: "Alex Thompson",
-      visits: 23,
-      lastVisit: "14 Apr 2025",
-      spent: "$178.50",
-    },
-    {
-      id: 2,
-      name: "Olivia Parker",
-      visits: 16,
-      lastVisit: "13 Apr 2025",
-      spent: "$124.75",
-    },
-    {
-      id: 3,
-      name: "Daniel Martinez",
-      visits: 31,
-      lastVisit: "12 Apr 2025",
-      spent: "$256.20",
-    },
-    {
-      id: 4,
-      name: "Sophia Chen",
-      visits: 8,
-      lastVisit: "10 Apr 2025",
-      spent: "$67.30",
-    },
-  ];
-
   // Chart Data
   const customerGrowthData = {
     labels: [
@@ -207,7 +185,7 @@ const CafeManagementDashboard = () => {
     ],
     datasets: [
       {
-        label: "Revenue ($)",
+        label: "Revenue (₹)",
         data: monthlyCommission,
         borderColor: "rgba(7, 192, 192, 1)",
         backgroundColor: "rgba(7, 192, 192, 0.2)",
@@ -225,6 +203,7 @@ const CafeManagementDashboard = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
   const cardUsageData = {
     labels: ["Active Users", "Inactive Users", "Frequent Visitors"],
     datasets: [
@@ -262,12 +241,13 @@ const CafeManagementDashboard = () => {
     ],
     datasets: [
       {
-        label: "Revenue ($)",
-        data: [1200, 1900, 1500, 1700, 2100, 2800, 2300],
+        label: "Revenue (₹)",
+        data: weeklyRevenue,
         backgroundColor: "rgba(54, 162, 235, 0.7)",
       },
     ],
   };
+  
   const mostPopularCardType = ['cafeCards', 'gamesCards', 'membershipCards'].reduce((a, b) =>
     summaryData[a] > summaryData[b] ? a : b
   );
@@ -330,7 +310,7 @@ const CafeManagementDashboard = () => {
         beginAtZero: true,
         ticks: {
           callback: function (value) {
-            return window.innerWidth < 768 ? `$${value / 1000}k` : `$${value}`;
+            return window.innerWidth < 768 ? `₹ ${value / 1000}k` : `₹ ${value}`;
           },
           font: {
             size: window.innerWidth < 768 ? 10 : 12
@@ -408,7 +388,7 @@ const CafeManagementDashboard = () => {
                     </div>
                   </div>
                   <div className="icon-circle bg-primary text-white">
-                    <FaRegUser size={24} />
+                    <GrCafeteria size={24} />
                   </div>
                 </Card.Body>
               </Card>
@@ -462,7 +442,7 @@ const CafeManagementDashboard = () => {
             <Col lg={8} data-aos="fade-right">
               <Card className="shadow mb-4 h-100">
                 <Card.Header className="py-3 d-flex flex-row align-items-center justify-content-between">
-                  <h6 className="m-0 font-weight-bold text-primary">Customer Growth Overview</h6>
+                  <h6 className="m-0 font-weight-bold text-primary">Game Commission Overview</h6>
                   <OverlayTrigger
                     placement="top"
                     overlay={

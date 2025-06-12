@@ -222,6 +222,7 @@ const CreateNewGameForm = () => {
                   name="price"
                   value={formData.price}
                   onChange={handleInputChange}
+                  onWheel={(e) => e.target.blur()} // Prevents scrolling when using number input
                   placeholder="Enter Price of Game"
                 />
               </Form.Group>
@@ -237,6 +238,7 @@ const CreateNewGameForm = () => {
                   name="players"
                   value={formData.players}
                   onChange={handleInputChange}
+                  onWheel={(e) => e.target.blur()}
                   placeholder="Enter Number of Players"
                 />
               </Form.Group>

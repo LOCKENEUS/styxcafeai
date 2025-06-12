@@ -135,6 +135,7 @@ import { SalesReturnList } from "../components/common/inventory/SalesReturns/Sal
 import { Reports } from "../pages/Admin/Reports/Reports";
 import SplashAnimation from "../components/utils/Animations/SplashAnimation";
 import { BookingsReport } from "../pages/Admin/Reports/BookingsReport";
+import { CommissionReport } from "../pages/Admin/Reports/CommissionReport";
 
 const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
   const [locations, setLocations] = useState([]);
@@ -311,6 +312,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           {/* Reports section */}
           <Route path="/admin/reports" element={<Reports />} />
           <Route path="/admin/bookings/report" element={<BookingsReport />} />
+          <Route path="/admin/commission/report" element={<CommissionReport />} />
         </Route>
       </Route>
 

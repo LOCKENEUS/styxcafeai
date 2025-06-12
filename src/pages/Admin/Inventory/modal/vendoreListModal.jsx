@@ -106,7 +106,7 @@ const VendorsList = ({ showVendorList, handleCloseVendorList,onVendorSelect }) =
                   <tr key={vendor._id}>
                     <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td>{vendor.name}</td>
-                    <td>{vendor.email}</td>
+                    <td>{vendor.emailID}</td>
                     <td>{vendor.phone}</td>
                     <td>{vendor.city1}</td>
                     <td>

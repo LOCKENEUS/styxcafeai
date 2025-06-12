@@ -3,8 +3,6 @@ import { Button, Form, Offcanvas, Spinner } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { addMembership } from "../../../../store/slices/MembershipSlice";
 
-
-
 const AddMembershipOffcanvas = ({ show ,handleClose , cafeId , selectedGameDetails}) => {
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
@@ -44,13 +42,7 @@ const AddMembershipOffcanvas = ({ show ,handleClose , cafeId , selectedGameDetai
         const submitData = { ...formData, details: filteredDetails };
     
         try {
-         
-            await dispatch(addMembership(submitData)).unwrap();
-          
-    
-          // Refresh the memberships list
-        //   dispatch(getMembershipsByCafeId(cafeId));
-          
+          await dispatch(addMembership(submitData)).unwrap();
           // Reset form
           setFormData(initialFormData);
           setDetails(['']);
@@ -110,6 +102,7 @@ const AddMembershipOffcanvas = ({ show ,handleClose , cafeId , selectedGameDetai
               name="limit"
               value={formData.limit}
               onChange={handleInputChange}
+              onWheel={(e) => e.target.blur()}
               required
             />
           </Form.Group>
@@ -124,6 +117,7 @@ const AddMembershipOffcanvas = ({ show ,handleClose , cafeId , selectedGameDetai
               placeholder="price"
               value={formData.price}
               onChange={handleInputChange}
+              onWheel={(e) => e.target.blur()}
               required
             />
           </Form.Group>

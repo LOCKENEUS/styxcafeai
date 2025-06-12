@@ -19,6 +19,7 @@ const SubscriptionForm = ({
           <Form.Control
             id="subscriptionName"
             type="text"
+            placeholder='Enter Subscription Name'
             required
             value={subscription.name}
             onChange={(e) => setSubscription({ ...subscription, name: e.target.value })}
@@ -32,9 +33,11 @@ const SubscriptionForm = ({
               <Form.Control
                 id="amount"
                 type="number"
+                placeholder='Enter Amount'
                 required
                 value={subscription.amount}
                 onChange={(e) => setSubscription({ ...subscription, amount: e.target.value })}
+                onWheel={(e) => e.target.blur()}
               />
             </Form.Group>
           </Col>
@@ -48,6 +51,7 @@ const SubscriptionForm = ({
                 max="100"
                 value={subscription.discount}
                 onChange={(e) => setSubscription({ ...subscription, discount: e.target.value })}
+                onWheel={(e) => e.target.blur()}
               />
             </Form.Group>
           </Col>
@@ -59,6 +63,7 @@ const SubscriptionForm = ({
                 type="number"
                 value={subscription.tax}
                 onChange={(e) => setSubscription({ ...subscription, tax: e.target.value })}
+                onWheel={(e) => e.target.blur()}
               />
             </Form.Group>
           </Col>
@@ -71,6 +76,7 @@ const SubscriptionForm = ({
           <Form.Control
             id="description"
             as="textarea"
+            placeholder='Enter description...'
             rows={3}
             value={subscription.description}
             onChange={(e) => setSubscription({ ...subscription, description: e.target.value })}

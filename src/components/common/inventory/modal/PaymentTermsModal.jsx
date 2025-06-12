@@ -29,7 +29,7 @@ const PaymentTermsModal = ({ show, handleClose, onCreated }) => {
         code: formData.term_days
       };
 
-      const response = await dispatch(addSaCustomField(submitData)).unwrap();
+      const response = await dispatch(addSaCustomField(submitData));
       
       if (onCreated && response) {
         onCreated(response);

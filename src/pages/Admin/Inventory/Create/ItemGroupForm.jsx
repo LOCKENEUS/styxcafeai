@@ -749,6 +749,7 @@ const ItemGroupForm = () => {
                                 value={formData?.items?.[itemIndex]?.costPrice}
                                 type="number" name="item_cost[]" className="form-control cost-price" required placeholder="Cost Price" style={{ width: '120px' }}
                                 onChange={(e) => handleItemChange(itemIndex, 'costPrice', e.target.value)}
+                                onWheel={(e) => e.target.blur()}
                               /></td>
                             <td
                               className="px-1"><input
@@ -757,6 +758,7 @@ const ItemGroupForm = () => {
                                 value={formData?.items?.[itemIndex]?.sellingPrice}
                                 name="item_price[]" className="form-control selling-price" placeholder="Selling Price" style={{ width: '120px' }}
                                 onChange={(e) => handleItemChange(itemIndex, 'sellingPrice', e.target.value)}
+                                onWheel={(e) => e.target.blur()}
                               /></td>
                             <td
                               className="px-1"><input
@@ -765,6 +767,7 @@ const ItemGroupForm = () => {
                                 value={formData?.items?.[itemIndex]?.upc}
                                 name="item_upc[]" className="form-control" placeholder="UPC" style={{ width: '120px' }}
                                 onChange={(e) => handleItemChange(itemIndex, 'upc', e.target.value)}
+                                onWheel={(e) => e.target.blur()}
                               /></td>
                             <td
                               className="px-1"><input
@@ -772,6 +775,7 @@ const ItemGroupForm = () => {
                                 value={formData?.items?.[itemIndex]?.ean}
                                 type="number" name="item_ean[]" className="form-control" placeholder="EAN" style={{ width: '120px' }}
                                 onChange={(e) => handleItemChange(itemIndex, 'ean', e.target.value)}
+                                onWheel={(e) => e.target.blur()}
                               /></td>
                             <td
                               className="px-1"><input type="number"
@@ -779,12 +783,14 @@ const ItemGroupForm = () => {
                                 value={formData?.items?.[itemIndex]?.isbn}
                                 name="item_isbn[]" className="form-control" placeholder="ISBN" style={{ width: '120px' }}
                                 onChange={(e) => handleItemChange(itemIndex, 'isbn', e.target.value)}
+                                onWheel={(e) => e.target.blur()}
                               /></td>
                             <td className="px-1"><input
 
                               value={formData?.items?.[itemIndex]?.stock}
                               type="number" name="item_stock[]" className="form-control stock" placeholder="Opening Stock" style={{ width: '120px' }}
                               onChange={(e) => handleItemChange(itemIndex, 'stock', e.target.value)}
+                              onWheel={(e) => e.target.blur()}
                             /></td>
                           </tr>
                         );

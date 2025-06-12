@@ -257,7 +257,7 @@ const BookingSlots = ({ date, selectedGame, gameId }) => {
   const isSlotBooked = (slotId, date) => {
     return bookings.some(
       (booking) =>
-        booking.slot_id?._id === slotId && booking.status !== "Paid" &&
+        booking.slot_id?._id === slotId  &&
         new Date(booking.slot_date).toDateString() === new Date(date).toDateString()
     );
   };
