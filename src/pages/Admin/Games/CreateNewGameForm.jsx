@@ -14,7 +14,7 @@ const CreateNewGameForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize form state with correct keys matching the backend
-  const cafeId = JSON.parse(sessionStorage.getItem('user'))?._id;
+  const cafeId = JSON.parse(localStorage.getItem('user'))?._id;
   const [formData, setFormData] = useState({
     name: "",
     type: "Single",
@@ -35,10 +35,10 @@ const CreateNewGameForm = () => {
     const fetchGameData = async () => {
       if (id) {
         try {
-          const user = JSON.parse(sessionStorage.getItem('user'));
+          const user = JSON.parse(localStorage.getItem('user'));
           const response = await dispatch(getGameById(id)).unwrap();
           const gameData = response.data;
-          
+
           setFormData({
             name: gameData.name || "",
             type: gameData.type || "Single",
@@ -91,7 +91,7 @@ const CreateNewGameForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     const formDataToSend = new FormData();
     formDataToSend.append('name', formData.name);
     formDataToSend.append('type', formData.type);
@@ -139,7 +139,7 @@ const CreateNewGameForm = () => {
       <h5>
         <Link to="/admin/dashboard">Home</Link> / <span style={{ color: "blue" }}>
           {id ? "Edit Game" : "Create New Game"}
-          </span>
+        </span>
       </h5>
       <Card data-aos="fade-up" ata-aos-duration="500" className="p-4 mt-4">
         <Form onSubmit={handleSubmit}>
@@ -305,9 +305,9 @@ const CreateNewGameForm = () => {
           </Row>
 
           <div className="d-flex justify-content-end mt-2">
-            <Button 
-              variant="light" 
-              className="me-2" 
+            <Button
+              variant="light"
+              className="me-2"
               onClick={() => navigate('/admin/games/recommended')}
               style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray' }}
             >

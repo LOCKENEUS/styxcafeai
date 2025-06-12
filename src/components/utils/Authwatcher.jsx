@@ -6,12 +6,12 @@ const AuthWatcher = ({ setIsAuthenticated, children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = sessionStorage.getItem('authToken');
-    const userRole = sessionStorage.getItem('userRole');
+    const token = localStorage.getItem('authToken');
+    const userRole = localStorage.getItem('userRole');
 
     if (!token) {
-      sessionStorage.removeItem('authToken');
-      sessionStorage.removeItem('userRole');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userRole');
       setIsAuthenticated(false);
       // if (userRole === 'admin') {
       //   navigate('/admin/login');
@@ -26,13 +26,13 @@ const AuthWatcher = ({ setIsAuthenticated, children }) => {
       const isExpired = payload.exp * 1000 < Date.now();
 
       if (isExpired) {
-        sessionStorage.removeItem('authToken');
-        sessionStorage.removeItem('userRole');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userRole');
         setIsAuthenticated(false);
         // navigate('/admin/login');
         if (userRole === 'admin') {
           navigate('/admin/login');
-        } else{
+        } else {
           navigate('/superadmin/login');
         }
       } else {
@@ -40,13 +40,13 @@ const AuthWatcher = ({ setIsAuthenticated, children }) => {
       }
     } catch (err) {
       console.error("Invalid token:", err);
-      sessionStorage.removeItem('authToken');
-      sessionStorage.removeItem('userRole');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userRole');
       setIsAuthenticated(false);
       // navigate('/admin/login');
       if (userRole === 'admin') {
         navigate('/admin/login');
-      } else{
+      } else {
         navigate('/superadmin/login');
       }
     }

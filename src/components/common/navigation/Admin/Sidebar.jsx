@@ -78,7 +78,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
       Object.keys(expandedItems).forEach(collapseId => {
         if (expandedItems[collapseId]) {
           const subItems = document.querySelectorAll(`#${collapseId} .nav-collapse-item`);
-          gsap.fromTo(subItems, 
+          gsap.fromTo(subItems,
             { x: -30, opacity: 0, scale: 0.9 },
             {
               duration: 0.5,
@@ -103,15 +103,15 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
       };
 
       const subItems = document.querySelectorAll(`#${collapseId} .nav-collapse-item`);
-      
+
       // Always ensure items are display block before animation
-      gsap.set(subItems, { 
+      gsap.set(subItems, {
         display: 'block',
         pointerEvents: 'none' // Disable interaction during animation
       });
 
       if (newState[collapseId]) {
-        gsap.fromTo(subItems, 
+        gsap.fromTo(subItems,
           { x: -30, opacity: 0, scale: 0.9 },
           {
             duration: 0.6, // Slightly longer duration
@@ -134,7 +134,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
           stagger: 0.03,
           ease: "power2.in",
           onComplete: () => {
-            gsap.set(subItems, { 
+            gsap.set(subItems, {
               display: 'none',
               pointerEvents: 'auto' // Re-enable interaction
             });
@@ -150,12 +150,12 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
     try {
       // Dispatch logout action to clear Redux state
       dispatch(logout());
-      
+
       // Clear session storage
-      sessionStorage.removeItem('authToken');
-      sessionStorage.removeItem('userRole');
-      sessionStorage.removeItem('user');
-      
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userRole');
+      localStorage.removeItem('user');
+
       // Redirect to login page
       navigate('/admin/login');
     } catch (error) {
@@ -166,12 +166,11 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
   return (
     <aside
       ref={sidebarRef}
-      className={`navbar navbar-vertical navbar-fixed navbar-expand-xl navbar-light bg-white shadow-sm transition-all duration-300 ${
-        collapsed ? "w-16" : "w-64"
-      }`}
+      className={`navbar navbar-vertical navbar-fixed navbar-expand-xl navbar-light bg-white shadow-sm transition-all duration-300 ${collapsed ? "w-16" : "w-64"
+        }`}
       style={{
         position: "fixed",
-        left: collapsed ? "-272px" : "0", 
+        left: collapsed ? "-272px" : "0",
         width: "272px",
         top: "4rem",
         height: "calc(100vh - 4rem)",
@@ -182,9 +181,9 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
         transform: collapsed ? "translateX(-272px)" : "translateX(0)",
       }}
     >
-          
-      
-      <div 
+
+
+      <div
         ref={waveRef}
         className="navbar-vertical-container"
         style={{
@@ -196,45 +195,45 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
       >
 
         <div className="navbar-vertical-content px-2" style={{ overflowY: 'auto', height: 'calc(100% - 100px)' }}>
-          <div style={{marginBottom: window.innerWidth <= 768 ? "5rem" : "2rem"}} className="nav nav-pills nav-flush flex-column">
-          <div className="nav-item">
-            <div className="nav-item-wrapper">
-              <Link
-                className="nav-link rounded py-3 px-3"
-                to="/admin/dashboard"
-                style={{
-                  // marginLeft: "20px",
-                  color: "#1e3a8a",
-                  backgroundColor: location.pathname === "/admin/dashboard" ? "#F4F4F4" : "transparent",
-                  fontWeight: location.pathname === "/admin/dashboard" ? "600" : "normal",
-                  transition: "all 0.2s",
-                }}
-              >
-                <BiHomeAlt className="flex-shrink-0 me-3" style={{ fontSize: "1.25rem" }} />                         
-                <span className="nav-link-text flex-grow-1">Dashboard</span>
-              </Link>
+          <div style={{ marginBottom: window.innerWidth <= 768 ? "5rem" : "2rem" }} className="nav nav-pills nav-flush flex-column">
+            <div className="nav-item">
+              <div className="nav-item-wrapper">
+                <Link
+                  className="nav-link rounded py-3 px-3"
+                  to="/admin/dashboard"
+                  style={{
+                    // marginLeft: "20px",
+                    color: "#1e3a8a",
+                    backgroundColor: location.pathname === "/admin/dashboard" ? "#F4F4F4" : "transparent",
+                    fontWeight: location.pathname === "/admin/dashboard" ? "600" : "normal",
+                    transition: "all 0.2s",
+                  }}
+                >
+                  <BiHomeAlt className="flex-shrink-0 me-3" style={{ fontSize: "1.25rem" }} />
+                  <span className="nav-link-text flex-grow-1">Dashboard</span>
+                </Link>
+              </div>
             </div>
-          </div>
 
             {navItems.map((item, index) => {
               const collapseId = `collapse-${index}`;
-              
+
               // Check if any sub-item matches current path
-              const isActive = item.subItems && item.subItems.some(subItem => 
-                subItem.sub && subItem.sub.some(furtherSubItem => 
+              const isActive = item.subItems && item.subItems.some(subItem =>
+                subItem.sub && subItem.sub.some(furtherSubItem =>
                   furtherSubItem.path === location.pathname
                 )
               );
 
               return (
                 <div key={index} className="nav-item">
-                  
+
                   <div className="nav-item-wrapper">
                     <a
                       className="nav-link rounded py-3 px-3"
                       href={`#${collapseId}`}
                       role="button"
-                      data-bs-toggle="collapse" 
+                      data-bs-toggle="collapse"
                       data-bs-target={`#${collapseId}`}
                       aria-expanded={expandedItems[collapseId]}
                       aria-controls={collapseId}
@@ -264,7 +263,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
                         });
                       }}
                     >
-                       {expandedItems[collapseId] ? (
+                      {expandedItems[collapseId] ? (
                         <FaCaretDown
                           className="ms-auto text-muted"
                           style={{
@@ -274,7 +273,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
                           size={16}
                         />
                       ) : (
-                        <FaCaretRight  
+                        <FaCaretRight
                           className="ms-auto text-muted"
                           style={{
                             transition: 'transform 0.2s ease-in-out',
@@ -283,13 +282,13 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
                           size={16}
                         />
                       )}
-                        <item.icon className="flex-shrink-0 me-3" style={{ fontSize: "1.25rem" }} />
+                      <item.icon className="flex-shrink-0 me-3" style={{ fontSize: "1.25rem" }} />
 
-                         
+
                       <span className="nav-link-text flex-grow-1">{item.title}</span>
-                     
+
                     </a>
-                    <div 
+                    <div
                       id={collapseId}
                       className={`collapse nav-collapse ${expandedItems[collapseId] ? 'show' : ''}`}
                       data-bs-parent="#navbarVerticalMenu"
@@ -361,29 +360,29 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
           </div>
         </div>
 
-        <div style={{marginTop: "auto", backgroundColor:"white", zIndex:"1000", display:"flex", flexDirection:"column", gap:"1rem", justifyContent:"center", alignItems:"center"}} className="navbar-vertical-footer p-1 border-top">
-<div className="justify-content-center align-items-center g-3" 
-             onClick={handleLogout}
-             style={{
-               display:"flex", 
-               gap:"5px",
-               marginTop:"0.9rem",
-               padding:"4px", 
-               backgroundColor:"#F4F4F4", 
-               height:"60px", 
-               width:"212px",
-               cursor: "pointer",
-               transition: "background-color 0.2s",
-               "&:hover": {
-                 backgroundColor: "#E5E7EB"
-               }
-             }}>
-          <LuLogOut/>
-          <h3 className="m-0">LOGOUT</h3>
-        </div>
-        
-          
-      
+        <div style={{ marginTop: "auto", backgroundColor: "white", zIndex: "1000", display: "flex", flexDirection: "column", gap: "1rem", justifyContent: "center", alignItems: "center" }} className="navbar-vertical-footer p-1 border-top">
+          <div className="justify-content-center align-items-center g-3"
+            onClick={handleLogout}
+            style={{
+              display: "flex",
+              gap: "5px",
+              marginTop: "0.9rem",
+              padding: "4px",
+              backgroundColor: "#F4F4F4",
+              height: "60px",
+              width: "212px",
+              cursor: "pointer",
+              transition: "background-color 0.2s",
+              "&:hover": {
+                backgroundColor: "#E5E7EB"
+              }
+            }}>
+            <LuLogOut />
+            <h3 className="m-0">LOGOUT</h3>
+          </div>
+
+
+
         </div>
       </div>
     </aside>

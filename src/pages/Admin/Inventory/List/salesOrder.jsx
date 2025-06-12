@@ -31,7 +31,7 @@ export const SalesOrder = () => {
   const itemsPerPage = 10;
   const dispatch = useDispatch();
   const { salesOrders, loading, error } = useSelector((state) => state.so);
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
 
   useEffect(() => {
@@ -163,19 +163,18 @@ export const SalesOrder = () => {
       const formattedDate =
         date instanceof Date && !isNaN(date)
           ? `${date.getDate().toString().padStart(2, "0")}/${(
-              date.getMonth() + 1
-            )
-              .toString()
-              .padStart(2, "0")}/${date.getFullYear()}`
+            date.getMonth() + 1
+          )
+            .toString()
+            .padStart(2, "0")}/${date.getFullYear()}`
           : "N/A";
 
       // Format the total
       const total = order.total ? order.total : "N/A";
 
       // Create CSV row
-      return `${index + 1},${order.so_no || ""},${
-        order.customer_id?.name || "N/A"
-      },${total},${formattedDate}`;
+      return `${index + 1},${order.so_no || ""},${order.customer_id?.name || "N/A"
+        },${total},${formattedDate}`;
     });
 
     // Combine header and rows
@@ -302,7 +301,7 @@ export const SalesOrder = () => {
               <Col sm={12} style={{ marginTop: "30px" }}>
                 {loading ? (
                   <div className="text-center py-4">
-                  <Loader />
+                    <Loader />
                   </div>
                 ) : error ? (
                   <div className="alert alert-danger" role="alert">
@@ -312,12 +311,12 @@ export const SalesOrder = () => {
                   <DataTable
                     columns={columns}
                     data={filteredItems}
-             
+
                     highlightOnHover
                     responsive
                     pagination
-                  paginationPerPage={10}
-                  paginationRowsPerPageOptions={[10, 20, 30, 40]}
+                    paginationPerPage={10}
+                    paginationRowsPerPageOptions={[10, 20, 30, 40]}
                     persistTableHead
                     noDataComponent={
                       <div className="p-4 text-center">

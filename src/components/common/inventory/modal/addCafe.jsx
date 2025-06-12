@@ -11,7 +11,7 @@ const AddCafe = ({ show, handleClose, onClientSelect }) => {
   const [showClientList, setShowClientList] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredClients, setFilteredClients] = useState([]);
-  const cafeId = JSON.parse(sessionStorage.getItem('user'))?._id;
+  const cafeId = JSON.parse(localStorage.getItem('user'))?._id;
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5; // Change as needed

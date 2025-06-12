@@ -12,7 +12,7 @@ import { sendMailToVendor } from "../../../store/AdminSlice/Inventory/purchaseOr
 
 export const PrDetails = () => {
 
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     const cafeId = user?._id;
     const userName = user?.name;
     const userEmail = user?.email;
@@ -86,7 +86,7 @@ export const PrDetails = () => {
                                     <Image src={sendMail} className="me-2" /> Send Email
                                 </Button>
                                 <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}
-                                onClick={() => navigate('/Inventory/PurchaseBillCreate', { state: POIdGet?._id })}
+                                    onClick={() => navigate('/Inventory/PurchaseBillCreate', { state: POIdGet?._id })}
                                 >
                                     {/* <Image src={sendMail} className="me-2" />  */}
                                     <div className="text-decoration-none text-dark"><b >+</b>  Create Bill </div>
@@ -141,11 +141,11 @@ export const PrDetails = () => {
                                     <Col sm={6} className="pt-6" >
                                         <span className="mb-3 text-color" style={{ fontSize: '16px', fontWeight: '500' }}>Delivery Address</span>
                                         <div className="my-3">
-                                            <span  style={{ fontSize: '16px' }}>{userName}</span><br />
-                                            <span>Tel: {UserContactN} </span><br/>
-                                            <span>{user.city1} {user.state1} {user.country1}</span><br/>
-                                            <span>{UserAddress}</span><br/>
-                                            <span>{user.pincode1} - {user.country1}</span><br/>
+                                            <span style={{ fontSize: '16px' }}>{userName}</span><br />
+                                            <span>Tel: {UserContactN} </span><br />
+                                            <span>{user.city1} {user.state1} {user.country1}</span><br />
+                                            <span>{UserAddress}</span><br />
+                                            <span>{user.pincode1} - {user.country1}</span><br />
                                         </div>
                                     </Col>
 
@@ -188,7 +188,7 @@ export const PrDetails = () => {
                                                     <tr key={index}>
                                                         <td>
                                                             {/* <b>{item?.item_id?.name}</b> */}
-                                                            <b className="text-primary" style={{ cursor: 'pointer'}} onClick={() => navigate(`/Inventory/itemDetails`, { state: {groupId: item?.item_id?._id} })}>
+                                                            <b className="text-primary" style={{ cursor: 'pointer' }} onClick={() => navigate(`/Inventory/itemDetails`, { state: { groupId: item?.item_id?._id } })}>
                                                                 {item?.item_id?.name}
                                                             </b>
                                                             <br />

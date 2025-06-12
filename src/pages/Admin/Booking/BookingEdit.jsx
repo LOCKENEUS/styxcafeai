@@ -61,7 +61,7 @@ const BookingEdit = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const user = JSON.parse(sessionStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem('user'));
     const cafeId = user?._id;
 
     const { gameId, slotId } = useParams();
@@ -78,7 +78,7 @@ const BookingEdit = () => {
     }).replace(",", "");
 
     useEffect(() => {
-        const user = JSON.parse(sessionStorage.getItem('user'));
+        const user = JSON.parse(localStorage.getItem('user'));
         if (user?._id) {
             dispatch(getGames(user?._id));
         }
@@ -161,7 +161,7 @@ const BookingEdit = () => {
         }
     }, [dispatch, gameId, slotId]);
 
-    
+
     useEffect(() => {
         if (slot) {
             if (slot?.slot_price) {
@@ -544,7 +544,7 @@ const BookingEdit = () => {
                                         </Col>
 
                                         <Col md={6}>
-                                            
+
                                             <Form.Group>
                                                 <Form.Label className="text-color">Select Slot</Form.Label>
                                                 <Form.Select
@@ -553,33 +553,33 @@ const BookingEdit = () => {
                                                     value={slot ? slot?._id : ""}
                                                     onChange={(e) => {
                                                         const selectedSlot = filteredSlots.find(s => s?._id === e.target.value);
-                                                      
+
                                                         if (selectedSlot) {
-                                                          const convertTo24Hour = (time12h) => {
-                                                            const [time, modifier] = time12h.split(' ');
-                                                            let [hours, minutes] = time.split(':');
-                                                            hours = parseInt(hours, 10);
-                                                      
-                                                            if (modifier === 'PM' && hours !== 12) {
-                                                              hours += 12;
-                                                            }
-                                                            if (modifier === 'AM' && hours === 12) {
-                                                              hours = 0;
-                                                            }
-                                                      
-                                                            return `${hours.toString().padStart(2, '0')}:${minutes}`;
-                                                          };
-                                                      
-                                                          const updatedSlot = {
-                                                            ...selectedSlot,
-                                                            start_time: convertTo24Hour(selectedSlot.start_time),
-                                                            end_time: convertTo24Hour(selectedSlot.end_time)
-                                                          };
-                                                      
-                                                          setSlot(updatedSlot);
+                                                            const convertTo24Hour = (time12h) => {
+                                                                const [time, modifier] = time12h.split(' ');
+                                                                let [hours, minutes] = time.split(':');
+                                                                hours = parseInt(hours, 10);
+
+                                                                if (modifier === 'PM' && hours !== 12) {
+                                                                    hours += 12;
+                                                                }
+                                                                if (modifier === 'AM' && hours === 12) {
+                                                                    hours = 0;
+                                                                }
+
+                                                                return `${hours.toString().padStart(2, '0')}:${minutes}`;
+                                                            };
+
+                                                            const updatedSlot = {
+                                                                ...selectedSlot,
+                                                                start_time: convertTo24Hour(selectedSlot.start_time),
+                                                                end_time: convertTo24Hour(selectedSlot.end_time)
+                                                            };
+
+                                                            setSlot(updatedSlot);
                                                         }
-                                                      }}
-                                                      
+                                                    }}
+
                                                 >
                                                     {filteredSlots.length > 0 ? <option value="">Select Slot</option> : <option>No slots available</option>}
                                                     {filteredSlots.map((slot, index) => {

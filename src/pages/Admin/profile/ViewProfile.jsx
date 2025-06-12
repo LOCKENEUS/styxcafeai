@@ -5,7 +5,7 @@ import { BsFillPencilFill } from "react-icons/bs";
 import { GoPencil } from "react-icons/go";
 
 const ViewProfile = () => {
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const backend_url = import.meta.env.VITE_API_URL;
 
   return (
@@ -35,8 +35,8 @@ const ViewProfile = () => {
               </div>
               {user?.role === "superadmin" ? (
                 <div
-                 className="bg-primary rounded-circle d-flex justify-content-center align-items-center position-relative"
-                   style={{ width: "40px", height: "40px", cursor: "pointer" }}
+                  className="bg-primary rounded-circle d-flex justify-content-center align-items-center position-relative"
+                  style={{ width: "40px", height: "40px", cursor: "pointer" }}
                   title="Edit Profile"
                 >
                   <GoPencil className="text-white" />
@@ -94,7 +94,7 @@ const ViewProfile = () => {
               <strong>License Expiry Date:</strong>{" "}
               {new Date(
                 new Date(user.createdAt).getTime() +
-                  user.yearsOfContract * 365 * 24 * 60 * 60 * 1000
+                user.yearsOfContract * 365 * 24 * 60 * 60 * 1000
               ).toLocaleDateString()}
             </p>
             <div className="d-flex justify-content-around mt-3">
@@ -148,7 +148,7 @@ const ViewProfile = () => {
               <span className="fw-bold">
                 {new Date(
                   new Date(user.createdAt).getTime() +
-                    user.yearsOfContract * 365 * 24 * 60 * 60 * 1000
+                  user.yearsOfContract * 365 * 24 * 60 * 60 * 1000
                 ).toLocaleDateString()}
               </span>
             </p>

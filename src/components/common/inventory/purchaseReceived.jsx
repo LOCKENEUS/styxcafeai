@@ -23,7 +23,7 @@ import { getSaPurchaseReceiveList } from "../../../store/slices/Inventory/prSlic
 
 export const PurchaseReceived = () => {
 
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
 
   const dispatch = useDispatch();

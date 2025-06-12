@@ -13,7 +13,7 @@ export const startBookingTimer = createAsyncThunk(
         {},
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -35,7 +35,7 @@ export const pauseBookingTimer = createAsyncThunk(
         {},
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -57,7 +57,7 @@ export const resumeBookingTimer = createAsyncThunk(
         {},
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -79,7 +79,7 @@ export const stopBookingTimer = createAsyncThunk(
         {},
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );

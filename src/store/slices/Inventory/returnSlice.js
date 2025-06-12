@@ -1,75 +1,84 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 // Async thunk to create a sales package
 export const createSalesReturn = createAsyncThunk(
-  'salesReturn/createSalesReturn',
+  "salesReturn/createSalesReturn",
   async (salesReturnData, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/superadmin/inventory/so/return`, 
+      const response = await axios.post(
+        `${BASE_URL}/superadmin/inventory/so/return`,
         salesReturnData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
-      toast.success('Sales return added successfully!');
+      toast.success("Sales return added successfully!");
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Async thunk to get a purchase receive by ID
 export const getSalesReturnList = createAsyncThunk(
-  'salesReturn/getSalesReturnList',
+  "salesReturn/getSalesReturnList",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/superadmin/inventory/so/return/list`,
+      const response = await axios.get(
+        `${BASE_URL}/superadmin/inventory/so/return/list`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 export const getSalesReturnDetails = createAsyncThunk(
-  'salesReturn/getSalesReturnDetails',
+  "salesReturn/getSalesReturnDetails",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/superadmin/inventory/so/return/${id}`,
+      const response = await axios.get(
+        `${BASE_URL}/superadmin/inventory/so/return/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 const salesReturnSlice = createSlice({
-  name: 'salesReturn',
+  name: "salesReturn",
   initialState: {
-    salesReturnList: [],       
-    selectedItem: null,           
+    salesReturnList: [],
+    selectedItem: null,
     loading: false,
     error: null,
   },
@@ -101,20 +110,20 @@ const salesReturnSlice = createSlice({
       })
       .addCase(getSalesReturnList.fulfilled, (state, action) => {
         state.loading = false;
-        state.salesReturnList = action.payload; 
+        state.salesReturnList = action.payload;
       })
       .addCase(getSalesReturnList.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-      // get salesReturn by id 
+      // get salesReturn by id
       .addCase(getSalesReturnDetails.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(getSalesReturnDetails.fulfilled, (state, action) => {
         state.loading = false;
-        state.selectedItem = action.payload; 
+        state.selectedItem = action.payload;
       })
       .addCase(getSalesReturnDetails.rejected, (state, action) => {
         state.loading = false;

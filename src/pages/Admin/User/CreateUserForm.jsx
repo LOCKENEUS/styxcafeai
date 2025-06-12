@@ -10,7 +10,7 @@ const CreateUser = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const fileInputRef = useRef(null); // Add this line
-  const cafeId = JSON.parse(sessionStorage.getItem('user'))?._id;
+  const cafeId = JSON.parse(localStorage.getItem('user'))?._id;
 
   const { id } = useParams(); // For edit mode
 
@@ -91,10 +91,10 @@ const CreateUser = () => {
     const fetchUserData = async () => {
       if (id) {
         try {
-          const user = JSON.parse(sessionStorage.getItem('user'));
+          const user = JSON.parse(localStorage.getItem('user'));
           // Use the getUserById action from the slice instead of direct axios call
           const response = await dispatch(getUserById(id)).unwrap();
-          
+
           setFormData({
             name: response.name || '',
             email: response.email || '',
@@ -124,7 +124,7 @@ const CreateUser = () => {
   const handleSelect = (place) => {
     const placeId = place.value.place_id;
     const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
-  
+
     axios
       .get(
         `https://maps.googleapis.com/maps/api/geocode/json?place_id=${placeId}&key=${apiKey}`
@@ -134,17 +134,17 @@ const CreateUser = () => {
         if (!res.data.results || res.data.results.length === 0) {
           throw new Error('No address details found for this location');
         }
-  
+
         const result = res.data.results[0];
         const addressComponents = result.address_components;
-  
+
         // Initialize address parts
         let city = "";
         let state = "";
         let country = "";
         let street = "";
         let zipCode = "";
-  
+
         // Parse address components
         addressComponents.forEach((component) => {
           if (component.types.includes("locality")) {
@@ -163,10 +163,10 @@ const CreateUser = () => {
             street = component.long_name;
           }
         });
-  
+
         // Build formatted address if needed
         const formattedAddress = result.formatted_address || place.label;
-  
+
         setFormData(prev => ({
           ...prev,
           address: formattedAddress,
@@ -214,14 +214,14 @@ const CreateUser = () => {
   // Update handleSubmit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     setIsSubmitting(true);
 
-    const user = JSON.parse(sessionStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem('user'));
     const submittedData = new FormData();
     submittedData.append("cafe", formData.cafe);
     submittedData.append("name", formData.name);
@@ -236,7 +236,7 @@ const CreateUser = () => {
     submittedData.append("department", formData.department);
     submittedData.append("role", formData.role);
     submittedData.append("additional_notes", formData.additionalNotes);
-    
+
     // Send null when userProfile is removed
     submittedData.append("userProfile", formData.userProfile || null);
 
@@ -264,8 +264,8 @@ const CreateUser = () => {
   return (
     <div className="container mt-2">
       <h5>
-        <Link to="/admin/dashboard">Home</Link> / 
-        <Link to="/admin/users/user-list">User List</Link> / 
+        <Link to="/admin/dashboard">Home</Link> /
+        <Link to="/admin/users/user-list">User List</Link> /
         <span style={{ color: "blue" }}>{id ? "Edit User" : "Create User"}</span>
       </h5>
       <div className="p-5 bg-white rounded-3 shadow-sm" style={{ margin: '0 auto' }}>
@@ -366,40 +366,40 @@ const CreateUser = () => {
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label className="fw-semibold" style={{ fontSize: '0.9rem', color: '#555' }}>
-                  Address 
+                  Address
                 </Form.Label>
                 <GooglePlacesAutocomplete
-  apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
-  selectProps={{
-    value: formData.address 
-      ? { label: formData.address, value: formData.address }
-      : null,
-    onChange: (place) => {
-      if (place) {
-        handleSelect(place);
-      } else {
-        // Handle clear action
-        setFormData(prev => ({
-          ...prev,
-          address: '',
-          city: '',
-          state: '',
-          country: ''
-        }));
-      }
-    },
-    placeholder: "Enter Address",
-    styles: {
-      control: (provided) => ({
-        ...provided,
-        padding: '5px',
-        fontSize: '0.9rem',
-        borderColor: '#ced4da',
-        borderRadius: '8px'
-      })
-    }
-  }}
-/>
+                  apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
+                  selectProps={{
+                    value: formData.address
+                      ? { label: formData.address, value: formData.address }
+                      : null,
+                    onChange: (place) => {
+                      if (place) {
+                        handleSelect(place);
+                      } else {
+                        // Handle clear action
+                        setFormData(prev => ({
+                          ...prev,
+                          address: '',
+                          city: '',
+                          state: '',
+                          country: ''
+                        }));
+                      }
+                    },
+                    placeholder: "Enter Address",
+                    styles: {
+                      control: (provided) => ({
+                        ...provided,
+                        padding: '5px',
+                        fontSize: '0.9rem',
+                        borderColor: '#ced4da',
+                        borderRadius: '8px'
+                      })
+                    }
+                  }}
+                />
               </Form.Group>
             </Col>
           </Row>

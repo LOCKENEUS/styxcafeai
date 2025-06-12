@@ -67,7 +67,7 @@ export const PurchaseOrderUpdate = () => {
     items = useSelector((state) => state.items.items);
   }
   const [showVendorList, setShowVendorList] = useState(false);
-  const handleShowVendorList = () =>{ 
+  const handleShowVendorList = () => {
     setUserType("Vendor");
     setShowVendorList(true)
   };
@@ -75,7 +75,7 @@ export const PurchaseOrderUpdate = () => {
   const [vendorSelected, setVendorSelected] = useState([]);
   const [selectedOption, setSelectedOption] = useState("Organization");
   const [vendorId, setVendorId] = useState("");
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const cafeId = user?._id;
 
@@ -87,7 +87,7 @@ export const PurchaseOrderUpdate = () => {
 
   // Filter payment terms from custom fields
   const paymentTerms = customFields.filter(field => field.type === 'Payment Terms');
-  const {styxData} = useSelector((state) => state.purchaseOrder);
+  const { styxData } = useSelector((state) => state.purchaseOrder);
 
   useEffect(() => {
     if (id) {
@@ -172,7 +172,7 @@ export const PurchaseOrderUpdate = () => {
   const customersList = lisgetCustomers?.customers;
 
   useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem('user'));
     const cafeId = user?._id;
     if (cafeId) {
       dispatch(getCustomers(cafeId));

@@ -20,7 +20,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
   const logoRef = useRef(null);
 
   const { searchResults } = useSelector((state) => state.adminDashboard);
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const backend_url = import.meta.env.VITE_API_URL
 
   useEffect(() => {
@@ -40,9 +40,9 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
   }, [user]);
 
   const handleLogout = () => {
-    sessionStorage.removeItem('authToken');
-    sessionStorage.removeItem('userRole');
-    sessionStorage.removeItem('user');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('user');
 
     setIsAuthenticated(false);//+
     toast.success('Logged out successfully');
@@ -139,9 +139,9 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                       right: 0,
                       zIndex: 1000,
                       maxHeight: '250px',
-                                            width: '330px', // Adjust width as needed
+                      width: '330px', // Adjust width as needed
                       scrollbarWidth: 'none',      // Firefox
-                      msOverflowStyle: 'none', 
+                      msOverflowStyle: 'none',
                     }}
                   >
                     {searchResults.games.map((item, index) => (
@@ -207,9 +207,9 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                       right: 0,
                       zIndex: 1000,
                       maxHeight: '250px',
-                                            width: '330px', // Adjust width as needed
+                      width: '330px', // Adjust width as needed
                       scrollbarWidth: 'none',      // Firefox
-                      msOverflowStyle: 'none', 
+                      msOverflowStyle: 'none',
                     }}
                   >
                     {searchResults.customers.map((item, index) => (
@@ -242,9 +242,9 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                       zIndex: 1000,
                       maxHeight: '250px',
                       width: '400px', // Adjust width as needed
-                                            width: '330px', // Adjust width as needed
+                      width: '330px', // Adjust width as needed
                       scrollbarWidth: 'none',      // Firefox
-                      msOverflowStyle: 'none', 
+                      msOverflowStyle: 'none',
                     }}
                   >
                     {searchResults?.items.map((item, index) => (
@@ -277,9 +277,9 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                       zIndex: 1000,
                       maxHeight: '250px',
                       width: '400px', // Adjust width as needed
-                                            width: '330px', // Adjust width as needed
+                      width: '330px', // Adjust width as needed
                       scrollbarWidth: 'none',      // Firefox
-                      msOverflowStyle: 'none', 
+                      msOverflowStyle: 'none',
                     }}
                   >
                     {searchResults?.itemGroups.map((item, index) => (

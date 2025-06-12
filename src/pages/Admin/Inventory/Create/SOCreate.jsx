@@ -51,7 +51,7 @@ const SOCreate = () => {
   const { customFields } = useSelector((state) => state.customFields);
   const { taxFields } = useSelector((state) => state.taxFieldSlice);
   const { items, loading } = useSelector((state) => state.items);
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
   const [latestTax, setLatestTax] = useState(null);
   const [isMobile, setIsMobile] = useState(false);

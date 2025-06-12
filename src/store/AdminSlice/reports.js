@@ -6,15 +6,14 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 
 export const getCafeReportData = createAsyncThunk(
   "cafeReports/getCafeReportData",
-  async ({id, filterData}, thunkAPI) => {
+  async ({ id, filterData }, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/admin/reports/${id}`,
+      const response = await axios.post(
+        `${BASE_URL}/admin/reports/${id}`,
         filterData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -34,15 +33,14 @@ export const getCafeReportData = createAsyncThunk(
 
 export const getCafeBookingsReport = createAsyncThunk(
   "cafeReports/getCafeBookingsReport",
-  async ({id, filterData}, thunkAPI) => {
+  async ({ id, filterData }, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/admin/reports/bookings/data`,
+      const response = await axios.post(
+        `${BASE_URL}/admin/reports/bookings/data`,
         filterData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -62,15 +60,14 @@ export const getCafeBookingsReport = createAsyncThunk(
 
 export const getCommissionReport = createAsyncThunk(
   "cafeReports/getCommissionReport",
-  async ({__, filterData}, thunkAPI) => {
+  async ({ __, filterData }, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/admin/reports/commission/data`,
+      const response = await axios.post(
+        `${BASE_URL}/admin/reports/commission/data`,
         filterData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -141,7 +138,7 @@ const cafeReportSlice = createSlice({
       .addCase(getCommissionReport.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      })
+      });
   },
 });
 

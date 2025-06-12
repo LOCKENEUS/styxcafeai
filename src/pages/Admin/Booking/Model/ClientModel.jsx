@@ -8,7 +8,7 @@ import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 const ClientModel = ({ show, handleClose, clientId = null }) => {
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
-  const cafeId = JSON.parse(sessionStorage.getItem('user'))?._id;
+  const cafeId = JSON.parse(localStorage.getItem('user'))?._id;
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -25,7 +25,7 @@ const ClientModel = ({ show, handleClose, clientId = null }) => {
     const fetchClientData = async () => {
       if (clientId) {
         try {
-          const user = JSON.parse(sessionStorage.getItem('user'));
+          const user = JSON.parse(localStorage.getItem('user'));
           const response = await axios.get(`${import.meta.env.VITE_API_URL}/admin/customer/${clientId}?cafe=${user.cafe}`);
           const customerData = response.data.data;
 
@@ -234,7 +234,7 @@ export default ClientModel;
 
 // const ClientModel = ({ show, handleClose, clientId = null }) => {
 //   const dispatch = useDispatch();
-//   const cafeId = JSON.parse(sessionStorage.getItem("user"))?._id;
+//   const cafeId = JSON.parse(localStorage.getItem("user"))?._id;
 
 //   const [isSubmitting, setIsSubmitting] = useState(false);
 

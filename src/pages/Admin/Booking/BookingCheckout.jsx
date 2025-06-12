@@ -68,7 +68,7 @@ const BookingCheckout = () => {
   const [total, setTotal] = useState(0);
   const isMobile = window.innerWidth <= 768;
 
-  const user = JSON.parse(sessionStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user'));
   const cafeId = user?._id;
 
   const items = useSelector((state) => state.items.items);
@@ -359,7 +359,7 @@ const BookingCheckout = () => {
           bookingData,
           {
             headers: {
-              Authorization: `Bearer ${sessionStorage.getItem(
+              Authorization: `Bearer ${localStorage.getItem(
                 "authToken"
               )}`,
             },
@@ -1692,9 +1692,9 @@ const BookingCheckout = () => {
                     <Col xs={6} className="muted-text">
                       <span style={{ cursor: 'pointer' }}>
                         {/* solve this show the total credit here? */}
-                        ₹ {booking?.playerCredits?.length > 0 ? booking?.playerCredits?.reduce((total, credit) => total + credit?.credit, 0) : 0} 
-                        <span className="text-primary" style={{ cursor: 'pointer' }} 
-                        onClick={() => {setShowPlayerCredits(true);}}>(Click for details)</span>
+                        ₹ {booking?.playerCredits?.length > 0 ? booking?.playerCredits?.reduce((total, credit) => total + credit?.credit, 0) : 0}
+                        <span className="text-primary" style={{ cursor: 'pointer' }}
+                          onClick={() => { setShowPlayerCredits(true); }}>(Click for details)</span>
                       </span>
                     </Col>
                   </Row>

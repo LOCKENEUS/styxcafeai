@@ -19,7 +19,7 @@
 //   }
 // );
 
-// // 
+// //
 // export const getPurchaseReceive = createAsyncThunk(
 //   'soInvoice/getPurchaseReceive',
 //   async (id, thunkAPI) => {
@@ -80,80 +80,87 @@
 // export const { setPurchaseReceiveItem } = purchaseReceiveSlice.actions;
 // export default purchaseReceiveSlice.reducer;
 
-
-
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 // Async thunk to create a purchase receive
 export const createPurchaseReceive = createAsyncThunk(
-  'purchaseReceive/createPurchaseReceive',
+  "purchaseReceive/createPurchaseReceive",
   async (POData, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/admin/inventory/po/receive`, 
+      const response = await axios.post(
+        `${BASE_URL}/admin/inventory/po/receive`,
         POData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
-      toast.success('Purchase Receive added successfully!');
+      toast.success("Purchase Receive added successfully!");
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Async thunk to get a purchase receive by ID
 export const getPurchaseReceive = createAsyncThunk(
-  'purchaseReceive/getPurchaseReceive',
+  "purchaseReceive/getPurchaseReceive",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/inventory/po/receive/${id}`,
+      const response = await axios.get(
+        `${BASE_URL}/admin/inventory/po/receive/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 export const getPurchaseReceiveList = createAsyncThunk(
-  'purchaseReceive/getPurchaseReceiveList',
+  "purchaseReceive/getPurchaseReceiveList",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/inventory/po/receive/list/${id}`,
+      const response = await axios.get(
+        `${BASE_URL}/admin/inventory/po/receive/list/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 const purchaseReceiveSlice = createSlice({
-  name: 'purchaseReceive',
+  name: "purchaseReceive",
   initialState: {
-    purchaseReceiveList: [],       
-    selectedItem: null,           
+    purchaseReceiveList: [],
+    selectedItem: null,
     loading: false,
     error: null,
   },
@@ -185,7 +192,7 @@ const purchaseReceiveSlice = createSlice({
       })
       .addCase(getPurchaseReceive.fulfilled, (state, action) => {
         state.loading = false;
-        state.selectedItem = action.payload; 
+        state.selectedItem = action.payload;
       })
       .addCase(getPurchaseReceive.rejected, (state, action) => {
         state.loading = false;
@@ -198,7 +205,7 @@ const purchaseReceiveSlice = createSlice({
       })
       .addCase(getPurchaseReceiveList.fulfilled, (state, action) => {
         state.loading = false;
-        state.selectedItem = action.payload; 
+        state.selectedItem = action.payload;
       })
       .addCase(getPurchaseReceiveList.rejected, (state, action) => {
         state.loading = false;

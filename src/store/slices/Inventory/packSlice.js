@@ -1,75 +1,84 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 // Async thunk to create a package
 export const createPackage = createAsyncThunk(
-  'saPackage/createPackage',
+  "saPackage/createPackage",
   async (POData, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/superadmin/inventory/so/package`, 
+      const response = await axios.post(
+        `${BASE_URL}/superadmin/inventory/so/package`,
         POData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
-      toast.success('Package added successfully!');
+      toast.success("Package added successfully!");
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Async thunk to get a package by ID
 export const getPackageDetails = createAsyncThunk(
-  'saPackage/getPackageDetails',
+  "saPackage/getPackageDetails",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/superadmin/inventory/so/package/${id}`,
+      const response = await axios.get(
+        `${BASE_URL}/superadmin/inventory/so/package/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 export const getPackageList = createAsyncThunk(
-  'saPackage/getPackageList',
+  "saPackage/getPackageList",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/superadmin/inventory/so/package/list`,
+      const response = await axios.get(
+        `${BASE_URL}/superadmin/inventory/so/package/list`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 const saPackageSlice = createSlice({
-  name: 'package',
+  name: "package",
   initialState: {
-    packageList: [],       
-    selectedPackage: null,           
+    packageList: [],
+    selectedPackage: null,
     loading: false,
     error: null,
   },
@@ -101,7 +110,7 @@ const saPackageSlice = createSlice({
       })
       .addCase(getPackageDetails.fulfilled, (state, action) => {
         state.loading = false;
-        state.selectedPackage = action.payload; 
+        state.selectedPackage = action.payload;
       })
       .addCase(getPackageDetails.rejected, (state, action) => {
         state.loading = false;
@@ -114,7 +123,7 @@ const saPackageSlice = createSlice({
       })
       .addCase(getPackageList.fulfilled, (state, action) => {
         state.loading = false;
-        state.packageList = action.payload; 
+        state.packageList = action.payload;
       })
       .addCase(getPackageList.rejected, (state, action) => {
         state.loading = false;

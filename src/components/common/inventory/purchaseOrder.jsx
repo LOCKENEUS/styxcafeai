@@ -31,7 +31,7 @@ export const PurchaseOrder = () => {
 
   const { purchaseOrder, loading, error } = useSelector((state) => state.saPurchaseOrder);
   const listOfPO = purchaseOrder;
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     if (user?._id) {

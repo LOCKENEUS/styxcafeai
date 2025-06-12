@@ -107,14 +107,14 @@ export const Reports = () => {
 
   const dispatch = useDispatch();
 
-  const user = JSON.parse(sessionStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user'));
   const { games, status } = useSelector((state) => state.games);
   const { cafeReport, loading } = useSelector((state) => state.cafeReport);
   const slots = useSelector((state) => state.slots?.slots || []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const user = JSON.parse(sessionStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem('user'));
     if (user?._id) {
       dispatch(getGames(user._id));
     }

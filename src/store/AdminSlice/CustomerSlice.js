@@ -9,12 +9,11 @@ export const getCustomers = createAsyncThunk(
   "customers/getCustomers",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/customer/list/${id}`,
+      const response = await axios.get(
+        `${BASE_URL}/admin/customer/list/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -40,9 +39,7 @@ export const searchCustomers = createAsyncThunk(
         `${BASE_URL}/admin/customer/search/${cafeId}?search=${searchTerm}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -65,16 +62,12 @@ export const getCustomerById = createAsyncThunk(
   "customers/getCustomerById",
   async (id, thunkAPI) => {
     try {
-       const token = sessionStorage.getItem("authToken");
-      const response = await axios.get(`${BASE_URL}/admin/customer/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
-          },
-        }
-      );
+      const token = localStorage.getItem("authToken");
+      const response = await axios.get(`${BASE_URL}/admin/customer/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
       return response.data;
     } catch (error) {
       toast.error(
@@ -98,9 +91,7 @@ export const addCustomer = createAsyncThunk(
         customerData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -128,9 +119,7 @@ export const updateCustomer = createAsyncThunk(
         data,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -153,15 +142,11 @@ export const deleteCustomer = createAsyncThunk(
   "customers/deleteCustomer",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`${BASE_URL}/admin/customer/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
-          },
-        }
-      );
+      await axios.delete(`${BASE_URL}/admin/customer/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
       toast.success("Customer deleted successfully!");
       return id;
     } catch (error) {
@@ -186,9 +171,7 @@ export const collectAmount = createAsyncThunk(
         updateData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -220,7 +203,7 @@ export const collectAmountOnline = createAsyncThunk(
         },
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -249,7 +232,7 @@ export const collectAmountOnline = createAsyncThunk(
                 },
                 {
                   headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem(
+                    Authorization: `Bearer ${localStorage.getItem(
                       "authToken"
                     )}`,
                   },
@@ -300,9 +283,7 @@ export const collectCustomCreditAmount = createAsyncThunk(
         { amount: amount },
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -334,7 +315,7 @@ export const collectCustomCreditAmountOnline = createAsyncThunk(
         },
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -362,7 +343,7 @@ export const collectCustomCreditAmountOnline = createAsyncThunk(
                 },
                 {
                   headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem(
+                    Authorization: `Bearer ${localStorage.getItem(
                       "authToken"
                     )}`,
                   },

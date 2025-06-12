@@ -9,15 +9,13 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 export const getBookings = createAsyncThunk(
   "bookings/getbookings",
   async (cafeId, thunkAPI) => {
-    const token = sessionStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken");
     try {
       const response = await axios.get(
         `${BASE_URL}/admin/booking/list/${cafeId}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -38,9 +36,7 @@ export const getBookingsByDate = createAsyncThunk(
         `${BASE_URL}/admin/booking/list/${cafeId}/${date}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -57,15 +53,11 @@ export const getBookingsByGame = createAsyncThunk(
   "bookings/getbookingsByGame",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/booking/game/${id}`, 
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}/admin/booking/game/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
       return response.data.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -85,9 +77,7 @@ export const addBooking = createAsyncThunk(
         bookingData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -110,9 +100,7 @@ export const updateBooking = createAsyncThunk(
         updatedData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -134,9 +122,7 @@ export const addToCart = createAsyncThunk(
         updatedData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -153,15 +139,11 @@ export const getBookingDetails = createAsyncThunk(
   "bookings/bookingDetails",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/booking/${id}`, 
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}/admin/booking/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -176,15 +158,11 @@ export const deleteBooking = createAsyncThunk(
   "bookings/deletebooking",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`${BASE_URL}/admin/booking/${id}`, 
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
-          },
-        }
-      );
+      await axios.delete(`${BASE_URL}/admin/booking/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
       return id;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -226,7 +204,7 @@ export const processOnlinePayment = createAsyncThunk(
         },
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -260,7 +238,7 @@ export const processOnlinePayment = createAsyncThunk(
                 },
                 {
                   headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem(
+                    Authorization: `Bearer ${localStorage.getItem(
                       "authToken"
                     )}`,
                   },
@@ -311,9 +289,7 @@ export const fetchEarning = createAsyncThunk(
         updatedData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );

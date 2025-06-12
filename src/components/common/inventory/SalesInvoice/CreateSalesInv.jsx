@@ -53,7 +53,7 @@ export const CreateSalesInv = () => {
 
   const { taxFields } = useSelector((state) => state.taxFieldSlice);
   const { loading } = useSelector((state) => state.inventorySuperAdmin);
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
   const [latestTax, setLatestTax] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -973,7 +973,7 @@ export const CreateSalesInv = () => {
             <>
               <Spinner animation="border" size="sm" className="me-2" /> Saving...
             </>
-          ) : (`${isEditMode ? 'Update': 'Submit'}`)}
+          ) : (`${isEditMode ? 'Update' : 'Submit'}`)}
         </Button>
       </div>
 

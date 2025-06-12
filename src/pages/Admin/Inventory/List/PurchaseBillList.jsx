@@ -32,7 +32,7 @@ const PurchaseBillList = () => {
   const [activePage, setActivePage] = useState(1);
   const itemsPerPage = 5;
   const totalPages = Math.ceil(3 / itemsPerPage);
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
   useEffect(() => {
     dispatch(getPBills(cafeId)).unwrap()
@@ -49,7 +49,7 @@ const PurchaseBillList = () => {
     let index = (po_no?.charCodeAt(0) + po_no?.charCodeAt(po_no?.length - 1)) % colors.length;
     return colors[index];
   };
-  
+
   const columns = [
     {
       name: "SN",
@@ -79,7 +79,7 @@ const PurchaseBillList = () => {
             {row.po_no?.charAt(0).toUpperCase()}
           </span>
           <div>
-            <div style={{ color: "#0062FF",cursor:"pointer" }} onClick={() => handleShowDetails(row)}>{row.po_no}</div>
+            <div style={{ color: "#0062FF", cursor: "pointer" }} onClick={() => handleShowDetails(row)}>{row.po_no}</div>
             {/* <div style={{ fontSize: "12px", color: "gray" }}>{row.email}</div> */}
           </div>
         </div>
@@ -90,9 +90,9 @@ const PurchaseBillList = () => {
     { name: "Total", selector: (row) => `₹ ${row.total}`, sortable: true },
 
   ];
-    const handleShowDetails = (row) => {
-      navigate(`/admin/inventory/PurchaseBillDetails/${row._id}`);
-    }
+  const handleShowDetails = (row) => {
+    navigate(`/admin/inventory/PurchaseBillDetails/${row._id}`);
+  }
 
   const filteredItems = bills.filter((item) =>
     item.vendor_id?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -104,7 +104,7 @@ const PurchaseBillList = () => {
   const handleExport = () => {
     // Define CSV headers
     const csvHeader = "S/N,Order No,Vendor,Status,Total\n";
-    
+
     // Convert bills data to CSV rows
     const csvRows = filteredItems.map((bill, index) => {
       return `${index + 1},${bill.po_no || ""},${bill?.vendor_id?.name || ""},${bill.status || "Pending"},${bill.total || 0}`;
@@ -130,9 +130,9 @@ const PurchaseBillList = () => {
   };
 
   return (
-    <Container  fluid className="mt-4 min-vh-100">
+    <Container fluid className="mt-4 min-vh-100">
       <Row>
-      <Col sm={12} className="mx-2 mb-0 mb-md-3 px-2 px-md-5">
+        <Col sm={12} className="mx-2 mb-0 mb-md-3 px-2 px-md-5">
           <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
@@ -176,10 +176,10 @@ const PurchaseBillList = () => {
                   <FormControl
                     type="search"
                     size="sm"
-                    placeholder="Search..." 
+                    placeholder="Search..."
                     aria-label="Search in docs"
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)} 
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     style={{ backgroundColor: "#FAFAFA", border: "none" }}
                   />
                   {searchQuery && (
@@ -196,10 +196,10 @@ const PurchaseBillList = () => {
 
               {/* Action Buttons */}
               <Col sm={5} className="d-flex justify-content-between justify-content-md-end text-end my-2">
-                <Button 
-                  variant="denger" 
-                  className="btn px-4 mx-2" 
-                  size="sm" 
+                <Button
+                  variant="denger"
+                  className="btn px-4 mx-2"
+                  size="sm"
                   style={{ borderColor: "#FF3636", color: "#FF3636" }}
                   onClick={handleExport}
                 >
@@ -228,7 +228,7 @@ const PurchaseBillList = () => {
                   paginationRowsPerPageOptions={[10, 20, 30, 40]}
                   responsive
                   progressPending={loading}
-                  progressComponent={<div><Loader/></div>}
+                  progressComponent={<div><Loader /></div>}
                   persistTableHead
                   customStyles={{
                     rows: {

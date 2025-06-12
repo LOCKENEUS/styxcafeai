@@ -14,7 +14,7 @@ export const addItems = createAsyncThunk(
         itemsData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -27,26 +27,23 @@ export const addItems = createAsyncThunk(
   }
 );
 
-export const getItems = createAsyncThunk(
-  "games/getItems",
-  async (thunkAPI) => {
-    try {
-      const response = await axios.get(
-        `${BASE_URL}/superadmin/inventory/item/list`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
-          },
-        }
-      );
-      return response.data.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data || "Something went wrong"
-      );
-    }
+export const getItems = createAsyncThunk("games/getItems", async (thunkAPI) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/superadmin/inventory/item/list`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      error.response?.data || "Something went wrong"
+    );
   }
-);
+});
 
 // /superadmin/inventory/item-group
 export const addItemsGroups = createAsyncThunk(
@@ -58,7 +55,7 @@ export const addItemsGroups = createAsyncThunk(
         itemsData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -78,7 +75,7 @@ export const getItemsGroups = createAsyncThunk(
         `${BASE_URL}/superadmin/inventory/item-group/list`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -98,7 +95,7 @@ export const getItemsById = createAsyncThunk(
         `${BASE_URL}/superadmin/inventory/item/${itemId}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -118,7 +115,7 @@ export const getItemTransactions = createAsyncThunk(
         `${BASE_URL}/superadmin/inventory/item/transactions/${itemId}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -139,7 +136,7 @@ export const getItemsGroupsById = createAsyncThunk(
         `${BASE_URL}/superadmin/inventory/item-group/${itemId}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -157,7 +154,7 @@ export const deleteItemById = createAsyncThunk(
     try {
       await axios.delete(`${BASE_URL}/superadmin/inventory/item/${id}`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
       });
       toast.success("Item deleted successfully!");
@@ -175,7 +172,7 @@ export const deleteItemById = createAsyncThunk(
 //     try {
 //       await axios.delete(`${BASE_URL}/superadmin/inventory/item-group/${id}`, {
 //         headers: {
-//           Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+//           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
 //         },
 //       });
 //       toast.success("Item deleted successfully!");
@@ -199,7 +196,7 @@ export const updateItemsById = createAsyncThunk(
         itemsData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -274,7 +271,7 @@ const InventorySlice = createSlice({
         state.status = "loading";
       })
       .addCase(getItemTransactions.fulfilled, (state, action) => {
-        state.itemTransactions = action.payload
+        state.itemTransactions = action.payload;
         state.status = "succeeded";
       })
       .addCase(getItemTransactions.rejected, (state, action) => {
@@ -315,32 +312,31 @@ const InventorySlice = createSlice({
         state.status = "succeeded";
         state.inventory = state.inventory.filter(
           (item) => item._id !== action.payload
-         
         );
-         toast.success("Item deleted successfully!");
+        toast.success("Item deleted successfully!");
       })
       .addCase(deleteItemById.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
         toast.error("Item deleted failed!");
       })
-  
-       .addCase(updateItemsById.pending, (state) => {
-         state.status = "loading";
-       })
-       .addCase(updateItemsById.fulfilled, (state, action) => {
+
+      .addCase(updateItemsById.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(updateItemsById.fulfilled, (state, action) => {
         console.log("state", state);
-         state.status = "succeeded";
-         state.selectedinventory = state.it.filter(
-           (item) => item._id !== action.payload
-         );
-         toast.success("Item updated successfully!");
-       })
-       .addCase(updateItemsById.rejected, (state, action) => {
-         state.status = "failed";
-         state.error = action.payload;
-         toast.error("Item updated failed!");
-       });
+        state.status = "succeeded";
+        state.selectedinventory = state.it.filter(
+          (item) => item._id !== action.payload
+        );
+        toast.success("Item updated successfully!");
+      })
+      .addCase(updateItemsById.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+        toast.error("Item updated failed!");
+      });
   },
 });
 

@@ -1,122 +1,125 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 // Fetch all tax fields
-export const getTaxes = createAsyncThunk(
-  'taxes/getTaxes',
-  async (thunkAPI) => {
-    try {
-      const response = await axios.get(
-        `${BASE_URL}/superadmin/inventory/tax/list`,
+export const getTaxes = createAsyncThunk("taxes/getTaxes", async (thunkAPI) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/superadmin/inventory/tax/list`,
       {
         headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
       }
-      );
-      return response.data.data;
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
-    }
+    );
+    return response.data.data;
+  } catch (error) {
+    toast.error(error.response?.data?.message || "Something went wrong");
+    return thunkAPI.rejectWithValue(
+      error.response?.data?.message || "Something went wrong"
+    );
   }
-);
+});
 
 // Fetch a single tax field by ID
 export const getTaxById = createAsyncThunk(
-  'taxes/getTaxById',
+  "taxes/getTaxById",
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
         `${BASE_URL}/superadmin/inventory/tax/${id}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`,
-        },
-      }
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
       );
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Add a new tax field
 export const addTax = createAsyncThunk(
-  'taxes/addTax',
+  "taxes/addTax",
   async (fieldData, thunkAPI) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/superadmin/inventory/tax`, 
+        `${BASE_URL}/superadmin/inventory/tax`,
         fieldData,
         {
           headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
-      toast.success('Tax field added successfully!');
+      toast.success("Tax field added successfully!");
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Update an existing tax field
 export const updateTax = createAsyncThunk(
-  'taxes/updateTax',
+  "taxes/updateTax",
   async ({ id, data }, thunkAPI) => {
     try {
       const response = await axios.put(
-        `${BASE_URL}/superadmin/inventory/tax/${id}`, 
+        `${BASE_URL}/superadmin/inventory/tax/${id}`,
         data,
         {
           headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
-      
       );
-      toast.success('Tax field updated successfully!');
+      toast.success("Tax field updated successfully!");
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Delete a tax field
 export const deleteTax = createAsyncThunk(
-  'taxes/deleteTax',
+  "taxes/deleteTax",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(
-        `${BASE_URL}/superadmin/inventory/tax/${id}`,
-       {
+      await axios.delete(`${BASE_URL}/superadmin/inventory/tax/${id}`, {
         headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
-      }
-      );
-      toast.success('Tax field deleted successfully!');
+      });
+      toast.success("Tax field deleted successfully!");
       return id;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 const taxSlice = createSlice({
-  name: 'taxes',
+  name: "taxes",
   initialState: {
     taxes: [],
     selectedTax: null,
@@ -173,7 +176,9 @@ const taxSlice = createSlice({
       .addCase(updateTax.fulfilled, (state, action) => {
         state.loading = false;
         const updatedTax = action.payload;
-        const index = state.taxes.findIndex((field) => field._id === updatedTax._id);
+        const index = state.taxes.findIndex(
+          (field) => field._id === updatedTax._id
+        );
         if (index !== -1) {
           state.taxes[index] = updatedTax;
         }
@@ -189,7 +194,9 @@ const taxSlice = createSlice({
       })
       .addCase(deleteTax.fulfilled, (state, action) => {
         state.loading = false;
-        state.taxes = state.taxes.filter((field) => field._id !== action.payload);
+        state.taxes = state.taxes.filter(
+          (field) => field._id !== action.payload
+        );
       })
       .addCase(deleteTax.rejected, (state, action) => {
         state.loading = false;

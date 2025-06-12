@@ -20,15 +20,15 @@ AOS.init({
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
-    !!sessionStorage.getItem('authToken')
+    !!localStorage.getItem('authToken')
   );
 
   return (
     <Fragment>
       <Router>
-      <AuthWatcher setIsAuthenticated={setIsAuthenticated}>
-        <AppRoutes setIsAuthenticated={setIsAuthenticated} isAuthenticated={isAuthenticated} />
-      </AuthWatcher>
+        <AuthWatcher setIsAuthenticated={setIsAuthenticated}>
+          <AppRoutes setIsAuthenticated={setIsAuthenticated} isAuthenticated={isAuthenticated} />
+        </AuthWatcher>
       </Router>
     </Fragment>
   );

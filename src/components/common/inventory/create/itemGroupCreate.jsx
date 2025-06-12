@@ -42,12 +42,12 @@ export const IitemGroupCreate = () => {
         const attributeInitial = attribute.charAt(0).toUpperCase();
         return `${groupInitial}${attributeInitial}-${String(index + 1).padStart(3, '0')}`;
     };
-    
-    
+
+
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const userData = sessionStorage.getItem("user");
+        const userData = localStorage.getItem("user");
         if (userData) {
             const parsedUser = JSON.parse(userData);
             setSuperAdminId(parsedUser._id);
@@ -68,7 +68,7 @@ export const IitemGroupCreate = () => {
         }
     }, [dispatch, superAdminId]);
 
-    
+
     const customFields = useSelector(state => state.customFields.customFields);
     const taxFieldsList = useSelector((state) => state.taxFieldSlice.taxFields);
 
@@ -112,15 +112,15 @@ export const IitemGroupCreate = () => {
     };
     const handleCopyToAll = (field, sourceIndex = 0) => {
         const valueToCopy = formData.items[sourceIndex]?.[field] || '';
-    
+
         setFormData((prev) => ({
-          ...prev,
-          items: prev.items.map((item) => ({
-            ...item,
-            [field]: valueToCopy,
-          })),
+            ...prev,
+            items: prev.items.map((item) => ({
+                ...item,
+                [field]: valueToCopy,
+            })),
         }));
-      };
+    };
     const removeRow = (index) => {
         if (attributes.length > 1) {
             const newAttributes = [...attributes];
@@ -146,14 +146,14 @@ export const IitemGroupCreate = () => {
                 sku: generatedSKU,
             };
         });
-    
+
         setFormData((prev) => ({
             ...prev,
             items: updatedItems,
         }));
     };
-   
-    
+
+
     const handleItemChange = (index, field, value) => {
         const updatedItems = [...formData.items];
         // Create the item if it doesn't exist
@@ -186,7 +186,7 @@ export const IitemGroupCreate = () => {
 
                 const itemName = `${formData.group_name} ${attribute.name} ${option}`;
                 // Auto-generate SKU directly
-            const sku = generateSKU(formData.group_name, itemName, attribute.name, itemIndex);
+                const sku = generateSKU(formData.group_name, itemName, attribute.name, itemIndex);
 
                 const item = {
                     name: itemName,
@@ -218,7 +218,7 @@ export const IitemGroupCreate = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitLoading(true);
-    
+
         // Basic validation
         if (
             !formData.group_name.trim() ||
@@ -228,7 +228,7 @@ export const IitemGroupCreate = () => {
             setSubmitLoading(false);
             return toast.error('Please fill all the required fields');
         }
-    
+
         try {
             const payload = {
                 group_name: formData.group_name.trim(),
@@ -239,7 +239,7 @@ export const IitemGroupCreate = () => {
                 brand: formData.brand?.trim() || null,
                 items: formData.items
             };
-    
+
             await dispatch(addItemsGroups(payload)).unwrap();
         } catch (error) {
             toast.error('Submission failed');
@@ -247,17 +247,17 @@ export const IitemGroupCreate = () => {
             setSubmitLoading(false);
         }
     };
-    
-    
+
+
     useEffect(() => {
         const items = generateItems();
-        
+
         setFormData((prev) => ({
-          ...prev,
-          items: items,
+            ...prev,
+            items: items,
         }));
-      }, [attributes, formData.group_name, formData.unit, formData.taxable, formData.manufacturer, formData.brand]);
-      
+    }, [attributes, formData.group_name, formData.unit, formData.taxable, formData.manufacturer, formData.brand]);
+
     //   useEffect(() => {
     //     const items = generateItems();
     //     const updatedItems = items.map((item, index) => {
@@ -273,13 +273,13 @@ export const IitemGroupCreate = () => {
     //         sku: generatedSKU,
     //       };
     //     });
-      
+
     //     setFormData(prev => ({
     //       ...prev,
     //       items: updatedItems,
     //     }));
     //   }, [attributes, formData.group_name]);
-      
+
     // -----    style -----
 
     const lableHeader = {
@@ -599,7 +599,7 @@ export const IitemGroupCreate = () => {
                                 {attributes.some(attr => attr.name || attr.options) && (
                                     <div className="col-sm-12 mb-3" id="tableDiv" style={{ zoom: 0.9, overflowX: 'auto' }}>
                                         <table className="table table-sm table-border table-border-vertical table-hover" >
-                                            <thead className="bg-light " style={{border: '2px solid #E5EFFF'}} >
+                                            <thead className="bg-light " style={{ border: '2px solid #E5EFFF' }} >
                                                 <tr>
                                                     <th className="border-2 border-end" nowrap="" style={lableHeader}>SN</th>
                                                     <th className="border-2 border-end" nowrap="" style={lableHeader}>Item name</th>
@@ -642,7 +642,7 @@ export const IitemGroupCreate = () => {
                                                     </th>
                                                     <th className="border-2 border-end" style={lableHeader}>UPC</th>
                                                     <th className="border-2 border-end" style={lableHeader}>EAN</th>
-                                                    <th  className="border-2 border-end" style={lableHeader}>ISBN</th>
+                                                    <th className="border-2 border-end" style={lableHeader}>ISBN</th>
                                                     <th style={lableHeader} nowrap="" className="px-1 ">
                                                         Opening Stock<br />
                                                         <span
@@ -675,14 +675,14 @@ export const IitemGroupCreate = () => {
                                                                     <input type="hidden" name="item_name[]" value={itemName} />
                                                                 </td>
                                                                 <td className="px-1">
-                                                                <input
-                                type="number"
-                                name="item_hsn[]"
-                                className="form-control hsn"
+                                                                    <input
+                                                                        type="number"
+                                                                        name="item_hsn[]"
+                                                                        className="form-control hsn"
 
-                                value={formData.items[itemIndex]?.hsn || ''}
-                                onChange={(e) => handleItemChange(itemIndex, 'hsn', e.target.value)}
-                              />
+                                                                        value={formData.items[itemIndex]?.hsn || ''}
+                                                                        onChange={(e) => handleItemChange(itemIndex, 'hsn', e.target.value)}
+                                                                    />
                                                                 </td>
                                                                 <td className="px-1">
                                                                     <input
@@ -749,11 +749,11 @@ export const IitemGroupCreate = () => {
                             </Col>
                             <Col sm={12} className="my-4 btn-lg justify-content-end align-items-end">
                                 <Button variant="primary" type="submit" className="mt-4 btn-lg rounded-2 float-end">
-                                {submitLoading ? (
-                                            <>
-                                                <Spinner animation="border" size="sm" className="me-2" /> Saving...
-                                            </>
-                                        ) : ('Submit')}
+                                    {submitLoading ? (
+                                        <>
+                                            <Spinner animation="border" size="sm" className="me-2" /> Saving...
+                                        </>
+                                    ) : ('Submit')}
                                 </Button>
                             </Col>
                         </Card>

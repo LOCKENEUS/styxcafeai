@@ -23,7 +23,7 @@ const PurchaseOrderDetails = () => {
     const { styxData } = useSelector((state) => state.purchaseOrder);
 
     const loading = useSelector((state) => state.purchaseOrder.loading);
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     const POId = purchaseOrder?._id;
 
     const userName = user?.name;
@@ -49,7 +49,7 @@ const PurchaseOrderDetails = () => {
     }, [selectedPo]);
 
     const handleSendMail = () => {
-       dispatch(sendMailToVendor(selectedPo));
+        dispatch(sendMailToVendor(selectedPo));
     }
 
     const handleReceive = () => {
@@ -100,16 +100,16 @@ const PurchaseOrderDetails = () => {
 
     if (loading) {
         return (
-          <Container className="d-flex justify-content-center align-items-center min-vh-100">
-            <Spinner animation="border" role="status">
-            </Spinner>
-          </Container>
+            <Container className="d-flex justify-content-center align-items-center min-vh-100">
+                <Spinner animation="border" role="status">
+                </Spinner>
+            </Container>
         );
-      }
+    }
 
     return (
         <Container id="printableArea">
-            <Row  data-aos="fade-up" data-aos-duration="500" className="mx-2">
+            <Row data-aos="fade-up" data-aos-duration="500" className="mx-2">
                 {/* Breadcrumb Section */}
                 <Col sm={12} className="my-3">
                     <div style={{ top: "186px", fontSize: "18px" }}>
@@ -122,7 +122,7 @@ const PurchaseOrderDetails = () => {
                 </Col>
 
                 <Col sm={12} className="my-2">
-                    <Card  className="p-3">
+                    <Card className="p-3">
                         <Row>
                             <Col sm={6} xs={12}>
                                 <h5 className="text-dark p-2" style={{ fontSize: '18px' }}>

@@ -15,7 +15,7 @@ const CreateCustomerForm = () => {
   const navigate = useNavigate();
   const { id } = useParams(); // For edit mode
   const fileInputRef = useRef(null);
-  const cafeId = JSON.parse(sessionStorage.getItem('user'))?._id;
+  const cafeId = JSON.parse(localStorage.getItem('user'))?._id;
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -164,8 +164,8 @@ const CreateCustomerForm = () => {
     const fetchCustomerData = async () => {
       if (id) {
         try {
-          const user = JSON.parse(sessionStorage.getItem('user'));
-          const authToken = sessionStorage.getItem('authToken');
+          const user = JSON.parse(localStorage.getItem('user'));
+          const authToken = localStorage.getItem('authToken');
           const response = await axios.get(`${import.meta.env.VITE_API_URL}/admin/customer/${id}`,
             {
               headers: {
@@ -232,7 +232,7 @@ const CreateCustomerForm = () => {
 
     setIsSubmitting(true);
 
-    const user = JSON.parse(sessionStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem('user'));
     const submittedData = new FormData();
     submittedData.append("cafe", formData.cafe);
     submittedData.append("name", formData.fullName);

@@ -1,75 +1,84 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 // Async thunk to create a sales package
 export const createShipment = createAsyncThunk(
-  'saShipment/createShipment',
+  "saShipment/createShipment",
   async (shipmentData, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/superadmin/inventory/so/shipment`, 
+      const response = await axios.post(
+        `${BASE_URL}/superadmin/inventory/so/shipment`,
         shipmentData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
-      toast.success('Shipment added successfully!');
+      toast.success("Shipment added successfully!");
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Async thunk to get a purchase receive by ID
 export const getShipmentList = createAsyncThunk(
-  'saShipment/getShipmentList',
+  "saShipment/getShipmentList",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/superadmin/inventory/so/shipment/list`,
+      const response = await axios.get(
+        `${BASE_URL}/superadmin/inventory/so/shipment/list`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 export const getShipmentDetails = createAsyncThunk(
-  'saShipment/getShipmetDetails',
+  "saShipment/getShipmetDetails",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/superadmin/inventory/so/shipment/${id}`,
+      const response = await axios.get(
+        `${BASE_URL}/superadmin/inventory/so/shipment/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 const saShipmentSlice = createSlice({
-  name: 'shipment',
+  name: "shipment",
   initialState: {
-    shipmentList: [],       
-    selectedItem: null,           
+    shipmentList: [],
+    selectedItem: null,
     loading: false,
     error: null,
   },
@@ -101,20 +110,20 @@ const saShipmentSlice = createSlice({
       })
       .addCase(getShipmentList.fulfilled, (state, action) => {
         state.loading = false;
-        state.shipmentList = action.payload; 
+        state.shipmentList = action.payload;
       })
       .addCase(getShipmentList.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-      // get shipment by id 
+      // get shipment by id
       .addCase(getShipmentDetails.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(getShipmentDetails.fulfilled, (state, action) => {
         state.loading = false;
-        state.selectedItem = action.payload; 
+        state.selectedItem = action.payload;
       })
       .addCase(getShipmentDetails.rejected, (state, action) => {
         state.loading = false;

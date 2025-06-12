@@ -1,116 +1,128 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 // Fetch all item groups
 export const getItemGroups = createAsyncThunk(
-  'itemGroups/getItemGroups',
+  "itemGroups/getItemGroups",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/inventory/item-group/list/${id}`,
+      const response = await axios.get(
+        `${BASE_URL}/admin/inventory/item-group/list/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Fetch a single item group by ID
 export const getItemGroupById = createAsyncThunk(
-  'itemGroups/getItemGroupById',
+  "itemGroups/getItemGroupById",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/inventory/item-group/${id}`,
+      const response = await axios.get(
+        `${BASE_URL}/admin/inventory/item-group/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Add a new item group
 export const addItemGroup = createAsyncThunk(
-  'itemGroups/addItemGroup',
+  "itemGroups/addItemGroup",
   async (itemGroupData, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/admin/inventory/item-group`, 
+      const response = await axios.post(
+        `${BASE_URL}/admin/inventory/item-group`,
         itemGroupData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
-      toast.success('Item group added successfully!');
+      toast.success("Item group added successfully!");
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Update an item group
 export const updateItemGroup = createAsyncThunk(
-  'itemGroups/updateItemGroup',
+  "itemGroups/updateItemGroup",
   async ({ id, itemGroupData }, thunkAPI) => {
     try {
-      const response = await axios.put(`${BASE_URL}/admin/inventory/item-group/${id}`, 
+      const response = await axios.put(
+        `${BASE_URL}/admin/inventory/item-group/${id}`,
         itemGroupData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
-      toast.success('Item group updated successfully!');
+      toast.success("Item group updated successfully!");
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Delete an item group
 export const deleteItemGroup = createAsyncThunk(
-  'itemGroups/deleteItemGroup',
+  "itemGroups/deleteItemGroup",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`${BASE_URL}/admin/inventory/item-group/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
-          },
-        }
-      );
-      toast.success('Item group deleted successfully!');
+      await axios.delete(`${BASE_URL}/admin/inventory/item-group/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
+      toast.success("Item group deleted successfully!");
       return id;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 const itemGroupSlice = createSlice({
-  name: 'itemGroups',
+  name: "itemGroups",
   initialState: {
     itemGroups: [],
     selectedItemGroup: null,
@@ -166,7 +178,9 @@ const itemGroupSlice = createSlice({
       })
       .addCase(deleteItemGroup.fulfilled, (state, action) => {
         state.loading = false;
-        state.itemGroups = state.itemGroups.filter((group) => group._id !== action.payload);
+        state.itemGroups = state.itemGroups.filter(
+          (group) => group._id !== action.payload
+        );
       })
       .addCase(deleteItemGroup.rejected, (state, action) => {
         state.loading = false;
@@ -181,12 +195,17 @@ const itemGroupSlice = createSlice({
         state.loading = false;
         const updatedGroup = action.payload;
         // Find the group in the array and update it
-        const index = state.itemGroups.findIndex(group => group._id === updatedGroup._id);
+        const index = state.itemGroups.findIndex(
+          (group) => group._id === updatedGroup._id
+        );
         if (index !== -1) {
           state.itemGroups[index] = updatedGroup;
         }
         // Also update selectedItemGroup if it's the same group
-        if (state.selectedItemGroup && state.selectedItemGroup._id === updatedGroup._id) {
+        if (
+          state.selectedItemGroup &&
+          state.selectedItemGroup._id === updatedGroup._id
+        ) {
           state.selectedItemGroup = updatedGroup;
         }
       })

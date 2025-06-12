@@ -7,20 +7,20 @@ import { toast } from "react-toastify";
 const Brand = ({ show, handleClose, onCreated }) => {
     const dispatch = useDispatch();
     const loading = useSelector(state => state.customFields.loading);
-    const user = JSON.parse(sessionStorage.getItem("user"));
-    
-    
+    const user = JSON.parse(localStorage.getItem("user"));
+
+
     const cafeId = user?._id || '';
-    
+
     const [formData, setFormData] = useState({
         name: '',
         code: '',
-        cafe: cafeId, 
+        cafe: cafeId,
         type: 'Brand',
         description: 'Brand measurement for inventory'
     });
 
-  
+
     useEffect(() => {
         setFormData(prev => ({
             ...prev,
@@ -37,9 +37,9 @@ const Brand = ({ show, handleClose, onCreated }) => {
     };
 
     const handleSubmitBrand = (e) => {
-        e.preventDefault(); 
-        
-        
+        e.preventDefault();
+
+
         if (!formData.cafe) {
             toast.error('Cafe ID is missing. Please try logging in again.');
             return;
@@ -74,25 +74,25 @@ const Brand = ({ show, handleClose, onCreated }) => {
                 <Modal.Title>Brand</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form  autoComplete="off">
+                <Form autoComplete="off">
                     <div className="row">
                         <div className="col-sm-12 mb-3">
                             <Form.Group controlId="brand_name">
                                 <Form.Label>Brand name</Form.Label>
-                                <Form.Control 
-                                    type="text" 
+                                <Form.Control
+                                    type="text"
                                     name="name"
                                     value={formData.name}
                                     onChange={handleInputChange}
-                                    placeholder="Brand Name" 
-                                    required 
+                                    placeholder="Brand Name"
+                                    required
                                 />
                             </Form.Group>
                         </div>
                         <div className="col-12">
-                            <Button 
-                                type="button" 
-                                className="btn btn-primary" 
+                            <Button
+                                type="button"
+                                className="btn btn-primary"
                                 id="brandSubmitBtn"
                                 onClick={handleSubmitBrand}
                                 disabled={loading}

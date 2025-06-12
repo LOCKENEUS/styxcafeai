@@ -16,7 +16,7 @@ export const PurchaseBillDetails = () => {
     const dispatch = useDispatch();
     const { id } = useParams();
     const { selectedBill, loading } = useSelector((state) => state.saPurchaseBill);
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     const navigate = useNavigate();
     const [collectAmount, setCollectAmount] = useState(0);
     const [showCollectModal, setShowCollectModal] = useState(false);
@@ -203,7 +203,7 @@ export const PurchaseBillDetails = () => {
 
                     {/* Vendor & Order Details */}
                     <Col sm={12} className="my-2">
-                        <Card className="p-3 shadow-sm mb-2"> 
+                        <Card className="p-3 shadow-sm mb-2">
                             <Row className="align-items-center">
                                 <Col sm={2}>
                                     <img src={Lockenelogo} alt="Logo" className="img-fluid" />

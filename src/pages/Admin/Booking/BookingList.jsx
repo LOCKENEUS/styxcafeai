@@ -31,7 +31,7 @@ const BookingList = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     const cafeId = user?._id;
     const { bookings } = useSelector((state) => state.bookings);
     const { games, status } = useSelector((state) => state.games);
@@ -60,7 +60,7 @@ const BookingList = () => {
     }, [cancelled])
 
     useEffect(() => {
-        const user = JSON.parse(sessionStorage.getItem('user'));
+        const user = JSON.parse(localStorage.getItem('user'));
         if (user?._id) {
             dispatch(getGames(user._id));
         }

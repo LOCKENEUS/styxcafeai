@@ -1,112 +1,124 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 // Fetch all vendors
 export const getVendors = createAsyncThunk(
-  'vendors/getVendors',
+  "vendors/getVendors",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/inventory/vendor/list/${id}`,
+      const response = await axios.get(
+        `${BASE_URL}/admin/inventory/vendor/list/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
       return response.data.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Fetch a single vendor by ID
 export const getVendorById = createAsyncThunk(
-  'vendors/getVendorById',
+  "vendors/getVendorById",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/inventory/vendor/${id}`,
+      const response = await axios.get(
+        `${BASE_URL}/admin/inventory/vendor/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
       return response.data.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Add a new vendor
 export const addVendor = createAsyncThunk(
-  'vendors/addVendor',
+  "vendors/addVendor",
   async (vendorData, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/admin/inventory/vendor`, 
+      const response = await axios.post(
+        `${BASE_URL}/admin/inventory/vendor`,
         vendorData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
-      toast.success('Vendor added successfully!');
+      toast.success("Vendor added successfully!");
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Update a vendor
 export const updateVendor = createAsyncThunk(
-  'vendors/updateVendor',
+  "vendors/updateVendor",
   async ({ id, vendorData }, thunkAPI) => {
     try {
-      const response = await axios.put(`${BASE_URL}/admin/inventory/vendor/${id}`, 
+      const response = await axios.put(
+        `${BASE_URL}/admin/inventory/vendor/${id}`,
         vendorData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
-      toast.success('Vendor updated successfully!');
+      toast.success("Vendor updated successfully!");
       return response.data.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Delete a vendor
 export const deleteVendor = createAsyncThunk(
-  'vendors/deleteVendor',
+  "vendors/deleteVendor",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`${BASE_URL}/admin/inventory/vendor/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
-          },
-        }
-      );
-      toast.success('Vendor deleted successfully!');
+      await axios.delete(`${BASE_URL}/admin/inventory/vendor/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
+      toast.success("Vendor deleted successfully!");
       return id;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 const vendorsSlice = createSlice({
-  name: 'vendors',
+  name: "vendors",
   initialState: {
     vendors: [],
     selectedVendor: null,
@@ -166,7 +178,9 @@ const vendorsSlice = createSlice({
       })
       .addCase(deleteVendor.fulfilled, (state, action) => {
         state.loading = false;
-        state.vendors = state.vendors.filter((vendor) => vendor._id !== action.payload);
+        state.vendors = state.vendors.filter(
+          (vendor) => vendor._id !== action.payload
+        );
       })
       .addCase(deleteVendor.rejected, (state, action) => {
         state.loading = false;
@@ -181,12 +195,17 @@ const vendorsSlice = createSlice({
         state.loading = false;
         const updatedVendor = action.payload;
         // Find the vendor in the array and update it
-        const index = state.vendors.findIndex(vendor => vendor._id === updatedVendor._id);
+        const index = state.vendors.findIndex(
+          (vendor) => vendor._id === updatedVendor._id
+        );
         if (index !== -1) {
           state.vendors[index] = updatedVendor;
         }
         // Also update selectedVendor if it's the same vendor
-        if (state.selectedVendor && state.selectedVendor._id === updatedVendor._id) {
+        if (
+          state.selectedVendor &&
+          state.selectedVendor._id === updatedVendor._id
+        ) {
           state.selectedVendor = updatedVendor;
         }
       })

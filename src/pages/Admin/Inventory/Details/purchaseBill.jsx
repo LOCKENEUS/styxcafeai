@@ -16,7 +16,7 @@ export const PurchaseBillDetailsAdmin = () => {
     const dispatch = useDispatch();
     const { id } = useParams();
     const { selectedBill, loading } = useSelector((state) => state.pBill);
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     const navigate = useNavigate();
     const [collectAmount, setCollectAmount] = useState(0);
     const [showCollectModal, setShowCollectModal] = useState(false);

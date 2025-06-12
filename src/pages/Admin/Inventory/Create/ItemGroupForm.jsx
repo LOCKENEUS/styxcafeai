@@ -32,7 +32,7 @@ const ItemGroupForm = () => {
   const [attributes, setAttributes] = useState([{ color: "", options: "" }]);
   const [taxPreference, setTaxPreference] = useState("Taxable");
   const [itemGroupName, setItemGroupName] = useState("");
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
 
   const [formData, setFormData] = useState({
@@ -61,7 +61,7 @@ const ItemGroupForm = () => {
   const [latestCreatedTax, setLatestCreatedTax] = useState(null);
 
   useEffect(() => {
-    const cafeId = JSON.parse(sessionStorage.getItem("user"))?._id;
+    const cafeId = JSON.parse(localStorage.getItem("user"))?._id;
     dispatch(getCustomFields(cafeId));
     dispatch(getTaxFields(cafeId));
 
@@ -322,7 +322,7 @@ const ItemGroupForm = () => {
   const generateItems = () => {
     const items = [];
     let globalIndex = 0;
-  
+
     attributes.forEach((attribute, attrIndex) => {
       const options = attribute.options.split(",").map((option) => option.trim());
       options.forEach((option, optIndex) => {
@@ -332,9 +332,9 @@ const ItemGroupForm = () => {
             (acc, attr) => acc + attr.options.split(",").length,
             0
           ) + optIndex;
-  
+
         const itemName = `${formData.group_name} ${attribute.color} ${option}`;
-  
+
         const item = {
           name: itemName,
           sku: formData.items[itemIndex]?.sku || "", // Do not generate SKU by default

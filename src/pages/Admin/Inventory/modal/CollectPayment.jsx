@@ -6,7 +6,7 @@ import { addPayment, getPaymentById } from '../../../../store/AdminSlice/Invento
 const CollectPayment = ({ show, handleClose, maxAmount, invoiceId, onSuccess }) => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.payment || {});
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
   const [showError, setShowError] = useState(false);
 
@@ -38,7 +38,7 @@ const CollectPayment = ({ show, handleClose, maxAmount, invoiceId, onSuccess }) 
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    
+
     if (name === 'deposit_amount') {
       const amount = parseFloat(value);
       if (amount > maxAmount) {
@@ -77,7 +77,7 @@ const CollectPayment = ({ show, handleClose, maxAmount, invoiceId, onSuccess }) 
 
   return (
     <Modal style={{ zIndex: 10000 }} show={show} onHide={handleClose} centered >
-      <ModalHeader closeButton style={{ backgroundColor: '#bad1f7', padding:"1rem" }}>
+      <ModalHeader closeButton style={{ backgroundColor: '#bad1f7', padding: "1rem" }}>
         <ModalTitle>Collect Payment</ModalTitle>
       </ModalHeader>
       <ModalBody>
@@ -170,8 +170,8 @@ const CollectPayment = ({ show, handleClose, maxAmount, invoiceId, onSuccess }) 
         <Button variant="secondary" onClick={handleClose}>
           Close
         </Button>
-        <Button 
-          variant="primary" 
+        <Button
+          variant="primary"
           onClick={handleSubmit}
           disabled={loading || showError}
         >

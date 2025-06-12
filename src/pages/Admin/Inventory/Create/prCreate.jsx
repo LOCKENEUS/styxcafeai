@@ -44,7 +44,7 @@ export const PRCreate = () => {
 
     const { purchaseOrder, selectedPo } = useSelector((state) => state.purchaseOrder);
     const { vendors, loading, error } = useSelector(state => state.vendors);
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     const cafeId = user?._id;
     const userName = user?.name;
     const userEmail = user?.email;

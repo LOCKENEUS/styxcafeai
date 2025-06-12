@@ -6,7 +6,7 @@ import { addCustomField } from '../../../../store/AdminSlice/CustomField';
 const PaymentTermsModal = ({ show, handleClose, onCreated }) => {
   const dispatch = useDispatch();
   const loading = useSelector(state => state.customFields.loading);
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
 
   const [formData, setFormData] = useState({
@@ -32,11 +32,11 @@ const PaymentTermsModal = ({ show, handleClose, onCreated }) => {
       };
 
       const response = await dispatch(addCustomField(submitData)).unwrap();
-      
+
       if (onCreated && response) {
         onCreated(response);
       }
-      
+
       handleClose();
       setFormData({
         name: '',
@@ -50,13 +50,13 @@ const PaymentTermsModal = ({ show, handleClose, onCreated }) => {
     }
   };
 
-  return (  
+  return (
     <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header  className="bg-info bg-opacity-25 ">
-      <h4 className="fs-2 mt-0 mb-4">Payment Terms</h4>
-        <Button 
-          variant="link" 
-          className="btn-close mb-3" 
+      <Modal.Header className="bg-info bg-opacity-25 ">
+        <h4 className="fs-2 mt-0 mb-4">Payment Terms</h4>
+        <Button
+          variant="link"
+          className="btn-close mb-3"
           onClick={handleClose}
         />
       </Modal.Header>
@@ -71,7 +71,7 @@ const PaymentTermsModal = ({ show, handleClose, onCreated }) => {
                 <Form.Label className='fw-semibold text-muted' htmlFor="term_name">Term name</Form.Label>
                 <Form.Control
                   id="term_name"
-                  name="term_name" 
+                  name="term_name"
                   type="text"
                   placeholder="Net 15"
                   onChange={handleChange}
@@ -85,16 +85,16 @@ const PaymentTermsModal = ({ show, handleClose, onCreated }) => {
                 <Form.Control
                   id="term_days"
                   name="term_days"
-                  type="number" 
+                  type="number"
                   placeholder="15"
                   onChange={handleChange}
-                  
+
                   required
                 />
               </Form.Group>
             </Col>
             <Col xs={12}>
-              <Button 
+              <Button
                 variant="outline-primary"
                 className="mx-2 float-end my-2"
                 type="submit"

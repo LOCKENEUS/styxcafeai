@@ -46,7 +46,7 @@ export const PoUpdate = () => {
   const [products, setProducts] = useState([
     { id: 1, item: "", quantity: 1, price: 0, tax: 0, total: 0, totalTax: 0 },
   ]);
-  const [selectedCafe, setSelectedCafe] = useState(""); 
+  const [selectedCafe, setSelectedCafe] = useState("");
   const [showProductList, setShowProductList] = useState(false);
   const [showTaxModal, setShowTaxModal] = useState(false);
   const [taxList, setTaxList] = useState([]);
@@ -67,7 +67,7 @@ export const PoUpdate = () => {
   const [vendorSelected, setVendorSelected] = useState([]);
   const [selectedOption, setSelectedOption] = useState("Organization");
   const [vendorId, setVendorId] = useState("");
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const cafeId = user?._id;
 
@@ -495,13 +495,13 @@ export const PoUpdate = () => {
                     {cafes.map((cafe, index) => (
                       <option key={index} value={cafe._id}>
                         {cafe.name}
-                      </option> 
+                      </option>
                     ))}
                   </Form.Select>
                   <div className="my-3">
                     {/* <p className="my-0 mx-2">{customersList?.address}</p> */}
-                      <p className="my-0 mx-2">{selectedCafe?.name}</p>
-                      <p className="my-0 mx-2">{selectedCafe?.address},</p>
+                    <p className="my-0 mx-2">{selectedCafe?.name}</p>
+                    <p className="my-0 mx-2">{selectedCafe?.address},</p>
                   </div>
                 </>
               )}

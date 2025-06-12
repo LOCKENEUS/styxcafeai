@@ -2,7 +2,7 @@
 // import { Outlet, Navigate } from "react-router-dom";
 
 // const PrivateRoute = () => {
-//   const isAuthenticated = sessionStorage.getItem("authToken");
+//   const isAuthenticated = localStorage.getItem("authToken");
 //   return isAuthenticated ? <Outlet /> : <Navigate to="/superadmin/login" replace />;
 // };
 
@@ -12,8 +12,8 @@
 import { Outlet, Navigate } from "react-router-dom";
 
 const PrivateRoute = () => {
-  const isAuthenticated = sessionStorage.getItem("authToken");
-  const userRole = JSON.parse(sessionStorage.getItem("userRole") || '""');
+  const isAuthenticated = localStorage.getItem("authToken");
+  const userRole = JSON.parse(localStorage.getItem("userRole") || '""');
 
   return isAuthenticated && userRole === "superadmin" ? <Outlet /> : <Navigate to="/admin/login" replace />;
 };

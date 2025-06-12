@@ -8,7 +8,7 @@ import { addSaVendor } from "../../../../store/slices/Inventory/saVendorSlice";
 export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const [submitLoading, setSubmitLoading] = useState(false);
   const cafeId = user?._id;
   const [newClient, setNewClient] = useState({

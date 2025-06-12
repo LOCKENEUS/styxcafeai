@@ -37,7 +37,7 @@ const ItemGroupList = () => {
   };
   const [searchText, setSearchText] = useState("");
   const dispatch = useDispatch();
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
   const { itemGroups, loading, error } = useSelector(
     (state) => state.itemGroups
@@ -91,7 +91,7 @@ const ItemGroupList = () => {
     <Container fluid className="px-3">
       <Row>
         <Col sm={12} className="mx-md-4 mb-3">
-          <div style={{ top: "186px",  fontSize: "16px" }}>
+          <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
               <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>

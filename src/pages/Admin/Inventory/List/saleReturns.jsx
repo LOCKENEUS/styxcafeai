@@ -27,7 +27,7 @@ export const InvoicePaymentInventory = () => {
   const navigator = useNavigate();
 
   useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     const cafeId = user?._id;
     if (cafeId) {
       dispatch(getPayments(cafeId));
@@ -35,7 +35,7 @@ export const InvoicePaymentInventory = () => {
   }, [dispatch]);
 
   const getRandomColor = (str) => {
-    const colors = ["#FAED39", "#FF5733", "#33FF57", "#339FFF", "#FF33F6", "#FFAA33","#39DDFA","#3DFF16"];
+    const colors = ["#FAED39", "#FF5733", "#33FF57", "#339FFF", "#FF33F6", "#FFAA33", "#39DDFA", "#3DFF16"];
     let index = str?.charCodeAt(0) % colors.length || 0;
     return colors[index];
   };
@@ -47,12 +47,12 @@ export const InvoicePaymentInventory = () => {
   const handleExport = () => {
     // Define CSV headers
     const csvHeader = "S/N,Invoice ID,Amount,Payment Mode,Payment Date,Description\n";
-    
+
     // Convert payments data to CSV rows
     const csvRows = filteredItems.map((payment, index) => {
       // Format the date
       const date = new Date(payment.deposit_date);
-      const formattedDate = date instanceof Date && !isNaN(date) 
+      const formattedDate = date instanceof Date && !isNaN(date)
         ? `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`
         : "N/A";
 
@@ -117,8 +117,8 @@ export const InvoicePaymentInventory = () => {
             {row?.invoice_id?.so_no?.charAt(0).toUpperCase()}
           </span>
           <div>
-            <div 
-              style={{ color: "#0062FF", cursor: "pointer" }} 
+            <div
+              style={{ color: "#0062FF", cursor: "pointer" }}
               onClick={() => handleDetails(row?.invoice_id?._id)}
             >
               {row?.invoice_id?.so_no}
@@ -127,20 +127,20 @@ export const InvoicePaymentInventory = () => {
         </div>
       ),
     },
-    { 
-      name: "Amount", 
+    {
+      name: "Amount",
       selector: (row) => `₹${row.deposit_amount}`,
-      sortable: true 
+      sortable: true
     },
-    { 
-      name: "Payment Mode", 
-      selector: (row) => row.mode, 
-      sortable: true 
+    {
+      name: "Payment Mode",
+      selector: (row) => row.mode,
+      sortable: true
     },
-    { 
-      name: "Payment Date", 
+    {
+      name: "Payment Date",
       selector: (row) => new Date(row.deposit_date).toLocaleDateString(),
-      sortable: true 
+      sortable: true
     },
     // { 
     //   name: "Description", 
@@ -205,23 +205,23 @@ export const InvoicePaymentInventory = () => {
               </Col>
 
               <Col sm={5} className="d-flex justify-content-end text-end my-2">
-                <Button 
-                  variant="white" 
-                  className="btn px-4 mx-2" 
-                  size="sm" 
+                <Button
+                  variant="white"
+                  className="btn px-4 mx-2"
+                  size="sm"
                   style={{ borderColor: "#FF3636", color: "#FF3636" }}
                   onClick={handleExport}
                 >
-                  <Image 
-                    className="me-2 size-sm" 
-                    style={{ width: "22px", height: "22px" }} 
-                    src={solar_export} 
+                  <Image
+                    className="me-2 size-sm"
+                    style={{ width: "22px", height: "22px" }}
+                    src={solar_export}
                   />
                   Export
                 </Button>
               </Col>
 
-              <Col sm={12} style={{marginTop:"30px"}}>
+              <Col sm={12} style={{ marginTop: "30px" }}>
                 {loading ? (
                   <div className="text-center p-4">
                     <Loader />
@@ -232,32 +232,32 @@ export const InvoicePaymentInventory = () => {
                     data={filteredItems}
                     highlightOnHover
                     pagination
-                  paginationPerPage={10}
-                  paginationRowsPerPageOptions={[10, 20, 30, 40]}
+                    paginationPerPage={10}
+                    paginationRowsPerPageOptions={[10, 20, 30, 40]}
                     responsive
                     persistTableHead
                     customStyles={{
-                      rows: { 
-                        style: { 
-                          backgroundColor: "#ffffff", 
+                      rows: {
+                        style: {
+                          backgroundColor: "#ffffff",
                           padding: 'clamp(10px, 2vw, 15px)',
                           border: 'none',
                           fontSize: '14px',
-                        } 
+                        }
                       },
                       headCells: {
-                        style: { 
-                          backgroundColor: "#e9f5f8", 
+                        style: {
+                          backgroundColor: "#e9f5f8",
                           padding: 'clamp(10px, 2vw, 15px)',
                           border: 'none',
                           fontSize: 'clamp(14px, 3vw, 16px)',
                         },
                       },
-                      table: { 
-                        style: { 
-                          borderRadius: "5px", 
-                          overflow: "hidden" 
-                        } 
+                      table: {
+                        style: {
+                          borderRadius: "5px",
+                          overflow: "hidden"
+                        }
                       },
                     }}
                   />

@@ -14,7 +14,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 
 const PublicRoute = ({ isAuthenticated }) => {
-  const userRole = JSON.parse(sessionStorage.getItem("userRole"));
+  const userRole = JSON.parse(localStorage.getItem("userRole"));
 
   // If user is authenticated, redirect based on their role
   if (isAuthenticated) {

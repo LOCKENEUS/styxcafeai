@@ -21,7 +21,7 @@ export const TaxModal = ({ show, handleClose }) => {
     tax_description: "",
   });
 
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const superAdminId = user?._id;
 
   const handleInputChange = (e) => {

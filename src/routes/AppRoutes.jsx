@@ -331,9 +331,9 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Navigate
             to={
               isAuthenticated
-                ? sessionStorage.getItem("userRole") === "superadmin"
+                ? localStorage.getItem("userRole") === "superadmin"
                   ? "/superadmin/dashboard"
-                  : sessionStorage.getItem("userRole") === "admin"
+                  : localStorage.getItem("userRole") === "admin"
                     ? "/splash"
                     : "/admin/login"
                 : "/admin/login"
@@ -348,9 +348,9 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Navigate
             to={
               isAuthenticated
-                ? sessionStorage.getItem("userRole") === "superadmin"
+                ? localStorage.getItem("userRole") === "superadmin"
                   ? "/superadmin/dashboard"
-                  : sessionStorage.getItem("userRole") === "admin"
+                  : localStorage.getItem("userRole") === "admin"
                     ? "/splash"
                     : "/user/dashboard"
                 : "/admin/login"

@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Row, Col, Form, FormGroup, Modal, ModalHeader, ModalBody, ModalFooter, ModalTitle, Alert } from "react-bootstrap";
 import { useDispatch, useSelector } from 'react-redux';
-import { 
-  addPurchaseBillPayment as addPayment, 
-  getPurchaseBillPaymentById as getPaymentById 
+import {
+  addPurchaseBillPayment as addPayment,
+  getPurchaseBillPaymentById as getPaymentById
 } from '../../../../store/AdminSlice/Inventory/CollectPurchaseBill';
 import { collectInvoicePayment } from '../../../../store/slices/Inventory/invoiceSlice';
 
 const CollectInvoicePayment = ({ show, handleClose, maxAmount, invoiceId, onSuccess }) => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.payments || {});
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [showError, setShowError] = useState(false);
 
@@ -40,7 +40,7 @@ const CollectInvoicePayment = ({ show, handleClose, maxAmount, invoiceId, onSucc
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    
+
     if (name === 'deposit_amount') {
       const amount = parseFloat(value);
       if (amount > maxAmount) {
@@ -66,11 +66,11 @@ const CollectInvoicePayment = ({ show, handleClose, maxAmount, invoiceId, onSucc
       await dispatch(collectInvoicePayment(formData)).unwrap();
       // Close modal and trigger success callback
       handleClose();
-    //   if (onSuccess) {
-    //     onSuccess();
-    //   }
+      //   if (onSuccess) {
+      //     onSuccess();
+      //   }
     } catch (error) {
-        console.log("reached here")
+      console.log("reached here")
       console.error('Failed to collect payment:', error);
       setShowError(true);
     }
@@ -78,7 +78,7 @@ const CollectInvoicePayment = ({ show, handleClose, maxAmount, invoiceId, onSucc
 
   return (
     <Modal style={{ zIndex: 10000 }} show={show} onHide={handleClose} centered >
-      <ModalHeader closeButton style={{ backgroundColor: '#bad1f7', padding:"1rem" }}>
+      <ModalHeader closeButton style={{ backgroundColor: '#bad1f7', padding: "1rem" }}>
         <ModalTitle>Collect Payment</ModalTitle>
       </ModalHeader>
       <ModalBody>
@@ -171,8 +171,8 @@ const CollectInvoicePayment = ({ show, handleClose, maxAmount, invoiceId, onSucc
         <Button variant="secondary" onClick={handleClose}>
           Close
         </Button>
-        <Button 
-          variant="primary" 
+        <Button
+          variant="primary"
           onClick={handleSubmit}
           disabled={loading || showError}
         >

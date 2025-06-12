@@ -100,15 +100,17 @@ export const deleteGame = createAsyncThunk(
 
 export const getGamesCommission = createAsyncThunk(
   "games/getGamesCommission",
-  async ({cafeId, updatedData}, thunkAPI) => {
+  async ({ cafeId, updatedData }, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/superadmin/game/commission/${cafeId}`,
+      const response = await axios.post(
+        `${BASE_URL}/superadmin/game/commission/${cafeId}`,
         updatedData,
         {
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
-        },
-      });
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
+      );
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -202,7 +204,7 @@ const gameSlice = createSlice({
       .addCase(getGamesCommission.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
-      })
+      });
   },
 });
 

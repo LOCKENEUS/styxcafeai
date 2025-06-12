@@ -16,7 +16,7 @@ import {
 const Units = ({ show, handleClose, onCreated }) => {
     const dispatch = useDispatch();
     const loading = useSelector(state => state.customFields.loading);
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     const cafeId = user?._id;
     const [formData, setFormData] = useState({
         name: '',

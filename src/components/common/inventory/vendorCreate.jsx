@@ -537,7 +537,7 @@ export const VendorCreate = () => {
         shippingCoordinates: { latitude: '', longitude: '' },
     })
     const [imagePreview, setImagePreview] = useState('https://fsm.lockene.net/assets/Web-Fsm/images/avtar/3.jpg');
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     const cafeId = user?._id;
     const [countries, setCountries] = useState([]);
     const [states, setStates] = useState([]);

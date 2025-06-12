@@ -13,7 +13,7 @@ export const CreateVendor = createAsyncThunk(
         vendorData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -46,7 +46,7 @@ export const GetVendorsList = createAsyncThunk(
         `${BASE_URL}/admin/inventory/vendor/list/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -69,7 +69,7 @@ export const CreatePurchaseOrder = createAsyncThunk(
         POData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -87,14 +87,14 @@ export const CreatePurchaseOrder = createAsyncThunk(
 
 export const UpdatePurchaseOrder = createAsyncThunk(
   "purchaseOrder/UpdatePurchaseOrder",
-  async ({id, POData}, thunkAPI) => {
+  async ({ id, POData }, thunkAPI) => {
     try {
       const response = await axios.put(
         `${BASE_URL}/admin/inventory/po/${id}`,
         POData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -119,7 +119,7 @@ export const GetPOList = createAsyncThunk(
         `${BASE_URL}/admin/inventory/po/list/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -132,7 +132,7 @@ export const GetPOList = createAsyncThunk(
   }
 );
 
-// cafe PO with styxcafe 
+// cafe PO with styxcafe
 export const GetCafePOList = createAsyncThunk(
   "purchaseOrder/GetCafePOList",
   async (id, thunkAPI) => {
@@ -141,7 +141,7 @@ export const GetCafePOList = createAsyncThunk(
         `${BASE_URL}/admin/inventory/po/cafe/list/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -163,7 +163,7 @@ export const GetPOListByVendor = createAsyncThunk(
         `${BASE_URL}/admin/inventory/po/list/${id}/${vendor}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -185,7 +185,7 @@ export const GetPurchaseOrder = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/admin/inventory/po/${id}`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
       });
       return response.data.data;
@@ -208,7 +208,7 @@ export const sendMailToVendor = createAsyncThunk(
         orderData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -234,17 +234,21 @@ export const sendMailToVendor = createAsyncThunk(
 );
 
 export const getStyxData = createAsyncThunk(
-  'purchaseOrder/getStyxData',
+  "purchaseOrder/getStyxData",
   async (__, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${BASE_URL}/user`, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       });
-      console.log("response", response.data)
+      console.log("response", response.data);
       return response.data.data;
     } catch (error) {
-      toast.error('Failed to fetch Styx data');
-      return rejectWithValue(error.response?.data?.message || error.message || "Failed to fetch Styx data");
+      toast.error("Failed to fetch Styx data");
+      return rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to fetch Styx data"
+      );
     }
   }
 );
@@ -281,8 +285,8 @@ const OPSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Get cafe PO with superadmin 
-        .addCase(GetCafePOList.pending, (state) => {
+      // Get cafe PO with superadmin
+      .addCase(GetCafePOList.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
@@ -295,7 +299,7 @@ const OPSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Get cafe PO with superadmin 
+      // Get cafe PO with superadmin
       .addCase(getStyxData.pending, (state) => {
         state.loading = true;
         state.error = null;

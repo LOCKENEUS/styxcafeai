@@ -37,7 +37,7 @@ export const CreateVendorForm = () => {
         shippingCoordinates: { latitude: '', longitude: '' },
     })
     const [imagePreview, setImagePreview] = useState('https://fsm.lockene.net/assets/Web-Fsm/images/avtar/3.jpg');
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     const cafeId = user?._id;
     const [countries, setCountries] = useState([]);
     const [states, setStates] = useState([]);
@@ -93,11 +93,11 @@ export const CreateVendorForm = () => {
                     longitude: selectedVendor.longitude2
                 },
             });
-            if(selectedVendor.image){
+            if (selectedVendor.image) {
                 setImagePreview(`${import.meta.env.VITE_API_URL}/${selectedVendor.image}`);
             }
         }
-        
+
     }, [selectedVendor]);
 
     useEffect(() => {
@@ -165,7 +165,7 @@ export const CreateVendorForm = () => {
         const { id, value } = e.target;
         setFormData((prev) => ({
             ...prev,
-            [id]: value, 
+            [id]: value,
         }));
     };
     const handleImageChange = (event) => {
@@ -197,7 +197,7 @@ export const CreateVendorForm = () => {
     const handleBillingAddressSelect = (place) => {
         const placeId = place.value.place_id;
         const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
-        
+
         axios
             .get(
                 `https://maps.googleapis.com/maps/api/geocode/json?place_id=${placeId}&key=${apiKey}`
@@ -206,19 +206,19 @@ export const CreateVendorForm = () => {
                 if (!res.data.results || res.data.results.length === 0) {
                     throw new Error('No address details found for this location');
                 }
-                
+
                 const result = res.data.results[0];
                 const addressComponents = result.address_components;
                 const location = result.geometry.location;
-                
+
                 let city = "";
                 let state = "";
                 let country = "";
                 let zipCode = "";
-                
+
                 addressComponents.forEach((component) => {
                     const types = component.types;
-                    
+
                     if (types.includes("locality")) {
                         city = component.long_name;
                     } else if (types.includes("administrative_area_level_1")) {
@@ -229,9 +229,9 @@ export const CreateVendorForm = () => {
                         zipCode = component.long_name;
                     }
                 });
-                
+
                 const formattedAddress = result.formatted_address || place.label;
-                
+
                 setFormData(prev => ({
                     ...prev,
                     address: formattedAddress,
@@ -250,7 +250,7 @@ export const CreateVendorForm = () => {
     const handleShippingAddressSelect = (place) => {
         const placeId = place.value.place_id;
         const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
-        
+
         axios
             .get(
                 `https://maps.googleapis.com/maps/api/geocode/json?place_id=${placeId}&key=${apiKey}`
@@ -259,19 +259,19 @@ export const CreateVendorForm = () => {
                 if (!res.data.results || res.data.results.length === 0) {
                     throw new Error('No address details found for this location');
                 }
-                
+
                 const result = res.data.results[0];
                 const addressComponents = result.address_components;
                 const location = result.geometry.location;
-                
+
                 let city = "";
                 let state = "";
                 let country = "";
                 let zipCode = "";
-                
+
                 addressComponents.forEach((component) => {
                     const types = component.types;
-                    
+
                     if (types.includes("locality")) {
                         city = component.long_name;
                     } else if (types.includes("administrative_area_level_1")) {
@@ -282,9 +282,9 @@ export const CreateVendorForm = () => {
                         zipCode = component.long_name;
                     }
                 });
-                
+
                 const formattedAddress = result.formatted_address || place.label;
-                
+
                 setFormData(prev => ({
                     ...prev,
                     shippingAddress: formattedAddress,
@@ -357,14 +357,14 @@ export const CreateVendorForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         if (!validateForm()) {
             return;
         }
 
         // Create FormData object for file upload
         const formDataToSend = new FormData();
-        
+
         // Add all the text fields
         formDataToSend.append('name', formData.vendorName);
         formDataToSend.append('emailID', formData.vendorEmail);
@@ -386,13 +386,13 @@ export const CreateVendorForm = () => {
         formDataToSend.append('ifsc', formData.ifsccode);
         formDataToSend.append('accountType', formData.accounttype);
         formDataToSend.append('cafe', cafeId);
-        
-        
+
+
         // Add the image file if it exists
         if (formData.image) {
             formDataToSend.append('image', formData.image);
         }
-        
+
         // Add latitude and longitude only if they exist
         if (formData.billingCoordinates.latitude) {
             formDataToSend.append('latitude1', formData.billingCoordinates.latitude);
@@ -406,7 +406,7 @@ export const CreateVendorForm = () => {
         if (formData.shippingCoordinates.longitude) {
             formDataToSend.append('longitude2', formData.shippingCoordinates.longitude);
         }
-        
+
         if (id) {
             dispatch(updateVendor({ id, vendorData: formDataToSend }))
                 .unwrap()
@@ -430,617 +430,618 @@ export const CreateVendorForm = () => {
         }
     }
     return (
-        <Container data-aos="fade-up" data-aos-duration="700"> 
-            <Row 
-            style={{ marginTop: "50px", 
-                // backgroundColor:"#F2F2F2",height:"100vh" 
-                
+        <Container data-aos="fade-up" data-aos-duration="700">
+            <Row
+                style={{
+                    marginTop: "50px",
+                    // backgroundColor:"#F2F2F2",height:"100vh" 
+
                 }}
             >
 
 
-<Col sm={12} className="d-flex "  >
-          {/* style={{top:"110px" , left:"700px"}} */}
+                <Col sm={12} className="d-flex "  >
+                    {/* style={{top:"110px" , left:"700px"}} */}
 
-          <div style={{ top: "186px" }}>
-            <Breadcrumb  >
-              <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
-              <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
-              <BreadcrumbItem ><Link to="/admin/inventory/vendor-list">Vendor List</Link></BreadcrumbItem>
-              <BreadcrumbItem active>Vendor Create</BreadcrumbItem>
-            </Breadcrumb>
-          </div>
+                    <div style={{ top: "186px" }}>
+                        <Breadcrumb  >
+                            <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
+                            <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
+                            <BreadcrumbItem ><Link to="/admin/inventory/vendor-list">Vendor List</Link></BreadcrumbItem>
+                            <BreadcrumbItem active>Vendor Create</BreadcrumbItem>
+                        </Breadcrumb>
+                    </div>
 
-        </Col>
+                </Col>
 
 
 
                 <Form onSubmit={handleSubmit}>
-                
+
 
                     {/* <Row> */}
-                        <Card className="shadow p-4 my-4">
+                    <Card className="shadow p-4 my-4">
                         <Row>
-                        <div className="d-flex justify-content-start align-items-start">
-                        <h1>Vendor Create</h1>
-                    </div>
+                            <div className="d-flex justify-content-start align-items-start">
+                                <h1>Vendor Create</h1>
+                            </div>
 
-                        <Col sm={6} className="my-2">
-                            <FormGroup>
-                                <label className="fw-bold my-2">
-                                    
-                                    Vendor Name
-                                    <span className="text-danger ms-1 ">*</span>
-                                </label>
-                                <input
-                                    
-                                    type="text"
-                                    className={`form-control ${errors.vendorName ? 'is-invalid' : ''}`}
-                                    id="vendorName"
-                                    placeholder="Enter item group name"
-                                    value={formData.vendorName}
-                                    onChange={handleChange}
-                                />
-                                {errors.vendorName && (
-                                    <div className="invalid-feedback">{errors.vendorName}</div>
-                                )}
-                            </FormGroup>
-                        </Col>
-                        <Col sm={6} className="my-2">
-                            <FormGroup>
-                                <label className="fw-bold my-2">
-                                    
-                                    Company Name
-                                    
-                                </label>
-                                <input
-                                    
-                                    type="text"
-                                    className={`form-control ${errors.companyName ? 'is-invalid' : ''}`}
-                                    id="companyName"
-                                    placeholder="Company Name"
-                                    value={formData.companyName}
-                                    onChange={handleChange}
-                                />
-                                {errors.companyName && (
-                                    <div className="invalid-feedback">{errors.companyName}</div>
-                                )}
-                            </FormGroup>
-                        </Col>
-                        <Col sm={6} className="my-2">
-                            <FormGroup>
-                                <label className="fw-bold my-2">
-                                    
-                                    Vendor Email
-                                    <span className="text-danger ms-1 ">*</span>
-                                </label>
-                                <input
-                                    
-                                    type="email"
-                                    className={`form-control ${errors.vendorEmail ? 'is-invalid' : ''}`}
-                                    id="vendorEmail"
-                                    placeholder="Vendor Email"
-                                    value={formData.vendorEmail}
-                                    onChange={handleChange}
-                                />
-                                {errors.vendorEmail && (
-                                    <div className="invalid-feedback">{errors.vendorEmail}</div>
-                                )}
-                            </FormGroup>
-                        </Col>
-                        <Col sm={6} className="my-2">
-                            <FormGroup>
-                                <label className="fw-bold my-2">
-                                    
-                                    Vendor Phone
-                                    
-                                </label>
-                                <input
-                                    
-                                    type="text"
-                                    className={`form-control ${errors.vendorPhone ? 'is-invalid' : ''}`}
-                                    id="vendorPhone"
-                                    placeholder="Enter 10 digit phone number"
-                                    value={formData.vendorPhone}
-                                    onChange={(e) => {
-                                        // Only allow numbers and limit to 10 digits
-                                        const value = e.target.value.replace(/\D/g, '').slice(0, 10);
-                                        setFormData(prev => ({
-                                            ...prev,
-                                            vendorPhone: value
-                                        }));
-                                    }}
-                                    pattern="[0-9]{10}"
-                                    title="Please enter exactly 10 digits"
-                                />
-                                {errors.vendorPhone && (
-                                    <div className="invalid-feedback">{errors.vendorPhone}</div>
-                                )}
-                            </FormGroup>
-                        </Col>
-                        </Row>
-                        </Card>
+                            <Col sm={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
 
-                      
+                                        Vendor Name
+                                        <span className="text-danger ms-1 ">*</span>
+                                    </label>
+                                    <input
 
-                        {/* Billing Address */}
-
-                        <Card className="shadow p-4 my-4">
-                        <Row>
-                        <div className="d-flex justify-content-start align-items-start">
-                        <h1>Billing Address <span className="text-danger ms-1 ">*</span></h1>
-                    </div>
-
-                       
-
-                        <Col sm={12} className="my-2">
-                            <FormGroup>
-                                <label className="fw-bold my-2">
-                                    
-                                    Address
-                                </label>
-                                <GooglePlacesAutocomplete
-                                    
-                                    apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
-                                    selectProps={{
-                                        value: formData.address 
-                                            ? { label: formData.address, value: formData.address }
-                                            : null,
-                                        onChange: (place) => {
-                                            if (place) {
-                                                handleBillingAddressSelect(place);
-                                            } else {
-                                                const updatedFormData = {
-                                                    ...formData,
-                                                    address: '',
-                                                    city: '',
-                                                    state: '',
-                                                    country: '',
-                                                    zipcode: ''
-                                                };
-                                                
-                                                setFormData(updatedFormData);
-                                            }
-                                        },
-                                        placeholder: "Enter Address",
-                                        required: true,
-                                        styles: {
-                                            control: (provided) => ({
-                                                ...provided,
-                                                padding: '5px',
-                                                fontSize: '0.9rem',
-                                                borderColor: '#ced4da',
-                                                borderRadius: '8px'
-                                            })
-                                        }
-                                    }}
-                                />
-                            </FormGroup>
-                        </Col>
-
-                        {/* select country */}
-                        <Col sm={6} className="my-2">
-                        <FormGroup>
-                            <label className="fw-bold my-2">Country</label>
-                            <FormSelect
-                                aria-label="select country"
-                                id="country"
-                                value={formData.country}
-                                onChange={(e) => setFormData({
-                                    ...formData,
-                                    country: e.target.value,
-                                    state: '',
-                                    city: ''
-                                })}
-                            >
-                                <option>Select Country</option>
-                                {countries.map((c, idx) => (
-                                    <option key={idx} value={c.country}>
-                                        {c.country}
-                                    </option>
-                                ))}
-                            </FormSelect>
-                        </FormGroup>
-                        
-                        </Col>
-
-                        <Col sm={6} className="my-2">
-                        <FormGroup>
-                            <label className="fw-bold my-2">State</label>
-                            <FormSelect
-                                aria-label="select state"
-                                id="state"
-                                value={formData.state}
-                                onChange={(e) => setFormData({
-                                    ...formData,
-                                    state: e.target.value,
-                                    city: ''
-                                })}
-                                disabled={!formData.country}
-                            >
-                                <option>Select State</option>
-                                {states.map((s, idx) => (
-                                    <option key={idx} value={s.name}>
-                                        {s.name}
-                                    </option>
-                                ))}
-                            </FormSelect>
-                        </FormGroup>
-                        
-                        </Col>
-
-                        <Col sm={6} className="my-2">
-                        <FormGroup>
-                            <label className="fw-bold my-2">City</label>
-                            <FormSelect
-                                aria-label="select city"
-                                id="city"
-                                value={formData.city}
-                                onChange={(e) => setFormData({
-                                    ...formData,
-                                    city: e.target.value
-                                })}
-                                disabled={!formData.state}
-                            >
-                                <option>Select City</option>
-                                {cities.map((c, idx) => (
-                                    <option key={idx} value={c}>
-                                        {c}
-                                    </option>
-                                ))}
-                            </FormSelect>
-                        </FormGroup>
-                        
-                        </Col>
-                        <Col sm={6} className="my-2">
-                            <FormGroup>
-                                <label className="fw-bold my-2">
-                                   Zipcode
-                                    
-                                </label>
-                                <input
-                                    type="text"
-                                    className={`form-control ${errors.zipcode ? 'is-invalid' : ''}`}
-                                    id="zipcode"
-                                    placeholder="Enter Zipcode"
-                                    value={formData.zipcode}
-                                    onChange={handleChange}
-                                />
-                                {errors.zipcode && (
-                                    <div className="invalid-feedback">{errors.zipcode}</div>
-                                )}
-                            </FormGroup>
-                        </Col>
-                        </Row>
-                        </Card>
-
-
-
-
-                       
-
-                            {/* Shipping Address */}
-
-                            <Card className="shadow p-4 my-4">
-                        <Row>
-                        <div className="d-flex justify-content-between align-items-center mb-3">
-                        <h1>Shipping Address</h1>
-                        <Button 
-                            variant="outline-primary" 
-                            className="d-flex align-items-center gap-2"
-                            onClick={copyBillingToShipping}
-                        >
-                            <FaCopy /> Copy from Billing
-                        </Button>
-                    </div>
-
-                        
-
-                        <Col sm={12} className="my-2">
-                            <FormGroup>
-                                <label className="fw-bold my-2">
-                                    
-                                    Address
-                                </label>
-                                <GooglePlacesAutocomplete
-                                    apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
-                                    selectProps={{
-                                        value: formData.shippingAddress 
-                                            ? { label: formData.shippingAddress, value: formData.shippingAddress }
-                                            : null,
-                                        onChange: (place) => {
-                                            if (place) {
-                                                handleShippingAddressSelect(place);
-                                            } else {
-                                                setFormData(prev => ({
-                                                    ...prev,
-                                                    shippingAddress: '',
-                                                    shippingcity: '',
-                                                    shippingstate: '',
-                                                    shippingcountry: '',
-                                                    shippingzipcode: ''
-                                                }));
-                                            }
-                                        },
-                                        placeholder: "Enter Shipping Address",
-                                        styles: {
-                                            control: (provided) => ({
-                                                ...provided,
-                                                padding: '5px',
-                                                fontSize: '0.9rem',
-                                                borderColor: '#ced4da',
-                                                borderRadius: '8px'
-                                            })
-                                        }
-                                    }}
-                                />
-                            </FormGroup>
-                        </Col>
-
-                        {/* select country */}
-                        <Col sm={6} className="my-2">
-                        <FormGroup>
-                            <label className="fw-bold my-2">Country</label>
-                            <FormSelect
-                                aria-label="select shipping country"
-                                id="shippingcountry"
-                                value={formData.shippingcountry}
-                                onChange={(e) => setFormData({
-                                    ...formData,
-                                    shippingcountry: e.target.value,
-                                    shippingstate: '',
-                                    shippingcity: ''
-                                })}
-                            >
-                                <option>Select Country</option>
-                                {countries.map((c, idx) => (
-                                    <option key={idx} value={c.country}>
-                                        {c.country}
-                                    </option>
-                                ))}
-                            </FormSelect>
-                        </FormGroup>
-                        
-                        </Col>
-
-                        <Col sm={6} className="my-2">
-                        <FormGroup>
-                            <label className="fw-bold my-2">State</label>
-                            <FormSelect
-                                aria-label="select shipping state"
-                                id="shippingstate"
-                                value={formData.shippingstate}
-                                onChange={(e) => setFormData({
-                                    ...formData,
-                                    shippingstate: e.target.value,
-                                    shippingcity: ''
-                                })}
-                                disabled={!formData.shippingcountry}
-                            >
-                                <option>Select State</option>
-                                {states.map((s, idx) => (
-                                    <option key={idx} value={s.name}>
-                                        {s.name}
-                                    </option>
-                                ))}
-                            </FormSelect>
-                        </FormGroup>
-                        
-                        </Col>
-
-                        <Col sm={6} className="my-2">
-                        <FormGroup>
-                            <label className="fw-bold my-2">City</label>
-                            <FormSelect
-                                aria-label="select shipping city"
-                                id="shippingcity"
-                                value={formData.shippingcity}
-                                onChange={(e) => setFormData({
-                                    ...formData,
-                                    shippingcity: e.target.value
-                                })}
-                                disabled={!formData.shippingstate}
-                            >
-                                <option>Select City</option>
-                                {cities.map((c, idx) => (
-                                    <option key={idx} value={c}>
-                                        {c}
-                                    </option>
-                                ))}
-                            </FormSelect>
-                        </FormGroup>
-                        
-                        </Col>
-                        <Col sm={6} >
-                            <FormGroup>
-                                <label className="fw-bold my-2">
-                                   Zipcode
-                                    
-                                </label>
-                                <input
-                                    type="text"
-                                    className={`form-control ${errors.shippingzipcode ? 'is-invalid' : ''}`}
-                                    id="shippingzipcode"
-                                    placeholder="Enter Zipcode"
-                                    value={formData.shippingzipcode}
-                                    onChange={handleChange}
-                                />
-                                {errors.shippingzipcode && (
-                                    <div className="invalid-feedback">{errors.shippingzipcode}</div>
-                                )}
-                            </FormGroup>
-                        </Col>
-                        </Row>
-                        </Card>
-
-                       
-
-                        <Card className="shadow p-4 my-4">
-                        <Row>
-                        <div className="d-flex justify-content-start align-items-start">
-                        <h1>Other Details</h1>
-                    </div>
-
-                        
-
-                        <Col sm={6} >
-                            <FormGroup>
-                                <label className="fw-bold my-2">
-                                   Government ID
-                                    
-                                </label>
-                                <input
-                                    type="text"
-                                    className={`form-control ${errors.governmentid ? 'is-invalid' : ''}`}
-                                    id="governmentid"
-                                    placeholder="Enter Zipcode"
-                                    value={formData.governmentid}
-                                    onChange={handleChange}
-                                />
-                                {errors.governmentid && (
-                                    <div className="invalid-feedback">{errors.governmentid}</div>
-                                )}
-                            </FormGroup>
-                        </Col>
-
-                        <Col sm={6} >
-                        <label className="fw-bold my-2">Document </label>
-                            <FormControl
-                                type="file"
-                                name="image"
-                                accept=".jpg, .jpeg, .png, .pdf"
-                                id="image"
-                                onChange={handleImageChange}
-                            />
-                        </Col>
-                        <Col sm={12} className="p-2 mb-2 text-end">
-                            {formData.image?.type === 'application/pdf' ? (
-                                <div className="pdf-preview">
-                                    <embed 
-                                        src={imagePreview} 
-                                        type="application/pdf" 
-                                        width="100px" 
-                                        height="100px"
+                                        type="text"
+                                        className={`form-control ${errors.vendorName ? 'is-invalid' : ''}`}
+                                        id="vendorName"
+                                        placeholder="Enter item group name"
+                                        value={formData.vendorName}
+                                        onChange={handleChange}
                                     />
-                                </div>
-                            ) : (
-                                <Image
-                                    src={imagePreview}
-                                    alt="product image"
-                                    fluid
-                                    style={{ width: '100px', aspectRatio: '1', objectFit: 'cover' }}
-                                    onError={(e) => e.target.src = 'https://fsm.lockene.net/assets/Web-Fsm/images/avtar/3.jpg'}
+                                    {errors.vendorName && (
+                                        <div className="invalid-feedback">{errors.vendorName}</div>
+                                    )}
+                                </FormGroup>
+                            </Col>
+                            <Col sm={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+
+                                        Company Name
+
+                                    </label>
+                                    <input
+
+                                        type="text"
+                                        className={`form-control ${errors.companyName ? 'is-invalid' : ''}`}
+                                        id="companyName"
+                                        placeholder="Company Name"
+                                        value={formData.companyName}
+                                        onChange={handleChange}
+                                    />
+                                    {errors.companyName && (
+                                        <div className="invalid-feedback">{errors.companyName}</div>
+                                    )}
+                                </FormGroup>
+                            </Col>
+                            <Col sm={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+
+                                        Vendor Email
+                                        <span className="text-danger ms-1 ">*</span>
+                                    </label>
+                                    <input
+
+                                        type="email"
+                                        className={`form-control ${errors.vendorEmail ? 'is-invalid' : ''}`}
+                                        id="vendorEmail"
+                                        placeholder="Vendor Email"
+                                        value={formData.vendorEmail}
+                                        onChange={handleChange}
+                                    />
+                                    {errors.vendorEmail && (
+                                        <div className="invalid-feedback">{errors.vendorEmail}</div>
+                                    )}
+                                </FormGroup>
+                            </Col>
+                            <Col sm={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+
+                                        Vendor Phone
+
+                                    </label>
+                                    <input
+
+                                        type="text"
+                                        className={`form-control ${errors.vendorPhone ? 'is-invalid' : ''}`}
+                                        id="vendorPhone"
+                                        placeholder="Enter 10 digit phone number"
+                                        value={formData.vendorPhone}
+                                        onChange={(e) => {
+                                            // Only allow numbers and limit to 10 digits
+                                            const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                            setFormData(prev => ({
+                                                ...prev,
+                                                vendorPhone: value
+                                            }));
+                                        }}
+                                        pattern="[0-9]{10}"
+                                        title="Please enter exactly 10 digits"
+                                    />
+                                    {errors.vendorPhone && (
+                                        <div className="invalid-feedback">{errors.vendorPhone}</div>
+                                    )}
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                    </Card>
+
+
+
+                    {/* Billing Address */}
+
+                    <Card className="shadow p-4 my-4">
+                        <Row>
+                            <div className="d-flex justify-content-start align-items-start">
+                                <h1>Billing Address <span className="text-danger ms-1 ">*</span></h1>
+                            </div>
+
+
+
+                            <Col sm={12} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+
+                                        Address
+                                    </label>
+                                    <GooglePlacesAutocomplete
+
+                                        apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
+                                        selectProps={{
+                                            value: formData.address
+                                                ? { label: formData.address, value: formData.address }
+                                                : null,
+                                            onChange: (place) => {
+                                                if (place) {
+                                                    handleBillingAddressSelect(place);
+                                                } else {
+                                                    const updatedFormData = {
+                                                        ...formData,
+                                                        address: '',
+                                                        city: '',
+                                                        state: '',
+                                                        country: '',
+                                                        zipcode: ''
+                                                    };
+
+                                                    setFormData(updatedFormData);
+                                                }
+                                            },
+                                            placeholder: "Enter Address",
+                                            required: true,
+                                            styles: {
+                                                control: (provided) => ({
+                                                    ...provided,
+                                                    padding: '5px',
+                                                    fontSize: '0.9rem',
+                                                    borderColor: '#ced4da',
+                                                    borderRadius: '8px'
+                                                })
+                                            }
+                                        }}
+                                    />
+                                </FormGroup>
+                            </Col>
+
+                            {/* select country */}
+                            <Col sm={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">Country</label>
+                                    <FormSelect
+                                        aria-label="select country"
+                                        id="country"
+                                        value={formData.country}
+                                        onChange={(e) => setFormData({
+                                            ...formData,
+                                            country: e.target.value,
+                                            state: '',
+                                            city: ''
+                                        })}
+                                    >
+                                        <option>Select Country</option>
+                                        {countries.map((c, idx) => (
+                                            <option key={idx} value={c.country}>
+                                                {c.country}
+                                            </option>
+                                        ))}
+                                    </FormSelect>
+                                </FormGroup>
+
+                            </Col>
+
+                            <Col sm={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">State</label>
+                                    <FormSelect
+                                        aria-label="select state"
+                                        id="state"
+                                        value={formData.state}
+                                        onChange={(e) => setFormData({
+                                            ...formData,
+                                            state: e.target.value,
+                                            city: ''
+                                        })}
+                                        disabled={!formData.country}
+                                    >
+                                        <option>Select State</option>
+                                        {states.map((s, idx) => (
+                                            <option key={idx} value={s.name}>
+                                                {s.name}
+                                            </option>
+                                        ))}
+                                    </FormSelect>
+                                </FormGroup>
+
+                            </Col>
+
+                            <Col sm={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">City</label>
+                                    <FormSelect
+                                        aria-label="select city"
+                                        id="city"
+                                        value={formData.city}
+                                        onChange={(e) => setFormData({
+                                            ...formData,
+                                            city: e.target.value
+                                        })}
+                                        disabled={!formData.state}
+                                    >
+                                        <option>Select City</option>
+                                        {cities.map((c, idx) => (
+                                            <option key={idx} value={c}>
+                                                {c}
+                                            </option>
+                                        ))}
+                                    </FormSelect>
+                                </FormGroup>
+
+                            </Col>
+                            <Col sm={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+                                        Zipcode
+
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className={`form-control ${errors.zipcode ? 'is-invalid' : ''}`}
+                                        id="zipcode"
+                                        placeholder="Enter Zipcode"
+                                        value={formData.zipcode}
+                                        onChange={handleChange}
+                                    />
+                                    {errors.zipcode && (
+                                        <div className="invalid-feedback">{errors.zipcode}</div>
+                                    )}
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                    </Card>
+
+
+
+
+
+
+                    {/* Shipping Address */}
+
+                    <Card className="shadow p-4 my-4">
+                        <Row>
+                            <div className="d-flex justify-content-between align-items-center mb-3">
+                                <h1>Shipping Address</h1>
+                                <Button
+                                    variant="outline-primary"
+                                    className="d-flex align-items-center gap-2"
+                                    onClick={copyBillingToShipping}
+                                >
+                                    <FaCopy /> Copy from Billing
+                                </Button>
+                            </div>
+
+
+
+                            <Col sm={12} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+
+                                        Address
+                                    </label>
+                                    <GooglePlacesAutocomplete
+                                        apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
+                                        selectProps={{
+                                            value: formData.shippingAddress
+                                                ? { label: formData.shippingAddress, value: formData.shippingAddress }
+                                                : null,
+                                            onChange: (place) => {
+                                                if (place) {
+                                                    handleShippingAddressSelect(place);
+                                                } else {
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        shippingAddress: '',
+                                                        shippingcity: '',
+                                                        shippingstate: '',
+                                                        shippingcountry: '',
+                                                        shippingzipcode: ''
+                                                    }));
+                                                }
+                                            },
+                                            placeholder: "Enter Shipping Address",
+                                            styles: {
+                                                control: (provided) => ({
+                                                    ...provided,
+                                                    padding: '5px',
+                                                    fontSize: '0.9rem',
+                                                    borderColor: '#ced4da',
+                                                    borderRadius: '8px'
+                                                })
+                                            }
+                                        }}
+                                    />
+                                </FormGroup>
+                            </Col>
+
+                            {/* select country */}
+                            <Col sm={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">Country</label>
+                                    <FormSelect
+                                        aria-label="select shipping country"
+                                        id="shippingcountry"
+                                        value={formData.shippingcountry}
+                                        onChange={(e) => setFormData({
+                                            ...formData,
+                                            shippingcountry: e.target.value,
+                                            shippingstate: '',
+                                            shippingcity: ''
+                                        })}
+                                    >
+                                        <option>Select Country</option>
+                                        {countries.map((c, idx) => (
+                                            <option key={idx} value={c.country}>
+                                                {c.country}
+                                            </option>
+                                        ))}
+                                    </FormSelect>
+                                </FormGroup>
+
+                            </Col>
+
+                            <Col sm={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">State</label>
+                                    <FormSelect
+                                        aria-label="select shipping state"
+                                        id="shippingstate"
+                                        value={formData.shippingstate}
+                                        onChange={(e) => setFormData({
+                                            ...formData,
+                                            shippingstate: e.target.value,
+                                            shippingcity: ''
+                                        })}
+                                        disabled={!formData.shippingcountry}
+                                    >
+                                        <option>Select State</option>
+                                        {states.map((s, idx) => (
+                                            <option key={idx} value={s.name}>
+                                                {s.name}
+                                            </option>
+                                        ))}
+                                    </FormSelect>
+                                </FormGroup>
+
+                            </Col>
+
+                            <Col sm={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2">City</label>
+                                    <FormSelect
+                                        aria-label="select shipping city"
+                                        id="shippingcity"
+                                        value={formData.shippingcity}
+                                        onChange={(e) => setFormData({
+                                            ...formData,
+                                            shippingcity: e.target.value
+                                        })}
+                                        disabled={!formData.shippingstate}
+                                    >
+                                        <option>Select City</option>
+                                        {cities.map((c, idx) => (
+                                            <option key={idx} value={c}>
+                                                {c}
+                                            </option>
+                                        ))}
+                                    </FormSelect>
+                                </FormGroup>
+
+                            </Col>
+                            <Col sm={6} >
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+                                        Zipcode
+
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className={`form-control ${errors.shippingzipcode ? 'is-invalid' : ''}`}
+                                        id="shippingzipcode"
+                                        placeholder="Enter Zipcode"
+                                        value={formData.shippingzipcode}
+                                        onChange={handleChange}
+                                    />
+                                    {errors.shippingzipcode && (
+                                        <div className="invalid-feedback">{errors.shippingzipcode}</div>
+                                    )}
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                    </Card>
+
+
+
+                    <Card className="shadow p-4 my-4">
+                        <Row>
+                            <div className="d-flex justify-content-start align-items-start">
+                                <h1>Other Details</h1>
+                            </div>
+
+
+
+                            <Col sm={6} >
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+                                        Government ID
+
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className={`form-control ${errors.governmentid ? 'is-invalid' : ''}`}
+                                        id="governmentid"
+                                        placeholder="Enter Zipcode"
+                                        value={formData.governmentid}
+                                        onChange={handleChange}
+                                    />
+                                    {errors.governmentid && (
+                                        <div className="invalid-feedback">{errors.governmentid}</div>
+                                    )}
+                                </FormGroup>
+                            </Col>
+
+                            <Col sm={6} >
+                                <label className="fw-bold my-2">Document </label>
+                                <FormControl
+                                    type="file"
+                                    name="image"
+                                    accept=".jpg, .jpeg, .png, .pdf"
+                                    id="image"
+                                    onChange={handleImageChange}
                                 />
-                            )}
-                        </Col>
+                            </Col>
+                            <Col sm={12} className="p-2 mb-2 text-end">
+                                {formData.image?.type === 'application/pdf' ? (
+                                    <div className="pdf-preview">
+                                        <embed
+                                            src={imagePreview}
+                                            type="application/pdf"
+                                            width="100px"
+                                            height="100px"
+                                        />
+                                    </div>
+                                ) : (
+                                    <Image
+                                        src={imagePreview}
+                                        alt="product image"
+                                        fluid
+                                        style={{ width: '100px', aspectRatio: '1', objectFit: 'cover' }}
+                                        onError={(e) => e.target.src = 'https://fsm.lockene.net/assets/Web-Fsm/images/avtar/3.jpg'}
+                                    />
+                                )}
+                            </Col>
 
                         </Row>
-                        </Card>
+                    </Card>
 
-                       
-                        {/* Bank Details */}
 
-                        <Card className="shadow p-4 my-4">
+                    {/* Bank Details */}
+
+                    <Card className="shadow p-4 my-4">
                         <Row>
-                        <div className="d-flex justify-content-start align-items-start">
-                        <h1>Bank Details</h1>
-                    </div>
+                            <div className="d-flex justify-content-start align-items-start">
+                                <h1>Bank Details</h1>
+                            </div>
 
 
-                       
 
-                        <Col sm={6} className="my-2" >
-                            <FormGroup>
-                                <label className="fw-bold my-2">
-                                   Bank Name
-                                    
-                                </label>
-                                <input
-                                    type="text"
-                                    className={`form-control ${errors.bank_name ? 'is-invalid' : ''}`}
-                                    id="bank_name"
-                                    placeholder="Enter Bank Name"
-                                    value={formData.bank_name}
-                                    onChange={handleChange}
-                                />
-                                {errors.bank_name && (
-                                    <div className="invalid-feedback">{errors.bank_name}</div>
-                                )}
-                            </FormGroup>
-                        </Col>
 
-                        <Col sm={6} className="my-2" >
-                            <FormGroup>
-                                <label className="fw-bold my-2">
-                                   Account Number
-                                    
-                                </label>
-                                <input
-                                    type="text"
-                                    className={`form-control ${errors.accountnumber ? 'is-invalid' : ''}`}
-                                    id="accountnumber"
-                                    placeholder="Enter Account Number"                                   
-                                    value={formData.accountnumber}
-                                    onChange={handleChange}
-                                />
-                                {errors.accountnumber && (
-                                    <div className="invalid-feedback">{errors.accountnumber}</div>
-                                )}
-                            </FormGroup>
-                        </Col>
-                        <Col sm={6} className="my-2" >
-                            <FormGroup>
-                                <label className="fw-bold my-2">
-                                   IFSC/SWIFT/BIC
-                                    
-                                </label>
-                                <input
-                                    type="text"
-                                    className={`form-control ${errors.ifsccode ? 'is-invalid' : ''}`}
-                                    id="ifsccode"
-                                    placeholder="Enter IFSC/SWIFT/BIC"                                   
-                                    value={formData.ifsccode}
-                                    onChange={handleChange}
-                                />
-                                {errors.ifsccode && (
-                                    <div className="invalid-feedback">{errors.ifsccode}</div>
-                                )}
-                            </FormGroup>
-                        </Col>
+                            <Col sm={6} className="my-2" >
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+                                        Bank Name
 
-                        <Col sm={6} className="my-2">
-                        <FormGroup>
-                            <label className="fw-bold my-2"> Type Of Account </label>
-                            <FormSelect aria-label="Select Account Type" id="accounttype" value={formData.accounttype} onChange={handleChange} className={`form-control ${errors.accounttype ? 'is-invalid' : ''}`}>
-                                <option>Select</option>
-                                <option value="Saving">Saving    </option>
-                                <option value="current">Current</option>
-                                <option value="Checking">Checking</option>
-                            </FormSelect>
-                            {errors.accounttype && (
-                                <div className="invalid-feedback">{errors.accounttype}</div>
-                            )}
-                        </FormGroup>
-                        
-                        </Col>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className={`form-control ${errors.bank_name ? 'is-invalid' : ''}`}
+                                        id="bank_name"
+                                        placeholder="Enter Bank Name"
+                                        value={formData.bank_name}
+                                        onChange={handleChange}
+                                    />
+                                    {errors.bank_name && (
+                                        <div className="invalid-feedback">{errors.bank_name}</div>
+                                    )}
+                                </FormGroup>
+                            </Col>
 
-                        <Col sm={12} className="d-flex justify-content-center">
-                            <Button 
-                                variant="primary" 
-                                type="submit" 
-                                className="mt-4" 
-                                disabled={loading}
-                            >
-                                {loading ? 'Submitting...' : 'Submit'}
-                            </Button>
-                        </Col>
+                            <Col sm={6} className="my-2" >
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+                                        Account Number
 
-                    </Row>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className={`form-control ${errors.accountnumber ? 'is-invalid' : ''}`}
+                                        id="accountnumber"
+                                        placeholder="Enter Account Number"
+                                        value={formData.accountnumber}
+                                        onChange={handleChange}
+                                    />
+                                    {errors.accountnumber && (
+                                        <div className="invalid-feedback">{errors.accountnumber}</div>
+                                    )}
+                                </FormGroup>
+                            </Col>
+                            <Col sm={6} className="my-2" >
+                                <FormGroup>
+                                    <label className="fw-bold my-2">
+                                        IFSC/SWIFT/BIC
+
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className={`form-control ${errors.ifsccode ? 'is-invalid' : ''}`}
+                                        id="ifsccode"
+                                        placeholder="Enter IFSC/SWIFT/BIC"
+                                        value={formData.ifsccode}
+                                        onChange={handleChange}
+                                    />
+                                    {errors.ifsccode && (
+                                        <div className="invalid-feedback">{errors.ifsccode}</div>
+                                    )}
+                                </FormGroup>
+                            </Col>
+
+                            <Col sm={6} className="my-2">
+                                <FormGroup>
+                                    <label className="fw-bold my-2"> Type Of Account </label>
+                                    <FormSelect aria-label="Select Account Type" id="accounttype" value={formData.accounttype} onChange={handleChange} className={`form-control ${errors.accounttype ? 'is-invalid' : ''}`}>
+                                        <option>Select</option>
+                                        <option value="Saving">Saving    </option>
+                                        <option value="current">Current</option>
+                                        <option value="Checking">Checking</option>
+                                    </FormSelect>
+                                    {errors.accounttype && (
+                                        <div className="invalid-feedback">{errors.accounttype}</div>
+                                    )}
+                                </FormGroup>
+
+                            </Col>
+
+                            <Col sm={12} className="d-flex justify-content-center">
+                                <Button
+                                    variant="primary"
+                                    type="submit"
+                                    className="mt-4"
+                                    disabled={loading}
+                                >
+                                    {loading ? 'Submitting...' : 'Submit'}
+                                </Button>
+                            </Col>
+
+                        </Row>
                     </Card>
 
                     {/* </Row> */}
 
-                    
+
                 </Form>
 
             </Row>

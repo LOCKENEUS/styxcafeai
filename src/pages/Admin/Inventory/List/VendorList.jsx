@@ -48,7 +48,7 @@ const VendorList = () => {
   const editDropdownRef = useRef(null);
   const dispatch = useDispatch();
   const { vendors, loading, error } = useSelector((state) => state.vendors);
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
   useEffect(() => {
     dispatch(getVendors(cafeId));

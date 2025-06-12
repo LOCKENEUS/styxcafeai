@@ -24,7 +24,7 @@ export const SoDetails = () => {
     const selectedSO = useSelector((state) => state.saSalesOrder.selectedsalesOrder);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     const userName = user?.name;
     const userEmail = user?.email;
     const UserContactN = user?.contact_no;
@@ -283,7 +283,7 @@ export const SoDetails = () => {
                                                 </p>
                                             </div>
                                         </Col>
-                                        
+
                                         <Col sm={6}>
                                             <div className="mb-4 ps-4 border-start">
                                                 <h6 className="text-dark mb-3" style={{ fontSize: '16px', fontWeight: '600' }}>

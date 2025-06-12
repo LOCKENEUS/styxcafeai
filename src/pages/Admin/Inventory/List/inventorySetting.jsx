@@ -37,7 +37,7 @@ export const InventorySettingAdmin = () => {
   const [newBrand, setNewBrand] = useState({ name: "" });
   const [newManufacturer, setNewManufacturer] = useState({ name: "" });
   const [newpaymentTerm, setNewPaymentTerm] = useState({ name: "", code: "" });
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
   const [submitLoading, setSubmitLoading] = useState(false);
 
@@ -188,392 +188,287 @@ export const InventorySettingAdmin = () => {
           onSelect={(k) => setActiveKey(k)}
         >
           {/* <Row className="justify-content-center"> */}
-            <Col className="tabs-responsive-side mb-3 mb-md-4">
-              <Card className="rounded-4 p-1 border">
-                <Nav variant="pills" className="nav-material flex-wrap justify-content-center">
-                  <NavItem>
-                    <NavLink
-                      eventKey="unit"
-                      className={
-                        activeKey === "unit" ? "bg-primary text-white" : ""
-                      }
-                    >
-                      Unit
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink
-                      eventKey="brand"
-                      className={
-                        activeKey === "brand" ? "bg-primary text-white" : ""
-                      }
-                    >
-                      Brand
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink
-                      eventKey="manufacturer"
-                      className={
-                        activeKey === "manufacturer"
-                          ? "bg-primary text-white"
-                          : ""
-                      }
-                    >
-                      Manufacturer
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink
-                      eventKey="paymentterms"
-                      className={
-                        activeKey === "paymentterms"
-                          ? "bg-primary text-white"
-                          : ""
-                      }
-                    >
-                      Payment Terms
-                    </NavLink>
-                  </NavItem>
-                </Nav>
-              </Card>
-            </Col>
+          <Col className="tabs-responsive-side mb-3 mb-md-4">
+            <Card className="rounded-4 p-1 border">
+              <Nav variant="pills" className="nav-material flex-wrap justify-content-center">
+                <NavItem>
+                  <NavLink
+                    eventKey="unit"
+                    className={
+                      activeKey === "unit" ? "bg-primary text-white" : ""
+                    }
+                  >
+                    Unit
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink
+                    eventKey="brand"
+                    className={
+                      activeKey === "brand" ? "bg-primary text-white" : ""
+                    }
+                  >
+                    Brand
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink
+                    eventKey="manufacturer"
+                    className={
+                      activeKey === "manufacturer"
+                        ? "bg-primary text-white"
+                        : ""
+                    }
+                  >
+                    Manufacturer
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink
+                    eventKey="paymentterms"
+                    className={
+                      activeKey === "paymentterms"
+                        ? "bg-primary text-white"
+                        : ""
+                    }
+                  >
+                    Payment Terms
+                  </NavLink>
+                </NavItem>
+              </Nav>
+            </Card>
+          </Col>
 
-            <Col xs={12}>
-              <TabContent>
-                <TabPane eventKey="unit">
-                  <Row className="g-3">
-                    <Col xs={12} md={4} lg={3}>
-                      <Card className="rounded-4 p-1 border h-100">
-                        <div className="my-3 mx-3">
-                          <h4 className="mb-4">Create New Unit</h4>
-                          <Form autoComplete="off" onSubmit={handleUnitSubmit}>
-                            <FormGroup className="mb-3">
-                              <FormLabel>Unit Name</FormLabel>
-                              <FormControl
-                                type="text"
-                                name="name"
-                                placeholder="Unit"
-                                value={newUnit.name}
-                                onChange={handleUnitChange}
-                                required
-                              />
-                            </FormGroup>
-                            <FormGroup className="mb-3">
-                              <FormLabel>Unique Quantity Code</FormLabel>
-                              <FormControl
-                                type="text"
-                                name="code"
-                                placeholder="000-000"
-                                value={newUnit.code}
-                                onChange={handleUnitChange}
-                                required
-                              />
-                            </FormGroup>
-                            {/* <Button
+          <Col xs={12}>
+            <TabContent>
+              <TabPane eventKey="unit">
+                <Row className="g-3">
+                  <Col xs={12} md={4} lg={3}>
+                    <Card className="rounded-4 p-1 border h-100">
+                      <div className="my-3 mx-3">
+                        <h4 className="mb-4">Create New Unit</h4>
+                        <Form autoComplete="off" onSubmit={handleUnitSubmit}>
+                          <FormGroup className="mb-3">
+                            <FormLabel>Unit Name</FormLabel>
+                            <FormControl
+                              type="text"
+                              name="name"
+                              placeholder="Unit"
+                              value={newUnit.name}
+                              onChange={handleUnitChange}
+                              required
+                            />
+                          </FormGroup>
+                          <FormGroup className="mb-3">
+                            <FormLabel>Unique Quantity Code</FormLabel>
+                            <FormControl
+                              type="text"
+                              name="code"
+                              placeholder="000-000"
+                              value={newUnit.code}
+                              onChange={handleUnitChange}
+                              required
+                            />
+                          </FormGroup>
+                          {/* <Button
                               className="my-3 float-end"
                               type="submit"
                               variant="primary"
                             >
                               Submit
                             </Button> */}
-                            <Button variant="primary" type="submit" className=" my-2 float-end">
-                              {submitLoading ? (
-                                <>
-                                  <Spinner animation="border" size="sm" className="me-2" /> Saving...
-                                </>
-                              ) : ('Submit')}
-                            </Button>
-                          </Form>
-                        </div>
-                      </Card>
-                    </Col>
+                          <Button variant="primary" type="submit" className=" my-2 float-end">
+                            {submitLoading ? (
+                              <>
+                                <Spinner animation="border" size="sm" className="me-2" /> Saving...
+                              </>
+                            ) : ('Submit')}
+                          </Button>
+                        </Form>
+                      </div>
+                    </Card>
+                  </Col>
 
-                    <Col xs={12} md={8} lg={9}>
-                      <Card className="rounded-4 p-2 border h-100">
-                        <div className="my-3 mx-3">
-                          <h4 className="mb-4">Unit List</h4>
-                          <div className="table-responsive">
-                            <Table className="border-none" hover size="sm">
-                              <thead>
-                                <tr>
-                                  {/* <th></th> */}
-                                  <th>Name</th>
-                                  <th>Unit Code</th>
-                                  <th>Action</th>
+                  <Col xs={12} md={8} lg={9}>
+                    <Card className="rounded-4 p-2 border h-100">
+                      <div className="my-3 mx-3">
+                        <h4 className="mb-4">Unit List</h4>
+                        <div className="table-responsive">
+                          <Table className="border-none" hover size="sm">
+                            <thead>
+                              <tr>
+                                {/* <th></th> */}
+                                <th>Name</th>
+                                <th>Unit Code</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {units.map((unit) => (
+                                <tr key={unit._id}>
+                                  {/* <td>{unit._id}</td> */}
+                                  <td>
+                                    <FormControl
+                                      type="text"
+                                      value={editedFields[unit._id]?.name ?? unit.name}
+                                      onChange={(e) => handleFieldChange(unit._id, 'name', e.target.value)}
+                                      style={{ minWidth: "200px" }}
+                                      className="border-0 bg-transparent"
+                                    />
+                                  </td>
+                                  <td>
+                                    <FormControl
+                                      type="text"
+                                      value={editedFields[unit._id]?.code ?? unit.code}
+                                      onChange={(e) => handleFieldChange(unit._id, 'code', e.target.value)}
+                                      style={{ minWidth: "200px" }}
+                                      className="border-0 bg-transparent"
+                                    />
+                                  </td>
+                                  <td className="d-flex gap-2">
+                                    <Button
+                                      variant="light"
+                                      size="sm"
+                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                      onClick={() => handleDelete(unit._id)}
+                                      style={{ backgroundColor: "#FFE5E5" }}
+                                    >
+                                      <BiTrash size={20} color="#FF4242" />
+                                    </Button>
+                                    <Button
+                                      variant="light"
+                                      size="sm"
+                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                      onClick={() => handleSubmitChanges(unit._id)}
+                                      style={{ backgroundColor: "#E8FFE5" }}
+                                      disabled={!editedFields[unit._id]}
+                                    >
+                                      <BiCheck size={20} color="#28A745" />
+                                    </Button>
+                                  </td>
                                 </tr>
-                              </thead>
-                              <tbody>
-                                {units.map((unit) => (
-                                  <tr key={unit._id}>
-                                    {/* <td>{unit._id}</td> */}
-                                    <td>
-                                      <FormControl
-                                        type="text"
-                                        value={editedFields[unit._id]?.name ?? unit.name}
-                                        onChange={(e) => handleFieldChange(unit._id, 'name', e.target.value)}
-                                        style={{ minWidth: "200px" }}
-                                        className="border-0 bg-transparent"
-                                      />
-                                    </td>
-                                    <td>
-                                      <FormControl
-                                        type="text"
-                                        value={editedFields[unit._id]?.code ?? unit.code}
-                                        onChange={(e) => handleFieldChange(unit._id, 'code', e.target.value)}
-                                        style={{ minWidth: "200px" }}
-                                        className="border-0 bg-transparent"
-                                      />
-                                    </td>
-                                    <td className="d-flex gap-2">
-                                      <Button
-                                        variant="light"
-                                        size="sm"
-                                        className="d-flex align-items-center justify-content-center rounded-circle p-2"
-                                        onClick={() => handleDelete(unit._id)}
-                                        style={{ backgroundColor: "#FFE5E5" }}
-                                      >
-                                        <BiTrash size={20} color="#FF4242" />
-                                      </Button>
-                                      <Button
-                                        variant="light"
-                                        size="sm"
-                                        className="d-flex align-items-center justify-content-center rounded-circle p-2"
-                                        onClick={() => handleSubmitChanges(unit._id)}
-                                        style={{ backgroundColor: "#E8FFE5" }}
-                                        disabled={!editedFields[unit._id]}
-                                      >
-                                        <BiCheck size={20} color="#28A745" />
-                                      </Button>
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </Table>
-                          </div>
+                              ))}
+                            </tbody>
+                          </Table>
                         </div>
-                      </Card>
-                    </Col>
-                  </Row>
-                </TabPane>
+                      </div>
+                    </Card>
+                  </Col>
+                </Row>
+              </TabPane>
 
-                <TabPane eventKey="brand">
-                  <Row className="g-3">
-                    <Col xs={12} md={4} lg={3}>
-                      <Card className="rounded-4 p-1 border h-100">
-                        <div className="my-3 mx-3">
-                          <h4 className="mb-4">Create New Brand</h4>
-                          <Form autoComplete="off" onSubmit={handleBrandSubmit}>
-                            <FormGroup className="mb-3">
-                              <FormLabel>Brand Name</FormLabel>
-                              <FormControl
-                                type="text"
-                                placeholder="Brand Name"
-                                value={newBrand.name}
-                                onChange={handleBrandChange}
-                                required
-                              />
-                            </FormGroup>
-                            {/* <Button
+              <TabPane eventKey="brand">
+                <Row className="g-3">
+                  <Col xs={12} md={4} lg={3}>
+                    <Card className="rounded-4 p-1 border h-100">
+                      <div className="my-3 mx-3">
+                        <h4 className="mb-4">Create New Brand</h4>
+                        <Form autoComplete="off" onSubmit={handleBrandSubmit}>
+                          <FormGroup className="mb-3">
+                            <FormLabel>Brand Name</FormLabel>
+                            <FormControl
+                              type="text"
+                              placeholder="Brand Name"
+                              value={newBrand.name}
+                              onChange={handleBrandChange}
+                              required
+                            />
+                          </FormGroup>
+                          {/* <Button
                               className="my-3 float-end"
                               type="submit"
                               variant="primary"
                             >
                               Submit
                             </Button> */}
-                            <Button variant="primary" type="submit" className=" my-2 float-end">
-                              {submitLoading ? (
-                                <>
-                                  <Spinner animation="border" size="sm" className="me-2" /> Saving...
-                                </>
-                              ) : ('Submit')}
+                          <Button variant="primary" type="submit" className=" my-2 float-end">
+                            {submitLoading ? (
+                              <>
+                                <Spinner animation="border" size="sm" className="me-2" /> Saving...
+                              </>
+                            ) : ('Submit')}
 
-                            </Button>
-                          </Form>
-                        </div>
-                      </Card>
-                    </Col>
-                    <Col xs={12} md={8} lg={9}>
-                      <Card className="rounded-4 p-2 border h-100">
-                        <div className="my-3 mx-3">
-                          <h4 className="mb-4">Brand List</h4>
-                          <div className="table-responsive">
-                            <Table className="border-none" hover size="sm">
-                              <thead>
-                                <tr>
-                                  {/* <th></th> */}
-                                  <th>Name</th>
-                                  <th>Action</th>
+                          </Button>
+                        </Form>
+                      </div>
+                    </Card>
+                  </Col>
+                  <Col xs={12} md={8} lg={9}>
+                    <Card className="rounded-4 p-2 border h-100">
+                      <div className="my-3 mx-3">
+                        <h4 className="mb-4">Brand List</h4>
+                        <div className="table-responsive">
+                          <Table className="border-none" hover size="sm">
+                            <thead>
+                              <tr>
+                                {/* <th></th> */}
+                                <th>Name</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {brands.map((brand) => (
+                                <tr key={brand._id}>
+                                  {/* <td>{brand._id}</td> */}
+                                  <td>
+                                    <FormControl
+                                      type="text"
+                                      value={editedFields[brand._id]?.name ?? brand.name}
+                                      onChange={(e) => handleFieldChange(brand._id, 'name', e.target.value)}
+                                      style={{ minWidth: "200px" }}
+                                      className="border-0 bg-transparent"
+                                    />
+                                  </td>
+                                  <td className="d-flex gap-2">
+                                    <Button
+                                      variant="light"
+                                      size="sm"
+                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                      onClick={() => handleDelete(brand._id)}
+                                      style={{ backgroundColor: "#FFE5E5" }}
+                                    >
+                                      <BiTrash size={20} color="#FF4242" />
+                                    </Button>
+                                    <Button
+                                      variant="light"
+                                      size="sm"
+                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                      onClick={() => handleSubmitChanges(brand._id)}
+                                      style={{ backgroundColor: "#E8FFE5" }}
+                                      disabled={!editedFields[brand._id]}
+                                    >
+                                      <BiCheck size={20} color="#28A745" />
+                                    </Button>
+                                  </td>
                                 </tr>
-                              </thead>
-                              <tbody>
-                                {brands.map((brand) => (
-                                  <tr key={brand._id}>
-                                    {/* <td>{brand._id}</td> */}
-                                    <td>
-                                      <FormControl
-                                        type="text"
-                                        value={editedFields[brand._id]?.name ?? brand.name}
-                                        onChange={(e) => handleFieldChange(brand._id, 'name', e.target.value)}
-                                        style={{ minWidth: "200px" }}
-                                        className="border-0 bg-transparent"
-                                      />
-                                    </td>
-                                    <td className="d-flex gap-2">
-                                      <Button
-                                        variant="light"
-                                        size="sm"
-                                        className="d-flex align-items-center justify-content-center rounded-circle p-2"
-                                        onClick={() => handleDelete(brand._id)}
-                                        style={{ backgroundColor: "#FFE5E5" }}
-                                      >
-                                        <BiTrash size={20} color="#FF4242" />
-                                      </Button>
-                                      <Button
-                                        variant="light"
-                                        size="sm"
-                                        className="d-flex align-items-center justify-content-center rounded-circle p-2"
-                                        onClick={() => handleSubmitChanges(brand._id)}
-                                        style={{ backgroundColor: "#E8FFE5" }}
-                                        disabled={!editedFields[brand._id]}
-                                      >
-                                        <BiCheck size={20} color="#28A745" />
-                                      </Button>
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </Table>
-                          </div>
+                              ))}
+                            </tbody>
+                          </Table>
                         </div>
-                      </Card>
-                    </Col>
-                  </Row>
-                </TabPane>
+                      </div>
+                    </Card>
+                  </Col>
+                </Row>
+              </TabPane>
 
-                <TabPane eventKey="manufacturer">
-                  <Row className="g-3">
-                    <Col xs={12} md={4} lg={3}>
-                      <Card className="rounded-4 p-1 border h-100">
-                        <div className="my-3 mx-3">
-                          <h4 className="mb-4">Create New Manufacturer</h4>
-                          <Form autoComplete="off" onSubmit={handleManufacturerSubmit}>
-                            <FormGroup className="mb-3">
-                              <FormLabel>Manufacturer Name</FormLabel>
-                              <FormControl
-                                type="text"
-                                placeholder="Manufacturer Name"
-                                value={newManufacturer.name}
-                                onChange={(e) => setNewManufacturer({ ...newManufacturer, name: e.target.value })}
-                                required
-                              />
-                            </FormGroup>
-                            {/* <Button
-                              className="my-3 float-end"
-                              type="submit"
-                              variant="primary"
-                            >
-                              Submit
-                            </Button> */}
-
-                            <Button variant="primary" type="submit" className=" my-2 float-end">
-                              {submitLoading ? (
-                                <>
-                                  <Spinner animation="border" size="sm" className="me-2" /> Saving...
-                                </>
-                              ) : ('Submit')}
-
-                            </Button>
-                          </Form>
-                        </div>
-                      </Card>
-                    </Col>
-                    <Col xs={12} md={8} lg={9}>
-                      <Card className="rounded-4 p-2 border h-100">
-                        <div className="my-3 mx-3">
-                          <h4 className="mb-4">Manufacturer List</h4>
-                          <div className="table-responsive">
-                            <Table className="border-none" hover size="sm">
-                              <thead>
-                                <tr>
-                                  {/* <th></th> */}
-                                  <th>Name</th>
-                                  <th>Action</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {manufacturers.map((manufacturer) => (
-                                  <tr key={manufacturer._id}>
-                                    {/* <td>{manufacturer._id}</td> */}
-                                    <td>
-                                      <FormControl
-                                        type="text"
-                                        value={editedFields[manufacturer._id]?.name ?? manufacturer.name}
-                                        onChange={(e) => handleFieldChange(manufacturer._id, 'name', e.target.value)}
-                                        style={{ minWidth: "200px" }}
-                                        className="border-0 bg-transparent"
-                                      />
-                                    </td>
-                                    <td className="d-flex gap-2">
-                                      <Button
-                                        variant="light"
-                                        size="sm"
-                                        className="d-flex align-items-center justify-content-center rounded-circle p-2"
-                                        onClick={() => handleDelete(manufacturer._id)}
-                                        style={{ backgroundColor: "#FFE5E5" }}
-                                      >
-                                        <BiTrash size={20} color="#FF4242" />
-                                      </Button>
-                                      <Button
-                                        variant="light"
-                                        size="sm"
-                                        className="d-flex align-items-center justify-content-center rounded-circle p-2"
-                                        onClick={() => handleSubmitChanges(manufacturer._id)}
-                                        style={{ backgroundColor: "#E8FFE5" }}
-                                        disabled={!editedFields[manufacturer._id]}
-                                      >
-                                        <BiCheck size={20} color="#28A745" />
-                                      </Button>
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </Table>
-                          </div>
-                        </div>
-                      </Card>
-                    </Col>
-                  </Row>
-                </TabPane>
-
-                <TabPane eventKey="paymentterms">
-                  <Row className="g-3">
-                    <Col xs={12} md={4} lg={3}>
-                      <Card className="rounded-4 p-1 border h-100">
-                        <div className="my-3 mx-3">
-                          <h4 className="mb-4">Create New Payment Terms</h4>
-                          <Form autoComplete="off" onSubmit={handalePaymentTermSubmit}>
-                            <FormGroup className="mb-3">
-                              <FormLabel>Term Name</FormLabel>
-                              <FormControl
-                                type="text"
-                                placeholder="Term Name"
-                                value={newpaymentTerm.name}
-                                onChange={(e) => setNewPaymentTerm({ ...newpaymentTerm, name: e.target.value })}
-                                required
-                              />
-                            </FormGroup>
-                            <FormGroup className="mb-3">
-                              <FormLabel>No of Days</FormLabel>
-                              <FormControl
-                                type="text"
-                                placeholder="No of Days"
-                                value={newpaymentTerm.code}
-                                onChange={(e) => setNewPaymentTerm({ ...newpaymentTerm, code: e.target.value })}
-                                required
-                              />
-                            </FormGroup>
-                            {/* <Button
+              <TabPane eventKey="manufacturer">
+                <Row className="g-3">
+                  <Col xs={12} md={4} lg={3}>
+                    <Card className="rounded-4 p-1 border h-100">
+                      <div className="my-3 mx-3">
+                        <h4 className="mb-4">Create New Manufacturer</h4>
+                        <Form autoComplete="off" onSubmit={handleManufacturerSubmit}>
+                          <FormGroup className="mb-3">
+                            <FormLabel>Manufacturer Name</FormLabel>
+                            <FormControl
+                              type="text"
+                              placeholder="Manufacturer Name"
+                              value={newManufacturer.name}
+                              onChange={(e) => setNewManufacturer({ ...newManufacturer, name: e.target.value })}
+                              required
+                            />
+                          </FormGroup>
+                          {/* <Button
                               className="my-3 float-end"
                               type="submit"
                               variant="primary"
@@ -581,87 +476,192 @@ export const InventorySettingAdmin = () => {
                               Submit
                             </Button> */}
 
-                            <Button variant="primary" type="submit" className=" my-2 float-end">
-                              {submitLoading ? (
-                                <>
-                                  <Spinner animation="border" size="sm" className="me-2" /> Saving...
-                                </>
-                              ) : ('Submit')}
+                          <Button variant="primary" type="submit" className=" my-2 float-end">
+                            {submitLoading ? (
+                              <>
+                                <Spinner animation="border" size="sm" className="me-2" /> Saving...
+                              </>
+                            ) : ('Submit')}
 
-                            </Button>
-                          </Form>
-                        </div>
-                      </Card>
-                    </Col>
-                    <Col xs={12} md={8} lg={9}>
-                      <Card className="rounded-4 p-2 border h-100">
-                        <div className="my-3 mx-3">
-                          <h4 className="mb-4">Payment Terms List</h4>
-                          <div className="table-responsive">
-                            <Table className="border-none" hover size="sm">
-                              <thead>
-                                <tr>
-                                  {/* <th></th> */}
-                                  <th>Name</th>
-                                  <th>Days</th>
-                                  <th>Action</th>
+                          </Button>
+                        </Form>
+                      </div>
+                    </Card>
+                  </Col>
+                  <Col xs={12} md={8} lg={9}>
+                    <Card className="rounded-4 p-2 border h-100">
+                      <div className="my-3 mx-3">
+                        <h4 className="mb-4">Manufacturer List</h4>
+                        <div className="table-responsive">
+                          <Table className="border-none" hover size="sm">
+                            <thead>
+                              <tr>
+                                {/* <th></th> */}
+                                <th>Name</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {manufacturers.map((manufacturer) => (
+                                <tr key={manufacturer._id}>
+                                  {/* <td>{manufacturer._id}</td> */}
+                                  <td>
+                                    <FormControl
+                                      type="text"
+                                      value={editedFields[manufacturer._id]?.name ?? manufacturer.name}
+                                      onChange={(e) => handleFieldChange(manufacturer._id, 'name', e.target.value)}
+                                      style={{ minWidth: "200px" }}
+                                      className="border-0 bg-transparent"
+                                    />
+                                  </td>
+                                  <td className="d-flex gap-2">
+                                    <Button
+                                      variant="light"
+                                      size="sm"
+                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                      onClick={() => handleDelete(manufacturer._id)}
+                                      style={{ backgroundColor: "#FFE5E5" }}
+                                    >
+                                      <BiTrash size={20} color="#FF4242" />
+                                    </Button>
+                                    <Button
+                                      variant="light"
+                                      size="sm"
+                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                      onClick={() => handleSubmitChanges(manufacturer._id)}
+                                      style={{ backgroundColor: "#E8FFE5" }}
+                                      disabled={!editedFields[manufacturer._id]}
+                                    >
+                                      <BiCheck size={20} color="#28A745" />
+                                    </Button>
+                                  </td>
                                 </tr>
-                              </thead>
-                              <tbody>
-                                {paymentTerms.map((term) => (
-                                  <tr key={term._id}>
-                                    {/* <td>{term._id}</td> */}
-                                    <td>
-                                      <FormControl
-                                        type="text"
-                                        value={editedFields[term._id]?.name ?? term.name}
-                                        onChange={(e) => handleFieldChange(term._id, 'name', e.target.value)}
-                                        style={{ minWidth: "200px" }}
-                                        className="border-0 bg-transparent"
-                                      />
-                                    </td>
-                                    <td>
-                                      <FormControl
-                                        type="text"
-                                        value={editedFields[term._id]?.code ?? term.code}
-                                        onChange={(e) => handleFieldChange(term._id, 'code', e.target.value)}
-                                        style={{ minWidth: "200px" }}
-                                        className="border-0 bg-transparent"
-                                      />
-                                    </td>
-                                    <td className="d-flex gap-2">
-                                      <Button
-                                        variant="light"
-                                        size="sm"
-                                        className="d-flex align-items-center justify-content-center rounded-circle p-2"
-                                        onClick={() => handleDelete(term._id)}
-                                        style={{ backgroundColor: "#FFE5E5" }}
-                                      >
-                                        <BiTrash size={20} color="#FF4242" />
-                                      </Button>
-                                      <Button
-                                        variant="light"
-                                        size="sm"
-                                        className="d-flex align-items-center justify-content-center rounded-circle p-2"
-                                        onClick={() => handleSubmitChanges(term._id)}
-                                        style={{ backgroundColor: "#E8FFE5" }}
-                                        disabled={!editedFields[term._id]}
-                                      >
-                                        <BiCheck size={20} color="#28A745" />
-                                      </Button>
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </Table>
-                          </div>
+                              ))}
+                            </tbody>
+                          </Table>
                         </div>
-                      </Card>
-                    </Col>
-                  </Row>
-                </TabPane>
-              </TabContent>
-            </Col>
+                      </div>
+                    </Card>
+                  </Col>
+                </Row>
+              </TabPane>
+
+              <TabPane eventKey="paymentterms">
+                <Row className="g-3">
+                  <Col xs={12} md={4} lg={3}>
+                    <Card className="rounded-4 p-1 border h-100">
+                      <div className="my-3 mx-3">
+                        <h4 className="mb-4">Create New Payment Terms</h4>
+                        <Form autoComplete="off" onSubmit={handalePaymentTermSubmit}>
+                          <FormGroup className="mb-3">
+                            <FormLabel>Term Name</FormLabel>
+                            <FormControl
+                              type="text"
+                              placeholder="Term Name"
+                              value={newpaymentTerm.name}
+                              onChange={(e) => setNewPaymentTerm({ ...newpaymentTerm, name: e.target.value })}
+                              required
+                            />
+                          </FormGroup>
+                          <FormGroup className="mb-3">
+                            <FormLabel>No of Days</FormLabel>
+                            <FormControl
+                              type="text"
+                              placeholder="No of Days"
+                              value={newpaymentTerm.code}
+                              onChange={(e) => setNewPaymentTerm({ ...newpaymentTerm, code: e.target.value })}
+                              required
+                            />
+                          </FormGroup>
+                          {/* <Button
+                              className="my-3 float-end"
+                              type="submit"
+                              variant="primary"
+                            >
+                              Submit
+                            </Button> */}
+
+                          <Button variant="primary" type="submit" className=" my-2 float-end">
+                            {submitLoading ? (
+                              <>
+                                <Spinner animation="border" size="sm" className="me-2" /> Saving...
+                              </>
+                            ) : ('Submit')}
+
+                          </Button>
+                        </Form>
+                      </div>
+                    </Card>
+                  </Col>
+                  <Col xs={12} md={8} lg={9}>
+                    <Card className="rounded-4 p-2 border h-100">
+                      <div className="my-3 mx-3">
+                        <h4 className="mb-4">Payment Terms List</h4>
+                        <div className="table-responsive">
+                          <Table className="border-none" hover size="sm">
+                            <thead>
+                              <tr>
+                                {/* <th></th> */}
+                                <th>Name</th>
+                                <th>Days</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {paymentTerms.map((term) => (
+                                <tr key={term._id}>
+                                  {/* <td>{term._id}</td> */}
+                                  <td>
+                                    <FormControl
+                                      type="text"
+                                      value={editedFields[term._id]?.name ?? term.name}
+                                      onChange={(e) => handleFieldChange(term._id, 'name', e.target.value)}
+                                      style={{ minWidth: "200px" }}
+                                      className="border-0 bg-transparent"
+                                    />
+                                  </td>
+                                  <td>
+                                    <FormControl
+                                      type="text"
+                                      value={editedFields[term._id]?.code ?? term.code}
+                                      onChange={(e) => handleFieldChange(term._id, 'code', e.target.value)}
+                                      style={{ minWidth: "200px" }}
+                                      className="border-0 bg-transparent"
+                                    />
+                                  </td>
+                                  <td className="d-flex gap-2">
+                                    <Button
+                                      variant="light"
+                                      size="sm"
+                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                      onClick={() => handleDelete(term._id)}
+                                      style={{ backgroundColor: "#FFE5E5" }}
+                                    >
+                                      <BiTrash size={20} color="#FF4242" />
+                                    </Button>
+                                    <Button
+                                      variant="light"
+                                      size="sm"
+                                      className="d-flex align-items-center justify-content-center rounded-circle p-2"
+                                      onClick={() => handleSubmitChanges(term._id)}
+                                      style={{ backgroundColor: "#E8FFE5" }}
+                                      disabled={!editedFields[term._id]}
+                                    >
+                                      <BiCheck size={20} color="#28A745" />
+                                    </Button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </Table>
+                        </div>
+                      </div>
+                    </Card>
+                  </Col>
+                </Row>
+              </TabPane>
+            </TabContent>
+          </Col>
           {/* </Row> */}
         </TabContainer>
       </Row>

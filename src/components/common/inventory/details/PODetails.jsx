@@ -259,7 +259,7 @@ export const PODetails = () => {
     const purchaseOrder = location.state;
     const selectedPo = useSelector((state) => state.purchaseOrder.selectedPo);
     const loading = useSelector((state) => state.purchaseOrder.loading);
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     const POId = useParams().id;
 
     const userName = user?.name;

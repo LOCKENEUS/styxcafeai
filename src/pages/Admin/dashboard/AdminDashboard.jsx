@@ -48,7 +48,7 @@ const AdminDashboard = () => {
   const [recentBookings, setRecentBookings] = useState([]);
   const { games } = useSelector((state) => state.games);
   const { adminDashboard } = useSelector((state) => state.adminDashboard);
-  const cafe = JSON.parse(sessionStorage.getItem('user'));
+  const cafe = JSON.parse(localStorage.getItem('user'));
   const cafeId = cafe?._id
   const summaryCardsRef = useRef(null);
   const gamesRef = useRef(null);

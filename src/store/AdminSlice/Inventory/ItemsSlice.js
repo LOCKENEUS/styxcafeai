@@ -13,7 +13,7 @@ export const getItems = createAsyncThunk(
         `${BASE_URL}/admin/inventory/item/list/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -36,7 +36,7 @@ export const getItemTransactions = createAsyncThunk(
         `${BASE_URL}/admin/inventory/item/transactions/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -59,7 +59,7 @@ export const getItemById = createAsyncThunk(
         `${BASE_URL}/admin/inventory/item/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -83,7 +83,7 @@ export const addItem = createAsyncThunk(
         itemData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -108,7 +108,7 @@ export const updateItem = createAsyncThunk(
         itemData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -128,13 +128,11 @@ export const deleteItem = createAsyncThunk(
   "items/deleteItem",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`${BASE_URL}/admin/inventory/item/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
-          },
-        }
-      );
+      await axios.delete(`${BASE_URL}/admin/inventory/item/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
       toast.success("Item deleted successfully!");
       return id;
     } catch (error) {
@@ -156,7 +154,7 @@ export const getItemsCount = createAsyncThunk(
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );

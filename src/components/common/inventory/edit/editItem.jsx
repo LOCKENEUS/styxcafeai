@@ -41,7 +41,7 @@ export const EditItem = () => {
     }, [dispatch, groupId]);
     const itemsDetails = useSelector((state) => state.inventorySuperAdmin.inventory);
     useEffect(() => {
-        const userData = sessionStorage.getItem("user");
+        const userData = localStorage.getItem("user");
         if (userData) {
             const parsedUser = JSON.parse(userData);
             setSuperAdminId(parsedUser._id);

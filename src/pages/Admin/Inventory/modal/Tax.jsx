@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 const Tax = ({ show, handleClose, onCreated }) => {
     const dispatch = useDispatch();
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     const cafeId = user?._id;
     const [formData, setFormData] = useState({
         tax_name: '',
@@ -45,7 +45,7 @@ const Tax = ({ show, handleClose, onCreated }) => {
 
     return (
         <Modal show={show} onHide={handleClose} centered style={{ zIndex: 2000 }} >
-            <Modal.Header  className='bg-info bg-opacity-25 py-3'closeButton >
+            <Modal.Header className='bg-info bg-opacity-25 py-3' closeButton >
                 <Modal.Title>Create Custom Tax</Modal.Title>
             </Modal.Header>
             <Modal.Body>
@@ -54,10 +54,10 @@ const Tax = ({ show, handleClose, onCreated }) => {
                         <div className="col-sm-6 mb-3">
                             <Form.Group controlId="tax_name">
                                 <Form.Label>Tax name</Form.Label>
-                                <Form.Control 
-                                    type="text" 
-                                    placeholder="Tax name" 
-                                    required 
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Tax name"
+                                    required
                                     value={formData.tax_name}
                                     onChange={handleChange}
                                 />
@@ -67,14 +67,14 @@ const Tax = ({ show, handleClose, onCreated }) => {
                             <Form.Group controlId="tax_value">
                                 <Form.Label>Tax Value</Form.Label>
                                 <div className="input-group input-group-sm">
-                                    <Form.Control 
-                                        type="tel" 
-                                        placeholder="0.00" 
-                                        required 
+                                    <Form.Control
+                                        type="tel"
+                                        placeholder="0.00"
+                                        required
                                         maxLength="2"
                                         value={formData.tax_rate}
                                         onChange={handleChange}
-                                        onInput={(e) => e.target.value = e.target.value.replace(/[^0-9]/g, '')} 
+                                        onInput={(e) => e.target.value = e.target.value.replace(/[^0-9]/g, '')}
                                     />
                                     <span className="input-group-text">%</span>
                                 </div>
@@ -83,10 +83,10 @@ const Tax = ({ show, handleClose, onCreated }) => {
                         <div className="col-sm-12 mb-3">
                             <Form.Group controlId="description">
                                 <Form.Label>Tax Description</Form.Label>
-                                <Form.Control 
-                                    type="text" 
-                                    placeholder="Custom tax description" 
-                                    required 
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Custom tax description"
+                                    required
                                     value={formData.description}
                                     onChange={handleChange}
                                 />

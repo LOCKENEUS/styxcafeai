@@ -1,116 +1,125 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 // Fetch all users
 export const getUsers = createAsyncThunk(
-  'users/getUsers',
+  "users/getUsers",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/staff-member/list/${id}`,
+      const response = await axios.get(
+        `${BASE_URL}/admin/staff-member/list/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Fetch a single user by ID
 export const getUserById = createAsyncThunk(
-  'users/getUserById',
+  "users/getUserById",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/staff-member/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}/admin/staff-member/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Add a new user
 export const addUser = createAsyncThunk(
-  'users/addUser',
+  "users/addUser",
   async (userData, thunkAPI) => {
     try {
-      const response = await axios.post(`${BASE_URL}/admin/staff-member`, 
+      const response = await axios.post(
+        `${BASE_URL}/admin/staff-member`,
         userData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
-      toast.success('User added successfully!');
+      toast.success("User added successfully!");
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Update an existing user
 export const updateUser = createAsyncThunk(
-  'users/updateUser',
+  "users/updateUser",
   async ({ id, data }, thunkAPI) => {
     try {
-      const response = await axios.put(`${BASE_URL}/admin/staff-member/${id}`, 
+      const response = await axios.put(
+        `${BASE_URL}/admin/staff-member/${id}`,
         data,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
-      toast.success('User updated successfully!');
+      toast.success("User updated successfully!");
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 // Delete a user
 export const deleteUser = createAsyncThunk(
-  'users/deleteUser',
+  "users/deleteUser",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`${BASE_URL}/admin/staff-member/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
-          },
-        }
-      );
-      toast.success('User deleted successfully!');
+      await axios.delete(`${BASE_URL}/admin/staff-member/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
+      toast.success("User deleted successfully!");
       return id;
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
 const userSlice = createSlice({
-  name: 'users',
+  name: "users",
   initialState: {
     users: [],
     selectedUser: null,
@@ -163,7 +172,9 @@ const userSlice = createSlice({
       .addCase(updateUser.fulfilled, (state, action) => {
         state.loading = false;
         const updatedUser = action.payload;
-        const index = state.users.findIndex((user) => user._id === updatedUser._id);
+        const index = state.users.findIndex(
+          (user) => user._id === updatedUser._id
+        );
         if (index !== -1) {
           state.users[index] = updatedUser;
         }

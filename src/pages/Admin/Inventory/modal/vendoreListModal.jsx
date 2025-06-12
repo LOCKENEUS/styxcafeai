@@ -5,7 +5,7 @@ import { VendorCreateModal } from "./vendorCreate";
 import { GetVendorsList } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch, useSelector } from "react-redux";
 
-const VendorsList = ({ showVendorList, handleCloseVendorList,onVendorSelect }) => {
+const VendorsList = ({ showVendorList, handleCloseVendorList, onVendorSelect }) => {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -20,7 +20,7 @@ const VendorsList = ({ showVendorList, handleCloseVendorList,onVendorSelect }) =
     setTimeout(() => handleShowCreateVendor(), 300);
   };
 
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
   const dispatch = useDispatch();
 
@@ -33,10 +33,10 @@ const VendorsList = ({ showVendorList, handleCloseVendorList,onVendorSelect }) =
 
   // Get vendors data from Redux store
   const vendors = useSelector((state) => state.purchaseOrder);
-  
+
   // Ensure vendors is an array before filtering
   const vendorsList = vendors?.vendors || [];
-  
+
   // Filtering vendors based on search input
   const filteredVendors = vendorsList.filter((vendor) =>
     Object.values(vendor).some((value) =>
@@ -51,13 +51,13 @@ const VendorsList = ({ showVendorList, handleCloseVendorList,onVendorSelect }) =
     currentPage * itemsPerPage
   );
 
-  const handleVendorSelected = ( vendor_id) => {
+  const handleVendorSelected = (vendor_id) => {
     if (onVendorSelect) {
       onVendorSelect(vendor_id);
     }
     handleCloseVendorList();
   };
- 
+
 
   return (
     <>
@@ -111,7 +111,7 @@ const VendorsList = ({ showVendorList, handleCloseVendorList,onVendorSelect }) =
                     <td>{vendor.city1}</td>
                     <td>
                       <Button variant="success" size="sm"
-                      onClick={() => handleVendorSelected(vendor._id)}
+                        onClick={() => handleVendorSelected(vendor._id)}
                       >
                         <BiPlus size={20} />
                       </Button>
@@ -127,7 +127,7 @@ const VendorsList = ({ showVendorList, handleCloseVendorList,onVendorSelect }) =
               )}
             </tbody>
           </Table>
-          
+
 
 
           {/* Pagination Controls */}

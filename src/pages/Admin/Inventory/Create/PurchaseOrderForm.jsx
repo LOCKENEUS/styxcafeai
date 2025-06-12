@@ -44,7 +44,7 @@ const PurchaseOrderForm = () => {
   const [userType, setUserType] = useState("Superadmin");
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [vendorId, setVendorId] = useState("");
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const cafeId = user?._id;
   const userName = user?.name;
@@ -56,7 +56,7 @@ const PurchaseOrderForm = () => {
   let items = []
   if (userType === "Superadmin") {
     items = useSelector((state) => state.inventorySuperAdmin.it);
-        const formattedItems = items.map(item => ({
+    const formattedItems = items.map(item => ({
       ...item,
       costPrice: `${item.sellingPrice}`,
     }));
@@ -106,7 +106,7 @@ const PurchaseOrderForm = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
   useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem('user'));
     const cafeId = user?._id;
     if (cafeId) {
       dispatch(getCustomers(cafeId));

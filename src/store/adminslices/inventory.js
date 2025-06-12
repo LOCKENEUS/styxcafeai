@@ -1,36 +1,37 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 // Async thunk to fetch items
 export const fetchItems = createAsyncThunk(
-    'inventory/fetchItems', // Action type updated
-    async (_, thunkAPI) => {
-      try {
-        const response = await axios.post(
-          `${BASE_URL}/inventory/item`,
-          {}, // Empty body
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "x-api-key": "46gyioi6n5h87kygf2w68r4p",
-              authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
-            },
-          }
-        );
-        return response.data;
-      } catch (error) {
-        return thunkAPI.rejectWithValue(error.response?.data || 'Something went wrong');
-      }
+  "inventory/fetchItems", // Action type updated
+  async (_, thunkAPI) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/inventory/item`,
+        {}, // Empty body
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": "46gyioi6n5h87kygf2w68r4p",
+            authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Something went wrong"
+      );
     }
-  );
-  
+  }
+);
 
 // Create Redux slice
 const inventorySlice = createSlice({
-  name: 'inventory',
+  name: "inventory",
   initialState: {
     locations: [],
     loading: false,
@@ -51,7 +52,7 @@ const inventorySlice = createSlice({
       .addCase(fetchItems.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        toast.error(action.payload || 'Failed to fetch locations'); // Show error message
+        toast.error(action.payload || "Failed to fetch locations"); // Show error message
       });
   },
 });

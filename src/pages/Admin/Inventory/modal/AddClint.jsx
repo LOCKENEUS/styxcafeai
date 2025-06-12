@@ -11,7 +11,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
   const [showClientList, setShowClientList] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredClients, setFilteredClients] = useState([]);
-  const cafeId = JSON.parse(sessionStorage.getItem('user'))?._id;
+  const cafeId = JSON.parse(localStorage.getItem('user'))?._id;
 
   const [newClient, setNewClient] = useState({
     fullName: "",
@@ -45,7 +45,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
   const handleSearch = async (e) => {
     const searchTerm = e.target.value;
     setSearchTerm(searchTerm);
-    
+
     try {
       const result = await dispatch(searchCustomers({ cafeId, searchTerm })).unwrap();
       setFilteredClients(result || []);
@@ -57,7 +57,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const formData = new FormData();
     formData.append("cafe", newClient.cafe);
     formData.append("name", newClient.fullName);
@@ -104,50 +104,50 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
   return (
     <Modal show={show} onHide={handleClose} size="lg">
       <Modal.Header className="bg-info bg-opacity-10 py-2">
-        <span style={{fontSize:"20px", fontWeight:"500"}}>
+        <span style={{ fontSize: "20px", fontWeight: "500" }}>
           {showClientList ? "Choose a client" : "Create New Client"}
         </span>
-          {
-            !showClientList ?
-            <Button 
-            variant="info" 
-            size="sm" 
-            onClick={toggleView}
-          > 
-            <BiArrowToLeft  size={20}/>
+        {
+          !showClientList ?
+            <Button
+              variant="info"
+              size="sm"
+              onClick={toggleView}
+            >
+              <BiArrowToLeft size={20} />
             </Button>
-             :
-             <Button 
-             variant="info" 
-             size="sm" 
-             onClick={handleClose}
-           > 
-             <RxCross1  size={20}/>
-           </Button>
-          }
-    
-          </Modal.Header>
-          <Modal.Body>
-            {showClientList ? (
-              <div>
-                <Card className="shadow">
-                  <Card.Header className="p-2 bg-info bg-opacity-10">
-                    <Row className="mb-2">
-                      <Col xs={8} sm={6} md={4}>
-                        <Form.Control 
-                          type="text" 
-                          placeholder="Search..." 
+            :
+            <Button
+              variant="info"
+              size="sm"
+              onClick={handleClose}
+            >
+              <RxCross1 size={20} />
+            </Button>
+        }
+
+      </Modal.Header>
+      <Modal.Body>
+        {showClientList ? (
+          <div>
+            <Card className="shadow">
+              <Card.Header className="p-2 bg-info bg-opacity-10">
+                <Row className="mb-2">
+                  <Col xs={8} sm={6} md={4}>
+                    <Form.Control
+                      type="text"
+                      placeholder="Search..."
                       value={searchTerm}
                       onChange={handleSearch}
                     />
                   </Col>
                   <Col xs={4} sm={6} md={8} className="text-end">
-                    <Button 
-                      variant="info" 
-                      size="sm" 
+                    <Button
+                      variant="info"
+                      size="sm"
                       onClick={toggleView}
                     >
-                      <BiPlus size={20}/>
+                      <BiPlus size={20} />
                     </Button>
                   </Col>
                 </Row>
@@ -176,7 +176,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                             size="sm"
                             onClick={() => selectClient(client)}
                           >
-                            <BiPlus size={20}/>
+                            <BiPlus size={20} />
                           </Button>
                         </td>
                       </tr>
@@ -212,7 +212,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                     placeholder="Enter contact number"
                     value={newClient.contactNumber}
                     onChange={handleChange}
-                    
+
                   />
                 </Form.Group>
               </Col>
@@ -229,7 +229,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                     placeholder="Enter email"
                     value={newClient.email}
                     onChange={handleChange}
-                    
+
                   />
                 </Form.Group>
               </Col>
@@ -242,7 +242,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                     placeholder="Enter address"
                     value={newClient.address}
                     onChange={handleChange}
-                    
+
                   />
                 </Form.Group>
               </Col>
@@ -254,7 +254,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                     name="gender"
                     value={newClient.gender}
                     onChange={handleChange}
-                    
+
                   >
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
@@ -275,7 +275,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                     placeholder="Enter country"
                     value={newClient.country}
                     onChange={handleChange}
-                    
+
                   />
                 </Form.Group>
               </Col>
@@ -288,7 +288,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                     placeholder="Enter state"
                     value={newClient.state}
                     onChange={handleChange}
-                    
+
                   />
                 </Form.Group>
               </Col>
@@ -301,7 +301,7 @@ const AddClint = ({ show, handleClose, onClientSelect }) => {
                     placeholder="Enter city"
                     value={newClient.city}
                     onChange={handleChange}
-                    
+
                   />
                 </Form.Group>
               </Col>

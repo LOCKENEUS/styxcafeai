@@ -17,7 +17,7 @@ const BookGames = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    const user = JSON.parse(sessionStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem('user'));
     if (user?._id) {
       dispatch(getGames(user._id));
     }
@@ -144,7 +144,7 @@ const BookGames = () => {
             ))
           ) : (
             <Col className="text-center py-3">
-             <GamePlaceholder/>
+              <GamePlaceholder />
             </Col>
           )}
         </Row>
@@ -199,7 +199,7 @@ const BookGames = () => {
             ))
           ) : (
             <Col className="text-center py-3">
-              <GamePlaceholder/>
+              <GamePlaceholder />
             </Col>
           )}
         </Row>

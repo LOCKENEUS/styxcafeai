@@ -13,7 +13,7 @@ export const getsalesOrders = createAsyncThunk(
         `${BASE_URL}/superadmin/inventory/so/list`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -36,7 +36,7 @@ export const getsalesOrderById = createAsyncThunk(
         `${BASE_URL}/superadmin/inventory/so/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -58,7 +58,7 @@ export const getsalesOrderByCafeId = createAsyncThunk(
         `${BASE_URL}/superadmin/inventory/so/list/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -82,7 +82,7 @@ export const addsalesOrder = createAsyncThunk(
         soData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -107,7 +107,7 @@ export const updatesalesOrder = createAsyncThunk(
         soData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -127,14 +127,11 @@ export const deletesalesOrder = createAsyncThunk(
   "salesOrder/deletesalesOrder",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(
-        `${BASE_URL}/superadmin/inventory/so/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
-          },
-        }
-      );
+      await axios.delete(`${BASE_URL}/superadmin/inventory/so/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
       toast.success("Sales Order deleted successfully!");
       return id;
     } catch (error) {

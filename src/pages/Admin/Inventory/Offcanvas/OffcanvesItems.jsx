@@ -49,7 +49,7 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
   const [showTaxFields, setShowTaxFields] = useState(true);
   const customFields = useSelector(state => state.customFields.customFields);
   const taxFields = useSelector(state => state.taxFieldSlice.taxFields);
-  const cafeId = JSON.parse(sessionStorage.getItem("user"))?._id;
+  const cafeId = JSON.parse(localStorage.getItem("user"))?._id;
   const vendors = useSelector(state => state.vendors.vendors);
 
   // Organize custom fields by type

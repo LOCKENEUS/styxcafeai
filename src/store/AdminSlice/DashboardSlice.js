@@ -8,15 +8,11 @@ export const getAdminDashboardData = createAsyncThunk(
   "adminDashboard/getAdminDashboardData",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/dashboard`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}/admin/dashboard`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
       return response.data.data;
     } catch (error) {
       console.error("API error:", error);
@@ -35,12 +31,11 @@ export const getSearchData = createAsyncThunk(
   "adminDashboard/getSearchData",
   async (query, thunkAPI) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/dashboard/search?search=${query}`,  // /api/search?search=john
+      const response = await axios.get(
+        `${BASE_URL}/admin/dashboard/search?search=${query}`, // /api/search?search=john
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem(
-              "authToken"
-            )}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -99,7 +94,7 @@ const adminDashboardSlice = createSlice({
       .addCase(getSearchData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      })
+      });
   },
 });
 

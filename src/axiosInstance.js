@@ -10,7 +10,7 @@
 
 // // Add Authorization Header
 // API.interceptors.request.use((config) => {
-//   const token = sessionStorage.getItem("authToken");
+//   const token = localStorage.getItem("authToken");
 //   if (token) {
 //     config.headers["Authorization"] = `Bearer ${token}`;
 //   }
@@ -32,15 +32,15 @@
 //           withCredentials: true, // Ensures cookies are sent
 //         });
 
-//         sessionStorage.setItem("authToken", res.data.accessToken);
+//         localStorage.setItem("authToken", res.data.accessToken);
 //         API.defaults.headers["Authorization"] = `Bearer ${res.data.accessToken}`;
 
 //         return API(originalRequest); // Retry the failed request
 //       } catch (refreshError) {
 //         console.error("Refresh token expired. Redirecting to login.");
-//         sessionStorage.removeItem("authToken");
-//         sessionStorage.removeItem("userRole");
-//         sessionStorage.removeItem("user");
+//         localStorage.removeItem("authToken");
+//         localStorage.removeItem("userRole");
+//         localStorage.removeItem("user");
 
 //         window.location.href = "/login";
 //       }
@@ -50,22 +50,6 @@
 // );
 
 // export default API;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import axios from "axios";
 
@@ -93,9 +77,9 @@
 //     const { accessToken, user } = res.data;
 
 //     // Store data in sessionStorage
-//     sessionStorage.setItem("authToken", accessToken);
-//     sessionStorage.setItem("userRole", user.role);
-//     sessionStorage.setItem("user", JSON.stringify(user)); // Store user as a string
+//     localStorage.setItem("authToken", accessToken);
+//     localStorage.setItem("userRole", user.role);
+//     localStorage.setItem("user", JSON.stringify(user)); // Store user as a string
 
 //       API.defaults.headers["Authorization"] = `Bearer ${accessToken}`;
 //       return accessToken;
@@ -145,21 +129,6 @@
 
 // export default API;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
@@ -200,9 +169,9 @@ const refreshAccessToken = async () => {
       const { accessToken: newToken, user } = res.data;
 
       // Store token in sessionStorage
-      sessionStorage.setItem("authToken", newToken);
-      sessionStorage.setItem("userRole", user.role);
-      sessionStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("authToken", newToken);
+      localStorage.setItem("userRole", user.role);
+      localStorage.setItem("user", JSON.stringify(user));
 
       accessToken = newToken;
       API.defaults.headers["Authorization"] = `Bearer ${accessToken}`;
@@ -222,7 +191,7 @@ const refreshAccessToken = async () => {
 
 // Add Authorization Header
 API.interceptors.request.use((config) => {
-  const storedToken = sessionStorage.getItem("authToken");
+  const storedToken = localStorage.getItem("authToken");
 
   if (storedToken) {
     config.headers["Authorization"] = `Bearer ${storedToken}`;

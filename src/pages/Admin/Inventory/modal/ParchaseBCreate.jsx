@@ -69,7 +69,7 @@ const ParchaseBCreate = () => {
 
   const { selectedItem } = useSelector((state) => state.purchaseReceiveSlice);
 
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
 
   const userName = user?.name;
@@ -97,7 +97,7 @@ const ParchaseBCreate = () => {
   const customersList = customers?.customers;
 
   useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     const cafeId = user?._id;
     if (cafeId) {
       dispatch(getCustomers(cafeId));
@@ -416,13 +416,13 @@ const ParchaseBCreate = () => {
   //   handleClose();
   // };
 
-    const handleVendorSelect = (newVendorId) => {
+  const handleVendorSelect = (newVendorId) => {
     const selectedVendor = vendorsList.find((vendor) => vendor?._id == newVendorId);
     if (selectedVendor) {
       setVendorSelected(selectedVendor);
       setFormData({
         ...formData,
-        vendor_id: selectedVendor?._id, 
+        vendor_id: selectedVendor?._id,
       });
       setVendorId(selectedVendor?._id);
     }
@@ -447,7 +447,7 @@ const ParchaseBCreate = () => {
     if (selectedItem) {
       // Set vendor data
       const vendor = selectedItem?.vendor_id;
-      if(!vendor || vendor == null || vendor == undefined) {
+      if (!vendor || vendor == null || vendor == undefined) {
         setUserType("Superadmin")
       }
       setVendorSelected(vendor);

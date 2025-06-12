@@ -1,6 +1,6 @@
 import { Modal, ModalBody, ModalHeader, Button, Form, Row, Col, FormGroup, FormLabel } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import { CreateVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder"; 
+import { CreateVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
@@ -11,20 +11,20 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
   const [newClient, setNewClient] = useState({
     vendorname: "",
-    companyName :"",
+    companyName: "",
     phone: "",
     email: "",
     // address: "",
-    billingAddress:"",
-    billingCountry:"",
-    billingState:"",
-    billingCity:"",
-    billingZip:"",
-    shippingAddress:"", 
+    billingAddress: "",
+    billingCountry: "",
+    billingState: "",
+    billingCity: "",
+    billingZip: "",
+    shippingAddress: "",
     shippingcountry: "",
     shippingState: "",
     shippingCity: "",
@@ -46,9 +46,9 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-      
+
     const formDataToSend = new FormData(); // Corrected initialization
-  
+
     formDataToSend.append("name", newClient.vendorname);
     formDataToSend.append("emailID", newClient.email);
     formDataToSend.append("company", newClient.companyName);
@@ -64,7 +64,7 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
     formDataToSend.append("pincode1", newClient.billingZip || 0);
     formDataToSend.append("pincode2", newClient.shippingZip || 0);
     formDataToSend.append('cafe', cafeId);
-  
+
     try {
       await dispatch(CreateVendor(formDataToSend));
       setNewClient({
@@ -83,7 +83,7 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
         billingZip: "",
         shippingZip: ""
       });
-  
+
       handleCloseCreateVendor();
     } catch (error) {
       console.error("Error creating vendor:", error);
@@ -91,11 +91,11 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
       setLoading(false);
     }
   };
-  
+
   const handleBillingAddressSelect = (place) => {
     const placeId = place.value.place_id;
     const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
-    
+
     axios
       .get(
         `https://maps.googleapis.com/maps/api/geocode/json?place_id=${placeId}&key=${apiKey}`
@@ -104,18 +104,18 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
         if (!res.data.results || res.data.results.length === 0) {
           throw new Error('No address details found for this location');
         }
-        
+
         const result = res.data.results[0];
         const addressComponents = result.address_components;
-        
+
         let city = "";
         let state = "";
         let country = "";
         let zipCode = "";
-        
+
         addressComponents.forEach((component) => {
           const types = component.types;
-          
+
           if (types.includes("locality")) {
             city = component.long_name;
           } else if (types.includes("administrative_area_level_1")) {
@@ -126,9 +126,9 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
             zipCode = component.long_name;
           }
         });
-        
+
         const formattedAddress = result.formatted_address || place.label;
-        
+
         setNewClient(prev => ({
           ...prev,
           billingAddress: formattedAddress,
@@ -157,7 +157,7 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
   const handleShippingAddressSelect = (place) => {
     const placeId = place.value.place_id;
     const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
-    
+
     axios
       .get(
         `https://maps.googleapis.com/maps/api/geocode/json?place_id=${placeId}&key=${apiKey}`
@@ -166,18 +166,18 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
         if (!res.data.results || res.data.results.length === 0) {
           throw new Error('No address details found for this location');
         }
-        
+
         const result = res.data.results[0];
         const addressComponents = result.address_components;
-        
+
         let city = "";
         let state = "";
         let country = "";
         let zipCode = "";
-        
+
         addressComponents.forEach((component) => {
           const types = component.types;
-          
+
           if (types.includes("locality")) {
             city = component.long_name;
           } else if (types.includes("administrative_area_level_1")) {
@@ -188,9 +188,9 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
             zipCode = component.long_name;
           }
         });
-        
+
         const formattedAddress = result.formatted_address || place.label;
-        
+
         setNewClient(prev => ({
           ...prev,
           shippingAddress: formattedAddress,
@@ -236,9 +236,9 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
   }, [newClient.billingState]);
 
   return (
-    <Modal show={showCreateVendor} onHide={handleCloseCreateVendor} backdrop="static"  keyboard={false} size="lg" centered >
+    <Modal show={showCreateVendor} onHide={handleCloseCreateVendor} backdrop="static" keyboard={false} size="lg" centered >
       <Modal.Header closeButton className="bg-info bg-opacity-50">
-      <h4 className="fs-2 mb-3"> Vendor Create</h4>
+        <h4 className="fs-2 mb-3"> Vendor Create</h4>
       </Modal.Header>
       <ModalBody>
         <Form onSubmit={handleSubmit}>
@@ -267,7 +267,7 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
                   value={newClient.companyName}
                   onChange={handleChange}
                   className="rounded-2"
-                  
+
                 />
               </FormGroup>
             </Col>
@@ -295,7 +295,7 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
                   value={newClient.phone}
                   onChange={handleChange}
                   className="rounded-2"
-                  
+
                 />
               </FormGroup>
             </Col>
@@ -309,7 +309,7 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
                 <GooglePlacesAutocomplete
                   apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
                   selectProps={{
-                    value: newClient.billingAddress 
+                    value: newClient.billingAddress
                       ? { label: newClient.billingAddress, value: newClient.billingAddress }
                       : null,
                     onChange: (place) => {
@@ -401,7 +401,7 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
                   value={newClient.billingCity}
                   onChange={handleChange}
                   className="rounded-2"
-                  
+
                   disabled={!newClient.billingState}
                 >
                   <option value="">Select City</option>
@@ -427,15 +427,15 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
                 />
               </FormGroup>
             </Col>
-            
-            
+
+
           </Row>
 
           <Row className="my-2 ">
             <div className="d-flex justify-content-between align-items-center mb-3">
               <h3>Shipping Address</h3>
-              <Button 
-                variant="outline-primary" 
+              <Button
+                variant="outline-primary"
                 className="d-flex align-items-center gap-2"
                 onClick={copyBillingToShipping}
               >
@@ -448,7 +448,7 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
                 <GooglePlacesAutocomplete
                   apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
                   selectProps={{
-                    value: newClient.shippingAddress 
+                    value: newClient.shippingAddress
                       ? { label: newClient.shippingAddress, value: newClient.shippingAddress }
                       : null,
                     onChange: (place) => {
@@ -466,7 +466,7 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
                       }
                     },
                     placeholder: "Enter Address",
-                    
+
                     styles: {
                       control: (provided) => ({
                         ...provided,
@@ -495,7 +495,7 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
                     }));
                   }}
                   className="rounded-2"
-                  
+
                 >
                   <option value="">Select Country</option>
                   {countries.map((country, index) => (
@@ -520,7 +520,7 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
                     }));
                   }}
                   className="rounded-2"
-                  
+
                   disabled={!newClient.shippingcountry}
                 >
                   <option value="">Select State</option>
@@ -540,7 +540,7 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
                   value={newClient.shippingCity}
                   onChange={handleChange}
                   className="rounded-2"
-                  
+
                   disabled={!newClient.shippingState}
                 >
                   <option value="">Select City</option>
@@ -562,11 +562,11 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
                   value={newClient.shippingZip}
                   onChange={handleChange}
                   className="rounded-2"
-                  
+
                 />
               </FormGroup>
             </Col>
-            
+
           </Row>
 
 

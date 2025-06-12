@@ -9,7 +9,7 @@ const CreateSlotForm = () => {
   const dispatch = useDispatch();
   const { games = [] } = useSelector((state) => state.games);
   const slots = useSelector((state) => state.slots?.slots || []);
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
 
   const navigate = useNavigate();

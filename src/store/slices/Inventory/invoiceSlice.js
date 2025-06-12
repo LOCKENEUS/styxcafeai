@@ -13,7 +13,7 @@ export const getSalesInvoiceList = createAsyncThunk(
         `${BASE_URL}/superadmin/inventory/so/invoice/list`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -36,7 +36,7 @@ export const getSalesInvoiceDetails = createAsyncThunk(
         `${BASE_URL}/superadmin/inventory/so/invoice/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -58,7 +58,7 @@ export const getSalesInvoiceDetails = createAsyncThunk(
 //         `${BASE_URL}/superadmin/inventory/so/list/${id}`,
 //         {
 //           headers: {
-//             Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+//             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
 //           },
 //         }
 //       );
@@ -83,7 +83,7 @@ export const createSalesInvoice = createAsyncThunk(
         soData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -108,7 +108,7 @@ export const updateSalesInvoice = createAsyncThunk(
         siData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -128,14 +128,11 @@ export const deleteSalesInvoice = createAsyncThunk(
   "saSalesInvoice/deleteSalesInvoice",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(
-        `${BASE_URL}/superadmin/inventory/so/invoice/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
-          },
-        }
-      );
+      await axios.delete(`${BASE_URL}/superadmin/inventory/so/invoice/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
       toast.success("Sales Invoice deleted successfully!");
       return id;
     } catch (error) {
@@ -156,7 +153,7 @@ export const collectInvoicePayment = createAsyncThunk(
         formData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -175,12 +172,12 @@ export const getInvoicePaymentList = createAsyncThunk(
   "saSalesInvoice/invoicePaymentList",
   async (formData, thunkAPI) => {
     try {
-      const response =await axios.get(
+      const response = await axios.get(
         `${BASE_URL}/superadmin/inventory/so/invoice/payment/list`,
         formData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );

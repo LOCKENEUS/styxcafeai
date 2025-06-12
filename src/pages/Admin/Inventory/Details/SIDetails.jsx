@@ -31,7 +31,7 @@ export const SIDetails = () => {
   const navigate = useNavigate();
 
 
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const userName = user?.name;
   const userEmail = user?.email;
   const UserContactN = user?.contact_no;
@@ -93,10 +93,10 @@ export const SIDetails = () => {
                                         <tr>
                                             <td>${index + 1}</td>
                                             <td>${new Date(payment.deposit_date).toLocaleDateString("en-US", {
-                                                year: "numeric",
-                                                month: "short",
-                                                day: "2-digit",
-                                            })}</td>
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+    })}</td>
                                             <td>₹ ${payment.deposit_amount}</td>
                                             <td>${payment.mode}</td>
                                             <td>${payment.transaction_id}</td>
@@ -170,7 +170,7 @@ export const SIDetails = () => {
   useEffect(() => {
     refreshPaymentData();
   }, [id]);
-  
+
   if (loading) {
     return (
       <Container className="d-flex justify-content-center align-items-center min-vh-100">
@@ -198,7 +198,7 @@ export const SIDetails = () => {
         <Col sm={12} className="">
           <div style={{ top: "186px", fontSize: "16px" }}>
             <Breadcrumb>
-            <BreadcrumbItem>
+              <BreadcrumbItem>
                 <Link to="/admin/dashboard">Home</Link>
               </BreadcrumbItem>
               <BreadcrumbItem>
@@ -449,7 +449,7 @@ export const SIDetails = () => {
                         <th className="text-start">Balance</th>
                         <th>
                           {((invoice?.total || 0) - (selectedPayment?.reduce((sum, payment) => sum + (payment.deposit_amount || 0), 0) || 0)) <= 0 ? (
-                            <span style={{fontWeight:"600"}} className="text-success">Amount Paid</span>
+                            <span style={{ fontWeight: "600" }} className="text-success">Amount Paid</span>
                           ) : (
                             <Button
                               onClick={handleCollectData}
@@ -457,7 +457,7 @@ export const SIDetails = () => {
                               Collect ₹{(invoice?.total || 0) - (selectedPayment?.reduce((sum, payment) => sum + (payment.deposit_amount || 0), 0) || 0)}
                             </Button>
                           )}
-                          
+
                           <CollectPayment
                             show={showCollectModal}
                             handleClose={handleModalClose}

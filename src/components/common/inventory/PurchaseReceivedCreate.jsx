@@ -44,7 +44,7 @@ export const PurchaseReceivedCreate = () => {
 
     const vendors = useSelector((state) => state.saVendor.vendors);
 
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     const cafeId = user?._id;
     const userName = user?.name;
     const userEmail = user?.email;

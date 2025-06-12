@@ -10,20 +10,20 @@ import { TbLayoutSidebarLeftCollapse } from "react-icons/tb";
 
 const MainNavbar = ({ setIsAuthenticated, toggleSidebar, collapsed }) => {
   const [profilePic, setProfilePic] = useState("/assets/profile/user_avatar.jpg");
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    sessionStorage.removeItem('authToken');
-    sessionStorage.removeItem('userRole');
-    sessionStorage.removeItem('user');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('user');
     toast.success('Logout successful');
 
     // Clear authentication
     setIsAuthenticated(false);
 
     // Remove any stored tokens
-    sessionStorage.removeItem('authToken');
+    localStorage.removeItem('authToken');
 
     // Redirect to login
     navigate('/login');

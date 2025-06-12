@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Button, Row, Col, Form, FormGroup, Modal, ModalHeader, ModalBody, ModalFooter, ModalTitle, Alert } from "react-bootstrap";
 import { useDispatch, useSelector } from 'react-redux';
 // import { addPurchaseBillPayment, getPaymentById } from '../../../../store/AdminSlice/Inventory/CollectPurchaseBill';
-import { 
-  addPurchaseBillPayment as addPayment, 
-  getPurchaseBillPaymentById as getPaymentById 
+import {
+  addPurchaseBillPayment as addPayment,
+  getPurchaseBillPaymentById as getPaymentById
 } from '../../../../store/AdminSlice/Inventory/CollectPurchaseBill';
 
 const CollectBillPayment = ({ show, handleClose, maxAmount, invoiceId, onSuccess }) => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.payments || {});
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
   const [showError, setShowError] = useState(false);
 
@@ -42,7 +42,7 @@ const CollectBillPayment = ({ show, handleClose, maxAmount, invoiceId, onSuccess
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    
+
     if (name === 'deposit_amount') {
       const amount = parseFloat(value);
       if (amount > maxAmount) {
@@ -81,7 +81,7 @@ const CollectBillPayment = ({ show, handleClose, maxAmount, invoiceId, onSuccess
 
   return (
     <Modal style={{ zIndex: 10000 }} show={show} onHide={handleClose} centered >
-      <ModalHeader closeButton style={{ backgroundColor: '#bad1f7', padding:"1rem" }}>
+      <ModalHeader closeButton style={{ backgroundColor: '#bad1f7', padding: "1rem" }}>
         <ModalTitle>Collect Payment</ModalTitle>
       </ModalHeader>
       <ModalBody>
@@ -174,8 +174,8 @@ const CollectBillPayment = ({ show, handleClose, maxAmount, invoiceId, onSuccess
         <Button variant="secondary" onClick={handleClose}>
           Close
         </Button>
-        <Button 
-          variant="primary" 
+        <Button
+          variant="primary"
           onClick={handleSubmit}
           disabled={loading || showError}
         >

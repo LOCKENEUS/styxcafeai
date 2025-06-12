@@ -32,7 +32,7 @@ export const ItemCreate = () => {
 
     // -----------------------   API CALLS ---------------------------
     useEffect(() => {
-        const userData = sessionStorage.getItem("user");
+        const userData = localStorage.getItem("user");
         if (userData) {
             const parsedUser = JSON.parse(userData);
             setSuperAdminId(parsedUser._id);
@@ -156,8 +156,8 @@ export const ItemCreate = () => {
                 formDataToSend.append("image", file);
             });
 
-            const response =await dispatch(addItems(formDataToSend));
-            navigate("/Inventory/itemDetails", {state:{ groupId: response.payload.data._id }});
+            const response = await dispatch(addItems(formDataToSend));
+            navigate("/Inventory/itemDetails", { state: { groupId: response.payload.data._id } });
             // setSubmitLoading(false);
             // Reset form after successful submission
             setFormData({

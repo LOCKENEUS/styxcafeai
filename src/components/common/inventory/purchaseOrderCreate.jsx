@@ -47,7 +47,7 @@ export const PurchaseOrderCreate = () => {
     const [userType, setUserType] = useState("Superadmin");
     const [selectedCafe, setSelectedCafe] = useState("");
     const [vendorId, setVendorId] = useState("");
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
 
     const userName = user?.name;
     const userEmail = user?.email;

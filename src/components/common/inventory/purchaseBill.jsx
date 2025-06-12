@@ -30,7 +30,7 @@ export const PurchaseBill = () => {
   const [activePage, setActivePage] = useState(1);
   const itemsPerPage = 5;
   const totalPages = Math.ceil(3 / itemsPerPage);
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   useEffect(() => {
     dispatch(getPurchaseBills()).unwrap()
   }, [dispatch]);

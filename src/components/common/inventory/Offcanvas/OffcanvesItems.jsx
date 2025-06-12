@@ -54,7 +54,7 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
   const vendors = useSelector(state => state.vendors.vendors);
 
   useEffect(() => {
-    const userData = sessionStorage.getItem("user");
+    const userData = localStorage.getItem("user");
     if (userData) {
       const parsedUser = JSON.parse(userData);
       setSuperAdminId(parsedUser._id);

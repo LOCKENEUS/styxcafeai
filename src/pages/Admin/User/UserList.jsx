@@ -15,7 +15,7 @@ const UserList = () => {
   const [activeDropdownId, setActiveDropdownId] = useState(null);
   const editDropdownRef = useRef(null);
   const navigate = useNavigate();
-  
+
   // Pagination state
   const [activePage, setActivePage] = useState(1);
   const itemsPerPage = 10;
@@ -24,7 +24,7 @@ const UserList = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem('user'));
     const cafeId = user?._id;
 
     if (cafeId) {
@@ -59,12 +59,12 @@ const UserList = () => {
   };
 
   // Filter users based on search term
-  const filteredUsers = users.filter(user => 
+  const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.contact_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
-    const totalPages = Math.ceil(filteredUsers.length / itemsPerPage); // Calculate total pages based on filtered users
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage); // Calculate total pages based on filtered users
 
   if (loading) {
     return <Loader />;
@@ -86,18 +86,18 @@ const UserList = () => {
           User List
         </div>
 
-          {/* Search Input */}
-          <InputGroup className="mb-3 w-50 mt-3">
+        {/* Search Input */}
+        <InputGroup className="mb-3 w-50 mt-3">
           <div className="d-flex px-2 bg-white align-items-center">
-          <BiSearch size={20}/>
+            <BiSearch size={20} />
           </div>
-        <FormControl
-        className="border-none "
-          placeholder="Search by Name, Contact, or Email"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </InputGroup>
+          <FormControl
+            className="border-none "
+            placeholder="Search by Name, Contact, or Email"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </InputGroup>
 
         <Link to="/admin/users/create-user">
           <IoAdd
@@ -118,7 +118,7 @@ const UserList = () => {
 
       {filteredUsers.length === 0 ? (
         <div style={{ overflowX: 'auto', width: '100%' }}>
-          <Table data-aos="fade-right" ata-aos-duration="1000" striped  hover style={{ minWidth: '600px' }}>
+          <Table data-aos="fade-right" ata-aos-duration="1000" striped hover style={{ minWidth: '600px' }}>
             <thead style={{ backgroundColor: '#0062FF0D' }}>
               <tr>
                 <th>S/N</th>
@@ -141,7 +141,7 @@ const UserList = () => {
         </div>
       ) : (
         <div style={{ overflowX: 'auto', width: '100%' }}>
-          <Table striped  hover style={{ minWidth: '600px' }}>
+          <Table striped hover style={{ minWidth: '600px' }}>
             <thead style={{ backgroundColor: '#0062FF0D' }}>
               <tr>
                 <th>S/N</th>
@@ -175,7 +175,7 @@ const UserList = () => {
                         <FaTrash style={{ color: 'red', fontSize: '1.2rem' }} />
                       </Button>
 
-                     
+
                     </td>
                   </tr>
                 ))}

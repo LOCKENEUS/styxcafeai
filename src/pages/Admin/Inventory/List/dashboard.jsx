@@ -42,7 +42,7 @@ const DashboardInventory = () => {
     window.scrollTo(0, 0);
 
   }, [])
-  
+
   // Conversion Rate Doughnut Data
   const conversionData = {
     datasets: [{
@@ -72,7 +72,7 @@ const DashboardInventory = () => {
         const chart = context.chart;
         const { ctx, chartArea } = chart;
         if (!chartArea) return null;
-        
+
         const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
         gradient.addColorStop(0, 'rgba(74, 255, 147, 0.2)');
         gradient.addColorStop(1, 'rgba(74, 255, 147, 0)');
@@ -115,7 +115,7 @@ const DashboardInventory = () => {
         },
         ticks: {
           padding: 10,
-          callback: function(value) {
+          callback: function (value) {
             return value + 'k';
           }
         }
@@ -153,44 +153,44 @@ const DashboardInventory = () => {
     { name: "Appearance Pvt Ltd", quantity: "200 Kg", price: "56000" },
     { name: "Appearance Pvt Ltd", quantity: "200 Kg", price: "56000" }
   ];
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafe_name = user?.cafe_name;
 
   return (
     <Container fluid className="p-4">
       <h3 className="mb-4">Hello, {cafe_name}</h3>
-      
+
       {/* Stats Cards */}
       <Row className="g-3 mb-4">
         <Col data-aos="fade-right" data-aos-duration="800" md={6}>
-        <Row className="g-3">
-        {statsCards.map((card, index) => (
-          <Col key={index} xs={6} lg={6}>
-            <Card className="border-0">
-              <Card.Body className="d-flex justify-content-start gap-3 align-items-center">
-                <div style={{  backgroundColor: card.bgColor, height: "100px", width: "70px", borderRadius: "10px"  }} className="d-flex justify-content-center align-items-center mb-2">
-                  <div style={{ 
-                    width: 40, 
-                    height: 40, 
-                    backgroundColor: card.iconBg,
-                    borderRadius: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <span style={{  display: 'inline-block' }}><AiOutlineStock color="#fff" size={20} /></span>
-                  </div>
-                </div>
+          <Row className="g-3">
+            {statsCards.map((card, index) => (
+              <Col key={index} xs={6} lg={6}>
+                <Card className="border-0">
+                  <Card.Body className="d-flex justify-content-start gap-3 align-items-center">
+                    <div style={{ backgroundColor: card.bgColor, height: "100px", width: "70px", borderRadius: "10px" }} className="d-flex justify-content-center align-items-center mb-2">
+                      <div style={{
+                        width: 40,
+                        height: 40,
+                        backgroundColor: card.iconBg,
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <span style={{ display: 'inline-block' }}><AiOutlineStock color="#fff" size={20} /></span>
+                      </div>
+                    </div>
 
-                <div className="d-flex flex-column justify-content-between align-items-center">
-                <div style={{ color: "#000" , fontWeight:'500' }} className="small">{card.title}</div>
-                <h1 className="mt-2 mb-0">{card.value}</h1>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-        </Row>
+                    <div className="d-flex flex-column justify-content-between align-items-center">
+                      <div style={{ color: "#000", fontWeight: '500' }} className="small">{card.title}</div>
+                      <h1 className="mt-2 mb-0">{card.value}</h1>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
         </Col>
         <Col data-aos="fade-left" data-aos-duration="1000" md={6}>
           <Card className="h-100">
@@ -198,10 +198,10 @@ const DashboardInventory = () => {
               <h6 className="text-muted mb-4">Inventory Summary</h6>
               <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px", position: "relative" }}>
                 <Doughnut data={inventoryData} options={doughnutOptions} />
-                <div style={{ 
-                  position: "absolute", 
-                  top: "50%", 
-                  left: "50%", 
+                <div style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
                   transform: "translate(-50%, -50%)",
                   textAlign: "center"
                 }}>
@@ -242,7 +242,7 @@ const DashboardInventory = () => {
       <Row data-aos="fade-down" data-aos-duration="1500" className="g-3 mb-4">
         <Col md={4}>
           <Card className="h-100 bg-transparent border-0 shadow-none">
-            <Card.Body  className="p-0 ">
+            <Card.Body className="p-0 ">
               <div className="mb-4 bg-white rounded-3 p-2 p-sm-3 gap-2 gap-sm-3 d-flex flex-column flex-sm-row align-items-center">
                 <div style={{ height: "80px", width: "80px", position: "relative" }}>
                   <Doughnut data={conversionData} options={doughnutOptions} />
@@ -297,7 +297,7 @@ const DashboardInventory = () => {
         <Card.Body className="p-2 p-sm-3">
           <div className="table-responsive">
             <Table borderless hover className="align-middle">
-              <thead style={{backgroundColor:"#0062FF0D", color:"black"}} className="border-bottom no-uppercase">
+              <thead style={{ backgroundColor: "#0062FF0D", color: "black" }} className="border-bottom no-uppercase">
                 <tr>
                   <th className="text-black">Icon</th>
                   <th className="text-black">Name</th>
@@ -309,9 +309,9 @@ const DashboardInventory = () => {
                 {tableData.map((item, index) => (
                   <tr key={index}>
                     <td>
-                      <div style={{ 
-                        width: 32, 
-                        height: 32, 
+                      <div style={{
+                        width: 32,
+                        height: 32,
                         backgroundColor: '#F5F5F5',
                         borderRadius: '4px',
                         display: 'flex',

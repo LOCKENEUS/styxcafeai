@@ -27,7 +27,7 @@ export const SalesInvDetails = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showModal, setShowModal] = useState(false);
 
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     const userName = user?.name;
     const userEmail = user?.email;
     const UserContactN = user?.contact_no;
@@ -431,7 +431,7 @@ export const SalesInvDetails = () => {
                                 </Col>
                             </Row>
 
-                        {/* Packages */}
+                            {/* Packages */}
                             <Row>
                                 <Col sm={12}>
                                     <div className="p-2" style={{ backgroundColor: "#dee2e6" }}>Package Details</div>
@@ -462,7 +462,7 @@ export const SalesInvDetails = () => {
                                 </Col>
                             </Row>
 
-                        {/* Shipments */}
+                            {/* Shipments */}
 
                             <Row>
                                 <Col sm={12}>

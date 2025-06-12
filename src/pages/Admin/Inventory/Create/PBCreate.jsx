@@ -57,7 +57,7 @@ const PurchaseBillCreate = () => {
   const [vendorSelected, setVendorSelected] = useState([]);
   const [vendorId, setVendorId] = useState("");
 
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
   const userName = user?.name;
   const userEmail = user?.email;
@@ -81,7 +81,7 @@ const PurchaseBillCreate = () => {
   const customersList = customers?.customers;
 
   useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem('user'));
     const cafeId = user?._id;
     if (cafeId) {
       dispatch(getCustomers(cafeId));

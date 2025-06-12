@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-
 const BASE_URL = import.meta.env.VITE_API_URL;
 const API_URL = `${BASE_URL}/superadmin/cafe`;
 
@@ -28,9 +27,9 @@ export const loginUser = createAsyncThunk(
         throw new Error("Invalid response structure from server");
       }
       toast.success("Login successful");
-      sessionStorage.setItem("authToken", data.data.token);
-      sessionStorage.setItem("userRole", JSON.stringify(data.data.user.role));
-      sessionStorage.setItem("user", JSON.stringify(data.data.user));
+      localStorage.setItem("authToken", data.data.token);
+      localStorage.setItem("userRole", JSON.stringify(data.data.user.role));
+      localStorage.setItem("user", JSON.stringify(data.data.user));
 
       return data.data;
     } catch (error) {
@@ -60,9 +59,9 @@ export const Adminlogin = createAsyncThunk(
         throw new Error("Invalid response structure from server");
       }
       toast.success("Login successful");
-      sessionStorage.setItem("authToken", data.data.token);
-      sessionStorage.setItem("userRole", JSON.stringify(data.data.cafe.role));
-      sessionStorage.setItem("user", JSON.stringify(data.data.cafe));
+      localStorage.setItem("authToken", data.data.token);
+      localStorage.setItem("userRole", JSON.stringify(data.data.cafe.role));
+      localStorage.setItem("user", JSON.stringify(data.data.cafe));
 
       return data.data;
     } catch (error) {
@@ -135,11 +134,11 @@ export const resetPassword = createAsyncThunk(
 //         }
 //       );
 
-//       toast.success('Password reset successful'); 
+//       toast.success('Password reset successful');
 
 //       return response.data;
 //     } catch (error) {
-//       toast.error('Password reset failed'); 
+//       toast.error('Password reset failed');
 
 //       return rejectWithValue(
 //         error.response?.data?.message ||
@@ -150,14 +149,17 @@ export const resetPassword = createAsyncThunk(
 //     }
 //   );
 
-
 export const forwardPassword1 = createAsyncThunk(
   "cafes/forwardPassword1",
   async ({ email, newPassword }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/reset-password`, { email, newPassword }, {
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await axios.post(
+        `${API_URL}/reset-password`,
+        { email, newPassword },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       if (response.data.status) {
         toast.success("Password reset successfully!");
@@ -170,9 +172,6 @@ export const forwardPassword1 = createAsyncThunk(
     }
   }
 );
-
-
-    
 
 const authSlice = createSlice({
   name: "auth",
@@ -234,8 +233,6 @@ const authSlice = createSlice({
         state.error = action.payload;
         state.success = false;
       });
-      
-      
   },
 });
 

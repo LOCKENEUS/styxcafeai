@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import { addCustomField } from "../../../../store/AdminSlice/CustomField";
 import { toast } from "react-toastify";
 
-const Manufacturer = ({ show, handleClose , onCreated }) => {
+const Manufacturer = ({ show, handleClose, onCreated }) => {
     const dispatch = useDispatch();
     const loading = useSelector(state => state.customFields.loading);
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     const cafeId = user?._id;
 
     const [formData, setFormData] = useState({
@@ -34,7 +34,7 @@ const Manufacturer = ({ show, handleClose , onCreated }) => {
     };
     const handleSubmit = (e) => {
         e.preventDefault(); // Prevent form submission
-        
+
         // Validate if cafe ID exists
         if (!formData.cafe) {
             toast.error('Cafe ID is missing. Please try logging in again.');
@@ -54,7 +54,7 @@ const Manufacturer = ({ show, handleClose , onCreated }) => {
                     name: '',
                     code: '',
                     cafe: cafeId,
-                    type: 'Manufacturer',   
+                    type: 'Manufacturer',
                     description: 'Manufacturer measurement for inventory'
                 });
             })
@@ -66,22 +66,22 @@ const Manufacturer = ({ show, handleClose , onCreated }) => {
 
     return (
         <Modal show={show} onHide={handleClose} centered style={{ zIndex: 2000 }}>
-            <Modal.Header  className='bg-info bg-opacity-25 py-3'  closeButton>
+            <Modal.Header className='bg-info bg-opacity-25 py-3' closeButton>
                 <Modal.Title>Manufacturer</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form  id="manufacturerForm" method="post" action="" autoComplete="off">
+                <Form id="manufacturerForm" method="post" action="" autoComplete="off">
                     <div className="row">
                         <div className="col-sm-12 mb-3">
                             <Form.Group controlId="mrf_name">
                                 <Form.Label>Manufacturer name</Form.Label>
-                                <Form.Control 
-                                    type="text" 
+                                <Form.Control
+                                    type="text"
                                     name="name"
                                     value={formData.name}
                                     onChange={handleInputChange}
-                                    placeholder="Manufacturer Name" 
-                                    required 
+                                    placeholder="Manufacturer Name"
+                                    required
                                 />
                             </Form.Group>
                         </div>

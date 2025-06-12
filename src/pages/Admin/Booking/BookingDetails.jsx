@@ -64,7 +64,7 @@ const BookingDetails = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const user = JSON.parse(sessionStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user'));
   const cafeId = user?._id;
 
   const { gameId, slotId, date } = useParams();
@@ -400,7 +400,7 @@ const BookingDetails = () => {
         items: mappedItems,
         custom_slot: slot,
         booking_type: booking_type,
-        
+
       };
 
       const response = await dispatch(addBooking(bookingData)).unwrap()
@@ -509,7 +509,7 @@ const BookingDetails = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
         body: JSON.stringify({
           amount: payableAmount,
@@ -564,7 +564,7 @@ const BookingDetails = () => {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${sessionStorage.getItem("authToken")}`,
+                Authorization: `Bearer ${localStorage.getItem("authToken")}`,
               },
               body: JSON.stringify({
                 customer_id: selectedCustomer?._id,
@@ -1442,7 +1442,7 @@ const BookingDetails = () => {
                               </div>
                               <div className="fw-semibold">Total: ₹{product.total}</div>
                             </div>
-                               <span
+                            <span
                               className="mx-2"
                               style={{
                                 top: "20px",
@@ -1476,9 +1476,9 @@ const BookingDetails = () => {
                             </span>
                           </div>
                           {/* <div className="text-end"> */}
-                            {/* Trash Icon */}
-                         
-                         
+                          {/* Trash Icon */}
+
+
                           {/* </div> */}
                         </div>
                       </>

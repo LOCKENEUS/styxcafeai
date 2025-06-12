@@ -11,7 +11,7 @@ import 'react-clock/dist/Clock.css';
 
 const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
   const dispatch = useDispatch();
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
 
   const [formData, setFormData] = useState({
@@ -147,112 +147,112 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
         <Form onSubmit={handleSubmit}>
           <Row>
             <Col xs={12} className="mb-3">
-          <Form.Group className="mb-3">
-            <Form.Label style={labelStyle}>Day</Form.Label>
-            <Form.Select name="day" value={formData.day} onChange={handleChange} style={inputStyle} required>
-              <option value="">Pick Day</option>
-              <option value="Monday">Monday</option>
-              <option value="Tuesday">Tuesday</option>
-              <option value="Wednesday">Wednesday</option>
-              <option value="Thursday">Thursday</option>
-              <option value="Friday">Friday</option>
-              <option value="Saturday">Saturday</option>
-              <option value="Sunday">Sunday</option>
-            </Form.Select>
-          </Form.Group>
-          </Col>
-
-          <Col xs={6} className="mb-3">
-          <Form.Group>
-            <Form.Label style={labelStyle}>Start Time<span className="text-danger">*</span></Form.Label>
-            <Row className="mb-2">
-              <Col className="">
-                <Form.Select className="p-2" value={startTimeParts.hour} onChange={(e) =>
-                  setStartTimeParts({ ...startTimeParts, hour: e.target.value })
-                }>
-                  <option value="">HH</option>
-                  {[...Array(12)].map((_, i) => {
-                    const val = (i + 1).toString().padStart(2, '0');
-                    return <option key={val} value={val}>{val}</option>;
-                  })}
+              <Form.Group className="mb-3">
+                <Form.Label style={labelStyle}>Day</Form.Label>
+                <Form.Select name="day" value={formData.day} onChange={handleChange} style={inputStyle} required>
+                  <option value="">Pick Day</option>
+                  <option value="Monday">Monday</option>
+                  <option value="Tuesday">Tuesday</option>
+                  <option value="Wednesday">Wednesday</option>
+                  <option value="Thursday">Thursday</option>
+                  <option value="Friday">Friday</option>
+                  <option value="Saturday">Saturday</option>
+                  <option value="Sunday">Sunday</option>
                 </Form.Select>
-              </Col>
-              <Col className="px-0">
-                <Form.Select className="p-2" value={startTimeParts.minute} onChange={(e) =>
-                  setStartTimeParts({ ...startTimeParts, minute: e.target.value })
-                }>
-                  <option value="">MM</option>
-                  {[...Array(60)].map((_, i) => {
-                    const val = i.toString().padStart(2, '0');
-                    return <option key={val} value={val}>{val}</option>;
-                  })}
-                </Form.Select>
-              </Col>
-              <Col className="px-0">
-                <Form.Select className="p-2" value={startTimeParts.period} onChange={(e) =>
-                  setStartTimeParts({ ...startTimeParts, period: e.target.value })
-                }>
+              </Form.Group>
+            </Col>
 
-                  <option value="AM">AM</option>
-                  <option value="PM">PM</option>
-                </Form.Select>
-              </Col>
-            </Row>
-          </Form.Group>
-          </Col>
+            <Col xs={6} className="mb-3">
+              <Form.Group>
+                <Form.Label style={labelStyle}>Start Time<span className="text-danger">*</span></Form.Label>
+                <Row className="mb-2">
+                  <Col className="">
+                    <Form.Select className="p-2" value={startTimeParts.hour} onChange={(e) =>
+                      setStartTimeParts({ ...startTimeParts, hour: e.target.value })
+                    }>
+                      <option value="">HH</option>
+                      {[...Array(12)].map((_, i) => {
+                        const val = (i + 1).toString().padStart(2, '0');
+                        return <option key={val} value={val}>{val}</option>;
+                      })}
+                    </Form.Select>
+                  </Col>
+                  <Col className="px-0">
+                    <Form.Select className="p-2" value={startTimeParts.minute} onChange={(e) =>
+                      setStartTimeParts({ ...startTimeParts, minute: e.target.value })
+                    }>
+                      <option value="">MM</option>
+                      {[...Array(60)].map((_, i) => {
+                        const val = i.toString().padStart(2, '0');
+                        return <option key={val} value={val}>{val}</option>;
+                      })}
+                    </Form.Select>
+                  </Col>
+                  <Col className="px-0">
+                    <Form.Select className="p-2" value={startTimeParts.period} onChange={(e) =>
+                      setStartTimeParts({ ...startTimeParts, period: e.target.value })
+                    }>
 
-          <Col xs={6} className="mb-3">
-          <Form.Group>
-            <Form.Label style={labelStyle}>End Time<span className="text-danger">*</span></Form.Label>
-            <Row className="mb-2">
-              <Col className="px-0">
-                <Form.Select className="p-2" value={endTimeParts.hour} onChange={(e) =>
-                  setEndTimeParts({ ...endTimeParts, hour: e.target.value })
-                }>
+                      <option value="AM">AM</option>
+                      <option value="PM">PM</option>
+                    </Form.Select>
+                  </Col>
+                </Row>
+              </Form.Group>
+            </Col>
 
-                  <option value="">HH</option>
-                  {[...Array(12)].map((_, i) => {
-                    const val = (i + 1).toString().padStart(2, '0');
-                    return <option key={val} value={val}>{val}</option>;
-                  })}
-                </Form.Select>
-              </Col>
-              <Col className="px-0">
-                <Form.Select className="p-2" value={endTimeParts.minute} onChange={(e) =>
-                  setEndTimeParts({ ...endTimeParts, minute: e.target.value })
-                }>
+            <Col xs={6} className="mb-3">
+              <Form.Group>
+                <Form.Label style={labelStyle}>End Time<span className="text-danger">*</span></Form.Label>
+                <Row className="mb-2">
+                  <Col className="px-0">
+                    <Form.Select className="p-2" value={endTimeParts.hour} onChange={(e) =>
+                      setEndTimeParts({ ...endTimeParts, hour: e.target.value })
+                    }>
 
-                  <option value="">MM</option>
-                  {[...Array(60)].map((_, i) => {
-                    const val = i.toString().padStart(2, '0');
-                    return <option key={val} value={val}>{val}</option>;
-                  })}
-                </Form.Select>
-              </Col>
-              <Col className="px-0">
-                <Form.Select className="p-2" value={endTimeParts.period} onChange={(e) =>
-                  setEndTimeParts({ ...endTimeParts, period: e.target.value })
-                }>
+                      <option value="">HH</option>
+                      {[...Array(12)].map((_, i) => {
+                        const val = (i + 1).toString().padStart(2, '0');
+                        return <option key={val} value={val}>{val}</option>;
+                      })}
+                    </Form.Select>
+                  </Col>
+                  <Col className="px-0">
+                    <Form.Select className="p-2" value={endTimeParts.minute} onChange={(e) =>
+                      setEndTimeParts({ ...endTimeParts, minute: e.target.value })
+                    }>
 
-                  <option value="AM">AM</option>
-                  <option value="PM">PM</option>
-                </Form.Select>
-              </Col>
-            </Row>
-          </Form.Group>
-          </Col>
+                      <option value="">MM</option>
+                      {[...Array(60)].map((_, i) => {
+                        const val = i.toString().padStart(2, '0');
+                        return <option key={val} value={val}>{val}</option>;
+                      })}
+                    </Form.Select>
+                  </Col>
+                  <Col className="px-0">
+                    <Form.Select className="p-2" value={endTimeParts.period} onChange={(e) =>
+                      setEndTimeParts({ ...endTimeParts, period: e.target.value })
+                    }>
 
-          <Col xs={12}>
-          <Form.Group className="mb-3">
-            <Form.Label style={labelStyle}>Slot Price</Form.Label>
-            <Form.Control type="number" name="slot_price" value={formData.slot_price} onChange={handleChange} onWheel={(e) => e.target.blur()} style={inputStyle} placeholder="Enter Slot Price" required />
-          </Form.Group>
-          </Col>
+                      <option value="AM">AM</option>
+                      <option value="PM">PM</option>
+                    </Form.Select>
+                  </Col>
+                </Row>
+              </Form.Group>
+            </Col>
 
-          <div className="d-flex justify-content-end">
-            <Button variant="secondary" className="me-2" onClick={handleClose}>Cancel</Button>
-            <Button variant="primary" type="submit">{slot?._id ? "Update Slot" : "Create Slot"}</Button>
-          </div>
+            <Col xs={12}>
+              <Form.Group className="mb-3">
+                <Form.Label style={labelStyle}>Slot Price</Form.Label>
+                <Form.Control type="number" name="slot_price" value={formData.slot_price} onChange={handleChange} onWheel={(e) => e.target.blur()} style={inputStyle} placeholder="Enter Slot Price" required />
+              </Form.Group>
+            </Col>
+
+            <div className="d-flex justify-content-end">
+              <Button variant="secondary" className="me-2" onClick={handleClose}>Cancel</Button>
+              <Button variant="primary" type="submit">{slot?._id ? "Update Slot" : "Create Slot"}</Button>
+            </div>
           </Row>
         </Form>
       </Modal.Body>

@@ -21,7 +21,7 @@ export const SODetails = () => {
     const { selectedSO, loading, error } = useSelector((state) => state.so);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user"));
     const userName = user?.name;
     const userEmail = user?.email;
     const UserContactN = user?.contact_no;

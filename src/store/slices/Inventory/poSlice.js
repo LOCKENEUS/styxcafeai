@@ -13,7 +13,7 @@ export const createSaPurchaseOrder = createAsyncThunk(
         POData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -31,14 +31,14 @@ export const createSaPurchaseOrder = createAsyncThunk(
 
 export const updateSaPurchaseOrder = createAsyncThunk(
   "saPurchaseOrder/updateSaPurchaseOrder",
-  async ({id, POData}, thunkAPI) => {
+  async ({ id, POData }, thunkAPI) => {
     try {
       const response = await axios.put(
         `${BASE_URL}/superadmin/inventory/po/${id}`,
         POData,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -63,7 +63,7 @@ export const getSaPOList = createAsyncThunk(
         `${BASE_URL}/superadmin/inventory/po/list`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -85,7 +85,7 @@ export const getSaPOListByVendor = createAsyncThunk(
         `${BASE_URL}/superadmin/inventory/po/list/${vendor}`,
         {
           headers: {
-            Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         }
       );
@@ -104,12 +104,15 @@ export const getSaPurchaseOrder = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       // const response = await axios.get(`${BASE_URL}/admin/inventory/po/${id}`);
-      const response = await axios.get(`${BASE_URL}/superadmin/inventory/po/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionStorage.getItem('authToken')}`,
-        },
-      });
+      const response = await axios.get(
+        `${BASE_URL}/superadmin/inventory/po/${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
+      );
       return response.data.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
