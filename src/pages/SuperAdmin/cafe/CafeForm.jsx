@@ -678,14 +678,14 @@ const CafeForm = ({
           </Form.Group>
 
           <Row className="mb-3">
-          <Form.Label className="fw-bold text-secondary d-block my-3">
+          <Form.Label className="fw-bold text-secondary d-block mt-3">
               Gallery Images
               <span className="text-muted fs-6 fw-light ms-2">(You can upload multiple images)</span>
             </Form.Label>
 
             <Col md={5} className="mt-3">
             
-              <div className="border-2 rounded-3 p-3 bg-light ">
+              <div className="border-2 rounded-3 py-2 bg-light ">
                 <Form.Control
                   type="file"
                   onChange={handleFileChange}
@@ -696,7 +696,7 @@ const CafeForm = ({
                   multiple
                 />
                 <div className="d-flex flex-column gap-3">
-                  <div className="d-flex justify-content-center align-items-center">
+                  <div className="d-flex">
                     <label
                       style={{ width: "10rem", height: "3rem" }}
                       htmlFor="fileUploadLocation"
@@ -705,13 +705,11 @@ const CafeForm = ({
                       Choose Files
                     </label>
                   </div>
-
-                  
                 </div>
               </div>
             </Col>
 
-            <Col md={7} className="mt-3">
+            <Col md={7} className="mt-1">
 
             {imagePreview.length > 0 && (
                     <div className="d-flex flex-wrap gap-2">
@@ -923,7 +921,7 @@ const CafeForm = ({
               <Form.Label className="fw-bold text-secondary d-block">
                 Upload Documents  <span className="text-danger m">(pdf, doc, docx)*</span>
               </Form.Label>
-              <div className="border-2 rounded-3 p-3 bg-light">
+              <div className="border-2 rounded-3 py-2 bg-light">
                 <Form.Control
                   type="file"
                   onChange={handleDocumentChange}
@@ -933,7 +931,7 @@ const CafeForm = ({
                   multiple
                 />
                 <div className="d-flex flex-column gap-3">
-                  <div className="d-flex justify-content-center align-items-center">
+                  <div className="d-flex">
                     <label
                       htmlFor="documentUpload"
                       className="btn btn-outline-primary d-flex justify-content-center align-items-center py-2"

@@ -339,6 +339,7 @@ const CafeManagementDashboard = () => {
       },
     },
   };
+  
   useEffect(() => {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     const tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
@@ -359,8 +360,7 @@ const CafeManagementDashboard = () => {
             <Row className="mb-4 align-items-center">
               <Col>
                 <h3 className="text-primary fw-bold mb-0">
-                  Dashboard Overview /{" "}
-                  <span className="text-danger">Static Page</span>{" "}
+                  Dashboard Overview
                 </h3>
               </Col>
               {/* <Col xs="auto">

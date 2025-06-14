@@ -149,7 +149,7 @@ const MainNavbar = ({ setIsAuthenticated, toggleSidebar, collapsed }) => {
                   </div>
 
                   <div className="dropdown-divider"></div>
-                  <a className="dropdown-item" href="#">Profile &amp; account</a>
+                  <a className="dropdown-item" href="/superadmin/profile">Profile &amp; account</a>
                   <div className="dropdown-divider"></div>
                   <a onClick={handleLogout} className="dropdown-item">Sign out</a>
                 </div>

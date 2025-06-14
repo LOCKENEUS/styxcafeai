@@ -397,8 +397,8 @@ export const IitemGroupCreate = () => {
                                             onChange={handleChange}
                                             style={inputStyle}
                                         >
-                                            <option value="Taxable">Taxsaple</option>
-                                            <option value="Non-Taxable">Not Tax</option>
+                                            <option value="Taxable">Taxable</option>
+                                            <option value="Non-Taxable">No Tax</option>
                                         </FormSelect>
                                     </FormGroup>
                                 </Col>
@@ -669,7 +669,7 @@ export const IitemGroupCreate = () => {
 
                                                         return (
                                                             <tr key={`${attrIndex}-${optIndex}`}>
-                                                                <td>{rowIndex++}</td>
+                                                                <td>{optIndex++}</td>
                                                                 <td>
                                                                     <b>{itemName}</b>
                                                                     <input type="hidden" name="item_name[]" value={itemName} />

@@ -136,6 +136,7 @@ import { Reports } from "../pages/Admin/Reports/Reports";
 import SplashAnimation from "../components/utils/Animations/SplashAnimation";
 import { BookingsReport } from "../pages/Admin/Reports/BookingsReport";
 import { CommissionReport } from "../pages/Admin/Reports/CommissionReport";
+import { SuperProfile } from "../pages/SuperAdmin/profile/Profile";
 
 const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
   const [locations, setLocations] = useState([]);
@@ -158,6 +159,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
       {/*-------------------- Super Admin Routes-------------------------------- */}
       <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
         <Route element={<DashboardLayout setIsAuthenticated={setIsAuthenticated} />}>
+          <Route path="/superadmin/profile" element={<SuperProfile />} />
           <Route path="/superadmin/dashboard" element={<Dashboard />} />
           <Route path="/superadmin/create-location" element={<CreateLocation locations={locations} setLocations={setLocations} />} />
           <Route path="/superadmin/location-details" element={<LocationDetails locations={locations} />} />

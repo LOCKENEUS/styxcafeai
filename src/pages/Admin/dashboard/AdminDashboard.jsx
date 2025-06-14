@@ -155,7 +155,7 @@ const AdminDashboard = () => {
 
   return (
     <Container fluid className="p-2" ref={containerRef}>
-      <h3 className="mb-4">Hello, {cafe.cafe_name}</h3>
+      <h3 className="mb-4 ms-3">Hello, {cafe.cafe_name}</h3>
 
       {/* Search Bar for Mobile */}
       <Row className="d-md-none mb-3 p-0">

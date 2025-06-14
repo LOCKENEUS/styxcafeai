@@ -887,13 +887,13 @@ const CreateItemsForm = () => {
                             </Col>
 
                             <Col sm={5} className="my-2">
-                                <Image
+                                {imagePreview && <Image
                                     src={imagePreview}
                                     alt="product image"
                                     fluid
                                     style={{ width: '100px', aspectRatio: '1', objectFit: 'cover' }}
                                     onError={(e) => e.target.src = ''}
-                                />
+                                />}
                             </Col>
 
                             <Col sm={12} className="my-2 btn-lg">

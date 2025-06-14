@@ -122,6 +122,40 @@ export const getSaPurchaseOrder = createAsyncThunk(
   }
 );
 
+export const sendMailToVendor = createAsyncThunk(
+  "saPurchaseOrder/sendMail",
+  async (orderData, thunkAPI) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/superadmin/inventory/po/send-mail`,
+        orderData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
+      );
+      toast.success("Mail sent successfully!");
+      return response.data.data;
+    } catch (error) {
+      let errorMessage =
+        error.response?.data?.message || "Something went wrong";
+      toast.error(errorMessage); // Show error toast for CreateVendor
+
+      // Check if the error is a duplicate email
+      if (
+        errorMessage.includes("E11000 duplicate key error") &&
+        errorMessage.includes("email")
+      ) {
+        errorMessage = "Email already exists!";
+      }
+
+      toast.error(errorMessage); // Show error toast
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  }
+);
+
 // /admin/inventory/item
 const poSlice = createSlice({
   name: "purchaseOrder",

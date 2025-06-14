@@ -1,4 +1,4 @@
-import { Badge, Button, Card, CardBody, CardHeader, Col, Image, ListGroup, ListGroupItem, Row, Table } from "react-bootstrap";
+import { Card, CardBody, CardHeader, Col, Image, ListGroup, ListGroupItem, Row, Table } from "react-bootstrap";
 import { FaRegCircle, FaTag, FaUserAlt } from "react-icons/fa";
 import { FiArrowDownLeft } from "react-icons/fi";
 import { MdNote } from "react-icons/md";
@@ -38,7 +38,6 @@ export const Dashboards = () => {
 
         },
     ];
-
 
     const topProducts = [
         {
@@ -97,7 +96,6 @@ export const Dashboards = () => {
         },
     ];
 
-
     const scheduleItems = [
         {
 
@@ -120,160 +118,101 @@ export const Dashboards = () => {
             borderClass: "border-danger",
             qty: "3",
         }
-
     ];
 
     return (
-
-        <Row>
-            <div className="d-flex justify-content-center align-items-center">
-                <h1>Inventory</h1>
-
-
-            </div>
-
-            {/* Sales Activity */}
-
-            <Col md={9} className="my-4">
-                <Card className="mb-3 mb-lg-5 rounded-1">
-                    <CardHeader>
-                        <h3>Sales Activity</h3>
-                    </CardHeader>
-                    <CardBody>
-                        <Row className="gx-lg-6">
-                            {metrics.map((metric, index) => (
-                                <Col lg={3} key={index}
-                                    // className="border-end border-secondary "
-                                    className={index !== metrics.length - 1 ? "border-end border-gray" : ""}
-                                >
-                                    <div className="d-flex">
-                                        <div className="flex-grow-1">
-                                            <h6 className="card-subtitle mb-3">{metric.title}</h6>
-                                            <h3 className="card-title">{metric.value}</h3>
-                                            <div className="d-flex align-items-center">
-                                                <span className="d-block fs-6">{metric.orders}</span>
-
-                                            </div>
-                                        </div>
-                                        <span className="icon icon-soft-secondary icon-sm icon-circle ms-1 fw-bold">{metric.icon}</span>
-                                    </div>
-                                </Col>
-                            ))}
-                        </Row>
-                    </CardBody>
-                </Card>
-            </Col>
-
-            {/* Inventory Summary */}
-            <Col md={3} className="border-start border-gray my-4">
-                <h6 className="lead text-center fw-bold">Inventory Summary</h6>
-
+        <Row className="p-3">
+            <Col md={12} className="mt-4">
                 <Row>
+                    <Col md={9}>
+                        <Card className="mb-3 mb-lg-5 rounded-1">
+                            <CardHeader>
+                                <h3>Sales Activity</h3>
+                            </CardHeader>
+                            <CardBody>
+                                <Row className="gx-lg-6">
+                                    {metrics.map((metric, index) => (
+                                        <Col lg={3} key={index}
+                                            className={index !== metrics.length - 1 ? "border-end border-gray" : ""}
+                                        >
+                                            <div className="d-flex">
+                                                <div className="flex-grow-1">
+                                                    <h6 className="card-subtitle mb-3">{metric.title}</h6>
+                                                    <h3 className="card-title">{metric.value}</h3>
+                                                    <div className="d-flex align-items-center">
+                                                        <span className="d-block fs-6">{metric.orders}</span>
+                                                    </div>
+                                                </div>
+                                                <span className="icon icon-soft-secondary icon-sm icon-circle ms-1 fw-bold">{metric.icon}</span>
+                                            </div>
+                                        </Col>
+                                    ))}
+                                </Row>
+                            </CardBody>
+                        </Card></Col>
+                    <Col md={3} className="border-start border-gray mt-4">
+                        <h6 className="lead text-start fw-bold">Inventory Summary</h6>
+                        <Row className="card p-2">
+                            <Col md={12} className=" border-bottom border-gray">
+                                <div
+                                    className="d-flex justify-content-center flex-column mb-3"
+                                >
+                                    <h6 className="lead">
+                                        970
+                                    </h6>
+                                    <span className="d-block text-success display-6">
+                                        <FaRegCircle className="me-1" /> <span className=" text-dark mb-1 me-3">
+                                            Quantity in Hand
+                                        </span>
+                                    </span>
+                                </div>
+                            </Col>
 
-
-                    <Col md={12} className=" border-bottom border-gray ">
-                        {/* Stats */}
-
-                        
-                        <div
-                            className="d-flex justify-content-center flex-column mb-3"
-                        // style={{ minHeight: "9rem" }}
-                        >
-                            <h6 className="lead">
-                                970
-                                
-                                </h6>
-                            {/* <span className="d-block display-4 text-dark mb-1 me-3">
-                            970
-                            </span> */}
-                             <span className="d-block text-success display-6">
-                                <FaRegCircle className="me-1 " /> <span className=" text-dark mb-1 me-3">
-                                Quantity in Hand
-                            </span>
-                            </span>
-                        </div>
-                        {/* End Stats */}
-
-
+                            <Col md={12}>
+                                <div
+                                    className="d-flex justify-content-center flex-column mt-3"
+                                >
+                                    <h6 className="lead">0</h6>
+                                    <span className="d-block text-danger display-6">
+                                        <FiArrowDownLeft className="me-1 " /> <span className=" text-dark mb-1 me-3">
+                                            Quantity to be Recieved
+                                        </span>
+                                    </span>
+                                </div>
+                            </Col>
+                        </Row>
                     </Col>
-                    {/* End Col */}
-
-                    <Col md={12}>
-                        {/* Stats */}
-                        <div
-                            className="d-flex justify-content-center flex-column mt-3"
-                        // style={{ minHeight: "9rem" }}
-                        >
-                            <h6 className="lead">0</h6>
-                            <span className="d-block text-danger display-6">
-                                <FiArrowDownLeft className="me-1 " /> <span className=" text-dark mb-1 me-3">
-                                Quantity to be Recieved
-                            </span>
-                            </span>
-                           
-                        </div>
-                        {/* End Stats */}
-                    </Col>
-                    {/* End Col */}
                 </Row>
-
-
-
             </Col>
 
             {/* Product Details */}
-
-            <Col md={12} className="my-4">
+            <Col md={12} className="">
                 <Row>
-
-
                     <Col md={7}>
-
-                        <Row>
-
-                            <Col md={7}>
-                                <h2 className="fw-bold my-2">Product Details</h2>
-                                <ListGroup className="list-group-flush">
-                                    {scheduleItems.map((item, index) => (
-                                        <ListGroupItem key={index} className={`list-group-item-action ${item.borderClass}`}>
-                                            <Row className="align-items-center my-2">
-                                                <Col>
-                                                    <h5 className="text-inherit mb-0">{item.title}</h5>
-                                                    <span className="text-body small">{item.subtitle}</span>
-                                                </Col>
-                                                <Col sm="auto" className="text-end">
-                                                    <div className="fw-bold">{item.qty}</div>
-                                                </Col>
-                                            </Row>
-
-                                        </ListGroupItem>
-                                    ))}
-                                </ListGroup>
-
-                            </Col>
-                        </Row>
-
-
+                        <h2 className="fw-bold my-2">Product Details</h2>
+                        <ListGroup className="list-group-flush">
+                            {scheduleItems.map((item, index) => (
+                                <ListGroupItem key={index} className={`list-group-item-action ${item.borderClass}`}>
+                                    <Row className="align-items-center my-2">
+                                        <Col>
+                                            <h5 className="text-inherit mb-0">{item.title}</h5>
+                                            <span className="text-body small">{item.subtitle}</span>
+                                        </Col>
+                                        <Col sm="auto" className="text-end">
+                                            <div className="fw-bold">{item.qty}</div>
+                                        </Col>
+                                    </Row>
+                                </ListGroupItem>
+                            ))}
+                        </ListGroup>
                     </Col>
 
-
                     <Col md={5} >
-
-
-
                         {/* Top Products */}
-
                         <Card className="h-100">
-                            {/* Header */}
                             <CardHeader className="d-flex justify-content-between align-items-center">
                                 <h4 className="mb-0">Top Selling Item</h4>
-                                {/* <Button variant="link" className="btn-sm text-secondary">
-          View all
-        </Button> */}
                             </CardHeader>
-                            {/* End Header */}
-
-                            {/* Body */}
                             <div className="card-body-height">
                                 <div className="table-responsive">
                                     <Table className="table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
@@ -283,7 +222,6 @@ export const Dashboards = () => {
                                                 <th>Name</th>
                                                 <th>Price</th>
                                                 <th>Qty</th>
-
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -301,34 +239,19 @@ export const Dashboards = () => {
                                                                     className="avatar"
                                                                 />
                                                             </div>
-                                                            {/* <div className="flex-grow-1 ms-3">
-                        <h5 className="mb-0">{product.name}</h5>
-                      </div> */}
                                                         </a>
                                                     </td>
-                                                    {/* <td className={product.changeType === "up" ? "text-success" : "text-danger"}>
-                    {product.changeType === "up" ? (
-                      <BiGraphUp className="me-1" />
-                    ) : (
-                      <BiGraphDown className="me-1" />
-                    )}
-                    {product.change}
-                  </td> */}
                                                     <td>{product.name}</td>
                                                     <td>{product.price}</td>
                                                     <td>{product.sold}</td>
-
                                                 </tr>
                                             ))}
                                         </tbody>
                                     </Table>
                                 </div>
                             </div>
-                            {/* End Body */}
                         </Card>
-
                     </Col>
-
                 </Row>
             </Col>
         </Row>

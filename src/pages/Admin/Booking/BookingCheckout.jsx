@@ -1029,7 +1029,7 @@ const BookingCheckout = () => {
                               // </Button>
 
                               <button
-                                className="btn btn-primary btn-lg px-4 py-2 fw-semibold ms-2"
+                                className="btn btn-success btn-lg px-4 py-2 fw-semibold ms-2"
                                 disabled={booking?.total_time > 0 && booking?.timer_status === "Stopped"}
                                 onClick={handleStartTimer}
                               >
@@ -1566,7 +1566,7 @@ const BookingCheckout = () => {
 
                   <Row>
                     <Col md={3} xs={12}>
-                      <Button variant="primary btn btn-sm"
+                      <Button variant="success btn btn-sm"
                         xs={12}
                         className="w-100 mt-3 tab-button-responsive"
                         disabled={!booking?.timer_status === "Stopped"}

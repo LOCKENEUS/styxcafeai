@@ -63,7 +63,12 @@ export const Units = ({ show, handleClose, superAdminId }) => {
   };
 
   return (
-    <Modal show={show} onHide={handleClose} centered backdrop="static">
+    <Modal 
+    show={show} 
+    onHide={handleClose} 
+    centered backdrop="static" 
+    style={{ zIndex: 2000 }}
+>
       <ModalHeader closeButton style={{ backgroundColor: "skyblue" }}>
         <h1 className="text-center">Inventory Units</h1>
       </ModalHeader>

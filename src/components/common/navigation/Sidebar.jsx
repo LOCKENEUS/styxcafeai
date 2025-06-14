@@ -104,7 +104,7 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
                         </a>
 
                         <div id={collapseId} className="nav-collapse collapse" data-bs-parent="#navbarVerticalMenuPagesMenu">
-                          {item.subItems.map((subItem, subIndex) => (
+                          {/* {item.subItems.map((subItem, subIndex) => (
                             <Link
                               key={subIndex}
                               to={subItem.path}
@@ -114,7 +114,39 @@ const Sidebar = ({ collapsed, toggleSidebar }) => {
                               {subItem.title}
                               {subItem.badge && <span className="badge bg-danger ms-2">{subItem.badge}</span>}
                             </Link>
-                          ))}
+                          ))} */}
+
+                          {item.subGroups ? (
+                            item.subGroups.map((group, gIdx) => (
+                              <div key={gIdx}>
+                                <span className="nav-subtitle text-muted ms-2">{group.groupTitle}</span>
+                                {group.subItems.map((subItem, subIndex) => (
+                                  <Link
+                                    key={subIndex}
+                                    to={subItem.path}
+                                    className="nav-link ms-2"
+                                    onClick={() => isMobile && toggleSidebar()}
+                                  >
+                                    {subItem.title}
+                                    {subItem.badge && <span className="badge bg-danger ms-2">{subItem.badge}</span>}
+                                  </Link>
+                                ))}
+                              </div>
+                            ))
+                          ) : (
+                            item.subItems.map((subItem, subIndex) => (
+                              <Link
+                                key={subIndex}
+                                to={subItem.path}
+                                className="nav-link"
+                                onClick={() => isMobile && toggleSidebar()}
+                              >
+                                {subItem.title}
+                                {subItem.badge && <span className="badge bg-danger ms-2">{subItem.badge}</span>}
+                              </Link>
+                            ))
+                          )}
+
                         </div>
                       </div>
                     </div>

@@ -29,7 +29,7 @@ const SubscriptionForm = ({
         <Row className="mb-3">
           <Col md={4}>
             <Form.Group>
-              <Form.Label className="fw-bold" htmlFor="amount">Amount ($)</Form.Label>
+              <Form.Label className="fw-bold" htmlFor="amount">Amount (₹)</Form.Label>
               <Form.Control
                 id="amount"
                 type="number"
@@ -69,7 +69,7 @@ const SubscriptionForm = ({
           </Col>
         </Row>
         <div className="mb-3 text-center">
-          <h5 className="text-primary fw-bold">Total Amount: ${totalAmount.toFixed(2)}</h5>
+          <h5 className="text-primary fw-bold">Total Amount: ₹{totalAmount.toFixed(2)}</h5>
         </div>
         <Form.Group className="mb-3">
           <Form.Label className="fw-bold" htmlFor="description">Description</Form.Label>

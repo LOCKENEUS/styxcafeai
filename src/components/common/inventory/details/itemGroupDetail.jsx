@@ -1,95 +1,166 @@
-import { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Tab,
+  Table,
+  Card,
+  Breadcrumb,
+  BreadcrumbItem,
+} from "react-bootstrap";
+import { BiArrowBack, BiCloudUpload } from "react-icons/bi";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getItemsGroupsById } from "../../../../store/slices/inventory";
-import { Breadcrumb, Button, Card, CardHeader, Col, Container, Row } from "react-bootstrap";
-import { MdDelete } from "react-icons/md";
-import { IoArrowBackOutline } from "react-icons/io5";
-import { RiEditFill } from "react-icons/ri";
-import { ItemGroupDeleteModal } from "../delete/itemGroupDelete";
 
 export const ItemGroupDetail = () => {
-    const location = useLocation();
-    const { groupId } = location.state || {};
-    const navigate = useNavigate();
-    const [showdeleteModal, setShowDeleteModal] = useState(false);
-    const dispatch = useDispatch();
-    useEffect(() => {
-        if (groupId) {
-            dispatch(getItemsGroupsById(groupId));
-        }
-    }, [dispatch, groupId]);
-    const itemGroupDetails = useSelector((state) => state.inventorySuperAdmin.inventory);
-    const handaleBack = () => {
-        navigate("/Inventory/ItemsGroup");
-    }
-    return (
-        <Container className="text-center">
-            <Row>
-                <Card.Header className="fw-bold">
-                    <Row className="d-flex justify-content-between align-items-center  ">
-                        <Col sm={8} xs={12} >
-                            <Breadcrumb>
-                                <Breadcrumb.Item href="#" style={{ fontSize: "16px", fontWeight: "500" }}>
-                                    <Link to="/superadmin/dashboard">Home
-                                    </Link>
-                                </Breadcrumb.Item>
-                                <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }}>
-                                    <Link to="/Inventory/Dashboard"
-                                    >
-                                        Inventory
-                                    </Link>
-                                </Breadcrumb.Item>
-                                <Breadcrumb.Item style={{ fontSize: "16px", fontWeight: "500" }}>
-                                    <Link to="/Inventory/ItemsGroup"
-                                    >
-                                        Items Groups List
-                                    </Link>
-                                </Breadcrumb.Item>
-                                <Breadcrumb.Item active style={{ fontSize: "16px", fontWeight: "500" }} > Items Group Details</Breadcrumb.Item>
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const location = useLocation();
 
-                            </Breadcrumb>
-                        </Col>
-                    </Row>
-                </Card.Header>
+  const { groupId: id } = location.state
+  // const { selectedItemGroup, loading, error } = useSelector(
+  //   (state) => state.itemGroups
+  // );
 
-                <Col md={12} className="my-2">
-                    <Card className="my-2">
-                        <CardHeader as="h5">
-                            <Row >
-                                <Col sm={6} className="d-flex justify-content-start">
-                                    <h3 className="fw-bold txt-start">{itemGroupDetails?.group_name}</h3>
-                                </Col>
-                                <Col sm={6} className="d-flex justify-content-end">
-                                    <Button className="mx-2" variant="outline-dark" onClick={handaleBack}><IoArrowBackOutline className="mx-2" />Back</Button>
-                                    <Button className="mx-2" variant="success"><RiEditFill className="mx-2" />
-                                        Edit</Button>
-                                    <Button className="mx-2" variant="danger"
-                                        onClick={() => setShowDeleteModal(true)}
-                                    ><MdDelete className="mx-2" />Delete</Button>
+  console.log("groupId", id)
+  const selectedItemGroup = useSelector((state) => state.inventorySuperAdmin.inventory);
 
-                                    <ItemGroupDeleteModal show={showdeleteModal} handleClose={() => setShowDeleteModal(false)} groupId={groupId} />
-                                </Col>
-                            </Row>
-                        </CardHeader>
-                    </Card>
-                </Col>
+  useEffect(() => {
+    dispatch(getItemsGroupsById(id)).then((res) => {
+    });
+  }, [dispatch, id]);
 
-                <Col sm={6}>
-                    <Card className="my-3 px-4  " style={{ height: "700px", overflowY: "scroll" }} >
-                        <Row className="text-start my-4">
-                            <Col sm={6} className="justify-content-start align-items-start my-2"><strong className="float-start">Unit</strong></Col>
-                            <Col sm={6} className="my-2">{itemGroupDetails?.unit || "---"}</Col>
-                            <Col sm={6} className="justify-content-start align-items-start my-2"><strong className="float-start">Tax</strong></Col>
-                            <Col sm={6} className="my-2">{itemGroupDetails?.tax?.tax_rate + "%" || "---"}</Col>
-                            <Col sm={6} className="justify-content-start align-items-start my-2"><strong className="float-start">Manufacturer</strong></Col>
-                            <Col sm={6} className="my-2">{itemGroupDetails?.manufacturer?.name || "---"}</Col>
-                            <Col sm={6} className="justify-content-start align-items-start my-2"><strong className="float-start">Brand</strong></Col>
-                            <Col sm={6} className="my-2">{itemGroupDetails?.brand?.name || "---"}</Col>
-                        </Row>
-                    </Card>
-                </Col>
-            </Row>
-        </Container>
-    )
-}
+  return (
+    <Container
+      fluid
+      className="mt-4 min-vh-100"
+    >
+      <Breadcrumb>
+        <BreadcrumbItem>
+          <Link to="/admin/dashboard">Home</Link>
+        </BreadcrumbItem>
+        <BreadcrumbItem>
+          <Link to="/admin/inventory/dashboard">Inventory</Link>
+        </BreadcrumbItem>
+        <BreadcrumbItem>
+          <Link to="/admin/inventory/item-group-list">Item Group List</Link>
+        </BreadcrumbItem>
+        <BreadcrumbItem active>Item Groups Details</BreadcrumbItem>
+      </Breadcrumb>
+      <Tab.Container defaultActiveKey="checkout">
+        <Row data-aos="fade-down" data-aos-duration="1000">
+          <Col sm={12} className="mt-3">
+            <Tab.Content>
+              <Card className="p-3">
+                <Tab.Pane eventKey="checkout">
+                  {/* <h5>Details</h5> */}
+                  <div className="d-flex justify-content-between mt-3">
+                    <div className="ms-2">
+                      <h3>{selectedItemGroup?.group_name}</h3>
+                    </div>
+                    <div>
+                      <button
+                        onClick={() =>
+                          navigate(`/admin/inventory/item-group-form/${id}`)
+                        }
+                        className="btn btn-primary me-2"
+                      >
+                        <BiCloudUpload /> Edit
+                      </button>
+
+                      <button
+                        className="btn btn-secondary"
+                        onClick={() => navigate(-1)}
+                      >
+                        <BiArrowBack /> Back
+                      </button>
+                    </div>
+                  </div>
+                  <Table className="w-25" borderless>
+                    <tbody>
+                      <tr>
+                        <td>Unit</td>
+                        <td>
+                          <b>{selectedItemGroup?.unit || "N/A"}</b>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Tax</td>
+                        <td>
+                          <b>{selectedItemGroup?.tax?.tax_rate || "N/A"}%</b>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Manufacturer</td>
+                        <td>
+                          <b>
+                            {selectedItemGroup?.manufacturer?.name || "N/A"}
+                          </b>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Brand</td>
+                        <td>
+                          <b>{selectedItemGroup?.brand?.name || "N/A"}</b>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Description</td>
+                        <td><b>{selectedItemGroup?.description || 'N/A'}</b></td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                  <hr className="w-50" />
+                  <h5>List of Items under this Group:</h5>
+                  <Row>
+                    {selectedItemGroup?.items?.map((item, index) => (
+                      <Col md={6} key={item._id} className="mb-3 pointer-cursor" onClick={() => navigate(`/Inventory/itemDetails`, { state: { groupId: item?._id } })}>
+                        <Card className="p-3">
+                          <Row>
+                            <Col md={6}>
+                              <h6>{item.name || "No Name Available"}</h6>
+                              <p>SKU : {item.sku || "No SKU Available"}</p>
+                              <p>
+                                Price : ₹
+                                {item.sellingPrice !== null
+                                  ? item.sellingPrice
+                                  : "Price Not Available"}
+                              </p>
+                              <p>
+                                Stock :{" "}
+                                {item.stock !== null
+                                  ? item.stock
+                                  : "Stock Not Available"}
+                              </p>
+                            </Col>
+                            <Col md={6}>
+                              <div
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  backgroundColor: "#e0e0e0",
+                                  borderRadius: "5px",
+                                }}
+                              >
+                                <span>250 x 250</span>
+                              </div>
+                            </Col>
+                          </Row>
+                        </Card>
+                      </Col>
+                    ))}
+                  </Row>
+                </Tab.Pane>
+              </Card>
+            </Tab.Content>
+          </Col>
+        </Row>
+      </Tab.Container>
+    </Container>
+  );
+};

@@ -264,7 +264,7 @@ const GameInfo = () => {
               <div className="d-flex justify-content-around gap-2 p-2">
                 <Button
                   size="sm"
-                  variant="primary"
+                  variant="success"
                   className="px-2 m-2"
                   disabled={isLoading}
                   style={{ width: "80%", height: "37px", marginRight: "30px" }}
@@ -277,7 +277,7 @@ const GameInfo = () => {
               <div>
                 <Button
                   size="sm"
-                  variant="primary"
+                  variant="success"
                   className="px-0"
                   style={{ width: "80%", height: "37px", marginLeft: "10px", marginRight: "50px" }}
                   onClick={() => setShowCustomSlot(true)}

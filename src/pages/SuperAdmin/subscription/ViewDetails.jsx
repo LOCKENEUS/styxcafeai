@@ -15,7 +15,7 @@ const ViewDetails = ({ subscription, onHide }) => {
             </ListGroup.Item>
             <ListGroup.Item className="d-flex justify-content-between">
               <span>Amount:</span>
-              <span>${subscription?.amount}</span>
+              <span>₹{subscription?.amount}</span>
             </ListGroup.Item>
             <ListGroup.Item className="d-flex justify-content-between">
               <span>Discount:</span>
@@ -27,7 +27,7 @@ const ViewDetails = ({ subscription, onHide }) => {
             </ListGroup.Item>
             <ListGroup.Item className="d-flex justify-content-between">
               <span>Total Amount:</span>
-              <span className="text-success">${subscription?.totalAmount?.toFixed(2)}</span>
+              <span className="text-success">₹{subscription?.totalAmount?.toFixed(2)}</span>
             </ListGroup.Item>
             <ListGroup.Item className="d-flex justify-content-between">
               <span>Plan:</span>

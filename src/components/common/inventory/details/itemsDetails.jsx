@@ -29,8 +29,7 @@ export const ItemsDetails = () => {
   }, [dispatch]);
 
   useEffect(() => {
-        dispatch(getItemTransactions(groupId));
-
+      dispatch(getItemTransactions(groupId));
   }, [dispatch]);
 
   const itemDetails = useSelector((state) => state.inventorySuperAdmin.inventory);
@@ -85,7 +84,7 @@ export const ItemsDetails = () => {
                 <CardHeader as="h5">
                   <Row >
                     <Col sm={6} className="d-flex justify-content-start">
-                      <h3 className="fw-bold txt-start">{itemDetails.name}</h3>
+                      <h3 className="fw-bold txt-start my-auto">{itemDetails?.name}</h3>
                     </Col>
                     <Col sm={6} className="d-flex justify-content-end">
                       <Button className="mx-2" variant="outline-dark" onClick={handaleBack}><IoArrowBackOutline className="mx-2" />Back</Button>
@@ -120,35 +119,35 @@ export const ItemsDetails = () => {
                           <Col sm={12} className="mb-2">
                             <Row className="mb-3 mx-4">
                               <Col sm={6} xs={3} className="justify-content-start align-items-start my-2"><strong className="float-start">SKU</strong></Col>
-                              <Col sm={6} xs={9} className="my-2">{itemDetails.sku || "---"}</Col>
+                              <Col sm={6} xs={9} className="my-2">{itemDetails?.sku || "---"}</Col>
 
                               <Col sm={6} xs={3} className="my-2"><strong className="float-start">Unit</strong></Col>
-                              <Col sm={6} xs={9} className="my-2">{itemDetails.unit || "---"}</Col>
+                              <Col sm={6} xs={9} className="my-2">{itemDetails?.unit || "---"}</Col>
 
                               <Col sm={6} xs={3} className="my-2"><strong className="float-start">Dimension</strong></Col>
                               <Col sm={6} xs={9} className="my-2">
-                                {(!itemDetails.length || !itemDetails.width || !itemDetails.height || !itemDetails.dimensionUnit)
+                                {(!itemDetails?.length || !itemDetails?.width || !itemDetails?.height || !itemDetails?.dimensionUnit)
                                   ? '---'
-                                  : `${itemDetails.length} x ${itemDetails.width} x ${itemDetails.height} ${itemDetails.dimensionUnit}`}
+                                  : `${itemDetails?.length} x ${itemDetails?.width} x ${itemDetails?.height} ${itemDetails?.dimensionUnit}`}
                               </Col>
 
                               <Col sm={6} xs={3} className="my-2"><strong className="float-start">Weight</strong></Col>
-                              <Col sm={6} xs={9} className="my-2">{itemDetails.weight || "---"}</Col>
+                              <Col sm={6} xs={9} className="my-2">{itemDetails?.weight || "---"}</Col>
 
                               <Col sm={6} xs={3} className="my-2"><strong className="float-start">Manufacturer</strong></Col>
-                              <Col sm={6} xs={9} className="my-2">{itemDetails.manufacturer?.name || "---"}</Col>
+                              <Col sm={6} xs={9} className="my-2">{itemDetails?.manufacturer?.name || "---"}</Col>
 
                               <Col sm={6} xs={3} className="my-2"><strong className="float-start">Brand</strong></Col>
-                              <Col sm={6} xs={9} className="my-2">{itemDetails.brand?.name || itemDetails.brand || "---"}</Col>
+                              <Col sm={6} xs={9} className="my-2">{itemDetails?.brand?.name || itemDetails?.brand || "---"}</Col>
                             </Row>
 
                             <h5 className="fw-bold mt-4 mx-5 border-top py-4 border-bottom border-dark text-start" style={{ fontSize: "16px", fontWeight: "500" }}>Purchase Information</h5>
                             <Row className="mb-3 mx-4">
                               <Col sm={6} xs={5} className="my-2"><strong className="float-start">Cost Price</strong></Col>
-                              <Col sm={6} xs={7} className="my-2">₹{itemDetails.costPrice || "---"}</Col>
+                              <Col sm={6} xs={7} className="my-2">₹{itemDetails?.costPrice || "---"}</Col>
 
                               <Col sm={6} xs={5} className="my-2"><strong className="float-start">Selling Price</strong></Col>
-                              <Col sm={6} xs={7} className="my-2">₹{itemDetails.sellingPrice || "---"}</Col>
+                              <Col sm={6} xs={7} className="my-2">₹{itemDetails?.sellingPrice || "---"}</Col>
                             </Row>
                           </Col>
                         </Row>
@@ -195,7 +194,7 @@ export const ItemsDetails = () => {
                             </tr>
                           </thead>
                           <tbody>
-                            {transactionDetails.map((item, index) => (
+                            {transactionDetails?.length > 0 && transactionDetails?.map((item, index) => (
                               <tr key={item.id}>
                                 <td>{index + 1}</td>
                                 <td>{item.quantity}</td>
@@ -213,18 +212,22 @@ export const ItemsDetails = () => {
 
                 <Col sm={5} className="mb-2">
                   <Card className="my-3 p-2" style={{ height: "700px", overflowY: "scroll" }} >
-                    <div className="my-3  text-center ">
-                      <Image
-                        src={`${import.meta.env.VITE_API_URL}/${itemDetails.image}`}
-                        alt="product image"
-                        id="imagePreview"
-                        onError={(e) =>
-                        (e.target.src =
-                          { Rectangle389 })
-                        }
-                        style={{ width: "200px", aspectRatio: "1", objectFit: "cover" }}
-                        className="rounded-3"
-                      />
+                    <div className="my-3  text-center">
+                    {itemDetails?.image ? <Image
+                      src={`${import.meta.env.VITE_API_URL}/${itemDetails?.image}`}
+                      alt="product image"
+                      id="imagePreview"
+                      onError={(e) =>
+                      (e.target.src =
+                        { Rectangle389 })
+                      }
+                      style={{ width: "200px", aspectRatio: "1", objectFit: "cover" }}
+                      className="rounded-3"
+                    />: 
+                    <div style={{height: "200px", backgroundColor: "#f2f2f2"}} className="d-flex justify-content-center align-items-center">
+                      400 X 200
+                    </div>
+                    }
                     </div>
 
                     <div className="text-dark p-2 rounded-2 text-start">
@@ -236,7 +239,7 @@ export const ItemsDetails = () => {
                         <Col md={6} className="mb-3">
                           <h6 className="fw-bold" style={{ fontSize: "16px" }}>Accounting Stock</h6>
                           <div className="my-3">
-                            <div className="my-1">Stock In Hand &nbsp;: <b>{itemDetails.stock}</b></div>
+                            <div className="my-1">Stock In Hand &nbsp;: <b>{itemDetails?.stock}</b></div>
                             <div className="my-1">Committed Stock : <b>0</b></div>
                             <div className="my-1">Available Stock  &nbsp;: <b>0</b></div>
                           </div>
@@ -245,7 +248,7 @@ export const ItemsDetails = () => {
                         <Col md={6} className="mb-3">
                           <h6 className="fw-bold" style={{ fontSize: "16px" }}>Physical Stock</h6>
                           <div className="my-3">
-                            <div className="my-1">Stock In Hand &nbsp;: <b>{itemDetails.stock}</b></div>
+                            <div className="my-1">Stock In Hand &nbsp;: <b>{itemDetails?.stock}</b></div>
                             <div className="my-1">Committed Stock : <b>0</b></div>
                             <div className="my-1">Available Stock  &nbsp;: <b>0</b></div>
                           </div>
@@ -255,7 +258,7 @@ export const ItemsDetails = () => {
                         <Col xs={6} className="pe-1">
                           <Card className="rounded-2 border p-2 my-3 mx-3 text-center">
                             <h4 style={{ fontSize: "16px" }}>
-                              {itemDetails.qty_to_ship} <span >Qty</span>
+                              {itemDetails?.qty_to_ship} <span >Qty</span>
                             </h4>
                             <p>To be Shipped</p>
                           </Card>
@@ -263,7 +266,7 @@ export const ItemsDetails = () => {
                         <Col xs={6} className="ps-1">
                           <Card className="rounded-2 border p-2 my-3 mx-3 text-center">
                             <h4>
-                              {itemDetails.qty_to_receive} <span >Qty</span>
+                              {itemDetails?.qty_to_receive} <span >Qty</span>
                             </h4>
                             <p>To be Received</p>
                           </Card>
@@ -271,7 +274,7 @@ export const ItemsDetails = () => {
                         <Col xs={6} className="pe-1">
                           <Card className="rounded-2 border p-2 my-3 mx-3 text-center">
                             <h4>
-                              {itemDetails.qty_to_invoice} <span >Qty</span>
+                              {itemDetails?.qty_to_invoice} <span >Qty</span>
                             </h4>
                             <p>To be Invoiced</p>
                           </Card>
@@ -279,7 +282,7 @@ export const ItemsDetails = () => {
                         <Col xs={6} className="ps-1">
                           <Card className="rounded-2 border p-2 my-3 mx-3 text-center">
                             <h4>
-                              {itemDetails.qty_to_bill} <span >Qty</span>
+                              {itemDetails?.qty_to_bill} <span >Qty</span>
                             </h4>
                             <p>To be Billed</p>
                           </Card>

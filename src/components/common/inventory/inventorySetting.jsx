@@ -376,7 +376,7 @@ export const InventorySetting = () => {
                                 </TabPane>
 
                                 <TabPane eventKey="paymentterms">
-                                <Card className="rounded-2 p-2 border">
+                                <Card className="rounded-2 p-4 border">
                                         <Row>
                                             <Col sm={4} className="mb-2">
                                                 <h4 className="mb-4">Create New Payment Terms </h4>
