@@ -632,7 +632,7 @@ const BookingDetails = () => {
         Home / Bookings/{" "}
         <span className="text-primary">Booking Details</span>
       </h6>
-      <Row>
+      <Row style={{height: "70vh"}}>
         <Col style={{ height: "100%" }} className="px-0 px-md-2" md={4} lg={3}>
           <div className="d-flex gap-3 zero-gap">
             <InputGroup className="mb-3 ">
@@ -1112,7 +1112,7 @@ const BookingDetails = () => {
               </div>
             </Col>
             <Col md={12}>
-              <div className="d-none d-md-flex gap-0 rounded-2" style={{ minHeight: "54vh" }}>
+              <div className="d-none d-md-flex gap-0 rounded-2" style={{ minHeight: "102%" }}>
                 <div className="bg-white p-4 w-100 border-end border-2 rounded-3" style={{ minHeight: "65%" }}>
                   <>
                     <div className="mb-5 d-flex justify-content-between">
@@ -1215,7 +1215,7 @@ const BookingDetails = () => {
             </Col>
 
             <Col md={12} style={{ marginTop: "8px" }}>
-              <div className="bg-white rounded-3 p-0 d-flex flex-column" style={{ height: isMobile ? "auto" : "90vh" }}>
+              <div className="bg-white rounded-3 p-0 d-flex flex-column" style={{ height: isMobile ? "auto" : "85vh" }}>
                 {/* Scrollable Content */}
                 <div
                   style={{

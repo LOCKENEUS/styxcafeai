@@ -12,7 +12,7 @@ const SplashAnimation = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigate("/admin/dashboard");
-    }, 5000); // Show splash for 4 seconds
+    }, 3500); // Show splash for 4 seconds
 
     return () => clearTimeout(timer);
   }, [navigate]);

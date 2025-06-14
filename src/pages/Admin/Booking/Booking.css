@@ -31,7 +31,7 @@
 /* Desktop (1025px and up) */
 @media only screen and (min-width: 1025px) {
   .responsive-height {
-    height: 90vh;
+    height: 85vh;
   }
 }
   

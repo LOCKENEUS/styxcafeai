@@ -4,14 +4,15 @@ import { Modal, Button, Row, Col, Container, Spinner } from "react-bootstrap";
 import { BsCurrencyRupee, BsFillPlusSquareFill, BsSquareHalf } from 'react-icons/bs';
 import { LuBadgeCheck, LuSplit } from "react-icons/lu";
 import { LiaCoinsSolid } from "react-icons/lia";
+import { current } from "@reduxjs/toolkit";
 
-const CreditSplit = ({ show, 
-  handleClose, 
-  handleCollectOffline, 
-  handleOnlinePayment, 
-  totalAmount, 
-  players, 
-  customer, 
+const CreditSplit = ({ show,
+  handleClose,
+  handleCollectOffline,
+  handleOnlinePayment,
+  totalAmount,
+  players,
+  customer,
   loading,
   cashLoading
 }) => {
@@ -81,6 +82,8 @@ const CreditSplit = ({ show,
     setAllPlayers(updatedPlayers);
   };
 
+  console.log("currentTotal", currentTotal)
+
   return (
     <Modal show={show} onHide={handleClose} centered>
       <div className="modal-content rounded-2">
@@ -92,7 +95,7 @@ const CreditSplit = ({ show,
             }
             {allPlayers?.length === 2 && <Button
               variant="primary"
-              className="mx-3"
+              // className="me-3"
               onClick={handleSplitAmount}
             >
               <BsSquareHalf /> 50-50
@@ -157,17 +160,17 @@ const CreditSplit = ({ show,
                 </Col>
               </Row>
             ))}
-            <Button
-              size="sm"
-              className="w-25"
-              onClick={() => handleOnlinePayment(allPlayers, currentTotal)}
-            >
-              Online
-              <span className="ms-2">
-                {loading && <Spinner animation="border" size="sm" />}
-              </span>
-            </Button>
-            <Button
+          {currentTotal > 0 && <Button
+            size="sm"
+            className="w-25"
+            onClick={() => handleOnlinePayment(allPlayers, currentTotal)}
+          >
+            Online
+            <span className="ms-2">
+              {loading && <Spinner animation="border" size="sm" />}
+            </span>
+          </Button>}
+            {currentTotal > 0 && <Button
               size="sm"
               className="mx-4 w-25"
               onClick={() => handleCollectOffline(allPlayers, currentTotal)}
@@ -175,7 +178,17 @@ const CreditSplit = ({ show,
               Cash <span className="ms-2">
                 {cashLoading && <Spinner animation="border" size="sm" />}
               </span>
-            </Button>
+            </Button>}
+
+            {currentTotal == 0 && <Button
+              size="sm"
+              className=""
+              onClick={() => handleCollectOffline(allPlayers, currentTotal)}
+            >
+              Collect on Credit <span className="ms-2">
+                {cashLoading && <Spinner animation="border" size="sm" />}
+              </span>
+            </Button>}
           </Container>
         </Modal.Body>
       </div>
