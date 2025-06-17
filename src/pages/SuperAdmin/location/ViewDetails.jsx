@@ -120,7 +120,7 @@ const ViewDetails = ({ location, index, onClose, onDelete, onEdit }) => {
                       {associatedCafes.map((cafe) => (
                         <tr
                           key={cafe._id}
-                          onClick={() => navigate(`/superadmin/cafe/viewdetails/${cafe._id}`)}
+                            onClick={() => navigate('/superadmin/cafe/viewdetails', { state: { cafeId: cafe._id } })}
                           style={{ cursor: 'pointer' }}
                         >
                           <td className="text-primary fw-bold">{cafe.cafe_name}</td>

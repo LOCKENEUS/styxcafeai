@@ -1,16 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button, Card, Col, Container, FormControl, Image, InputGroup, Row, Table } from "react-bootstrap";
 import { useDispatch, useSelector } from 'react-redux';
-import { addCafe, updateCafe, deleteCafe, fetchCafes, selectCafes, selectLoading, selectError } from '../../../store/slices/cafeSlice';
+import { fetchCafes, selectCafes, selectLoading, selectError } from '../../../store/slices/cafeSlice';
 import { Navigate } from "react-router-dom";
 import gm1 from "/assets/inventory/mynaui_search.svg";
 import plus from "/assets/superAdmin/cafe/Plus.png";
 import profile from "/assets/profile/user_avatar.jpg";
-
-import ViewDetails from "./ViewDetails";
 import CafeForm from "./CafeForm";
 import Loader from "../../../components/common/Loader/Loader";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
+
 const CafeManager = () => {
   const dispatch = useDispatch();
   const cafes = useSelector(selectCafes);
@@ -21,7 +20,6 @@ const CafeManager = () => {
   const [selectedCafe, setSelectedCafeState] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-
   const [showCanvas, setShowCanvas] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showDetails, setShowDetails] = useState(false);
@@ -94,8 +92,6 @@ const CafeManager = () => {
     });
   };
 
-
-
   // Updated handleRemoveImage to remove specific image
   const handleRemoveImage = (index) => {
     setImagePreview(prev => prev.filter((_, i) => i !== index));
@@ -104,7 +100,6 @@ const CafeManager = () => {
       images: prev.images ? prev.images.filter((_, i) => i !== index) : []
     }));
   };
-
 
   const filteredCafes = cafes.filter(cafe => {
     const lowercasedQuery = searchQuery.toLowerCase();
@@ -176,7 +171,6 @@ const CafeManager = () => {
         yearsOfContract: selectedCafe?.yearsOfContract || "",
         document: selectedCafe?.document || [],
         officeContactNo: selectedCafe?.officeContactNo || "",
-
       });
       setImagePreview(selectedCafe.cafeImage.split(',').map(image => `${import.meta.env.VITE_API_URL}/${image}`) || []);
       setIsEditing(true);
@@ -194,17 +188,7 @@ const CafeManager = () => {
 
   return (
     <div className="my-5">
-      {/* <div className="d-flex justify-content-center align-items-start mb-3">
-        <h1 className="text-center">Cafe List</h1>
-        
-      </div> */}
-
-      {/* <Link to={{ pathname: '/superadmin/CreateMembership/', state: { cafeId } }}></Link>
-      to={`/superadmin/cafe/viewdetails/${selectedCafe._id}`} 
-      */}
-
       {showDetails && selectedCafe ? (
-
         <Navigate to={`/superadmin/cafe/viewdetails/`} 
         state={{ cafeId: selectedCafe._id }} 
         />
@@ -216,9 +200,7 @@ const CafeManager = () => {
 
               <Row>
                 <Col sm={7} className="fluid d-flex justify-content-start">
-
                   <h1 className="text-center mx-3 mt-2">Cafe List</h1>
-
                 </Col>
 
                 <Col sm={4} className="my-1" >
@@ -251,8 +233,6 @@ const CafeManager = () => {
                     <Image src={plus} alt="add" className=" " />
                   </Button>
                 </Col>
-
-
 
                 <Col sm={12}>
                   <Table hover responsive className="my-3">
@@ -345,7 +325,6 @@ const CafeManager = () => {
                         )
                       }
                     </tbody>
-
                   </Table>
                 </Col>
 
@@ -371,13 +350,10 @@ const CafeManager = () => {
                   </Button>
                 </Col>
               </Row>
-
-
             </Card>
           </Container>
         )
       )}
-
 
       <CafeForm
         showCanvas={showCanvas}
@@ -399,8 +375,6 @@ const CafeManager = () => {
         formDataState={formDataState}
         setFormDataState={setFormDataState}
       />
-
-
     </div>
   );
 };

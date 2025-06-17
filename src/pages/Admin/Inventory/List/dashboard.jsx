@@ -15,6 +15,8 @@ import {
 } from "chart.js";
 import { TfiBoltAlt } from "react-icons/tfi";
 import { AiOutlineStock } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
+import { getInvDashboardData } from "../../../../store/AdminSlice/Inventory/invDashboardSlice";
 
 ChartJS.register(
   ArcElement,
@@ -28,11 +30,20 @@ ChartJS.register(
 );
 
 const DashboardInventory = () => {
+
+  const dispatch = useDispatch();
+
+  const { data } = useSelector((state) => state.invDashboard);
+
+  useEffect(() => {
+    dispatch(getInvDashboardData())
+  }, [dispatch])
+
   // Inventory Doughnut Chart Data
   const inventoryData = {
     labels: ["Qty in Hands", "Qty Received"],
     datasets: [{
-      data: [1030, 240],
+      data: [data?.item_stock, data?.qty_received],
       backgroundColor: ["#FF6B4A", "#4AFF93"],
       borderWidth: 0,
     }],
@@ -141,13 +152,6 @@ const DashboardInventory = () => {
     }
   };
 
-  const statsCards = [
-    { title: "TOTAL SALE", value: "145", bgColor: "#E6F8FF", iconBg: "#66C2EA" },
-    { title: "TOTAL ORDER", value: "456", bgColor: "#E6FFE6", iconBg: "#66CC66" },
-    { title: "NEW ORDER", value: "45", bgColor: "#FFE6FF", iconBg: "#FF66FF" },
-    { title: "CANCELLED ORDER", value: "50", bgColor: "#FFE6E6", iconBg: "#FF6666" }
-  ];
-
   const tableData = [
     { name: "Appearance Pvt Ltd", quantity: "100 Kg", price: "45000" },
     { name: "Appearance Pvt Ltd", quantity: "200 Kg", price: "56000" },
@@ -164,32 +168,105 @@ const DashboardInventory = () => {
       <Row className="g-3 mb-4">
         <Col data-aos="fade-right" data-aos-duration="800" md={6}>
           <Row className="g-3">
-            {statsCards.map((card, index) => (
-              <Col key={index} xs={6} lg={6}>
-                <Card className="border-0">
-                  <Card.Body className="d-flex justify-content-start gap-3 align-items-center">
-                    <div style={{ backgroundColor: card.bgColor, height: "100px", width: "70px", borderRadius: "10px" }} className="d-flex justify-content-center align-items-center mb-2">
-                      <div style={{
-                        width: 40,
-                        height: 40,
-                        backgroundColor: card.iconBg,
-                        borderRadius: '8px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}>
-                        <span style={{ display: 'inline-block' }}><AiOutlineStock color="#fff" size={20} /></span>
-                      </div>
+            <Col xs={6} lg={6}>
+              <Card className="border-0">
+                <Card.Body className="d-flex justify-content-start gap-3 align-items-center">
+                  <div style={{ backgroundColor: "#E6F8FF", height: "100px", width: "70px", borderRadius: "10px" }} className="d-flex justify-content-center align-items-center mb-2">
+                    <div style={{
+                      width: 40,
+                      height: 40,
+                      backgroundColor: "#66C2EA",
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <span style={{ display: 'inline-block' }}><AiOutlineStock color="#fff" size={20} /></span>
                     </div>
+                  </div>
 
-                    <div className="d-flex flex-column justify-content-between align-items-center">
-                      <div style={{ color: "#000", fontWeight: '500' }} className="small">{card.title}</div>
-                      <h1 className="mt-2 mb-0">{card.value}</h1>
+                  <div className="d-flex flex-column justify-content-between align-items-center">
+                    <div style={{ color: "#000", fontWeight: '500' }} className="small">TOTAL SALE</div>
+                    <h1 className="mt-2 mb-0">{data?.total_sale}</h1>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+
+            <Col xs={6} lg={6}>
+              <Card className="border-0">
+                <Card.Body className="d-flex justify-content-start gap-3 align-items-center">
+                  <div style={{ backgroundColor: "#E6FFE6", height: "100px", width: "70px", borderRadius: "10px" }} className="d-flex justify-content-center align-items-center mb-2">
+                    <div style={{
+                      width: 40,
+                      height: 40,
+                      backgroundColor: "#66CC66",
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <span style={{ display: 'inline-block' }}><AiOutlineStock color="#fff" size={20} /></span>
                     </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
+                  </div>
+
+                  <div className="d-flex flex-column justify-content-between align-items-center">
+                    <div style={{ color: "#000", fontWeight: '500' }} className="small">TOTAL ORDER</div>
+                    <h1 className="mt-2 mb-0">{data?.total_orders}</h1>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+
+            <Col xs={6} lg={6}>
+              <Card className="border-0">
+                <Card.Body className="d-flex justify-content-start gap-3 align-items-center">
+                  <div style={{ backgroundColor: "#FFE6FF", height: "100px", width: "70px", borderRadius: "10px" }} className="d-flex justify-content-center align-items-center mb-2">
+                    <div style={{
+                      width: 40,
+                      height: 40,
+                      backgroundColor: "#FF66FF",
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <span style={{ display: 'inline-block' }}><AiOutlineStock color="#fff" size={20} /></span>
+                    </div>
+                  </div>
+
+                  <div className="d-flex flex-column justify-content-between align-items-center">
+                    <div style={{ color: "#000", fontWeight: '500' }} className="small">NEW ORDER</div>
+                    <h1 className="mt-2 mb-0">{data?.new_orders}</h1>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+
+            <Col xs={6} lg={6}>
+              <Card className="border-0">
+                <Card.Body className="d-flex justify-content-start gap-3 align-items-center">
+                  <div style={{ backgroundColor: "#FFE6E6", height: "100px", width: "70px", borderRadius: "10px" }} className="d-flex justify-content-center align-items-center mb-2">
+                    <div style={{
+                      width: 40,
+                      height: 40,
+                      backgroundColor: "#FF6666",
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <span style={{ display: 'inline-block' }}><AiOutlineStock color="#fff" size={20} /></span>
+                    </div>
+                  </div>
+
+                  <div className="d-flex flex-column justify-content-between align-items-center">
+                    <div style={{ color: "#000", fontWeight: '500' }} className="small">CANCELLED ORDER</div>
+                    <h1 className="mt-2 mb-0">{data?.cancelled_orders || 0}</h1>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
           </Row>
         </Col>
         <Col data-aos="fade-left" data-aos-duration="1000" md={6}>
@@ -217,7 +294,7 @@ const DashboardInventory = () => {
                   borderRadius: "16px"
                 }}>
                   <div className="text-muted small">Qty in Hands</div>
-                  <div style={{ color: "#FF6B4A", fontWeight: "bold" }}>1030</div>
+                  <div style={{ color: "#FF6B4A", fontWeight: "bold" }}>{data?.item_stock}</div>
                 </div>
                 {/* Qty Received Label */}
                 <div style={{
@@ -229,7 +306,7 @@ const DashboardInventory = () => {
                   borderRadius: "16px"
                 }}>
                   <div className="text-muted small">Qty Received</div>
-                  <div style={{ color: "#4AFF93", fontWeight: "bold" }}>240</div>
+                  <div style={{ color: "#4AFF93", fontWeight: "bold" }}>{data?.qty_received} </div>
                 </div>
               </div>
             </Card.Body>

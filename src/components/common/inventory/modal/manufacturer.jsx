@@ -2,7 +2,6 @@ import { Button, Col, FormGroup, Modal, ModalBody, ModalFooter, ModalHeader, Row
 import { addCustomField } from "../../../../store/AdminSlice/CustomField";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
 
 export const Manufacturer = ({ show, handleClose, superAdminId }) => {
   const dispatch = useDispatch();
@@ -89,9 +88,6 @@ export const Manufacturer = ({ show, handleClose, superAdminId }) => {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          {/* <Button variant="primary" type="submit">
-            Save
-          </Button> */}
           <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
             {submitLoading ? (
               <>

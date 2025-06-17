@@ -296,39 +296,6 @@ export const SalesInvDetails = () => {
                                 </Col>
 
                                 <Col sm={6}>
-                                    {/* <div className="text-end mb-4">
-                                        <h6 className="text-dark" style={{ fontSize: '16px' }}>
-                                            Order No: <span className="text-primary fw-bold">{selectedSalesInvoice.so_no}</span>
-                                        </h6>
-                                    </div> */}
-
-                                    {/* <div className="order-details ms-auto" style={{ maxWidth: '400px' }}>
-                                        <table className="table table-borderless">
-                                            <tbody>
-                                                <tr>
-                                                    <td className="text-muted" style={{ width: '50%' }}>Sales Invoice No:</td>
-                                                    <td className="fw-medium">{selectedSalesInvoice.po_no}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className="text-muted">Order Date:</td>
-                                                    <td className="fw-medium">{formatDate(selectedSalesInvoice.delivery_date)}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className="text-muted">Payment Terms:</td>
-                                                    <td className="fw-medium">{selectedSalesInvoice.payment_terms || "Cash"}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className="text-muted">Reference:</td>
-                                                    <td className="fw-medium">{selectedSalesInvoice.reference || "N/A"}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className="text-muted">Sales Person:</td>
-                                                    <td className="fw-medium">{selectedSalesInvoice.sales_person || "N/A"}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div> */}
-
                                     <div className="order-details ms-auto" style={{ maxWidth: '400px' }}>
                                         <div className="d-flex justify-content-between py-1">
                                             <div className="text-muted">Sales Invoice No:</div>

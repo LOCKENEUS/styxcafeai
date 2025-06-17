@@ -378,6 +378,7 @@ const CafeForm = ({
 
   // Modify the handleSelect function
   const handleSelect = (place) => {
+    console.log(place);
     const placeId = place.value.place_id;
     const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
@@ -497,7 +498,6 @@ const CafeForm = ({
                         ...provided,
                         zIndex: 1000
                       })
-                      
                     }
                   }}
                 />

@@ -1,6 +1,5 @@
 import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormControl, FormLabel, FormSelect, Row, Spinner, Table } from "react-bootstrap";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import companylog from "/assets/inventory/companylogo.png";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import { use, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,7 +35,6 @@ export const CreateSalesReturn = () => {
     const [shipmentItems, setShipmentItems] = useState({});
     const [soSelected, setSoSelected] = useState("");
     const [selectedClient, setSelectedClient] = useState("");
-    const [taxList, setTaxList] = useState([]);
     const [submitLoading, setSubmitLoading] = useState(false);
 
     const dispatch = useDispatch();
@@ -49,12 +47,6 @@ export const CreateSalesReturn = () => {
     const cafes = useSelector((state) => state.cafes.cafes);
 
     const user = JSON.parse(localStorage.getItem("user"));
-    const cafeId = user?._id;
-    const userName = user?.name;
-    const userEmail = user?.email;
-    const UserContactN = user?.contact_no;
-    const UserAddress = user?.address;
-    const UesrPAN = user?.panNo;
 
     useEffect(() => {
         if (selectedSo) {
@@ -89,13 +81,6 @@ export const CreateSalesReturn = () => {
             setInventoryItems(selectedSo?.items || []);
         }
     }, [selectedSo]);
-
-    const handleTaxSubmit = (e) => {
-        e.preventDefault();
-        setTaxList([...taxList, newTax]);
-        setNewTax({ name: '', value: '', description: '' });
-        setShowTaxModal(false);
-    };
 
     const handleVendorChange = (vendorId) => {
         setSelectedClient(vendorId);

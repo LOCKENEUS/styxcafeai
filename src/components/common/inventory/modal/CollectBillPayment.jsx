@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Row, Col, Form, FormGroup, Modal, ModalHeader, ModalBody, ModalFooter, ModalTitle, Alert } from "react-bootstrap";
 import { useDispatch, useSelector } from 'react-redux';
-// import { addPurchaseBillPayment, getPaymentById } from '../../../../store/AdminSlice/Inventory/CollectPurchaseBill';
 import {
   addPurchaseBillPayment as addPayment,
   getPurchaseBillPaymentById as getPaymentById

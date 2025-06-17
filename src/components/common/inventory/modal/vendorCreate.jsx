@@ -570,9 +570,6 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
             <Button variant="outline-secondary" className="rounded-2" onClick={handleCloseCreateVendor}>
               Cancel
             </Button>
-            {/* <Button variant="primary" type="submit" className="rounded-2">
-              Submit
-            </Button> */}
             <Button variant="primary" type="submit" className=" my-2 float-end">
               {submitLoading ? (
                 <>

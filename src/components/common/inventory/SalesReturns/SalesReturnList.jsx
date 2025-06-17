@@ -27,17 +27,14 @@ export const SalesReturnList = () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   useEffect(() => {
     dispatch(getSalesReturnList());
   }, [dispatch])
 
   const { salesReturnList, loading } = useSelector(state => state.saSalesReturn);
-  const [searchText, setSearchText] = useState("");
-  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [activePage, setActivePage] = useState(1);
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(3 / itemsPerPage);
 
   // Function to handle modal (replace with actual logic)
   const handleShowCreate = () => {
@@ -108,12 +105,6 @@ export const SalesReturnList = () => {
       sortable: true,
     },
   ];
-
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setActivePage(page);
-    }
-  };
 
   const handleShowDetails = (id) => {
     navigate(`/Inventory/SalesReturn/View/${id}`);

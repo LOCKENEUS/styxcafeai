@@ -23,7 +23,6 @@ export const ItemCreate = () => {
     const [galleryImages, setGalleryImages] = useState([]);
     const [submitLoading, setSubmitLoading] = useState(false);
     const [galleryFiles, setGalleryFiles] = useState([]); // actual files
-
     const [superAdminId, setSuperAdminId] = useState('');
     const customFields = useSelector(state => state.customFields.customFields);
 
@@ -776,7 +775,6 @@ export const ItemCreate = () => {
                                                 <Spinner animation="border" size="sm" className="me-2" /> Saving...
                                             </>
                                         ) : ('Submit')}
-
                                     </Button>
                                 </Col>
                             </Row>

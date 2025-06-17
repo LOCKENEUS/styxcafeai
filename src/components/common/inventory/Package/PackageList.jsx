@@ -23,21 +23,14 @@ import { getPackageList } from "../../../../store/slices/Inventory/packSlice";
 
 export const PackageList = () => {
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  const cafeId = user?._id;
-
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getPackageList());
   }, [dispatch])
 
   const { packageList, loading } = useSelector(state => state.saPackage);
-  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [activePage, setActivePage] = useState(1);
-  const itemsPerPage = 5;
-  const totalPages = Math.ceil(3 / itemsPerPage);
 
   // Function to handle modal (replace with actual logic)
   const handleShowCreate = () => {
@@ -76,18 +69,6 @@ export const PackageList = () => {
       sortable: true,
       cell: (row) => (
         <div className="d-flex align-items-center">
-          {/* <span
-            className="d-flex justify-content-center align-items-center rounded-circle me-2"
-            style={{
-              width: "35px",
-              height: "35px",
-              backgroundColor: getRandomColor(row.name),
-              color: "white",
-              fontWeight: "bold",
-            }}
-          >
-            {row.name.charAt(0).toUpperCase()}
-          </span> */}
           <div>
             <div
               style={{ color: "#0062FF", cursor: "pointer" }}
@@ -108,12 +89,6 @@ export const PackageList = () => {
       sortable: true,
     },
   ];
-
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setActivePage(page);
-    }
-  };
 
   const handleShowDetails = (id) => {
     navigate("/Inventory/Package/View", { state: id });

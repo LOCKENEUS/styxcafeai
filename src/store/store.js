@@ -42,6 +42,7 @@ import saSalesInvoiceReducer from "./slices/Inventory/invoiceSlice";
 import saSalesReturnReducer from "./slices/Inventory/returnSlice";
 import cafeReportReducer from "./AdminSlice/reports";
 import dashboardReducer from "./slices/dashboardSlice"
+import invDashboardReducer from "./AdminSlice/Inventory/invDashboardSlice";
 
 export const store = configureStore({
   reducer: {
@@ -80,6 +81,7 @@ export const store = configureStore({
     bookings: bookingsReducer,
     timer: timerReducer,
     cafeReport: cafeReportReducer,
+    invDashboard: invDashboardReducer,
 
     // super admin
     inventorySuperAdmin: InventorySlice,

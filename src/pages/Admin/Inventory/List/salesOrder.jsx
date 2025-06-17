@@ -311,7 +311,6 @@ export const SalesOrder = () => {
                   <DataTable
                     columns={columns}
                     data={filteredItems}
-
                     highlightOnHover
                     responsive
                     pagination

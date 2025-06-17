@@ -77,11 +77,6 @@ export const IitemGroupCreate = () => {
     const brandOptions = customFields.filter(field => field.type === "Brand");
 
     const handleChange = (e) => {
-        // const { id, value } = e.target;
-        // setFormData((prev) => ({
-        //     ...prev,
-        //     [id]: value, 
-        // }));
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
         if (name === 'taxPreference') {
@@ -257,28 +252,6 @@ export const IitemGroupCreate = () => {
             items: items,
         }));
     }, [attributes, formData.group_name, formData.unit, formData.taxable, formData.manufacturer, formData.brand]);
-
-    //   useEffect(() => {
-    //     const items = generateItems();
-    //     const updatedItems = items.map((item, index) => {
-    //       const attribute = attributes.find(attr => item.name.includes(attr.name));
-    //       const generatedSKU = generateSKU(
-    //         formData.group_name,
-    //         item.name,
-    //         attribute?.name || '',
-    //         index
-    //       );
-    //       return {
-    //         ...item,
-    //         sku: generatedSKU,
-    //       };
-    //     });
-
-    //     setFormData(prev => ({
-    //       ...prev,
-    //       items: updatedItems,
-    //     }));
-    //   }, [attributes, formData.group_name]);
 
     // -----    style -----
 

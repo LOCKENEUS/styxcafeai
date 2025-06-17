@@ -1,13 +1,3 @@
-// import React from 'react'
-
-// export const SalesReturnDetails = () => {
-//   return (
-//     <div>SalesReturnDetails</div>
-//   )
-// }
-
-
-
 import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Spinner, Table } from "react-bootstrap";;
 import sendMail from "/assets/inventory/Group.png";
 import Lockenelogo from "/assets/inventory/companylogo.png";
@@ -15,18 +5,12 @@ import print from "/assets/inventory/Vector.png";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect } from "react";
-import { getShipmentDetails } from "../../../../store/slices/Inventory/shipSlice";
 import { getSalesReturnDetails } from "../../../../store/slices/Inventory/returnSlice";
 
 export const SalesReturnDetails = () => {
 
   const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
-  const userName = user?.name;
-  const userEmail = user?.email;
-  const UserContactN = user?.contact_no;
-  const UserAddress = user?.address;
-  const UesrPAN = user?.panNo;
 
   const dispatch = useDispatch();
   const navigate = useNavigate();

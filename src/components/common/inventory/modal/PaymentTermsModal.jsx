@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { addCustomField } from '../../../../store/AdminSlice/CustomField';
 import { addSaCustomField } from '../../../../store/slices/Inventory/customField';
 
 const PaymentTermsModal = ({ show, handleClose, onCreated }) => {

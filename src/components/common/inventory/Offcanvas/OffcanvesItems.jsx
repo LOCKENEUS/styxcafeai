@@ -47,11 +47,9 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
   const [showTaxFields, setShowTaxFields] = useState(true);
   const customFields = useSelector(state => state.customFields.customFields);
   const taxFields = useSelector(state => state.taxFieldSlice.taxFields);
-  const taxFieldsList = useSelector((state) => state.taxFieldSlice.taxFields);
   const unitOptions = customFields.filter(field => field.type === "Unit");
   const manufacturerOptions = customFields.filter(field => field.type === "Manufacturer");
   const brandOptions = customFields.filter(field => field.type === "Brand");
-  const vendors = useSelector(state => state.vendors.vendors);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -560,32 +558,6 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
               </FormGroup>
             </Col>
 
-            {/* <Col sm={6} className="mb-3">
-              <Form.Label htmlFor="linking">Link with Website</Form.Label>
-              <div className="form-group mt-2 mb-3 d-flex gap-3">
-                <Form.Check
-                  type="radio"
-                  id="linkingradioinline1"
-                  name="linking"
-                  label="Yes"
-                  value="Y"
-                  checked={formData.linking === 'Y'}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, linking: e.target.value }))}
-                  className="mb-0"
-                />
-                <Form.Check
-                  type="radio"
-                  id="linkingradioinline2"
-                  name="linking"
-                  label="No"
-                  value="N"
-                  checked={formData.linking === 'N'}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, linking: e.target.value }))}
-                  className="mb-0"
-                />
-              </div>
-            </Col> */}
-
             <Col sm={3} className="mb-3">
               <FormGroup>
                 <FormLabel className="fw-bold">
@@ -611,17 +583,12 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
 
           {/* Submit Buttons */}
           <div className="d-flex gap-2">
-            {/* <Button variant="primary" type="submit">
-              Submit
-            </Button> */}
-
             <Button variant="primary" type="submit" className="float-end">
               {submitLoading ? (
                 <>
                   <Spinner animation="border" size="sm" className="me-2" /> Saving...
                 </>
               ) : ('Submit')}
-
             </Button>
             <Button variant="secondary" onClick={handleCloseCreateItem}>
               Cancel

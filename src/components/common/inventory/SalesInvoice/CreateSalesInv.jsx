@@ -15,12 +15,11 @@ import {
   Spinner,
 } from "react-bootstrap";
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
-import { FaCheck, FaRupeeSign, FaTrash, FaUpload, FaFilePdf } from "react-icons/fa";
-import { BiArrowToLeft, BiPlus } from "react-icons/bi";
+import { FaCheck, FaRupeeSign, FaTrash } from "react-icons/fa";
+import {  BiPlus } from "react-icons/bi";
 import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems"
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { MdOutlineRemoveCircleOutline } from "react-icons/md";
 import Select from 'react-select';
 import { TaxModal } from "../modal/tax";
 import AddCafe from "../modal/addCafe";
@@ -962,12 +961,6 @@ export const CreateSalesInv = () => {
 
       {/* Add a submit button */}
       <div className="d-flex justify-content-end mt-3">
-        {/* <Button
-          variant="primary"
-          onClick={handleSubmit}
-        >
-          {isEditMode ? "Update Sales Invoice" : "Create Sales Invoice"}
-        </Button> */}
         <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
           {submitLoading ? (
             <>

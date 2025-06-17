@@ -85,11 +85,10 @@ const navItems = [
       {
         label: "Inventory",
         sub :[
-          { title: "Dashboard Inventory", path: "/admin/Inventory/dashboard" },
+          { title: "Dashboard", path: "/admin/Inventory/dashboard" },
       { title: "Items List", path: "/admin/inventory/items-list" },
       { title: "Item Group List", path: "/admin/inventory/item-group-list" },
         ]
-      
       },
       {
         label: "Purchase",

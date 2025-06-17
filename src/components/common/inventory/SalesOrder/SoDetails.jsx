@@ -2,16 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteSO } from "../../../../store/AdminSlice/Inventory/SoSlice";
-import { addSOInvoice } from "../../../../store/AdminSlice/Inventory/SoInvoiceSlice";
 import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Table, Spinner, Modal } from "react-bootstrap";
-import deleteplogo from "/assets/inventory/Vector (1).png";
 import receive from "/assets/inventory/solar_card-send-linear.png";
 import print from "/assets/inventory/Vector.png";
 import sendMail from "/assets/inventory/Group.png";
 import editlogo from "/assets/inventory/mage_edit.png";
 import companylog from "/assets/inventory/companylogo.png";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { sendMailToVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { getsalesOrderById } from "../../../../store/slices/Inventory/soSlice";
 import { createSalesInvoice } from "../../../../store/slices/Inventory/invoiceSlice";
@@ -25,11 +22,6 @@ export const SoDetails = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const user = JSON.parse(localStorage.getItem("user"));
-    const userName = user?.name;
-    const userEmail = user?.email;
-    const UserContactN = user?.contact_no;
-    const UserAddress = user?.address;
-    const UesrPAN = user?.panNo;
 
     useEffect(() => {
         if (id) {

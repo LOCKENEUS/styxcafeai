@@ -44,18 +44,13 @@ export const CreateSo = () => {
   ]);
   const [showProductList, setShowProductList] = useState(false);
   const [showTaxModal, setShowTaxModal] = useState(false);
-  const [taxList, setTaxList] = useState([]);
   const [selectedCafe, setSelectedCafe] = useState(null);
   const dispatch = useDispatch();
-  const { customFields } = useSelector((state) => state.customFields);
   const items = useSelector((state) => state.inventorySuperAdmin.it);
   const [submitLoading, setSubmitLoading] = useState(false);
 
   const { taxFields } = useSelector((state) => state.taxFieldSlice);
-  const { loading } = useSelector((state) => state.inventorySuperAdmin);
   const user = JSON.parse(localStorage.getItem("user"));
-  const cafeId = user?._id;
-  const [latestTax, setLatestTax] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -953,13 +948,6 @@ export const CreateSo = () => {
 
       {/* Add a submit button */}
       <div className="d-flex justify-content-end mt-3">
-        {/* <Button
-          variant="primary"
-          onClick={handleSubmit}
-        >
-          {isEditMode ? "Update Sales Order" : "Create Sales Order"}
-        </Button> */}
-
         <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
           {submitLoading ? (
             <>

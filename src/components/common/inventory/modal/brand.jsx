@@ -96,9 +96,6 @@ export const Brand = ({ show, handleClose, superAdminId }) => {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          {/* <Button variant="primary" type="submit">
-            Save
-          </Button> */}
           <Button variant="primary" type="submit" className=" my-2 float-end">
             {submitLoading ? (
               <>

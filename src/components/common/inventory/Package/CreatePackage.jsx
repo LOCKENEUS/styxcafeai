@@ -1,5 +1,5 @@
 import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormControl, FormLabel, FormSelect, Row, Spinner, Table } from "react-bootstrap";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import companylog from "/assets/inventory/companylogo.png";
 import { use, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
