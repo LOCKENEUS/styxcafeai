@@ -605,7 +605,7 @@ const GameInfo = () => {
                         {booking?.gameTitle}
                       </td>
                       <td
-                        className="align-middle p-0"
+                        className="align-middle p-0 text-center"
                         style={{ border: "none", minWidth: "80px" }}
                       >
                         {booking.players.length + 1}
