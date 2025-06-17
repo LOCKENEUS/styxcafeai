@@ -418,7 +418,7 @@ const BookingList = () => {
                                 Name
                             </th>
                             <th
-                                style={{ textTransform: "none", border: "none", fontSize: "1rem", color: "black" }}
+                                style={{ textTransform: "none", border: "none", width: "100%", fontSize: "1rem", color: "black" }}
                             >
                                 Sports
                             </th>
@@ -453,7 +453,7 @@ const BookingList = () => {
                         {currentBookings.length > 0 ?
                             currentBookings?.map((booking, index) => (
                                 <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
-                                    <td className="text-center p-0 p-md-2" style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
+                                    <td className=" p-0 p-md-2" style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
                                         {index + 1}
                                     </td>
                                     <td
@@ -483,7 +483,7 @@ const BookingList = () => {
                                     <td
                                         className="text-center p-0 p-md-2"
                                         style={{
-                                            border: "none", minWidth: "150px", alignContent: "center",
+                                            border: "none", minWidth: "200px", alignContent: "center",
                                             alignContent: "center",
                                         }}>
                                         <div className="d-flex align-items-center">
@@ -500,9 +500,43 @@ const BookingList = () => {
                                             <span>{booking?.customerName}</span>
                                         </div>
                                     </td>
+
+                                    {/* <td
+                                        className="text-center p-0 p-md-2"
+                                        style={{
+                                            border: "none",
+                                            minWidth: "250px",
+                                            alignContent: "center",
+                                        }}
+                                    >
+                                        <div className="d-flex align-items-center">
+                                            <img
+                                                src={profile}
+                                                alt={booking?.customerName}
+                                                style={{
+                                                    width: "40px",
+                                                    height: "40px",
+                                                    borderRadius: "100%",
+                                                    marginRight: "10px",
+                                                }}
+                                            />
+                                            <span
+                                                style={{
+                                                    whiteSpace: "nowrap",
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    maxWidth: "80px", // adjust width based on available space
+                                                    display: "inline-block",
+                                                }}
+                                            >
+                                                {booking?.customerName}
+                                            </span>
+                                        </div>
+                                    </td> */}
+
                                     <td
                                         className="align-middle p-0 p-md-2"
-                                        style={{ border: "none", minWidth: "120px" }}
+                                        style={{ border: "none", minWidth: "180px" }}
                                     >
                                         {booking?.gameTitle}
                                     </td>
@@ -600,7 +634,7 @@ const BookingList = () => {
                                     </td>
                                     <td
                                         className="align-middle p-0 p-md-2"
-                                        style={{ border: "none", minWidth: "120px" }}
+                                        style={{ border: "none", minWidth: "150px" }}
                                     >
                                         {formatDate(booking?.slot_date)}<br />
                                         {/* {booking?.booking_type === "Regular" ? (convertTo12Hour(booking?.slot_id?.start_time)-convertTo12Hour(booking?.slot_id?.end_time))
