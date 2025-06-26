@@ -179,13 +179,13 @@ const AdminDashboard = () => {
                 <img src={user_check} alt="User Check Icon" />
               </span>
               <div className='pointer-cursor' onClick={() => navigate('/admin/bookings')}>
-                <small className="text-dashboard-sm">Total Bookings</small>
+                <small className="text-dashboard-sm"> Bookings</small>
                 <h2 className="mt-2">{adminDashboard?.totalBookings}</h2>
               </div>
             </div>
 
             <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
-              <small className="text-dashboard-sm">Total Online Bookings</small>
+              <small className="text-dashboard-sm"> Online Bookings</small>
               <div className='d-flex align-items-center justify-content-between mt-2'>
                 <span className='d-flex align-items-center justify-content-center rounded-4'
                   style={{ width: '50px', height: '50px', background: "#00AF0F0D" }}>
@@ -205,13 +205,13 @@ const AdminDashboard = () => {
                 <img src={user_forbid_fil} alt="User forbid fill" />
               </span>
               <div className='pointer-cursor' onClick={() => navigate('/admin/bookings', { state: { cancelled: 'Pending' } })}>
-                <small className="text-dashboard-sm">Total Waiting Bookings</small>
+                <small className="text-dashboard-sm"> Waiting Bookings</small>
                 <h2 className="mt-2">{adminDashboard?.totalWaitingBookings}</h2>
               </div>
             </div>
 
             <div className='mobile-view d-md-none d-flex flex-column p-2 w-100 cursor-pointer' onClick={() => navigate('/admin/bookings', { state: { cancelled: 'Pending' } })} >
-              <small className="text-dashboard-sm">Total Waiting Bookings</small>
+              <small className="text-dashboard-sm"> Waiting Bookings</small>
               <div className='d-flex align-items-center justify-content-between mt-2'>
                 <span className='d-flex align-items-center justify-content-center rounded-4'
                   style={{ width: '50px', height: '50px', background: "#F0D4000D" }}>
@@ -231,13 +231,13 @@ const AdminDashboard = () => {
                 <img src={user_x_fill} alt="cancel icon" />
               </span>
               <div className='pointer-cursor' onClick={() => navigate('/admin/bookings', { state: { cancelled: "Yes" } })}>
-                <small className="text-dashboard-sm">Total Cancelled Bookings</small>
+                <small className="text-dashboard-sm"> Cancelled Bookings</small>
                 <h2 className="mt-2">{adminDashboard?.totalCancelledBookings || 0}</h2>
               </div>
             </div>
 
             <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
-              <small className="text-dashboard-sm">Total Cancel Bookings</small>
+              <small className="text-dashboard-sm"> Cancel Bookings</small>
               <div className='d-flex align-items-center justify-content-between mt-2 pointer-cursor' onClick={() => navigate('/admin/bookings', { state: { cancelled: "Yes" } })}>
                 <span className='d-flex align-items-center justify-content-center rounded-4'
                   style={{ width: '50px', height: '50px', background: "#FF00000D" }}>
@@ -257,13 +257,13 @@ const AdminDashboard = () => {
                 <img src={rupee_circle} alt="rupee icon" />
               </span>
               <div>
-                <small className="text-dashboard-sm">Total Payments</small>
+                <small className="text-dashboard-sm"> Payments</small>
                 <h2 className="mt-2">{adminDashboard?.totalAmount || 0}</h2>
               </div>
             </div>
 
             <div className='mobile-view d-md-none d-flex flex-column p-2 w-100'>
-              <small className="text-dashboard-sm">Total Payments</small>
+              <small className="text-dashboard-sm"> Payments</small>
               <div className='d-flex align-items-center justify-content-between mt-2'>
                 <span className='d-flex align-items-center justify-content-center rounded-4'
                   style={{ width: '50px', height: '50px', background: "#00D5ED0D" }}>
