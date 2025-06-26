@@ -16,11 +16,8 @@ import {
   DropdownButton,
   Dropdown,
 } from "react-bootstrap";
-import { BiEdit, BiTrash } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  updateGame,
-  deleteGame,
   getGameById,
   getGames,
 } from "../../../../store/slices/gameSlice";
@@ -150,8 +147,6 @@ const GameDetailsCafe = () => {
 
     return `${endYear}-${endMonth}-${endDate}`; // Example: 2025-04-30
   })();
-
-
 
   const [currentPageEarning, setCurrentPageEarning] = useState(1);
   const itemsPerPageEarning = 5;
@@ -384,7 +379,7 @@ const GameDetailsCafe = () => {
                 <Card className=" ">
 
                   <Row className="my-3 mx-1">
-                    <Col sm={4} my-3>
+                    <Col sm={4} className="my-auto">
                       {/* gameImage */}
                       <Image src={`${baseURL}/${selectedGame?.data?.gameImage || Rectangle389}`}
                         alt="CafeCall" className="mx-1  rounded-2 "
@@ -436,7 +431,7 @@ const GameDetailsCafe = () => {
                         </Col>
                         <Col sm={12} className="my-5 " >
 
-                          <Card className="border-2 rounded-2 ">
+                          {/* <Card className="border-2 rounded-2 "> */}
 
                             <p style={{ fontSize: "14px", fontWeight: "400", margin: "22px  22px  21px  15px" }}>
                               {selectedGame?.data?.details || `Pickleball is a fast-growing paddle sport that blends the best of tennis, badminton,
@@ -447,7 +442,7 @@ const GameDetailsCafe = () => {
                         clubs, and community centers around the world.`}
                             </p>
 
-                          </Card>
+                          {/* </Card> */}
                         </Col>
 
                         <Col sm={12} className="my-3 mx-2" >

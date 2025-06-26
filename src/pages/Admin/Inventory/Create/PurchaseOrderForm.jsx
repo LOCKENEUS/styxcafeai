@@ -363,53 +363,12 @@ const PurchaseOrderForm = () => {
           </Breadcrumb>
         </div>
       </Col>
-      {/* Header Card */}
-      {/* <Card className="p-3 mb-3 shadow-sm">
-        <Row className="align-items-center">
-          <Col xs={2}>
-            <img src={Lockenelogo} alt="Logo" className="img-fluid" />
-          </Col>
-          <Col>
-            <h5>{userName}</h5>
-            <p className="mb-1">{userEmail} / {UserContactN}</p>
-            <p className="mb-1">
-              {UserAddress}
-            </p>
-            <strong>PAN: {UesrPAN}</strong>
-          </Col>
-          <Col xs={2} className="text-end">
-            <span className="text-muted">PO:</span>
-            <strong className="text-primary"> Draft</strong>
-          </Col>
-        </Row>
-      </Card> */}
 
       {/* Client & Delivery Details */}
       <Card className="p-3 shadow-sm">
         <Row>
           <Col sm={4} className="d-flex border-end flex-column gap-2">
             <div className="border-bottom ">
-              {/* <div className="d-flex flex-row align-items-center mb-3 gap-2">
-                <h5 className="text-muted">Vendor :  </h5>
-                <Button
-                  style={{ width: "144px", height: "44px", borderStyle: "dashed" }}
-                  variant="outline-primary"
-                  className="d-flex align-items-center justify-content-center gap-2"
-                  onClick={handleShowVendorList}
-                >
-                  <span>+</span> Add Vendor
-                </Button>
-                <Button
-                  style={{ width: "144px", height: "44px", borderStyle: "dashed" }}
-                  variant="outline-primary"
-                  className="d-flex align-items-center justify-content-center gap-2"
-                  onClick={() => {
-                    setUserType("Superadmin");
-                  }}
-                >
-                  Superadmin
-                </Button>
-              </div> */}
 
               <div className="d-flex flex-row align-items-center mb-3 gap-2">
                 <h5 className="text-muted pt-1">Vendor:</h5>
@@ -941,14 +900,6 @@ const PurchaseOrderForm = () => {
 
       {/* Add a submit button */}
       <div className="d-flex justify-content-end mt-3">
-        {/* <Button
-          variant="primary"
-          onClick={handleSubmit}
-        // disabled={!selectedClient || products.length === 0}
-        >
-          Submit
-        </Button> */}
-
         <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
           {submitLoading ? (
             <>

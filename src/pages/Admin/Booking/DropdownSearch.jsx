@@ -8,8 +8,6 @@
 //   const [showDropdown, setShowDropdown] = useState(false);
 //   const dropdownRef = useRef();
 
-// console.log("options...",options)
-
 //   useEffect(() => {
 //     setFilteredOptions(
 //       options.filter((item) =>

@@ -31,6 +31,7 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
     cafe: cafeId,
     commission: 0,
     payLater: true,
+    amenities: [""],
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -56,6 +57,7 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
     formDataToSend.append('cafe', formData.cafe);
     formDataToSend.append('commission', formData.commission);
     formDataToSend.append('payLater', formData.payLater);
+    formDataToSend.append('amenities', JSON.stringify(formData.amenities));
 
     // Append image file if exists
     if (formData.gameImage instanceof File) {
@@ -135,7 +137,6 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
         setErrors(prev => ({ ...prev, size: '' }));
       }
     }
-
   };
 
   const handleFileChange = (e) => {
@@ -158,6 +159,18 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
       cafeImage: prev.imagePreview.filter((_, i) => i !== e),
     }));
   };
+
+  const handleAmenityChange = (index, value) => {
+    const updatedAmenities = [...formData.amenities];
+    updatedAmenities[index] = value;
+    setFormData({ ...formData, amenities: updatedAmenities });
+  };
+
+  const addAmenityField = () => {
+    setFormData({ ...formData, amenities: [...formData.amenities, ""] });
+  };
+
+  console.log("formData", formData);
 
   return (
     <Offcanvas show={show} onHide={handleClose} placement="end" style={{ width: "600px" }}>
@@ -351,6 +364,33 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
               </Form.Select>
             </Col>
           </Row>
+
+          <Form.Group className="mb-2">
+            <Form.Label htmlFor="amenities" className="fw-bold text-secondary">
+              Amenities <span className="text-danger">*</span>
+            </Form.Label>
+
+            {formData.amenities.map((amenity, index) => (
+              <div key={index} className="d-flex align-items-center mb-2">
+                <Form.Control
+                  type="text"
+                  value={amenity}
+                  onChange={(e) => handleAmenityChange(index, e.target.value)}
+                  placeholder={`Amenity ${index + 1}`}
+                  className="border-2 me-2"
+                />
+                {index === formData.amenities.length - 1 && (
+                  <Button
+                    variant="success"
+                    onClick={addAmenityField}
+                    className="px-2 py-1"
+                  >
+                    +
+                  </Button>
+                )}
+              </div>
+            ))}
+          </Form.Group>
 
           <Row className="mb-2 g-4">
             <Col md={6}>

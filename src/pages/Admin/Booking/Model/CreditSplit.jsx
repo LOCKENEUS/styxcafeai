@@ -82,8 +82,6 @@ const CreditSplit = ({ show,
     setAllPlayers(updatedPlayers);
   };
 
-  console.log("currentTotal", currentTotal)
-
   return (
     <Modal show={show} onHide={handleClose} centered>
       <div className="modal-content rounded-2">

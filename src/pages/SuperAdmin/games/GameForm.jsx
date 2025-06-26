@@ -67,14 +67,14 @@ const GameForm = ({ showCanvas, handleCloseCanvas, isEditing, editIndex }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     const formDataToSend = new FormData();
     if (isEditing) {
       dispatch(updateGame({ id: formData.id, updatedData: formDataToSend }));
     } else {
       dispatch(addGame(formDataToSend));
     }
-    
+
     // Log the form data to the console
     setFormData(initialFormData);
     handleCloseCanvas();
@@ -88,7 +88,7 @@ const GameForm = ({ showCanvas, handleCloseCanvas, isEditing, editIndex }) => {
         </Offcanvas.Title>
       </Offcanvas.Header>
       <Offcanvas.Body style={{ padding: "1.4rem" }}>
-         <Form onSubmit={handleSubmit} className="rounded-3 bg-white">
+        <Form onSubmit={handleSubmit} className="rounded-3 bg-white">
           <Form.Group className="mb-2">
             <Form.Label htmlFor="gameName" className="fw-bold text-secondary">Name of Game</Form.Label>
             <Form.Control
@@ -193,6 +193,7 @@ const GameForm = ({ showCanvas, handleCloseCanvas, isEditing, editIndex }) => {
                 <option>No</option>
               </Form.Select>
             </Col>
+
             <Col md={6}>
               <Form.Label className="fw-bold text-secondary d-block">Upload Image</Form.Label>
               <div className="border-2 align-items-center rounded-3 p-3 bg-light">
@@ -267,7 +268,6 @@ const GameForm = ({ showCanvas, handleCloseCanvas, isEditing, editIndex }) => {
               placeholder="Describe the game details..."
             />
           </Form.Group>
-
 
           <div className="d-flex justify-content-end gap-3 mt-4">
             <Button variant="success" type="submit" className="px-4 py-2 fw-bold">

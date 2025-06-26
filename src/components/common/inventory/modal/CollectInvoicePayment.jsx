@@ -6,7 +6,6 @@ import { collectInvoicePayment } from '../../../../store/slices/Inventory/invoic
 const CollectInvoicePayment = ({ show, handleClose, maxAmount, invoiceId, onSuccess }) => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.payments || {});
-  const user = JSON.parse(localStorage.getItem("user"));
 
   const [showError, setShowError] = useState(false);
 
@@ -62,11 +61,7 @@ const CollectInvoicePayment = ({ show, handleClose, maxAmount, invoiceId, onSucc
       await dispatch(collectInvoicePayment(formData)).unwrap();
       // Close modal and trigger success callback
       handleClose();
-      //   if (onSuccess) {
-      //     onSuccess();
-      //   }
     } catch (error) {
-      console.log("reached here")
       console.error('Failed to collect payment:', error);
       setShowError(true);
     }

@@ -39,10 +39,10 @@ const SnookerTableList = () => {
         <Breadcrumb.Item active>Snooker Table List</Breadcrumb.Item>
       </Breadcrumb>
 
-      {['A', 'B'].map((wing) => (
-        <div key={wing} className="mb-5">
+      {/* {['A', 'B'].map((wing) => ( */}
+        <div className="mb-5">
           <h2 className="fw-bold mb-4">
-            Wing {wing}
+            Wing A
             <div className="border-bottom border-primary w-25 mt-2" style={{ height: '4px' }}></div>
           </h2>
           <Row className="g-4">
@@ -94,7 +94,7 @@ const SnookerTableList = () => {
               ))}
           </Row>
         </div>
-      ))}
+      {/* ))} */}
     </Container>
   );
 };

@@ -6,11 +6,8 @@ import axios from "axios";
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 
 export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }) => {
-
-
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({});
   const user = JSON.parse(localStorage.getItem("user"));
   const cafeId = user?._id;
   const [newClient, setNewClient] = useState({
@@ -38,11 +35,6 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }
     setNewClient({ ...newClient, [e.target.name]: e.target.value });
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log("Client Created:", newClient);
-  //   handleCloseCreateVendor(); // No need to pass false, just call the function
-  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);

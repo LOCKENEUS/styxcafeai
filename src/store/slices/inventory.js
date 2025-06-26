@@ -325,7 +325,6 @@ const InventorySlice = createSlice({
         state.status = "loading";
       })
       .addCase(updateItemsById.fulfilled, (state, action) => {
-        console.log("state", state);
         state.status = "succeeded";
         state.selectedinventory = state.it.filter(
           (item) => item._id !== action.payload

@@ -20,11 +20,7 @@ export const ItemGroupDetail = () => {
   const location = useLocation();
 
   const { groupId: id } = location.state
-  // const { selectedItemGroup, loading, error } = useSelector(
-  //   (state) => state.itemGroups
-  // );
 
-  console.log("groupId", id)
   const selectedItemGroup = useSelector((state) => state.inventorySuperAdmin.inventory);
 
   useEffect(() => {

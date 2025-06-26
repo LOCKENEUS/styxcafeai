@@ -12,14 +12,14 @@ import { GetPurchaseOrder, sendMailToVendor } from "../../../../store/AdminSlice
 
 export const PODetails = () => {
 
+    const dispatch = useDispatch();
+    const location = useLocation();
+    const navigate = useNavigate();
+
     const [vendor, setVendor] = useState("");
     const [items, setItems] = useState([]);
     const [taxes, setTaxes] = useState([]);
     const [discount, setDiscount] = useState(0);
-    
-    const dispatch = useDispatch();
-    const location = useLocation();
-    const navigate = useNavigate();
     const purchaseOrder = location.state;
     const selectedPo = useSelector((state) => state.purchaseOrder.selectedPo);
     const loading = useSelector((state) => state.purchaseOrder.loading);

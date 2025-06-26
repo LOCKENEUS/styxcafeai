@@ -290,10 +290,6 @@ const BookingEdit = () => {
         });
     };
 
-    console.log("payableAmount", payableAmount);
-    console.log("gameId", gameId);
-    console.log("slotId", slotId);
-
     return (
         <Container fluid className="p-4 ">
             <h6 className="mb-3 muted-text">

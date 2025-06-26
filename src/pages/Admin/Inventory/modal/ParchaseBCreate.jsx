@@ -17,10 +17,8 @@ import {
 import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import { FaFilePdf, FaRupeeSign, FaTrash, FaUpload } from "react-icons/fa";
 import { BiArrowToLeft, BiPlus } from "react-icons/bi";
-// import  { OffcanvesItemsCreate } from "../Offcanvas/OffcanvesItems";
 import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems";
 import Tax from "./Tax";
-// import AddClint from "../modal/vendorListModal";
 import PaymentTermsModal from "./PaymentTermsModal";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import {
@@ -383,39 +381,6 @@ const ParchaseBCreate = () => {
     }
   };
 
-  // const handleVendorSelect = (newVendor) => {
-  //   const selectedVendorId = newVendor;
-  //   const selectedVendor = vendorsList.find(
-  //     (vendor) => vendor?._id == selectedVendorId
-  //   );
-  //   if (selectedVendor) {
-  //     setVendorSelected(selectedVendor);
-  //     setFormData({
-  //       ...formData,
-  //       vendor_id: selectedVendor?._id,
-  //     });
-  //     setVendorId(selectedVendor?._id);
-  //   }
-  //   handleClose();
-  //   setVendorId(newVendor._id);
-  //   console.log("Selected vendor ID:---", vendorId);
-  // };
-
-  // const handleVendorSelect = (newVendorId) => {
-  //   const selectedVendor = vendorsList.find(
-  //     (vendor) => vendor?._id == newVendorId
-  //   );
-  //   if (selectedVendor) {
-  //     setVendorSelected(selectedVendor);
-  //     setFormData({
-  //       ...formData,
-  //       vendor_id: selectedVendor?._id,
-  //     });
-  //     setVendorId(selectedVendor?._id);
-  //   }
-  //   handleClose();
-  // };
-
   const handleVendorSelect = (newVendorId) => {
     const selectedVendor = vendorsList.find((vendor) => vendor?._id == newVendorId);
     if (selectedVendor) {
@@ -490,8 +455,6 @@ const ParchaseBCreate = () => {
     }
   }, [selectedItem]);
 
-  console.log("vendorSelected", vendorSelected);
-
   return (
     <Container fluid className="p-4">
       <Col sm={12} className="my-3">
@@ -532,24 +495,6 @@ const ParchaseBCreate = () => {
       <Card className="p-3 shadow-sm">
         <Row>
           <Col sm={4} className="d-flex border-end flex-column gap-2">
-            {/* <div className="border-bottom ">
-              <div className="d-flex flex-row align-items-center justify-content-around mb-3 gap-2">
-                <h5 className="text-muted">Vendor : </h5>
-                <Button
-                  style={{
-                    width: "144px",
-                    height: "44px",
-                    borderStyle: "dashed",
-                  }}
-                  variant="outline-primary"
-                  className="d-flex align-items-center justify-content-center gap-2"
-                  onClick={handleShowVendorList}
-                >
-                  <span>+</span> Add Vendor
-                </Button>
-              </div>
-            </div> */}
-
             <div className="d-flex flex-row align-items-center mb-3 gap-2">
               <h5 className="text-muted pt-1">Vendor:</h5>
 
@@ -1170,74 +1115,6 @@ const ParchaseBCreate = () => {
               style={{ border: "1px solid gray" }}
             />
           </Col>
-
-          {/* <Col md={6}>
-            <div
-              className="rounded d-flex flex-column align-items-center justify-content-center p-4"
-              style={{
-                minHeight: "200px",
-                border: "1px solid black",
-                borderStyle: "dashed",
-                cursor: "pointer",
-              }}
-              onClick={() => document.getElementById("fileInput").click()}
-            >
-              <input
-                type="file"
-                id="fileInput"
-                multiple
-                accept=".pdf,.jpg,.jpeg,.png"
-                style={{ display: "none" }}
-                onChange={handleFileChange2}
-              />
-
-              <div className="text-center">
-                <div className="mb-2">
-                  <FaUpload />
-                </div>
-                <p className="mb-0">Click to upload multiple files (.pdf, .jpg, .jpeg, .png)</p>
-              </div>
-
-              <div
-                style={{ height: "100px" }}
-                className="mt-3 d-flex align-items-end w-100 flex-wrap gap-2"
-              >
-                {files.map((file, index) => (
-                  <div key={index} className="position-relative">
-                    {file.type.includes("image") ? (
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt={`Preview ${index}`}
-                        style={{ width: "50px", height: "50px", objectFit: "cover" }}
-                        onLoad={(e) => {
-                          // Cleanup the object URL after the image has loaded
-                          const objectUrl = URL.createObjectURL(file);
-                          e.target.src = objectUrl;
-                          URL.revokeObjectURL(objectUrl);
-                        }}
-                      />
-                    ) : (
-                      <div
-                        className="d-flex align-items-center justify-content-center bg-light"
-                        style={{ width: "50px", height: "50px" }}
-                      >
-                        <FaFilePdf size={40} />
-                      </div>
-                    )}
-                    <div
-                      className="position-absolute end-0"
-                      onClick={(e) => handleRemoveFile2(index, e)}
-                      style={{ cursor: "pointer", top: "-20px" }}
-                    >
-                      <MdOutlineRemoveCircleOutline
-                        style={{ color: "red", fontWeight: "bold", fontSize: "20px" }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Col> */}
         </Row>
       </Card>
 

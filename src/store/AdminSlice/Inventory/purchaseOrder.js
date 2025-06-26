@@ -240,7 +240,6 @@ export const getStyxData = createAsyncThunk(
       const response = await axios.get(`${BASE_URL}/user`, {
         headers: { "Content-Type": "application/json" },
       });
-      console.log("response", response.data);
       return response.data.data;
     } catch (error) {
       toast.error("Failed to fetch Styx data");

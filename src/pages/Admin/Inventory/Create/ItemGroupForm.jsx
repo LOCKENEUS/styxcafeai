@@ -208,21 +208,6 @@ const ItemGroupForm = () => {
     }));
   };
 
-  // const handleCopyToAll = (field, sourceIndex = 0) => {
-  //   const valueToCopy = formData.items[sourceIndex]?.[field] || '';
-
-  //   console.log("valueToCopy", valueToCopy);
-  //   console.log("formData items", formData?.items)
-
-  //   setFormData(prev => ({
-  //     ...prev,
-  //     items: prev.items.map(item => ({
-  //       ...item,
-  //       [field]: valueToCopy
-  //     }))
-  //   }));
-  // };
-
   const handleCopyToAll = (field, sourceIndex = 0) => {
     const valueToCopy = formData.items[sourceIndex]?.[field] || '';
 

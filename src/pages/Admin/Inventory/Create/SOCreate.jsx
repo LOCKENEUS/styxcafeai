@@ -234,10 +234,7 @@ const SOCreate = () => {
     setSelectedClient(client);
   };
 
-  // Update the payment terms section in your existing JSX
-
   // Add the payment terms modal
-
   const [totals, setTotals] = useState({
     subtotal: 0,
     discount: 0,
@@ -448,26 +445,6 @@ const SOCreate = () => {
           </Breadcrumb>
         </div>
       </Col>
-      {/* Header Card */}
-      {/* <Card className="p-3 mb-3 shadow-sm">
-        <Row className="align-items-center">
-          <Col xs={2}>
-            <img src={Lockenelogo} alt="Logo" className="img-fluid" />
-          </Col>
-          <Col>
-            <h5>{user?.name}</h5>
-            <p className="mb-1">{user?.email} / {user?.contact_no}</p>
-            <p className="mb-1">
-              {user?.address}
-            </p>
-            <strong>PAN: {user?.panNo}</strong>
-          </Col>
-          <Col xs={2} className="text-end">
-            <span className="text-muted">SO:</span>
-            <strong className="text-primary"> Draft</strong>
-          </Col>
-        </Row>
-      </Card> */}
 
       {/* Client & Delivery Details */}
       <Card className="p-3 shadow-sm">
@@ -541,32 +518,6 @@ const SOCreate = () => {
                   }}
                 />
               </div>
-
-              {/* <div className="d-flex flex-row align-items-center gap-2">
-                <Form.Control
-                  type="text"
-                  name="shipment_date"
-                  value={formData.shipment_date}
-                  onChange={handleInputChange}
-                  placeholder="Expected Shipment"
-                  onFocus={(e) => e.target.type = 'date'}
-                  onBlur={(e) => {
-                    if (!e.target.value) e.target.type = 'text'
-                  }}
-                />
-              </div> */}
-
-
-
-
-
-              {/* <Form.Control
-                name="delivery_preference"
-                value={formData.delivery_preference}
-                onChange={handleInputChange}
-                placeholder="Enter Shipment Preference"
-              /> */}
-
               <Form.Select
                 name="sales_person"
                 value={formData.sales_person}
@@ -962,62 +913,6 @@ const SOCreate = () => {
               style={{ border: "1px solid gray" }}
             />
           </Col>
-          {/* Add a Attachment */}
-          {/* <Col className="" md={6}>
-            <div
-              className="rounded d-flex flex-column align-items-center justify-content-center p-4"
-              style={{
-                minHeight: "200px",
-                border: "1px solid black",
-                borderStyle: "dashed",
-                cursor: "pointer"
-              }}
-              onClick={() => document.getElementById('fileInput').click()}
-            >
-              <input
-                type="file"
-                id="fileInput"
-                multiple
-                accept=".pdf,.jpg,.jpeg,.png"
-                style={{ display: 'none' }}
-                onChange={handleFileChange}
-              />
-              
-              <div className="text-center">
-                <div className="mb-2">
-                  <FaUpload />
-                </div>
-                <p className="mb-0">
-                  Click to upload multiple files (.pdf, .jpg, .jpeg, .png)
-                </p>
-              </div>
-              <div style={{height:"100px"}} className="mt-3 d-flex align-items-end w-100 flex-wrap gap-2">
-                {files.map((file, index) => (
-                  <div key={index} className="position-relative">
-                    {file.type.includes('image') ? (
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt={`Preview ${index}`}
-                        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-                      />
-                    ) : (
-                      <div className="d-flex align-items-center justify-content-center bg-light" 
-                           style={{ width: '50px', height: '50px' }}>
-                        <FaFilePdf size={40} />
-                      </div>
-                    )}
-                    <div
-                      className="position-absolute  end-0"
-                      onClick={(e) => handleRemoveFile(index, e)}
-                      style={{ cursor: 'pointer', top:"-20px" }}
-                    >
-                      <MdOutlineRemoveCircleOutline style={{color:"red", fontWeight:"bold", fontSize:"20px"}} /> 
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Col> */}
         </Row>
       </Card>
 
@@ -1045,12 +940,6 @@ const SOCreate = () => {
 
       {/* Add a submit button */}
       <div className="d-flex justify-content-end mt-3">
-        {/* <Button
-          variant="primary"
-          onClick={handleSubmit}
-        >
-          {isEditMode ? "Update Sales Order" : "Create Sales Order"}
-        </Button> */}
 
         <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
           {submitLoading ? (

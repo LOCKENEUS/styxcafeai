@@ -90,12 +90,7 @@ const GameForm = ({ showCanvas, handleCloseCanvas, game, isEditing, cafeId }) =>
     // Append image file if exists
     if (formData.gameImage instanceof File) {
       formDataToSend.append('gameImage', formData.gameImage);
-      // console.log(`Appending image: ${formData.gameImage.name}`);
     }
-    // Log the entire FormData object for debugging
-    // for (let pair of formDataToSend.entries()) {
-    //   console.log(`${pair[0]}: ${pair[1]}`);
-    // }
 
     try {
       if (isEditing) {

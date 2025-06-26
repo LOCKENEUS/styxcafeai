@@ -39,8 +39,6 @@ export const ShipmentList = () => {
   const itemsPerPage = 10;
   const totalPages = Math.ceil(3 / itemsPerPage);
 
-  console.log("shipmentList", shipmentList);
-
   // Function to handle modal (replace with actual logic)
   const handleShowCreate = () => {
     navigate("/Inventory/Shipment");

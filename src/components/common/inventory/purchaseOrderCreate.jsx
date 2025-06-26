@@ -109,7 +109,6 @@ export const PurchaseOrderCreate = () => {
                         updatedProduct.sku = selectedItem.sku || ""; // Set SKU from selected item
 
                         const itemTax = TaxList.find(tax => tax._id === selectedItem.tax?._id);
-                        console.log("itemTax", itemTax);
                         updatedProduct.taxRate = itemTax ? itemTax.tax_rate : 0;
                     }
 

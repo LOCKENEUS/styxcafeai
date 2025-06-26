@@ -40,7 +40,6 @@ const CustomerDetails = () => {
       let creditTotalAmount = 0
       selectedCustomer?.creditHistory.forEach((credit) => {
         if (credit?.status === "Unpaid") {
-          console.log("Credit:", credit?.credit)
         creditTotalAmount += credit?.credit
         }
         if (credit?.status === "Unpaid" && credit?.paid_amount > 0) {
@@ -50,8 +49,6 @@ const CustomerDetails = () => {
       setCreditTotal(creditTotalAmount)
     }
   }, [dispatch, selectedCustomer]);
-
-  console.log("credit total", creditTotal);
 
   const handleCheckboxChange = (bookingId, isChecked, creditValue) => {
     if (isChecked) {

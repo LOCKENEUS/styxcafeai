@@ -228,8 +228,6 @@ export const Reports = () => {
     document.body.removeChild(link);
   }
 
-  console.log("formData", formData);
-
   return (
     <div className="container-fluid">
       <div className="container mt-2">

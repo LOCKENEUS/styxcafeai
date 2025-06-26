@@ -236,27 +236,6 @@ export const SODetails = () => {
 
                 {/* Printable area starts here */}
                 <div id="printableArea">
-                    {/* Company Info */}
-                    {/* <Col sm={12} className="my-2">
-            <Card className="p-3">
-                <Row className="align-items-center">
-                    <Col sm={2}>
-                        <img src={companylog} alt="Logo" className="img-fluid" />
-                    </Col>
-                    <Col sm={8}>
-                        <h5>{userName}</h5>
-                        <p className="mb-1">{userEmail} / {UserContactN}</p>
-                        <p className="mb-1">
-                            {UserAddress}
-                        </p>
-                        <strong>PAN: {UesrPAN}</strong>
-                    </Col>
-                    <Col sm={2} className="d-flex">
-                        <span className="p-2 float-right">SO:<b className="text-primary">Draft</b></span>
-                    </Col>
-                </Row>
-            </Card>
-        </Col> */}
 
                     {/* Customer & Order Details */}
                     <Col sm={12} className="my-2">

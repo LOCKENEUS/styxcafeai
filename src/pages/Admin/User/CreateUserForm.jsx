@@ -415,6 +415,7 @@ const CreateUser = () => {
                   type="text"
                   name="city"
                   value={formData.city}
+                  placeholder="Enter City"
                   onChange={handleChange}
                   className="rounded-2"
                   style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
@@ -430,6 +431,7 @@ const CreateUser = () => {
                   type="text"
                   name="state"
                   value={formData.state}
+                  placeholder="Enter State"
                   onChange={handleChange}
                   className="rounded-2"
                   style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}
@@ -445,6 +447,7 @@ const CreateUser = () => {
                   type="text"
                   name="country"
                   value={formData.country}
+                  placeholder="Enter Country"
                   onChange={handleChange}
                   className="rounded-2"
                   style={{ padding: '10px', fontSize: '0.9rem', borderColor: '#ced4da' }}

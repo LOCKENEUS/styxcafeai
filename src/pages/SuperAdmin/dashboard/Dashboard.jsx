@@ -108,8 +108,6 @@ const CafeManagementDashboard = () => {
     }
   }, [dashboardData]);
 
-  console.log("weeklyRevenue", weeklyRevenue);
-
   const fixedBookingData = {
     1: 2,   // April 1 - 2 slots booked
     3: 5,   // April 3 - 5 slots booked

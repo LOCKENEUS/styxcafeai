@@ -242,8 +242,6 @@ export default ClientModel;
 //     e.preventDefault();
 //     setIsSubmitting(true);
 
-//     console.log("Form Data:", "here");
-
 //     const submittedData = new FormData();
 //     submittedData.append("cafe", cafeId);
 //     submittedData.append("name", data.fullName);

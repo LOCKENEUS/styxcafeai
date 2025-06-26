@@ -10,13 +10,11 @@ import {
     Pagination,
 } from "react-bootstrap";
 import {
-    FaEdit,
     FaSearch,
     FaChevronDown,
     FaChevronUp,
 } from "react-icons/fa";
 import { FiFilter } from "react-icons/fi";
-import nobookings from "/assets/Admin/Game/nobookings.png";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getGameById, getGames } from "../../../store/slices/gameSlice";
@@ -28,7 +26,6 @@ import { MdOutlineDoNotDisturb } from "react-icons/md";
 const BookingList = () => {
     const { gameId } = useParams();
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const location = useLocation();
 
     const user = JSON.parse(localStorage.getItem("user"));
@@ -65,36 +62,6 @@ const BookingList = () => {
             dispatch(getGames(user._id));
         }
     }, [dispatch]);
-
-    // const filterBookingsByDate = (filter) => {
-    //     const today = moment().startOf("day");
-
-    //     switch (filter) {
-    //         case "Today":
-    //             return bookings?.filter((booking) =>
-    //                 moment(booking.slot_date).isSame(today, "day")
-    //             );
-    //         case "Tomorrow":
-    //             return bookings?.filter((booking) =>
-    //                 moment(booking.slot_date).isSame(today.clone().add(1, "days"), "day")
-    //             );
-    //         case "Yesterday":
-    //             return bookings?.filter((booking) =>
-    //                 moment(booking.slot_date).isSame(today.clone().subtract(1, "days"), "day")
-    //             );
-    //         case "Monday":
-    //         case "Tuesday":
-    //         case "Wednesday":
-    //         case "Thursday":
-    //             return bookings?.filter((booking) =>
-    //                 moment(booking.slot_date).format("dddd") === filter
-    //             );
-    //         case "All Bookings":
-
-    //         default:
-    //             return bookings
-    //     }
-    // };
 
     const filterBookingsByDate = (filter) => {
         const today = new Date();
@@ -242,7 +209,7 @@ const BookingList = () => {
 
     return (
         <div className="container-fluid min-vh-100 px-md-2">
-            <Row>
+            <Row className="mx-0">
                 <Col>
                     <p>
                         Home / Games / <Link to="/admin/games/Bookings">Bookings</Link>{" "}
@@ -453,7 +420,7 @@ const BookingList = () => {
                         {currentBookings.length > 0 ?
                             currentBookings?.map((booking, index) => (
                                 <tr key={index} style={{ borderBottom: "1px solid #dee2e6" }}>
-                                    <td className=" p-0 p-md-2" style={{ border: "none", minWidth: "100px", alignContent: "center" }}>
+                                    <td className=" p-0 p-md-2 text-center" style={{ border: "none", minWidth: "70px", alignContent: "center" }}>
                                         {index + 1}
                                     </td>
                                     <td
@@ -501,39 +468,6 @@ const BookingList = () => {
                                         </div>
                                     </td>
 
-                                    {/* <td
-                                        className="text-center p-0 p-md-2"
-                                        style={{
-                                            border: "none",
-                                            minWidth: "250px",
-                                            alignContent: "center",
-                                        }}
-                                    >
-                                        <div className="d-flex align-items-center">
-                                            <img
-                                                src={profile}
-                                                alt={booking?.customerName}
-                                                style={{
-                                                    width: "40px",
-                                                    height: "40px",
-                                                    borderRadius: "100%",
-                                                    marginRight: "10px",
-                                                }}
-                                            />
-                                            <span
-                                                style={{
-                                                    whiteSpace: "nowrap",
-                                                    overflow: "hidden",
-                                                    textOverflow: "ellipsis",
-                                                    maxWidth: "80px", // adjust width based on available space
-                                                    display: "inline-block",
-                                                }}
-                                            >
-                                                {booking?.customerName}
-                                            </span>
-                                        </div>
-                                    </td> */}
-
                                     <td
                                         className="align-middle p-0 p-md-2"
                                         style={{ border: "none", minWidth: "180px" }}
@@ -541,7 +475,7 @@ const BookingList = () => {
                                         {booking?.gameTitle}
                                     </td>
                                     <td
-                                        className="align-middle p-0 p-md-2"
+                                        className="align-middle p-0 p-md-2 text-center"
                                         style={{ border: "none", minWidth: "80px" }}
                                     >
                                         {booking.players.length + 1}
@@ -586,26 +520,6 @@ const BookingList = () => {
                                                         {booking?.status === "Pending" ? "Pending" : booking?.mode}
                                                     </span>
                                                 </div>
-                                                {/* <span style={{ fontSize: "0.6rem", color: "green", paddingLeft: "5px" }}>
-                                                    {
-                                                        (booking?.game_id?.payLater && booking?.start_time && !booking?.end_time)
-                                                            ||
-                                                            (() => {
-                                                                const now = new Date();
-                                                                const slotDate = new Date(booking?.slot_date);
-                                                                const [startHour, startMinute] = (booking?.slot_id?.start_time ? booking?.slot_id?.start_time : booking?.custom_slot?.start_time).split(":").map(Number);
-                                                                const [endHour, endMinute] = (booking?.slot_id?.end_time ? booking?.slot_id?.end_time : booking?.custom_slot?.end_time).split(":").map(Number);
-
-                                                                const startDateTime = new Date(slotDate);
-                                                                startDateTime.setHours(startHour, startMinute, 0, 0);
-
-                                                                const endDateTime = new Date(slotDate);
-                                                                endDateTime.setHours(endHour, endMinute, 0, 0);
-
-                                                                return (!booking?.game_id?.payLater && now >= startDateTime && now <= endDateTime);
-                                                            })() ? "Game Running" : <></>
-                                                    }
-                                                </span> */}
 
                                                 {
                                                     (booking?.game_id?.payLater && booking?.start_time && !booking?.end_time) ||
@@ -637,13 +551,7 @@ const BookingList = () => {
                                         style={{ border: "none", minWidth: "150px" }}
                                     >
                                         {formatDate(booking?.slot_date)}<br />
-                                        {/* {booking?.booking_type === "Regular" ? (convertTo12Hour(booking?.slot_id?.start_time)-convertTo12Hour(booking?.slot_id?.end_time))
-                                          :
-                                          (convertTo12Hour(booking?.custom_slot?.start_time)-convertTo12Hour(booking?.custom_slot?.end_time))
-                                        } */}
-
                                         {convertTo12Hour(booking?.slot_id?.start_time || booking?.custom_slot?.start_time)}-{convertTo12Hour(booking?.slot_id?.end_time || booking?.custom_slot?.end_time)}
-
                                     </td>
 
                                     <td

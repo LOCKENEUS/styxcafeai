@@ -158,8 +158,6 @@ export const PurchaseOrderUpdate = () => {
     }
   }, [selectedPo])
 
-  console.log("styxData", styxData)
-
   useEffect(() => {
     dispatch(getStyxData());
     dispatch(GetVendorsList(cafeId));
@@ -397,8 +395,6 @@ export const PurchaseOrderUpdate = () => {
     }
     handleClose();
   };
-
-  console.log("userType", userType);
 
   return (
     <Container fluid className="p-4">

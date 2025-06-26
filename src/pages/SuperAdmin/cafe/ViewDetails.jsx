@@ -2,7 +2,7 @@ import { Row, Col, Button, Card, Image, Modal, Container, CardGroup, Badge, Pagi
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { deleteCafe, fetchCafes, selectCafes } from "../../../store/slices/cafeSlice";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getGames, getGamesCommission, setSelectedGame } from '../../../store/slices/gameSlice';
 import Rectangle389 from '/assets/superAdmin/cafe/Rectangle389.png'
 import edit from "/assets/superAdmin/cafe/edit.png";
@@ -42,7 +42,6 @@ const ViewDetails = () => {
   const [showModalForwordPassword, setShowModalForwordPassword] = useState(false);
   const [formDataState, setFormDataState] = useState({});
   const [imagePreview, setImagePreview] = useState([]);
-  const fileInputRef = React.useRef(null);
   const [showModalAdd, setShowModalAdd] = useState(false);
   const [showMembershipAdd, setShowMembershipAdd] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -668,23 +667,14 @@ const ViewDetails = () => {
 
   };
 
-
   const commissionDataArray = commission?.data || [];
   const totalPagesCommission = Math.ceil(commissionDataArray.length / itemsPerPageCommission);
   const indexOfLastCommission = currentPageCommission * itemsPerPageCommission;
   const indexOfFirstCommission = indexOfLastCommission - itemsPerPageCommission;
   const currentCommissionItems = commissionDataArray.slice(indexOfFirstCommission, indexOfLastCommission);
 
-
-
-
-
-
-
-
   const commissionData = async (eventKey = selectedItem, id = selectedGameId) => {
 
-    console.log("eventKey", eventKey);
     setSelectedItem(eventKey);
     setSelectedGameId(id);
 
@@ -723,13 +713,6 @@ const ViewDetails = () => {
     }
   };
 
-
-
-
-
-  console.log("commission data", commission)
-
-
   return (
     <Container fluid>
       <Row className="my-5">
@@ -760,10 +743,7 @@ const ViewDetails = () => {
               <div className="d-flex flex-column align-items-end" onClick={() => setShowCanvasEditCafe(true)} style={{ objectFit: "cover", cursor: "pointer" }} >
                 <Image src={edit} alt="edit" className="mb-3" />
               </div>
-
-
             </div>
-
 
             <Row className="mx-2 d-flex justify-content-between flex-wrap">
 
@@ -875,9 +855,6 @@ const ViewDetails = () => {
               </Col>
 
             </Row>
-
-
-
 
             <Row className="justify-content-center align-items-center text-center " style={{ marginTop: "110px", marginBottom: "20px" }}>
               <Col xs="2" sm={4} className="my-1">

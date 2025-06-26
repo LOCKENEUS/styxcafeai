@@ -16,25 +16,6 @@ const Login = () => {
   const [loadingState, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-
-  //   if (loginData.email && loginData.password) {
-  //     setLoading(true);
-  //     const result = await dispatch(loginUser(loginData));
-
-  //     console.log("Login API Response:", result);
-
-  //     if (loginUser.fulfilled) {
-  //       navigate('/superadmin/dashboard'); 
-
-  //     } else {
-  //       console.error("Login failed:", result.payload);
-  //       setErrorMessage("Login failed. Please try again later.");
-  //     }
-  //     setLoading(false);
-  //   }
-  // };
   const handleSubmit = async (event) => {
     event.preventDefault();
 

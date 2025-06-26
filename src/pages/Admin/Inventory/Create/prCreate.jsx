@@ -1,6 +1,5 @@
 import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormControl, FormLabel, FormSelect, Row, Spinner, Table } from "react-bootstrap";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import companylog from "/assets/inventory/companylogo.png";
 import { use, useEffect, useState } from "react";
 import { getVendors } from "../../../../store/AdminSlice/Inventory/VendorSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -46,11 +45,6 @@ export const PRCreate = () => {
     const { vendors, loading, error } = useSelector(state => state.vendors);
     const user = JSON.parse(localStorage.getItem("user"));
     const cafeId = user?._id;
-    const userName = user?.name;
-    const userEmail = user?.email;
-    const UserContactN = user?.contact_no;
-    const UserAddress = user?.address;
-    const UesrPAN = user?.panNo;
 
     useEffect(() => {
         if (purchaseOrderData) {
@@ -98,19 +92,6 @@ export const PRCreate = () => {
         setNewTax({ name: '', value: '', description: '' });
         setShowTaxModal(false);
     };
-
-    // const handleVendorChange = (vendorId) => {
-    //     if (vendorId === "StyxCafe") {
-    //         setVendorType("StyxCafe");
-    //         return;
-    //     }
-    //     setVendorType("");
-    //     setSelectedVendor(vendorId);
-    //     setFormData((prev) => ({
-    //         ...prev,
-    //         selectedVendor: vendorId,
-    //     }));
-    // };
 
     const handleVendorChange = (vendorId) => {
         setSelectedVendor(vendorId);
@@ -208,26 +189,6 @@ export const PRCreate = () => {
                         </Breadcrumb>
                     </div>
                 </Col>
-                {/* <Col sm={12} className="my-2">
-                    <Card className="p-3">
-                        <Row className="align-items-center">
-                            <Col sm={2}>
-                                <img src={companylog} alt="Logo" className="img-fluid" />
-                            </Col>
-                            <Col sm={8}>
-                                <h5>{userName}</h5>
-                                <p className="mb-1">{userEmail} / {UserContactN}</p>
-                                <p className="mb-1">
-                                    {UserAddress}
-                                </p>
-                                <strong>PAN: {UesrPAN}</strong>
-                            </Col>
-                            <Col sm={2} className=" d-flex  ">
-                            </Col>
-                        </Row>
-                    </Card>
-
-                </Col> */}
 
                 <Col sm={12} className="my-2">
                     <Card className="p-3 shadow-sm">
@@ -344,7 +305,6 @@ export const PRCreate = () => {
                                 />
                             </Col>
                             <Col sm={12} className="my-3 d-flex justify-content-end">
-                                {/* <Button type="submit " onClick={handleSubmit} style={{ padding: "10px 35px", fontSize: "14px" }}>Submit</Button> */}
                                 <Button variant="primary" type="submit" className=" my-2 float-end" onClick={handleSubmit}>
                                     {submitLoading ? (
                                         <>
