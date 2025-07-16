@@ -2,7 +2,7 @@
 // import { Container, Row, Col, Card, Button, Image, Stack, Form, OverlayTrigger, Tooltip, Modal, Table,  Popover } from "react-bootstrap";
 // import { FaPause } from "react-icons/fa";
 // import { Link, useNavigate, useParams } from "react-router-dom";
-// import userProfile from "/assets/profile/user_avatar.jpg";
+// import userProfile from "/assets/profile/user_avatar.png";
 // import { useDispatch, useSelector } from "react-redux";
 // import { convertTo12Hour, formatDate, formatDateAndTime } from "../../../components/utils/utils";
 // import { addToCart, deleteBooking, getBookingDetails, processOnlinePayment } from "../../../store/AdminSlice/BookingSlice";
@@ -1867,7 +1867,7 @@ import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button, Image, Stack, Form, OverlayTrigger, Tooltip, Modal, Table,  Popover } from "react-bootstrap";
 import { FaPause } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import userProfile from "/assets/profile/user_avatar.jpg";
+import userProfile from "/assets/profile/user_avatar.png";
 import { useDispatch, useSelector } from "react-redux";
 import { convertTo12Hour, formatDate, formatDateAndTime } from "../../../components/utils/utils";
 import { addToCart, deleteBooking, getBookingDetails, processOnlinePayment } from "../../../store/AdminSlice/BookingSlice";
@@ -2846,69 +2846,39 @@ const BookingCheckout = () => {
                     <Row className="mt-1 gap-0">
                       <Col md={6} className="p-0">
                         <div className="bg-white d-flex p-3 gap-1" style={{ borderRadius: "10px", width: "100%" }}>
-                          <div className="d-flex gap-4" style={{ border: "none" }}>
+                          <div className="d-flex gap-3" style={{ border: "none" }}>
                             <div>
                               <img src="/assets/Admin/Game/Notification.svg" alt="Game Timer" />
                             </div>
-                            <div className="text-color my-auto">
-                              <div>Total Time</div>
-                              <div className="text-color fs-4">
+                            <div className="text-color my-auto" style={{ width: "100%" }}>
+                              <div>Time</div>
+                              <div className="text-color fs-4 w-100" style={{ minWidth: "90px" }}>
                                 <span className="">{Math.floor(currentTime / 60)} m</span> : {" "}
                                 <span className="">{currentTime % 60} s</span>
                               </div>
                             </div>
                           </div>
-                          <div className="d-flex justify-content-around align-items-center gap-4">
+                          <div className="d-flex justify-content-around align-items-center gap-1">
                             {isRunning || isPaused ? (
-                              // <Button
-                              //   size="sm"
-                              //   variant="outline-transparent"
-                              //   className="ms-3 p-0"
-                              //   // style={{ border: "2px dashed rgb(255, 68, 0)", width: "50%", paddingRight: "10px", marginLeft: "30px" }}
-                              //   onClick={() => setShowConfirm(true)} // Show confirmation modal
-                              // >
-                              //   {/* Stop */}
-                              //   <StopButton />
-                              // </Button>
-
                               <button
                                 className="btn btn-danger btn-lg px-4 py-2 fw-semibold ms-2"
                                 onClick={() => setShowConfirm(true)}
                               >
-                                Stop Time
+                                Stop
                               </button>
                             ) : (
                               !isPaused &&
-                              // <Button
-                              //   size="sm"
-                              //   variant="outline-transparent"
-                              //   className="ms-3 border-0 p-0"
-                              //   disabled={booking?.total_time > 0 && booking?.timer_status === "Stopped"}
-                              //   // style={{ border: "2px dashed", width: "100%", height: "40px", padding: "2px", marginLeft: "30px" }}
-                              //   onClick={handleStartTimer}
-                              // >
-                              //   {/* <FaClock size={16} style={{ marginRight: "5px" }} />
-                              //   <span>Start</span> */}
-                              //   <PlayButton />
-                              // </Button>
-
                               <button
                                 className="btn btn-success btn-lg px-4 py-2 fw-semibold ms-2"
                                 disabled={booking?.total_time > 0 && booking?.timer_status === "Stopped"}
                                 onClick={handleStartTimer}
                               >
-                                Start Time
+                                Start
                               </button>
                             )}
 
                             {
                               !isRunning ? (
-                                // <VscDebugContinue
-                                //   size={32}
-                                //   className="text-success mt-2"
-                                //   style={{ marginLeft: "5%", cursor: "pointer" }}
-                                //   onClick={handleResumeTimer}
-                                // />
                                 <button
                                   onClick={handleResumeTimer}
                                   style={{
@@ -2923,14 +2893,6 @@ const BookingCheckout = () => {
                                   </svg>
                                 </button>
                               ) : (
-
-                                // <FaPause
-                                //   size={32}
-                                //   className="text-danger mt-2"
-                                //   style={{ marginLeft: "5%", cursor: "pointer" }}
-                                //   onClick={handlePauseTimer}
-                                // />
-
                                 <button
                                   onClick={handlePauseTimer}
                                   style={{

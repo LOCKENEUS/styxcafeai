@@ -14,7 +14,7 @@ import {
     Spinner,
 } from "react-bootstrap";
 import { addCustomer, getCustomers, searchCustomers } from "../../../store/AdminSlice/CustomerSlice";
-import profile_pic from "/assets/profile/user_avatar.jpg";
+import profile_pic from "/assets/profile/user_avatar.png";
 import { BsSearch, BsPlus } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";

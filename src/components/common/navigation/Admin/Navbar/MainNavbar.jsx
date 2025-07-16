@@ -1,5 +1,3 @@
-// components/Navbar.jsx
-import { Navbar, Container, Button } from 'react-bootstrap';
 import { BiBell, BiChevronRight, BiMoon, BiSearch, BiSun } from 'react-icons/bi';
 import { PiMapPinBold } from 'react-icons/pi';
 import { Link, useNavigate } from 'react-router-dom';
@@ -13,7 +11,7 @@ import { getSearchData } from '../../../../../store/AdminSlice/DashboardSlice';
 
 const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
   const [showDropdown, setShowDropdown] = useState(false);
-  const [profilePic, setProfilePic] = useState("/assets/profile/user_avatar.jpg");
+  const [profilePic, setProfilePic] = useState("/assets/profile/user_avatar.png");
   const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();//+
@@ -32,7 +30,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
   useEffect(() => {
     if (user) {
       if (user.role === "superadmin") {
-        setProfilePic(`assets/profile/user_avatar.jpg`);
+        setProfilePic(`assets/profile/user_avatar.png`);
       } else {
         setProfilePic(`${backend_url}/${user.cafeLogo}`);
       }
@@ -73,7 +71,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
     <header id="header" className="navbar navbar-expand-lg  navbar-fixed navbar-height navbar-container navbar-bordered bg-white">
       <div style={{ width: "100%" }} className=" d-flex justify-content-between align-items-center">
 
-        <a className="navbar-brand " style={{ fontSize: "1.5rem", fontWeight: "bold" }} aria-label="Front">
+        <div className="navbar-brand " style={{ fontSize: "1.5rem", fontWeight: "bold" }} aria-label="Front">
           <button
             className="btn btn-ghost-secondary btn-icon rounded-circle me-2"
             onClick={toggleSidebar}
@@ -99,7 +97,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
           >
             {user.cafe_name}
           </Link>
-        </a>
+        </div>
         {/* Responsive View */}
         <div className="d-md-none ">
 
@@ -371,7 +369,6 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                     <div className="card-header card-header-content-between">
                       <h4 className="card-title mb-0">Notifications</h4>
                     </div>
-
                     <ul className="list-group list-group-flush navbar-card-list-group"
                       style={{ maxHeight: '300px', overflowY: 'auto', scrollbarWidth: 'thin', msOverflowStyle: 'none' }}>
                       <li className="list-group-item">
@@ -381,7 +378,6 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                         <span className="text-info">🔔 System Update 145</span>
                       </li>
                     </ul>
-
                     <a className="card-footer text-center" href="#">
                       View all notifications <BiChevronRight />
                     </a>
@@ -396,7 +392,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                   <div className="avatar avatar-sm avatar-circle">
                     <img className="avatar-img" src={profilePic} alt="Image Description" onError={(e) => {
                       e.target.onerror = null; // prevents infinite loop if fallback also fails
-                      e.target.src = "/assets/profile/user_avatar.jpg"; // replace with your fallback path
+                      e.target.src = "/assets/profile/user_avatar.png"; // replace with your fallback path
                     }} />
                     <span className="avatar-status avatar-sm-status avatar-status-success"></span>
                   </div>
@@ -408,7 +404,7 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                       <div className="avatar avatar-sm avatar-circle">
                         <img className="avatar-img" src={profilePic} alt="Image Description" onError={(e) => {
                           e.target.onerror = null; // prevents infinite loop if fallback also fails
-                          e.target.src = "/assets/profile/user_avatar.jpg"; // replace with your fallback path
+                          e.target.src = "/assets/profile/user_avatar.png"; // replace with your fallback path
                         }} />
                       </div>
                       <div className="flex-grow-1 ms-3">
@@ -422,8 +418,8 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                   <a className="dropdown-item" href="#">Settings</a>
                   <div className="dropdown-divider"></div>
                   <div className="dropdown">
-                    <a className="navbar-dropdown-submenu-item dropdown-item dropdown-toggle" href="javascript:;" id="navSubmenuPagesAccountDropdown2" data-bs-toggle="dropdown" aria-expanded="false">Customization</a>
-
+                    {/* <a className="navbar-dropdown-submenu-item dropdown-item dropdown-toggle" href="javascript:;" id="navSubmenuPagesAccountDropdown2" data-bs-toggle="dropdown" aria-expanded="false">Customization</a> */}
+                    <button type="button" className="navbar-dropdown-submenu-item dropdown-item dropdown-toggle" id="navSubmenuPagesAccountDropdown2" data-bs-toggle="dropdown" aria-expanded="false">Customization</button>
                     <div className="dropdown-menu dropdown-menu-end navbar-dropdown-menu navbar-dropdown-menu-borderless navbar-dropdown-sub-menu" aria-labelledby="navSubmenuPagesAccountDropdown2">
                       <a className="dropdown-item" href="#">Invite people</a>
                       <a className="dropdown-item" href="#">Analytics</a>
@@ -501,11 +497,9 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                       }
                     `}
                     </style>
-
                     <a className="card-footer text-center" href="#">
                       View all notifications <i className="bi-chevron-right"></i>
                     </a>
-
                   </div>
                 </div>
               </div>
@@ -514,10 +508,9 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
             <li className="nav-item d-none d-none d-md-block">
               <div className="dropdown">
                 <button type="button" className="btn " id="navbarAppsDropdown">
-                  <sapn className='d-flex align-items-center justify-content-center'> <PiMapPinBold style={{ fontSize: "1.3rem" }} /> {user?.location?.city}</sapn>
+                  <span className='d-flex align-items-center justify-content-center'> <PiMapPinBold style={{ fontSize: "1.3rem" }} /> {user?.location?.city}</span>
                 </button>
               </div>
-
             </li>
 
             <li className="nav-item d-none d-none d-md-block">
@@ -525,10 +518,9 @@ const MainNavbar = ({ setIsAuthenticated, collapsed, toggleSidebar }) => {
                 <a className="navbar-dropdown-account-wrapper justify-content-center align-items-center gap-4 px-4" id="accountNavbarDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" data-bs-dropdown-animation="">
                   <p style={{ color: "#677788", fontWeight: "bold" }} className='m-0'>{user?.name}</p>
                   <div className="avatar avatar-sm avatar-circle">
-                    {/* <img className="avatar-img" src={profilePic} alt="Image Description" /> */}
                     <img className="avatar-img" src={profilePic} alt="Image Description" onError={(e) => {
                       e.target.onerror = null; // prevents infinite loop if fallback also fails
-                      e.target.src = "/assets/profile/user_avatar.jpg"; // replace with your fallback path
+                      e.target.src = "/assets/profile/user_avatar.png"; // replace with your fallback path
                     }} />
                     <span className="avatar-status avatar-sm-status avatar-status-success"></span>
                   </div>

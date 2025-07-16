@@ -170,8 +170,6 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
     setFormData({ ...formData, amenities: [...formData.amenities, ""] });
   };
 
-  console.log("formData", formData);
-
   return (
     <Offcanvas show={show} onHide={handleClose} placement="end" style={{ width: "600px" }}>
       <Offcanvas.Header closeButton>

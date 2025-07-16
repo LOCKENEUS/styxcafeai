@@ -208,16 +208,16 @@ export const collectAmountOnline = createAsyncThunk(
         }
       );
 
-      const data = response.data;
+      const data = response.data.data;
 
-      if (data.success && data.order) {
+      if (data) {
         const options = {
           key: import.meta.env.VITE_RAZOR_LIVE_KEY,
-          amount: data.order.amount * 100,
-          currency: data.order.currency,
+          amount: data.amount * 100,
+          currency: data.currency,
           name: "Lockene Inc",
           description: "Credit Collection",
-          order_id: data.order.id,
+          order_id: data.id,
           handler: async function (response) {
             try {
               const verifyResponse = await axios.patch(
@@ -227,7 +227,7 @@ export const collectAmountOnline = createAsyncThunk(
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature,
                   bookingIds: updateData.bookingIds,
-                  amount: data.order.amount,
+                  amount: data.amount,
                   customerId: id,
                 },
                 {
@@ -320,16 +320,16 @@ export const collectCustomCreditAmountOnline = createAsyncThunk(
         }
       );
 
-      const data = response.data;
+      const data = response.data.data;
 
-      if (data.success && data.order) {
+      if (data) {
         const options = {
           key: import.meta.env.VITE_RAZOR_LIVE_KEY,
-          amount: data.order.amount * 100,
-          currency: data.order.currency,
+          amount: data.amount * 100,
+          currency: data.currency,
           name: "Lockene Inc",
           description: "Credit Collection",
-          order_id: data.order.id,
+          order_id: data.id,
           handler: async function (response) {
             try {
               const verifyResponse = await axios.patch(
@@ -338,7 +338,7 @@ export const collectCustomCreditAmountOnline = createAsyncThunk(
                   razorpay_order_id: response.razorpay_order_id,
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature,
-                  amount: data.order.amount / 100,
+                  amount: data.amount / 100,
                   customerId: id,
                 },
                 {

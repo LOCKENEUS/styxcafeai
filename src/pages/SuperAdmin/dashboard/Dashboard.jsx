@@ -71,9 +71,7 @@ const CafeManagementDashboard = () => {
     });
   }, []);
 
-  // State management
-  // const [activeTab, setActiveTab] = useState("dashboard");
-  // const [timeFilter, setTimeFilter] = useState("weekly");
+
   const [activeTooltip, setActiveTooltip] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [activeMonth, setActiveMonth] = useState(currentDate.getMonth());
@@ -361,11 +359,6 @@ const CafeManagementDashboard = () => {
                   Dashboard Overview
                 </h3>
               </Col>
-              {/* <Col xs="auto">
-                <Button variant="primary" className="shadow-sm">
-                  Generate Report
-                </Button>
-              </Col> */}
             </Row>
           </div>
 
@@ -927,7 +920,7 @@ const CafeManagementDashboard = () => {
         </Container>
       </div>
 
-      <style jsx>{`
+      <style>{`
       .react-calendar {
   width: 100%;
   border: none;

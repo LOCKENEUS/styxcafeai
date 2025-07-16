@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { resetPassword } from "../../../store/slices/authSlice";
 import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { adminResetPassword } from "../../../store/AdminSlice/AuthSlice";
 
 const ResetPassword = () => {
   const location = useLocation();
@@ -53,7 +54,7 @@ const ResetPassword = () => {
     }
 
     try {
-      await dispatch(resetPassword({
+      await dispatch(adminResetPassword({
         email: formData.email,
         newPassword: formData.newPassword,
         otp: otp.join("")

@@ -296,7 +296,7 @@ const CustomerDetails = () => {
                                 currentBookings.map((booking, index) => (
                                   <tr key={booking._id}>
                                     <td>{index + 1 + indexOfFirstBooking}</td>
-                                    <td style={{ fontWeight: "600", color: "blue" }} onClick={() => navigate(`/admin/booking/checkout/${booking._id}`)} >{booking.booking_id}</td>
+                                    <td style={{ fontWeight: "600", color: "blue", cursor: "pointer" }} onClick={() => navigate(`/admin/booking/checkout/${booking._id}`)} >{booking.booking_id}</td>
                                     <td>{booking.game_id.name}</td>
                                     <td>{new Date(booking.slot_date).toLocaleDateString()}</td>
                                     <td>

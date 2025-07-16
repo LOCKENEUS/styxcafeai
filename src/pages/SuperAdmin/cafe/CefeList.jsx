@@ -5,7 +5,7 @@ import { fetchCafes, selectCafes, selectLoading, selectError } from '../../../st
 import { Navigate } from "react-router-dom";
 import gm1 from "/assets/inventory/mynaui_search.svg";
 import plus from "/assets/superAdmin/cafe/Plus.png";
-import profile from "/assets/profile/user_avatar.jpg";
+import profile from "/assets/profile/user_avatar.png";
 import CafeForm from "./CafeForm";
 import Loader from "../../../components/common/Loader/Loader";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
@@ -308,7 +308,7 @@ const CafeManager = () => {
                                 <Image
                                   src={profile}
                                   alt="owner"
-                                  className="rounded-circle mr-2"
+                                  className="rounded-circle mr-2 h-25"
                                   style={{ width: "50px", height: "50px" }}
                                 />
                                 {cafe.name}

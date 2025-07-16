@@ -209,16 +209,16 @@ export const processOnlinePayment = createAsyncThunk(
         }
       );
 
-      const data = response.data;
+      const data = response.data.data;
 
-      if (data.success && data.order) {
+      if (data) {
         const options = {
           key: import.meta.env.VITE_RAZOR_LIVE_KEY,
-          amount: data.order.amount,
-          currency: data.order.currency,
+          amount: data.amount,
+          currency: data.currency,
           name: "Lockene Inc",
           description: "Game Booking",
-          order_id: data.order.id,
+          order_id: data.id,
           handler: async function (response) {
             try {
               const verifyResponse = await axios.post(
@@ -228,7 +228,7 @@ export const processOnlinePayment = createAsyncThunk(
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature,
                   booking_id: bookingId,
-                  amount: data.order.amount,
+                  amount: data.amount,
                   paid_amount,
                   total,
                   looser,

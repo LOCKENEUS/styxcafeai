@@ -45,7 +45,7 @@ export const adminSendPasswordResetEmail = createAsyncThunk(
   async (email, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/admin/forget-password`,
+        `${BASE_URL}/user/admin/forget-password`,
         { email },
         {
           headers: { "Content-Type": "application/json" },
@@ -70,7 +70,7 @@ export const adminResetPassword = createAsyncThunk(
   async ({ email, newPassword, otp }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/admin/reset-password`,
+        `${BASE_URL}/user/admin/reset-password`,
         { email, newPassword, otp },
         {
           headers: { "Content-Type": "application/json" },

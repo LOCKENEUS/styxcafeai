@@ -4,7 +4,7 @@ import forgetPasswordIllustration from "/assets/Admin/Forgot password-rafiki.svg
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { sendPasswordResetEmail } from "../../../store/slices/authSlice";
+import { adminSendPasswordResetEmail } from "../../../store/AdminSlice/AuthSlice";
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState("");
@@ -18,7 +18,7 @@ const ForgetPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(sendPasswordResetEmail(email)).unwrap();
+      await dispatch(adminSendPasswordResetEmail(email)).unwrap();
       // If successful, navigate to change password page
       navigate("/admin/change-password", { state: { email } });
     } catch (error) {

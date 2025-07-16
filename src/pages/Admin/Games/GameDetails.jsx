@@ -73,7 +73,7 @@ const GameDetails = () => {
     };
 
     const handleToggleStatus = async (slot) => {
-        
+
         await dispatch(deleteslot(slot._id));
 
         // Update the local state for real-time UI changes
@@ -206,26 +206,13 @@ const GameDetails = () => {
                         </span>
                         <p className="text-muted">{selectedGame?.data?.details}</p>
 
-                        {/* Buttons Container */}
-                        {/* <div className="d-flex gap-2">
-                            Cancellation : {selectedGame?.data?.cancellation ? "Yes" : "No"}
-                        </div> */}
-                        <div className="d-flex gap-2">
-                            <div><img src="/assets/Admin/Game/paylater.svg" className="me-1 mb-1 p-1" alt="paylater" /> {selectedGame?.data?.payLater ? "Pay Later" : "Pay Now"}</div>
-                            <div><img src="/assets/Admin/Game/singleplayer.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.type}</div>
-                            <div><img src="/assets/Admin/Game/indoor.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.zone}</div>
-                            <div><img src="/assets/Admin/Game/crosssign.svg" className="me-1 mb-1 p-1" alt="paylater" />{selectedGame?.data?.cancellation ? "Cancellation Yes" : "Cancellation No"}</div>
-                        </div>
+                        <div className="d-flex justify-content-between">
+                            <div><img src="/assets/Admin/Game/paylater.svg" className="me-1 mb-1 p-1" alt="paylater" /><br/> {selectedGame?.data?.payLater ? "Pay Later" : "Pay Now"}</div>
+                            <div><img src="/assets/Admin/Game/singleplayer.svg" className="me-1 mb-1 p-1" alt="paylater" /><br/>{selectedGame?.data?.type}</div>
 
-                        {/* Timestamps Container */}
-                        {/* <div className="mt-3">
-                            <p>
-                                <b>Created At:</b> <span>{new Date(selectedGame?.data?.createdAt).toLocaleString()}</span>
-                            </p>
-                            <p>
-                                <b>Updated At:</b> <span>{new Date(selectedGame?.data?.updatedAt).toLocaleString()}</span>
-                            </p>
-                        </div> */}
+                            <div><img src="/assets/Admin/Game/indoor.svg" className="me-1 mb-1 p-1" alt="paylater" /><br/>{selectedGame?.data?.zone}</div>
+                            <div><img src="/assets/Admin/Game/crosssign.svg" className="me-1 mb-1 p-1" alt="paylater" /><br/>{selectedGame?.data?.cancellation ? "Cancellation Yes" : "Cancellation No"}</div>
+                        </div>
 
                         <div>
                             <img src="/assets/Admin/Game/price.svg" className="mb-2" alt="paylater" />
@@ -250,108 +237,104 @@ const GameDetails = () => {
                                 Add Slots
                             </Button>
                         </div>
-
-
                     </Col>
                 </Row>
+                <Col
+                    xs={12}
+                    md={6}
+                    className="d-flex d-md-none flex-column justify-content-around mt-2 p-2 p-md-3"
+                    style={{ backgroundColor: "transparent" }}
+                >
+                    <h5 className="fw-600 fs-5 fs-md-3" style={{ fontWeight: "600" }}>
+                        {selectedGame?.data?.name} <span className="float-end text-primary" onClick={() => navigate(`/admin/games/edit-game/${id}`)}>Edit</span>
+                    </h5>
 
-                
-                        <Col
-                            xs={12}
-                            md={6}
-                            className="d-flex d-md-none flex-column justify-content-around mt-2 p-2 p-md-3"
-                            style={{ backgroundColor: "transparent" }}
-                          >
-                            <h5 className="fw-600 fs-5 fs-md-3" style={{ fontWeight: "600" }}>
-                              {selectedGame?.data?.name} <span className="float-end text-primary" onClick={() => navigate(`/admin/games/edit-game/${id}`)}>Edit</span>
-                            </h5>
-                
-                            <p className="text-muted small">{selectedGame?.data?.details}</p>
-                
-                            <div className="d-flex flex-wrap gap-2">
-                              <div className="d-flex align-items-center">
-                                <img
-                                  src="/assets/Admin/Game/paylater.svg"
-                                  className="me-1 p-1"
-                                  alt="paylater"
-                                  style={{ width: "20px", height: "20px" }}
-                                />
-                                <small>{selectedGame?.data?.payLater ? "Pay Later" : "Pay Now"}</small>
-                              </div>
-                              <div className="d-flex align-items-center">
-                                <img
-                                  src="/assets/Admin/Game/singleplayer.svg"
-                                  className="me-1 p-1"
-                                  alt="type"
-                                  style={{ width: "20px", height: "20px" }}
-                                />
-                                <small>{selectedGame?.data?.type}</small>
-                              </div>
-                              <div className="d-flex align-items-center">
-                                <img
-                                  src="/assets/Admin/Game/indoor.svg"
-                                  className="me-1 p-1"
-                                  alt="zone"
-                                  style={{ width: "20px", height: "20px" }}
-                                />
-                                <small>{selectedGame?.data?.zone}</small>
-                              </div>
-                              <div className="d-flex align-items-center">
-                                <img
-                                  src="/assets/Admin/Game/crosssign.svg"
-                                  className="me-1 p-1"
-                                  alt="cancel"
-                                  style={{ width: "20px", height: "20px" }}
-                                />
-                                <small>{selectedGame?.data?.cancellation ? "Cancellation Yes" : "Cancellation No"}</small>
-                              </div>
-                            </div>
-                
-                            <div className="mt-3">
-                              <img
-                                src="/assets/Admin/Game/price.svg"
-                                className="mb-2"
-                                alt="price"
-                                style={{ width: "24px", height: "24px" }}
-                              />
-                              <span
-                                className="fw-bold text-primary"
-                                style={{ fontSize: "20px" }}
-                              >
-                                ₹ {selectedGame?.data?.price}
-                              </span>
-                            </div>
-                          </Col>
-                
-                          <Col
-                            md={3}
-                            className="d-block d-md-none "
-                            style={{ backgroundColor: "transparent" }}
-                          >
-                            <Row className="px-2">
-                              <Col xs={5}>
-                                <p className="text-color">Created At</p>
-                              </Col>
-                              <Col xs={7}>
-                                <span className="muted-text">{new Date(selectedGame?.data?.createdAt).toLocaleString()}</span>
-                              </Col>
-                            </Row>
-                
-                            <Row className="mb-2 p-2">
-                              <Col xs={6} className="">
-                            
-                              </Col>
-                              <Col xs={6} className="text-end">
-                              <Button
+                    <p className="text-muted small">{selectedGame?.data?.details}</p>
+
+                    <div className="d-flex flex-wrap gap-2">
+                        <div className="d-flex align-items-center">
+                            <img
+                                src="/assets/Admin/Game/paylater.svg"
+                                className="me-1 p-1"
+                                alt="paylater"
+                                style={{ width: "20px", height: "20px" }}
+                            />
+                            <small>{selectedGame?.data?.payLater ? "Pay Later" : "Pay Now"}</small>
+                        </div>
+                        <div className="d-flex align-items-center">
+                            <img
+                                src="/assets/Admin/Game/singleplayer.svg"
+                                className="me-1 p-1"
+                                alt="type"
+                                style={{ width: "20px", height: "20px" }}
+                            />
+                            <small>{selectedGame?.data?.type}</small>
+                        </div>
+                        <div className="d-flex align-items-center">
+                            <img
+                                src="/assets/Admin/Game/indoor.svg"
+                                className="me-1 p-1"
+                                alt="zone"
+                                style={{ width: "20px", height: "20px" }}
+                            />
+                            <small>{selectedGame?.data?.zone}</small>
+                        </div>
+                        <div className="d-flex align-items-center">
+                            <img
+                                src="/assets/Admin/Game/crosssign.svg"
+                                className="me-1 p-1"
+                                alt="cancel"
+                                style={{ width: "20px", height: "20px" }}
+                            />
+                            <small>{selectedGame?.data?.cancellation ? "Cancellation Yes" : "Cancellation No"}</small>
+                        </div>
+                    </div>
+
+                    <div className="mt-3">
+                        <img
+                            src="/assets/Admin/Game/price.svg"
+                            className="mb-2"
+                            alt="price"
+                            style={{ width: "24px", height: "24px" }}
+                        />
+                        <span
+                            className="fw-bold text-primary"
+                            style={{ fontSize: "20px" }}
+                        >
+                            ₹ {selectedGame?.data?.price}
+                        </span>
+                    </div>
+                </Col>
+
+                <Col
+                    md={3}
+                    className="d-block d-md-none "
+                    style={{ backgroundColor: "transparent" }}
+                >
+                    <Row className="px-2">
+                        <Col xs={5}>
+                            <p className="text-color">Created At</p>
+                        </Col>
+                        <Col xs={7}>
+                            <span className="muted-text">{new Date(selectedGame?.data?.createdAt).toLocaleString()}</span>
+                        </Col>
+                    </Row>
+
+                    <Row className="mb-2 p-2">
+                        <Col xs={6} className="">
+
+                        </Col>
+                        <Col xs={6} className="text-end">
+                            <Button
                                 variant="primary"
                                 style={{ width: "128px", height: "37px" }}
                                 onClick={handleSlotCreate}
                             >
                                 Add Slots
                             </Button>
-                              </Col>
-                            </Row>
-                          </Col>
+                        </Col>
+                    </Row>
+                </Col>
             </Card>
 
             {/* Calendar Section */}

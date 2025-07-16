@@ -19,7 +19,7 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getGameById, getGames } from "../../../store/slices/gameSlice";
 import { getBookings } from "../../../store/AdminSlice/BookingSlice";
-import profile from "/assets/profile/user_avatar.jpg";
+import profile from "/assets/profile/user_avatar.png";
 import { convertTo12Hour, formatDate } from "../../../components/utils/utils";
 import { MdOutlineDoNotDisturb } from "react-icons/md";
 

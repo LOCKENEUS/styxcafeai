@@ -312,7 +312,6 @@ const DashboardInventory = () => {
             </Card.Body>
           </Card>
         </Col>
-
       </Row>
 
       {/* Charts Row */}

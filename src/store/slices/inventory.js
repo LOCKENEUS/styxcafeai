@@ -209,11 +209,35 @@ export const updateItemsById = createAsyncThunk(
   }
 );
 
+// dashboard data
+export const getSaInvDashboardData = createAsyncThunk(
+  "saInvDashboard/getSaInvDashboardData",
+  async (id, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/superadmin/inventory/dashboard`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
+    }
+  }
+);
+
 const InventorySlice = createSlice({
   name: "inventory",
   initialState: {
     it: [],
     itemTransactions: [],
+    invDashboard: null,
     selectedinventory: null,
     status: "idle",
     error: null,
@@ -304,6 +328,20 @@ const InventorySlice = createSlice({
         state.status = "failed";
         state.error = action.payload;
       })
+
+      // get dashboard data
+      .addCase(getSaInvDashboardData.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getSaInvDashboardData.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.invDashboard = action.payload;
+      })
+      .addCase(getSaInvDashboardData.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
       // deleteItemByIdn
       .addCase(deleteItemById.pending, (state) => {
         state.status = "loading";

@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import Rectangle389 from '/assets/superAdmin/cafe/Rectangle389.png'
 import { useEffect, useState } from "react";
 import { getBookingDetails } from "../../../../store/AdminSlice/BookingSlice";
-import profile from "/assets/profile/user_avatar.jpg";
+import profile from "/assets/profile/user_avatar.png";
 import amounImage from "/assets/superAdmin/booking/Amount.png";
 import { convertTo12Hour, formatDate, formatDateAndTime } from "../../../../components/utils/utils";
 import Loader from "../../../../components/common/Loader/Loader";

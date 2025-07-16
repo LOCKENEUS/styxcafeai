@@ -9,7 +9,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { TbLayoutSidebarLeftCollapse } from "react-icons/tb";
 
 const MainNavbar = ({ setIsAuthenticated, toggleSidebar, collapsed }) => {
-  const [profilePic, setProfilePic] = useState("/assets/profile/user_avatar.jpg");
+  const [profilePic, setProfilePic] = useState("/assets/profile/user_avatar.png");
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
 
