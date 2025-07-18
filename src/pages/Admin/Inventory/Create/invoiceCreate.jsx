@@ -20,7 +20,6 @@ import { BiPlus } from "react-icons/bi";
 import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems"
 import Tax from "../modal/Tax";
 import AddClint from "../modal/AddClint";
-import PaymentTermsModal from "../modal/PaymentTermsModal";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import Select from 'react-select';
 
@@ -28,7 +27,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getCustomFields } from '../../../../store/AdminSlice/CustomField';
 import { getTaxFields } from '../../../../store/AdminSlice/TextFieldSlice';
 import { getItems } from '../../../../store/AdminSlice/Inventory/ItemsSlice';
-// import { addSO, getSOById, updateSO } from '../../../../store/AdminSlice/Inventory/SoSlice';
 import { addSOInvoice, updateSOInvoice, getSOInvoiceById } from '../../../../store/AdminSlice/Inventory/SoInvoiceSlice';
 import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 

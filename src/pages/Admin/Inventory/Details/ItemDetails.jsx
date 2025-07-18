@@ -7,7 +7,6 @@ import {
   Nav,
   Table,
   Card,
-  Breadcrumb,
   Spinner,
   Modal,
   Button,
@@ -112,18 +111,6 @@ const ItemDetails = () => {
 
   return (
     <Container fluid>
-      {/* <Breadcrumb>
-        <Breadcrumb.Item>
-          <Link to="/admin/dashboard">Home</Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>
-          <Link to="/admin/inventory/dashboard">Inventory</Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>
-          <Link to="/admin/inventory/items-list">Item List</Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item active>Item Details</Breadcrumb.Item>
-      </Breadcrumb> */}
       <Breadcrumbs
         items={[
           { label: "Home", path: "/admin/dashboard" },

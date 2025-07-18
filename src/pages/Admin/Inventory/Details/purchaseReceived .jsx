@@ -10,7 +10,6 @@ import { getStyxData, sendMailToVendor } from "../../../../store/AdminSlice/Inve
 import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 export const PurchaseReceivedDetails = () => {
-
     const [vendor, setVendor] = useState(null);
     const user = JSON.parse(localStorage.getItem("user"));
     const cafeId = user?._id;

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Image, Spinner, Table, Pagination, Nav, Tab, Button, Form, InputGroup, FormControl } from "react-bootstrap";
+import { Container, Row, Col, Card, Image, Spinner, Table, Pagination, Nav, Tab, Button, Form, FormControl } from "react-bootstrap";
 import profileBg from "/assets/Admin/profileDetails/profileBg.png";
 import { LuPencil } from "react-icons/lu";
-import pdflogo from "/assets/Admin/profileDetails/pdflogo.svg";
 import profileImg from "/assets/Admin/profileDetails/ProfileImg.png";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -131,7 +130,6 @@ const CustomerDetails = () => {
     await dispatch(getCustomerById(id));
   }
 
-
   const handleCollectOnline = async () => {
     await dispatch(
       collectAmountOnline({
@@ -159,8 +157,7 @@ const CustomerDetails = () => {
   };
 
   return (
-    <Container className="mx-2">
-
+    <Container fluid>
       <Breadcrumbs
         items={[
           { label: "Home", path: "/admin/dashboard" },

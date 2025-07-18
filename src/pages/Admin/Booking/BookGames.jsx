@@ -3,7 +3,7 @@ import { Card, Row, Col, Container } from 'react-bootstrap';
 import { MdOutlineArrowOutward } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGames } from '../../../store/slices/gameSlice';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import GamePlaceholder from '../Games/components/GamePlaceholder';
 import { Breadcrumbs } from '../../../components/common/Breadcrumbs/Breadcrumbs';

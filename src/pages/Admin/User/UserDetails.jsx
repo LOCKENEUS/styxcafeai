@@ -31,7 +31,7 @@ const UserDetails = () => {
     );
   }
   return (
-    <Container className="mt-4">
+    <Container fluid>
         <Breadcrumbs
           items={[
             { label: "Home", path: "/admin/dashboard" },

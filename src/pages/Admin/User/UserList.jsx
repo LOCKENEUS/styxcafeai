@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Button, Table, Pagination, FormControl, InputGroup } from "react-bootstrap";
+import { Button, Table, Pagination, FormControl, InputGroup, Container } from "react-bootstrap";
 import { IoAdd } from "react-icons/io5";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getUsers, deleteUser } from "../../../store/AdminSlice/UserSlice";
@@ -76,7 +76,7 @@ const UserList = () => {
   }
 
   return (
-    <div className="container mx-2">
+    <Container fluid>
       <Breadcrumbs
         items={[
           { label: "Home", path: "/admin/dashboard" },
@@ -165,8 +165,10 @@ const UserList = () => {
                   .map((user, index) => (
                     <tr key={user._id}>
                       <td>{(activePage - 1) * itemsPerPage + index + 1}</td>
-                      <td style={{ color: 'blue' }} onClick={() => navigate(`/admin/users/user-details/${user._id}`)}>
-                        {user.name}
+                      <td>
+                        <Link to={`/admin/users/user-details/${user._id}`}>
+                          {user.name}
+                        </Link>
                       </td>
                       <td>{user.contact_no}</td>
                       <td>{user.email}</td>
@@ -227,7 +229,7 @@ const UserList = () => {
         }
       }
     `}</style>
-    </div>
+    </Container>
   );
 };
 

@@ -28,10 +28,10 @@ import { TbTrash } from "react-icons/tb";
 import { Breadcrumbs } from "../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const BookingDetails = () => {
-  const { customers, loading, error } = useSelector((state) => state.customers);
+  const { customers } = useSelector((state) => state.customers);
   const { selectedGame, status: gameStatus, error: gameError } = useSelector((state) => state.games);
 
-  const { slot, loading: slotLoading, error: slotError } = useSelector((state) => state.slots);
+  const { slot } = useSelector((state) => state.slots);
   const { items } = useSelector((state) => state.items);
 
   const [selectedIds, setSelectedIds] = useState([]);
@@ -52,7 +52,6 @@ const BookingDetails = () => {
   const [playerCredits, setPlayerCredits] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [showOnCredit, setShowOnCredit] = useState(false);
-  const [activeTab, setActiveTab] = useState("checkout");
   const [showClientModal, setShowClientModal] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Payment Options");

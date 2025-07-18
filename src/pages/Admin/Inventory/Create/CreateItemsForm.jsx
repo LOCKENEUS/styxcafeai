@@ -324,7 +324,7 @@ const CreateItemsForm = () => {
     }
 
     return (
-        <Container data-aos="fade-up" data-aos-duration="700">
+        <Container fluid data-aos="fade-up" data-aos-duration="700">
             <Row style={{ marginTop: "10px" }}>
                 <Col sm={12} className="d-flex "  >
                     {/* style={{top:"110px" , left:"700px"}} */}

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import { Button, Table, Pagination, InputGroup, FormControl } from "react-bootstrap";
+import { Button, Table, Pagination, InputGroup, FormControl, Container } from "react-bootstrap";
 import { IoAdd } from "react-icons/io5";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getCustomers, deleteCustomer } from "../../../store/AdminSlice/CustomerSlice";
@@ -67,7 +67,7 @@ const CustomerList = () => {
   );
 
   return (
-    <div className="container mx-2">
+    <Container fluid>
       <Breadcrumbs
         items={[
           { label: "Home", path: "/admin/dashboard" },
@@ -208,7 +208,7 @@ const CustomerList = () => {
         padding: 10px 0;
       }
     `}</style>
-    </div>
+    </Container>
   );
 };
 

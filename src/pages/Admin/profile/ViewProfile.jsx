@@ -1,7 +1,6 @@
 import React from "react";
-import { Card, Row, Col, Image } from "react-bootstrap";
+import { Card, Row, Col, Image, Container } from "react-bootstrap";
 import { FaPhone, FaComment, FaEnvelope } from "react-icons/fa";
-import { BsFillPencilFill } from "react-icons/bs";
 import { GoPencil } from "react-icons/go";
 
 const ViewProfile = () => {
@@ -9,7 +8,7 @@ const ViewProfile = () => {
   const backend_url = import.meta.env.VITE_API_URL;
 
   return (
-    <div className="container mt-4">
+    <Container fluid>
       <Row>
         {/* Profile Section */}
         <Col md={4}>
@@ -168,7 +167,7 @@ const ViewProfile = () => {
           </Row>
         </Col>
       </Row>
-    </div>
+    </Container>
   );
 };
 

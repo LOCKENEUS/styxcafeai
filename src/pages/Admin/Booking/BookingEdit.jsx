@@ -5,10 +5,7 @@ import {
     Col,
     Form,
     InputGroup,
-    Tab,
-    Nav,
     Button,
-    Dropdown,
     ListGroup,
     Card,
     Spinner,
@@ -20,12 +17,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { getGameById, getGames } from "../../../store/slices/gameSlice";
 import { getSlotDetails, getslots } from "../../../store/slices/slotsSlice";
-import { addBooking, deleteBooking, getBookingDetails, getBookingsByDate, updateBooking } from "../../../store/AdminSlice/BookingSlice";
+import { getBookingDetails, getBookingsByDate, updateBooking } from "../../../store/AdminSlice/BookingSlice";
 import ClientModel from "./Model/ClientModel";
-import { IoAdd } from "react-icons/io5";
-import { FaDeleteLeft } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
-import { BiLoaderCircle } from "react-icons/bi";
 import { Breadcrumbs } from "../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const BookingEdit = () => {
@@ -49,18 +43,12 @@ const BookingEdit = () => {
     const [showInput, setShowInput] = useState(false);
     const [newPlayer, setNewPlayer] = useState({ name: "", contact_no: "" });
     const [payableAmount, setPayableAmount] = useState(0);
-    const [creditAmount, setCreditAmount] = useState("");
-    const [playerCredits, setPlayerCredits] = useState([]);
     const [selectedCustomer, setSelectedCustomer] = useState(null);
-    const [showOnCredit, setShowOnCredit] = useState(false);
-    const [activeTab, setActiveTab] = useState("checkout");
     const [showClientModal, setShowClientModal] = useState(false);
-    const [selectedOption, setSelectedOption] = useState("Payment Options");
     const [filteredSlots, setFilteredSlots] = useState([]);
 
     const backend_url = import.meta.env.VITE_API_URL;
     const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     const user = JSON.parse(localStorage.getItem('user'));
     const cafeId = user?._id;
@@ -269,27 +257,6 @@ const BookingEdit = () => {
             console.error("Error updating booking:", error);
         }
     }
-
-    const sortSlotsByTime = (slots) => {
-        const convertTo24HourMinutes = (timeStr) => {
-            let [time, modifier] = timeStr.split(" ");
-            let [hours, minutes] = time.split(":").map(Number);
-
-            if (modifier === "PM" && hours !== 12) {
-                hours += 12;
-            }
-            if (modifier === "AM" && hours === 12) {
-                hours = 0;
-            }
-            return hours * 60 + minutes;
-        };
-
-        return slots.sort((a, b) => {
-            const aStart = convertTo24HourMinutes(a.start_time);
-            const bStart = convertTo24HourMinutes(b.start_time);
-            return aStart - bStart;
-        });
-    };
 
     return (
         <Container fluid>

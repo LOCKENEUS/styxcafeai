@@ -14,6 +14,7 @@ import { getItems } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
 import { getCustomers } from "../../../../store/AdminSlice/CustomerSlice";
 import { getItems as getSuperItems } from "../../../../store/slices/inventory";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 export const PurchaseOrderUpdate = () => {
   const [show, setShow] = useState(false);
@@ -397,16 +398,14 @@ export const PurchaseOrderUpdate = () => {
   };
 
   return (
-    <Container fluid className="p-4">
-      <Col sm={12} className="my-3">
-        <div style={{ top: "186px", fontSize: "18px" }}>
-          <Breadcrumb>
-            <BreadcrumbItem >Home</BreadcrumbItem>
-            <BreadcrumbItem><Link to="/admin/inventory/purchase-order-list">Purchase Order List</Link></BreadcrumbItem>
-            <BreadcrumbItem active>Purchase Order Create</BreadcrumbItem>
-          </Breadcrumb>
-        </div>
-      </Col>
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Purchase Order List", path: "/admin/inventory/purchase-order-list" },
+          { label: "Purchase Order Update", active: true }
+        ]}
+      />
       {/* Header Card */}
       <Card className="p-3 mb-3 shadow-sm">
         <Row className="align-items-center">

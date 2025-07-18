@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Form, Button, Row, Col, Card } from "react-bootstrap";
+import { Form, Button, Row, Col, Card, Container } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { addGame, updateGame, getGameById } from '../../../store/slices/gameSlice';
-import axios from "axios";
+import { Breadcrumbs } from "../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const CreateNewGameForm = () => {
   const dispatch = useDispatch();
@@ -135,12 +135,14 @@ const CreateNewGameForm = () => {
   };
 
   return (
-    <div className="container mt-2">
-      <h5>
-        <Link to="/admin/dashboard">Home</Link> / <span style={{ color: "blue" }}>
-          {id ? "Edit Game" : "Create New Game"}
-        </span>
-      </h5>
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: 'Home', path: '/' },
+          { label: 'Games', path: '/admin/games' },
+          { label: id ? 'Edit Game' : 'Create New Game', active: true },
+        ]}
+      />
       <Card data-aos="fade-up" ata-aos-duration="500" className="p-4 mt-4">
         <Form onSubmit={handleSubmit}>
           <Row className="mb-3">
@@ -319,7 +321,7 @@ const CreateNewGameForm = () => {
           </div>
         </Form>
       </Card>
-    </div>
+    </Container>
   );
 };
 

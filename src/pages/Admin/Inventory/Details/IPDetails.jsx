@@ -4,23 +4,19 @@ import editlogo from "/assets/inventory/mage_edit.png";
 import companylog from "/assets/inventory/companylogo.png";
 import { Link } from "react-router-dom";
 import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Table } from "react-bootstrap";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 export const IPDetails = () => {
   return (
-    <Container >
-      <Row className="mx-2">
-        {/* Breadcrumb Section */}
-        <Col sm={12} className="my-3">
-          <div style={{ top: "186px", fontSize: "10px" }}>
-            <Breadcrumb>
-              <BreadcrumbItem href="#">Home</BreadcrumbItem>
-              <BreadcrumbItem href="#">Sales</BreadcrumbItem>
-              <BreadcrumbItem ><Link to="/admin/Inventory/InvoicePayment">Invoice Payment List</Link></BreadcrumbItem>
-              <BreadcrumbItem active> Invoice Payment Details</BreadcrumbItem>
-            </Breadcrumb>
-          </div>
-        </Col>
-
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Invoice Payments", path: "/admin/Inventory/InvoicePayment" },
+          { label: "Details", active: true }
+        ]}
+      />
+      <Row>
         <Col sm={12} className="my-2">
           <Card className="p-3">
             <Row>
@@ -47,8 +43,8 @@ export const IPDetails = () => {
             <Row>
               {/* Customer Info */}
               <Col sm={6}  >
-                <h5 className="text-primary mb-3" style={{ fontSize: '20px' }}>Rupesh Suryvanshi</h5>
-                <p className="my-3">Yash123456@gmail.com / 915637864976</p>
+                <h5 className="text-primary mb-3" style={{ fontSize: '20px' }}>Mark Zukerberg</h5>
+                <p className="my-3">markzukerberg@gmail.com / 915637864976</p>
 
                 <span style={{ fontSize: '16px', fontWeight: '500' }}>Billing Address</span>
                 <p>Classy Cuts Unisex Salon, Manewada Road, near vidharbh glass, Durga Nagar, Ambika Nagar, Ayodhya nagar, Nagpur, Maharashtra, India</p>

@@ -94,10 +94,10 @@ export const SIDetails = () => {
                                         <tr>
                                             <td>${index + 1}</td>
                                             <td>${new Date(payment.deposit_date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "2-digit",
-    })}</td>
+                                                                                              year: "numeric",
+                                                                                              month: "short",
+                                                                                              day: "2-digit",
+                                                                                            })}</td>
                                             <td>₹ ${payment.deposit_amount}</td>
                                             <td>${payment.mode}</td>
                                             <td>${payment.transaction_id}</td>

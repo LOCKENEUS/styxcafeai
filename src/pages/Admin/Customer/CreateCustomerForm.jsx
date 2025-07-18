@@ -1,15 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Form, Button, Row, Col } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { Autocomplete, useJsApiLoader } from "@react-google-maps/api";
+import { Form, Button, Row, Col, Container } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { addCustomer, updateCustomer } from "../../../store/AdminSlice/CustomerSlice";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import { Breadcrumbs } from "../../../components/common/Breadcrumbs/Breadcrumbs";
-
-const googleMapsApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
 const CreateCustomerForm = () => {
   const dispatch = useDispatch();
@@ -276,12 +272,12 @@ const CreateCustomerForm = () => {
   };
 
   return (
-    <div className="container mx-2">
+    <Container fluid>
 
       <Breadcrumbs
         items={[
           { label: "Home", path: "/admin/dashboard" },
-          { label: "Customer", path: "/admin/users/create-customer" },
+          { label: "Customer", path: "/admin/users/customer-list" },
           { label: "Create", active: true }
         ]}
       />
@@ -552,7 +548,7 @@ const CreateCustomerForm = () => {
           </div>
         </Form>
       </div>
-    </div>
+    </Container>
   );
 };
 

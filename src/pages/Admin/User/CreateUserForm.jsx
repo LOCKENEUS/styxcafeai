@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Form, Button, Row, Col } from "react-bootstrap";
+import { Form, Button, Row, Col, Container } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import { useDispatch } from "react-redux";
@@ -262,12 +262,14 @@ const CreateUser = () => {
   };
 
   return (
-    <div className="container mt-2">
-      {/* <h5>
-        <Link to="/admin/dashboard">Home</Link> /
-        <Link to="/admin/users/user-list">User List</Link> /
-        <span style={{ color: "blue" }}>{id ? "Edit User" : "Create User"}</span>
-      </h5> */}
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "User List", path: "/admin/users/user-list" },
+          { label: "Create User", active: true }
+        ]}
+      />
 
       <div className="row mt-3">
         <div className="col-12 d-flex" style={{ fontSize: '16px' }}>
@@ -610,7 +612,7 @@ const CreateUser = () => {
           </div>
         </Form>
       </div>
-    </div>
+    </Container>
   );
 };
 

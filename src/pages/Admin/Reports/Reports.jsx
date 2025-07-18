@@ -8,6 +8,7 @@ import { getslots24 } from '../../../store/slices/slotsSlice';
 import { getCafeReportData } from '../../../store/AdminSlice/reports';
 import { Button, Card, Col, Container, Form, Pagination, Row, Table } from 'react-bootstrap';
 import { Breadcrumbs } from '../../../components/common/Breadcrumbs/Breadcrumbs';
+import { Link } from 'react-router-dom';
 
 export const Reports = () => {
   let filteredItems = [];
@@ -668,7 +669,7 @@ export const Reports = () => {
             <hr className="my-4" />
 
             {/* Summary Section */}
-            <Row className="text-center gy-2">
+            {/* <Row className="text-center gy-2">
               <Col xs={6} md={3}>
                 <Card className="bg-success text-white">
                   <Card.Body>
@@ -701,7 +702,13 @@ export const Reports = () => {
                   </Card.Body>
                 </Card>
               </Col>
-            </Row>
+            </Row> */}
+            <div className=" d-flex-column d-md-flex justify-content-between mt-3 gap-1">
+              <div className='rounded-2 px-3 py-2' style={{ backgroundColor: "#dbf9e0", color: "white" }}><h3 className='mb-0'>Total Earnings: &#8377; {cafeReport?.total_amount || 0}</h3></div>
+              <div className='rounded-2 px-3 py-2' style={{ backgroundColor: "#def1fa", color: "white" }}><h3 className='mb-0'>Total Paid Amount: &#8377; {cafeReport?.total_paid || 0}</h3></div>
+              <div className='rounded-2 px-3 py-2' style={{ backgroundColor: "#fbe0e4", color: "white" }}><h3 className='mb-0'>Credit Amount: &#8377; {cafeReport?.credit_amount || 0}</h3></div>
+              <div className='rounded-2 px-3 py-2' style={{ backgroundColor: "#f6defa", color: "white" }}><h3 className='mb-0'>Total Bookings: {cafeReport?.total_bookings || 0}</h3></div>
+            </div>
 
             <hr className="my-4" />
 
@@ -736,7 +743,7 @@ export const Reports = () => {
                     <thead className="table-light bg-red">
                       <tr>
                         <th>SN</th>
-                        <th>Booking ID</th>
+                        <th>Bookings</th>
                         <th>Game</th>
                         <th>Slot</th>
                         <th>Players</th>
@@ -753,13 +760,15 @@ export const Reports = () => {
                         currentItems.map((row, index) => (
                           <tr key={row._id || index}>
                             <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                            <td style={{ color: "#0062FF", cursor: "pointer" }}
-                              onClick={() => window.location.href = `/admin/booking/checkout/${row._id}`}>
-                              {row.booking_id || "N/A"}
+                            <td style={{ color: "#0062FF", cursor: "pointer" }}>
+                              <Link to={`/admin/booking/checkout/${row._id}`}>
+                                {row?.total_bookings || "N/A"}
+                              </Link>
                             </td>
-                            <td style={{ color: "#0062FF", cursor: "pointer" }}
-                              onClick={() => window.location.href = `/admin/games/game-details/${row?.game_id?._id}`}>
-                              {row?.game_id?.name || "N/A"}
+                            <td style={{ color: "#0062FF", cursor: "pointer" }}>
+                              <Link to={`/admin/games/${row?.game_id?._id}`}>
+                                {row?.game_name || "N/A"}
+                              </Link>
                             </td>
                             <td>{`${row?.slot_id?.start_time || ""} - ${row?.slot_id?.end_time || ""}`}</td>
                             <td>{`${(row?.players?.length || 0) + 1} Players`}</td>
