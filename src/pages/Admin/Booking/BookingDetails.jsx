@@ -25,6 +25,7 @@ import Select from "react-select";
 import { LiaCoinsSolid } from "react-icons/lia";
 import { RxCross2 } from "react-icons/rx";
 import { TbTrash } from "react-icons/tb";
+import { Breadcrumbs } from "../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const BookingDetails = () => {
   const { customers, loading, error } = useSelector((state) => state.customers);
@@ -627,12 +628,16 @@ const BookingDetails = () => {
   };
 
   return (
-    <Container fluid className="p-4">
-      <h6 className="mb-3 muted-text">
-        Home / Bookings/{" "}
-        <span className="text-primary">Booking Details</span>
-      </h6>
-      <Row style={{height: "70vh"}}>
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Book Game", path: "/admin/booking/games" },
+          { label: `${selectedGame?.data?.name}`, path: `/admin/booking/games/${selectedGame?.data?._id}`},
+          { label: "Details", active: true }
+        ]}
+      />
+      <Row style={{ height: "70vh" }}>
         <Col style={{ height: "100%" }} className="px-0 px-md-2" md={4} lg={3}>
           <div className="d-flex gap-3 zero-gap">
             <InputGroup className="mb-3 ">

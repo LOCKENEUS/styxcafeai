@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { GetCafePOList, GetPOListByVendor, GetPurchaseOrder } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { createPurchaseReceive } from "../../../../store/AdminSlice/Inventory/purchaseReceive";
 import { toast } from "react-toastify";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 export const PRCreate = () => {
     const [formData, setFormData] = useState({
@@ -177,19 +178,15 @@ export const PRCreate = () => {
     };
 
     return (
-        <Container >
-            <Row className="mx-2">
-                {/* Breadcrumb Section */}
-                <Col sm={12} className="mt-3">
-                    <div style={{ top: "186px", fontSize: "16px" }}>
-                        <Breadcrumb>
-                            <BreadcrumbItem href="#">Home</BreadcrumbItem>
-                            <BreadcrumbItem> <Link to="/admin/inventory/purchaseReceived">Purchase Received List</Link></BreadcrumbItem>
-                            <BreadcrumbItem active>Purchase Received Create</BreadcrumbItem>
-                        </Breadcrumb>
-                    </div>
-                </Col>
-
+        <Container fluid>
+            <Breadcrumbs
+                items={[
+                    { label: "Home", path: "/admin/dashboard" },
+                    { label: "Purchase Receive List", path: "/admin/inventory/purchase-receive-list" },
+                    { label: "Create", active: true }
+                ]}
+            />
+            <Row>
                 <Col sm={12} className="my-2">
                     <Card className="p-3 shadow-sm">
                         <Row className="align-items-center">

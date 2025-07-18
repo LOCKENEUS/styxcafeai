@@ -14,6 +14,7 @@ import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
 import { getCustomers } from "../../../../store/AdminSlice/CustomerSlice";
 import { addPBill, getPBillById, updatePBill } from "../../../../store/AdminSlice/Inventory/PBillSlice";
 import { getItems as getSuperItems } from "../../../../store/slices/inventory";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const PurchaseBillCreate = () => {
   const [show, setShow] = useState(false);
@@ -420,18 +421,14 @@ const PurchaseBillCreate = () => {
   };
 
   return (
-    <Container fluid className="p-4">
-      <Col sm={12} className="mb-3">
-        <div style={{ top: "186px", fontSize: "16px" }}>
-          <Breadcrumb>
-            <BreadcrumbItem >Home</BreadcrumbItem>
-            <BreadcrumbItem><Link to="/admin/inventory/purchase-bill-list">Purchase Bill List</Link></BreadcrumbItem>
-            <BreadcrumbItem active>Purchase Bill Create</BreadcrumbItem>
-          </Breadcrumb>
-        </div>
-      </Col>
-      {/* Header Card */}
-
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Purchase Bill List", path: "/admin/inventory/purchase-bill-list" },
+          { label: "Create", active: true }
+        ]}
+      />
       {/* Client & Delivery Details */}
       <Card className="p-3 shadow-sm">
         <Row>

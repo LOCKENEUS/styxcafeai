@@ -10,6 +10,7 @@ import { collectAmount, collectAmountOnline, collectCustomCreditAmount, collectC
 import { useNavigate } from "react-router-dom";
 import { FaRupeeSign } from "react-icons/fa";
 import CreditCollectModal from "./Modal/CreditCollectModal";
+import { Breadcrumbs } from "../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const CustomerDetails = () => {
   const { id } = useParams();
@@ -40,7 +41,7 @@ const CustomerDetails = () => {
       let creditTotalAmount = 0
       selectedCustomer?.creditHistory.forEach((credit) => {
         if (credit?.status === "Unpaid") {
-        creditTotalAmount += credit?.credit
+          creditTotalAmount += credit?.credit
         }
         if (credit?.status === "Unpaid" && credit?.paid_amount > 0) {
           creditTotalAmount -= credit?.paid_amount
@@ -158,9 +159,16 @@ const CustomerDetails = () => {
   };
 
   return (
-    <Container className="mt-4">
+    <Container className="mx-2">
+
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Customer", path: "/admin/users/customer-list" },
+          { label: "Details", active: true }
+        ]}
+      />
       <Row>
-        {/* Sidebar with Profile */}
         <Col md={4}>
           <Card className="p-3" style={{ height: "100vh" }}>
             <div className="d-flex justify-content-center flex-column align-items-center">
@@ -377,7 +385,7 @@ const CustomerDetails = () => {
                           <tbody>
                             {selectedCustomer?.creditHistory.length > 0 ? (
                               selectedCustomer?.creditHistory.map((credit, index) => (
-                               credit.status !== "Paid" && <tr key={credit._id}>
+                                credit.status !== "Paid" && <tr key={credit._id}>
                                   <td>{index + 1}</td>
                                   <td style={{ fontWeight: "600", color: "blue", cursor: "pointer" }} onClick={() => navigate(`/admin/booking/checkout/${credit.booking_id}`)} >{credit.booking_no}</td>
                                   <td>{credit.game_name}</td>

@@ -19,6 +19,7 @@ import gm1 from "/assets/inventory/mynaui_search.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { getItemGroups } from "../../../../store/AdminSlice/Inventory/ItemGroupSlice"; // Adjust the path as necessary
 import Loader from "../../../../components/common/Loader/Loader";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const ItemGroupList = () => {
   const getRandomColor = (name) => {
@@ -88,30 +89,22 @@ const ItemGroupList = () => {
   }, [dispatch, cafeId]);
 
   return (
-    <Container fluid className="px-3">
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Item Group List", active: true }
+        ]}
+      />
       <Row>
-        <Col sm={12} className="mx-md-4 mb-3">
-          <div style={{ top: "186px", fontSize: "16px" }}>
-            <Breadcrumb>
-              <BreadcrumbItem>
-                <Link to="/admin/dashboard">Home</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <Link to="/admin/inventory/dashboard">Inventory</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem active>Item Group List</BreadcrumbItem>
-            </Breadcrumb>
-          </div>
-        </Col>
-
         <Col sm={12}>
           <Card
             data-aos="fade-right"
             data-aos-duration="1000"
-            className="mx-md-4 p-3"
+            className="p-3"
           >
             <Row className="align-items-center">
-              <Col xs={12} sm={6} lg={4} className="d-flex my-2">
+              <Col xs={12} sm={6} lg={3} className="d-flex my-2">
                 <h1
                   style={{
                     fontSize: "20px",
@@ -124,7 +117,7 @@ const ItemGroupList = () => {
                 </h1>
               </Col>
 
-              <Col xs={12} sm={6} lg={3} className="d-flex my-2">
+              <Col xs={12} sm={6} lg={4} className="d-flex my-2">
                 <InputGroup className="navbar-input-group">
                   <InputGroup.Text
                     className="border-0"
@@ -180,7 +173,7 @@ const ItemGroupList = () => {
 
                 <Link to="/admin/inventory/item-group-form">
                   <Button variant="primary" className="px-3" size="sm">
-                    + Create Item Group
+                    + Create Group
                   </Button>
                 </Link>
               </Col>

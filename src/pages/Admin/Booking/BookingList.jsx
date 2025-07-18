@@ -8,6 +8,7 @@ import {
     InputGroup,
     FormControl,
     Pagination,
+    Container,
 } from "react-bootstrap";
 import {
     FaSearch,
@@ -22,6 +23,7 @@ import { getBookings } from "../../../store/AdminSlice/BookingSlice";
 import profile from "/assets/profile/user_avatar.png";
 import { convertTo12Hour, formatDate } from "../../../components/utils/utils";
 import { MdOutlineDoNotDisturb } from "react-icons/md";
+import { Breadcrumbs } from "../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const BookingList = () => {
     const { gameId } = useParams();
@@ -208,19 +210,18 @@ const BookingList = () => {
     };
 
     return (
-        <div className="container-fluid min-vh-100 px-md-2">
-            <Row className="mx-0">
-                <Col>
-                    <p>
-                        Home / Games / <Link to="/admin/games/Bookings">Bookings</Link>{" "}
-                    </p>
-                </Col>
-            </Row>
+        <Container fluid style={{ maxWidth: "100vw", overflowX: "hidden" }}>
+            <Breadcrumbs
+                items={[
+                    { label: "Home", path: "/admin/dashboard" },
+                    { label: "Booking List", active: true }
+                ]}
+            />
             <Row
                 className="mb-3 d-flex justify-content-between"
                 style={{ backgroundColor: "transparent" }}
             >
-                <Col xs={12} md={6} className="d-flex">
+                <Col xs={12} md={6} className="d-flex px-0">
                     <div
                         onClick={(e) => {
                             e.stopPropagation();
@@ -286,16 +287,15 @@ const BookingList = () => {
                 <Col
                     xs={12}
                     md={6}
-                    className="text-md-end d-flex flex-md-row justify-content-between align-items-center gap-3"
+                    className="text-md-end d-flex flex-md-row justify-content-between align-items-center"
                     style={{ backgroundColor: "transparent" }}
                 >
-                    <InputGroup className="mb-2 mb-md-0">
+                    <InputGroup className="mb-2 mb-md-0 w-75">
                         <Button variant="outline-secondary">
                             <FaSearch
                                 style={{
                                     fontSize: "20px",
                                     color: "#0062FF",
-                                    marginRight: "10px",
                                 }}
                             />
                         </Button>
@@ -361,8 +361,12 @@ const BookingList = () => {
                 </Col>
             </Row>
 
-            <div className="table-responsive bg-white rounded-3 shadow-sm p-1 p-md-4">
-                <div className="fs-1 py-2 py-md-0"><strong>Collection: ₹ </strong>{collection}</div>
+            {/* <div className="table-responsive bg-white rounded-3 shadow-sm p-1 p-md-4"> */}
+            <div
+                className="table-responsive bg-white rounded-2"
+                style={{ overflowX: "auto"}}
+            >
+                <div className="fs-1 p-2 p-md-3 "><strong>Collection: ₹ </strong>{collection}</div>
                 <Table striped bordered hover>
                     <thead
                         className=""
@@ -588,7 +592,7 @@ const BookingList = () => {
                     <Pagination.Next onClick={() => handlePageChange(activePage + 1)} disabled={activePage === totalPages} />
                 </Pagination>
             </div>
-        </div>
+        </Container>
     );
 };
 

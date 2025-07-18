@@ -6,6 +6,7 @@ import { getGames } from '../../../store/slices/gameSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import GamePlaceholder from '../Games/components/GamePlaceholder';
+import { Breadcrumbs } from '../../../components/common/Breadcrumbs/Breadcrumbs';
 
 const BookGames = () => {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ const BookGames = () => {
   const outdoorGames = games.filter(game => game.zone === 'Outdoor');
 
   return (
-    <Container fluid className="p-4">
+    <Container fluid>
       <style>
         {`
           .horizontal-scroll {
@@ -85,14 +86,15 @@ const BookGames = () => {
         `}
       </style>
 
-      {/* Breadcrumb */}
-      <h5>
-        <Link to="/admin/dashboard">Home</Link> /{' '}
-        <span style={{ color: 'blue' }}>Book Games</span>
-      </h5>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Book Game", active: true }
+        ]}
+      />
 
       {/* Indoor Games Section */}
-      <div className="d-flex justify-content-between align-items-center mt-4 mb-2">
+      <div className="d-flex justify-content-between align-items-center mt-2 mb-2">
         <h5 className="text-dark fw-bold" style={{ fontSize: 'clamp(20px, 5vw, 25px)', margin: 0 }}>
           Indoor Games
         </h5>

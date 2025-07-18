@@ -19,6 +19,7 @@ import {
   deleteItemGroup,
 } from "../../../../store/AdminSlice/Inventory/ItemGroupSlice";
 import Loader from "../../../../components/common/Loader/Loader";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const ItemGroupsDetails = () => {
   const navigate = useNavigate();
@@ -50,30 +51,21 @@ const ItemGroupsDetails = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <Container
- 
-      fluid
-      className="mt-4 min-vh-100"
-    >
-      <Breadcrumb>
-        <BreadcrumbItem>
-          <Link to="/admin/dashboard">Home</Link>
-        </BreadcrumbItem>
-        <BreadcrumbItem>
-          <Link to="/admin/inventory/dashboard">Inventory</Link>
-        </BreadcrumbItem>
-        <BreadcrumbItem>
-          <Link to="/admin/inventory/item-group-list">Item Group List</Link>
-        </BreadcrumbItem>
-        <BreadcrumbItem active>Item Groups Details</BreadcrumbItem>
-      </Breadcrumb>
-      <Tab.Container   defaultActiveKey="checkout">
+    <Container fluid >
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Item Group List", path: "/admin/inventory/item-group-list" },
+          { label: "Details", active: true }
+        ]}
+      />
+      <Tab.Container defaultActiveKey="checkout">
         <Row data-aos="fade-down" data-aos-duration="1000">
-          <Col sm={12} className="mt-3">
+          <Col sm={12}>
             <Tab.Content>
               <Card className="p-3">
                 <Tab.Pane eventKey="checkout">
-                  <h5>Details</h5>
+                  <h4>Details</h4>
                   <div className="d-flex justify-content-end mt-3">
                     <button
                       onClick={() =>

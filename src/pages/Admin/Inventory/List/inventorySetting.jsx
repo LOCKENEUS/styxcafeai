@@ -28,6 +28,7 @@ import {
 } from "../../../../store/AdminSlice/CustomField";
 import { BiCheck, BiTrash } from "react-icons/bi";
 import { Link } from "react-router-dom";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 export const InventorySettingAdmin = () => {
   const dispatch = useDispatch();
@@ -167,21 +168,13 @@ export const InventorySettingAdmin = () => {
 
   return (
     <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Inventory Setting", active: true }
+        ]}
+      />
       <Row>
-        <Col sm={12} className="mt-3 mb-0">
-          <div style={{ top: "186px", fontSize: "16px" }}>
-            <Breadcrumb>
-              <BreadcrumbItem>
-                <Link to="/admin/dashboard">Home</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <Link to="/admin/inventory/dashboard">Inventory</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem active>Inventory Settings</BreadcrumbItem>
-            </Breadcrumb>
-          </div>
-        </Col>
-
         <TabContainer
           id="inventory-tabs"
           activeKey={activeKey}

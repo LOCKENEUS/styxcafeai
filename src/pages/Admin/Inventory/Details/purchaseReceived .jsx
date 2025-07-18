@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getPurchaseReceive } from "../../../../store/AdminSlice/Inventory/purchaseReceive";
 import { useEffect, useState } from "react";
 import { getStyxData, sendMailToVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 export const PurchaseReceivedDetails = () => {
 
@@ -102,17 +103,15 @@ export const PurchaseReceivedDetails = () => {
     };
 
     return (
-        <Container >
-            <Row className="mx-2">
-                <Col sm={12} className="my-3">
-                    <div style={{ top: "186px", fontSize: "18px" }}>
-                        <Breadcrumb>
-                            <BreadcrumbItem href="#">Home</BreadcrumbItem>
-                            <BreadcrumbItem><Link to="admin/inventory/purchaseReceived">Purchase Receive List</Link></BreadcrumbItem>
-                            <BreadcrumbItem active>Purchase Receive Details</BreadcrumbItem>
-                        </Breadcrumb>
-                    </div>
-                </Col>
+        <Container fluid >
+            <Breadcrumbs
+                items={[
+                    { label: "Home", path: "/admin/dashboard" },
+                    { label: "Purchase Receive List", path: "/admin/inventory/purchase-receive-list" },
+                    { label: "Details", active: true }
+                ]}
+            />
+            <Row>
                 <Col sm={12} className="my-2">
                     <Card className="p-3">
                         <Row>
@@ -140,7 +139,7 @@ export const PurchaseReceivedDetails = () => {
                     </Card>
                 </Col>
             </Row>
-            <Row className="mx-2" id="printableArea">
+            <Row id="printableArea">
                 {/* Breadcrumb Section */}
 
                 {/* Company Info */}

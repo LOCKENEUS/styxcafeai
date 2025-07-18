@@ -288,7 +288,7 @@ export const CommissionReport = () => {
     return (
         <div className="container-fluid">
             <div className="container mt-2">
-                <div className="row mb-3">
+                <div className="row mb-3 mt-3">
                     <div className="col-12 d-flex" style={{ fontSize: '16px' }}>
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb">

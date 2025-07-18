@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { getPayments } from '../../../../store/AdminSlice/Inventory/CollectPaymentSlice';
 import Loader from "../../../../components/common/Loader/Loader";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 export const InvoicePaymentInventory = () => {
   const dispatch = useDispatch();
@@ -156,20 +157,16 @@ export const InvoicePaymentInventory = () => {
   ) || [];
 
   return (
-    <Container className="p-2 p-md-4">
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Invoice Payment List", active: true }
+        ]}
+      />
       <Row>
-        <Col sm={12} className="mx-2 mb-0 mb-md-3">
-          <div style={{ top: "186px", fontSize: "16px" }}>
-            <Breadcrumb>
-              <BreadcrumbItem href="#">Home</BreadcrumbItem>
-              <BreadcrumbItem href="#">Sales</BreadcrumbItem>
-              <BreadcrumbItem active>Invoice Payment List</BreadcrumbItem>
-            </Breadcrumb>
-          </div>
-        </Col>
-
         <Col sm={12}>
-          <Card data-aos="fade-right" data-aos-duration="1000" className="mx-2 p-3">
+          <Card data-aos="fade-right" data-aos-duration="1000" className="p-3">
             <Row className="align-items-center">
               <Col sm={4} className="d-flex my-2">
                 <h1 style={{ fontSize: "20px", fontWeight: "500", lineHeight: "18px" }} className="m-0">

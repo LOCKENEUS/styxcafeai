@@ -6,6 +6,7 @@ import { addVendor, getVendorById, updateVendor } from "../../../../store/AdminS
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import axios from "axios";
 import { FaCopy } from "react-icons/fa";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 export const CreateVendorForm = () => {
     const { id } = useParams();
@@ -430,37 +431,17 @@ export const CreateVendorForm = () => {
         }
     }
     return (
-        <Container data-aos="fade-up" data-aos-duration="700">
-            <Row
-                style={{
-                    marginTop: "50px",
-                    // backgroundColor:"#F2F2F2",height:"100vh" 
-
-                }}
-            >
-
-
-                <Col sm={12} className="d-flex "  >
-                    {/* style={{top:"110px" , left:"700px"}} */}
-
-                    <div style={{ top: "186px" }}>
-                        <Breadcrumb  >
-                            <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
-                            <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
-                            <BreadcrumbItem ><Link to="/admin/inventory/vendor-list">Vendor List</Link></BreadcrumbItem>
-                            <BreadcrumbItem active>Vendor Create</BreadcrumbItem>
-                        </Breadcrumb>
-                    </div>
-
-                </Col>
-
-
-
+        <Container fluid>
+            <Breadcrumbs
+                items={[
+                    { label: "Home", path: "/admin/dashboard" },
+                    { label: "Vendor List", active: true }
+                ]}
+            />
+            <Row data-aos="fade-up" data-aos-duration="700">
                 <Form onSubmit={handleSubmit}>
-
-
                     {/* <Row> */}
-                    <Card className="shadow p-4 my-4">
+                    <Card className="shadow p-4">
                         <Row>
                             <div className="d-flex justify-content-start align-items-start">
                                 <h1>Vendor Create</h1>
@@ -1025,7 +1006,7 @@ export const CreateVendorForm = () => {
 
                             </Col>
 
-                            <Col sm={12} className="d-flex justify-content-center">
+                            <Col sm={12}>
                                 <Button
                                     variant="primary"
                                     type="submit"

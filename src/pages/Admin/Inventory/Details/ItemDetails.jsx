@@ -25,6 +25,7 @@ import {
 } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { getCustomFieldById } from "../../../../store/AdminSlice/CustomField";
 import { formatDateAndTime } from "../../../../components/utils/utils";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const ItemDetails = () => {
   const navigate = useNavigate();
@@ -110,8 +111,8 @@ const ItemDetails = () => {
   }
 
   return (
-    <Container className="mt-4 min-vh-100">
-      <Breadcrumb>
+    <Container fluid>
+      {/* <Breadcrumb>
         <Breadcrumb.Item>
           <Link to="/admin/dashboard">Home</Link>
         </Breadcrumb.Item>
@@ -122,7 +123,14 @@ const ItemDetails = () => {
           <Link to="/admin/inventory/items-list">Item List</Link>
         </Breadcrumb.Item>
         <Breadcrumb.Item active>Item Details</Breadcrumb.Item>
-      </Breadcrumb>
+      </Breadcrumb> */}
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Item List", path: "/admin/inventory/items-list" },
+          { label: "Details", active: true }
+        ]}
+      />
       <Tab.Container defaultActiveKey="checkout">
         <Row>
           <Col xs={12} sm={6} className="mt-3">

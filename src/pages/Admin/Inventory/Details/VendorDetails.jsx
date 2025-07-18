@@ -7,6 +7,7 @@ import profileBg from "/assets/Admin/profileDetails/profileBg.png";
 import { LuPencil } from "react-icons/lu";
 import pdflogo from "/assets/Admin/profileDetails/pdflogo.svg";
 import profileImg from "/assets/Admin/profileDetails/ProfileImg.png";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const VendorDetails = () => {
   const navigate = useNavigate();
@@ -32,15 +33,14 @@ const VendorDetails = () => {
   if (!selectedVendor) return <div className="text-center my-5">No vendor data found</div>;
 
   return (
-    <Container className="mt-4">
-<div style={{ top: "186px", fontSize: "12px" }}>
-      <Breadcrumb>
-        <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
-        <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
-        <BreadcrumbItem ><Link to="/admin/inventory/vendors-list">Vendors List</Link></BreadcrumbItem>
-        <BreadcrumbItem active>Vendor Details</BreadcrumbItem>
-      </Breadcrumb>
-      </div>
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Vendor List", path: "/admin/inventory/vendors-list" },
+          { label: "Details", active: true }
+        ]}
+      />
       <Row data-aos="fade-up" data-aos-duration="500">
         {/* Sidebar with Profile */}
         <Col md={4}>
@@ -107,16 +107,16 @@ const VendorDetails = () => {
             <div className="d-flex justify-content-between align-items-center mb-3">
               <Nav variant="tabs">
                 <Nav.Item>
-                  <Nav.Link 
-                    className={activeTab === "billing" ? "active" : ""} 
+                  <Nav.Link
+                    className={activeTab === "billing" ? "active" : ""}
                     onClick={() => setActiveTab("billing")}
                   >
                     Billing Address
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link 
-                    className={activeTab === "shipping" ? "active" : ""} 
+                  <Nav.Link
+                    className={activeTab === "shipping" ? "active" : ""}
                     onClick={() => setActiveTab("shipping")}
                   >
                     Shipping Address
@@ -153,10 +153,10 @@ const VendorDetails = () => {
             <h5>Other Documents</h5>
             <div className="d-flex flex-wrap align-items-center justify-content-around gap-2">
               <p><strong>Government Id:</strong> {selectedVendor.govtId}</p>
-              <p><strong>Document:</strong> 
-                <img src={pdflogo} alt="pdflogo" /> 
+              <p><strong>Document:</strong>
+                <img src={pdflogo} alt="pdflogo" />
                 {selectedVendor.image && (
-                  <a 
+                  <a
                     href={`${import.meta.env.VITE_API_URL}/${selectedVendor.image}`}
                     download
                     onClick={(e) => {
@@ -177,7 +177,7 @@ const VendorDetails = () => {
                         });
                     }}
                     className="text-primary"
-                  > 
+                  >
                     Download PDF
                   </a>
                 )}

@@ -21,6 +21,7 @@ import { getPurchaseReceiveList } from "../../../../store/AdminSlice/Inventory/p
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../../../components/common/Loader/Loader";
 import { getStyxData } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 export const PurchaseReceivedAdmin = () => {
 
@@ -147,28 +148,21 @@ export const PurchaseReceivedAdmin = () => {
   };
 
   return (
-    <Container data-aos="fade-right" data-aos-duration="1000" fluid className="mt-4 min-vh-100">
+    <Container data-aos="fade-right" data-aos-duration="1000" fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Purchase Receive List", path: "/admin/inventory/purchase-receive-list" },
+          { label: "Details", active: true }
+        ]}
+      />
       <Row>
-        <Col sm={12} className="mx-2 mb-0 mb-md-3 px-2 px-md-5">
-          <div style={{ top: "186px", fontSize: "16px" }}>
-            <Breadcrumb>
-              <BreadcrumbItem>
-                <Link to="/admin/dashboard">Home</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <Link to="/admin/inventory/dashboard">Inventory</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem active>Purchase Received List</BreadcrumbItem>
-            </Breadcrumb>
-          </div>
-        </Col>
-
         {/* Items List Card */}
         <Col sm={12}>
-          <Card className="mx-1 mx-md-4 mt-0 p-3">
+          <Card className="p-3">
             <Row className="align-items-center">
               {/* Title */}
-              <Col sm={4} className="d-flex my-2">
+              <Col sm={3} className="d-flex my-2">
                 <h1
                   style={{
                     fontSize: "20px",
@@ -182,7 +176,7 @@ export const PurchaseReceivedAdmin = () => {
               </Col>
 
               {/* Search Input */}
-              <Col sm={3} className="d-flex my-2">
+              <Col sm={4} className="d-flex my-2">
                 <InputGroup className="navbar-input-group">
                   <InputGroupText
                     className="border-0"

@@ -7,6 +7,7 @@ import { addCustomer, updateCustomer } from "../../../store/AdminSlice/CustomerS
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
+import { Breadcrumbs } from "../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const googleMapsApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
@@ -275,13 +276,17 @@ const CreateCustomerForm = () => {
   };
 
   return (
-    <div className="container mt-2">
-      <h5>
-        <Link to="/admin/dashboard">Home</Link> /
-        <Link to="/admin/users/customer-list">Customer List</Link> /
-        <span style={{ color: "blue" }}>{id ? "Edit Customer" : "Create New Customer"}</span>
-      </h5>
-      <div className="p-5 rounded-3 shadow-sm bg-body" style={{ margin: '0 auto' }}>
+    <div className="container mx-2">
+
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Customer", path: "/admin/users/create-customer" },
+          { label: "Create", active: true }
+        ]}
+      />
+
+      <div className="p-5 rounded-3 shadow-sm bg-body">
         <Form onSubmit={handleSubmit}>
           <Row className="mb-3">
             <Col md={6}>

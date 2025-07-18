@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import Loader from "../../../components/common/Loader/Loader";
 import { BiSearch } from "react-icons/bi";
 import "./Customer.css"
+import { Breadcrumbs } from "../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const CustomerList = () => {
   const dispatch = useDispatch();
@@ -66,8 +67,14 @@ const CustomerList = () => {
   );
 
   return (
-    <div className="container mt-4 bg-white rounded-2 mx-2 py-2" style={{ padding: '0 1rem' }}>
-      <>
+    <div className="container mx-2">
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Customer", active: true }
+        ]}
+      />
+      <div className=" bg-white rounded-2 py-2 px-3">
         <div className="d-flex justify-content-between align-items-center mt-3 mb-3" style={{ flexDirection: 'row', gap: '1rem' }}>
           <div className="text-dark fw-bold responsive-heading">
             Customer List
@@ -171,36 +178,36 @@ const CustomerList = () => {
             </Pagination>
           </div>
         </div>
-      </>
+      </div>
 
       {/* Optional: Add custom CSS */}
       <style jsx>{`
-        @media (max-width: 768px) {
-          .container {
-            padding: 0 0.5rem;
-          }
-
-          h4 {
-            margin-bottom: 1rem;
-          }
+      @media (max-width: 768px) {
+        .container {
+          padding: 0 0.5rem;
         }
 
-        @media (max-width: 576px) {
-          thead th {
-            font-size: 12px;
-            padding: 8px;
-          }
-          tbody td {
-            font-size: 12px;
-            padding: 8px;
-          }
+        h4 {
+          margin-bottom: 1rem;
         }
+      }
 
-        .pagination-wrapper {
-          overflow-x: auto;
-          padding: 10px 0;
+      @media (max-width: 576px) {
+        thead th {
+          font-size: 12px;
+          padding: 8px;
         }
-      `}</style>
+        tbody td {
+          font-size: 12px;
+          padding: 8px;
+        }
+      }
+
+      .pagination-wrapper {
+        overflow-x: auto;
+        padding: 10px 0;
+      }
+    `}</style>
     </div>
   );
 };

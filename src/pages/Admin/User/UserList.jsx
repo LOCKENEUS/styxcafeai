@@ -8,6 +8,7 @@ import { getUsers, deleteUser } from "../../../store/AdminSlice/UserSlice";
 import Loader from "../../../components/common/Loader/Loader";
 import { useNavigate } from "react-router-dom";
 import { BiSearch } from "react-icons/bi";
+import { Breadcrumbs } from "../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const UserList = () => {
   const dispatch = useDispatch();
@@ -75,152 +76,157 @@ const UserList = () => {
   }
 
   return (
-    <div className="container mt-4 mx-2 py-2 bg-white rounded-2" style={{ padding: '0 1rem' }}>
-      <div
-        className="d-flex justify-content-between align-items-center mt-3 mb-3"
-        style={{ flexDirection: 'row', gap: '1rem' }}
-      >
+    <div className="container mx-2">
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "User", active: true }
+        ]}
+      />
+      <div className="py-2 px-3 bg-white rounded-2">
         <div
-          className="text-dark fw-bold responsive-heading"
+          className="d-flex justify-content-between align-items-center mt-3 mb-3"
+          style={{ flexDirection: 'row', gap: '1rem' }}
         >
-          User List
-        </div>
-
-        {/* Search Input */}
-        <InputGroup className="mb-3 w-50 mt-3">
-          <div className="d-flex px-2 bg-white align-items-center">
-            <BiSearch size={20} />
+          <div
+            className="text-dark fw-bold responsive-heading"
+          >
+            User List
           </div>
-          <FormControl
-            className="border-none "
-            placeholder="Search by Name, Contact, or Email"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </InputGroup>
 
-        <Link to="/admin/users/create-user">
-          <IoAdd
-            style={{
-              fontSize: 'clamp(30px, 8vw, 40px)',
-              cursor: 'pointer',
-              backgroundColor: 'white',
-              color: 'blue',
-              border: '2px solid blue',
-              borderRadius: '50%',
-              padding: '0.2rem',
-            }}
-          />
-        </Link>
+          {/* Search Input */}
+          <InputGroup className="mb-3 w-50 mt-3">
+            <div className="d-flex px-2 bg-white align-items-center">
+              <BiSearch size={20} />
+            </div>
+            <FormControl
+              className="border-none "
+              placeholder="Search by Name, Contact, or Email"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </InputGroup>
+
+          <Link to="/admin/users/create-user">
+            <IoAdd
+              style={{
+                fontSize: 'clamp(30px, 8vw, 40px)',
+                cursor: 'pointer',
+                backgroundColor: 'white',
+                color: 'blue',
+                border: '2px solid blue',
+                borderRadius: '50%',
+                padding: '0.2rem',
+              }}
+            />
+          </Link>
+        </div>
+
+        {filteredUsers.length === 0 ? (
+          <div style={{ overflowX: 'auto', width: '100%' }}>
+            <Table data-aos="fade-right" ata-aos-duration="1000" striped hover style={{ minWidth: '600px' }}>
+              <thead style={{ backgroundColor: '#0062FF0D' }}>
+                <tr>
+                  <th>S/N</th>
+                  <th>Name</th>
+                  <th>Contact</th>
+                  <th>Email</th>
+                  <th>Department</th>
+                  <th>Role</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colSpan="7" style={{ textAlign: 'center', padding: '2rem' }}>
+                    No users found. Click the + button to add a new user.
+                  </td>
+                </tr>
+              </tbody>
+            </Table>
+          </div>
+        ) : (
+          <div style={{ overflowX: 'auto', width: '100%' }}>
+            <Table striped hover style={{ minWidth: '600px' }}>
+              <thead style={{ backgroundColor: '#0062FF0D' }}>
+                <tr>
+                  <th>S/N</th>
+                  <th>Name</th>
+                  <th>Contact</th>
+                  <th>Email</th>
+                  <th>Department</th>
+                  <th>Role</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredUsers
+                  .slice((activePage - 1) * itemsPerPage, activePage * itemsPerPage) // Pagination logic
+                  .map((user, index) => (
+                    <tr key={user._id}>
+                      <td>{(activePage - 1) * itemsPerPage + index + 1}</td>
+                      <td style={{ color: 'blue' }} onClick={() => navigate(`/admin/users/user-details/${user._id}`)}>
+                        {user.name}
+                      </td>
+                      <td>{user.contact_no}</td>
+                      <td>{user.email}</td>
+                      <td>{user.department}</td>
+                      <td>{user.role}</td>
+                      <td>
+                        <Button
+                          variant="link"
+                          className="text-primary"
+                          onClick={() => handleDeleteUser(user._id)}
+                        >
+                          <FaTrash style={{ color: 'red', fontSize: '1.2rem' }} />
+                        </Button>
+
+
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </Table>
+          </div>
+        )}
+
+        {/* Add pagination */}
+        <div className="d-flex justify-content-center mt-3 mb-3">
+          <div className="pagination-wrapper">
+            <Pagination size={window.innerWidth < 768 ? "sm" : ""}>
+              <Pagination.Prev onClick={() => handlePageChange(activePage - 1)} disabled={activePage === 1} />
+              {[...Array(totalPages)].map((_, index) => (
+                <Pagination.Item key={index + 1} active={index + 1 === activePage} onClick={() => handlePageChange(index + 1)}>
+                  {index + 1}
+                </Pagination.Item>
+              ))}
+              <Pagination.Next onClick={() => handlePageChange(activePage + 1)} disabled={activePage === totalPages} />
+            </Pagination>
+          </div>
+        </div>
       </div>
-
-
-
-      {filteredUsers.length === 0 ? (
-        <div style={{ overflowX: 'auto', width: '100%' }}>
-          <Table data-aos="fade-right" ata-aos-duration="1000" striped hover style={{ minWidth: '600px' }}>
-            <thead style={{ backgroundColor: '#0062FF0D' }}>
-              <tr>
-                <th>S/N</th>
-                <th>Name</th>
-                <th>Contact</th>
-                <th>Email</th>
-                <th>Department</th>
-                <th>Role</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colSpan="7" style={{ textAlign: 'center', padding: '2rem' }}>
-                  No users found. Click the + button to add a new user.
-                </td>
-              </tr>
-            </tbody>
-          </Table>
-        </div>
-      ) : (
-        <div style={{ overflowX: 'auto', width: '100%' }}>
-          <Table striped hover style={{ minWidth: '600px' }}>
-            <thead style={{ backgroundColor: '#0062FF0D' }}>
-              <tr>
-                <th>S/N</th>
-                <th>Name</th>
-                <th>Contact</th>
-                <th>Email</th>
-                <th>Department</th>
-                <th>Role</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUsers
-                .slice((activePage - 1) * itemsPerPage, activePage * itemsPerPage) // Pagination logic
-                .map((user, index) => (
-                  <tr key={user._id}>
-                    <td>{(activePage - 1) * itemsPerPage + index + 1}</td>
-                    <td style={{ color: 'blue' }} onClick={() => navigate(`/admin/users/user-details/${user._id}`)}>
-                      {user.name}
-                    </td>
-                    <td>{user.contact_no}</td>
-                    <td>{user.email}</td>
-                    <td>{user.department}</td>
-                    <td>{user.role}</td>
-                    <td>
-                      <Button
-                        variant="link"
-                        className="text-primary"
-                        onClick={() => handleDeleteUser(user._id)}
-                      >
-                        <FaTrash style={{ color: 'red', fontSize: '1.2rem' }} />
-                      </Button>
-
-
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </Table>
-        </div>
-      )}
-
-      {/* Add pagination */}
-      <div className="d-flex justify-content-center mt-3 mb-3">
-        <div className="pagination-wrapper">
-          <Pagination size={window.innerWidth < 768 ? "sm" : ""}>
-            <Pagination.Prev onClick={() => handlePageChange(activePage - 1)} disabled={activePage === 1} />
-            {[...Array(totalPages)].map((_, index) => (
-              <Pagination.Item key={index + 1} active={index + 1 === activePage} onClick={() => handlePageChange(index + 1)}>
-                {index + 1}
-              </Pagination.Item>
-            ))}
-            <Pagination.Next onClick={() => handlePageChange(activePage + 1)} disabled={activePage === totalPages} />
-          </Pagination>
-        </div>
-      </div>
-
       <style jsx>{`
-        @media (max-width: 768px) {
-          .container {
-            padding: 0 0.5rem;
-          }
-
-          h4 {
-            margin-bottom: 1rem;
-          }
+      @media (max-width: 768px) {
+        .container {
+          padding: 0 0.5rem;
         }
 
-        @media (max-width: 576px) {
-          thead th {
-            font-size: 12px;
-            padding: 8px;
-          }
-          tbody td {
-            font-size: 12px;
-            padding: 8px;
-          }
+        h4 {
+          margin-bottom: 1rem;
         }
-      `}</style>
+      }
+
+      @media (max-width: 576px) {
+        thead th {
+          font-size: 12px;
+          padding: 8px;
+        }
+        tbody td {
+          font-size: 12px;
+          padding: 8px;
+        }
+      }
+    `}</style>
     </div>
   );
 };

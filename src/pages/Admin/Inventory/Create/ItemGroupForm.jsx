@@ -11,6 +11,7 @@ import { addItemGroup, getItemGroupById, updateItemGroup } from '../../../../sto
 import { getCustomFields, deleteCustomField } from '../../../../store/AdminSlice/CustomField';
 import { getTaxFields } from '../../../../store/AdminSlice/TextFieldSlice';
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const ItemGroupForm = () => {
   const navigate = useNavigate();
@@ -227,83 +228,6 @@ const ItemGroupForm = () => {
     return `${groupInitial}${attributeInitial}-${String(index + 1).padStart(3, '0')}`;
   };
 
-  // const generateItems = () => {
-  //   const items = [];
-  //   let globalIndex = 0;
-
-  //   attributes.forEach((attribute, attrIndex) => {
-  //     const options = attribute.options.split(',').map(option => option.trim());
-  //     options.forEach((option, optIndex) => {
-  //       const itemIndex = attributes.slice(0, attrIndex).reduce(
-  //         (acc, attr) => acc + attr.options.split(',').length,
-  //         0
-  //       ) + optIndex;
-
-  //       const itemName = `${formData.group_name} ${attribute.color} ${option}`;
-  //       // Generate a unique SKU for each item
-  //       const generatedSKU = generateSKU(formData.group_name, itemName, attribute.color, globalIndex);
-  //       globalIndex++;
-
-  //       const item = {
-  //         name: itemName,
-  //         sku: formData.items[itemIndex]?.sku || generatedSKU, // Use existing SKU if available, otherwise use generated
-  //         hsn: formData.items[itemIndex]?.hsn || '',
-  //         unit: formData.unit,
-  //         taxable: formData.taxable,
-  //         manufacturer: formData.manufacturer,
-  //         brand: formData.brand,
-  //         costPrice: formData.items[itemIndex]?.costPrice || 0,
-  //         sellingPrice: formData.items[itemIndex]?.sellingPrice || 0,
-  //         stock: formData.items[itemIndex]?.stock || 0,
-  //         upc: formData.items[itemIndex]?.upc || '',
-  //         ean: formData.items[itemIndex]?.ean || '',
-  //         isbn: formData.items[itemIndex]?.isbn || '',
-  //         cafe: cafeId
-  //       };
-  //       items.push(item);
-  //     });
-  //   });
-  //   return items;
-  // };
-
-  // const generateItems = () => {
-  //   const items = [];
-  //   let globalIndex = 0;
-
-  //   attributes.forEach((attribute, attrIndex) => {
-  //     const options = attribute.options.split(',').map((option) => option.trim());
-  //     options.forEach((option, optIndex) => {
-  //       const itemIndex = attributes.slice(0, attrIndex).reduce(
-  //         (acc, attr) => acc + attr.options.split(',').length,
-  //         0
-  //       ) + optIndex;
-
-  //       const itemName = `${formData.group_name} ${attribute.color} ${option}`;
-  //       const generatedSKU = generateSKU(formData.group_name, itemName, attribute.color, globalIndex);
-  //       globalIndex++;
-
-  //       const item = {
-  //         name: itemName,
-  //         sku: formData.items[itemIndex]?.sku || generatedSKU,
-  //         hsn: formData.items[itemIndex]?.hsn || '',
-  //         unit: formData.unit,
-  //         taxable: formData.taxable,
-  //         manufacturer: formData.manufacturer,
-  //         brand: formData.brand,
-  //         costPrice: formData.items[itemIndex]?.costPrice || 0,
-  //         sellingPrice: formData.items[itemIndex]?.sellingPrice || 0,
-  //         stock: formData.items[itemIndex]?.stock || 0,
-  //         upc: formData.items[itemIndex]?.upc || '',
-  //         ean: formData.items[itemIndex]?.ean || '',
-  //         isbn: formData.items[itemIndex]?.isbn || '',
-  //         cafe: cafeId,
-  //       };
-  //       items.push(item);
-  //     });
-  //   });
-  //   return items;
-  // };
-
   const generateItems = () => {
     const items = [];
     let globalIndex = 0;
@@ -397,17 +321,17 @@ const ItemGroupForm = () => {
   };
 
   return (
-    <Container className="p-4">
-      <div style={{ top: "186px", fontSize: "12px" }}>
-        <Breadcrumb>
-          <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
-          <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
-          <BreadcrumbItem ><Link to="/admin/inventory/item-group-list">Item Group List</Link></BreadcrumbItem>
-          <BreadcrumbItem active>{isEditMode ? 'Edit Item Group' : 'Create New Item Group'}</BreadcrumbItem>
-        </Breadcrumb> </div>
-      <Card className="shadow p-3">
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Item Group List", path: "/admin/inventory/item-group-list" },
+          { label: "Create", active: true }
+        ]}
+      />
+      <Card className="shadow p-4">
         <div className="d-flex justify-content-start align-items-start">
-          <h1>{isEditMode ? 'Edit Item Group' : 'Create New Item'}</h1>
+          <h1>{isEditMode ? 'Edit Item Group' : 'Create New Item Group'}</h1>
         </div>
         <Form onSubmit={handleSubmit}>
           <div className="row">

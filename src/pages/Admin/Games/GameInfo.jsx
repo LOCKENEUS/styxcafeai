@@ -8,6 +8,7 @@ import {
   InputGroup,
   FormControl,
   Pagination,
+  Container,
 } from "react-bootstrap";
 import {
   FaEdit,
@@ -26,6 +27,7 @@ import { getBookingsByGame } from "../../../store/AdminSlice/BookingSlice";
 import { convertTo12Hour, formatDate } from "../../../components/utils/utils";
 import { BiPencil } from "react-icons/bi";
 import CustomSlotModal from "./Modal/CustomSlot";
+import { Breadcrumbs } from "../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const GameInfo = () => {
   const { gameId } = useParams();
@@ -125,35 +127,6 @@ const GameInfo = () => {
     "Thursday",
   ];
 
-  // const filterBookingsByDate = (filter) => {
-  //   const today = moment().startOf("day");
-
-  //   switch (filter) {
-  //     case "Today":
-  //       return bookings?.filter((booking) =>
-  //         moment(booking.slot_date).isSame(today, "day")
-  //       );
-  //     case "Tomorrow":
-  //       return bookings?.filter((booking) =>
-  //         moment(booking.slot_date).isSame(today.clone().add(1, "days"), "day")
-  //       );
-  //     case "Yesterday":
-  //       return bookings?.filter((booking) =>
-  //         moment(booking.slot_date).isSame(today.clone().subtract(1, "days"), "day")
-  //       );
-  //     case "Monday":
-  //     case "Tuesday":
-  //     case "Wednesday":
-  //     case "Thursday":
-  //       return bookings?.filter((booking) =>
-  //         moment(booking.slot_date).format("dddd") === filter
-  //       );
-  //     case "All Bookings": // Handle the new option
-  //     default:
-  //       return bookings
-  //   }
-  // };
-
   const filterBookingsByDate = (filter) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalize
@@ -200,18 +173,14 @@ const GameInfo = () => {
   };
 
   return (
-    <div className="container mt-4">
-      {/* Header Section */}
-      <Row>
-        <Col>
-          <p>
-            <Link to="/admin/dashboard">Home</Link> /{" "}
-            <Link to="#" className="fw-bold">
-              {selectedGame?.data?.name || "Loading..."}
-            </Link>
-          </p>
-        </Col>
-      </Row>
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Book Games", path: "/admin/booking/games" },
+          { label: `${selectedGame?.data?.name || "Loading..."}`, active: true }
+        ]}
+      />
 
       {/* Booking Overview */}
       <Card className="p-1" style={{ backgroundColor: "white", marginBottom: "20px" }}>
@@ -240,10 +209,10 @@ const GameInfo = () => {
             <h5 className="fw-600 fs-3" style={{ fontWeight: "600" }}>{selectedGame?.data?.name}</h5>
             <p className="text-muted">{selectedGame?.data?.details}</p>
             <div className="d-flex justify-content-between">
-              <div><img src="/assets/Admin/Game/paylater.svg" className="me-1 mb-1 p-1" alt="paylater" /><br/>{selectedGame?.data?.payLater ? "Pay Later" : "Pay Now"}</div>
-              <div><img src="/assets/Admin/Game/singleplayer.svg" className="me-1 mb-1 p-1" alt="paylater" /><br/>{selectedGame?.data?.type}</div>
-              <div><img src="/assets/Admin/Game/indoor.svg" className="me-1 mb-1 p-1" alt="paylater" /><br/>{selectedGame?.data?.zone}</div>
-              <div><img src="/assets/Admin/Game/crosssign.svg" className="me-1 mb-1 p-1" alt="paylater" /><br/>{selectedGame?.data?.cancellation ? "Cancellation Yes" : "Cancellation No"}</div>
+              <div><img src="/assets/Admin/Game/paylater.svg" className="me-1 mb-1 p-1" alt="paylater" /><br />{selectedGame?.data?.payLater ? "Pay Later" : "Pay Now"}</div>
+              <div><img src="/assets/Admin/Game/singleplayer.svg" className="me-1 mb-1 p-1" alt="paylater" /><br />{selectedGame?.data?.type}</div>
+              <div><img src="/assets/Admin/Game/indoor.svg" className="me-1 mb-1 p-1" alt="paylater" /><br />{selectedGame?.data?.zone}</div>
+              <div><img src="/assets/Admin/Game/crosssign.svg" className="me-1 mb-1 p-1" alt="paylater" /><br />{selectedGame?.data?.cancellation ? "Cancellation Yes" : "Cancellation No"}</div>
             </div>
 
             <div>
@@ -710,7 +679,7 @@ const GameInfo = () => {
           date={new Date()}
         />}
 
-    </div>
+    </Container>
   );
 };
 

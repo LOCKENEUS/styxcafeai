@@ -28,6 +28,7 @@ import { getItems } from '../../../../store/AdminSlice/Inventory/ItemsSlice';
 import { MdOutlineRemoveCircleOutline } from "react-icons/md";
 import { addSO, getSOById, updateSO } from '../../../../store/AdminSlice/Inventory/SoSlice';
 import Select from 'react-select';
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const SOCreate = () => {
   const { id } = useParams();
@@ -431,20 +432,14 @@ const SOCreate = () => {
   };
 
   return (
-    <Container fluid className="p-4">
-      <Col sm={12} className="mb-3">
-        <div style={{ top: "186px", fontSize: "16px" }}>
-          <Breadcrumb>
-            <BreadcrumbItem>Home</BreadcrumbItem>
-            <BreadcrumbItem>
-              <Link to="/admin/Inventory/SalesOrder">
-                Sales Order List
-              </Link>
-            </BreadcrumbItem>
-            <BreadcrumbItem active>{pageTitle}</BreadcrumbItem>
-          </Breadcrumb>
-        </div>
-      </Col>
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Sales Order List", path: "/admin/inventory/sales-order-list" },
+          { label: "Create", active: true }
+        ]}
+      />
 
       {/* Client & Delivery Details */}
       <Card className="p-3 shadow-sm">

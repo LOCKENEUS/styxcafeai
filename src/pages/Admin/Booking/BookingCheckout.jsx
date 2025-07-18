@@ -1884,6 +1884,7 @@ import axios from "axios";
 import PlayerCredits from "./Model/PlayerCredits";
 import PlayButton from "../../../components/utils/Animations/PlayButton";
 import StopButton from "../../../components/utils/Animations/StopButton";
+import { Breadcrumbs } from "../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const BookingCheckout = () => {
 
@@ -2294,15 +2295,16 @@ const BookingCheckout = () => {
   };
 
   return (
-    <Container className="mt-4 pb-3">
-      <Row>
-        <h5>
-          <Link to="/admin/dashboard">Home</Link> / <span style={{ color: "blue" }}>
-            {"Bookings/Checkout"}
-          </span>
-        </h5>
-
-      </Row>
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Book Game", path: "/admin/booking/games" },
+          { label: `${selectedGame?.name}`, path: `/admin/booking/games/${selectedGame?._id}`},
+          { label: "Details", path: `/admin/booking/games/${selectedGame?._id}`},
+          { label: "Checkout", active: true }
+        ]}
+      />
 
       <Row>
         <Col md={4} className="border-0 p-0">
@@ -2506,20 +2508,6 @@ const BookingCheckout = () => {
                     }}
                   >
                     {booking?.status !== "Pending" ?
-                      // <div className="text-color fs-4 p-2">
-                      //   Selected Items ({selectedItems?.length || 0})
-                      //   <Link
-                      //     to={`/admin/Inventory/SaleOrderDetails/${booking?.so_id?._id}`}
-                      //   >
-                      //     <span
-                      //       style={{ cursor: "pointer" }}
-                      //       className="float-end text-primary"
-                      //     >
-                      //       {booking?.so_id?.so_no}
-                      //     </span>
-                      //   </Link>
-                      // </div>
-
                       <div className="text-color fs-4 p-2 d-flex justify-content-between align-items-center">
                         <span>Selected Items ({selectedItems?.length || 0})</span>
                         <Link
@@ -2560,29 +2548,6 @@ const BookingCheckout = () => {
                         className="d-flex mb-3"
                         style={{ width: "100%" }}
                       >
-                        {/* Trash Icon */}
-                        {/* <span
-                          className="position-absolute bg-transparent border-0 color-red"
-                          style={{
-                            top: "20px",
-                            right: "10px",
-                            color: "red",
-                            zIndex: 2,
-                          }}
-                          onClick={() => {
-                            const updatedProducts = selectedItems.filter((_, i) => i !== index);
-                            setSelectedItems(updatedProducts);
-                            const updatedSelectedIds = selectedIds.filter((id) => id !== product.id);
-                            setSelectedIds(updatedSelectedIds);
-                            setIsItemsSaved(false); // Mark items as unsaved
-                          }}
-                        >
-                          {booking?.status === "Pending" && <TbTrash style={{
-                            top: "15px",
-                            right: "-30px",
-                            zIndex: 2,
-                          }} size={12} />}
-                        </span> */}
 
                         {/* Product Card */}
                         <div
@@ -2694,8 +2659,6 @@ const BookingCheckout = () => {
                     style={{
                       padding: "8px 12px",
                       borderTop: "1px solid #ddd",
-                      // fontWeight: "600",
-                      // textAlign: "right",
                       background: "#fff",
                       borderRadius: "0 0 10px 10px",
                     }}
@@ -3072,15 +3035,6 @@ const BookingCheckout = () => {
                           </div>
                           <div className="d-flex justify-content-around align-items-center gap-4 custom-gap-responsive">
                             {isRunning || isPaused ? (
-                              // <Button
-                              //   size="sm"
-                              //   variant="outline-danger"
-                              //   className="px-2"
-                              //   style={{ border: "2px dashed rgb(255, 68, 0)", width: "50%", paddingRight: "10px", marginLeft: "30px" }}
-                              //   onClick={() => setShowConfirm(true)} // Show confirmation modal
-                              // >
-                              //   Stop
-                              // </Button>
                               <Button
                                 size="sm"
                                 variant="outline-transparent"
@@ -3093,18 +3047,6 @@ const BookingCheckout = () => {
                               </Button>
                             ) : (
                               !isPaused &&
-                              // <Button
-                              //   size="sm"
-                              //   variant="outline-primary"
-                              //   className="start-btn-responsive mt-2"
-                              //   disabled={booking?.total_time > 0 && booking?.timer_status === "Stopped"}
-                              //   style={{ border: "2px dashed", width: "100%", height: "40px", padding: "2px", marginLeft: "30px" }}
-                              //   onClick={handleStartTimer}
-                              // >
-                              //   <FaClock size={16} style={{ marginRight: "5px" }} />
-                              //   <span>Start</span>
-                              // </Button>
-
                               <Button
                                 size="sm"
                                 variant="outline-transparent"
@@ -3113,8 +3055,6 @@ const BookingCheckout = () => {
                                 // style={{ border: "2px dashed", width: "100%", height: "40px", padding: "2px", marginLeft: "30px" }}
                                 onClick={handleStartTimer}
                               >
-                                {/* <FaClock size={16} style={{ marginRight: "5px" }} />
-                                <span>Start</span> */}
                                 <PlayButton />
                               </Button>
                             )}
@@ -3212,7 +3152,6 @@ const BookingCheckout = () => {
                                         setLooserPlayer(selectedCustomer);
                                         setShowTooltip(false);
                                       }}
-                                      // style={{ cursor: "pointer" }}
                                       style={{
                                         cursor: "pointer",
                                         transition: "all 0.2s ease-in-out",
@@ -3290,7 +3229,6 @@ const BookingCheckout = () => {
             <div className="rounded shadow-sm w-100">
               <Row className="p-2">
                 <Col md={12} className="bg-white p-3 rounded-2">
-                  {/* <Card className="p-3 mt-2 rounded-3" style={{ marginLeft: "10px", marginRight: "10px" }}> */}
                   <h5 className="fs-3 text-color">Payment Details</h5>
                   <Row className="mt-1">
                     <Col xs={6} className="text-primary fw-semibold">{selectedGame?.name} ({selectedGame?.size}) </Col>
@@ -3340,7 +3278,6 @@ const BookingCheckout = () => {
 
                   {creditAmount > 0 && <div className="mt-4">
                     <h4>Credit Collection
-                      {/* <Button size="sm" className="btn btn-primary bg-body text-color" onClick={handleSplitCredit}>Split Credit</Button> */}
                     </h4>
                     <Table bordered hover responsive size="sm" className="mt-2">
                       <thead className="bg-light">
@@ -3418,19 +3355,17 @@ const BookingCheckout = () => {
                         loading={loading}
                       />}
                   </Row>
-                  {/* </Card> */}
                 </Col>
               </Row>
             </div>
             :
             <div className="rounded-3 w-100">
-              <Row className="mt-1 p-2" style={{ paddingLeft: "10px" }}>
+              <Row className="mt-1 p-2 pb-0" style={{ paddingLeft: "10px" }}>
                 <Col md={12} className="bg-white p-3 rounded-2">
                   <h5 className="fs-3">Payment Details</h5>
                   <Row>
                     <Col xs={6} className="text-primary fw-semibold">{selectedGame?.name} ({selectedGame?.size}) </Col>
                     <Col xs={3} className="text-color">
-                      {/* {booking?.players?.length + 1} <span>Candidates</span> */}
                       <OverlayTrigger
                         placement="right"
                         overlay={
@@ -3462,10 +3397,6 @@ const BookingCheckout = () => {
                   </Row>
 
                   <hr />
-
-                  {/* <Col xs={3} className="text-end muted-text">₹ {booking?.total - booking?.paid_amount} Balance</Col> */}
-
-                  {/* <Col xs={3} className="text-end">{(booking?.total - booking?.paid_amount) > 0 && <span className="fs-3 text-danger">₹ { booking?.total - booking?.paid_amount} Pending</span>} </Col> */}
 
                   <Row className="mt-2">
                     <Col xs={6} className="text-color fw-semibold">Payment Mode</Col>

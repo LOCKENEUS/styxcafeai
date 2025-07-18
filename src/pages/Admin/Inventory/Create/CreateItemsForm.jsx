@@ -328,8 +328,8 @@ const CreateItemsForm = () => {
             <Row style={{ marginTop: "10px" }}>
                 <Col sm={12} className="d-flex "  >
                     {/* style={{top:"110px" , left:"700px"}} */}
-                    <div style={{ top: "186px", fontSize: "16px" }}>
-                        <Breadcrumb  >
+                    <div className="mt-3 ms-1 mb-2" style={{ top: "186px", fontSize: "16px" }}>
+                        <Breadcrumb>
                             <BreadcrumbItem  ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
                             <BreadcrumbItem ><Link to="/admin/inventory/dashboard">Inventory</Link></BreadcrumbItem>
                             <BreadcrumbItem ><Link to="/admin/inventory/items-list">Item List</Link></BreadcrumbItem>

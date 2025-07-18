@@ -24,6 +24,7 @@ import { getSOInvoiceById } from "../../../../store/AdminSlice/Inventory/SoInvoi
 import CollectPayment from "../modal/CollectPayment";
 import { getPaymentById } from "../../../../store/AdminSlice/Inventory/CollectPaymentSlice";
 import Loader from "../../../../components/common/Loader/Loader";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 export const SIDetails = () => {
   const { id } = useParams();
@@ -191,29 +192,15 @@ export const SIDetails = () => {
   };
 
   return (
-    <Container>
-      <Row className="mx-2">
-        {/* Breadcrumb Section */}
-
-        <Col sm={12} className="">
-          <div style={{ top: "186px", fontSize: "16px" }}>
-            <Breadcrumb>
-              <BreadcrumbItem>
-                <Link to="/admin/dashboard">Home</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <Link to="/admin/inventory/dashboard">Inventory</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <Link to="/admin/Inventory/SaleInvoice">
-                  Sales Invoice List
-                </Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem active>Sales Invoice</BreadcrumbItem>
-            </Breadcrumb>
-          </div>
-        </Col>
-
+    <Container fluid>
+      <Breadcrumbs
+              items={[
+                { label: "Home", path: "/admin/dashboard" },
+                { label: "Sales Invoice List", path: "/admin/inventory/sales-invoice-list" },
+                { label: "Details", active: true }
+              ]}
+            />
+      <Row>
         <Col sm={12} className="my-2">
           <Card className="p-3">
             <Row>

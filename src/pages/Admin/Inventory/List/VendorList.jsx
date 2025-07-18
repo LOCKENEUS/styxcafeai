@@ -28,6 +28,7 @@ import {
 } from "../../../../store/AdminSlice/Inventory/VendorSlice";
 import { toast } from "react-toastify";
 import Loader from "../../../../components/common/Loader/Loader";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const avatarColors = [
   "#0062FF",
@@ -141,26 +142,18 @@ const VendorList = () => {
   const totalPages = Math.ceil(filteredVendors.length / itemsPerPage);
 
   return (
-    <Container fluid className="px-3">
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Vendor List", active: true }
+        ]}
+      />
       <Row>
-        <Col sm={12} className="mx-md-4 mb-3">
-          <div style={{ top: "186px", fontSize: "16px" }}>
-            <Breadcrumb>
-              <BreadcrumbItem>
-                <Link to="/admin/dashboard">Home</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <Link to="/admin/inventory/dashboard">Inventory</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem active>Vendor List</BreadcrumbItem>
-            </Breadcrumb>
-          </div>
-        </Col>
-
         <Col data-aos="fade-right" data-aos-duration="1000" sm={12}>
-          <Card className="mx-md-4 p-3">
+          <Card className="p-3">
             <Row className="align-items-center">
-              <Col xs={12} sm={6} lg={4} className="d-flex my-2">
+              <Col xs={12} sm={6} lg={3} className="d-flex my-2">
                 <h1
                   style={{
                     fontSize: "20px",
@@ -173,7 +166,7 @@ const VendorList = () => {
                 </h1>
               </Col>
 
-              <Col xs={12} sm={6} lg={3} className="d-flex my-2">
+              <Col xs={12} sm={6} lg={4} className="d-flex my-2">
                 <InputGroup className="navbar-input-group w-100">
                   <InputGroup.Text
                     className="border-0"

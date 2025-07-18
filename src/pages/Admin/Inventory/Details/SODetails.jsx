@@ -13,6 +13,7 @@ import companylog from "/assets/inventory/companylogo.png";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { sendMailToVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 export const SODetails = () => {
     const navigate = useNavigate();
@@ -170,26 +171,15 @@ export const SODetails = () => {
     };
 
     return (
-        <Container >
-            <Row className="mx-2">
-                {/* Breadcrumb Section */}
-                <Col sm={12} className="mx-2">
-                    <div style={{ top: "186px", fontSize: "16px" }}>
-                        <Breadcrumb>
-                            <BreadcrumbItem>
-                                <Link to="/admin/dashboard">Home</Link>
-                            </BreadcrumbItem>
-                            <BreadcrumbItem>
-                                <Link to="/admin/inventory/dashboard">Inventory</Link>
-                            </BreadcrumbItem>
-                            <BreadcrumbItem>
-                                <Link to="/admin/Inventory/SalesOrder">Sales Order List</Link>
-                            </BreadcrumbItem>
-                            <BreadcrumbItem active>SaleOrderDetails</BreadcrumbItem>
-                        </Breadcrumb>
-                    </div>
-                </Col>
-
+        <Container fluid >
+            <Breadcrumbs
+                items={[
+                    { label: "Home", path: "/admin/dashboard" },
+                    { label: "Sales Order List", path: "/admin/inventory/sales-order-list" },
+                    { label: "Details", active: true }
+                ]}
+            />
+            <Row>
                 <Col sm={12} className="my-2">
                     <Card className="p-3">
                         <Row>

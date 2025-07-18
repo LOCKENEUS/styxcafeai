@@ -20,6 +20,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getSOs } from "../../../../store/AdminSlice/Inventory/SoSlice";
 import Loader from "../../../../components/common/Loader/Loader";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 // import { format } from "date-fns";
 
 export const SalesOrder = () => {
@@ -197,32 +198,24 @@ export const SalesOrder = () => {
   };
 
   return (
-    <Container className="p-2 p-md-4">
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Sales Order List", active: true }
+        ]}
+      />
       <Row>
-        <Col sm={12} className="mx-2 mb-0 mb-md-3 px-3">
-          <div style={{ top: "186px", fontSize: "16px" }}>
-            <Breadcrumb>
-              <BreadcrumbItem>
-                <Link to="/admin/dashboard">Home</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <Link to="/admin/inventory/dashboard">Inventory</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem active>Sales Order List</BreadcrumbItem>
-            </Breadcrumb>
-          </div>
-        </Col>
-
         {/* Items List Card */}
         <Col sm={12}>
           <Card
             data-aos="fade-right"
             data-aos-duration="1000"
-            className="mx-2 p-1"
+            className="p-2"
           >
             <Row className="align-items-center">
               {/* Title */}
-              <Col sm={4} className="d-flex my-3 my-md-2">
+              <Col sm={3} className="d-flex my-3 my-md-2">
                 <h1
                   style={{
                     fontSize: "20px",
@@ -236,7 +229,7 @@ export const SalesOrder = () => {
               </Col>
 
               {/* Search Input */}
-              <Col sm={3} className="d-flex my-2">
+              <Col sm={4} className="d-flex my-2">
                 <InputGroup className="navbar-input-group">
                   <InputGroupText
                     className="border-0"

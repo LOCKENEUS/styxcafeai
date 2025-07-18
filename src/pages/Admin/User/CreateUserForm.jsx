@@ -263,11 +263,23 @@ const CreateUser = () => {
 
   return (
     <div className="container mt-2">
-      <h5>
+      {/* <h5>
         <Link to="/admin/dashboard">Home</Link> /
         <Link to="/admin/users/user-list">User List</Link> /
         <span style={{ color: "blue" }}>{id ? "Edit User" : "Create User"}</span>
-      </h5>
+      </h5> */}
+
+      <div className="row mt-3">
+        <div className="col-12 d-flex" style={{ fontSize: '16px' }}>
+          <nav aria-label="breadcrumb">
+            <ol className="breadcrumb">
+              <li className="breadcrumb-item"><a href="#">Home</a></li>
+              <li className="breadcrumb-item"><a href="#">User</a></li>
+              <li className="breadcrumb-item"><a href="#">Create</a></li>
+            </ol>
+          </nav>
+        </div>
+      </div>
       <div className="p-5 bg-white rounded-3 shadow-sm" style={{ margin: '0 auto' }}>
         <Form onSubmit={handleSubmit}>
           <Row className="mb-3">

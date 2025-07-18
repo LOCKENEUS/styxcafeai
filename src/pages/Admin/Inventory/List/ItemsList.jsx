@@ -22,6 +22,7 @@ import { BsCurrencyRupee } from "react-icons/bs";
 import { useSelector, useDispatch } from "react-redux";
 import { getItems } from "../../../../store/AdminSlice/Inventory/ItemsSlice"; // Adjust the path as necessary
 import Loader from "../../../../components/common/Loader/Loader";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const ItemsList = () => {
   const [searchText, setSearchText] = useState("");
@@ -105,30 +106,22 @@ const ItemsList = () => {
   };
 
   return (
-    <Container fluid className="p-1">
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Item List", active: true }
+        ]}
+      />
       <Row>
-        <Col xs={12} className="mx-2 mx-md-4 mb-3">
-          <div style={{ fontSize: "16px" }}>
-            <Breadcrumb>
-              <BreadcrumbItem>
-                <Link to="/admin/dashboard">Home</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <Link to="/admin/inventory/dashboard">Inventory</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem active>Items List</BreadcrumbItem>
-            </Breadcrumb>
-          </div>
-        </Col>
-
         <Col xs={12}>
           <Card
             data-aos="fade-right"
             data-aos-duration="1000"
-            className="mx-2 mx-md-4 p-2 p-md-3"
+            className="p-2 p-md-3"
           >
             <Row className="align-items-center">
-              <Col xs={12} md={4} className="d-flex my-2">
+              <Col xs={12} md={3} className="d-flex my-2">
                 <h1
                   style={{
                     fontSize: "20px",
@@ -141,7 +134,7 @@ const ItemsList = () => {
                 </h1>
               </Col>
 
-              <Col xs={12} md={3} className="d-flex my-2">
+              <Col xs={12} md={4} className="d-flex my-2">
                 <InputGroup className="navbar-input-group">
                   <InputGroupText
                     className="border-0"
@@ -172,9 +165,7 @@ const ItemsList = () => {
                 </InputGroup>
               </Col>
 
-              <Col
-                xs={12}
-                md={5}
+              <Col xs={12} md={5}
                 className="d-flex justify-content-start justify-content-md-end text-start text-md-end my-2"
               >
                 <Button

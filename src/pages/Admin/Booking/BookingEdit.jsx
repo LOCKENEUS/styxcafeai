@@ -26,6 +26,7 @@ import { IoAdd } from "react-icons/io5";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import { BiLoaderCircle } from "react-icons/bi";
+import { Breadcrumbs } from "../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const BookingEdit = () => {
 
@@ -291,11 +292,16 @@ const BookingEdit = () => {
     };
 
     return (
-        <Container fluid className="p-4 ">
-            <h6 className="mb-3 muted-text">
-                Home / Purchase / Vendor List/{" "}
-                <span className="text-primary">Purchase Order</span>
-            </h6>
+        <Container fluid>
+            <Breadcrumbs
+                items={[
+                    { label: "Home", path: "/admin/dashboard" },
+                    { label: "Book Game", path: "/admin/booking/games" },
+                    { label: `${selectedGame?.name}`, path: `/admin/booking/games/${selectedGame?._id}` },
+                    { label: "Details", path: `/admin/booking/edit/${booking?._id}` },
+                    { label: "Edit", active: true },
+                ]}
+            />
             <Row>
                 <Col style={{ height: "100%" }} md={4}>
                     <div className="d-flex  gap-3">
@@ -490,7 +496,7 @@ const BookingEdit = () => {
                                         <Col md={6}>
                                             <Form.Group>
                                                 <Form.Label className="text-color">Select Game</Form.Label>
-                                                <Form.Select
+                                                {/* <Form.Select
                                                     size="sm"
                                                     className="border-2"
                                                     value={selectedGame ? JSON.stringify(selectedGame) : ""}
@@ -499,6 +505,22 @@ const BookingEdit = () => {
                                                     <option value="">Select Game</option>
                                                     {games.map((game, index) => (
                                                         <option key={index} value={JSON.stringify(game)}>
+                                                            {game.name}
+                                                        </option>
+                                                    ))}
+                                                </Form.Select> */}
+                                                <Form.Select
+                                                    size="sm"
+                                                    className="border-2"
+                                                    value={selectedGame?._id || ""}
+                                                    onChange={(e) => {
+                                                        const game = games.find(g => g._id === e.target.value);
+                                                        setSelectedGame(game);
+                                                    }}
+                                                >
+                                                    <option value="">Select Game</option>
+                                                    {games.map((game, index) => (
+                                                        <option key={game._id} value={game._id}>
                                                             {game.name}
                                                         </option>
                                                     ))}

@@ -8,6 +8,7 @@ import { IoAdd } from 'react-icons/io5';
 import Nogame from "/assets/Admin/Game/No Game.png";
 import gsap from 'gsap';
 import GamePlaceholder from './components/GamePlaceholder';
+import { Breadcrumbs } from '../../../components/common/Breadcrumbs/Breadcrumbs';
 
 const RecommendedGames = () => {
   const navigate = useNavigate();
@@ -53,7 +54,7 @@ const RecommendedGames = () => {
   };
 
   return (
-    <Container fluid className="p-4">
+    <Container fluid>
       <style>
         {`
           .horizontal-scroll {
@@ -87,14 +88,21 @@ const RecommendedGames = () => {
       </style>
 
       {/* Indoor Games Section */}
-      <h5>
+      {/* <h5>
         <Link to="/admin/dashboard">Home</Link> / <span style={{ color: "blue" }}>
           {"Recommended Games"}
         </span>
 
-      </h5>
+      </h5> */}
+
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Recommended Games", active: true }
+        ]}
+      />
       <div
-        className="d-flex justify-content-between align-items-center mt-4 mb-2"
+        className="d-flex justify-content-between align-items-center mb-2"
         style={{ flexDirection: 'row', gap: '1rem' }}
       >
         <h5

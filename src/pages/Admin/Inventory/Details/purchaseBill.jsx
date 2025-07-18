@@ -11,6 +11,7 @@ import Lockenelogo from "/assets/Admin/Inventory/Lockenelogo.svg";
 import CollectPayment from "../modal/CollectBillPayment";
 import { getPurchaseBillPaymentById } from "../../../../store/AdminSlice/Inventory/CollectPurchaseBill";
 import { getStyxData, sendMailToVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 export const PurchaseBillDetailsAdmin = () => {
     const dispatch = useDispatch();
@@ -150,19 +151,15 @@ export const PurchaseBillDetailsAdmin = () => {
     }
 
     return (
-        <Container>
-            <Row className="mx-2">
-                {/* Breadcrumb Section */}
-                <Col sm={12} className="my-3">
-                    <div style={{ top: "186px", fontSize: "18px" }}>
-                        <Breadcrumb>
-                            <BreadcrumbItem >Home</BreadcrumbItem>
-                            <BreadcrumbItem><Link to="/admin/inventory/purchase-bill-list">Purchase Bill  List</Link></BreadcrumbItem>
-                            <BreadcrumbItem active>Purchase Bill Details</BreadcrumbItem>
-                        </Breadcrumb>
-                    </div>
-                </Col>
-
+        <Container fluid>
+            <Breadcrumbs
+                items={[
+                    { label: "Home", path: "/admin/dashboard" },
+                    { label: "Purchase Bill List", path: "/admin/inventory/purchase-bill-list" },
+                    { label: "Details", active: true }
+                ]}
+            />
+            <Row>
                 <Col sm={12} className="my-2">
                     <Card className="p-3">
                         <Row>

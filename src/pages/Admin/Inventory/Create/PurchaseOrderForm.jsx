@@ -16,6 +16,7 @@ import { getCustomers } from "../../../../store/AdminSlice/CustomerSlice";
 import { toast } from "react-toastify";
 
 import { getItems as getSuperItems } from "../../../../store/slices/inventory";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const PurchaseOrderForm = () => {
   const [show, setShow] = useState(false);
@@ -353,16 +354,14 @@ const PurchaseOrderForm = () => {
   };
 
   return (
-    <Container fluid className="p-4 pt-0">
-      <Col sm={12} className="my-3">
-        <div style={{ top: "186px", fontSize: "16px" }}>
-          <Breadcrumb>
-            <BreadcrumbItem >Home</BreadcrumbItem>
-            <BreadcrumbItem><Link to="/admin/inventory/purchase-order-list">Purchase Order List</Link></BreadcrumbItem>
-            <BreadcrumbItem active>Purchase Order Create</BreadcrumbItem>
-          </Breadcrumb>
-        </div>
-      </Col>
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Purchase Order List", path: "/admin/inventory/purchase-order-list" },
+          { label: "Create", active: true }
+        ]}
+      />
 
       {/* Client & Delivery Details */}
       <Card className="p-3 shadow-sm">

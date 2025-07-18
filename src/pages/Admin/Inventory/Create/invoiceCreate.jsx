@@ -30,6 +30,7 @@ import { getTaxFields } from '../../../../store/AdminSlice/TextFieldSlice';
 import { getItems } from '../../../../store/AdminSlice/Inventory/ItemsSlice';
 // import { addSO, getSOById, updateSO } from '../../../../store/AdminSlice/Inventory/SoSlice';
 import { addSOInvoice, updateSOInvoice, getSOInvoiceById } from '../../../../store/AdminSlice/Inventory/SoInvoiceSlice';
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 export const InvoiceCreate = () => {
   const { id } = useParams();
@@ -427,24 +428,14 @@ export const InvoiceCreate = () => {
   const pageTitle = isEditMode ? "Edit Sales Order" : "Create Sales Order";
 
   return (
-    <Container fluid className="p-4">
-      <Col sm={12} className="">
-        <div style={{ top: "186px", fontSize: "16px" }}>
-          <Breadcrumb>
-            <BreadcrumbItem>
-              <Link to={'/admin/dashboard'} >
-                Home
-              </Link>
-            </BreadcrumbItem>
-            <BreadcrumbItem>
-              <Link to="/admin/Inventory/SaleInvoice">
-                Sales Invoice List
-              </Link>
-            </BreadcrumbItem>
-            <BreadcrumbItem active>{pageTitle}</BreadcrumbItem>
-          </Breadcrumb>
-        </div>
-      </Col>
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Sales Invoice List", path: "/admin/inventory/sales-invoice-list" },
+          { label: "Create", active: true }
+        ]}
+      />
       {/* Header Card */}
       {/* <Card className="p-3 mb-3 shadow-sm">
         <Row className="align-items-center">

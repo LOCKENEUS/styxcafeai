@@ -9,6 +9,7 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GetPurchaseOrder, getStyxData, sendMailToVendor } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const PurchaseOrderDetails = () => {
     const [vendor, setVendor] = useState("");
@@ -108,19 +109,15 @@ const PurchaseOrderDetails = () => {
     }
 
     return (
-        <Container id="printableArea">
-            <Row data-aos="fade-up" data-aos-duration="500" className="mx-2">
-                {/* Breadcrumb Section */}
-                <Col sm={12} className="my-3">
-                    <div style={{ top: "186px", fontSize: "18px" }}>
-                        <Breadcrumb>
-                            <BreadcrumbItem ><Link to="/admin/dashboard">Home</Link></BreadcrumbItem>
-                            <BreadcrumbItem><Link to="/admin/inventory/purchase-order-list">Purchase Order List</Link></BreadcrumbItem>
-                            <BreadcrumbItem active>Purchase Order Details</BreadcrumbItem>
-                        </Breadcrumb>
-                    </div>
-                </Col>
-
+        <Container fluid id="printableArea">
+            <Breadcrumbs
+                items={[
+                    { label: "Home", path: "/admin/dashboard" },
+                    { label: "Purchase Order List", path: "/admin/inventory/purchase-order-list" },
+                    { label: "Details", active: true }
+                ]}
+            />
+            <Row data-aos="fade-up" data-aos-duration="500">
                 <Col sm={12} className="my-2">
                     <Card className="p-3">
                         <Row>

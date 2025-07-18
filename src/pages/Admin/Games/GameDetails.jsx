@@ -3,7 +3,8 @@ import {
     Card,
     Row,
     Col,
-    Button
+    Button,
+    Container
 } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import gm2 from "/assets/Admin/Dashboard/GamesImage/gm2.png";
@@ -15,6 +16,7 @@ import { copySlots, deleteslot, getslots } from "../../../store/slices/slotsSlic
 import { FaEdit } from "react-icons/fa";
 import { BiPen, BiPencil } from "react-icons/bi";
 import { AiOutlineClose } from "react-icons/ai";
+import { Breadcrumbs } from "../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const GameDetails = () => {
     const { id } = useParams();
@@ -143,18 +145,13 @@ const GameDetails = () => {
     filteredSlots = sortSlotsByTime(filteredSlots);
 
     return (
-        <div className="container mt-4">
-            {/* Header Section */}
-            <Row>
-                <Col>
-                    <p>
-                        <Link to="/admin/dashboard">Home</Link> /{" "}
-                        <Link to="#" className="fw-bold">
-                            {selectedGame?.data?.name || "Loading..."}
-                        </Link>
-                    </p>
-                </Col>
-            </Row>
+        <Container fluid>
+            <Breadcrumbs
+                items={[
+                    { label: "Home", path: "/admin/dashboard" },
+                    { label: `${selectedGame?.data?.name}`, active: true }
+                ]}
+            />
 
             {/* Booking Overview */}
             <Card className="p-3 mb-2" style={{ backgroundColor: "white" }}>
@@ -207,11 +204,11 @@ const GameDetails = () => {
                         <p className="text-muted">{selectedGame?.data?.details}</p>
 
                         <div className="d-flex justify-content-between">
-                            <div><img src="/assets/Admin/Game/paylater.svg" className="me-1 mb-1 p-1" alt="paylater" /><br/> {selectedGame?.data?.payLater ? "Pay Later" : "Pay Now"}</div>
-                            <div><img src="/assets/Admin/Game/singleplayer.svg" className="me-1 mb-1 p-1" alt="paylater" /><br/>{selectedGame?.data?.type}</div>
+                            <div><img src="/assets/Admin/Game/paylater.svg" className="me-1 mb-1 p-1" alt="paylater" /><br /> {selectedGame?.data?.payLater ? "Pay Later" : "Pay Now"}</div>
+                            <div><img src="/assets/Admin/Game/singleplayer.svg" className="me-1 mb-1 p-1" alt="paylater" /><br />{selectedGame?.data?.type}</div>
 
-                            <div><img src="/assets/Admin/Game/indoor.svg" className="me-1 mb-1 p-1" alt="paylater" /><br/>{selectedGame?.data?.zone}</div>
-                            <div><img src="/assets/Admin/Game/crosssign.svg" className="me-1 mb-1 p-1" alt="paylater" /><br/>{selectedGame?.data?.cancellation ? "Cancellation Yes" : "Cancellation No"}</div>
+                            <div><img src="/assets/Admin/Game/indoor.svg" className="me-1 mb-1 p-1" alt="paylater" /><br />{selectedGame?.data?.zone}</div>
+                            <div><img src="/assets/Admin/Game/crosssign.svg" className="me-1 mb-1 p-1" alt="paylater" /><br />{selectedGame?.data?.cancellation ? "Cancellation Yes" : "Cancellation No"}</div>
                         </div>
 
                         <div>
@@ -361,42 +358,42 @@ const GameDetails = () => {
                 </div>
 
                 <style jsx>{`
-            .date-container {
-                display: flex;
-                justify-content: space-between;
-                width: 100%;
-                flex-wrap: nowrap;
-            }
+                    .date-container {
+                        display: flex;
+                        justify-content: space-between;
+                        width: 100%;
+                        flex-wrap: nowrap;
+                    }
 
-            .date-box {
-                cursor: pointer;
-                padding: 10px;
-                text-align: center;
-                border: 1px solid #ccc;
-                border-radius: 10px;
-                min-width: 100px;
-                background: #fff;
-                flex: 1;
-                margin: 5px;
-            }
+                    .date-box {
+                        cursor: pointer;
+                        padding: 10px;
+                        text-align: center;
+                        border: 1px solid #ccc;
+                        border-radius: 10px;
+                        min-width: 100px;
+                        background: #fff;
+                        flex: 1;
+                        margin: 5px;
+                    }
 
-            .date-box.active {
-                background: #007bff;
-                color: white;
-                border-color: #007bff;
-            }
+                    .date-box.active {
+                        background: #007bff;
+                        color: white;
+                        border-color: #007bff;
+                    }
 
-            @media (max-width: 768px) {
-                .date-container {
-                    flex-wrap: wrap;
-                }
+                    @media (max-width: 768px) {
+                        .date-container {
+                            flex-wrap: wrap;
+                        }
 
-                .date-box {
-                    flex: 1 1 45%;
-                    min-width: 0;
-                }
-            }
-        `}</style>
+                        .date-box {
+                            flex: 1 1 45%;
+                            min-width: 0;
+                        }
+                    }
+                `}</style>
 
                 {/* {activeDate.getDay() === 0 ? ( */}
                 {filteredSlots.length === 0 ? (
@@ -407,7 +404,7 @@ const GameDetails = () => {
                         </p>
                     </div>
                 ) : (
-                    <div className="booking-slots mt-2 p-1 p-md-2">
+                    <Container className="booking-slots mt-2 p-1 p-md-2">
                         <Button
                             variant="primary"
                             style={{ width: "128px", height: "37px" }}
@@ -464,7 +461,7 @@ const GameDetails = () => {
                                 </Card>
                             ))}
                         </div>
-                    </div>
+                    </Container>
                 )}
             </div>
 
@@ -477,7 +474,7 @@ const GameDetails = () => {
                     day={weekdays[activeDate.getDay()]}
                 />
             )}
-        </div>
+        </Container>
     );
 };
 

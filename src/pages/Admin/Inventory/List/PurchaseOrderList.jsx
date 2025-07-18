@@ -20,6 +20,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { CreateVendor, GetPOList, getStyxData } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../../../components/common/Loader/Loader";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const PurchaseOrderList = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -101,26 +102,18 @@ const PurchaseOrderList = () => {
   };
 
   return (
-    <Container>
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Purchase Order List", active: true }
+        ]}
+      />
       <Row>
-        <Col sm={12} className="mx-2 my-3 mb-0 px-2 px-md-5">
-          <div style={{ top: "186px", fontSize: "16px" }}>
-            <Breadcrumb>
-              <BreadcrumbItem>
-                <Link to="/admin/dashboard">Home</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <Link to="/admin/inventory/dashboard">Inventory</Link>
-              </BreadcrumbItem>
-              <BreadcrumbItem active>Purchase Order List</BreadcrumbItem>
-            </Breadcrumb>
-          </div>
-        </Col>
-
         <Col data-aos="fade-right" data-aos-duration="1000" sm={12}>
-          <Card className="mx-1 mx-md-4 p-3">
+          <Card className="p-3">
             <Row className="align-items-center">
-              <Col sm={4} className="d-flex my-2">
+              <Col sm={3} className="d-flex my-2">
                 <h1 style={{
                   fontSize: "20px",
                   fontWeight: "500",
@@ -130,7 +123,7 @@ const PurchaseOrderList = () => {
                 </h1>
               </Col>
 
-              <Col sm={3} className="d-flex my-2">
+              <Col sm={4} className="d-flex my-2">
                 <InputGroup className="navbar-input-group">
                   <InputGroupText className="border-0"
                     style={{ backgroundColor: "#FAFAFA" }}>

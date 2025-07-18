@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserById } from "../../../store/AdminSlice/UserSlice";
 import { useNavigate } from "react-router-dom";
+import { Breadcrumbs } from "../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const UserDetails = () => {
   const { id } = useParams();
@@ -31,7 +32,12 @@ const UserDetails = () => {
   }
   return (
     <Container className="mt-4">
-
+        <Breadcrumbs
+          items={[
+            { label: "Home", path: "/admin/dashboard" },
+            { label: "Customer", active: true }
+          ]}
+        />
         <Row>
           {/* Sidebar with Profile */}
           <Col md={4}>
