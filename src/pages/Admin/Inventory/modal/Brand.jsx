@@ -45,7 +45,6 @@ const Brand = ({ show, handleClose, onCreated }) => {
             return;
         }
 
-
         dispatch(addCustomField(formData))
             .unwrap()
             .then((response) => {

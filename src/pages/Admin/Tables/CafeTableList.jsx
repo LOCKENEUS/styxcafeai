@@ -2,19 +2,19 @@ import React from "react";
 import { Container, Row, Col, Breadcrumb, Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import CafeSloteIcon from "/assets/Admin/Table/CafeSlot.svg";
+import { Breadcrumbs } from "../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const CafeTableList = () => {
   const slots = Array(10).fill(null); // Example: 10 slots
 
   return (
-    <Container className="mt-4">
-      {/* Breadcrumb Navigation */}
-      <Breadcrumb>
-        <Breadcrumb.Item linkAs={Link} linkProps={{ to: "/admin/dashboard" }}>
-          Home
-        </Breadcrumb.Item>
-        <Breadcrumb.Item active>Select Pickle Ball Slot</Breadcrumb.Item>
-      </Breadcrumb>
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Cafe Table", active: true }
+        ]}
+      />
 
       <h5 className="mt-3">Floor 1</h5>
       <Row className="mt-3 d-flex align-items-center">

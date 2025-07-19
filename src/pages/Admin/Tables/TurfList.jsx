@@ -3,6 +3,7 @@ import { Container, Row, Col, Card, Button, Breadcrumb } from 'react-bootstrap';
 import TurfCricket from "/assets/Admin/Table/TurfCricket.svg";
 import TurfFootball from "/assets/Admin/Table/TurfFootball.svg";
 import { MdOutlineArrowOutward } from "react-icons/md";
+import { Breadcrumbs } from "../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const tables = [
   { turf: "Cricket Turf", size: "(6/12) Feet", slots: 30 },
@@ -15,11 +16,13 @@ const tables = [
 
 const CricketTurfList = () => {
   return (
-    <Container className="py-5">
-      <Breadcrumb>
-        <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
-        <Breadcrumb.Item active>Cricket Turf List</Breadcrumb.Item>
-      </Breadcrumb>
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Turf List", active: true }
+        ]}
+      />
 
       {['Cricket Turf', 'Football Turf'].map((turf) => (
         <div key={turf} className="mb-5">

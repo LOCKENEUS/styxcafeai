@@ -1,18 +1,15 @@
 import { useState, useEffect } from "react";
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect, Image, InputGroup, Offcanvas, Row } from "react-bootstrap";
-import InputGroupText from "react-bootstrap/esm/InputGroupText";
-import { FaPlus, FaStarOfLife, FaTrash } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
-import { getItemById, addItem, updateItem } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
+import { Button, Col, Form, FormControl, FormGroup, FormLabel, FormSelect, InputGroup, Offcanvas, Row } from "react-bootstrap";
+import { FaPlus } from "react-icons/fa";
+import { addItem } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import Tax from "../modal/Tax";
 import Manufacturer from "../modal/Manufacturer";
 import Brand from "../modal/Brand";
 import Units from "../modal/Units";
-import { getCustomFields, deleteCustomField } from "../../../../store/AdminSlice/CustomField";
+import { getCustomFields } from "../../../../store/AdminSlice/CustomField";
 import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
 import { getVendors } from "../../../../store/AdminSlice/Inventory/VendorSlice";
-
 
 const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
   const dispatch = useDispatch();
@@ -119,10 +116,6 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
     formDataToSend.append('isbn', formData.isbn);
     formDataToSend.append('costPrice', parseFloat(formData.costPrice));
     formDataToSend.append('sellingPrice', parseFloat(formData.sellingPrice));
-    // formDataToSend.append('preferredVendor', formData.preferredVendor);
-    // formDataToSend.append('stock', parseInt(formData.stock, 10));
-    // formDataToSend.append('stockRate', parseFloat(formData.stock_rate));
-    // formDataToSend.append('reorderPoint', parseInt(formData.reorder_point, 10));
     formDataToSend.append('linking', formData.linking);
     if (formData.image) {
       formDataToSend.append('image', formData.image);
@@ -154,10 +147,6 @@ const OffcanvesItems = ({ showOffCanvasCreateItem, handleCloseCreateItem }) => {
           isbn: '',
           costPrice: '',
           sellingPrice: '',
-          // preferredVendor: '',
-          // stock: '',
-          // stock_rate: '',
-          // reorder_point: '',
           linking: 'Y',
           image: null,
 

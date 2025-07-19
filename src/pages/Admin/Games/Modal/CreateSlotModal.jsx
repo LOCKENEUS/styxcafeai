@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getGames } from "../../../../store/slices/gameSlice";
 import { addslot, updateslot } from "../../../../store/slices/slotsSlice";
-import TimePicker from 'react-time-picker';
 // Also include styles
 import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';

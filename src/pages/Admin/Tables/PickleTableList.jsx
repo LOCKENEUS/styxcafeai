@@ -2,6 +2,7 @@ import React from "react";
 import { Container, Row, Col, Card, Button, Breadcrumb } from 'react-bootstrap';
 import PickleBallTable from "/assets/Admin/Table/PickleBallTable.svg";
 import { MdOutlineArrowOutward } from "react-icons/md";
+import { Breadcrumbs } from "../../../components/common/Breadcrumbs/Breadcrumbs";
 
 const tables = [
   { wing: "A", size: "(6/12) Feet", slots: 30 },
@@ -14,11 +15,13 @@ const tables = [
 
 const PickleTableList = () => {
   return (
-    <Container className="py-5">
-      <Breadcrumb>
-        <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
-        <Breadcrumb.Item active>Pickle Table List</Breadcrumb.Item>
-      </Breadcrumb>
+    <Container fluid>
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Pickle Table List", active: true }
+        ]}
+      />
 
       {['A', 'B'].map((wing) => (
         <div key={wing} className="mb-5">

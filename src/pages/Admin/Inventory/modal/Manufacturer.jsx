@@ -63,7 +63,6 @@ const Manufacturer = ({ show, handleClose, onCreated }) => {
             });
     };
 
-
     return (
         <Modal show={show} onHide={handleClose} centered style={{ zIndex: 2000 }}>
             <Modal.Header className='bg-info bg-opacity-25 py-3' closeButton>

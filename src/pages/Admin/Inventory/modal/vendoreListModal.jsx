@@ -128,8 +128,6 @@ const VendorsList = ({ showVendorList, handleCloseVendorList, onVendorSelect }) 
             </tbody>
           </Table>
 
-
-
           {/* Pagination Controls */}
           <div className="d-flex justify-content-end">
             <Pagination>

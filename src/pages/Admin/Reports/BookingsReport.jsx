@@ -543,36 +543,39 @@ export const BookingsReport = () => {
                 ]}
             />
 
-            <Card className="border-0 rounded-2 shadow-sm mt-3 px-3 py-4">
+            <Card className="border-0 shadow-sm p-3">
                 <Row>
-                    <Col xs={12} md={6} className="d-flex align-items-center">
-                        <h1
-                            className="text-uppercase fw-bold mx-2 mt-2"
-                            style={{
-                                letterSpacing: '5px',
-                                fontSize: '18px',
-                                background: 'linear-gradient(to right,rgb(0, 119, 255),rgb(0, 17, 255))',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent'
-                            }}
-                        >
-                            Bookings Report
-                        </h1>
+                    <Col xs={12} md={12}>
+                        <Row className="align-items-center mb-3">
+                            <Col xs={12} md={6}>
+                                <h1
+                                    className="text-uppercase fw-bold mx-2"
+                                    style={{
+                                        letterSpacing: '5px',
+                                        fontSize: '18px',
+                                        background: 'linear-gradient(to right,rgb(0, 119, 255),rgb(0, 17, 255))',
+                                        WebkitBackgroundClip: 'text',
+                                        WebkitTextFillColor: 'transparent'
+                                    }}
+                                >
+                                    Bookings Report
+                                </h1>
+                            </Col>
+                            <Col xs={12} md={6} className="d-flex justify-content-md-end mt-2 mt-md-0">
+                                <Button
+                                    className="px-4 mx-2 w-100 w-sm-auto"
+                                    style={{ borderColor: '#FF3636', color: '#FF3636' }}
+                                    onClick={() => exportToCSV(filteredItems, columns, "sales_report.csv", bookingsReport)}
+                                    variant="outline-danger"
+                                >
+                                    <img src={solar_export} alt="export" style={{ width: '22px', height: '22px' }} className="me-2" />
+                                    Export
+                                </Button>
+                            </Col>
+                        </Row>
                     </Col>
 
-                    <Col xs={12} md={6} className="d-flex justify-content-md-end align-items-center mt-2 mt-md-0">
-                        <Button
-                            className="px-4 mx-2 w-100 w-sm-auto"
-                            style={{ borderColor: '#FF3636', color: '#FF3636' }}
-                            onClick={() => exportToCSV(filteredItems, columns, "sales_report.csv", bookingsReport)}
-                            variant="outline-danger"
-                        >
-                            <img src={solar_export} alt="export" style={{ width: '22px', height: '22px' }} className="me-2" />
-                            Export
-                        </Button>
-                    </Col>
-
-                    <Col xs={12} className="mt-3">
+                    {/* <Col xs={12} className="mt-3"> */}
                         <Form className="mt-3">
                             <Row className="g-3">
                                 <Col xs={6} md={3}>
@@ -694,7 +697,7 @@ export const BookingsReport = () => {
                                 </Col>
                             </Row>
                         </Form>
-                    </Col>
+                    {/* </Col> */}
 
                     <hr className="mt-4" />
 

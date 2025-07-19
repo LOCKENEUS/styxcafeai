@@ -88,7 +88,6 @@ const ParchaseBCreate = () => {
     dispatch(getItems(cafeId));
   }, [dispatch]);
   const vendorsList = useSelector((state) => state.purchaseOrder?.vendors);
-  // const lisgetCustomers = useSelector((state) => state.customers?.customers);
   const { customers, loading: customerLoading } = useSelector(
     (state) => state.customers
   );
