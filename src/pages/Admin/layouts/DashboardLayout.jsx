@@ -30,7 +30,7 @@ const DashboardLayout = ({ setIsAuthenticated }) => {
       <Sidebar collapsed={collapsed} isMobile={isMobile} toggleSidebar={toggleSidebar} />
       <main className={`main-content ${collapsed ? "collapsed" : ""}`}>
         <Navbar setIsAuthenticated={setIsAuthenticated} toggleSidebar={toggleSidebar} collapsed={collapsed} />
-        <Container fluid className={`content-wrapper ${isMobile ? 'p-1' : 'p-4'}`}>
+        <Container fluid className={`content-wrapper ${isMobile ? 'p-1' : 'p-4'}`} style={{ minHeight: '100vh' }}>
           <Outlet />
         </Container>
       </main>

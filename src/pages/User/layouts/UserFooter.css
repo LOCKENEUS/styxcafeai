@@ -1,0 +1,12 @@
+.site-footer {
+  background-color: #000;
+  color: white;
+  text-align: center;
+  padding: 20px 10px;
+}
+
+.site-footer a {
+  color: #ffc107;
+  text-decoration: none;
+  margin: 0 5px;
+}

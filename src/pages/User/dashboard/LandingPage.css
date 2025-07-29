@@ -1,0 +1,180 @@
+/* BookingPage.css */
+
+.booking-page {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  padding: 2rem;
+  background-color: #fdfbfb; /* Dark background */
+  color: #fff;
+}
+
+.booking-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1c1c1c;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.booking-header h2 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.8rem;
+}
+
+.address {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  color: #ccc;
+}
+
+.address .icon {
+  margin-right: 6px;
+  color: #ffcc00;
+}
+
+.rating-offer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  background: #292929;
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  font-weight: bold;
+  color: #facc15;
+}
+
+.rating .icon {
+  margin-right: 4px;
+}
+
+.offer-button {
+  background-color: #0d9488 !important;
+  color: white;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.9rem;
+  border-radius: 8px;
+}
+
+.tab-navigation {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.tab-navigation button {
+  background: #1e1e1e;
+  color: #aaa;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tab-navigation .active {
+  background: #0d9488;
+  color: white;
+}
+
+.booking-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.step-number {
+  background: #0d9488;
+  color: white;
+  font-weight: bold;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 2rem;
+}
+
+.step-details h3 {
+  margin: 0 0 0.5rem 0;
+}
+
+.subtext {
+  color: #aaa;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.activity-card {
+  background: white;
+  color: black;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-top: 0.5rem;
+}
+
+.activity-title {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.book-button {
+  background-color: #0d9488 !important;
+  color: white;
+  font-size: 0.9rem;
+  padding: 0.4rem 1.2rem;
+  border-radius: 6px;
+}
+
+.booking-sidebar {
+  background: #1b1b1b;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-top: 2rem;
+}
+
+.empty-slot-card {
+  background: #292929;
+  padding: 1rem;
+  border-radius: 8px;
+  color: #bbb;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.select-slot-button {
+  background-color: #0d9488 !important;
+  color: white;
+  width: 100%;
+  padding: 0.6rem;
+  font-weight: bold;
+  border-radius: 8px;
+}

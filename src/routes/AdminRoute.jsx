@@ -1,20 +1,3 @@
-// // routes/AdminRoute.jsx
-// import { Navigate, Outlet } from "react-router-dom";
-
-// const AdminRoute = () => {
-//   const isAuthenticated = localStorage.getItem("authToken");
-//   const userRole = localStorage.getItem("userRole");
-
-//   return isAuthenticated && userRole === "admin" ? (
-//     <Outlet />
-//   ) : (
-//     <Navigate to="/admin/login" replace />
-//   );
-// };
-
-// export default AdminRoute;
-
-
 import { Navigate, Outlet } from "react-router-dom";
 
 const AdminRoute = () => {

@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import PublicRoute from "./PublicRoute";
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
+import UserRoute from "./UserRoute";
 
 import Login from "../pages/SuperAdmin/authentication/Login";
 import Dashboard from "../pages/SuperAdmin/dashboard/Dashboard";
@@ -137,6 +138,8 @@ import SplashAnimation from "../components/utils/Animations/SplashAnimation";
 import { BookingsReport } from "../pages/Admin/Reports/BookingsReport";
 import { CommissionReport } from "../pages/Admin/Reports/CommissionReport";
 import { SuperProfile } from "../pages/SuperAdmin/profile/Profile";
+import UserLayout from "../pages/User/layouts/UserLayout";
+import UserDashboard from "../pages/User/dashboard/LandingPage";
 
 const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
   const [locations, setLocations] = useState([]);
@@ -320,11 +323,11 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
 
       {/*-------------------- User Routes -------------------------------- */}
       {/* Uncomment and add UserRoute/UserLayout if needed */}
-      {/* <Route element={<UserRoute />}>
+      <Route element={<UserRoute />}>
         <Route element={<UserLayout />}>
           <Route path="/user/dashboard" element={<UserDashboard />} />
         </Route>
-      </Route> */}
+      </Route>
 
       {/*-------------------- Redirects -------------------------------- */}
       <Route

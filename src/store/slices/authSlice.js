@@ -17,7 +17,7 @@ export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/user/login`, userData, {
+      const response = await axios.post(`${BASE_URL}/auth/login`, userData, {
         headers: { "Content-Type": "application/json" },
       });
 
@@ -47,7 +47,7 @@ export const Adminlogin = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/user/admin/login`,
+        `${BASE_URL}/auth/admin/login`,
         userData,
         {
           headers: { "Content-Type": "application/json" },
@@ -79,7 +79,7 @@ export const sendPasswordResetEmail = createAsyncThunk(
   async (email, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/user/forget-password`,
+        `${BASE_URL}/auth/forget-password`,
         { email },
         {
           headers: { "Content-Type": "application/json" },
@@ -102,7 +102,7 @@ export const resetPassword = createAsyncThunk(
   async ({ email, newPassword, otp }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/user/reset-password`,
+        `${BASE_URL}/auth/reset-password`,
         { email, newPassword, otp },
         {
           headers: { "Content-Type": "application/json" },

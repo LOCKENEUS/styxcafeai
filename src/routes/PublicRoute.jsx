@@ -1,16 +1,3 @@
-// // routes/PublicRoute.jsx
-// import { Navigate, Outlet } from 'react-router-dom';
-
-// const PublicRoute = ({ isAuthenticated, ...props }) => {
-//   return !isAuthenticated ? (
-//     <Outlet {...props} />
-//   ) : (
-//     <Navigate to="/superadmin/dashboard" replace />
-//   );
-// };
-
-// export default PublicRoute;
-
 import { Navigate, Outlet } from "react-router-dom";
 
 const PublicRoute = ({ isAuthenticated }) => {

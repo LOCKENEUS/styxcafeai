@@ -2355,18 +2355,10 @@ const BookingCheckout = () => {
               </p>
             </div>
 
-            <hr />
-            <Row className="text-center">
-              {/* <Col>
-                <FaPhone size={20} />
-              </Col>
-              <Col>
-                <FaComment size={20} />
-              </Col>
-              <Col>
-                <FaVideo size={20} />
-              </Col> */}
-              <Col className="m-auto d-flex">
+            {/* <hr /> */}
+            {/* <Row className="text-center"> */}
+              {/* <Col className="m-auto d-flex"> */}
+              <div>
                 {(booking?.booking_type === "Regular" && selectedGame?.cancellation && booking?.status === "Pending") || (booking?.booking_type === "Regular" && selectedGame?.cancellation && !selectedGame?.payLater) ?
                   <Button
                     variant="success"
@@ -2390,8 +2382,10 @@ const BookingCheckout = () => {
                   </Button>
                   :
                   <></>}
-              </Col>
-            </Row>
+              </div>
+
+              {/* </Col>
+            </Row> */}
           </Card>
 
         </Col>

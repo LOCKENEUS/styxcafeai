@@ -11,7 +11,7 @@ import membershipReducer from "./slices/MembershipSlice";
 import InventorySlice from "./slices/inventory";
 
 // Admin Slices
-import inventoryReducer from "./adminslices/inventory";
+// import inventoryReducer from "./adminslices/inventory";
 import customerReducer from "./AdminSlice/CustomerSlice";
 import userReducer from "./AdminSlice/UserSlice";
 import customFieldReducer from "./AdminSlice/CustomField";
@@ -60,7 +60,7 @@ export const store = configureStore({
 
 
     // Admin Slices
-    inventory: inventoryReducer,
+    // inventory: inventoryReducer,
     customers: customerReducer,
     users: userReducer,
     customFields: customFieldReducer,
