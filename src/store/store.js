@@ -43,6 +43,7 @@ import saSalesReturnReducer from "./slices/Inventory/returnSlice";
 import cafeReportReducer from "./AdminSlice/reports";
 import dashboardReducer from "./slices/dashboardSlice"
 import invDashboardReducer from "./AdminSlice/Inventory/invDashboardSlice";
+import userBookingReducer from "./userSlice/BookingSlice";
 
 export const store = configureStore({
   reducer: {
@@ -57,6 +58,7 @@ export const store = configureStore({
     offers: offerReducer, // Ensure 'offers' matches useSelector((state) => state.offers)
     memberships: membershipReducer, // Ensure 'memberships' matches useSelector((state) => state.memberships)
     adminDashboard: adminDashboardReducer,
+    userBooking: userBookingReducer,
 
 
     // Admin Slices
