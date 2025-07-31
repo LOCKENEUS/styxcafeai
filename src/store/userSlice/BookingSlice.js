@@ -6,10 +6,10 @@ const API_URL = import.meta.env.VITE_API_URL;
 const BASE_URL = `${API_URL}/user`;
 
 const initialState = {
-    cafeDetails: null,
-    gameDetails:null,
-    loading: false,
-    error: null,
+  cafeDetails: null,
+  gameDetails:null,
+  loading: false,
+  error: null,
 };
 
 export const fetchCafeDetails = createAsyncThunk(
@@ -50,37 +50,36 @@ export const fetchGameDetails = createAsyncThunk(
 );
 
 const authSlice = createSlice({
-    name: "user",
-    initialState,
-    extraReducers: (builder) => {
-        builder
-            .addCase(fetchCafeDetails.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchCafeDetails.fulfilled, (state, action) => {
-                state.loading = false;
-                state.cafeDetails = action.payload;
-            })
-            .addCase(fetchCafeDetails.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-            })
+  name: "user",
+  initialState,
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCafeDetails.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+      })
+      .addCase(fetchCafeDetails.fulfilled, (state, action) => {
+          state.loading = false;
+          state.cafeDetails = action.payload;
+      })
+      .addCase(fetchCafeDetails.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload;
+      })
 
-            .addCase(fetchGameDetails.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchGameDetails.fulfilled, (state, action) => {
-                state.loading = false;
-                state.gameDetails = action.payload;
-            })
-            .addCase(fetchGameDetails.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-            });
-
-    },
+      .addCase(fetchGameDetails.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+      })
+      .addCase(fetchGameDetails.fulfilled, (state, action) => {
+          state.loading = false;
+          state.gameDetails = action.payload;
+      })
+      .addCase(fetchGameDetails.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload;
+      });
+  },
 });
 
 export default authSlice.reducer;

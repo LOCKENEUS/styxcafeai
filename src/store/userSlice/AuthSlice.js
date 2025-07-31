@@ -3,7 +3,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
-const API_URL = `${BASE_URL}/superadmin/cafe`;
 
 const initialState = {
     isAuthenticated: false,
@@ -42,6 +41,29 @@ export const loginUser = createAsyncThunk(
     }
 );
 
+export const registerUser = createAsyncThunk(
+    "auth/registerUser",
+    async (userData, { rejectWithValue }) => {
+        try {
+            const response = await axios.post(`${BASE_URL}/auth/user/register`, userData );
+
+            const { data } = response;
+
+            if (!data || !data.data) {
+                throw new Error("Invalid response structure from server");
+            }
+            toast.success("Registration successful");
+
+            return data.data;
+        } catch (error) {
+            toast.error("Login failed");
+
+            return rejectWithValue(
+                error.response?.data?.message || error.message || "Registration failed"
+            );
+        }
+    }
+);
 
 const authSlice = createSlice({
     name: "userAuth",
