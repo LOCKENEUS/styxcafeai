@@ -183,7 +183,7 @@ const GameInfo = () => {
       />
 
       {/* Booking Overview */}
-      <Card className="p-1" style={{ backgroundColor: "white", marginBottom: "20px" }}>
+      <Card className="p-2" style={{ backgroundColor: "white", marginBottom: "20px" }}>
         <Row className="" style={{ backgroundColor: "transparent" }}>
           <Col md={3} className="position-relative my-auto" style={{ backgroundColor: "transparent" }}>
             <img
@@ -195,7 +195,7 @@ const GameInfo = () => {
               className="ps-2 pe-2 mt-2 mt-md-0 img-fluid responsive-img-width"
               style={{
                 height: "230px",
-                borderRadius: "20px",
+                borderRadius: "12px",
                 objectFit: "cover",
               }}
             />
@@ -227,7 +227,7 @@ const GameInfo = () => {
             style={{ backgroundColor: "transparent" }}
           >
             <div className="mb-10 p-2 mx-2 text-end">
-              <span className="text-color">Created At - </span>{new Date(selectedGame?.data?.createdAt).toLocaleString()}
+              <span className="text-color">Created At - </span>{new Date(selectedGame?.data?.createdAt).toLocaleDateString('en-GB')}
             </div>
             <span className="align-bottom p-2 px-0 mt-3">
               <div className="d-flex justify-content-around gap-2 p-2">

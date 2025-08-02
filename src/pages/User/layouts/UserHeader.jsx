@@ -16,8 +16,7 @@ const UserHeader = () => {
         <nav className="nav-links">
           <Link className={isActive("/") ? "active" : ""} to="/">Home</Link>
           <Link className={isActive("/book")} to="/book">Book a Table</Link>
-          <Link className={isActive("/franchise")} to="/franchise">Franchise</Link>
-          <Link className={isActive("/gallery")} to="/gallery">Gallery</Link>
+          <Link className={isActive("/book")} to="/user/bookings">My Bookings</Link>
           <Link className={isActive("/about")} to="/about">About Us</Link>
         </nav>
 

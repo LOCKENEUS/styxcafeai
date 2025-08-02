@@ -13,7 +13,6 @@ const UserLayout = ({ setIsAuthenticated }) => {
           {/* Main Navbar */}
           <Outlet />
         </Container>
-
       <UserFooter />
     </div>
   );

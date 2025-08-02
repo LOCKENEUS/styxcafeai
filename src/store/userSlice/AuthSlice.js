@@ -26,9 +26,10 @@ export const loginUser = createAsyncThunk(
                 throw new Error("Invalid response structure from server");
             }
             toast.success("Login successful");
+            console.log("data after login",data)
             localStorage.setItem("authToken", data.data.token);
             localStorage.setItem("userRole", "user");
-            localStorage.setItem("user", JSON.stringify(data.data.user));
+            localStorage.setItem("user", JSON.stringify(data.data.customer));
 
             return data.data;
         } catch (error) {

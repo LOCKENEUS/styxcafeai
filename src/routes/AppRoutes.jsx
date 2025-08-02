@@ -140,6 +140,8 @@ import { CommissionReport } from "../pages/Admin/Reports/CommissionReport";
 import { SuperProfile } from "../pages/SuperAdmin/profile/Profile";
 import UserLayout from "../pages/User/layouts/UserLayout";
 import UserDashboard from "../pages/User/dashboard/LandingPage";
+import { UserBookings } from "../pages/User/dashboard/UserBookings";
+import { AboutUs } from "../pages/User/dashboard/AboutUs";
 
 const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
   const [locations, setLocations] = useState([]);
@@ -157,6 +159,12 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/change-password" element={<ChangePassword />} />
+
+        {/* User routes */}
+        <Route element={<UserLayout />}>
+          <Route path="/user/dashboard" element={<UserDashboard />} />
+          <Route path="/about" element={<AboutUs />} />
+        </Route>
       </Route>
 
       {/*-------------------- Super Admin Routes-------------------------------- */}
@@ -322,10 +330,9 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
       </Route>
 
       {/*-------------------- User Routes -------------------------------- */}
-      {/* Uncomment and add UserRoute/UserLayout if needed */}
       <Route element={<UserRoute />}>
         <Route element={<UserLayout />}>
-          <Route path="/user/dashboard" element={<UserDashboard />} />
+          <Route path="/user/bookings" element={<UserBookings />} />
         </Route>
       </Route>
 
@@ -358,7 +365,7 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
                   : localStorage.getItem("userRole") === "admin"
                     ? "/splash"
                     : "/user/dashboard"
-                : "/admin/login"
+                : "/user/dashboard"
             }
             replace
           />

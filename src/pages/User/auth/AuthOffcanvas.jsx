@@ -1,8 +1,7 @@
 // import React, { useState } from "react";
-// import { Button, Form, Offcanvas } from "react-bootstrap";
-// import { BiMobile } from "react-icons/bi";
+// import { Button, Offcanvas } from "react-bootstrap";
 // import { useDispatch } from "react-redux";
-// import { registerUser } from "../../../store/userSlice/AuthSlice";
+// import { loginUser, registerUser } from "../../../store/userSlice/AuthSlice";
 // import './AuthOffcanvas.css';
 
 // const AuthOffcanvas = ({ show, onClose, cafe }) => {
@@ -17,30 +16,23 @@
 //         e.preventDefault();
 //         if (isSignup) {
 //             dispatch(registerUser({
-//                 name: name,
-//                 email: email,
+//                 name,
+//                 email,
 //                 contact_no: contactNo,
-//                 password: password,
-//                 cafe: cafe
-//             }))
+//                 password,
+//                 cafe
+//             }));
 //         } else {
-//             console.log("Logging in with:", email);
+//             dispatch(loginUser({
+
+//             }))
 //         }
 //     };
 
 //     return (
-//         <Offcanvas show={show} onHide={onClose} placement="end" style={{ width: "500px" }} >
-//             <Offcanvas.Header closeButton
-//                 style={{
-//                     border: "none",
-//                     // backgroundImage: "url('/assets/profile/auth_header.png')",
-//                     // backgroundSize: "cover", // optional: scale image
-//                     // backgroundRepeat: "no-repeat", // optional: prevent tiling
-//                     // backgroundPosition: "center", // optional: center the image
-//                 }}
-//             >
-//                 <Offcanvas.Title>
-//                 </Offcanvas.Title>
+//         <Offcanvas show={show} onHide={onClose} placement="end" style={{ width: "500px" }}>
+//             <Offcanvas.Header closeButton style={{ border: "none" }}>
+//                 <Offcanvas.Title />
 //             </Offcanvas.Header>
 //             <Offcanvas.Body className="d-flex flex-column justify-content-between">
 //                 <div>
@@ -48,48 +40,59 @@
 //                         UNLEASH THE SPORTS PERSON IN YOU!
 //                     </h6>
 //                     <hr />
-//                     <Form onSubmit={handleSubmit} className="px-2">
-//                         {isSignup && (<Form.Group controlId="name" className="mb-3">
-//                             <Form.Label>Full NAme</Form.Label>
-//                             <Form.Control
+//                     <form onSubmit={handleSubmit} className="px-2">
+
+//                         {isSignup && (
+//                             <div className="floating-input-container mb-3">
+//                                 <input
+//                                     type="text"
+//                                     id="name"
+//                                     className="floating-input"
+//                                     placeholder=" "
+//                                     value={name}
+//                                     onChange={(e) => setName(e.target.value)}
+//                                 />
+//                                 <label htmlFor="name" className="floating-label">Full Name</label>
+//                             </div>
+//                         )}
+
+//                         <div className="floating-input-container mb-3">
+//                             <input
 //                                 type="text"
-//                                 placeholder={"Enter your name"}
-//                                 value={name}
-//                                 onChange={(e) => setName(e.target.value)}
-//                             />
-//                         </Form.Group>)}
-//                         {/* <Form.Group controlId="contactNo" className="mb-3">
-//                             <Form.Label>Mobile Number</Form.Label>
-//                             <Form.Control
-//                                 type="text"
-//                                 placeholder={"Enter your mobile number"}
+//                                 id="contactNo"
+//                                 className="floating-input"
+//                                 placeholder=" "
 //                                 value={contactNo}
 //                                 onChange={(e) => setContactNo(e.target.value)}
 //                             />
-//                         </Form.Group> */}
-//                         <div className="floating-input-container">
-//                             <input type="text" className="floating-input" placeholder=" " name="contactNo" value={contactNo} id="contactNo" onChange={(e) => setContactNo(e.target.value)}/>
-//                             <label for="contactNo" name="contactNo" className="floating-label">Mobile No</label>
+//                             <label htmlFor="contactNo" className="floating-label">Mobile No</label>
 //                         </div>
-//                         {isSignup && (<Form.Group controlId="email" className="mb-3">
-//                             <Form.Label>Email</Form.Label>
-//                             <Form.Control
-//                                 type="text"
-//                                 placeholder={"Enter your email"}
-//                                 value={email}
-//                                 onChange={(e) => setEmail(e.target.value)}
-//                             />
-//                         </Form.Group>)}
 
-//                         <Form.Group controlId="password" className="mb-3">
-//                             <Form.Label>Password</Form.Label>
-//                             <Form.Control
+//                         {isSignup && (
+//                             <div className="floating-input-container mb-3">
+//                                 <input
+//                                     type="email"
+//                                     id="email"
+//                                     className="floating-input"
+//                                     placeholder=" "
+//                                     value={email}
+//                                     onChange={(e) => setEmail(e.target.value)}
+//                                 />
+//                                 <label htmlFor="email" className="floating-label">Email</label>
+//                             </div>
+//                         )}
+
+//                         <div className="floating-input-container mb-3">
+//                             <input
 //                                 type="password"
-//                                 placeholder="Create a password"
+//                                 id="password"
+//                                 className="floating-input"
+//                                 placeholder=" "
 //                                 value={password}
 //                                 onChange={(e) => setPassword(e.target.value)}
 //                             />
-//                         </Form.Group>
+//                             <label htmlFor="password" className="floating-label">Password</label>
+//                         </div>
 
 //                         <div className="d-grid">
 //                             <Button type="submit" style={{ background: "#ffc107", border: "none" }}>
@@ -109,7 +112,7 @@
 //                                 </span>
 //                             </small>
 //                         </div>
-//                     </Form>
+//                     </form>
 //                 </div>
 
 //                 <div className="text-center mt-4">
@@ -135,6 +138,11 @@
 
 
 
+
+
+
+
+
 import React, { useState } from "react";
 import { Button, Offcanvas } from "react-bootstrap";
 import { useDispatch } from "react-redux";
@@ -147,10 +155,35 @@ const AuthOffcanvas = ({ show, onClose, cafe }) => {
     const [email, setEmail] = useState("");
     const [contactNo, setContactNo] = useState("");
     const [password, setPassword] = useState("");
+    const [errors, setErrors] = useState({});
+
     const dispatch = useDispatch();
+
+    const validate = () => {
+        const newErrors = {};
+        if (isSignup) {
+            if (!name.trim()) newErrors.name = "Name is required";
+            else if (name.trim().length < 2) newErrors.name = "Name must be at least 2 characters";
+
+            if(email){
+                if (!/^\S+@\S+\.\S+$/.test(email)) newErrors.email = "Enter a valid email";
+            }
+        }
+
+        if (!contactNo.trim()) newErrors.contactNo = "Mobile number is required";
+        else if (!/^\d{10}$/.test(contactNo)) newErrors.contactNo = "Enter a valid 10-digit number";
+
+        if (!password.trim()) newErrors.password = "Password is required";
+        else if (password.length < 6) newErrors.password = "Password must be at least 6 characters";
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!validate()) return;
+
         if (isSignup) {
             dispatch(registerUser({
                 name,
@@ -161,8 +194,11 @@ const AuthOffcanvas = ({ show, onClose, cafe }) => {
             }));
         } else {
             dispatch(loginUser({
-                
-            }))
+                name,
+                contact_no: contactNo,
+                password
+            }));
+            handleOnlinePayment();
         }
     };
 
@@ -179,7 +215,7 @@ const AuthOffcanvas = ({ show, onClose, cafe }) => {
                     <hr />
                     <form onSubmit={handleSubmit} className="px-2">
 
-                        {isSignup && (
+                        {/* {isSignup && ( */}
                             <div className="floating-input-container mb-3">
                                 <input
                                     type="text"
@@ -190,8 +226,9 @@ const AuthOffcanvas = ({ show, onClose, cafe }) => {
                                     onChange={(e) => setName(e.target.value)}
                                 />
                                 <label htmlFor="name" className="floating-label">Full Name</label>
+                                {errors.name && <small className="text-danger">{errors.name}</small>}
                             </div>
-                        )}
+                        {/* )} */}
 
                         <div className="floating-input-container mb-3">
                             <input
@@ -203,6 +240,7 @@ const AuthOffcanvas = ({ show, onClose, cafe }) => {
                                 onChange={(e) => setContactNo(e.target.value)}
                             />
                             <label htmlFor="contactNo" className="floating-label">Mobile No</label>
+                            {errors.contactNo && <small className="text-danger">{errors.contactNo}</small>}
                         </div>
 
                         {isSignup && (
@@ -216,6 +254,7 @@ const AuthOffcanvas = ({ show, onClose, cafe }) => {
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
                                 <label htmlFor="email" className="floating-label">Email</label>
+                                {errors.email && <small className="text-danger">{errors.email}</small>}
                             </div>
                         )}
 
@@ -229,6 +268,7 @@ const AuthOffcanvas = ({ show, onClose, cafe }) => {
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                             <label htmlFor="password" className="floating-label">Password</label>
+                            {errors.password && <small className="text-danger">{errors.password}</small>}
                         </div>
 
                         <div className="d-grid">
@@ -243,7 +283,10 @@ const AuthOffcanvas = ({ show, onClose, cafe }) => {
                                 <span
                                     className="text-primary fw-semibold"
                                     role="button"
-                                    onClick={() => setIsSignup(!isSignup)}
+                                    onClick={() => {
+                                        setIsSignup(!isSignup);
+                                        setErrors({});
+                                    }}
                                 >
                                     {isSignup ? "Login" : "Sign Up"}
                                 </span>
@@ -265,4 +308,3 @@ const AuthOffcanvas = ({ show, onClose, cafe }) => {
 };
 
 export default AuthOffcanvas;
-

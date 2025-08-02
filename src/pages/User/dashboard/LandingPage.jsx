@@ -4,10 +4,11 @@ import { BiMapPin } from 'react-icons/bi';
 import { FaStar } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { fetchCafeDetails, fetchGameDetails } from '../../../store/userSlice/BookingSlice';
+import { fetchCafeDetails, fetchGameDetails, processRazorPay } from '../../../store/userSlice/BookingSlice';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import './LandingPage.css';
 import AuthOffcanvas from '../auth/AuthOffcanvas';
+import FeatureIcons from './FeatureIcons';
 
 const LandingPage = () => {
 
@@ -18,7 +19,7 @@ const LandingPage = () => {
   ];
 
   const [activeTab, setActiveTab] = useState('book');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const isAuthenticated = localStorage.getItem("authToken");
   const [showCanvas, setShowCanvas] = useState(false);
 
   const [showSlots, setShowSlots] = useState(false);
@@ -32,6 +33,7 @@ const LandingPage = () => {
   const game = queryParams.get('game');
 
   const { cafeDetails, gameDetails, loading, error } = useSelector((state) => state.userBooking);
+  const selectedCustomer = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
     // Fetch data based on cafe and game
@@ -81,6 +83,39 @@ const LandingPage = () => {
   const timeSlots = generateTimeSlots();
   const dates = generateDates();
 
+  // For multiple slot selection
+  // const handleSlotClick = (dateIndex, timeIndex) => {
+  //   const date = dates[dateIndex];
+  //   console.log("date...", date)
+  //   const dayName = date.date.toLocaleDateString('en-US', { weekday: 'long' });
+  //   const availableSlots = gameDetails?.slots?.[dayName] || [];
+
+  //   const matchingSlot = availableSlots.find(
+  //     (s) => s.start_time === `${timeSlots[timeIndex].hour.toString().padStart(2, '0')}:00`
+  //   );
+
+  //   if (!matchingSlot) return;
+
+  //   const slotKey = `${dateIndex}-${timeIndex}`;
+  //   const isAlreadySelected = selectedSlots?.some(s => s._key === slotKey);
+
+  //   let updatedSlots;
+  //   if (isAlreadySelected) {
+  //     updatedSlots = selectedSlots.filter(s => s._key !== slotKey);
+  //   } else {
+  //     const slotInfo = {
+  //       _key: slotKey, // unique identifier
+  //       ...matchingSlot,
+  //       uiDate: date.fullDate,        // e.g., "2025-08-09"
+  //       uiDayName: date.dayName,      // e.g., "Saturday"
+  //     };
+  //     updatedSlots = [...selectedSlots, slotInfo];
+  //   }
+
+  //   setSelectedSlots(updatedSlots);
+  // };
+
+  // For single slot selection
   const handleSlotClick = (dateIndex, timeIndex) => {
     const date = dates[dateIndex];
     const dayName = date.date.toLocaleDateString('en-US', { weekday: 'long' });
@@ -90,27 +125,19 @@ const LandingPage = () => {
       (s) => s.start_time === `${timeSlots[timeIndex].hour.toString().padStart(2, '0')}:00`
     );
 
-    console.log("selected slots...", selectedSlots)
-
     if (!matchingSlot) return;
 
     const slotKey = `${dateIndex}-${timeIndex}`;
-    const isAlreadySelected = selectedSlots?.some(s => s._key === slotKey);
 
-    let updatedSlots;
-    if (isAlreadySelected) {
-      updatedSlots = selectedSlots.filter(s => s._key !== slotKey);
-    } else {
-      const slotInfo = {
-        _key: slotKey, // unique identifier
-        ...matchingSlot,
-        uiDate: date.fullDate,        // e.g., "2025-08-09"
-        uiDayName: date.dayName,      // e.g., "Saturday"
-      };
-      updatedSlots = [...selectedSlots, slotInfo];
-    }
+    const slotInfo = {
+      _key: slotKey, // unique identifier
+      ...matchingSlot,
+      uiDate: date.fullDate,        // e.g., "2025-08-09"
+      uiDayName: date.dayName,      // e.g., "Saturday"
+    };
 
-    setSelectedSlots(updatedSlots);
+    // Set ONLY one slot
+    setSelectedSlots([slotInfo]);
   };
 
   const handleBookNow = () => {
@@ -119,6 +146,86 @@ const LandingPage = () => {
       setSelectedSlots([]); // Clear selections when opening
     }
   };
+
+  // With multiple slots
+  // const handleOnlinePayment = async () => {
+  //   const payableAmount = selectedSlots.reduce((total, slot) => total + (slot.slot_price || 0), 0);
+  //   const total = payableAmount; // assuming no discounts, taxes, etc.
+
+  //   if (payableAmount <= 0) {
+  //     alert("Amount must be greater than 0");
+  //     return;
+  //   }
+
+  //   selectedSlots.map(slot => ({
+  //     slot_id: slot._id,
+  //     slot_date: new Date(slot.uiDate).toISOString().split('T')[0], // "2025-08-01"
+  //     start_time: slot.start_time,
+  //     end_time: slot.end_time,
+  //   }));
+
+  //   try {
+  //     const resultAction = await dispatch(
+  //       processRazorPay({
+  //         selectedGame: gameDetails,
+  //         selectedCustomer,
+  //         selectedSlots,
+  //         payableAmount,
+  //         paid_amount: payableAmount,
+  //         total,
+  //         looser: null,
+  //         playerCredits: null,
+  //         adjustment: null,
+  //       })
+  //     );
+
+  //     const result = unwrapResult(resultAction);
+  //     console.log("Payment initiated:", result);
+  //   } catch (error) {
+  //     console.error("Payment error:", error);
+  //   }
+  // };
+
+  // With single slot
+  const handleOnlinePayment = async () => {
+    console.log("selectedSlots", selectedSlots)
+    if (selectedSlots.length !== 1) {
+      alert("Please select one slot for booking.");
+      return;
+    }
+
+    const selectedSlot = selectedSlots[0];
+
+    const slotDate = new Date(selectedSlot.uiDate).toISOString().split('T')[0]; // YYYY-MM-DD
+    const payableAmount = selectedSlot.slot_price || 0;
+
+    if (payableAmount <= 0) {
+      alert("Amount must be greater than 0");
+      return;
+    }
+
+    try {
+      const resultAction = await dispatch(
+        processRazorPay({
+          selectedGame: gameDetails,
+          selectedCustomer,
+          selectedSlotId: selectedSlot._id,
+          slotDate: slotDate,
+          startTime: selectedSlot.start_time,
+          endTime: selectedSlot.end_time,
+          payableAmount,
+          paid_amount: payableAmount,
+          total: payableAmount,
+        })
+      );
+
+      // const result = unwrapResult(resultAction);
+      // console.log("Payment initiated:", result);
+    } catch (error) {
+      console.error("Payment error:", error);
+    }
+  };
+
 
   return (
     <Container fluid className="p-3">
@@ -162,7 +269,7 @@ const LandingPage = () => {
           </div>
 
           <Row className="p-4">
-            <Col md={2}>
+            {/* <Col md={2}>
               <div><img src="/assets/Admin/Game/paylater.svg" className="me-1 mb-1 p-1" alt="paylater" /><br />Online Payment</div>
             </Col>
             <Col md={2}>
@@ -173,7 +280,9 @@ const LandingPage = () => {
             </Col>
             <Col md={2}>
               <div><img src="/assets/Admin/Game/crosssign.svg" className="me-1 mb-1 p-1" alt="paylater" /><br />Cross Sign</div>
-            </Col>
+            </Col> */}
+
+            <FeatureIcons/>
           </Row>
 
           <Row className="p-4">
@@ -302,40 +411,6 @@ const LandingPage = () => {
                 </Col>
 
                 <Col lg={4}>
-                  {/* {selectedSlots.length > 0 ? (
-
-                    selectedSlots.map((slot, index) => (
-                      <div key={index} className="d-flex justify-content-between align-items-center mb-2 p-2 bg-white rounded border">
-                        <div>
-                          <div className="fw-semibold text-primary">{slot.uiDayName}</div>
-                          <small className="text-muted">{slot.start_time} - {slot.end_time}</small>
-                        </div>
-                        <Badge bg="success">₹{slot.slot_price}</Badge>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="bg-light p-5 text-center rounded shadow-sm h-100 d-flex flex-column justify-content-center">
-                      <div className="text-muted">
-                        <div className="mb-3">
-                          <div
-                            className="mx-auto mb-3 d-flex align-items-center justify-content-center"
-                            style={{
-                              width: '80px',
-                              height: '80px',
-                              backgroundColor: '#f8f9fa',
-                              borderRadius: '50%',
-                              border: '2px dashed #dee2e6'
-                            }}
-                          >
-                            📅
-                          </div>
-                        </div>
-                        <div className="fw-semibold">No slots selected yet!</div>
-                        <small>Click "Show Available Slots" and select your preferred time slots</small>
-                      </div>
-                    </div>
-                  )} */}
-
                   {selectedSlots.length > 0 ? (
                     <div className="booking-summary p-4 shadow-sm h-100">
                       <h5 className="fw-bold mb-3 text-center">
@@ -363,11 +438,6 @@ const LandingPage = () => {
                         <div className="max-height-200" style={{ maxHeight: '200px', overflowY: 'auto' }}>
                           {selectedSlots?.map((slot, index) => (
                             <div key={index} className="d-flex justify-content-between align-items-center mb-2 p-2 bg-white rounded border">
-                              {/* <div>
-                                <div className="fw-semibold text-primary">{slot.dayName}</div>
-                                <small className="text-muted">{slot.time}</small>
-                              </div>
-                              <Badge bg="success">₹300</Badge> */}
                               <div>
                                 <div className="fw-semibold text-primary">{slot.uiDayName}</div>
                                 <small className="text-muted">{slot.start_time} - {slot.end_time}</small>
@@ -389,6 +459,7 @@ const LandingPage = () => {
                         className="w-100 fw-bold py-2"
                         style={{ backgroundColor: '#ffc107', borderColor: '#ffc107', color: '#2b2a2aff' }}
                         size="lg"
+                        onClick={handleOnlinePayment}
                       >
                         Proceed to Book ({selectedSlots.size} slots)
                       </Button>
@@ -440,7 +511,7 @@ const LandingPage = () => {
         </Tab.Container>
       </Row>
       <AuthOffcanvas show={showCanvas} onClose={() => setShowCanvas(false)} cafe={cafe} />
-    </Container >
+    </Container>
   );
 };
 
