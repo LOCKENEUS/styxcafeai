@@ -28,6 +28,7 @@ export const getBookings = createAsyncThunk(
   }
 );
 
+// Async thunk to fetch bookings by date
 export const getBookingsByDate = createAsyncThunk(
   "bookings/getbookingsByDate",
   async ({ cafeId, date }, thunkAPI) => {
@@ -49,6 +50,7 @@ export const getBookingsByDate = createAsyncThunk(
   }
 );
 
+// Async thunk to fetch bookings by Game
 export const getBookingsByGame = createAsyncThunk(
   "bookings/getbookingsByGame",
   async (id, thunkAPI) => {
@@ -113,6 +115,7 @@ export const updateBooking = createAsyncThunk(
   }
 );
 
+// Async thunk to add a new booking
 export const addToCart = createAsyncThunk(
   "bookings/addToCart",
   async ({ id, updatedData }, thunkAPI) => {
@@ -135,6 +138,7 @@ export const addToCart = createAsyncThunk(
   }
 );
 
+// Async thunk to fetch booking details
 export const getBookingDetails = createAsyncThunk(
   "bookings/bookingDetails",
   async (id, thunkAPI) => {
@@ -172,6 +176,7 @@ export const deleteBooking = createAsyncThunk(
   }
 );
 
+// Async thunk to process online payment
 export const processOnlinePayment = createAsyncThunk(
   "bookings/processOnlinePayment",
   async (
@@ -280,6 +285,7 @@ export const processOnlinePayment = createAsyncThunk(
   }
 );
 
+// Async thunk to fetch earnings report
 export const fetchEarning = createAsyncThunk(
   "bookings/fetchEarning",
   async ({ id, updatedData }, thunkAPI) => {

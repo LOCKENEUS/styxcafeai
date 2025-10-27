@@ -2,7 +2,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import PublicRoute from "./PublicRoute";
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
-import UserRoute from "./UserRoute";
 
 import Login from "../pages/SuperAdmin/authentication/Login";
 import Dashboard from "../pages/SuperAdmin/dashboard/Dashboard";
@@ -138,10 +137,6 @@ import SplashAnimation from "../components/utils/Animations/SplashAnimation";
 import { BookingsReport } from "../pages/Admin/Reports/BookingsReport";
 import { CommissionReport } from "../pages/Admin/Reports/CommissionReport";
 import { SuperProfile } from "../pages/SuperAdmin/profile/Profile";
-import UserLayout from "../pages/User/layouts/UserLayout";
-import UserDashboard from "../pages/User/dashboard/LandingPage";
-import { UserBookings } from "../pages/User/dashboard/UserBookings";
-import { AboutUs } from "../pages/User/dashboard/AboutUs";
 
 const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
   const [locations, setLocations] = useState([]);
@@ -159,12 +154,6 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/change-password" element={<ChangePassword />} />
-
-        {/* User routes */}
-        <Route element={<UserLayout />}>
-          <Route path="/user/dashboard" element={<UserDashboard />} />
-          <Route path="/about" element={<AboutUs />} />
-        </Route>
       </Route>
 
       {/*-------------------- Super Admin Routes-------------------------------- */}
@@ -329,13 +318,6 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
         </Route>
       </Route>
 
-      {/*-------------------- User Routes -------------------------------- */}
-      <Route element={<UserRoute />}>
-        <Route element={<UserLayout />}>
-          <Route path="/user/bookings" element={<UserBookings />} />
-        </Route>
-      </Route>
-
       {/*-------------------- Redirects -------------------------------- */}
       <Route
         path="/"
@@ -364,8 +346,8 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
                   ? "/superadmin/dashboard"
                   : localStorage.getItem("userRole") === "admin"
                     ? "/splash"
-                    : "/user/dashboard"
-                : "/user/dashboard"
+                    : "/admin/dashboard"
+                : "/admin/dashboard"
             }
             replace
           />
