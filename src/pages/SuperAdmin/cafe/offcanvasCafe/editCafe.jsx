@@ -15,35 +15,31 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
 
   const [removedExistingDocs, setRemovedExistingDocs] = useState([]);
   const [removedDocuments, setRemovedDocuments] = useState([]);
-
-  const [documentPreview, setDocumentPreview] = useState([]); // stores file names or objects
-
+  const [documentPreview, setDocumentPreview] = useState([]);
   const [formDataState, setFormDataState] = useState({
     cafeImage: [],
     document: [],
   });
   const [existingImages, setExistingImages] = useState([]);
   const [useManualAddress, setUseManualAddress] = useState(false);
-
-  const { locations = [] } = useSelector((state) => state.locations);
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-
   const dispatch = useDispatch();
   const IDCafeFetch = useSelector((state) => state.cafes);
-
+  const { locations = [] } = useSelector((state) => state.locations);
 
   useEffect(() => {
     if (cafeId) {
       dispatch(fetchCafesID(cafeId));
     }
   }, [dispatch, cafeId]);
+
   useEffect(() => {
     dispatch(getLocations());
   }, [dispatch]);
+
   const filteredCafes = IDCafeFetch.cafes?.filter((cafe) => cafe._id === cafeId);
 
   useEffect(() => {
@@ -52,7 +48,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
       const cafe = filteredCafes[0];
 
       setExistingImages(cafe.cafeImage || []);
-
 
       setFormDataState({
         name: cafe.name,
@@ -71,10 +66,9 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
         depositAmount: cafe.depositAmount,
         yearsOfContract: cafe.yearsOfContract,
         officeContactNo: cafe.officeContactNo,
-        cafeImage: cafe.imagePreview || [],
+        // cafeImage: cafe.imagePreview || [],
+        cafeImage: cafe.cafeImage || [],
         document: cafe.document || [],
-
-
       });
     }
   }, [IDCafeFetch, cafeId]);
@@ -85,23 +79,16 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
   };
   const [imagePreview, setImagePreview] = useState([]);
 
- 
-
-
   // -----------------------------------------------------
 
-
-
-
   const [existingCafeImages, setExistingCafeImages] = useState([]);
-  const [removedCafeImages, setRemovedCafeImages] = useState([]); 
-
+  const [removedCafeImages, setRemovedCafeImages] = useState([]);
 
   useEffect(() => {
     if (filteredCafes?.[0]?.cafeImage) {
       setExistingCafeImages(filteredCafes[0].cafeImage);
     }
-  }, [filteredCafes]);
+  }, []);
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
@@ -130,15 +117,46 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
     });
   };
 
-  const handleRemoveExistingImage = (imgPath) => {
-    setExistingCafeImages((prev) => prev.filter((img) => img !== imgPath));
+  // const handleRemoveExistingImage = (imgPath) => {
+  //   setExistingCafeImages((prev) => prev.filter((img) => img !== imgPath));
+  //   setRemovedCafeImages((prev) => [...prev, imgPath]);
+  // };
+
+  // ...existing code...
+   const handleRemoveExistingImage = (imgPath, index) => {
+    console.log("Removing existing image:", imgPath, "at index:", index);
+    // remove from displayed existing images by index
+    setExistingCafeImages((prev) => {
+      const copy = [...prev];
+      const removed = copy.splice(index, 1);
+      return copy;
+    });
+
+    console.log("Updated existingCafeImages:", existingCafeImages);
+
+    // track for backend deletion (store the original path)
     setRemovedCafeImages((prev) => [...prev, imgPath]);
+
+    // also remove from formDataState.cafeImage so submit won't re-send it
+    setFormDataState((prev) => {
+      if (!prev) return prev;
+      const prevImgs = Array.isArray(prev.cafeImage) ? prev.cafeImage : [];
+      const filename = imgPath.split('/').pop();
+      const updatedFiles = prevImgs.filter((item, i) => {
+        // if this item is a string and matches path or filename, drop it
+        if (typeof item === 'string') {
+          if (item === imgPath) return false;
+          if (item.split('/').pop() === filename) return false;
+        }
+        // if item is a File and indices match, keep it (we only remove existing images here)
+        return true;
+      });
+      return { ...prev, cafeImage: updatedFiles };
+    });
   };
-
-
+// ...existing code...
 
   // ================================================
-
 
   const toggleConfirmPasswordVisibility = (e) => {
     e.preventDefault(); // Prevent form submission
@@ -177,7 +195,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
     setShowPassword(!showPassword);
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -186,7 +203,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
     //   toast.error('Please fix All  before submitting');
     //   return;
     // }
-
 
     const formDataToSend = new FormData();
     formDataToSend.append("_id", cafeId);
@@ -231,7 +247,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
     //   });
     // }
 
-
     if (Array.isArray(formDataState.cafeImage)) {
       formDataState.cafeImage.forEach((item) => {
         if (typeof item === "string") {
@@ -252,7 +267,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
       });
     }
 
-
     try {
       setIsLoading(true);
       await dispatch(updateCafe({ id: cafeId, updatedData: formDataToSend })).unwrap();
@@ -264,8 +278,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
       setIsLoading(false);
     }
   };
-
-
 
   const handleSelect = (selectedOption) => {
     if (selectedOption) {
@@ -309,11 +321,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
       }));
     }
   };
-
-
-
-
-
 
   return (
     <Offcanvas show={show} onHide={handleClose} placement="end" style={{ width: "700px" }}>
@@ -366,7 +373,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                   onChange={handleChange}
                   required
                   className="py-2 border-2"
-
                 />
               </Form.Group>
             </Col>
@@ -437,7 +443,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
               </>
             )}
           </Form.Group>
-
 
           <Row className="mb-2">
             <Col md={6}>
@@ -511,9 +516,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
               <Form.Group className="my-4">
                 <Form.Label htmlFor="email" className="fw-bold text-secondary">
                   Email Address
-
                 </Form.Label>
-
                 <h4 className='text-secondary my-2 mx-3' style={{ fontSize: "14px" }}>{formDataState.email || filteredCafes?.[0]?.email || ""}</h4>
               </Form.Group>
             </Col>
@@ -545,7 +548,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                     </option>
                   ))}
                 </Form.Control>
-
               </Form.Group>
             </Col>
 
@@ -567,7 +569,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                   onChange={handleChange}
                   pattern="https?://.+"
                   className="py-2 border-2"
-
                 />
               </Form.Group>
             </Col>
@@ -592,85 +593,86 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
             />
           </Form.Group>
 
-          {/* <Row className="mb-3">
-          <Col md={6}>
-      <Form.Label className="fw-bold text-secondary d-block">
-        Upload Images
-      </Form.Label>
-      <div className="border-2 rounded-3 p-3 bg-light">
-        <Form.Control
-          type="file"
-          onChange={handleFileChange}
-          accept="image/*"
-          className="d-none"
-          id="fileUploadLocation"
-          multiple
-        />
-        <div className="d-flex flex-column gap-3">
-          <div className="d-flex justify-content-center align-items-center">
-            <label
-              style={{ width: "10rem", height: "3rem" }}
-              htmlFor="fileUploadLocation"
-              className="btn btn-outline-primary d-flex justify-content-center align-items-center py-2"
-            >
-              Choose Files
-            </label>
-          </div>
-
-         
-          <div className="d-flex flex-wrap gap-2">
-            {imagePreview.map((img, index) => (
-              <div key={`new-${index}`} className="position-relative">
-                <img
-                  src={img}
-                  alt={`Preview ${index + 1}`}
-                  className="img-thumbnail"
-                  style={{
-                    width: "100px",
-                    height: "100px",
-                    objectFit: "cover",
-                  }}
+          <Row className="mb-3">
+            <Col md={6}>
+              <Form.Label className="fw-bold text-secondary d-block">
+                Upload Images
+              </Form.Label>
+              <div className="border-2 rounded-3 p-3 bg-light">
+                <Form.Control
+                  type="file"
+                  onChange={handleFileChange}
+                  accept="image/*"
+                  className="d-none"
+                  id="fileUploadLocation"
+                  multiple
                 />
-                <div
-                  onClick={() => handleRemoveImage(index)}
-                  className="position-absolute top-0 end-0 cursor-pointer"
-                  style={{ transform: "translate(25%, -25%)" }}
-                >
-                  <TiDeleteOutline color="red" size={25} />
+                <div className="d-flex flex-column gap-3">
+                  <div className="d-flex justify-content-center align-items-center">
+                    <label
+                      style={{ width: "10rem", height: "3rem" }}
+                      htmlFor="fileUploadLocation"
+                      className="btn btn-outline-primary d-flex justify-content-center align-items-center py-2"
+                    >
+                      Choose Files
+                    </label>
+                  </div>
+
+
+                  <div className="d-flex flex-wrap gap-2">
+                    {imagePreview.map((img, index) => (
+                      <div key={`new-${index}`} className="position-relative">
+                        <img
+                          src={img}
+                          alt={`Preview ${index + 1}`}
+                          className="img-thumbnail"
+                          style={{
+                            width: "100px",
+                            height: "100px",
+                            objectFit: "cover",
+                          }}
+                        />
+                        <div
+                          onClick={() => handleRemoveImage(index)}
+                          className="position-absolute top-0 end-0 cursor-pointer"
+                          style={{ transform: "translate(25%, -25%)" }}
+                        >
+                          <TiDeleteOutline color="red" size={25} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+
+                  <div className="d-flex flex-wrap gap-2">
+                    {existingCafeImages.map((img, index) => (
+                      <div key={`existing-${index}`} className="position-relative">
+                        <img
+                          src={`${baseURL}/${img}`}
+                          alt={`Existing ${index + 1}`}
+                          className="img-thumbnail"
+                          style={{
+                            width: "100px",
+                            height: "100px",
+                            objectFit: "cover",
+                          }}
+                        />
+                        <div
+                          // onClick={() => handleRemoveExistingImage(img)}
+                          onClick={() => handleRemoveExistingImage(img, index)}
+                          className="position-absolute top-0 end-0 cursor-pointer"
+                          style={{ transform: "translate(25%, -25%)" }}
+                        >
+                          <TiDeleteOutline color="red" size={25} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
+            </Col>
 
-         
-          <div className="d-flex flex-wrap gap-2">
-            {existingCafeImages.map((img, index) => (
-              <div key={`existing-${index}`} className="position-relative">
-                <img
-                  src={`${baseURL}/${img}`}
-                  alt={`Existing ${index + 1}`}
-                  className="img-thumbnail"
-                  style={{
-                    width: "100px",
-                    height: "100px",
-                    objectFit: "cover",
-                  }}
-                />
-                <div
-                  onClick={() => handleRemoveExistingImage(img)}
-                  className="position-absolute top-0 end-0 cursor-pointer"
-                  style={{ transform: "translate(25%, -25%)" }}
-                >
-                  <TiDeleteOutline color="red" size={25} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </Col>
-
-          </Row> */}
+          </Row>
 
           {/* <Row className="mb-2">
                     <Col md={6}>
@@ -868,15 +870,11 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                       Upload Documents
                     </label>
                   </div>
-
-
-
-
                 </div>
               </div>
             </Col>
-            <Col sm={6}>
 
+            <Col sm={6}>
               {filteredCafes[0]?.document?.length > 0 && (
                 <div className="d-flex flex-wrap gap-2">
                   {filteredCafes[0].document.map((doc, index) => (
@@ -908,7 +906,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                 </div>
               )}
 
-
               {documentPreview.length > 0 && (
                 <div className="d-flex flex-wrap gap-2 mt-4">
                   {documentPreview.map((doc, index) => (
@@ -929,17 +926,12 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                         className="cursor-pointer text-danger"
                         // onClick={() => handleRemoveDocument(index)}
                         onClick={() => handleRemoveDocument(index, "new")}
-
                       />
                     </div>
                   ))}
                 </div>
               )}
             </Col>
-
-
-
-
           </Row>
 
           <div className="mt-2 d-flex gap-2 justify-content-end">

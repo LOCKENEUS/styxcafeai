@@ -65,6 +65,7 @@ const CafeForm = ({
   useEffect(() => {
     dispatch(getLocations());
   }, [dispatch]);
+  
   useEffect(() => {
     if (showCanvas && !isEditing) {
       setFormDataState((prev) =>
@@ -121,7 +122,7 @@ const CafeForm = ({
         }
         break;
 
-        // adress are blank enter REQUIRED adress
+      // adress are blank enter REQUIRED adress
       case 'address':
         if (value.length < 3) {
           setErrors(prev => ({
@@ -163,17 +164,17 @@ const CafeForm = ({
           setErrors(prev => ({ ...prev, confirm_password: '' }));
         }
         break;
-      
-        case 'yearsOfContract':
-          if (value < 1 ) {
-            setErrors(prev => ({
-              ...prev,
-              yearsOfContract: 'Years of contract must be at least 1'
-            }));
-          } else {
-            setErrors(prev => ({ ...prev, yearsOfContract: '' }));
-          }
-          break;
+
+      case 'yearsOfContract':
+        if (value < 1) {
+          setErrors(prev => ({
+            ...prev,
+            yearsOfContract: 'Years of contract must be at least 1'
+          }));
+        } else {
+          setErrors(prev => ({ ...prev, yearsOfContract: '' }));
+        }
+        break;
 
       default:
         break;
@@ -190,30 +191,30 @@ const CafeForm = ({
     }));
 
     const invalidFiles = files.some((file) => {
-    const fileName = file.name.toLowerCase();
-    return (
-      !fileName.endsWith('.png') &&
-      !fileName.endsWith('.doc') &&
-      !fileName.endsWith('.docx')
-    );
-  });
+      const fileName = file.name.toLowerCase();
+      return (
+        !fileName.endsWith('.png') &&
+        !fileName.endsWith('.doc') &&
+        !fileName.endsWith('.docx')
+      );
+    });
 
-  if (invalidFiles) {
-    setErrors((prev) => ({
-      ...prev,
-      document: 'Only .png, .doc, .docx files are allowed',
-    }));
-    return;
-  }
-  
+    if (invalidFiles) {
+      setErrors((prev) => ({
+        ...prev,
+        document: 'Only .png, .doc, .docx files are allowed',
+      }));
+      return;
+    }
+
     setDocumentPreview((prev) => [...prev, ...newDocPreviews]);
-  
+
     setFormDataState((prev) => ({
       ...prev,
       document: [...(prev.document || []), ...files],
     }));
   };
-  
+
 
   const handleRemoveDocument = (index) => {
     setDocumentPreview((prev) => prev.filter((_, i) => i !== index));
@@ -269,9 +270,9 @@ const CafeForm = ({
 
     // if (Array.isArray(formDataState.documentPreview)) {
     //   formDataState.documentPreview.forEach((file) => {
-       
+
     //       formDataToSend.append("document[]", file.file); // Actual file object
-        
+
     //   });
     // }
     if (Array.isArray(formDataState.document)) {
@@ -334,6 +335,8 @@ const CafeForm = ({
       cafeImage: prev.cafeImage ? [...prev.cafeImage, ...files] : [...files],
     }));
   };
+
+  console.log("cafe images", cafeData.cafeImages);
 
   // Modify useEffect to handle existing images and documents when editing
   useEffect(() => {
@@ -464,7 +467,7 @@ const CafeForm = ({
                   onChange={handleChange}
                   required
                   className="py-2 border-2"
-                  
+
                 />
               </Form.Group>
             </Col>
@@ -478,7 +481,7 @@ const CafeForm = ({
             {!useManualAddress ? (
               <>
                 <GooglePlacesAutocomplete
-                 
+
                   apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
                   selectProps={{
                     value: formDataState.address
@@ -639,7 +642,7 @@ const CafeForm = ({
                   className="fw-bold text-secondary"
                 >
                   Website URL
-                  
+
                 </Form.Label>
                 <Form.Control
                   id="website"
@@ -650,7 +653,7 @@ const CafeForm = ({
                   onChange={handleChange}
                   pattern="https?://.+"
                   className="py-2 border-2"
-                  
+
                 />
               </Form.Group>
             </Col>
@@ -677,13 +680,13 @@ const CafeForm = ({
           </Form.Group>
 
           <Row className="mb-3">
-          <Form.Label className="fw-bold text-secondary d-block mt-3">
+            <Form.Label className="fw-bold text-secondary d-block mt-3">
               Gallery Images
               <span className="text-muted fs-6 fw-light ms-2">(You can upload multiple images)</span>
             </Form.Label>
 
             <Col md={5} className="mt-3">
-            
+
               <div className="border-2 rounded-3 py-2 bg-light ">
                 <Form.Control
                   type="file"
@@ -710,31 +713,31 @@ const CafeForm = ({
 
             <Col md={7} className="mt-1">
 
-            {imagePreview.length > 0 && (
-                    <div className="d-flex flex-wrap gap-2">
-                      {imagePreview.map((preview, index) => (
-                        <div key={index} className="position-relative">
-                          <img
-                            src={preview}
-                            alt={`Preview ${index + 1}`}
-                            className="img-thumbnail"
-                            style={{
-                              width: "100px",
-                              height: "100px",
-                              objectFit: "cover",
-                            }}
-                          />
-                          <div
-                            onClick={() => handleRemoveImage(index)}
-                            className="position-absolute top-0 end-0 cursor-pointer"
-                            style={{ transform: "translate(25%, -25%)" }}
-                          >
-                            <TiDeleteOutline color="red" size={25} />
-                          </div>
-                        </div>
-                      ))}
+              {imagePreview.length > 0 && (
+                <div className="d-flex flex-wrap gap-2">
+                  {imagePreview.map((preview, index) => (
+                    <div key={index} className="position-relative">
+                      <img
+                        src={preview}
+                        alt={`Preview ${index + 1}`}
+                        className="img-thumbnail"
+                        style={{
+                          width: "100px",
+                          height: "100px",
+                          objectFit: "cover",
+                        }}
+                      />
+                      <div
+                        onClick={() => handleRemoveImage(index)}
+                        className="position-absolute top-0 end-0 cursor-pointer"
+                        style={{ transform: "translate(25%, -25%)" }}
+                      >
+                        <TiDeleteOutline color="red" size={25} />
+                      </div>
                     </div>
-                  )}
+                  ))}
+                </div>
+              )}
             </Col>
           </Row>
 
@@ -907,10 +910,10 @@ const CafeForm = ({
                 />
               </Form.Group>
               {errors.yearsOfContract && (
-                  <Form.Text className="text-danger">
-                    {errors.yearsOfContract}
-                  </Form.Text>
-                )}
+                <Form.Text className="text-danger">
+                  {errors.yearsOfContract}
+                </Form.Text>
+              )}
             </Col>
           </Row>
 
@@ -940,48 +943,46 @@ const CafeForm = ({
                     </label>
                   </div>
                   {errors.document && (
-    <Form.Text className="text-danger">{errors.document}</Form.Text>
-  )}
-
-                  
+                    <Form.Text className="text-danger">{errors.document}</Form.Text>
+                  )}
                 </div>
               </div>
             </Col>
             <Col md={7}>
-  {documentPreview.length > 0 && (
-    <div className="d-flex flex-wrap gap-2">
-      {documentPreview.map((doc, index) => (
-        <div
-          key={index}
-          className="p-2 border rounded bg-white d-flex justify-content-between align-items-center"
-          style={{ width: '48%' }}
-        >
-          <a
-            href={doc.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-decoration-none text-dark text-truncate"
-            style={{
-              maxWidth: "150px",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis"
-            }}
-            title={doc.name}
-          >
-            {doc.name}
-          </a>
-          <TiDeleteOutline
-            color="red"
-            size={20}
-            onClick={() => handleRemoveDocument(index)}
-            style={{ cursor: 'pointer', marginLeft: '8px' }}
-          />
-        </div>
-      ))}
-    </div>
-  )}
-</Col>
+              {documentPreview.length > 0 && (
+                <div className="d-flex flex-wrap gap-2">
+                  {documentPreview.map((doc, index) => (
+                    <div
+                      key={index}
+                      className="p-2 border rounded bg-white d-flex justify-content-between align-items-center"
+                      style={{ width: '48%' }}
+                    >
+                      <a
+                        href={doc.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-decoration-none text-dark text-truncate"
+                        style={{
+                          maxWidth: "150px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis"
+                        }}
+                        title={doc.name}
+                      >
+                        {doc.name}
+                      </a>
+                      <TiDeleteOutline
+                        color="red"
+                        size={20}
+                        onClick={() => handleRemoveDocument(index)}
+                        style={{ cursor: 'pointer', marginLeft: '8px' }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Col>
 
           </Row>
 
