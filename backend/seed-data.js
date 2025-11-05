@@ -20,29 +20,35 @@ mongoose.connect(process.env.DB_URL || 'mongodb://localhost:27017/styxcafe', {
 // Sample data
 const sampleLocations = [
   {
-    name: 'Mumbai Central',
     address: 'Central Mumbai, Maharashtra',
+    country: 'India',
     city: 'Mumbai',
     state: 'Maharashtra',
-    pincode: '400001',
+    lat: 19.0760,
+    long: 72.8777,
+    details: 'Prime location in Mumbai with easy access to public transport',
     is_active: true,
     is_deleted: false
   },
   {
-    name: 'Pune Koregaon Park',
     address: 'Koregaon Park, Pune, Maharashtra',
+    country: 'India',
     city: 'Pune',
     state: 'Maharashtra',
-    pincode: '411001',
+    lat: 18.5362,
+    long: 73.8958,
+    details: 'Upscale area in Pune known for cafes and nightlife',
     is_active: true,
     is_deleted: false
   },
   {
-    name: 'Bangalore Indiranagar',
     address: 'Indiranagar, Bangalore, Karnataka',
+    country: 'India',
     city: 'Bangalore',
     state: 'Karnataka',
-    pincode: '560038',
+    lat: 12.9716,
+    long: 77.5946,
+    details: 'Trendy neighborhood in Bangalore with vibrant culture',
     is_active: true,
     is_deleted: false
   }
