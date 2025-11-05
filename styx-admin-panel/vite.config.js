@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   server: {
     host: '0.0.0.0', // Allows access from any device on the network
-    port: 3000,
+    port: 3001,
     allowedHosts: [
       'styxcafe-revamp.preview.emergentagent.com',
       'localhost',
