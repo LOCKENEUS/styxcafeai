@@ -108,7 +108,7 @@ const seedDatabase = async () => {
         cafeLogo: '',
         gstNo: 'GST234567890',
         panNo: 'BCDEF2345G',
-        ownershipType: 'Partnership',
+        ownershipType: 'FOCO',
         depositAmount: 75000,
         yearsOfContract: 5,
         officeContactNo: '020-98765432',
