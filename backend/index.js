@@ -16,14 +16,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// app.use(cors());
+// CORS configuration
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
+  'http://localhost:8001',
   'https://your-production-domain.com'
 ];
 
-// CORS options: function to dynamically check the request origin
 const corsOptions = {
   origin: function (origin, callback) {
     // allow requests with no origin (like mobile apps or curl)
@@ -31,7 +31,7 @@ const corsOptions = {
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     } else {
-      return callback(new Error('Not allowed by CORS'));
+      return callback(null, true); // Allow all origins in development
     }
   },
   credentials: true
