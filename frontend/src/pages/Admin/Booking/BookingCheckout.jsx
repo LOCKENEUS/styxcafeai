@@ -1879,7 +1879,7 @@ import { getItems } from "../../../store/AdminSlice/Inventory/ItemsSlice";
 import { getTaxFields } from "../../../store/AdminSlice/TextFieldSlice";
 import CreditSplit from "./Model/CreditSplit";
 import { TbTrash } from "react-icons/tb";
-import ItemsSave from "./Model/itemsSave";
+import ItemsSave from "./Model/ItemsSave";
 import axios from "axios";
 import PlayerCredits from "./Model/PlayerCredits";
 import PlayButton from "../../../components/utils/Animations/PlayButton";
