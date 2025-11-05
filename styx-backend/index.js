@@ -18,10 +18,12 @@ app.use(cookieParser());
 
 // CORS configuration
 const allowedOrigins = [
-  'http://localhost:3000',
+  'http://localhost:3000',  // Admin Panel
+  'http://localhost:3001',  // User Website
   'http://localhost:5173',
   'http://localhost:8001',
   'https://styxcafe-revamp.preview.emergentagent.com',
+  'https://styxuser.lockene.co',
   'https://your-production-domain.com'
 ];
 
