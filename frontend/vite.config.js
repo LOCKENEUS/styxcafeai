@@ -4,7 +4,16 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   server: {
     host: '0.0.0.0', // Allows access from any device on the network
-    port: 5173,
+    port: 3000,
+    allowedHosts: [
+      'styxcafe-revamp.preview.emergentagent.com',
+      'localhost',
+      '.preview.emergentagent.com'
+    ],
+    hmr: {
+      clientPort: 443,
+      protocol: 'wss'
+    }
   },
   plugins: [react()], // Handles JSX automatically
 });
