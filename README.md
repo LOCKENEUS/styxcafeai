@@ -191,6 +191,12 @@ tail -f /var/log/supervisor/backend.out.log
 tail -f /var/log/supervisor/frontend.out.log
 ```
 
+## 🌐 Access URLs:
+- **Admin Frontend**: http://localhost:3000 (Super Admin & Admin Panel)
+- **User Frontend**: http://localhost:3001 (Customer-facing application)
+- **Backend API**: http://localhost:8001
+- **Database**: mongodb://localhost:27017/styxcafe
+
 ## 🎮 Membership Management
 
 The membership management system allows super admins to create and manage different membership tiers for customers.
