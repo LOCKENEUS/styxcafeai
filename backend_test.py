@@ -144,14 +144,14 @@ class StyxBackendTester:
         print("\n=== TESTING CAFE SIGNUP ===")
         
         cafe_data = {
-            "ownerName": "Test Cafe Owner",
-            "cafeName": "Test Cafe",
+            "name": "Test Cafe Owner",
             "email": "testcafe@example.com",
-            "phone": "9876543210",
+            "contact_no": "9876543210",
+            "password": "testpass123",
+            "cafe_name": "Test Cafe",
             "address": "Test Address",
             "city": "Mumbai",
-            "state": "Maharashtra",
-            "pincode": "400001"
+            "state": "Maharashtra"
         }
         
         self.run_test(
