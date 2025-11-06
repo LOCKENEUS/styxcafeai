@@ -44,6 +44,42 @@ backend:
         agent: "testing"
         comment: "✅ PASSED - GET / returns 'Welcome to the Styx Cafe!' with 200 status code as expected."
 
+  - task: "Customer Registration Endpoint"
+    implemented: true
+    working: true
+    file: "/app/styx-backend/component/auth/controller/controller.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - POST /api/auth/user/register works correctly without Twilio configuration. Successfully creates customers with name, contact_no, and email. Returns 201 status with customer data. Handles duplicate contact numbers appropriately (409 status). Registration functionality is independent of SMS service as expected."
+
+  - task: "Send OTP Endpoint"
+    implemented: true
+    working: true
+    file: "/app/styx-backend/component/auth/controller/controller.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - POST /api/auth/user/send-otp correctly returns 500 error with clear message 'SMS service is not configured. Please contact administrator.' when Twilio credentials (TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_VERIFY_SID) are missing from .env file. Error handling is user-friendly and informative."
+
+  - task: "Verify OTP Endpoint"
+    implemented: true
+    working: true
+    file: "/app/styx-backend/component/auth/controller/controller.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - POST /api/auth/user/verify-otp correctly returns 500 error with clear message 'SMS service is not configured. Please contact administrator.' when Twilio credentials are missing. Consistent error handling with send-otp endpoint."
+
 frontend:
   - task: "Homepage UI and AI Integration"
     implemented: true
