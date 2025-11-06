@@ -27,15 +27,18 @@ class StyxBackendTester:
         print(f"\n🔍 Testing {name}...")
         print(f"   URL: {url}")
         
+        # Use longer timeout for AI endpoints (they may take 2-5 seconds)
+        timeout = 30 if 'ai' in endpoint.lower() else 10
+        
         try:
             if method == 'GET':
-                response = requests.get(url, headers=test_headers, timeout=10)
+                response = requests.get(url, headers=test_headers, timeout=timeout)
             elif method == 'POST':
-                response = requests.post(url, json=data, headers=test_headers, timeout=10)
+                response = requests.post(url, json=data, headers=test_headers, timeout=timeout)
             elif method == 'PUT':
-                response = requests.put(url, json=data, headers=test_headers, timeout=10)
+                response = requests.put(url, json=data, headers=test_headers, timeout=timeout)
             elif method == 'DELETE':
-                response = requests.delete(url, headers=test_headers, timeout=10)
+                response = requests.delete(url, headers=test_headers, timeout=timeout)
 
             success = response.status_code == expected_status
             if success:
