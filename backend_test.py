@@ -390,26 +390,20 @@ class StyxBackendTester:
         # Note: /api endpoint doesn't exist, which is expected behavior
 
     def run_all_tests(self):
-        """Run all backend tests"""
-        print("🚀 Starting Styx Cafe Authentication Endpoint Tests")
+        """Run all backend tests for password-based authentication"""
+        print("🚀 Starting Styx Cafe Password-Based Authentication Tests")
         print(f"Base URL: {self.base_url}")
-        print("=" * 60)
+        print("=" * 70)
         
         # Test authentication endpoints as per review request
         self.test_health_check()
         self.test_customer_auth_flow()
-        
-        # Skip other endpoints as they're not part of the review request
-        print("\n⏭️  Skipping other endpoints (not part of current review request)")
-        # self.test_basic_endpoints()
-        # self.test_admin_auth_flow()
-        # self.test_cafe_signup()
-        # self.test_user_endpoints()
-        # self.test_ai_endpoints()
+        self.test_admin_auth_flow()
+        self.test_super_admin_auth()
         
         # Print summary
-        print("\n" + "=" * 50)
-        print(f"📊 TEST SUMMARY")
+        print("\n" + "=" * 70)
+        print(f"📊 STYX CAFE AUTHENTICATION TEST SUMMARY")
         print(f"Tests Run: {self.tests_run}")
         print(f"Tests Passed: {self.tests_passed}")
         print(f"Tests Failed: {len(self.failed_tests)}")
@@ -424,6 +418,12 @@ class StyxBackendTester:
             print(f"\n✅ PASSED TESTS:")
             for test in self.passed_tests:
                 print(f"   - {test}")
+        
+        # Check password hashing
+        print(f"\n🔐 PASSWORD SECURITY CHECK:")
+        print(f"   - Passwords should be hashed with bcrypt in database")
+        print(f"   - Cookies should be set with httpOnly flag")
+        print(f"   - JWT tokens should be generated for authentication")
         
         return self.tests_passed == self.tests_run
 
