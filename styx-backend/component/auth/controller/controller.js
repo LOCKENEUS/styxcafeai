@@ -223,6 +223,14 @@ const customerSendOtpCtrl = async (req, res) => {
     let { contact_no } = req.body;
     if (!contact_no) return res.status(400).json({ status: false, message: "Contact number is required" });
 
+    // Check if Twilio credentials are configured
+    if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN || !process.env.TWILIO_VERIFY_SID) {
+      return res.status(500).json({
+        status: false,
+        message: "SMS service is not configured. Please contact administrator.",
+      });
+    }
+
     // ✅ Ensure E.164 format
     if (!contact_no.startsWith("+91")) contact_no = `+91${contact_no}`;
 
@@ -239,10 +247,10 @@ const customerSendOtpCtrl = async (req, res) => {
       // sid: verification.sid,
     });
   } catch (err) {
+    console.error("Twilio OTP Error:", err);
     res.status(500).json({
       status: false,
-      message: "Failed to send OTP",
-      error: err.message,
+      message: err.message || "Failed to send OTP. Please try again.",
     });
   }
 };
