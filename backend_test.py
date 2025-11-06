@@ -258,6 +258,11 @@ class StyxBackendTester:
         print(f"Base URL: {self.base_url}")
         print("=" * 50)
         
+        # Test critical AI endpoints first (as per review request)
+        self.test_health_check()
+        self.test_ai_endpoints()
+        
+        # Test other endpoints
         self.test_basic_endpoints()
         self.test_customer_auth_flow()
         self.test_admin_auth_flow()
