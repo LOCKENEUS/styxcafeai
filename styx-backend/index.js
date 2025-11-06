@@ -21,6 +21,7 @@ app.use(cookieParser());
 const allowedOrigins = [
   'http://localhost:3000',  // Customer Website (PRIMARY)
   'http://localhost:3001',  // Admin Panel (SECONDARY)
+  'http://localhost:3002',  // Sporty Frontend
   'http://localhost:5173',
   'http://localhost:8001',
   'https://sporty-booking.preview.emergentagent.com',
