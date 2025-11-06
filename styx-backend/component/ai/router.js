@@ -83,8 +83,9 @@ router.post('/generate-sport-description', async (req, res) => {
     // Path to Python script
     const pythonScript = path.join(__dirname, '..', '..', 'ai_sport_description_api.py');
     
-    // Spawn Python process
-    const python = spawn('python', [pythonScript, sport_name]);
+    // Spawn Python process with virtual environment
+    const pythonPath = process.env.PYTHON_PATH || '/root/.venv/bin/python';
+    const python = spawn(pythonPath, [pythonScript, sport_name]);
     
     let dataString = '';
     let errorString = '';
