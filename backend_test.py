@@ -176,6 +176,82 @@ class StyxBackendTester:
             data=filter_data
         )
 
+    def test_ai_endpoints(self):
+        """Test AI-related endpoints as specified in review request"""
+        print("\n=== TESTING AI ENDPOINTS (CRITICAL) ===")
+        
+        # Test AI Greeting Endpoint - No context
+        print("\n🔍 Testing AI Greeting - No Context...")
+        success, response = self.run_test(
+            "AI Greeting - No Context",
+            "POST",
+            "api/ai/generate-greeting",
+            200,
+            data={}
+        )
+        
+        # Test AI Greeting Endpoint - With time_of_day
+        print("\n🔍 Testing AI Greeting - With Time of Day...")
+        success, response = self.run_test(
+            "AI Greeting - With Time",
+            "POST",
+            "api/ai/generate-greeting",
+            200,
+            data={"time_of_day": "morning"}
+        )
+        
+        # Test AI Greeting Endpoint - With full context
+        print("\n🔍 Testing AI Greeting - Full Context...")
+        success, response = self.run_test(
+            "AI Greeting - Full Context",
+            "POST",
+            "api/ai/generate-greeting",
+            200,
+            data={"time_of_day": "evening", "name": "Alex", "preferred_sport": "Basketball"}
+        )
+        
+        # Test AI Sport Description - Football
+        print("\n🔍 Testing AI Sport Description - Football...")
+        success, response = self.run_test(
+            "AI Sport Description - Football",
+            "POST",
+            "api/ai/generate-sport-description",
+            200,
+            data={"sport_name": "Football"}
+        )
+        
+        # Test AI Sport Description - Basketball
+        print("\n🔍 Testing AI Sport Description - Basketball...")
+        success, response = self.run_test(
+            "AI Sport Description - Basketball",
+            "POST",
+            "api/ai/generate-sport-description",
+            200,
+            data={"sport_name": "Basketball"}
+        )
+        
+        # Test AI Sport Description - Invalid/missing sport_name
+        print("\n🔍 Testing AI Sport Description - Missing Sport Name...")
+        success, response = self.run_test(
+            "AI Sport Description - Missing Sport",
+            "POST",
+            "api/ai/generate-sport-description",
+            400,  # Expecting 400 for missing sport_name
+            data={}
+        )
+
+    def test_health_check(self):
+        """Test health check endpoint"""
+        print("\n=== TESTING HEALTH CHECK ===")
+        
+        # Test root endpoint
+        success, response = self.run_test(
+            "Health Check Root",
+            "GET",
+            "",  # Root endpoint
+            200
+        )
+
     def run_all_tests(self):
         """Run all backend tests"""
         print("🚀 Starting Styx Backend API Tests")
