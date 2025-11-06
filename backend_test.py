@@ -84,21 +84,26 @@ class StyxBackendTester:
         self.run_test("Get Styx Data", "GET", "auth/", 200)
 
     def test_customer_auth_flow(self):
-        """Test customer authentication flow as per review request"""
-        print("\n=== TESTING STYX CAFE AUTHENTICATION ENDPOINTS ===")
+        """Test customer password-based authentication flow as per review request"""
+        print("\n=== TESTING STYX CAFE PASSWORD-BASED AUTHENTICATION ===")
         
-        # Test 1: Customer Registration (should work without Twilio)
-        print("\n🔍 Test 1: Customer Registration...")
+        # Generate unique test data
         import random
-        unique_contact = f"99999{random.randint(10000, 99999)}"
+        unique_contact = f"9876543{random.randint(100, 999)}"
+        test_email = f"john{random.randint(1000, 9999)}@example.com"
+        test_password = "test123456"
+        
+        # Test 1: Customer Registration with Password
+        print("\n🔍 Test 1: Customer Registration with Password...")
         customer_data = {
-            "name": "Test User",
-            "contact_no": unique_contact, 
-            "email": f"test{random.randint(1000, 9999)}@example.com"
+            "name": "John Doe",
+            "contact_no": unique_contact,
+            "email": test_email,
+            "password": test_password
         }
         
         success, response = self.run_test(
-            "Customer Registration",
+            "Customer Registration with Password",
             "POST",
             "api/auth/user/register",
             201,
@@ -106,56 +111,93 @@ class StyxBackendTester:
         )
         
         if success:
-            print("✅ Registration works without Twilio as expected")
+            print("✅ Registration with password works correctly")
+            print(f"   Registered contact: {unique_contact}")
         else:
-            print("❌ Registration failed - investigating...")
+            print("❌ Registration failed - checking alternative status codes...")
             # Try with different expected status codes
             self.run_test(
                 "Customer Registration (Alt Status)",
                 "POST", 
                 "api/auth/user/register",
-                400,  # Maybe validation error
+                400,
                 data=customer_data
             )
         
-        # Test 2: Send OTP (should return Twilio configuration error)
-        print("\n🔍 Test 2: Send OTP (expecting Twilio error)...")
-        otp_data = {"contact_no": "9999999999"}
+        # Test 2: Customer Login with Correct Password
+        print("\n🔍 Test 2: Customer Login with Correct Password...")
+        login_data = {
+            "contact_no": unique_contact,
+            "password": test_password
+        }
         
-        success, response = self.run_test(
+        login_success, login_response = self.run_test(
+            "Customer Login with Correct Password",
+            "POST",
+            "api/auth/user/login",
+            200,
+            data=login_data
+        )
+        
+        if login_success:
+            print("✅ Login with correct password works")
+            if 'customer' in login_response:
+                print(f"   Customer data returned: {login_response['customer']}")
+        
+        # Test 3: Customer Login with Wrong Password
+        print("\n🔍 Test 3: Customer Login with Wrong Password...")
+        wrong_login_data = {
+            "contact_no": unique_contact,
+            "password": "wrongpassword"
+        }
+        
+        self.run_test(
+            "Customer Login with Wrong Password",
+            "POST",
+            "api/auth/user/login",
+            401,
+            data=wrong_login_data
+        )
+        
+        # Test 4: Duplicate Registration
+        print("\n🔍 Test 4: Duplicate Registration...")
+        duplicate_data = {
+            "name": "John Doe",
+            "contact_no": unique_contact,  # Same contact number
+            "email": "different@example.com",
+            "password": test_password
+        }
+        
+        self.run_test(
+            "Duplicate Registration",
+            "POST",
+            "api/auth/user/register",
+            409,
+            data=duplicate_data
+        )
+        
+        # Test 5: OTP endpoints (should still exist but return Twilio error)
+        print("\n🔍 Test 5: Send OTP (expecting Twilio error)...")
+        otp_data = {"contact_no": unique_contact}
+        
+        self.run_test(
             "Send OTP - Twilio Not Configured",
             "POST",
             "api/auth/user/send-otp", 
-            500,  # Expecting 500 error for missing Twilio config
+            500,
             data=otp_data
         )
         
-        if success:
-            print("✅ Send OTP correctly returns error about missing Twilio configuration")
-        else:
-            # Try different status codes
-            self.run_test(
-                "Send OTP - Alt Status",
-                "POST",
-                "api/auth/user/send-otp",
-                400,  # Maybe 400 instead of 500
-                data=otp_data
-            )
+        print("\n🔍 Test 6: Verify OTP (expecting Twilio error)...")
+        verify_data = {"contact_no": unique_contact, "otp": "123456"}
         
-        # Test 3: Verify OTP (should also return Twilio configuration error)
-        print("\n🔍 Test 3: Verify OTP (expecting Twilio error)...")
-        verify_data = {"contact_no": "9999999999", "otp": "123456"}
-        
-        success, response = self.run_test(
+        self.run_test(
             "Verify OTP - Twilio Not Configured",
             "POST",
             "api/auth/user/verify-otp",
-            500,  # Expecting 500 error for missing Twilio config
+            500,
             data=verify_data
         )
-        
-        if success:
-            print("✅ Verify OTP correctly returns error about missing Twilio configuration")
 
     def test_admin_auth_flow(self):
         """Test admin authentication"""
