@@ -22,7 +22,7 @@ const MotionBackground = () => {
     },
     {
       name: 'Neon Pink',
-      gradient: 'radial-gradient(circle at 70% 30%, rgba(255, 41, 212, 0.4), transparent 50%), radial-gradient(circle at 30% 70%, rgba(0, 255, 136, 0.4), transparent 50%), linear-gradient(225deg, rgba(255, 41, 212, 0.1), rgba(0, 255, 136, 0.1))',
+      gradient: 'radial-gradient(circle at 70% 30%, rgba(255, 41, 212, 0.6), transparent 50%), radial-gradient(circle at 30% 70%, rgba(0, 255, 136, 0.6), transparent 50%), linear-gradient(225deg, rgba(255, 41, 212, 0.2), rgba(0, 255, 136, 0.2))',
       particles: [
         { icon: '🏏', x: '20%', y: '60%', duration: 9, size: 'text-9xl' },
         { icon: '🏸', x: '70%', y: '30%', duration: 11, size: 'text-7xl' },
