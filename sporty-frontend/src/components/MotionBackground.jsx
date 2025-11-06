@@ -46,8 +46,8 @@ const MotionBackground = () => {
         { icon: '🏏', x: '30%', y: '85%', duration: 11, size: 'text-8xl' },
       ],
       shapes: [
-        { size: 380, x: '80%', y: '25%', color: 'rgba(255, 170, 0, 0.15)' },
-        { size: 320, x: '35%', y: '55%', color: 'rgba(0, 212, 255, 0.15)' },
+        { size: 480, x: '80%', y: '25%', color: 'rgba(255, 170, 0, 0.25)' },
+        { size: 420, x: '35%', y: '55%', color: 'rgba(0, 212, 255, 0.25)' },
       ]
     }
   ];
