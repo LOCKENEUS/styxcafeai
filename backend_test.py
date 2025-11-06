@@ -60,7 +60,10 @@ class StyxBackendTester:
                 print(f"❌ Failed - Expected {expected_status}, got {response.status_code}")
                 print(f"   Response: {response.text[:200]}")
 
-            return success, response.json() if success and response.content else {}
+            try:
+                return success, response.json() if success and response.content else {}
+            except:
+                return success, {"text": response.text} if success else {}
 
         except Exception as e:
             self.failed_tests.append({
