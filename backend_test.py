@@ -264,14 +264,26 @@ class StyxBackendTester:
         )
 
     def test_health_check(self):
-        """Test health check endpoint"""
+        """Test health check endpoint as per review request"""
         print("\n=== TESTING HEALTH CHECK ===")
         
-        # Test root endpoint
+        # Test 3: Health Check - GET /api (or /)
+        print("\n🔍 Test 3: Health Check...")
         success, response = self.run_test(
-            "Health Check Root",
+            "Health Check Root (/)",
             "GET",
             "",  # Root endpoint
+            200
+        )
+        
+        if success:
+            print("✅ Health check endpoint working correctly")
+        
+        # Also test /api endpoint
+        success_api, response_api = self.run_test(
+            "Health Check API (/api)",
+            "GET", 
+            "api",  # /api endpoint
             200
         )
 
