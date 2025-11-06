@@ -160,8 +160,8 @@ const MotionBackground = () => {
         className="absolute inset-0"
       />
 
-      {/* Overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/70" />
+      {/* Lighter overlay for better visibility of background effects */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/50" />
     </div>
   );
 };
