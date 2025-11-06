@@ -81,11 +81,12 @@ class StyxBackendTester:
         """Test customer authentication flow"""
         print("\n=== TESTING CUSTOMER AUTH FLOW ===")
         
-        # Test customer registration
+        # Test customer registration with required cafe field
         customer_data = {
             "name": "Test Customer",
             "email": "test@example.com",
-            "contact_no": "9876543210"
+            "contact_no": "9876543210",
+            "cafe": "test-cafe-id"
         }
         
         success, response = self.run_test(
