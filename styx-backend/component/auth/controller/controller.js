@@ -266,6 +266,14 @@ const customerVerifyOtpCtrl = async (req, res) => {
       });
     }
 
+    // Check if Twilio credentials are configured
+    if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN || !process.env.TWILIO_VERIFY_SID) {
+      return res.status(500).json({
+        status: false,
+        message: "SMS service is not configured. Please contact administrator.",
+      });
+    }
+
     // ✅ Verify OTP with Twilio
     const verification_check = await client.verify.v2
       .services(process.env.TWILIO_VERIFY_SID)
@@ -286,7 +294,7 @@ const customerVerifyOtpCtrl = async (req, res) => {
     if (!customer) {
       return res.status(404).json({
         status: false,
-        message: "User not found",
+        message: "User not found. Please register first.",
       });
     }
 
@@ -325,10 +333,10 @@ const customerVerifyOtpCtrl = async (req, res) => {
       },
     });
   } catch (err) {
+    console.error("OTP Verification Error:", err);
     res.status(500).json({
       status: false,
-      message: "OTP verification failed",
-      error: err.message,
+      message: err.message || "OTP verification failed. Please try again.",
     });
   }
 };
