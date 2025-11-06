@@ -18,8 +18,9 @@ router.post('/generate-greeting', async (req, res) => {
     // Path to Python script
     const pythonScript = path.join(__dirname, '..', '..', 'ai_greeting_api.py');
     
-    // Spawn Python process
-    const python = spawn('python', [pythonScript, context]);
+    // Spawn Python process with virtual environment
+    const pythonPath = process.env.PYTHON_PATH || '/root/.venv/bin/python';
+    const python = spawn(pythonPath, [pythonScript, context]);
     
     let dataString = '';
     let errorString = '';
