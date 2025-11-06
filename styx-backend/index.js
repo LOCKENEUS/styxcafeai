@@ -6,6 +6,7 @@ const superAdminRouter = require("./component/superadmin/index");
 const adminRouter = require("./component/admin/index");
 const userRouter = require("./component/user/index");
 const authRouter = require("./component/auth/router/router");
+const aiRouter = require("./component/ai/router");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const path = require("path");
