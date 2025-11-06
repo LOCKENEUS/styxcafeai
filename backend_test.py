@@ -166,12 +166,14 @@ class StyxBackendTester:
         """Test user-related endpoints"""
         print("\n=== TESTING USER ENDPOINTS ===")
         
-        # Test filter cafes
+        # Test filter cafes (POST method based on backend code)
+        filter_data = {"city": "Mumbai"}
         self.run_test(
             "Filter Cafes",
-            "GET",
+            "POST",
             "user/filterCafes",
-            200
+            200,
+            data=filter_data
         )
 
     def run_all_tests(self):
