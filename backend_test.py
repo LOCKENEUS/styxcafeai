@@ -200,10 +200,11 @@ class StyxBackendTester:
         )
 
     def test_admin_auth_flow(self):
-        """Test admin authentication"""
+        """Test admin authentication as per review request"""
         print("\n=== TESTING ADMIN AUTH FLOW ===")
         
-        # Test admin login
+        # Test 5: Admin Login (from seeded data)
+        print("\n🔍 Test 5: Admin Login...")
         admin_data = {
             "email": "styx.mumbai@example.com",
             "password": "admin123"
@@ -212,14 +213,62 @@ class StyxBackendTester:
         success, response = self.run_test(
             "Admin Login",
             "POST",
-            "auth/admin/login",
+            "api/auth/admin/login",
             200,
             data=admin_data
         )
         
-        if success and 'token' in response:
-            self.token = response['token']
-            print(f"   Admin token obtained: {self.token[:20]}...")
+        if success:
+            print("✅ Admin login works with seeded data")
+            if 'data' in response and 'token' in response['data']:
+                self.token = response['data']['token']
+                print(f"   Admin token obtained: {self.token[:20]}...")
+        else:
+            print("❌ Admin login failed - checking if endpoint exists...")
+            # Try alternative endpoint path
+            self.run_test(
+                "Admin Login (Alt Path)",
+                "POST",
+                "auth/admin/login",
+                200,
+                data=admin_data
+            )
+    
+    def test_super_admin_auth(self):
+        """Test super admin authentication"""
+        print("\n=== TESTING SUPER ADMIN AUTH ===")
+        
+        # Test 6: Super Admin Login
+        print("\n🔍 Test 6: Super Admin Login...")
+        super_admin_data = {
+            "email": "admin@styx.com",
+            "password": "admin123"
+        }
+        
+        success, response = self.run_test(
+            "Super Admin Login",
+            "POST",
+            "api/auth/login",
+            200,
+            data=super_admin_data
+        )
+        
+        if success:
+            print("✅ Super Admin login endpoint exists and responds")
+        else:
+            print("❌ Super Admin login failed - checking alternative credentials...")
+            # Try with different credentials
+            alt_admin_data = {
+                "email": "superadmin@styx.com", 
+                "password": "superadmin123"
+            }
+            self.run_test(
+                "Super Admin Login (Alt Credentials)",
+                "POST",
+                "api/auth/login",
+                200,
+                data=alt_admin_data
+            )
 
     def test_cafe_signup(self):
         """Test cafe owner signup (List Your Court)"""
