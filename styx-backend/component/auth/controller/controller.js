@@ -99,6 +99,7 @@ const customerRegisterCtrl = async (req, res) => {
       name,
       email,
       contact_no,
+      password,
       age,
       address,
       gender,
@@ -109,6 +110,14 @@ const customerRegisterCtrl = async (req, res) => {
       creditLimit,
       creditAmount,
     } = req.body;
+
+    // Validate required fields
+    if (!name || !contact_no || !password) {
+      return res.status(400).json({
+        status: false,
+        message: "Name, contact number, and password are required",
+      });
+    }
 
     // If no cafe is provided, get the first available cafe
     if (!cafe) {
@@ -147,6 +156,7 @@ const customerRegisterCtrl = async (req, res) => {
       name,
       email,
       contact_no,
+      password,
       age,
       address,
       gender,
@@ -161,7 +171,7 @@ const customerRegisterCtrl = async (req, res) => {
 
     res.status(201).json({
       status: true,
-      message: "Customer created successfully",
+      message: "Customer registered successfully! Please login with your credentials.",
       customer: {
         _id: newCustomer._id,
         name: newCustomer.name,
