@@ -191,14 +191,22 @@ const customerRegisterCtrl = async (req, res) => {
 
 const customerLoginCtrl = async (req, res) => {
   try {
-    const { name, contact_no, password } = req.body;
+    const { contact_no, password } = req.body;
 
-    // Find customer by name and contact_no
-    const customer = await Customer.findOne({ name, contact_no });
+    // Validate input
+    if (!contact_no || !password) {
+      return res.status(400).json({
+        status: false,
+        message: "Contact number and password are required",
+      });
+    }
+
+    // Find customer by contact_no and include password
+    const customer = await Customer.findOne({ contact_no }).select("+password");
     if (!customer) {
       return res.status(401).json({
         status: false,
-        message: "User not found",
+        message: "Invalid contact number or password",
       });
     }
 
@@ -207,7 +215,7 @@ const customerLoginCtrl = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         status: false,
-        message: "Invalid password",
+        message: "Invalid contact number or password",
       });
     }
 
