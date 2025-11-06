@@ -69,6 +69,13 @@ Router
   
   Router
   .route('/user/verify-otp')
-  .post(customerVerifyOtpCtrl) 
+  .post(customerVerifyOtpCtrl)
+
+// Cafe owner signup - List Your Court
+const { cafeOwnerSignup } = require('../cafe-signup/controller');
+  
+Router
+  .route('/cafe-signup')
+  .post(cafeOwnerSignup)
 
 module.exports = Router;
