@@ -7,7 +7,7 @@ const MotionBackground = () => {
   const scenes = [
     {
       name: 'Electric Blue',
-      gradient: 'radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.4), transparent 50%), radial-gradient(circle at 80% 80%, rgba(184, 41, 255, 0.4), transparent 50%), linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(184, 41, 255, 0.1))',
+      gradient: 'radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.6), transparent 50%), radial-gradient(circle at 80% 80%, rgba(184, 41, 255, 0.6), transparent 50%), linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(184, 41, 255, 0.2))',
       particles: [
         { icon: '⚽', x: '10%', y: '20%', duration: 8, size: 'text-9xl' },
         { icon: '🏀', x: '80%', y: '70%', duration: 10, size: 'text-8xl' },
