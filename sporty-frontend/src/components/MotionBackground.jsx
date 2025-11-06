@@ -37,7 +37,7 @@ const MotionBackground = () => {
     },
     {
       name: 'Golden Glow',
-      gradient: 'radial-gradient(circle at 50% 50%, rgba(255, 170, 0, 0.4), transparent 60%), radial-gradient(circle at 90% 20%, rgba(0, 212, 255, 0.4), transparent 50%), linear-gradient(45deg, rgba(255, 170, 0, 0.1), rgba(0, 212, 255, 0.1))',
+      gradient: 'radial-gradient(circle at 50% 50%, rgba(255, 170, 0, 0.6), transparent 60%), radial-gradient(circle at 90% 20%, rgba(0, 212, 255, 0.6), transparent 50%), linear-gradient(45deg, rgba(255, 170, 0, 0.2), rgba(0, 212, 255, 0.2))',
       particles: [
         { icon: '🏀', x: '15%', y: '40%', duration: 10, size: 'text-8xl' },
         { icon: '🎾', x: '75%', y: '65%', duration: 8, size: 'text-9xl' },
