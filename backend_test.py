@@ -89,10 +89,12 @@ class StyxBackendTester:
         
         # Test 1: Customer Registration (should work without Twilio)
         print("\n🔍 Test 1: Customer Registration...")
+        import random
+        unique_contact = f"99999{random.randint(10000, 99999)}"
         customer_data = {
             "name": "Test User",
-            "contact_no": "9999999999", 
-            "email": "test@example.com"
+            "contact_no": unique_contact, 
+            "email": f"test{random.randint(1000, 9999)}@example.com"
         }
         
         success, response = self.run_test(
