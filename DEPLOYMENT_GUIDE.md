@@ -45,7 +45,7 @@ This guide covers deploying the complete Styx Cafe Management System on Emergent
 
 ### Emergent Preview URL:
 ```
-https://styxcafe-revamp.preview.emergentagent.com
+https://sporty-booking.preview.emergentagent.com
 ```
 
 **Note**: Emergent's default preview typically routes to port 3000. To access different services:
@@ -59,8 +59,8 @@ https://styxcafe-revamp.preview.emergentagent.com
 
 ### Customer Website (.env)
 ```env
-REACT_APP_API_URL=https://styxcafe-revamp.preview.emergentagent.com/api
-REACT_APP_ADMIN_URL=https://styxcafe-revamp.preview.emergentagent.com
+REACT_APP_API_URL=https://sporty-booking.preview.emergentagent.com/api
+REACT_APP_ADMIN_URL=https://sporty-booking.preview.emergentagent.com
 REACT_APP_GOOGLE_API_KEY=AIzaSyCp8LWxhq-nPpEs4msUOj_JX-3HXhFoFF8
 REACT_APP_RAZOR_LIVE_KEY=rzp_test_XKXEVtmAb8x7DN
 REACT_APP_RAZOR_LIVE_SECRET=FFmzsGqrPoTvQXifCAavr8Zl
@@ -70,7 +70,7 @@ PORT=3001
 
 ### Admin Panel (.env)
 ```env
-VITE_API_URL=https://styxcafe-revamp.preview.emergentagent.com/api
+VITE_API_URL=https://sporty-booking.preview.emergentagent.com/api
 VITE_GOOGLE_API_KEY=AIzaSyCp8LWxhq-nPpEs4msUOj_JX-3HXhFoFF8
 VITE_RAZOR_LIVE_KEY=rzp_test_XKXEVtmAb8x7DN
 VITE_RAZOR_LIVE_SECRET=FFmzsGqrPoTvQXifCAavr8Zl
@@ -84,8 +84,8 @@ DB_URL=mongodb://localhost:27017/styxcafe
 SECRET_KEY=styxcafe_secret_key_2024_secure_token_here
 JWT_EXPIRY=7d
 NODE_ENV=production
-CLIENT_URL=https://styxcafe-revamp.preview.emergentagent.com
-ADMIN_URL=https://styxcafe-revamp.preview.emergentagent.com
+CLIENT_URL=https://sporty-booking.preview.emergentagent.com
+ADMIN_URL=https://sporty-booking.preview.emergentagent.com
 SMTP_EMAIL=
 SMTP_PASSWORD=
 RAZOR_LIVE_KEY=rzp_test_XKXEVtmAb8x7DN
@@ -162,10 +162,10 @@ Located in: `/app/styx-backend/index.js`
 3. **Test Endpoints**
    ```bash
    # Backend API
-   curl https://styxcafe-revamp.preview.emergentagent.com/api/user/filterCafes -X POST -H "Content-Type: application/json" -d '{}'
+   curl https://sporty-booking.preview.emergentagent.com/api/user/filterCafes -X POST -H "Content-Type: application/json" -d '{}'
    
    # Frontend
-   curl https://styxcafe-revamp.preview.emergentagent.com
+   curl https://sporty-booking.preview.emergentagent.com
    ```
 
 ---
@@ -176,16 +176,16 @@ Located in: `/app/styx-backend/index.js`
 
 **Single Domain with Path-Based Routing:**
 ```
-https://styxcafe-revamp.preview.emergentagent.com/        → Customer Website (Port 3001)
-https://styxcafe-revamp.preview.emergentagent.com/admin   → Admin Panel (Port 3000)
-https://styxcafe-revamp.preview.emergentagent.com/api     → Backend API (Port 8001)
+https://sporty-booking.preview.emergentagent.com/        → Customer Website (Port 3001)
+https://sporty-booking.preview.emergentagent.com/admin   → Admin Panel (Port 3000)
+https://sporty-booking.preview.emergentagent.com/api     → Backend API (Port 8001)
 ```
 
 **OR Multiple Subdomains:**
 ```
-https://styxcafe-revamp.preview.emergentagent.com         → Customer Website
-https://admin-styxcafe-revamp.preview.emergentagent.com   → Admin Panel
-https://api-styxcafe-revamp.preview.emergentagent.com     → Backend API
+https://sporty-booking.preview.emergentagent.com         → Customer Website
+https://sporty-booking.preview.emergentagent.com   → Admin Panel
+https://sporty-booking.preview.emergentagent.com     → Backend API
 ```
 
 ### Current Default:
@@ -210,19 +210,19 @@ mongodb          RUNNING
 ```
 
 ### 2. Test Customer Website
-- Visit: https://styxcafe-revamp.preview.emergentagent.com
+- Visit: https://sporty-booking.preview.emergentagent.com
 - Should see: "The Ultimate Playground For Every Gamer"
 - Test: Click "Login" dropdown
 - Verify: Customer Login, Admin Login, Super Admin Login options
 
 ### 3. Test Admin Panel
-- Visit: https://styxcafe-revamp.preview.emergentagent.com/admin/login
+- Visit: https://sporty-booking.preview.emergentagent.com/admin/login
 - Login: styx.mumbai@example.com / admin123
 - Verify: Dashboard loads with menu
 
 ### 4. Test Backend API
 ```bash
-curl https://styxcafe-revamp.preview.emergentagent.com/api/user/filterCafes \
+curl https://sporty-booking.preview.emergentagent.com/api/user/filterCafes \
   -X POST \
   -H "Content-Type: application/json" \
   -d '{}'
@@ -301,7 +301,7 @@ Once deployed, you'll have:
 - ✅ All services running and monitored
 
 **Production URLs:**
-- Customer Website: https://styxcafe-revamp.preview.emergentagent.com
+- Customer Website: https://sporty-booking.preview.emergentagent.com
 - Admin Panel: (Configure routing)
 - Backend API: (Configure routing)
 

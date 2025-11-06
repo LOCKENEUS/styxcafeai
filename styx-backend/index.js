@@ -22,7 +22,7 @@ const allowedOrigins = [
   'http://localhost:3001',  // Admin Panel (SECONDARY)
   'http://localhost:5173',
   'http://localhost:8001',
-  'https://styxcafe-revamp.preview.emergentagent.com',
+  'https://sporty-booking.preview.emergentagent.com',
   'https://styxuser.lockene.co',
   'https://your-production-domain.com'
 ];
