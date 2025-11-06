@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcrypt");
 
 const customerSchema = new mongoose.Schema(
   {
@@ -61,6 +62,8 @@ const customerSchema = new mongoose.Schema(
     password: {
       type: String,
       trim: true,
+      required: [true, "Password is required"],
+      select: false, // Don't return password by default
     },
     creditEligibility: {
       type: String,
@@ -89,6 +92,19 @@ const customerSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Hash password before saving
+customerSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 const Customer = mongoose.model("Customer", customerSchema);
 
