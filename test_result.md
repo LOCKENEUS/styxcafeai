@@ -95,6 +95,30 @@ backend:
         agent: "testing"
         comment: "✅ PASSED - POST /api/auth/user/verify-otp correctly returns 500 error with clear message 'SMS service is not configured. Please contact administrator.' when Twilio credentials are missing. Consistent error handling with send-otp endpoint."
 
+  - task: "Admin Login Endpoint"
+    implemented: true
+    working: true
+    file: "/app/styx-backend/component/auth/controller/controller.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - Admin login fully functional. POST /api/auth/admin/login works with seeded cafe admin credentials (styx.mumbai@example.com / admin123). Returns 200 with authentication token and cafe data. JWT token generation working correctly. Admin authentication flow operational."
+
+  - task: "Super Admin Login Endpoint"
+    implemented: true
+    working: true
+    file: "/app/styx-backend/component/auth/controller/controller.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - Super admin login endpoint exists and responds correctly. POST /api/auth/login returns proper 401 error for invalid credentials with message 'Invalid email or password'. Endpoint is functional but no super admin users are seeded in database (expected behavior)."
+
 frontend:
   - task: "Homepage UI and AI Integration"
     implemented: true
