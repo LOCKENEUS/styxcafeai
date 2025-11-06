@@ -137,12 +137,13 @@ frontend:
 
 metadata:
   created_by: "testing_agent"
-  version: "1.0"
-  test_sequence: 1
-  run_ui: false
-  last_updated: "2024-11-06 07:25:00"
+  version: "2.0"
+  test_sequence: 2
+  run_ui: true
+  last_updated: "2025-11-06 07:25:00"
   test_status: "COMPLETED"
   backend_status: "ALL_PASSED"
+  frontend_status: "ALL_PASSED"
 
 test_plan:
   current_focus: []
