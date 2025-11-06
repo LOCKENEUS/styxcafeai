@@ -20,13 +20,35 @@ mongoose.connect(process.env.DB_URL || 'mongodb://localhost:27017/styxcafe', {
 // Sample data
 const sampleLocations = [
   {
-    address: 'Central Mumbai, Maharashtra',
+    address: 'Andheri West, Mumbai, Maharashtra',
     country: 'India',
     city: 'Mumbai',
     state: 'Maharashtra',
-    lat: 19.0760,
-    long: 72.8777,
-    details: 'Prime location in Mumbai with easy access to public transport',
+    lat: 19.1136,
+    long: 72.8697,
+    details: 'Premier location in Western Mumbai with excellent connectivity',
+    is_active: true,
+    is_deleted: false
+  },
+  {
+    address: 'Connaught Place, New Delhi',
+    country: 'India',
+    city: 'Delhi',
+    state: 'Delhi',
+    lat: 28.6315,
+    long: 77.2167,
+    details: 'Heart of Delhi with iconic architecture and bustling activity',
+    is_active: true,
+    is_deleted: false
+  },
+  {
+    address: 'Civil Lines, Nagpur, Maharashtra',
+    country: 'India',
+    city: 'Nagpur',
+    state: 'Maharashtra',
+    lat: 21.1458,
+    long: 79.0882,
+    details: 'Upscale residential and commercial area in Central India',
     is_active: true,
     is_deleted: false
   },
@@ -37,7 +59,7 @@ const sampleLocations = [
     state: 'Maharashtra',
     lat: 18.5362,
     long: 73.8958,
-    details: 'Upscale area in Pune known for cafes and nightlife',
+    details: 'Trendy neighborhood known for cafes, nightlife and culture',
     is_active: true,
     is_deleted: false
   },
@@ -48,7 +70,7 @@ const sampleLocations = [
     state: 'Karnataka',
     lat: 12.9716,
     long: 77.5946,
-    details: 'Trendy neighborhood in Bangalore with vibrant culture',
+    details: 'Vibrant area with tech startups and modern lifestyle',
     is_active: true,
     is_deleted: false
   }
