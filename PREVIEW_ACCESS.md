@@ -7,7 +7,7 @@ The application is now configured to work with the Emergent Agent preview URL.
 ## 🌐 Access URLs
 
 ### Frontend (React + Vite)
-- **Preview URL**: https://sporty-booking.preview.emergentagent.com
+- **Preview URL**: https://cafe-auth-fix.preview.emergentagent.com
 - **Local**: http://localhost:3000
 
 ### Backend API (Node.js + Express)
@@ -46,7 +46,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
   'http://localhost:8001',
-  'https://sporty-booking.preview.emergentagent.com',
+  'https://cafe-auth-fix.preview.emergentagent.com',
   'https://your-production-domain.com'
 ];
 ```
@@ -68,7 +68,7 @@ const allowedOrigins = [
 ### Option 1: Preview URL (Recommended)
 Simply navigate to:
 ```
-https://sporty-booking.preview.emergentagent.com
+https://cafe-auth-fix.preview.emergentagent.com
 ```
 
 ### Option 2: Local Development
