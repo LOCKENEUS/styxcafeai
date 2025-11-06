@@ -55,6 +55,21 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ PASSED - POST /api/auth/user/register works correctly without Twilio configuration. Successfully creates customers with name, contact_no, and email. Returns 201 status with customer data. Handles duplicate contact numbers appropriately (409 status). Registration functionality is independent of SMS service as expected."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - Password-based registration fully functional. POST /api/auth/user/register accepts {name, contact_no, email, password} and returns 201 with customer data. Passwords are properly hashed with bcrypt ($2b$10$ format, 60 characters). Duplicate contact numbers return 409 status with clear error message. Registration creates customers successfully and assigns them to default cafe."
+
+  - task: "Customer Password Login Endpoint"
+    implemented: true
+    working: true
+    file: "/app/styx-backend/component/auth/controller/controller.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - Password-based login fully functional. POST /api/auth/user/login accepts {contact_no, password} and returns 200 with customer data and authentication. Correct passwords authenticate successfully, wrong passwords return 401 with 'Invalid contact number or password'. JWT tokens generated and httpOnly cookies set properly. Authentication flow working as expected."
 
   - task: "Send OTP Endpoint"
     implemented: true
