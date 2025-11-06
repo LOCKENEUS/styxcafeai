@@ -50,10 +50,11 @@ app.get("/", (req, res) => {
   res.send("Welcome to the Styx Cafe!");
 });
 
-app.use("/superadmin", superAdminRouter);
-app.use("/admin", adminRouter);
-app.use("/user", userRouter);
-app.use("/auth", authRouter);
+app.use("/api/superadmin", superAdminRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/user", userRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/ai", aiRouter);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
