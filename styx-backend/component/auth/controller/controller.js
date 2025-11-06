@@ -94,7 +94,7 @@ const registerCtrl = async (req, res) => {
 
 const customerRegisterCtrl = async (req, res) => {
   try {
-    const {
+    let {
       cafe,
       name,
       email,
@@ -110,16 +110,27 @@ const customerRegisterCtrl = async (req, res) => {
       creditAmount,
     } = req.body;
 
-    // Check if a customer with the same contact number already exists for the specified cafe
+    // If no cafe is provided, get the first available cafe
+    if (!cafe) {
+      const defaultCafe = await Cafe.findOne();
+      if (!defaultCafe) {
+        return res.status(500).json({
+          status: false,
+          message: "No cafe available for registration. Please contact administrator.",
+        });
+      }
+      cafe = defaultCafe._id;
+    }
+
+    // Check if a customer with the same contact number already exists
     const existingCustomer = await Customer.findOne({
-      cafe,
       contact_no,
     });
 
     if (existingCustomer) {
       return res.status(409).json({
         status: false,
-        message: `Customer with the same contact number already exists for the cafe "${cafe}".`,
+        message: "Customer with this contact number already exists. Please login instead.",
       });
     }
 
@@ -151,12 +162,19 @@ const customerRegisterCtrl = async (req, res) => {
     res.status(201).json({
       status: true,
       message: "Customer created successfully",
-      data: newCustomer,
+      customer: {
+        _id: newCustomer._id,
+        name: newCustomer.name,
+        contact_no: newCustomer.contact_no,
+        email: newCustomer.email,
+        cafe: newCustomer.cafe,
+      },
     });
   } catch (err) {
+    console.error("Registration Error:", err);
     res.status(400).json({
       status: false,
-      message: err.message,
+      message: err.message || "Registration failed. Please try again.",
     });
   }
 };
