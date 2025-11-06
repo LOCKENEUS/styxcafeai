@@ -139,6 +139,21 @@ class StyxBackendTester:
                 400,  # Maybe 400 instead of 500
                 data=otp_data
             )
+        
+        # Test 3: Verify OTP (should also return Twilio configuration error)
+        print("\n🔍 Test 3: Verify OTP (expecting Twilio error)...")
+        verify_data = {"contact_no": "9999999999", "otp": "123456"}
+        
+        success, response = self.run_test(
+            "Verify OTP - Twilio Not Configured",
+            "POST",
+            "api/auth/user/verify-otp",
+            500,  # Expecting 500 error for missing Twilio config
+            data=verify_data
+        )
+        
+        if success:
+            print("✅ Verify OTP correctly returns error about missing Twilio configuration")
 
     def test_admin_auth_flow(self):
         """Test admin authentication"""
