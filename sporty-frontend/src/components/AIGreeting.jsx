@@ -48,7 +48,7 @@ const AIGreeting = () => {
         animate={{ opacity: 1 }}
       >
         {!isLoading ? (
-          <div className="flex flex-wrap justify-center gap-x-4">
+          <div className="flex flex-wrap justify-center gap-x-3">
             {words.map((word, index) => (
               <motion.span
                 key={index}
@@ -61,7 +61,7 @@ const AIGreeting = () => {
                 }}
                 className="inline-block bg-gradient-to-r from-glow-blue via-glow-purple to-glow-pink bg-clip-text text-transparent"
               >
-                {word}
+                {word}{' '}
               </motion.span>
             ))}
           </div>
