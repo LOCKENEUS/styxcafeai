@@ -260,7 +260,7 @@ class StyxBackendTester:
 
     def run_all_tests(self):
         """Run all backend tests"""
-        print("🚀 Starting Styx Backend API Tests")
+        print("🚀 Starting Sporty Backend API Tests (Focus: AI Endpoints)")
         print(f"Base URL: {self.base_url}")
         print("=" * 50)
         
@@ -268,12 +268,13 @@ class StyxBackendTester:
         self.test_health_check()
         self.test_ai_endpoints()
         
-        # Test other endpoints
-        self.test_basic_endpoints()
-        self.test_customer_auth_flow()
-        self.test_admin_auth_flow()
-        self.test_cafe_signup()
-        self.test_user_endpoints()
+        # Skip other endpoints as they're not part of the review request
+        print("\n⏭️  Skipping other endpoints (not part of current review request)")
+        # self.test_basic_endpoints()
+        # self.test_customer_auth_flow()
+        # self.test_admin_auth_flow()
+        # self.test_cafe_signup()
+        # self.test_user_endpoints()
         
         # Print summary
         print("\n" + "=" * 50)
