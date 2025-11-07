@@ -33,11 +33,18 @@ const corsOptions = {
   origin: function (origin, callback) {
     // allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      return callback(null, true); // Allow all origins in development
+    
+    // In production, only allow specific origins
+    if (process.env.NODE_ENV === 'production') {
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error('Not allowed by CORS'));
+      }
     }
+    
+    // In development, allow all origins
+    return callback(null, true);
   },
   credentials: true
 };
