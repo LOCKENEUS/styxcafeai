@@ -7,7 +7,12 @@ const Cafe = require('./component/superadmin/cafe/model');
 const Location = require('./component/superadmin/location/model');
 
 // Connect to MongoDB
-mongoose.connect(process.env.DB_URL || 'mongodb://localhost:27017/styxcafe', {
+if (!process.env.DB_URL) {
+  console.error('✗ DB_URL environment variable is required');
+  process.exit(1);
+}
+
+mongoose.connect(process.env.DB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
