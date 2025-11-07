@@ -19,13 +19,16 @@ app.use(cookieParser());
 
 // CORS configuration
 const allowedOrigins = [
+  // Local development URLs
   'http://localhost:3000',  // Customer Website (PRIMARY)
   'http://localhost:3001',  // Admin Panel (SECONDARY)
   'http://localhost:3002',  // Sporty Frontend
   'http://localhost:5173',
   'http://localhost:8001',
-  process.env.CLIENT_URL,  // From environment
-  process.env.ADMIN_URL,   // From environment
+  // Environment-based production URLs (set by Emergent)
+  process.env.CLIENT_URL,   // Production frontend URL
+  process.env.ADMIN_URL,    // Production admin URL
+  // Preview and production domains
   'https://cafe-auth-fix.preview.emergentagent.com',
   'https://styxuser.lockene.co'
 ].filter(Boolean); // Remove undefined values
