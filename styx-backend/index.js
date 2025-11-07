@@ -24,10 +24,11 @@ const allowedOrigins = [
   'http://localhost:3002',  // Sporty Frontend
   'http://localhost:5173',
   'http://localhost:8001',
+  process.env.CLIENT_URL,  // From environment
+  process.env.ADMIN_URL,   // From environment
   'https://cafe-auth-fix.preview.emergentagent.com',
-  'https://styxuser.lockene.co',
-  'https://your-production-domain.com'
-];
+  'https://styxuser.lockene.co'
+].filter(Boolean); // Remove undefined values
 
 const corsOptions = {
   origin: function (origin, callback) {
