@@ -38,13 +38,19 @@ const corsOptions = {
     // allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
     
-    // In production, only allow specific origins
+    // Check if origin is in allowed list
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    // Allow all Emergent preview/production domains
+    if (origin && origin.includes('.emergentagent.com')) {
+      return callback(null, true);
+    }
+    
+    // In production, enforce strict CORS
     if (process.env.NODE_ENV === 'production') {
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      } else {
-        return callback(new Error('Not allowed by CORS'));
-      }
+      return callback(new Error('Not allowed by CORS'));
     }
     
     // In development, allow all origins
