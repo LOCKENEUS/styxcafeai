@@ -3,6 +3,7 @@ from models.customer import CustomerCreate, CustomerLogin, CustomerResponse
 from utils.auth import get_password_hash, verify_password, create_access_token
 from datetime import datetime
 import uuid
+import os
 
 router = APIRouter()
 
