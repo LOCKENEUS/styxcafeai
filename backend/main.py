@@ -102,6 +102,7 @@ async def health_check():
 
 # Include routers
 app.include_router(auth_router.router, prefix="/api/auth", tags=["Authentication"])
+app.include_router(superadmin_auth_router.router, prefix="/api/auth", tags=["SuperAdmin Auth"])
 app.include_router(user_router.router, prefix="/api/user", tags=["User"])
 app.include_router(admin_router.router, prefix="/api/admin", tags=["Admin"])
 app.include_router(superadmin_router.router, prefix="/api/superadmin", tags=["SuperAdmin"])
