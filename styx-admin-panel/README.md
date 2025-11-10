@@ -1,12 +1,125 @@
-# React + Vite
+# Styx Cafe Admin Panel
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A comprehensive admin and super admin dashboard for managing the Styx Cafe booking platform.
 
-Currently, two official plugins are available:
+## 🚀 Quick Start
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Installation
+```bash
+yarn install
+```
 
-## Expanding the ESLint configuration
+### Development
+```bash
+yarn dev
+```
+Runs on `http://localhost:3000`
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Production Build
+```bash
+yarn build
+```
+Output in `dist/` directory
+
+## 🔑 Login Credentials
+
+### Admin Login
+- **URL**: `/admin/login`
+- **Email**: styx.mumbai@example.com
+- **Password**: admin123
+
+### Super Admin Login
+- **URL**: `/superadmin/login`
+- **Email**: styxcafe@gmail.com
+- **Password**: 10101984#rR
+
+## 🌐 Environment Variables
+
+Create a `.env` file:
+
+```env
+VITE_API_URL=https://styxcafe.in/api
+VITE_GOOGLE_API_KEY=your_google_api_key
+VITE_RAZOR_LIVE_KEY=your_razorpay_key
+VITE_RAZOR_LIVE_SECRET=your_razorpay_secret
+VITE_RAZOR_LIVE_TOKEN=your_razorpay_token
+```
+
+## 📦 Features
+
+### Admin Features
+- Dashboard with analytics
+- Booking management
+- Customer management
+- Games and slots management
+- Inventory tracking
+- Payment processing
+- Reports and analytics
+
+### Super Admin Features
+- All admin features
+- Multi-cafe management
+- Location management
+- Admin user management
+- System-wide settings
+- Platform analytics
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React 18 + Vite
+- **UI**: Bootstrap 5 + React Bootstrap
+- **State Management**: Redux Toolkit
+- **Routing**: React Router v7
+- **Charts**: Chart.js
+- **Maps**: Google Maps API
+- **Payments**: Razorpay + Stripe
+- **Icons**: React Icons + Lucide
+
+## 📁 Project Structure
+
+```
+src/
+├── components/        # Reusable components
+├── pages/
+│   ├── Admin/        # Admin pages
+│   ├── SuperAdmin/   # Super admin pages
+│   └── User/         # User pages
+├── routes/           # Route configurations
+├── store/            # Redux store & slices
+├── App.jsx
+└── main.jsx
+```
+
+## 🔗 API Integration
+
+This admin panel connects to the backend API:
+- **Base URL**: Configured via `VITE_API_URL`
+- **Authentication**: JWT tokens in HTTP-only cookies
+- **Role-based**: Different routes for admin vs super admin
+
+## 📖 Full Documentation
+
+See `DEPLOYMENT_TO_NEW_PROJECT.md` for complete deployment guide.
+
+## 🐛 Troubleshooting
+
+### Build fails
+```bash
+rm -rf node_modules dist
+yarn install
+yarn build
+```
+
+### API not connecting
+- Check `.env` file exists
+- Verify `VITE_API_URL` is correct
+- Check backend CORS settings
+
+## 📄 License
+
+Proprietary - Styx Cafe Platform
+
+---
+
+**Version**: 1.0.0
+**Last Updated**: November 10, 2025
