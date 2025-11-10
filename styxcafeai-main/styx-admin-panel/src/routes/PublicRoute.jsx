@@ -1,0 +1,21 @@
+import { Navigate, Outlet } from "react-router-dom";
+
+const PublicRoute = ({ isAuthenticated }) => {
+  const userRole = JSON.parse(localStorage.getItem("userRole"));
+
+  // If user is authenticated, redirect based on their role
+  if (isAuthenticated) {
+    if (userRole === "superadmin") {
+      return <Navigate to="/superadmin/dashboard" replace />;
+    } else if (userRole === "admin") {
+      return <Navigate to="/splash" replace />;
+    } else if (userRole === "user") {
+      return <Navigate to="/user/dashboard" replace />;
+    }
+  }
+
+  // If not authenticated, allow access to public routes
+  return <Outlet />;
+};
+
+export default PublicRoute;

@@ -1,0 +1,452 @@
+
+import gsap from "gsap";
+import { useEffect, useRef, useState } from "react";
+import { Button, Col, Form, Offcanvas, Row, Spinner } from "react-bootstrap";
+import { getGameById, updateGame } from "../../../../store/slices/gameSlice";
+import { useDispatch, useSelector } from "react-redux";
+
+const EditGameOffcanvas = ({ show, handleClose, gameId }) => {
+  const [errors, setErrors] = useState({});
+  const [previewImage, setPreviewImage] = useState(null);
+  const baseURL = import.meta.env.VITE_API_URL;
+  const [formData, setFormData] = useState({
+    name: "",
+    type: "Single ",
+    price: "",
+    zone: "Indoor",
+    size: "",
+    players: "",
+    commission: "",
+    cancellation: "Yes",
+    payLater: "Yes",
+    details: "",
+    image: "",
+    length: '',
+    breadth: '',
+    selectedArea: ''
+
+  })
+  const [saveLoading, setSaveLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { selectedGame } = useSelector((state) => state.games);
+  useEffect(() => {
+    dispatch(getGameById(gameId));
+  }, [gameId, dispatch]);
+  const [areaDimension, setAreaDimension] = useState({
+    length: '',
+    breadth: '',
+    selectedArea: ''
+  });
+
+  useEffect(() => {
+    if (selectedGame?.data?._id === gameId) {
+      const sizeString = selectedGame?.data?.size;
+
+      if (sizeString) {
+        const sizeParts = sizeString.split(' ');
+
+        if (sizeParts.length === 4) {
+          setAreaDimension({
+            length: sizeParts[0],
+            breadth: sizeParts[2],
+            selectedArea: sizeParts[3]
+          });
+        }
+      }
+    }
+  }, [selectedGame]);
+
+  useEffect(() => {
+    if (selectedGame) {
+      setFormData({
+        name: selectedGame?.data?.name,
+        type: selectedGame?.data?.type,
+        price: selectedGame?.data?.price,
+        zone: selectedGame?.data?.zone,
+        size: selectedGame?.data?.size,
+        players: selectedGame?.data?.players,
+        commission: selectedGame?.data?.commission,
+        cancellation: selectedGame?.data?.cancellation ? "Yes" : "No",
+        payLater: selectedGame?.data?.payLater ? "Yes" : "No",
+        details: selectedGame?.data?.details,
+        image: selectedGame?.data?.image
+      });
+    }
+  }, [selectedGame]);
+  const formRef = useRef(null);
+  useEffect(() => {
+    gsap.from(formRef.current, {
+
+      y: 50,
+      duration: 3,
+
+    });
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    setAreaDimension(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // Validation for number of players
+    if (name === 'players' && formData.type === 'Multiplayer') {
+      const num = parseInt(value);
+      if (num <= 1) {
+        setErrors(prev => ({
+          ...prev,
+          players: 'Please enter more than 1 player for multiplayer games.'
+        }));
+      } else {
+        setErrors(prev => ({ ...prev, players: '' }));
+      }
+    }
+
+    // Optional: Reset players field if type is changed
+    if (name === 'type' && value === 'Single ') {
+      setFormData(prev => ({
+        ...prev,
+        players: ''
+      }));
+      setErrors(prev => ({ ...prev, players: '' }));
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPreviewImage(URL.createObjectURL(file)); // For image preview
+      setFormData((prev) => ({ ...prev, image: file })); // For backend submission
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaveLoading(true);
+
+    const { length, breadth, selectedArea } = areaDimension;
+    const sizeFormatted = `${length} * ${breadth} ${selectedArea}`;
+
+    if (formData.type === "Single ") {
+      // return 1 to the 'players' field if it's a single player game pass 1
+      formData.players = '1';
+
+    }
+    const formDataToSend = new FormData();
+    formDataToSend.append('_id', gameId);
+    formDataToSend.append('name', formData.name);
+    formDataToSend.append('type', formData.type);
+    formDataToSend.append('price', formData.price);
+    formDataToSend.append('zone', formData.zone);
+    formDataToSend.append('size', sizeFormatted);
+    formDataToSend.append('players', formData.players);
+    formDataToSend.append('commission', formData.commission);
+    // formDataToSend.append('cancellation', formData.cancellation);
+    formDataToSend.append('payLater', formData.payLater === "Yes" || formData.payLater === true);
+    formDataToSend.append('cancellation', formData.cancellation === "Yes" || formData.cancellation === true);
+    // formDataToSend.append('payLater', formData.payLater);
+    formDataToSend.append('details', formData.details);
+
+    if (formData.image && typeof formData.image !== 'string') {
+      formDataToSend.append("gameImage", formData.image);
+    }
+
+    try {
+      await dispatch(updateGame({ id: gameId, updatedData: formDataToSend }));
+      handleClose();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Failed to update game. Please try again.");
+      handleClose();
+      // getGames(gameId);
+    }
+    finally {
+      setSaveLoading(false);
+    }
+  };
+
+  return (
+    <Offcanvas show={show} onHide={handleClose} placement="end" style={{ width: "700px" }}>
+      <Offcanvas.Header closeButton>
+        <Offcanvas.Title><h2 className="text-primary fw-bold">Edit Game </h2> </Offcanvas.Title>
+      </Offcanvas.Header>
+      <Offcanvas.Body>
+
+        <Form onSubmit={handleSubmit} ref={formRef} className="rounded-3 bg-white">
+          <Form.Group className="mb-2">
+            <Form.Label htmlFor="gameName" className="fw-bold text-secondary">Name of Game
+              <span className="text-danger">*</span>
+            </Form.Label>
+            <Form.Control
+              id="gameName"
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className="py-2 border-2"
+              placeholder="Enter game name"
+            />
+          </Form.Group>
+
+          <Row className="mb-2 g-4">
+            <Col md={6}>
+              <Form.Label htmlFor="gameType" className="fw-bold text-secondary">Type of Game</Form.Label>
+              <Form.Select
+                id="gameType"
+                name="type"
+                value={formData.type}
+                onChange={handleChange}
+                required
+                className="form-select-lg border-2"
+              >
+                <option value="Single">Single player</option>
+                <option value="Multiplayer">Multiplayer</option>
+              </Form.Select>
+
+              {formData.type === "Multiplayer" && (
+                <Form.Group className="mb-2 mt-2">
+                  <Form.Label htmlFor="players" className="fw-bold text-secondary">
+                    Number of Players <span className="text-danger">*</span>
+                  </Form.Label>
+                  <Form.Control
+                    id="players"
+                    type="number"
+                    name="players"
+                    value={formData.players}
+                    onChange={handleChange}
+                    required
+                    className={`py-2 border-2 ${errors.players ? 'is-invalid' : ''}`}
+                    placeholder="Enter number of players"
+                  />
+                  {errors.players && (
+                    <div className="invalid-feedback d-block">{errors.players}</div>
+                  )}
+                </Form.Group>
+              )}
+
+            </Col>
+            <Col md={6}>
+              <Form.Label htmlFor="gamePrice" className="fw-bold text-secondary">Price of Game
+                <span className="text-danger">*</span>
+              </Form.Label>
+              <Form.Control
+                id="gamePrice"
+                type="number"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                onWheel={(e) => e.target.blur()}
+                required
+                className="py-2 border-2"
+                placeholder="Enter price amount"
+              />
+            </Col>
+            <Col md={6}>
+              <Form.Label htmlFor="gamePrice" className="fw-bold text-secondary">Area of Game
+                <span className="text-danger">*</span>
+              </Form.Label>
+              <Row className="g-1">
+                <Col sm={4}>
+                  <Form.Control
+                    type="number"
+                    name="length"
+                    value={areaDimension.length}
+                    onWheel={(e) => e.target.blur()}
+                    onChange={handleChange}
+                    placeholder="length"
+                    required
+                  />
+                </Col>
+
+                <Col sm={4}>
+                  <Form.Control
+                    type="number"
+                    name="breadth"
+                    value={areaDimension.breadth}
+                    onWheel={(e) => e.target.blur()}
+                    onChange={handleChange}
+                    placeholder="breadth"
+                    required
+                  />
+                </Col>
+
+                <Col sm={4}>
+                  <Form.Select
+                    name="selectedArea"
+                    value={areaDimension.selectedArea}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Select Area</option>
+                    <option value="ft">Feet (ft)</option>
+                    <option value="in">Inches (in)</option>
+                    <option value="yd">Yards (yd)</option>
+                    <option value="m">Meters (m)</option>
+                    <option value="cm">Centimeters (cm)</option>
+                  </Form.Select>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+          <Row className="mb-2 g-4">
+            <Col md={6}>
+              <Form.Label htmlFor="gameZone" className="fw-bold text-secondary">Zone of Game</Form.Label>
+              <Form.Select
+                id="gameZone"
+                name="zone"
+                value={formData.zone}
+                onChange={handleChange}
+                required
+                className="form-select-lg border-2"
+              >
+                <option>Indoor</option>
+                <option>Outdoor</option>
+              </Form.Select>
+            </Col>
+            <Col md={6}>
+              <Form.Group className="mb-2">
+                <Form.Label htmlFor="gameCommission" className="fw-bold text-secondary">Commission (%)
+                  <span className="text-danger">*</span>
+                </Form.Label>
+                <Form.Control
+                  id="gameCommission"
+                  type="number"
+                  name="commission"
+                  value={formData.commission}
+                  onWheel={(e) => e.target.blur()}
+                  onChange={handleChange}
+                  required
+                  className="py-2 border-2"
+                  placeholder="Enter commission percentage"
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Row className="mb-2 g-4">
+            <Col md={6}>
+              <Form.Label htmlFor="gameCancellation" className="fw-bold text-secondary">Cancellation Option</Form.Label>
+              <Form.Select
+                id="gameCancellation"
+                name="cancellation"
+                value={formData.cancellation}
+                onChange={handleChange}
+                required
+                className="form-select-lg border-2"
+              >
+                <option>Yes</option>
+                <option>No</option>
+              </Form.Select>
+            </Col>
+            <Col md={6}>
+              <Form.Label htmlFor="payLater" className="fw-bold text-secondary">Pay Later Option</Form.Label>
+              <Form.Select
+                id="payLater"
+                name="payLater"
+                value={formData.payLater}
+                onChange={handleChange}
+                required
+                className="form-select-lg border-2"
+              >
+                <option>Yes</option>
+                <option>No</option>
+              </Form.Select>
+            </Col>
+          </Row>
+
+          <Row className="mb-2 g-4">
+            <Col md={6}>
+              <Form.Label className="fw-bold text-secondary d-block">
+                Upload Image <span className="text-danger">*</span>
+              </Form.Label>
+              <div className="border-2 align-items-center rounded-3 p-3 bg-light">
+                <Form.Control
+                  type="file"
+                  accept="image/*"
+                  name="image"
+                  className="d-none"
+                  id="fileUploadLocation"
+                  onChange={handleFileChange}
+
+                />
+                <div className="d-flex justify-content-center align-items-center">
+                  <label
+                    htmlFor="fileUploadLocation"
+                    style={{ width: '10rem', height: '3rem' }}
+                    className="btn btn-outline-primary d-flex justify-content-center align-items-center py-2"
+                  >
+                    Choose File
+                  </label>
+                </div>
+              </div>
+            </Col>
+
+            <Col md={6}>
+              <div className="mt-3 d-flex flex-wrap gap-3">
+                {(previewImage || selectedGame?.data?.gameImage) && (
+                  <div className="position-relative">
+                    <img
+                      src={previewImage || `${baseURL}/${selectedGame.data.gameImage}`}
+                      alt="Selected"
+                      className="img-thumbnail"
+                      style={{ maxHeight: '100px', maxWidth: '100px' }}
+
+                    />
+                  </div>
+                )}
+              </div>
+            </Col>
+          </Row>
+          <Form.Group className="mb-2">
+            <Form.Label htmlFor="gameDetails" className="fw-bold text-secondary">Game Details
+              <span className="text-danger">*</span>
+            </Form.Label>
+            <Form.Control
+              id="gameDetails"
+              as="textarea"
+              rows={4}
+              name="details"
+              value={formData.details}
+              onChange={handleChange}
+              required
+              className="border-2"
+              placeholder="Describe the game details..."
+            />
+          </Form.Group>
+
+          <div className="d-flex justify-content-end gap-3 mt-4">
+            <Button variant="success" type="submit" >
+              {
+                saveLoading ? (
+                  <>
+                    <Spinner
+                      animation="border"
+                      role="status"
+                      size="sm"
+                      className="me-2"
+                    />
+                    Saving...
+                  </>
+
+                ) : (
+                  "Save Game"
+                )
+              }
+            </Button>
+            <Button variant="outline-secondary" onClick={handleClose} className="px-4 py-2 fw-bold">
+              Cancel
+            </Button>
+          </div>
+        </Form>
+      </Offcanvas.Body>
+    </Offcanvas>
+  )
+};
+export default EditGameOffcanvas;

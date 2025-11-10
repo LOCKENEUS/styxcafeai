@@ -1,0 +1,37 @@
+.transition-col {
+    transition: all 0.5s ease-in-out;
+  }
+  
+  .hidden {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  
+  .visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+/* responsive height for mobile tab and desktop */
+
+/* Mobile (up to 768px) */
+@media only screen and (max-width: 768px) {
+  .responsive-height {
+    height: 40vh;
+  }
+}
+
+/* Tablet (769px to 1024px) */
+@media only screen and (min-width: 769px) and (max-width: 1024px) {
+  .responsive-height {
+    height: 90vh;
+  }
+}
+
+/* Desktop (1025px and up) */
+@media only screen and (min-width: 1025px) {
+  .responsive-height {
+    height: 85vh;
+  }
+}
+  

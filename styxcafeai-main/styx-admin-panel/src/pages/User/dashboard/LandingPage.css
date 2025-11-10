@@ -1,0 +1,65 @@
+  .step-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ffc107;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+  }
+
+  .btn-style {
+    color: #2b2a2aff;
+    background-color: #fafafa;
+    border: 1px solid #ffc107;
+  }
+
+  .btn-style:hover {
+    background-color: #ffc107;
+    color: #fff;
+  }
+
+  .slot-btn {
+    min-height: 45px;
+    border: 1px solid #dee2e6;
+    background-color: #fafafa;
+    color: #2b2a2aff;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+  }
+
+  .slot-btn:hover {
+    border-color: #ffc107;
+    background-color: #fff8e1;
+  }
+
+  .slot-btn.selected {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #fff;
+    font-weight: bold;
+  }
+
+  .time-header {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #2b2a2aff;
+  }
+
+  .date-header {
+    background-color: #2b2a2aff;
+    color: #fff;
+  }
+
+  .booking-summary {
+    background: linear-gradient(135deg, #fff8e1 0%, #fafafa 100%);
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+  }
+  .slot-btn.disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+  }

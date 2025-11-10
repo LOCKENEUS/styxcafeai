@@ -1,0 +1,33 @@
+/* DashboardLayout.css */
+.dashboard-container {
+  min-height: 100vh;
+  display: flex;
+}
+
+.main-content {
+  flex-grow: 1;
+  transition: margin-left 0.3s ease;
+}
+
+.main-content.collapsed {
+  margin-left: 100px; /* Collapsed sidebar width */
+}
+
+.content-wrapper {
+  background-color: #fafafa;
+  /* background-color: rgb(230, 227, 232); */
+  padding: 20px;
+  height: auto;
+  margin-top: 30px; /* Navbar height */
+}
+
+@media (max-width: 1199.98px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .main-content.collapsed {
+    margin-left: 0;
+  }
+}
