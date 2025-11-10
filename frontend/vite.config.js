@@ -7,6 +7,7 @@ export default defineConfig({
     port: 3000,
     allowedHosts: [
       'styxcafe-revamp.preview.emergentagent.com',
+      'cafe-admin-panel.preview.emergentagent.com',
       'localhost',
       '.preview.emergentagent.com'
     ],
