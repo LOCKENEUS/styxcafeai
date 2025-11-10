@@ -32,6 +32,14 @@ mongodb         RUNNING   (Port 27017)
 user-website    RUNNING   (Port 3000)
 ```
 
+### 5. Super Admin Setup ✅
+- **Email**: styxcafe@gmail.com
+- **Password**: 10101984#rR
+- **Role**: superadmin
+- **Status**: Created and Tested
+- **Login Endpoint**: `/api/auth/login` (Working)
+- **Details**: See `/app/SUPERADMIN_SETUP_COMPLETE.md`
+
 ---
 
 ## ⚠️ Current Situation
