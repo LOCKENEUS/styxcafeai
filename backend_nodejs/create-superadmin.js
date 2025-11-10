@@ -12,17 +12,8 @@ mongoose.connect(DB_URL)
     process.exit(1);
   });
 
-// Define SuperAdmin schema (simple version)
-const superAdminSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  name: { type: String },
-  role: { type: String, default: 'superadmin' },
-  is_active: { type: Boolean, default: true },
-  is_deleted: { type: Boolean, default: false }
-}, { timestamps: true });
-
-const SuperAdmin = mongoose.model('SuperAdmin', superAdminSchema, 'superadmins');
+// Import the User model (which has superadmin role)
+const User = require('./component/auth/model/model');
 
 async function createSuperAdmin() {
   try {
