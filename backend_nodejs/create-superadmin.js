@@ -25,22 +25,26 @@ async function createSuperAdmin() {
     const existing = await User.findOne({ email });
     if (existing) {
       console.log(`✓ Super admin already exists with email: ${email}`);
-      console.log('Updating password and role...');
+      console.log('Deleting and recreating to update password...');
       
-      const hashedPassword = await bcrypt.hash(password, 10);
-      await User.updateOne(
-        { email },
-        { password: hashedPassword, name, role: 'superadmin', updatedAt: new Date() }
-      );
-      console.log('✓ Password and role updated successfully!');
-    } else {
-      // Hash password
-      const hashedPassword = await bcrypt.hash(password, 10);
+      await User.deleteOne({ email });
       
-      // Create super admin user
+      // Create super admin user (password will be auto-hashed by pre-save hook)
       const superAdmin = new User({
         email,
-        password: hashedPassword,
+        password, // Plain password - will be hashed by model
+        name,
+        contact: '1234567890', // Default contact
+        role: 'superadmin'
+      });
+      
+      await superAdmin.save();
+      console.log('✓ Super admin recreated with new password!');
+    } else {
+      // Create super admin user (password will be auto-hashed by pre-save hook)
+      const superAdmin = new User({
+        email,
+        password, // Plain password - will be hashed by model
         name,
         contact: '1234567890', // Default contact
         role: 'superadmin'
