@@ -22,29 +22,28 @@ async function createSuperAdmin() {
     const name = 'Styx Cafe Super Admin';
 
     // Check if super admin already exists
-    const existing = await SuperAdmin.findOne({ email });
+    const existing = await User.findOne({ email });
     if (existing) {
       console.log(`✓ Super admin already exists with email: ${email}`);
-      console.log('Updating password...');
+      console.log('Updating password and role...');
       
       const hashedPassword = await bcrypt.hash(password, 10);
-      await SuperAdmin.updateOne(
+      await User.updateOne(
         { email },
-        { password: hashedPassword, name, updated_at: new Date() }
+        { password: hashedPassword, name, role: 'superadmin', updatedAt: new Date() }
       );
-      console.log('✓ Password updated successfully!');
+      console.log('✓ Password and role updated successfully!');
     } else {
       // Hash password
       const hashedPassword = await bcrypt.hash(password, 10);
       
-      // Create super admin
-      const superAdmin = new SuperAdmin({
+      // Create super admin user
+      const superAdmin = new User({
         email,
         password: hashedPassword,
         name,
-        role: 'superadmin',
-        is_active: true,
-        is_deleted: false
+        contact: '1234567890', // Default contact
+        role: 'superadmin'
       });
       
       await superAdmin.save();
