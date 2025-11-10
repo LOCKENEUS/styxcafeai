@@ -1,0 +1,16 @@
+import { Navigate, Outlet } from "react-router-dom";
+
+const UserRoute = () => {
+  const isAuthenticated = localStorage.getItem("authToken");
+  // const userRole = localStorage.getItem("userRole");
+  const userRole = localStorage.getItem("userRole");
+
+  return isAuthenticated && (userRole === "user" || userRole === "admin" || userRole === "superadmin") ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/user/login" replace />
+  );
+};
+
+export default UserRoute;
+

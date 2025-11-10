@@ -1,0 +1,178 @@
+import React, { useEffect } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Tab,
+  Table,
+  Card,
+  Breadcrumb,
+  BreadcrumbItem,
+  Spinner,
+} from "react-bootstrap";
+import { BiArrowBack, BiCloudUpload } from "react-icons/bi";
+import { HiOutlineTrash } from "react-icons/hi";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getItemGroupById,
+  deleteItemGroup,
+} from "../../../../store/AdminSlice/Inventory/ItemGroupSlice";
+import Loader from "../../../../components/common/Loader/Loader";
+import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
+
+const ItemGroupsDetails = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { id } = useParams();
+  const { selectedItemGroup, loading, error } = useSelector(
+    (state) => state.itemGroups
+  );
+
+  useEffect(() => {
+    dispatch(getItemGroupById(id)).then((res) => {
+    });
+  }, [dispatch, id]);
+
+  const handleDelete = () => {
+    // if (window.confirm("Are you sure you want to delete this item group?")) {
+    //   dispatch(deleteItemGroup(id));
+    // }
+  };
+
+  if (loading) {
+    return (
+      <Container className="d-flex justify-content-center align-items-center min-vh-100">
+        <Spinner animation="border" role="status">
+        </Spinner>
+      </Container>
+    );
+  }
+  if (error) return <p>Error: {error}</p>;
+
+  return (
+    <Container fluid >
+      <Breadcrumbs
+        items={[
+          { label: "Home", path: "/admin/dashboard" },
+          { label: "Item Group List", path: "/admin/inventory/item-group-list" },
+          { label: "Details", active: true }
+        ]}
+      />
+      <Tab.Container defaultActiveKey="checkout">
+        <Row data-aos="fade-down" data-aos-duration="1000">
+          <Col sm={12}>
+            <Tab.Content>
+              <Card className="p-3">
+                <Tab.Pane eventKey="checkout">
+                  <h4>Details</h4>
+                  <div className="d-flex justify-content-end mt-3">
+                    <button
+                      onClick={() =>
+                        navigate(`/admin/inventory/item-group-form/${id}`)
+                      }
+                      className="btn btn-primary me-2"
+                    >
+                      <BiCloudUpload /> Edit
+                    </button>
+                    {/* <button
+                      className="btn btn-danger me-2"
+                      onClick={handleDelete}
+                    >
+                      <HiOutlineTrash /> Delete
+                    </button> */}
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => navigate(-1)}
+                    >
+                      <BiArrowBack /> Back
+                    </button>
+                  </div>
+                  <Table className="w-25" borderless>
+                    <tbody>
+                      <tr>
+                        <td>Unit</td>
+                        <td>
+                          <b>{selectedItemGroup?.unit || "N/A"}</b>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Tax</td>
+                        <td>
+                          <b>{selectedItemGroup?.tax?.tax_rate || "N/A"}%</b>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Manufacturer</td>
+                        <td>
+                          <b>
+                            {selectedItemGroup?.manufacturer?.name || "N/A"}
+                          </b>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Brand</td>
+                        <td>
+                          <b>{selectedItemGroup?.brand?.name || "N/A"}</b>
+                        </td>
+                      </tr>
+                      {/* <tr>
+                        <td>Description</td>
+                        <td><b>{selectedItemGroup?.description || 'N/A'}</b></td>
+                      </tr> */}
+                    </tbody>
+                  </Table>
+                  <hr className="w-50" />
+                  <h5>List of Items under this Group:</h5>
+                  <Row>
+                    {selectedItemGroup?.items?.map((item, index) => (
+                      <Col md={6} key={item._id} className="mb-3">
+                        <Card className="p-3">
+                          <Row>
+                            <Col md={6}>
+                              <h6>{item.name || "No Name Available"}</h6>
+                              <p>SKU : {item.sku || "No SKU Available"}</p>
+                              <p>
+                                Price : ₹
+                                {item.sellingPrice !== null
+                                  ? item.sellingPrice
+                                  : "Price Not Available"}
+                              </p>
+                              <p>
+                                Stock :{" "}
+                                {item.stock !== null
+                                  ? item.stock
+                                  : "Stock Not Available"}
+                              </p>
+                            </Col>
+                            <Col md={6}>
+                              <div
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  backgroundColor: "#e0e0e0",
+                                  borderRadius: "5px",
+                                }}
+                              >
+                                <span>250 x 250</span>
+                              </div>
+                            </Col>
+                          </Row>
+                        </Card>
+                      </Col>
+                    ))}
+                  </Row>
+                </Tab.Pane>
+              </Card>
+            </Tab.Content>
+          </Col>
+        </Row>
+      </Tab.Container>
+    </Container>
+  );
+};
+
+export default ItemGroupsDetails;
