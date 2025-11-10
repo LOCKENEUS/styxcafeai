@@ -3,7 +3,7 @@
 ## Current Setup (After Port Swap)
 
 ### Preview URL Mapping
-**https://cafe-auth-fix.preview.emergentagent.com/** → Port 3000 (Sporty Frontend)
+**https://cafeadmin.preview.emergentagent.com/** → Port 3000 (Sporty Frontend)
 
 ### Port Assignments
 
@@ -45,7 +45,7 @@
 
 ## Why This Change?
 
-The preview URL (`https://cafe-auth-fix.preview.emergentagent.com/`) is configured to route traffic to **port 3000** by default. By moving the Sporty frontend to port 3000, the preview URL now correctly displays the new Sporty application instead of the old Styx website.
+The preview URL (`https://cafeadmin.preview.emergentagent.com/`) is configured to route traffic to **port 3000** by default. By moving the Sporty frontend to port 3000, the preview URL now correctly displays the new Sporty application instead of the old Styx website.
 
 ## Verification
 
@@ -66,7 +66,7 @@ netstat -tlnp | grep -E ":(3000|3001|3002|8001)"
 ```
 
 ### Access URLs
-- Sporty: http://localhost:3000 or https://cafe-auth-fix.preview.emergentagent.com/
+- Sporty: http://localhost:3000 or https://cafeadmin.preview.emergentagent.com/
 - Admin: http://localhost:3001
 - Styx Website: http://localhost:3002
 - Backend: http://localhost:8001
