@@ -12,7 +12,7 @@ import uvicorn
 load_dotenv()
 
 # Import routers
-from routes import auth_router, user_router, admin_router, superadmin_router
+from routes import auth_router, user_router, admin_router, superadmin_router, superadmin_auth_router
 
 # MongoDB connection
 mongo_client = None
