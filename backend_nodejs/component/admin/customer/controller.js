@@ -19,6 +19,7 @@ const createCustomer = async (req, res) => {
       country,
       state,
       city,
+      password,
       creditEligibility,
       creditLimit,
       creditAmount,
@@ -45,6 +46,10 @@ const createCustomer = async (req, res) => {
         .replace(/\\/g, "/");
     }
 
+    // Generate default password if not provided (for booking flow)
+    // Use last 4 digits of contact number or a default value
+    const customerPassword = password || contact_no.slice(-4) || "1234";
+
     const newCustomer = await Customer.create({
       cafe,
       name,
@@ -57,6 +62,7 @@ const createCustomer = async (req, res) => {
       country,
       state,
       city,
+      password: customerPassword,
       creditEligibility,
       creditLimit,
       creditAmount,
