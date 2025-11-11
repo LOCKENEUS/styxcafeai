@@ -1,8 +1,10 @@
 import { useRef, useState } from "react";
-import { Button, Col, Form, Offcanvas, Row, Spinner } from "react-bootstrap";
+import { Button, Col, Form, Offcanvas, Row, Spinner, Alert, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { addGame, updateGame } from "../../../../store/slices/gameSlice";
 import { TiDeleteOutline } from "react-icons/ti";
+import { FiUpload, FiInfo, FiX } from "react-icons/fi";
+import { toast } from "react-toastify";
 
 const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) => {
   const [isLoading, setIsLoading] = useState(false);
