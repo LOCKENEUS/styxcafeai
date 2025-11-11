@@ -227,6 +227,11 @@ export const CreateSo = () => {
     ]);
   };
 
+  // Check if item is already selected
+  const isItemAlreadySelected = (itemId, currentProductId) => {
+    return products.some(product => product.item === itemId && product.id !== currentProductId);
+  };
+
   // Add this function to handle client selection
   const handleClientSelect = (client) => {
     setSelectedCafe(client);
