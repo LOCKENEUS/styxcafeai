@@ -424,3 +424,56 @@ agent_communication:
       - Enhanced user feedback with toasts and alerts
       
       Ready for frontend testing to verify all improvements work correctly.
+
+user_problem_statement: |
+  Getting error "Customer validation failed: password: Password is required, name: Name is required, contact_no: Contact number is required" when creating new client during game booking
+  Path: Book game/Turf Cricket/Details
+
+backend:
+  - task: "Fix customer creation validation error during booking"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/component/admin/customer/controller.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Fixed customer creation validation error:
+          
+          Root Cause:
+          - Customer model requires password field as mandatory
+          - Frontend booking flow only sends name and contact_no
+          - No password was being generated or sent
+          
+          Solution Implemented:
+          - Modified createCustomer controller to auto-generate default password
+          - Uses last 4 digits of contact_no as password (fallback to "1234")
+          - Password is auto-hashed by the pre-save hook in model
+          - Maintains backward compatibility with explicit password provision
+          
+          This allows customers to be created during booking without requiring password input,
+          while still satisfying the model validation requirements.
+
+agent_communication:
+  - agent: "main"
+    message: |
+      Fixed customer validation error during game booking:
+      
+      Issue: Customer model requires password, but booking flow doesn't provide it
+      Solution: Auto-generate password using last 4 digits of contact number
+      
+      Changes made:
+      - Updated createCustomer controller to handle missing password
+      - Default password generation: contact_no.slice(-4) || "1234"
+      - Password is automatically hashed by model pre-save hook
+      
+      This fix applies to all customer creation flows:
+      - Book game booking details
+      - Book game booking edit
+      - Client model creation
+      - Direct customer creation
+      
+      Ready for backend testing to verify customer creation works without password.
