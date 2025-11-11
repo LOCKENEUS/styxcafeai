@@ -355,106 +355,165 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
             )}
           </Form.Group>
 
-          <Row className="mb-2 g-4">
+          {/* Game Type and Price Row */}
+          <Row className="mb-4 g-3">
             <Col md={6}>
-              <Form.Label htmlFor="gameType" className="fw-bold text-secondary">Type of Game</Form.Label>
+              <Form.Label htmlFor="gameType" className="fw-semibold text-dark">
+                Game Type <span className="text-danger">*</span>
+              </Form.Label>
               <Form.Select
                 id="gameType"
                 name="type"
                 value={formData.type}
                 onChange={handleInputChange}
                 required
-                className="form-select-lg border-2"
+                className="py-2"
+                style={{ fontSize: "15px" }}
               >
-                <option value='Single'>Single player</option>
-                <option > Multiplayer</option>
+                <option value='Single'>Single Player</option>
+                <option value='Multiplayer'>Multiplayer</option>
               </Form.Select>
-              {formData.type === "Multiplayer" && (
-                <Form.Group className="mb-2 mt-2">
-                  <Form.Label htmlFor="players" className="fw-bold text-secondary">Number of Players
-                    <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    id="players"
-                    type="number"
-                    name="players"
-                    // value={formData.players}
-                    onChange={handleInputChange}
-                    required
-                    className="py-2 border-2"
-                    placeholder="Enter number of players"
-                  />
-                  {errors.players && (
-                    <div className="invalid-feedback d-block">{errors.players}</div>
-                  )}
-                </Form.Group>
-              )}
             </Col>
             <Col md={6}>
-              <Form.Label htmlFor="gamePrice" className="fw-bold text-secondary">Price of Game
-                <span className="text-danger">*</span>
+              <Form.Label htmlFor="gamePrice" className="fw-semibold text-dark d-flex align-items-center">
+                Price per Session <span className="text-danger ms-1">*</span>
+                <OverlayTrigger
+                  placement="right"
+                  overlay={renderTooltip("Set the base price for one game session")}
+                >
+                  <span className="ms-2 text-muted" style={{ cursor: "help" }}>
+                    <FiInfo size={16} />
+                  </span>
+                </OverlayTrigger>
               </Form.Label>
-              <Form.Control
-                id="gamePrice"
-                type="number"
-                name="price"
-                value={formData.price}
-                onChange={handleInputChange}
-                onWheel={(e) => e.target.blur()}
-                required
-                className="py-2 border-2"
-                placeholder="Enter price amount"
-              />
-            </Col>
-            <Col md={6}>
-              <Form.Label htmlFor="gameSize" className="fw-bold text-secondary">Area of dimensions
-                <span className="text-danger">*</span>
-              </Form.Label>
-              <Row className="g-1">
-                <Col sm={4}>
-
-                  <Form.Control
-                    type="number"
-                    name="length"
-                    value={formData.length}
-                    onChange={handleInputChange}
-                    onWheel={(e) => e.target.blur()}
-                    placeholder="length"
-                    required
-                  />
-                </Col>
-
-                <Col sm={4}>
-                  <Form.Control
-                    type="number"
-                    name="breadth"
-                    value={formData.breadth}
-                    onChange={handleInputChange}
-                    onWheel={(e) => e.target.blur()}
-                    placeholder="breadth"
-                    required
-                  />
-                </Col>
-
-                <Col sm={4}>
-                  <Form.Select
-                    name="selectedArea"
-                    value={formData.selectedArea}
-                    onChange={handleInputChange}
-                    required
-                  >
-                    <option value="">Select Area</option>
-                    <option value="ft">Feet (ft)</option>
-                    <option value="in">Inches (in)</option>
-                    <option value="yd">Yards (yd)</option>
-                    <option value="m">Meters (m)</option>
-                    <option value="cm">Centimeters (cm)</option>
-                  </Form.Select>
-
-                </Col>
-              </Row>
+              <div className="input-group">
+                <span className="input-group-text">₹</span>
+                <Form.Control
+                  id="gamePrice"
+                  type="number"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleInputChange}
+                  onWheel={(e) => e.target.blur()}
+                  required
+                  className={`${submitAttempted && errors.price ? 'is-invalid' : ''}`}
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                  style={{ fontSize: "15px" }}
+                />
+                {submitAttempted && errors.price && (
+                  <Form.Control.Feedback type="invalid">
+                    {errors.price}
+                  </Form.Control.Feedback>
+                )}
+              </div>
             </Col>
           </Row>
+
+          {/* Number of Players (Conditional) */}
+          {formData.type === "Multiplayer" && (
+            <Form.Group className="mb-4">
+              <Form.Label htmlFor="players" className="fw-semibold text-dark">
+                Number of Players <span className="text-danger">*</span>
+              </Form.Label>
+              <Form.Control
+                id="players"
+                type="number"
+                name="players"
+                value={formData.players}
+                onChange={handleInputChange}
+                required
+                className={`py-2 ${submitAttempted && errors.players ? 'is-invalid' : ''}`}
+                placeholder="Enter number of players (minimum 2)"
+                min="2"
+                max="20"
+                style={{ fontSize: "15px" }}
+              />
+              {submitAttempted && errors.players && (
+                <Form.Control.Feedback type="invalid" className="d-block">
+                  {errors.players}
+                </Form.Control.Feedback>
+              )}
+              <Form.Text className="text-muted">
+                For multiplayer games, specify the maximum number of players
+              </Form.Text>
+            </Form.Group>
+          )}
+
+          {/* Area Dimensions */}
+          <Form.Group className="mb-4">
+            <Form.Label className="fw-semibold text-dark d-flex align-items-center">
+              Area Dimensions <span className="text-danger ms-1">*</span>
+              <OverlayTrigger
+                placement="right"
+                overlay={renderTooltip("Specify the physical space required for this game")}
+              >
+                <span className="ms-2 text-muted" style={{ cursor: "help" }}>
+                  <FiInfo size={16} />
+                </span>
+              </OverlayTrigger>
+            </Form.Label>
+            <Row className="g-2">
+              <Col xs={4}>
+                <Form.Control
+                  type="number"
+                  name="length"
+                  value={formData.areaDimension.length}
+                  onChange={handleInputChange}
+                  onWheel={(e) => e.target.blur()}
+                  placeholder="Length"
+                  required
+                  min="0"
+                  step="0.1"
+                  className={`py-2 ${submitAttempted && errors.areaDimension ? 'is-invalid' : ''}`}
+                  style={{ fontSize: "15px" }}
+                />
+                <Form.Text className="text-muted small">Length</Form.Text>
+              </Col>
+
+              <Col xs={4}>
+                <Form.Control
+                  type="number"
+                  name="breadth"
+                  value={formData.areaDimension.breadth}
+                  onChange={handleInputChange}
+                  onWheel={(e) => e.target.blur()}
+                  placeholder="Width"
+                  required
+                  min="0"
+                  step="0.1"
+                  className={`py-2 ${submitAttempted && errors.areaDimension ? 'is-invalid' : ''}`}
+                  style={{ fontSize: "15px" }}
+                />
+                <Form.Text className="text-muted small">Width</Form.Text>
+              </Col>
+
+              <Col xs={4}>
+                <Form.Select
+                  name="selectedArea"
+                  value={formData.areaDimension.selectedArea}
+                  onChange={handleInputChange}
+                  required
+                  className={`py-2 ${submitAttempted && errors.areaDimension ? 'is-invalid' : ''}`}
+                  style={{ fontSize: "15px" }}
+                >
+                  <option value="">Unit</option>
+                  <option value="ft">Feet (ft)</option>
+                  <option value="m">Meters (m)</option>
+                  <option value="yd">Yards (yd)</option>
+                  <option value="in">Inches (in)</option>
+                  <option value="cm">Centimeters (cm)</option>
+                </Form.Select>
+                <Form.Text className="text-muted small">Unit</Form.Text>
+              </Col>
+            </Row>
+            {submitAttempted && errors.areaDimension && (
+              <Form.Control.Feedback type="invalid" className="d-block">
+                {errors.areaDimension}
+              </Form.Control.Feedback>
+            )}
+          </Form.Group>
 
           <Row className="mb-2 g-4">
             <Col md={6}>
