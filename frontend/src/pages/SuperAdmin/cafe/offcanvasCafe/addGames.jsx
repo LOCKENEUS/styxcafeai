@@ -779,36 +779,74 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
             )}
           </Form.Group>
 
-          <Form.Group className="mb-2">
-            <Form.Label htmlFor="gameDetails" className="fw-bold text-secondary">Game Details
-              <span className="text-danger">*</span>
+          {/* Game Details */}
+          <Form.Group className="mb-4">
+            <Form.Label htmlFor="gameDetails" className="fw-semibold text-dark d-flex align-items-center">
+              Game Description <span className="text-danger ms-1">*</span>
+              <OverlayTrigger
+                placement="right"
+                overlay={renderTooltip("Provide detailed information about the game, rules, and special features")}
+              >
+                <span className="ms-2 text-muted" style={{ cursor: "help" }}>
+                  <FiInfo size={16} />
+                </span>
+              </OverlayTrigger>
             </Form.Label>
             <Form.Control
               id="gameDetails"
               as="textarea"
-              rows={4}
+              rows={5}
               name="details"
               value={formData.details}
               onChange={handleInputChange}
               required
-              className="border-2"
-              placeholder="Describe the game details..."
+              className={`${submitAttempted && errors.details ? 'is-invalid' : ''}`}
+              placeholder="Provide a detailed description of the game including:
+• Game rules and how to play
+• Special features or equipment
+• Suitable age group or skill level
+• Any safety guidelines"
+              style={{ fontSize: "15px" }}
             />
+            {submitAttempted && errors.details && (
+              <Form.Control.Feedback type="invalid">
+                {errors.details}
+              </Form.Control.Feedback>
+            )}
+            <Form.Text className="text-muted">
+              {formData.details.length}/500 characters
+            </Form.Text>
           </Form.Group>
 
-          <div className="d-flex justify-content-end gap-3 mt-4">
-            <Button variant="success" type="submit" disabled={isLoading}>
+          {/* Submit Buttons */}
+          <div className="d-flex justify-content-between align-items-center gap-3 mt-4 pt-3 border-top">
+            <Button 
+              variant="outline-secondary" 
+              onClick={handleCloseAndReset} 
+              className="px-4 py-2 fw-semibold"
+              disabled={isLoading}
+              style={{ minWidth: "120px" }}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="success" 
+              type="submit" 
+              disabled={isLoading}
+              className="px-4 py-2 fw-semibold"
+              style={{ minWidth: "150px" }}
+            >
               {isLoading ? (
                 <>
                   <Spinner animation="border" size="sm" className="me-2" />
                   Saving...
                 </>
               ) : (
-                "Save Game"
+                <>
+                  <FiUpload size={18} className="me-2" />
+                  Save Game Slot
+                </>
               )}
-            </Button>
-            <Button variant="outline-secondary" onClick={handleClose} className="px-4 py-2 fw-bold">
-              Cancel
             </Button>
           </div>
         </Form>
