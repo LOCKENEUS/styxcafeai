@@ -47,8 +47,51 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
     handleClose();
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.name.trim()) {
+      newErrors.name = "Game name is required";
+    }
+    
+    if (!formData.price || formData.price <= 0) {
+      newErrors.price = "Please enter a valid price";
+    }
+    
+    if (formData.type === "Multiplayer" && formData.players <= 1) {
+      newErrors.players = "Multiplayer games must have more than 1 player";
+    }
+    
+    if (!formData.areaDimension.length || !formData.areaDimension.breadth || !formData.areaDimension.selectedArea) {
+      newErrors.areaDimension = "Please provide complete area dimensions";
+    }
+    
+    if (!formData.gameImage) {
+      newErrors.gameImage = "Game image is required";
+    }
+    
+    if (!formData.details.trim()) {
+      newErrors.details = "Game details are required";
+    }
+    
+    const validAmenities = formData.amenities.filter(a => a.trim() !== "");
+    if (validAmenities.length === 0) {
+      newErrors.amenities = "At least one amenity is required";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitAttempted(true);
+    
+    if (!validateForm()) {
+      toast.error("Please fix all errors before submitting");
+      return;
+    }
+
     setIsLoading(true);
 
     const formDataToSend = new FormData();
@@ -68,7 +111,10 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
     formDataToSend.append('cafe', formData.cafe);
     formDataToSend.append('commission', formData.commission);
     formDataToSend.append('payLater', formData.payLater);
-    formDataToSend.append('amenities', JSON.stringify(formData.amenities));
+    
+    // Filter out empty amenities
+    const validAmenities = formData.amenities.filter(a => a.trim() !== "");
+    formDataToSend.append('amenities', JSON.stringify(validAmenities));
 
     // Append image file if exists
     if (formData.gameImage instanceof File) {
@@ -77,19 +123,14 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
 
     try {
       await dispatch(addGame(formDataToSend));
-      handleClose();
-
+      toast.success("Game added successfully!");
+      handleCloseAndReset();
     } catch (error) {
       console.error("Error submitting form:", error);
-      handleClose();
+      toast.error("Failed to add game. Please try again.");
     } finally {
       setIsLoading(false);
     }
-
-    // Reset form data and image preview after submission
-    setFormData(initialFormData);
-    setImagePreview(null);
-
   };
 
   const handleInputChange = (e) => {
