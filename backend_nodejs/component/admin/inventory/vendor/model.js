@@ -76,7 +76,17 @@ const vendorSchema = new mongoose.Schema(
   }
 );
 
-vendorSchema.index({ email: 1, cafe: 1 }, { unique: true });
+// Unique index on emailID and cafe, but only when emailID exists
+// This allows multiple vendors with no email (null) for different cafes or superadmin
+vendorSchema.index(
+  { emailID: 1, cafe: 1 }, 
+  { 
+    unique: true,
+    partialFilterExpression: { 
+      emailID: { $exists: true, $ne: null, $ne: '' } 
+    }
+  }
+);
 
 const Vendor = mongoose.model("Vendor", vendorSchema);
 
