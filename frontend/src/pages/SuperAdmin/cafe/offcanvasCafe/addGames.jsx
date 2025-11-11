@@ -277,11 +277,29 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
     const updatedAmenities = [...formData.amenities];
     updatedAmenities[index] = value;
     setFormData({ ...formData, amenities: updatedAmenities });
+    setErrors((prev) => ({ ...prev, amenities: "" }));
   };
 
   const addAmenityField = () => {
+    if (formData.amenities.length >= 10) {
+      toast.warning("Maximum 10 amenities allowed");
+      return;
+    }
     setFormData({ ...formData, amenities: [...formData.amenities, ""] });
   };
+  
+  const removeAmenityField = (index) => {
+    if (formData.amenities.length <= 1) {
+      toast.warning("At least one amenity field is required");
+      return;
+    }
+    const updatedAmenities = formData.amenities.filter((_, i) => i !== index);
+    setFormData({ ...formData, amenities: updatedAmenities });
+  };
+  
+  const renderTooltip = (text) => (
+    <Tooltip id="tooltip">{text}</Tooltip>
+  );
 
   return (
     <Offcanvas show={show} onHide={handleClose} placement="end" style={{ width: "600px" }}>
