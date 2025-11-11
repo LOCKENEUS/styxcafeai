@@ -88,7 +88,17 @@ export const updateCafe = createAsyncThunk(
         throw new Error(response.data.message || "Failed to update cafe");
       }
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      // Handle multer file size errors
+      if (error.response?.status === 413 || error.code === 'LIMIT_FILE_SIZE') {
+        return rejectWithValue({ message: 'File too large. Maximum file size is 10MB' });
+      }
+      // Handle multer file type errors  
+      if (error.message && error.message.includes('Only image')) {
+        return rejectWithValue({ message: error.message });
+      }
+      // Handle general errors
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to update cafe';
+      return rejectWithValue({ message: errorMessage });
     }
   }
 );
