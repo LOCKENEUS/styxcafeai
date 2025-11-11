@@ -233,3 +233,35 @@ agent_communication:
       - Integration: Payment-to-invoice relationship working correctly
       
       Both reported issues have been completely resolved. The sales invoice functionality is now working as expected.
+
+user_problem_statement: |
+  New issue: Invoice Payments page - clicking on payment to view details shows error "Error Loading Invoice, Error fetching sales invoice details"
+
+frontend:
+  - task: "Fix invoice payment detail navigation"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/common/inventory/invoicePayments.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Fixed invoice payment list page navigation issue:
+          1. Added invoice document ID (_id) to itemsData mapping (was missing)
+          2. Now properly extracts bill_id._id from payment records
+          3. This ID is used when navigating to invoice details page
+          
+          The issue was that row._id was undefined because it wasn't included in the mapped data structure.
+
+agent_communication:
+  - agent: "main"
+    message: |
+      Fixed invoice payments navigation bug:
+      - Root cause: itemsData mapping didn't include the invoice _id field
+      - Fix: Added _id: item?.bill_id?._id to the mapped data
+      - This enables proper navigation to invoice details when clicking a payment
+      
+      Ready for testing - need to verify payment list loads and clicking navigates to correct invoice details.
