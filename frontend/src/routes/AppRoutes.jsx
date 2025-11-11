@@ -173,6 +173,16 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/superadmin/subscription" element={<CreatesubScription />} />
           <Route path="/superadmin/create-table" element={<CreateTable />} />
 
+          <Route path="/superadmin/CafeGames" element={<CafeGames />} />
+          <Route path="/superadmin/CreateMembership" element={<CreateMembership />} />
+          <Route path="/superadmin/Bookings/BookingDetails" element={<BookingDetailsPage />} />
+          <Route path="/superadmin/Clients/ClientDetails" element={<ClientDetailsPage />} />
+        </Route>
+      </Route>
+
+      {/*-------------------- Inventory Routes (Both Admin & Super Admin) -------------------------------- */}
+      <Route element={<InventoryRoute />}>
+        <Route element={<DashboardLayout setIsAuthenticated={setIsAuthenticated} />}>
           <Route path="/Inventory/Dashboard" element={<Dashboards />} />
           <Route path="/Inventory/Items" element={<Items />} />
           <Route path="/Inventory/Items/ItemEdit" element={<EditItem />} />
@@ -220,11 +230,6 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/Inventory/ItemDetails" element={<ItemsDetails />} />
           <Route path="/Inventory/PurchaseOrderDetails/:id" element={<PODetails />} />
           <Route path="/Inventory/PurchaseOrder/Edit/:id" element={<PoUpdate />} />
-
-          <Route path="/superadmin/CafeGames" element={<CafeGames />} />
-          <Route path="/superadmin/CreateMembership" element={<CreateMembership />} />
-          <Route path="/superadmin/Bookings/BookingDetails" element={<BookingDetailsPage />} />
-          <Route path="/superadmin/Clients/ClientDetails" element={<ClientDetailsPage />} />
         </Route>
       </Route>
 
