@@ -12,6 +12,7 @@ import { getCustomFields, deleteCustomField } from "../../../../store/AdminSlice
 import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
 import { getVendors } from "../../../../store/AdminSlice/Inventory/VendorSlice";
 import Units from "../modal/Units";
+import { VendorCreateModal } from "../modal/vendorCreate";
 
 const CreateItemsForm = () => {
     const { id } = useParams();
