@@ -194,22 +194,83 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Image size should be less than 5MB");
+        return;
+      }
+      
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error("Please upload a valid image file");
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
         setFormData((prev) => ({ ...prev, gameImage: file }));
+        setErrors((prev) => ({ ...prev, gameImage: "" }));
       };
       reader.readAsDataURL(file);
     }
   };
-  const handleRemoveImage = (e) => {
-    const updatedImagePreviews = imagePreview.filter((_, i) => i !== e);
-    setImagePreview(updatedImagePreviews);
-
-    setFormData((prev) => ({
-      ...prev,
-      cafeImage: prev.imagePreview.filter((_, i) => i !== e),
-    }));
+  
+  const handleRemoveImage = () => {
+    setImagePreview(null);
+    setFormData((prev) => ({ ...prev, gameImage: null }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+  
+  // Drag and drop handlers
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+  
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+  
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+  
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Image size should be less than 5MB");
+        return;
+      }
+      
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error("Please upload a valid image file");
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+        setFormData((prev) => ({ ...prev, gameImage: file }));
+        setErrors((prev) => ({ ...prev, gameImage: "" }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleAmenityChange = (index, value) => {
