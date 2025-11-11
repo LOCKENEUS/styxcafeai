@@ -171,6 +171,7 @@ export const InvoicePayments = () => {
     const itemsData = Array.isArray(invoicePaymentList)
         ? invoicePaymentList.map((item, index) => ({
             sn: index + 1,
+            _id: item?.bill_id?._id || null,  // Add the actual invoice document ID
             invoice_id: item?.bill_id?.po_no || "N/A",
             vendor: item?.bill_id?.customer_id?.name || "N/A",
             amount: item?.deposit_amount || "N/A",
