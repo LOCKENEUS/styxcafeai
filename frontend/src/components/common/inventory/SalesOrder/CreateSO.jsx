@@ -409,8 +409,14 @@ export const CreateSo = () => {
       setSubmitLoading(true);
       if (isEditMode) {
         const res = await dispatch(updatesalesOrder({ id, soData: submitData })).unwrap();
+        // After successful update, redirect to the updated sales order details page
         if (res?.data?._id) {
+          navigate(`/Inventory/SalesOrderDetails/${res.data._id}`);
+        } else if (res?._id) {
           navigate(`/Inventory/SalesOrderDetails/${res._id}`);
+        } else if (id) {
+          // Fallback to the current ID if no ID returned
+          navigate(`/Inventory/SalesOrderDetails/${id}`);
         } else {
           setSubmitLoading(false);
           console.error('No ID returned from update operation');
@@ -419,6 +425,8 @@ export const CreateSo = () => {
         const res = await dispatch(addsalesOrder(submitData)).unwrap();
         if (res?._id) {
           navigate(`/Inventory/SalesOrderDetails/${res._id}`);
+        } else if (res?.data?._id) {
+          navigate(`/Inventory/SalesOrderDetails/${res.data._id}`);
         } else {
           setSubmitLoading(false);
           console.error('No ID returned from create operation');
@@ -427,6 +435,7 @@ export const CreateSo = () => {
     } catch (error) {
       setSubmitLoading(false);
       console.error('Error with Sales Order:', error);
+      toast.error(error?.message || 'Failed to save sales order');
     }
   };
 
