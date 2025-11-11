@@ -782,14 +782,35 @@ const CreateItemsForm = () => {
                                             onChange={handleSelectChange}
                                         >
                                             <option value="">Select Vendor</option>
-                                            {vendors.map(vendor => (
-                                                <option key={vendor._id} value={vendor._id}>
-                                                    {vendor.name}
-                                                </option>
-                                            ))}
+                                            {vendors && vendors.length > 0 ? (
+                                                vendors.map(vendor => (
+                                                    <option key={vendor._id} value={vendor._id}>
+                                                        {vendor.name}
+                                                    </option>
+                                                ))
+                                            ) : (
+                                                <option value="" disabled>No vendors available</option>
+                                            )}
                                         </FormSelect>
                                     </InputGroup>
+                                    <div id="addVendorFieldContainer" />
+                                    <Button 
+                                        className="d-flex justify-content-end align-items-center" 
+                                        style={{ width: "40px", padding: '12px', border: "1px solid blue", height: "40px", borderStyle: "dashed" }} 
+                                        variant="outline-secondary" 
+                                        onClick={() => setShowVendorModal(true)}
+                                    >
+                                        <FaPlus className="text-primary" size={30} />
+                                    </Button>
                                 </FormGroup>
+                                <VendorCreateModal 
+                                    showCreateVendor={showVendorModal} 
+                                    handleCloseCreateVendor={() => {
+                                        setShowVendorModal(false);
+                                        // Refresh vendors list after creating new vendor
+                                        dispatch(getVendors(cafeId));
+                                    }}
+                                />
                             </Col>
                         </Row>
                     </Card>
