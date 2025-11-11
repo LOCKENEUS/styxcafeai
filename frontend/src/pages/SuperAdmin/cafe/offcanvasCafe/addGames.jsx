@@ -628,31 +628,67 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
             </Col>
           </Row>
 
-          <Form.Group className="mb-2">
-            <Form.Label htmlFor="amenities" className="fw-bold text-secondary">
-              Amenities <span className="text-danger">*</span>
+          {/* Amenities Section */}
+          <Form.Group className="mb-4">
+            <Form.Label className="fw-semibold text-dark d-flex align-items-center justify-content-between">
+              <span>
+                Amenities & Features <span className="text-danger">*</span>
+                <OverlayTrigger
+                  placement="right"
+                  overlay={renderTooltip("List amenities like WiFi, AC, Locker, etc.")}
+                >
+                  <span className="ms-2 text-muted" style={{ cursor: "help" }}>
+                    <FiInfo size={16} />
+                  </span>
+                </OverlayTrigger>
+              </span>
+              <Button
+                variant="outline-primary"
+                size="sm"
+                onClick={addAmenityField}
+                className="d-flex align-items-center"
+                disabled={formData.amenities.length >= 10}
+              >
+                <span className="me-1">+</span> Add More
+              </Button>
             </Form.Label>
 
-            {formData.amenities.map((amenity, index) => (
-              <div key={index} className="d-flex align-items-center mb-2">
-                <Form.Control
-                  type="text"
-                  value={amenity}
-                  onChange={(e) => handleAmenityChange(index, e.target.value)}
-                  placeholder={`Amenity ${index + 1}`}
-                  className="border-2 me-2"
-                />
-                {index === formData.amenities.length - 1 && (
-                  <Button
-                    variant="success"
-                    onClick={addAmenityField}
-                    className="px-2 py-1"
-                  >
-                    +
-                  </Button>
-                )}
-              </div>
-            ))}
+            <div className="border rounded p-3 bg-light">
+              {formData.amenities.map((amenity, index) => (
+                <div key={index} className="d-flex align-items-center mb-2">
+                  <span className="me-2 text-muted" style={{ minWidth: "20px" }}>
+                    {index + 1}.
+                  </span>
+                  <Form.Control
+                    type="text"
+                    value={amenity}
+                    onChange={(e) => handleAmenityChange(index, e.target.value)}
+                    placeholder={`e.g., ${index === 0 ? 'WiFi' : index === 1 ? 'Air Conditioning' : index === 2 ? 'Locker Facility' : `Amenity ${index + 1}`}`}
+                    className={`me-2 ${submitAttempted && errors.amenities ? 'is-invalid' : ''}`}
+                    style={{ fontSize: "15px" }}
+                  />
+                  {formData.amenities.length > 1 && (
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      onClick={() => removeAmenityField(index)}
+                      className="d-flex align-items-center"
+                      style={{ minWidth: "38px" }}
+                    >
+                      <FiX size={18} />
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </div>
+            {submitAttempted && errors.amenities && (
+              <Form.Control.Feedback type="invalid" className="d-block">
+                {errors.amenities}
+              </Form.Control.Feedback>
+            )}
+            <Form.Text className="text-muted">
+              Add at least one amenity. You can add up to 10 amenities.
+            </Form.Text>
           </Form.Group>
 
           <Row className="mb-2 g-4">
