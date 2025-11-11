@@ -20,7 +20,7 @@ ADMIN_ENDPOINTS = {
     "customer_details": f"{BASE_URL}/admin/customer"
 }
 
-class InvoicePaymentsTest:
+class CustomerCreationTest:
     def __init__(self):
         self.session = requests.Session()
         self.test_results = []
