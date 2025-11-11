@@ -138,7 +138,16 @@ const CreateItemsForm = () => {
     useEffect(() => {
         dispatch(getCustomFields(cafeId));
         dispatch(getTaxFields(cafeId));
-        dispatch(getVendors(cafeId));
+        
+        // Fetch vendors with proper error handling
+        dispatch(getVendors(cafeId))
+            .unwrap()
+            .then((data) => {
+                console.log('✅ Vendors fetched successfully:', data);
+            })
+            .catch((error) => {
+                console.error('❌ Error fetching vendors:', error);
+            });
 
         // Fetch item data when in edit mode
         if (isEditMode) {
