@@ -344,6 +344,18 @@ export const CreateSo = () => {
       }
     });
 
+    // Check for duplicate items
+    const itemCounts = {};
+    products.forEach(product => {
+      if (product.item) {
+        itemCounts[product.item] = (itemCounts[product.item] || 0) + 1;
+        if (itemCounts[product.item] > 1) {
+          hasErrors = true;
+          newValidationErrors[`product-${product.id}`] = 'This item is already selected. Please choose a different item.';
+        }
+      }
+    });
+
     if (hasErrors) {
       setValidationErrors(newValidationErrors);
       return;
