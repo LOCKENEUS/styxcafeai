@@ -545,3 +545,73 @@ agent_communication:
       
       The customer creation validation error during game booking has been completely resolved.
       Both scenarios (with and without password) are working as expected.
+
+The login issue is now permanently fixed. The Node.js backend will automatically start and stay running!
+
+user_problem_statement: |
+  While booking slots - after selecting Online Payment Mode - unable to do payment
+  User wants to add Razorpay for online payment so that users can make payment online
+
+backend:
+  - task: "Fix Razorpay payment integration for online bookings"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/component/admin/booking/controller.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Fixed Razorpay payment integration:
+          
+          Investigation Found:
+          - Razorpay credentials already configured in .env files
+          - Razorpay SDK already installed (v2.9.6)
+          - Frontend has complete payment flow implemented
+          - Backend has payment and verify-payment endpoints
+          - Razorpay script loaded in index.html
+          
+          Issue Found:
+          - Backend payment endpoint returned { success: true, data: order }
+          - Frontend expected { success: true, order: order }
+          - This mismatch caused payment modal not to open
+          
+          Fix Applied:
+          - Changed backend response from 'data' to 'order' in payment endpoint
+          - Added better error logging
+          - Changed status: false to success: false for consistency
+          
+          Payment Flow:
+          1. User selects Online payment mode
+          2. Frontend calls /admin/booking/payment to create Razorpay order
+          3. Backend creates order and returns order details
+          4. Frontend opens Razorpay payment modal
+          5. User completes payment
+          6. Frontend creates booking and calls /admin/booking/verify-payment
+          7. Backend verifies signature and updates booking status
+          8. User redirected to checkout page
+
+agent_communication:
+  - agent: "main"
+    message: |
+      Razorpay payment integration fix completed:
+      
+      Infrastructure status:
+      ✓ Razorpay credentials configured (Test mode)
+      ✓ Razorpay SDK installed (backend)
+      ✓ Razorpay checkout.js loaded (frontend)
+      ✓ Payment endpoints exist and exported
+      
+      Bug fixed:
+      - Response structure mismatch between backend and frontend
+      - Backend now returns { success: true, order: {...} }
+      
+      Ready for testing:
+      1. Navigate to game booking page
+      2. Select customer, game, slot, date
+      3. Choose "Online" payment mode
+      4. Click proceed - Razorpay modal should open
+      5. Complete test payment
+      6. Verify booking is created with "Paid" status
