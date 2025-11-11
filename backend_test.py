@@ -11,7 +11,7 @@ from datetime import datetime
 import sys
 
 # Configuration
-BASE_URL = "/api"  # Using VITE_API_URL from frontend/.env
+BASE_URL = "http://localhost:8001/api"  # Backend running on port 8001
 ADMIN_ENDPOINTS = {
     "create_invoice": f"{BASE_URL}/admin/inventory/so/invoice",
     "get_invoice": f"{BASE_URL}/admin/inventory/so/invoice",
