@@ -77,8 +77,14 @@ export const addsalesOrder = createAsyncThunk(
   "salesOrder/addsalesOrder",
   async (soData, thunkAPI) => {
     try {
+      // Determine the correct endpoint based on user role
+      const user = JSON.parse(localStorage.getItem("user"));
+      const endpoint = user?.role === 'superadmin' 
+        ? `${BASE_URL}/superadmin/inventory/so`
+        : `${BASE_URL}/admin/inventory/so`;
+        
       const response = await axios.post(
-        `${BASE_URL}/superadmin/inventory/so`,
+        endpoint,
         soData,
         {
           headers: {
