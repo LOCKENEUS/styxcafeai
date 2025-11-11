@@ -64,6 +64,7 @@ const CreateItemsForm = () => {
     const [latestCreatedManufacturer, setLatestCreatedManufacturer] = useState(null);
     const [latestCreatedBrand, setLatestCreatedBrand] = useState(null);
     const [latestCreatedTax, setLatestCreatedTax] = useState(null);
+    const [latestCreatedVendor, setLatestCreatedVendor] = useState(null);
 
     // Organize custom fields by type
     const unitOptions = customFields.filter(field => field.type === "Unit");
