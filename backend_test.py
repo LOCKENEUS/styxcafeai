@@ -106,22 +106,77 @@ class RazorpayPaymentTest:
             )
             return False
     
-    def setup_test_data(self):
-        """Setup test data - authenticate and get cafe ID"""
-        print("\n=== Setting up test data ===")
+    def test_razorpay_credentials_configuration(self):
+        """Test 1: Verify Razorpay credentials are properly configured"""
+        print("\n=== Testing Razorpay Credentials Configuration ===")
         
-        # First authenticate to get token and cafe ID
-        if not self.authenticate_admin():
+        try:
+            # Check if Razorpay SDK is working by making a test payment order
+            test_data = {
+                "amount": 1,  # Minimum amount for testing
+                "currency": "INR",
+                "receipt": "test_config_check"
+            }
+            
+            response = self.session.post(ADMIN_ENDPOINTS["payment"], json=test_data)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                if data.get("success") and "order" in data:
+                    order = data["order"]
+                    
+                    # Check if order has required Razorpay fields
+                    required_fields = ["id", "amount", "currency", "receipt"]
+                    missing_fields = [field for field in required_fields if field not in order]
+                    
+                    if not missing_fields:
+                        self.log_result(
+                            "Razorpay Credentials Configuration",
+                            True,
+                            "Razorpay credentials are properly configured and SDK is working",
+                            {
+                                "order_id": order.get("id"),
+                                "amount": order.get("amount"),
+                                "currency": order.get("currency"),
+                                "receipt": order.get("receipt")
+                            }
+                        )
+                        return True
+                    else:
+                        self.log_result(
+                            "Razorpay Credentials Configuration",
+                            False,
+                            f"Order missing required fields: {missing_fields}",
+                            {"order": order}
+                        )
+                        return False
+                else:
+                    self.log_result(
+                        "Razorpay Credentials Configuration",
+                        False,
+                        "Invalid response structure - missing 'order' field",
+                        {"response": data}
+                    )
+                    return False
+            else:
+                error_msg = response.json().get("message", "Unknown error") if response.content else "No response content"
+                self.log_result(
+                    "Razorpay Credentials Configuration",
+                    False,
+                    f"Failed to create test order: {error_msg}",
+                    {"status_code": response.status_code, "response": response.text}
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "Razorpay Credentials Configuration Test",
+                False,
+                f"Exception occurred: {str(e)}",
+                {"exception_type": type(e).__name__}
+            )
             return False
-        
-        self.log_result(
-            "Test Data Setup",
-            True,
-            f"Using authenticated cafe ID: {self.test_cafe_id}",
-            {"cafe_id": self.test_cafe_id}
-        )
-        
-        return True
     
     def create_test_customer_data(self, include_password=False, contact_no=None):
         """Create test data for customer creation"""
