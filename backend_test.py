@@ -341,7 +341,7 @@ class InvoicePaymentsTest:
         }
 
 if __name__ == "__main__":
-    tester = SalesInvoiceTest()
+    tester = InvoicePaymentsTest()
     results = tester.run_all_tests()
     
     # Exit with appropriate code
