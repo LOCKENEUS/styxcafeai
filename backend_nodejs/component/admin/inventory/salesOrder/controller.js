@@ -324,14 +324,24 @@ const createSalesInvoice = async (req, res) => {
       0
     );
 
-    // Generate SO Number
-    const lastSo = await InvSo.findOne().sort({ createdAt: -1 });
-    let nextSoNumber = 1;
-    if (lastSo) {
-      const lastNumber = parseInt(lastSo.so_no.split("-")[1], 10);
-      nextSoNumber = lastNumber + 1;
+    // Generate SI Number - only query SI type invoices
+    const lastSi = await InvSo.findOne({ type: "SI" }).sort({ createdAt: -1 });
+    let nextSiNumber = 1;
+    if (lastSi && lastSi.so_no) {
+      const lastNumber = parseInt(lastSi.so_no.split("-")[1], 10);
+      nextSiNumber = lastNumber + 1;
     }
-    const so_no = `SI-${nextSoNumber.toString().padStart(3, "0")}`;
+    
+    // Ensure unique SI number with retry mechanism
+    let so_no = `SI-${nextSiNumber.toString().padStart(3, "0")}`;
+    let existingSi = await InvSo.findOne({ so_no });
+    
+    // If the generated number already exists, keep incrementing
+    while (existingSi) {
+      nextSiNumber++;
+      so_no = `SI-${nextSiNumber.toString().padStart(3, "0")}`;
+      existingSi = await InvSo.findOne({ so_no });
+    }
 
     const newSo = new InvSo({ 
       cafe: req.body.cafe,
