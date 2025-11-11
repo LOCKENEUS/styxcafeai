@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
-import { Button, Col, Form, Row, Spinner } from 'react-bootstrap';
+import { Button, Col, Form, Row, Spinner, Alert } from 'react-bootstrap';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { TiDeleteOutline } from 'react-icons/ti';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCafesID, updateCafe } from '../../../../store/slices/cafeSlice';
+import { fetchCafes, fetchCafesID, updateCafe } from '../../../../store/slices/cafeSlice';
 import { getLocations } from '../../../../store/slices/locationSlice';
 import { toast } from "react-toastify";
 
 function EditCafeOffcanvas({ show, handleClose, cafeId }) {
 
   const baseURL = import.meta.env.VITE_API_URL;
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
 
   const [removedExistingDocs, setRemovedExistingDocs] = useState([]);
   const [removedDocuments, setRemovedDocuments] = useState([]);
@@ -25,6 +26,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
 
   const dispatch = useDispatch();
   const IDCafeFetch = useSelector((state) => state.cafes);
@@ -54,10 +56,8 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
         cafe_name: cafe.cafe_name,
         email: cafe.email,
         contact_no: cafe.contact_no,
-        cafe_name: cafe.cafe_name,
         address: cafe.address,
         website_url: cafe.website_url,
-        // location: cafe.location,
         location: cafe.location ? cafe.location._id : '',
         description: cafe.description,
         gstNo: cafe.gstNo,
@@ -66,7 +66,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
         depositAmount: cafe.depositAmount,
         yearsOfContract: cafe.yearsOfContract,
         officeContactNo: cafe.officeContactNo,
-        // cafeImage: cafe.imagePreview || [],
         cafeImage: cafe.cafeImage || [],
         document: cafe.document || [],
       });
@@ -79,8 +78,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
   };
   const [imagePreview, setImagePreview] = useState([]);
 
-  // -----------------------------------------------------
-
   const [existingCafeImages, setExistingCafeImages] = useState([]);
   const [removedCafeImages, setRemovedCafeImages] = useState([]);
 
@@ -88,10 +85,22 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
     if (filteredCafes?.[0]?.cafeImage) {
       setExistingCafeImages(filteredCafes[0].cafeImage);
     }
-  }, []);
+  }, [filteredCafes]);
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
+    setUploadError(''); // Clear previous errors
+    
+    // Validate file sizes
+    const invalidFiles = files.filter(file => file.size > MAX_FILE_SIZE);
+    if (invalidFiles.length > 0) {
+      const fileNames = invalidFiles.map(f => f.name).join(', ');
+      const errorMsg = `File(s) exceed 10MB limit: ${fileNames}`;
+      setUploadError(errorMsg);
+      toast.error(errorMsg);
+      return;
+    }
+
     const previews = files.map((file) => URL.createObjectURL(file));
 
     setImagePreview((prev) => [...prev, ...previews]);
@@ -102,7 +111,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
   };
 
   const handleRemoveImage = (index) => {
-    // Remove from new image preview and files
     setImagePreview((prev) => {
       const updated = [...prev];
       URL.revokeObjectURL(updated[index]);
@@ -117,71 +125,50 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
     });
   };
 
-  // const handleRemoveExistingImage = (imgPath) => {
-  //   setExistingCafeImages((prev) => prev.filter((img) => img !== imgPath));
-  //   setRemovedCafeImages((prev) => [...prev, imgPath]);
-  // };
-
-  // ...existing code...
-   const handleRemoveExistingImage = (imgPath, index) => {
-    console.log("Removing existing image:", imgPath, "at index:", index);
-    // remove from displayed existing images by index
+  const handleRemoveExistingImage = (imgPath, index) => {
     setExistingCafeImages((prev) => {
       const copy = [...prev];
-      const removed = copy.splice(index, 1);
+      copy.splice(index, 1);
       return copy;
     });
 
-    console.log("Updated existingCafeImages:", existingCafeImages);
-
-    // track for backend deletion (store the original path)
     setRemovedCafeImages((prev) => [...prev, imgPath]);
 
-    // also remove from formDataState.cafeImage so submit won't re-send it
     setFormDataState((prev) => {
       if (!prev) return prev;
       const prevImgs = Array.isArray(prev.cafeImage) ? prev.cafeImage : [];
       const filename = imgPath.split('/').pop();
-      const updatedFiles = prevImgs.filter((item, i) => {
-        // if this item is a string and matches path or filename, drop it
+      const updatedFiles = prevImgs.filter((item) => {
         if (typeof item === 'string') {
           if (item === imgPath) return false;
           if (item.split('/').pop() === filename) return false;
         }
-        // if item is a File and indices match, keep it (we only remove existing images here)
         return true;
       });
       return { ...prev, cafeImage: updatedFiles };
     });
   };
-// ...existing code...
-
-  // ================================================
 
   const toggleConfirmPasswordVisibility = (e) => {
-    e.preventDefault(); // Prevent form submission
+    e.preventDefault();
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  // const handleDocumentChange = (e) => {
-  //   const files = Array.from(e.target.files);
-  //   const newDocPreviews = files.map((file) => ({
-  //     name: file.name,
-  //     url: URL.createObjectURL(file),
-  //     isExisting: false
-  //   }));
-
-  //   setDocumentPreview((prev) => [...prev, ...newDocPreviews]);
-  //   setFormDataState((prev) => ({
-  //     ...prev,
-  //     document: [...(prev.document || []), ...files],
-  //   }));
-  // };
-
   const handleDocumentChange = (e) => {
     const files = Array.from(e.target.files);
+    setUploadError(''); // Clear previous errors
 
-    setDocumentPreview((prev) => [...prev, ...files]); // for UI preview
+    // Validate file sizes
+    const invalidFiles = files.filter(file => file.size > MAX_FILE_SIZE);
+    if (invalidFiles.length > 0) {
+      const fileNames = invalidFiles.map(f => f.name).join(', ');
+      const errorMsg = `Document(s) exceed 10MB limit: ${fileNames}`;
+      setUploadError(errorMsg);
+      toast.error(errorMsg);
+      return;
+    }
+
+    setDocumentPreview((prev) => [...prev, ...files]);
 
     setFormDataState((prev) => ({
       ...prev,
@@ -191,18 +178,12 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
 
   const togglePasswordVisibility = (e) => {
     e.preventDefault();
-
     setShowPassword(!showPassword);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // all fields are required
-    // if(!cafeId || name || email || contact_no || cafe_name || address || website_url || location || description || password || gstNo || panNo || ownershipType || depositAmount || yearsOfContract || officeContactNo){
-    //   toast.error('Please fix All  before submitting');
-    //   return;
-    // }
+    setUploadError(''); // Clear previous errors
 
     const formDataToSend = new FormData();
     formDataToSend.append("_id", cafeId);
@@ -222,40 +203,13 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
     formDataToSend.append("yearsOfContract", formDataState.yearsOfContract);
     formDataToSend.append("officeContactNo", formDataState.officeContactNo);
 
-    // if (Array.isArray(formDataState.cafeImage)) {
-    //   formDataState.cafeImage.forEach((file) => {
-    //     formDataToSend.append("cafeImage", file);
-    //   });
-    // }
-
-    // if (Array.isArray(formDataState.document)) {
-    //   formDataState.document.forEach((file) => {
-    //     formDataToSend.append("document", file); 
-    //   });
-    // }
-
-
-    // if (Array.isArray(formDataState.cafeImage)) {
-    //   formDataState.cafeImage.forEach((file) => {
-    //     formDataToSend.append("cafeImage", file);
-    //   });
-    // }
-
-    // if (Array.isArray(formDataState.document)) {
-    //   formDataState.document.forEach((file) => {
-    //     formDataToSend.append("document", file);
-    //   });
-    // }
-
     if (Array.isArray(formDataState.cafeImage)) {
       formDataState.cafeImage.forEach((item) => {
         if (typeof item === "string") {
-          // existing image path (only add if NOT removed)
           if (!removedCafeImages.includes(item)) {
             formDataToSend.append("cafeImage", item);
           }
         } else if (item instanceof File) {
-          // new uploaded file
           formDataToSend.append("cafeImage", item);
         }
       });
@@ -270,10 +224,25 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
     try {
       setIsLoading(true);
       await dispatch(updateCafe({ id: cafeId, updatedData: formDataToSend })).unwrap();
+      // Refresh the cafe data to get updated images
+      await dispatch(fetchCafes());
       handleClose();
+      // Force a page refresh to show updated images
+      window.location.reload();
     } catch (error) {
-      console.error(error);
-      toast.error(error.message);
+      console.error('Update error:', error);
+      // Handle different error types
+      if (error.message && error.message.includes('File too large')) {
+        setUploadError('One or more files exceed the 10MB size limit. Please choose smaller files.');
+        toast.error('File size exceeds 10MB limit');
+      } else if (error.message && error.message.includes('Only image')) {
+        setUploadError('Only image files (JPEG, PNG, GIF, WEBP) and documents (PDF, DOC, DOCX) are allowed.');
+        toast.error('Invalid file type');
+      } else {
+        const errorMsg = error.message || error.toString() || 'Failed to update cafe';
+        setUploadError(errorMsg);
+        toast.error(errorMsg);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -308,13 +277,10 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
     } else if (type === "existing") {
       const removedDoc = filteredCafes?.document[index];
 
-      // Remove from existing list index
       const updatedDocs = filteredCafes?.document.filter((doc) => doc !== removedDoc);
 
-      // Add to removedDocuments state
       setRemovedDocuments((prev) => [...prev, removedDoc]);
 
-      // Update formDataState with updated document list
       setFormDataState((prev) => ({
         ...prev,
         document: updatedDocs,
@@ -330,6 +296,11 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
         </Offcanvas.Title>
       </Offcanvas.Header>
       <Offcanvas.Body>
+        {uploadError && (
+          <Alert variant="danger" dismissible onClose={() => setUploadError('')}>
+            <strong>Upload Error:</strong> {uploadError}
+          </Alert>
+        )}
         <Form onSubmit={handleSubmit}>
           <Row className="mb-2">
             <Col md={6}>
@@ -347,12 +318,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                   onChange={handleChange}
                   required
                 />
-
-                {/* {errors.name && (
-                          <Form.Text className="text-danger">
-                            {errors.name}
-                          </Form.Text>
-                        )} */}
               </Form.Group>
             </Col>
             <Col md={6}>
@@ -493,25 +458,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
           </Row>
 
           <Row className="mb-2">
-            {/* <Col md={6}>
-              <Form.Group className="mb-2">
-                <Form.Label htmlFor="email" className="fw-bold text-secondary">
-                  Email Address
-                  <span className="text-danger">*</span>
-                </Form.Label>
-                <Form.Control
-                  id="email"
-                  type="email"
-                  name="email"
-                  required
-                  placeholder="Enter Email Address"
-                  value={formDataState.email || filteredCafes?.[0]?.email || ''}
-                  onChange={handleChange}
-                  className="py-2 border-2"
-                  readOnly
-                />
-              </Form.Group>
-            </Col> */}
             <Col md={6}>
               <Form.Group className="my-4">
                 <Form.Label htmlFor="email" className="fw-bold text-secondary">
@@ -558,7 +504,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                   className="fw-bold text-secondary"
                 >
                   Website URL
-                  {/* <span className="text-danger">*</span> */}
                 </Form.Label>
                 <Form.Control
                   id="website"
@@ -597,6 +542,9 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
             <Col md={6}>
               <Form.Label className="fw-bold text-secondary d-block">
                 Upload Images
+                <small className="text-muted d-block" style={{ fontSize: '0.8em' }}>
+                  (Max 10MB per file)
+                </small>
               </Form.Label>
               <div className="border-2 rounded-3 p-3 bg-light">
                 <Form.Control
@@ -617,7 +565,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                       Choose Files
                     </label>
                   </div>
-
 
                   <div className="d-flex flex-wrap gap-2">
                     {imagePreview.map((img, index) => (
@@ -643,7 +590,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                     ))}
                   </div>
 
-
                   <div className="d-flex flex-wrap gap-2">
                     {existingCafeImages.map((img, index) => (
                       <div key={`existing-${index}`} className="position-relative">
@@ -658,7 +604,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                           }}
                         />
                         <div
-                          // onClick={() => handleRemoveExistingImage(img)}
                           onClick={() => handleRemoveExistingImage(img, index)}
                           className="position-absolute top-0 end-0 cursor-pointer"
                           style={{ transform: "translate(25%, -25%)" }}
@@ -673,80 +618,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
             </Col>
 
           </Row>
-
-          {/* <Row className="mb-2">
-                    <Col md={6}>
-                      <Form.Group className="mb-2">
-                        <Form.Label htmlFor="password" className="fw-bold text-secondary">
-                          Password
-                          <span className="text-danger">*</span>
-                        </Form.Label>
-                        <div className="position-relative">
-                          <Form.Control
-                            id="password"
-                            type={showPassword ? "text" : "password"}
-                            name="password"
-                            placeholder="Enter Password"
-                            onChange={handleChange}
-                            required
-                            // className={`py-2 border-2 ${errors.password ? 'is-invalid' : ''}`}
-                          />
-                          <button
-                            type="button"
-                            className="btn position-absolute top-50 end-0 translate-middle-y pe-3 border-0 bg-transparent"
-                            onClick={togglePasswordVisibility}
-                            tabIndex={-1}
-                          >
-                            {showPassword ?
-                              <AiOutlineEyeInvisible size={20} color="#6c757d" /> :
-                              <AiOutlineEye size={20} color="#6c757d" />
-                            }
-                          </button>
-                        </div>
-                        {errors.password && (
-                          <Form.Text className="text-danger">
-                            {errors.password}
-                          </Form.Text>
-                        )}
-                      </Form.Group>
-                    </Col>
-                    <Col md={6}>
-                      <Form.Group className="mb-2">
-                        <Form.Label htmlFor="confirmPassword" className="fw-bold text-secondary">
-                          Confirm Password
-                          <span className="text-danger">*</span>
-                        </Form.Label>
-                        <div className="position-relative">
-                          <Form.Control
-                            id="confirmPassword"
-                            type={showConfirmPassword ? "text" : "password"}
-                            name="confirm_password"
-                            placeholder="Confirm Password"
-                            value={formDataState.confirm_password || ''}
-                            onChange={handleChange}
-                            required
-                            className={`py-2 border-2 ${errors.confirm_password ? 'is-invalid' : ''}`}
-                          />
-                          <button
-                            type="button"
-                            className="btn position-absolute top-50 end-0 translate-middle-y pe-3 border-0 bg-transparent"
-                            onClick={toggleConfirmPasswordVisibility}
-                            tabIndex={-1}
-                          >
-                            {showConfirmPassword ?
-                              <AiOutlineEyeInvisible size={20} color="#6c757d" /> :
-                              <AiOutlineEye size={20} color="#6c757d" />
-                            }
-                          </button>
-                        </div>
-                        {errors.confirm_password && (
-                          <Form.Text className="text-danger">
-                            {errors.confirm_password}
-                          </Form.Text>
-                        )}
-                      </Form.Group>
-                    </Col>
-                  </Row> */}
 
           <Row className="mb-2">
             <Col md={6}>
@@ -843,11 +714,10 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
             </Col>
           </Row>
 
-          {/* Document Upload Section */}
           <Row className="mb-3">
             <Col md={6}>
               <Form.Label className="fw-bold text-secondary d-block">
-                Upload Documents <span className="text-danger m">(pdf, doc, docx)*</span>
+                Upload Documents <span className="text-danger m">(pdf, doc, docx)* Max 10MB</span>
               </Form.Label>
 
               <div className="border-2 rounded-3 p-3 bg-light">
@@ -884,7 +754,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                       style={{ width: '48%' }}
                     >
                       <a
-                        // href={`${BASE_URL}${doc}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-decoration-none text-dark text-truncate d-block"
@@ -898,7 +767,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                       <TiDeleteOutline
                         size={22}
                         className="cursor-pointer text-danger"
-                        // onClick={() => handleRemoveDocument(index)}
                         onClick={() => handleRemoveDocument(index, "existing")}
                       />
                     </div>
@@ -924,7 +792,6 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
                       <TiDeleteOutline
                         size={22}
                         className="cursor-pointer text-danger"
-                        // onClick={() => handleRemoveDocument(index)}
                         onClick={() => handleRemoveDocument(index, "new")}
                       />
                     </div>
@@ -947,7 +814,7 @@ function EditCafeOffcanvas({ show, handleClose, cafeId }) {
             </Button>
             <Button
               variant="outline-secondary"
-              onClick={() => setShowCanvas(false)}
+              onClick={handleClose}
               className="px-4 py-2 fw-bold"
             >
               Cancel
