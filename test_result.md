@@ -432,11 +432,11 @@ user_problem_statement: |
 backend:
   - task: "Fix customer creation validation error during booking"
     implemented: true
-    working: "NA"
-    file: "/app/backend/component/admin/customer/controller.js"
+    working: true
+    file: "/app/backend_nodejs/component/admin/customer/controller.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
@@ -456,6 +456,43 @@ backend:
           
           This allows customers to be created during booking without requiring password input,
           while still satisfying the model validation requirements.
+      - working: true
+        agent: "testing"
+        comment: |
+          ✅ COMPREHENSIVE TESTING COMPLETED - ALL TESTS PASSED
+          
+          Test Results Summary:
+          1. Customer Creation Without Password (Booking Flow): ✅ PASS
+             - Successfully created customer with contact: 9030475803
+             - Auto-generated password: 5803 (last 4 digits of contact)
+             - Customer data validation: All fields match input data
+             - Customer ID: 69131c284dff877a7f1a98c2
+          
+          2. Customer Creation With Password (Normal Flow): ✅ PASS
+             - Successfully created customer with explicit password
+             - Contact: 9866686413, Password: testpass123
+             - Customer data validation: All fields match input data
+             - Customer ID: 69131c284dff877a7f1a98c5
+          
+          3. Customer List Verification: ✅ PASS
+             - Created customers appear in customer list API
+             - GET /api/admin/customer/list/{cafeId} working correctly
+             - Total customers found: 2
+          
+          4. Duplicate Customer Prevention: ✅ PASS
+             - Duplicate customer creation properly prevented
+             - Returns 409 status code with appropriate error message
+             - Error: "Customer with the same contact number already exists for the cafe"
+          
+          API Endpoints Tested:
+          - POST /api/admin/customer (customer creation) ✅
+          - GET /api/admin/customer/list/{cafeId} (customer list) ✅
+          
+          Authentication: Admin login working correctly with JWT tokens
+          
+          The customer creation validation fix is working perfectly. Both booking flow 
+          (without password) and normal flow (with password) are functioning as expected.
+          The auto-password generation using last 4 digits of contact number is working correctly.
 
 agent_communication:
   - agent: "main"
