@@ -53,18 +53,79 @@ class CustomerCreationTest:
         last_names = ["Sharma", "Patel", "Kumar", "Singh", "Gupta", "Reddy", "Nair", "Joshi"]
         return f"{random.choice(first_names)} {random.choice(last_names)}"
     
+    def authenticate_admin(self):
+        """Authenticate as admin and get token"""
+        print("\n=== Authenticating as Admin ===")
+        
+        try:
+            login_data = {
+                "email": "styx.mumbai@example.com",
+                "password": "admin123"
+            }
+            
+            response = self.session.post(f"{BASE_URL}/auth/admin/login", json=login_data)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                if data.get("status") and "token" in data:
+                    self.auth_token = data["token"]
+                    self.test_cafe_id = data.get("data", {}).get("_id")  # Get actual cafe ID
+                    
+                    # Set authorization header for all future requests
+                    self.session.headers.update({
+                        "Authorization": f"Bearer {self.auth_token}"
+                    })
+                    
+                    self.log_result(
+                        "Admin Authentication",
+                        True,
+                        f"Successfully authenticated as admin",
+                        {
+                            "cafe_id": self.test_cafe_id,
+                            "token_length": len(self.auth_token) if self.auth_token else 0
+                        }
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Admin Authentication",
+                        False,
+                        "Invalid response structure from login API",
+                        {"response": data}
+                    )
+                    return False
+            else:
+                error_msg = response.json().get("message", "Unknown error") if response.content else "No response content"
+                self.log_result(
+                    "Admin Authentication",
+                    False,
+                    f"Failed to authenticate: {error_msg}",
+                    {"status_code": response.status_code}
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "Admin Authentication",
+                False,
+                f"Exception occurred: {str(e)}",
+                {"exception_type": type(e).__name__}
+            )
+            return False
+    
     def setup_test_data(self):
-        """Setup test data - find or create a cafe ID"""
+        """Setup test data - authenticate and get cafe ID"""
         print("\n=== Setting up test data ===")
         
-        # For testing, we'll use a mock cafe ID (MongoDB ObjectId format)
-        # In a real scenario, this would be fetched from the database
-        self.test_cafe_id = "507f1f77bcf86cd799439011"  # Valid ObjectId format
+        # First authenticate to get token and cafe ID
+        if not self.authenticate_admin():
+            return False
         
         self.log_result(
             "Test Data Setup",
             True,
-            f"Using test cafe ID: {self.test_cafe_id}",
+            f"Using authenticated cafe ID: {self.test_cafe_id}",
             {"cafe_id": self.test_cafe_id}
         )
         
