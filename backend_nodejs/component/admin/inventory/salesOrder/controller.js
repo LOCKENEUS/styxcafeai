@@ -459,6 +459,7 @@ const getSalesInvoiceDetails = async (req, res) => {
         },
       })
       .populate("tax", "tax_name tax_rate")
+      .lean();
 
     if (!salesInvoice) {
       return res.status(404).json({
@@ -466,6 +467,13 @@ const getSalesInvoiceDetails = async (req, res) => {
         message: "Sales Invoice not found",
       });
     }
+
+    // Fetch payments for this invoice
+    const InvPayment = require("./payments/model");
+    const payments = await InvPayment.find({ invoice_id: id }).lean();
+    
+    // Attach payments to the invoice object
+    salesInvoice.payments = payments;
 
     return res.status(200).json({
       status: true,
