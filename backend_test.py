@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing for Customer Creation Fix
-Tests for customer creation without password (booking flow) and with password (normal flow)
+Backend API Testing for Razorpay Payment Integration
+Tests for Razorpay payment order creation and verification endpoints
 """
 
 import requests
@@ -11,13 +11,14 @@ from datetime import datetime
 import sys
 import random
 import string
+import os
 
-# Configuration - Backend running on localhost:8002 (Node.js backend)
-BASE_URL = "http://localhost:8002/api"
+# Configuration - Backend running on localhost:8001 (Node.js backend)
+BASE_URL = "http://localhost:8001/api"
 ADMIN_ENDPOINTS = {
-    "customer_create": f"{BASE_URL}/admin/customer",
-    "customer_list": f"{BASE_URL}/admin/customer/list",
-    "customer_details": f"{BASE_URL}/admin/customer"
+    "login": f"{BASE_URL}/auth/admin/login",
+    "payment": f"{BASE_URL}/admin/booking/payment",
+    "verify_payment": f"{BASE_URL}/admin/booking/verify-payment"
 }
 
 class CustomerCreationTest:
