@@ -58,7 +58,13 @@ export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, o
     formDataToSend.append('cafe', cafeId);
 
     try {
-      await dispatch(CreateVendor(formDataToSend));
+      const result = await dispatch(CreateVendor(formDataToSend));
+      
+      // If onCreated callback is provided, call it with the created vendor data
+      if (onCreated && result.payload) {
+        onCreated(result.payload);
+      }
+      
       setNewClient({
         vendorname: "",
         email: "",
