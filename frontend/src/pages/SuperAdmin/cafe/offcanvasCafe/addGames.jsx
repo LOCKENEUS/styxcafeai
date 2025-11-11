@@ -302,15 +302,40 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
   );
 
   return (
-    <Offcanvas show={show} onHide={handleClose} placement="end" style={{ width: "600px" }}>
-      <Offcanvas.Header closeButton>
-        <Offcanvas.Title><h2 className="text-primary fw-bold">Add Game </h2></Offcanvas.Title>
+    <Offcanvas show={show} onHide={handleCloseAndReset} placement="end" style={{ width: "650px" }}>
+      <Offcanvas.Header closeButton className="border-bottom">
+        <Offcanvas.Title>
+          <h2 className="text-primary fw-bold mb-0">
+            <FiUpload className="me-2" />
+            Add New Game Slot
+          </h2>
+        </Offcanvas.Title>
       </Offcanvas.Header>
-      <Offcanvas.Body style={{ padding: "1.4rem" }}>
+      <Offcanvas.Body style={{ padding: "1.5rem", overflowY: "auto" }}>
+        {submitAttempted && Object.keys(errors).length > 0 && (
+          <Alert variant="danger" dismissible onClose={() => setSubmitAttempted(false)}>
+            <strong>Please fix the following errors:</strong>
+            <ul className="mb-0 mt-2">
+              {Object.values(errors).map((error, idx) => (
+                <li key={idx}>{error}</li>
+              ))}
+            </ul>
+          </Alert>
+        )}
+        
         <Form onSubmit={handleSubmit} className="rounded-3 bg-white">
-          <Form.Group className="mb-2">
-            <Form.Label htmlFor="gameName" className="fw-bold text-secondary">Name of Game
-              <span className="text-danger">*</span>
+          {/* Game Name */}
+          <Form.Group className="mb-4">
+            <Form.Label htmlFor="gameName" className="fw-semibold text-dark d-flex align-items-center">
+              Game Name <span className="text-danger ms-1">*</span>
+              <OverlayTrigger
+                placement="right"
+                overlay={renderTooltip("Enter the official name of the game")}
+              >
+                <span className="ms-2 text-muted" style={{ cursor: "help" }}>
+                  <FiInfo size={16} />
+                </span>
+              </OverlayTrigger>
             </Form.Label>
             <Form.Control
               id="gameName"
@@ -319,9 +344,15 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
               value={formData.name}
               onChange={handleInputChange}
               required
-              className="py-2 border-2"
-              placeholder="Enter game name"
+              className={`py-2 ${submitAttempted && errors.name ? 'is-invalid' : ''}`}
+              placeholder="e.g., Billiards, Bowling, Virtual Reality"
+              style={{ fontSize: "15px" }}
             />
+            {submitAttempted && errors.name && (
+              <Form.Control.Feedback type="invalid" className="d-block">
+                {errors.name}
+              </Form.Control.Feedback>
+            )}
           </Form.Group>
 
           <Row className="mb-2 g-4">
