@@ -62,7 +62,9 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// Serve static files - both paths for compatibility
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Styx Cafe!");
