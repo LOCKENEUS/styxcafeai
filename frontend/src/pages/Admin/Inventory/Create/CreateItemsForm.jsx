@@ -810,6 +810,9 @@ const CreateItemsForm = () => {
                                         // Refresh vendors list after creating new vendor
                                         dispatch(getVendors(cafeId));
                                     }}
+                                    onCreated={(vendorData) => {
+                                        setLatestCreatedVendor(vendorData);
+                                    }}
                                 />
                             </Col>
                         </Row>
