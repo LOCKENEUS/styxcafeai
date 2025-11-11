@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing for Invoice Payments Functionality
-Tests for invoice payment list and navigation to invoice details
+Backend API Testing for Customer Creation Fix
+Tests for customer creation without password (booking flow) and with password (normal flow)
 """
 
 import requests
@@ -9,14 +9,15 @@ import json
 import time
 from datetime import datetime
 import sys
+import random
+import string
 
-# Configuration - Backend running on localhost:8001
-BASE_URL = "http://localhost:8001/api"  # Backend API base URL
-SUPERADMIN_ENDPOINTS = {
-    "payment_list": f"{BASE_URL}/superadmin/inventory/so/invoice/payment/list",
-    "invoice_details": f"{BASE_URL}/superadmin/inventory/so/invoice",
-    "create_invoice": f"{BASE_URL}/superadmin/inventory/so/invoice",
-    "create_payment": f"{BASE_URL}/superadmin/inventory/so/invoice/payment"
+# Configuration - Backend running on localhost:8002 (Node.js backend)
+BASE_URL = "http://localhost:8002/api"
+ADMIN_ENDPOINTS = {
+    "customer_create": f"{BASE_URL}/admin/customer",
+    "customer_list": f"{BASE_URL}/admin/customer/list",
+    "customer_details": f"{BASE_URL}/admin/customer"
 }
 
 class InvoicePaymentsTest:
