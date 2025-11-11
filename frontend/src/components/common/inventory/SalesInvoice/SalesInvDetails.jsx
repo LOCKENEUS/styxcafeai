@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getSOById, deleteSO } from "../../../../store/AdminSlice/Inventory/SoSlice";
 import { addSOInvoice } from "../../../../store/AdminSlice/Inventory/SoInvoiceSlice";
-import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Table, Spinner, Modal } from "react-bootstrap";
+import { Breadcrumb, BreadcrumbItem, Button, Card, Col, Container, Image, Row, Table, Spinner, Modal, Badge } from "react-bootstrap";
 import deleteplogo from "/assets/inventory/Vector (1).png";
 import receive from "/assets/inventory/solar_card-send-linear.png";
 import print from "/assets/inventory/Vector.png";
@@ -28,11 +28,11 @@ export const SalesInvDetails = () => {
     const [showModal, setShowModal] = useState(false);
 
     const user = JSON.parse(localStorage.getItem("user"));
-    const userName = user?.name;
-    const userEmail = user?.email;
-    const UserContactN = user?.contact_no;
-    const UserAddress = user?.address;
-    const UesrPAN = user?.panNo;
+    const userName = user?.name || "";
+    const userEmail = user?.email || "";
+    const UserContactN = user?.contact_no || "";
+    const UserAddress = user?.address || "";
+    const UesrPAN = user?.panNo || "";
 
     useEffect(() => {
         if (id) {
@@ -43,19 +43,62 @@ export const SalesInvDetails = () => {
     const handleClose = () => setShowModal(false);
     const handleShow = () => setShowModal(true);
 
+    // Calculate payment status
+    const calculatePaymentStatus = () => {
+        if (!selectedSalesInvoice || !selectedSalesInvoice.total) {
+            return { collected: 0, balance: 0, isFullyPaid: false };
+        }
+
+        const totalAmount = parseFloat(selectedSalesInvoice.total) || 0;
+        const adjustmentAmount = parseFloat(selectedSalesInvoice.adjustment_amount) || 0;
+        const finalTotal = totalAmount + adjustmentAmount;
+
+        // Calculate total collected from payments
+        const totalCollected = selectedSalesInvoice.payments?.reduce((sum, payment) => {
+            return sum + (parseFloat(payment.deposit_amount) || 0);
+        }, 0) || 0;
+
+        const balance = finalTotal - totalCollected;
+        const isFullyPaid = balance <= 0;
+
+        return {
+            collected: totalCollected,
+            balance: Math.max(0, balance),
+            finalTotal,
+            isFullyPaid
+        };
+    };
+
+    const paymentStatus = calculatePaymentStatus();
+
+    // Format date helper
+    const formatDate = (dateString) => {
+        if (!dateString) return "N/A";
+        try {
+            return new Date(dateString).toLocaleDateString("en-GB");
+        } catch {
+            return "N/A";
+        }
+    };
+
     // Handle print functionality
     const handlePrint = () => {
         const printContent = document.getElementById('printableArea');
-        const originalContents = document.body.innerHTML;
+        if (!printContent) {
+            toast.error("Unable to print. Content not found.");
+            return;
+        }
 
-        // Create a new window for printing
         const printWindow = window.open('', '_blank');
+        if (!printWindow) {
+            toast.error("Unable to open print window. Please check your popup settings.");
+            return;
+        }
 
-        // Add necessary styles for printing
         printWindow.document.write(`
             <html>
                 <head>
-                    <title>Sales Invoice: ${selectedSalesInvoice.so_no}</title>
+                    <title>Sales Invoice: ${selectedSalesInvoice?.so_no || 'N/A'}</title>
                     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
                     <style>
                         body { font-family: Arial, sans-serif; }
@@ -68,7 +111,7 @@ export const SalesInvDetails = () => {
                 <body>
                     <div class="container mt-4">
                         <div class="print-header">
-                            <h3>Sales Invoice: ${selectedSalesInvoice.po_no}</h3>
+                            <h3>Sales Invoice: ${selectedSalesInvoice?.po_no || 'N/A'}</h3>
                         </div>
                         ${printContent.innerHTML}
                         <div class="row mt-4 no-print">
@@ -96,7 +139,11 @@ export const SalesInvDetails = () => {
     };
 
     const handleCreateInvoice = () => {
-        // Prepare the invoice data from selectedSalesInvoice
+        if (!selectedSalesInvoice) {
+            toast.error("Invoice data not loaded");
+            return;
+        }
+
         const invoiceData = {
             cafe: selectedSalesInvoice.cafe?._id,
             customer_id: selectedSalesInvoice.customer_id?._id,
@@ -109,7 +156,6 @@ export const SalesInvDetails = () => {
             sales_person: selectedSalesInvoice.sales_person || "",
             description: selectedSalesInvoice.description || "",
             internal_team_notes: selectedSalesInvoice.internal_team_notes || "",
-            subtotal: selectedSalesInvoice.subtotal || 0,
             discount_value: selectedSalesInvoice.discount_value || 0,
             discount_type: selectedSalesInvoice.discount_type || "percentage",
             tax: selectedSalesInvoice.tax || [],
@@ -121,61 +167,39 @@ export const SalesInvDetails = () => {
                 id: item.item_id?._id,
                 qty: item.quantity || 0,
                 hsn: item.item_id?.hsn || "",
-                price: item.price || 0,
-                tax: item.tax?._id || null,
-                tax_amt: item.tax_amt || 0,
-                total: item.total || 0
-            })) || []
+                sku: item.item_id?.sku || "",
+                name: item.item_id?.name || "",
+                total: item.total || 0,
+                discount_value: item.discount_value || 0,
+                discount_type: item.discount_type || "percentage",
+            })) || [],
         };
 
-        // Add validation before dispatch
-        if (!invoiceData.cafe || !invoiceData.customer_id) {
-            toast.error("Missing required data: Cafe or Customer information");
+        dispatch(addSOInvoice(invoiceData)).then((result) => {
+            if (!result.error) {
+                toast.success("Invoice created successfully!");
+            }
+        });
+    };
+
+    const handleEdit = () => {
+        navigate(`/Inventory/SaleInvoice/Edit/${id}`);
+    };
+
+    const handleSendMail = () => {
+        if (!selectedSalesInvoice?.customer_id?.email) {
+            toast.error("Customer email not found");
             return;
         }
 
-        dispatch(addSOInvoice(invoiceData))
-            .then(() => {
-                navigate(`/admin/Inventory/SaleInvoiceDetails/${id}`);
-            })
-            .catch((error) => {
-                console.error("Error creating invoice:", error);
-            });
-    };
-
-    const handleSendMail = async () => {
-        await dispatch(sendMailToVendor(selectedSalesInvoice))
-    };
-
-    if (loading) {
-        return (
-            <div className="d-flex justify-content-center align-items-center" style={{ height: "70vh" }}>
-                <Spinner animation="border" variant="primary" />
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="d-flex justify-content-center align-items-center" style={{ height: "70vh" }}>
-                <h4 className="text-danger">Error: {error}</h4>
-            </div>
-        );
-    }
-
-    if (!selectedSalesInvoice) {
-        return (
-            <div className="d-flex justify-content-center align-items-center" style={{ height: "70vh" }}>
-                <h4>No sales invoice found</h4>
-            </div>
-        );
-    }
-
-    // Format date function
-    const formatDate = (dateString) => {
-        if (!dateString) return "N/A";
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        dispatch(sendMailToVendor({
+            invoiceId: id,
+            recipientEmail: selectedSalesInvoice.customer_id.email
+        })).then((result) => {
+            if (!result.error) {
+                toast.success("Email sent successfully!");
+            }
+        });
     };
 
     const handleProductClick = (groupId) => {
@@ -183,123 +207,151 @@ export const SalesInvDetails = () => {
     };
 
     const handleInvoicePayment = async () => {
-        // await dispatch(collectInvoicePayment(id));
+        if (paymentStatus.isFullyPaid) {
+            toast.info("This invoice is already fully paid");
+            return;
+        }
         setShowModal(true);
-    }
+    };
 
     const handleSuccess = async () => {
-        // await dispatch(getSalesInvoiceById(id));
+        // Refresh the invoice details after payment
+        await dispatch(getSalesInvoiceDetails(id));
+        handleClose();
+    };
+
+    if (loading) {
+        return (
+            <Container className="text-center mt-5">
+                <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </Spinner>
+                <p className="mt-3">Loading invoice details...</p>
+            </Container>
+        );
+    }
+
+    if (error) {
+        return (
+            <Container className="mt-5">
+                <Card className="text-center border-danger">
+                    <Card.Body>
+                        <h4 className="text-danger">Error Loading Invoice</h4>
+                        <p>{error}</p>
+                        <Button variant="primary" onClick={() => navigate('/Inventory/SaleInvoice/List')}>
+                            Back to List
+                        </Button>
+                    </Card.Body>
+                </Card>
+            </Container>
+        );
+    }
+
+    if (!selectedSalesInvoice || !selectedSalesInvoice._id) {
+        return (
+            <Container className="mt-5">
+                <Card className="text-center">
+                    <Card.Body>
+                        <h4>Invoice Not Found</h4>
+                        <p>The requested sales invoice could not be found.</p>
+                        <Button variant="primary" onClick={() => navigate('/Inventory/SaleInvoice/List')}>
+                            Back to List
+                        </Button>
+                    </Card.Body>
+                </Card>
+            </Container>
+        );
     }
 
     return (
-        <Container >
-            <Row className="mx-2">
-                {/* Breadcrumb Section */}
-                <Col sm={12} className="mx-2 my-3">
-                    <div style={{ top: "186px", fontSize: "12px" }}>
-                        <Breadcrumb>
-                            <BreadcrumbItem>
-                                <Link to="/">Home</Link>
-                            </BreadcrumbItem>
-                            <BreadcrumbItem>
-                                <Link to="/Inventory/dashboard">Inventory</Link>
-                            </BreadcrumbItem>
-                            <BreadcrumbItem>
-                                <Link to="/Inventory/SaleInvoice/List">Sales Invoice List</Link>
-                            </BreadcrumbItem>
-                            <BreadcrumbItem active>SalesInvoiceDetails</BreadcrumbItem>
-                        </Breadcrumb>
-                    </div>
-                </Col>
+        <Container fluid>
+            <Row>
+                <Breadcrumb className="py-3">
+                    <BreadcrumbItem linkAs={Link} linkProps={{ to: "/admin/dashboard" }}>
+                        Home
+                    </BreadcrumbItem>
+                    <BreadcrumbItem linkAs={Link} linkProps={{ to: "/Inventory/SaleInvoice/List" }}>
+                        Sales Invoice
+                    </BreadcrumbItem>
+                    <BreadcrumbItem active>Invoice Details</BreadcrumbItem>
+                </Breadcrumb>
 
-                <Col sm={12} className="my-2">
-                    <Card className="p-3">
-                        <Row>
-                            <Col sm={6} xs={12}>
-                                <h5 className="text-dark p-2" style={{ fontSize: '18px' }}>
-                                    <span>Sales Invoice: </span>
-                                    <span>{selectedSalesInvoice.po_no}</span>
-                                </h5>
-                            </Col>
-                            <Col sm={6} xs={12} className="d-flex flex-wrap justify-content-center justify-content-sm-end align-items-center gap-2 text-center">
-                                <Button
-                                    className="d-flex align-items-center"
-                                    style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}
-                                    onClick={handlePrint}
-                                >
-                                    <Image src={print} className="me-2" /> Print
-                                </Button>
-                                <Button className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }} onClick={handleSendMail}>
-                                    <Image src={sendMail} className="me-2" /> Send Email
-                                </Button>
-                                <Button
-                                    onClick={() => navigate(`/Inventory/SaleInvoice/Edit/${id}`)}
-                                    className="d-flex align-items-center" style={{ backgroundColor: '#FAFAFA', color: 'black', border: 'none' }}>
-                                    <Image src={editlogo} className="me-2" /> Edit
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Card>
-                </Col>
+                <Col sm={12}>
+                    <div id="printableArea">
+                        <Card className="border-0 rounded shadow-sm">
+                            <Card.Header className="bg-white d-flex justify-content-between align-items-center p-3">
+                                <div>
+                                    <h5 className="mb-0">
+                                        Sales Invoice: {selectedSalesInvoice.so_no || 'N/A'}
+                                    </h5>
+                                    {paymentStatus.isFullyPaid && (
+                                        <Badge bg="success" className="mt-2">
+                                            ✓ Fully Paid
+                                        </Badge>
+                                    )}
+                                    {!paymentStatus.isFullyPaid && paymentStatus.collected > 0 && (
+                                        <Badge bg="warning" text="dark" className="mt-2">
+                                            Partially Paid
+                                        </Badge>
+                                    )}
+                                    {paymentStatus.collected === 0 && (
+                                        <Badge bg="danger" className="mt-2">
+                                            Unpaid
+                                        </Badge>
+                                    )}
+                                </div>
+                                <div className="d-flex gap-2 flex-wrap no-print">
+                                    <Button variant="link" size="sm" onClick={handleEdit}>
+                                        <Image src={editlogo} alt="Edit" width="20" /> Edit
+                                    </Button>
+                                    <Button variant="link" size="sm" onClick={handlePrint}>
+                                        <Image src={print} alt="Print" width="20" /> Print
+                                    </Button>
+                                    <Button variant="link" size="sm" onClick={handleSendMail}>
+                                        <Image src={sendMail} alt="Send Mail" width="20" /> Send Mail
+                                    </Button>
+                                    <Button variant="link" size="sm" onClick={() => setShowDeleteModal(true)} className="text-danger">
+                                        <Image src={deleteplogo} alt="Delete" width="20" /> Delete
+                                    </Button>
+                                </div>
+                            </Card.Header>
 
-                {/* Printable area starts here */}
-                <div id="printableArea">
-                    <Col sm={12} className="my-2">
-                        <Card className="p-3 mb-3 shadow-sm">
-                            <Row className="align-items-center">
-                                <Col xs={2}>
-                                    <img
-                                        src={companylog}
-                                        alt="Logo"
-                                        className="img-fluid"
-                                    />
-                                </Col>
-                                <Col>
-                                    <h5>{user?.name}</h5>
-                                    <p className="mb-1">{user?.email} / {user?.contact}</p>
-                                    <p className="mb-1">
-                                        {user?.address}
-                                    </p>
-                                    <strong>PAN: {user?.pan}</strong>
-                                </Col>
-                                <Col xs={2} className="text-end">
-                                    <span className="text-muted">PO:</span>
-                                    <strong className="text-primary"> Draft</strong>
-                                </Col>
-                            </Row>
-                        </Card>
-                    </Col>
-
-                    {/* Customer & Order Details */}
-                    <Col sm={12} className="my-2">
-                        <Card className="p-3 shadow-sm">
-                            <Row>
-                                {/* Customer Info */}
-                                <Col sm={6}>
-                                    <div className="mb-4">
-                                        <h5 className="text-primary" style={{ fontSize: '22px', fontWeight: '600' }}>
-                                            {selectedSalesInvoice.customer_id ? selectedSalesInvoice.customer_id.name : ""}
-                                        </h5>
-                                    </div>
-                                    <Row>
-                                        <Col sm={8}>
-                                            <div className="mb-4">
-                                                <h6 className="text-dark mb-3" style={{ fontSize: '16px', fontWeight: '600' }}>
-                                                    Billing Address
-                                                </h6>
-                                                <p className="text-muted mb-0" style={{ fontSize: '14px', lineHeight: '1.6' }}>
-                                                    {selectedSalesInvoice.customer_id ? selectedSalesInvoice.customer_id.address : ""},<br />
-                                                </p>
+                            <Card.Body className="p-4">
+                                {/* Company and Customer Details */}
+                                <Row className="mb-4">
+                                    <Col md={6}>
+                                        <div className="mb-3">
+                                            <Image src={companylog} alt="Company Logo" width="150" className="mb-3" />
+                                            <h6 className="fw-bold mb-2">From</h6>
+                                            <div className="text-muted">
+                                                <div>{userName}</div>
+                                                <div>{UserAddress}</div>
+                                                <div>Email: {userEmail}</div>
+                                                <div>Contact: {UserContactN}</div>
+                                                {UesrPAN && <div>PAN: {UesrPAN}</div>}
                                             </div>
-                                        </Col>
-                                    </Row>
-                                </Col>
+                                        </div>
+                                    </Col>
+                                    <Col md={6}>
+                                        <div className="mb-3">
+                                            <h6 className="fw-bold mb-2">Bill To</h6>
+                                            <div className="text-muted">
+                                                <div className="fw-semibold">{selectedSalesInvoice.customer_id?.name || 'N/A'}</div>
+                                                <div>{selectedSalesInvoice.customer_id?.company || ''}</div>
+                                                <div>{selectedSalesInvoice.customer_id?.billing?.address || 'N/A'}</div>
+                                                <div>Email: {selectedSalesInvoice.customer_id?.email || 'N/A'}</div>
+                                                <div>Contact: {selectedSalesInvoice.customer_id?.contact || 'N/A'}</div>
+                                            </div>
+                                        </div>
+                                    </Col>
+                                </Row>
 
-                                <Col sm={6}>
-                                    <div className="order-details ms-auto" style={{ maxWidth: '400px' }}>
+                                {/* Invoice Details */}
+                                <Row className="mb-4">
+                                    <Col md={6}>
                                         <div className="d-flex justify-content-between py-1">
-                                            <div className="text-muted">Sales Invoice No:</div>
-                                            <div className="fw-medium">{selectedSalesInvoice.po_no}</div>
+                                            <div className="text-muted">Invoice No:</div>
+                                            <div className="fw-medium">{selectedSalesInvoice.so_no || 'N/A'}</div>
                                         </div>
                                         <div className="d-flex justify-content-between py-1">
                                             <div className="text-muted">Order Date:</div>
@@ -313,197 +365,194 @@ export const SalesInvDetails = () => {
                                             <div className="text-muted">Reference:</div>
                                             <div className="fw-medium">{selectedSalesInvoice.reference || "N/A"}</div>
                                         </div>
+                                    </Col>
+                                    <Col md={6}>
                                         <div className="d-flex justify-content-between py-1">
                                             <div className="text-muted">Sales Person:</div>
-                                            <div className="fw-medium">{selectedSalesInvoice.sales_person || "N/A"}</div>
+                                            <div className="fw-medium">{selectedSalesInvoice.sales_person || 'N/A'}</div>
                                         </div>
-                                    </div>
-                                </Col>
-                            </Row>
-                        </Card>
-                    </Col>
+                                    </Col>
+                                </Row>
 
-                    <Col sm={12} className="my-2">
-                        <Card className="p-3 shadow-sm">
-                            <Row>
-                                <Col sm={12}>
-                                    <div className="table-responsive">
-                                        <Table className="text-center align-middle">
-                                            <thead className="text-start" >
-                                                <tr style={{ borderBottom: "2px solid #dee2e6" }}>
-                                                    <th className="fw-bold">PRODUCT</th>
-                                                    <th className="fw-bold">QUANTITY</th>
-                                                    <th className="fw-bold">PRICE</th>
-                                                    <th className="fw-bold">TAX</th>
-                                                    <th className="fw-bold">TOTAL</th>
+                                {/* Items Table */}
+                                <Row className="mb-4">
+                                    <Col sm={12}>
+                                        <div className="p-2 bg-light">Item Details</div>
+                                        <Table className="text-center align-middle mb-0" bordered hover>
+                                            <thead>
+                                                <tr>
+                                                    <th className="fw-bold">#</th>
+                                                    <th className="fw-bold">Item Name</th>
+                                                    <th className="fw-bold">HSN</th>
+                                                    <th className="fw-bold">SKU</th>
+                                                    <th className="fw-bold">Quantity</th>
+                                                    <th className="fw-bold">Rate</th>
+                                                    <th className="fw-bold">Discount</th>
+                                                    <th className="fw-bold">Amount</th>
                                                 </tr>
                                             </thead>
-                                            <tbody className="text-start">
-                                                {selectedSalesInvoice.items && selectedSalesInvoice.items.map((item, index) => (
-                                                    <tr key={item._id || index}>
-                                                        <td>
-                                                            <b className="text-primary" onClick={() => handleProductClick(item.item_id)}>{item?.item_id?.name}</b>
-                                                            <br />
-                                                            HSN : {item.item_id ? item.item_id.hsn : "N/A"}
+                                            <tbody>
+                                                {selectedSalesInvoice.items && selectedSalesInvoice.items.length > 0 ? (
+                                                    selectedSalesInvoice.items.map((item, index) => (
+                                                        <tr key={item._id || index}>
+                                                            <td>{index + 1}</td>
+                                                            <td className="text-start">
+                                                                <div 
+                                                                    className="text-primary cursor-pointer"
+                                                                    onClick={() => handleProductClick(item.item_id?._id)}
+                                                                    style={{ cursor: 'pointer' }}
+                                                                >
+                                                                    {item.item_id?.name || 'N/A'}
+                                                                </div>
+                                                            </td>
+                                                            <td>{item.item_id?.hsn || 'N/A'}</td>
+                                                            <td>{item.item_id?.sku || 'N/A'}</td>
+                                                            <td>{item.quantity || 0}</td>
+                                                            <td>₹{item.rate || 0}</td>
+                                                            <td>
+                                                                {item.discount_value || 0}
+                                                                {item.discount_type === 'percentage' ? '%' : '₹'}
+                                                            </td>
+                                                            <td>₹{item.total || 0}</td>
+                                                        </tr>
+                                                    ))
+                                                ) : (
+                                                    <tr>
+                                                        <td colSpan="8" className="text-center text-muted">
+                                                            No items found
                                                         </td>
-                                                        <td>
-                                                            SKU : {item.item_id ? item.item_id.sku : "N/A"} <br />
-                                                            Qty : {item.quantity} Nos
-                                                        </td>
-                                                        <td>Price : ₹{item.price}</td>
-                                                        <td>{item?.tax?.tax_rate}%</td>
-                                                        <td>Total : ₹{item.total}</td>
                                                     </tr>
-                                                ))}
+                                                )}
                                             </tbody>
                                         </Table>
-                                    </div>
-                                </Col>
-                            </Row>
-                            <Row className="mt-4 border-top border-3 p-2">
-                                <Col sm={6} className="border-end border-3">
-                                    <p>
-                                        <b>Description:</b> {selectedSalesInvoice.description || "N/A"}
-                                    </p>
-                                </Col>
-                                <Col sm={6} className="text-end">
-                                    <p className="border-bottom border-3 p-2">
-                                        <b>Subtotal:</b> ₹{selectedSalesInvoice.subtotal}
-                                    </p>
-                                    <p className="border-bottom border-3 p-2">
-                                        <b>Discount:</b>{" "}
-                                        <span className="text-primary" style={{ cursor: "pointer" }}>
-                                            {selectedSalesInvoice.discount_value}%
-                                        </span>{" "}
-                                        ₹{(selectedSalesInvoice.subtotal * selectedSalesInvoice.discount_value / 100).toFixed(2)}
-                                    </p>
-                                    <p className="border-bottom border-3 p-2">
-                                        <b>Tax:</b> {selectedSalesInvoice.tax && selectedSalesInvoice.tax.length > 0 ?
-                                            selectedSalesInvoice.tax.map((tax, index) => (
-                                                <span key={index}>
-                                                    {tax.tax_name} ({tax.tax_rate}%)
-                                                    {index < selectedSalesInvoice.tax.length - 1 ? ', ' : ''}
+                                    </Col>
+                                </Row>
+
+                                {/* Summary Section */}
+                                <Row className="mb-4">
+                                    <Col md={6}>
+                                        {selectedSalesInvoice.description && (
+                                            <div className="mb-3">
+                                                <h6 className="fw-bold">Description</h6>
+                                                <p className="text-muted">{selectedSalesInvoice.description}</p>
+                                            </div>
+                                        )}
+                                        {selectedSalesInvoice.internal_team_notes && (
+                                            <div>
+                                                <h6 className="fw-bold">Internal Notes</h6>
+                                                <p className="text-muted">{selectedSalesInvoice.internal_team_notes}</p>
+                                            </div>
+                                        )}
+                                    </Col>
+                                    <Col md={6}>
+                                        <div className="border rounded p-3">
+                                            <div className="d-flex justify-content-between py-2 border-bottom">
+                                                <span className="fw-semibold">Subtotal:</span>
+                                                <span>₹{selectedSalesInvoice.subtotal || 0}</span>
+                                            </div>
+                                            {selectedSalesInvoice.discount_value > 0 && (
+                                                <div className="d-flex justify-content-between py-2 border-bottom">
+                                                    <span className="fw-semibold">Discount:</span>
+                                                    <span>
+                                                        {selectedSalesInvoice.discount_value}
+                                                        {selectedSalesInvoice.discount_type === 'percentage' ? '%' : '₹'}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            <div className="d-flex justify-content-between py-2 border-bottom">
+                                                <span className="fw-semibold">Tax:</span>
+                                                <span>
+                                                    {selectedSalesInvoice.tax && selectedSalesInvoice.tax.length > 0 ?
+                                                        selectedSalesInvoice.tax.map((tax, index) => (
+                                                            <div key={index}>
+                                                                {tax.tax_name} ({tax.tax_rate}%)
+                                                            </div>
+                                                        )) : 'N/A'}
                                                 </span>
-                                            )) : 'N/A'}
-                                    </p>
-                                    <p className="border-bottom border-3 p-2">
-                                        <b>Total:</b> ₹{selectedSalesInvoice.total}
-                                    </p>
-                                    {selectedSalesInvoice.adjustment_amount > 0 && <p className="border-bottom border-3 p-2">
-                                        <b>{selectedSalesInvoice.adjustment_note}:</b> ₹{selectedSalesInvoice.adjustment_amount}
-                                    </p>}
-                                    <p className="border-bottom border-3 p-2">
-                                        <b>Balance:</b> <Button size="sm" variant="secondary" onClick={() => handleInvoicePayment()}>Collect ₹ {selectedSalesInvoice.total}</Button>
-                                    </p>
-                                </Col>
-                            </Row>
+                                            </div>
+                                            <div className="d-flex justify-content-between py-2 border-bottom">
+                                                <span className="fw-bold">Total:</span>
+                                                <span className="fw-bold">₹{selectedSalesInvoice.total || 0}</span>
+                                            </div>
+                                            {selectedSalesInvoice.adjustment_amount !== 0 && (
+                                                <div className="d-flex justify-content-between py-2 border-bottom">
+                                                    <span className="fw-semibold">{selectedSalesInvoice.adjustment_note || 'Adjustment'}:</span>
+                                                    <span>₹{selectedSalesInvoice.adjustment_amount || 0}</span>
+                                                </div>
+                                            )}
+                                            {paymentStatus.finalTotal !== selectedSalesInvoice.total && (
+                                                <div className="d-flex justify-content-between py-2 border-bottom">
+                                                    <span className="fw-bold">Final Total:</span>
+                                                    <span className="fw-bold">₹{paymentStatus.finalTotal}</span>
+                                                </div>
+                                            )}
+                                            {paymentStatus.collected > 0 && (
+                                                <div className="d-flex justify-content-between py-2 border-bottom text-success">
+                                                    <span className="fw-semibold">Amount Collected:</span>
+                                                    <span className="fw-bold">₹{paymentStatus.collected.toFixed(2)}</span>
+                                                </div>
+                                            )}
+                                            <div className="d-flex justify-content-between py-2">
+                                                <span className="fw-bold">Balance:</span>
+                                                <span className="fw-bold">
+                                                    {paymentStatus.isFullyPaid ? (
+                                                        <Badge bg="success">Fully Paid ✓</Badge>
+                                                    ) : (
+                                                        <Button 
+                                                            size="sm" 
+                                                            variant="warning" 
+                                                            onClick={handleInvoicePayment}
+                                                            className="no-print"
+                                                        >
+                                                            Collect ₹{paymentStatus.balance.toFixed(2)}
+                                                        </Button>
+                                                    )}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </Col>
+                                </Row>
 
-                            {/* Packages */}
-                            <Row>
-                                <Col sm={12}>
-                                    <div className="p-2" style={{ backgroundColor: "#dee2e6" }}>Package Details</div>
-                                    <Table className="text-center align-middle">
-                                        <thead className="text-start" >
-                                            <tr style={{ borderBottom: "2px solid #dee2e6" }}>
-                                                <th className="fw-bold">#</th>
-                                                <th className="fw-bold">Package No</th>
-                                                <th className="fw-bold">Packing Date</th>
-                                                <th className="fw-bold">Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="text-start">
-                                            {selectedSalesInvoice?.packages?.length > 0 && selectedSalesInvoice.packages.map((pkg, index) => (
-                                                <tr key={pkg._id || index}>
-                                                    <td>
-                                                        {index + 1}
-                                                    </td>
-                                                    <td>
-                                                        {pkg?.po_no}
-                                                    </td>
-                                                    <td>{formatDateAndTime(pkg?.delivery_date)}</td>
-                                                    <td>{pkg?.status}</td>
+                                {/* Payment Collection Details */}
+                                <Row className="mb-4">
+                                    <Col sm={12}>
+                                        <div className="p-2 bg-light">Payment Collection Details</div>
+                                        <Table className="text-center align-middle mb-0" bordered hover>
+                                            <thead>
+                                                <tr>
+                                                    <th className="fw-bold">#</th>
+                                                    <th className="fw-bold">Date</th>
+                                                    <th className="fw-bold">Amount</th>
+                                                    <th className="fw-bold">Mode</th>
+                                                    <th className="fw-bold">Transaction ID</th>
                                                 </tr>
-                                            ))}
-                                        </tbody>
-                                    </Table>
-                                </Col>
-                            </Row>
-
-                            {/* Shipments */}
-
-                            <Row>
-                                <Col sm={12}>
-                                    <div className="p-2" style={{ backgroundColor: "#dee2e6" }}>Shipment Details</div>
-                                    <Table className="text-center align-middle">
-                                        <thead className="text-start" >
-                                            <tr style={{ borderBottom: "2px solid #dee2e6" }}>
-                                                <th className="fw-bold">#</th>
-                                                <th className="fw-bold">Shipping No</th>
-                                                <th className="fw-bold">Shipping Date</th>
-                                                <th className="fw-bold">Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="text-start">
-                                            {selectedSalesInvoice?.shipments?.length > 0 && selectedSalesInvoice.shipments.map((shipment, index) => (
-                                                <tr key={shipment._id || index}>
-                                                    <td>
-                                                        {index + 1}
-                                                    </td>
-                                                    <td>
-                                                        {shipment?.po_no}
-                                                    </td>
-                                                    <td>{formatDateAndTime(shipment?.delivery_date)}</td>
-                                                    <td>{shipment?.status}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </Table>
-                                </Col>
-                            </Row>
-
-                            <Row>
-                                <Col sm={12}>
-                                    <div className="p-2" style={{ backgroundColor: "#dee2e6" }}>Payment Collection Details</div>
-                                    <Table className="text-center align-middle">
-                                        <thead className="text-start" >
-                                            <tr style={{ borderBottom: "2px solid #dee2e6" }}>
-                                                <th className="fw-bold">#</th>
-                                                <th className="fw-bold">Date</th>
-                                                <th className="fw-bold">Amount</th>
-                                                <th className="fw-bold">Mode</th>
-                                                <th className="fw-bold">Transaction</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="text-start">
-                                            {selectedSalesInvoice.payments && selectedSalesInvoice.payments.map((payment, index) => (
-                                                <tr key={payment._id || index}>
-                                                    <td>
-                                                        {index + 1}
-                                                    </td>
-                                                    <td>
-                                                        {new Date(payment.deposit_date).toLocaleDateString("en-GB")}
-                                                    </td>
-                                                    <td>{payment?.deposit_amount}</td>
-                                                    <td>{payment?.mode}</td>
-                                                    <td>{payment.transaction_id}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </Table>
-                                </Col>
-                            </Row>
+                                            </thead>
+                                            <tbody>
+                                                {selectedSalesInvoice.payments && selectedSalesInvoice.payments.length > 0 ? (
+                                                    selectedSalesInvoice.payments.map((payment, index) => (
+                                                        <tr key={payment._id || index}>
+                                                            <td>{index + 1}</td>
+                                                            <td>{formatDate(payment.deposit_date)}</td>
+                                                            <td className="text-success fw-semibold">₹{payment.deposit_amount || 0}</td>
+                                                            <td>{payment.mode || 'N/A'}</td>
+                                                            <td>{payment.transaction_id || 'N/A'}</td>
+                                                        </tr>
+                                                    ))
+                                                ) : (
+                                                    <tr>
+                                                        <td colSpan="5" className="text-center text-muted">
+                                                            No payments collected yet
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </Table>
+                                    </Col>
+                                </Row>
+                            </Card.Body>
                         </Card>
-                    </Col>
-                    <Col sm={12} className="my-2">
-                        <Card className="p-3 shadow-sm">
-                            <h5 className="mb-3" style={{ fontSize: '20px' }}>Terms and Condition </h5>
-                            <div className="table-responsive">
-                                <b>{selectedSalesInvoice.internal_team_notes || "Terms and Condition not applied"}</b>
-                            </div>
-                        </Card>
-                    </Col>
-                </div>
-                {/* Printable area ends here */}
+                    </div>
+                </Col>
 
                 {/* Delete Confirmation Modal */}
                 <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
@@ -517,17 +566,19 @@ export const SalesInvDetails = () => {
                         <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
                             Cancel
                         </Button>
-                        <Button
-                            variant="danger"
-                            onClick={handleDelete}
-                            disabled={loading}
-                        >
+                        <Button variant="danger" onClick={handleDelete} disabled={loading}>
                             {loading ? <Spinner animation="border" size="sm" /> : 'Delete'}
                         </Button>
                     </Modal.Footer>
                 </Modal>
             </Row>
-            <CollectInvoicePayment show={showModal} handleClose={handleClose} maxAmount={selectedSalesInvoice.total} invoiceId={selectedSalesInvoice._id} onSuccess={handleSuccess} />
+            <CollectInvoicePayment 
+                show={showModal} 
+                handleClose={handleClose} 
+                maxAmount={paymentStatus.balance} 
+                invoiceId={selectedSalesInvoice._id} 
+                onSuccess={handleSuccess} 
+            />
         </Container>
-    )
+    );
 };
