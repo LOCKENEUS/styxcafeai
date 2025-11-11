@@ -23,6 +23,7 @@ const CreateItemsForm = () => {
     const [showUnitModal, setShowUnitModal] = useState(false);
     const [showTaxModal, setShowTaxModal] = useState(false);
     const [showManufacturerModal, setShowManufacturerModal] = useState(false);
+    const [showVendorModal, setShowVendorModal] = useState(false);
     const dispatch = useDispatch();
     const [formData, setFormData] = useState({
         name: '',
