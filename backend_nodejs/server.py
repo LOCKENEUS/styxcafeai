@@ -1,125 +1,105 @@
-from fastapi import FastAPI, HTTPException, Depends, status, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import JSONResponse
-from motor.motor_asyncio import AsyncIOMotorClient
-from contextlib import asynccontextmanager
+#!/usr/bin/env python3
+"""
+Server Wrapper - Starts and maintains Node.js backend
+This wrapper ensures the Node.js backend runs instead of Python backend
+"""
+import subprocess
+import sys
 import os
-from dotenv import load_dotenv
-import uvicorn
+import time
+import signal
+import atexit
 
-# Load environment variables
-load_dotenv()
+# Path to Node.js backend
+NODEJS_BACKEND_DIR = "/app/backend"
+NODEJS_INDEX = "index.js"
+PORT = 8001
 
-# Import routers
-from routes import auth_router, user_router, admin_router, superadmin_router
+# Process handle
+nodejs_process = None
 
-# MongoDB connection
-mongo_client = None
-database = None
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Startup
-    global mongo_client, database
-    DB_URL = os.getenv("DB_URL")
-    if not DB_URL:
-        raise ValueError("DB_URL environment variable is required")
+def start_nodejs_backend():
+    """Start the Node.js backend"""
+    global nodejs_process
     
-    mongo_client = AsyncIOMotorClient(DB_URL)
-    database = mongo_client.get_database()
-    app.state.db = database
-    print(f"✓ Connected to MongoDB")
+    print(f"[Wrapper] Starting Node.js backend in {NODEJS_BACKEND_DIR}")
+    print(f"[Wrapper] Port: {PORT}")
     
-    yield
+    env = os.environ.copy()
+    env['PORT'] = str(PORT)
     
-    # Shutdown
-    mongo_client.close()
-    print("✓ Closed MongoDB connection")
+    try:
+        nodejs_process = subprocess.Popen(
+            ['node', NODEJS_INDEX],
+            cwd=NODEJS_BACKEND_DIR,
+            env=env,
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            preexec_fn=os.setsid  # Create new process group
+        )
+        print(f"[Wrapper] Node.js backend started with PID: {nodejs_process.pid}")
+        return nodejs_process
+    except Exception as e:
+        print(f"[Wrapper] Failed to start Node.js backend: {e}")
+        sys.exit(1)
 
-# Create FastAPI app
-app = FastAPI(
-    title="Styx Cafe API",
-    description="FastAPI backend for Styx Cafe booking platform",
-    version="1.0.0",
-    lifespan=lifespan
-)
-
-# CORS configuration
-allowed_origins = [
-    # Local development URLs
-    "http://localhost:3000",  # Customer Website
-    "http://localhost:3001",  # Admin Panel
-    "http://localhost:3002",  # Additional frontend
-    "http://localhost:5173",  # Vite dev server
-    "http://localhost:8001",  # Backend
-    os.getenv("CLIENT_URL"),  # Production frontend
-    os.getenv("ADMIN_URL"),   # Production admin
-    "https://styx-inventory.preview.emergentagent.com",
-    "https://styxuser.lockene.co",
-]
-
-# Remove None values
-allowed_origins = [origin for origin in allowed_origins if origin]
-
-# Add CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["*"]
-)
-
-# Custom CORS handler for Emergent domains
-@app.middleware("http")
-async def custom_cors_middleware(request: Request, call_next):
-    origin = request.headers.get("origin")
+def stop_nodejs_backend():
+    """Stop the Node.js backend gracefully"""
+    global nodejs_process
     
-    # Allow all Emergent domains
-    if origin and ".emergentagent.com" in origin:
-        response = await call_next(request)
-        response.headers["Access-Control-Allow-Origin"] = origin
-        response.headers["Access-Control-Allow-Credentials"] = "true"
-        return response
+    if nodejs_process:
+        print("[Wrapper] Stopping Node.js backend...")
+        try:
+            # Send SIGTERM to process group
+            os.killpg(os.getpgid(nodejs_process.pid), signal.SIGTERM)
+            nodejs_process.wait(timeout=10)
+            print("[Wrapper] Node.js backend stopped")
+        except subprocess.TimeoutExpired:
+            print("[Wrapper] Force killing Node.js backend")
+            os.killpg(os.getpgid(nodejs_process.pid), signal.SIGKILL)
+        except Exception as e:
+            print(f"[Wrapper] Error stopping Node.js backend: {e}")
+
+def signal_handler(signum, frame):
+    """Handle termination signals"""
+    print(f"[Wrapper] Received signal {signum}, shutting down...")
+    stop_nodejs_backend()
+    sys.exit(0)
+
+def main():
+    """Main function"""
+    print("=" * 60)
+    print("Node.js Backend Wrapper")
+    print("=" * 60)
     
-    return await call_next(request)
+    # Register signal handlers
+    signal.signal(signal.SIGTERM, signal_handler)
+    signal.signal(signal.SIGINT, signal_handler)
+    
+    # Register cleanup on exit
+    atexit.register(stop_nodejs_backend)
+    
+    # Start Node.js backend
+    process = start_nodejs_backend()
+    
+    # Monitor the process
+    try:
+        while True:
+            # Check if process is still running
+            if process.poll() is not None:
+                print(f"[Wrapper] Node.js backend exited with code {process.returncode}")
+                print("[Wrapper] Restarting Node.js backend...")
+                time.sleep(2)
+                process = start_nodejs_backend()
+            
+            time.sleep(5)  # Check every 5 seconds
+    except KeyboardInterrupt:
+        print("[Wrapper] Received keyboard interrupt")
+        stop_nodejs_backend()
+    except Exception as e:
+        print(f"[Wrapper] Error in main loop: {e}")
+        stop_nodejs_backend()
+        sys.exit(1)
 
-# Mount static files
-os.makedirs("uploads", exist_ok=True)
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
-
-# Root endpoint
-@app.get("/")
-async def root():
-    return {"message": "Welcome to the Styx Cafe API!"}
-
-# Health check endpoint
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy", "database": "connected"}
-
-# Include routers
-app.include_router(auth_router.router, prefix="/api/auth", tags=["Authentication"])
-app.include_router(user_router.router, prefix="/api/user", tags=["User"])
-app.include_router(admin_router.router, prefix="/api/admin", tags=["Admin"])
-app.include_router(superadmin_router.router, prefix="/api/superadmin", tags=["SuperAdmin"])
-
-# Global exception handler
-@app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    return JSONResponse(
-        status_code=500,
-        content={"message": str(exc) or "Something went wrong!"}
-    )
-
-# Run the application
 if __name__ == "__main__":
-    PORT = int(os.getenv("PORT", 8001))
-    uvicorn.run(
-        "server:app",
-        host="0.0.0.0",
-        port=PORT,
-        reload=True if os.getenv("NODE_ENV") == "development" else False
-    )
+    main()
