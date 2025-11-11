@@ -9,12 +9,12 @@ import { toast } from "react-toastify";
 const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [isDragging, setIsDragging] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
   const dispatch = useDispatch();
-  // const cafes = useSelector(selectCafes);
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
-  const [width, setWidth] = useState(window.innerWidth < 768 ? "90%" : "50%");
   const [areaDimension, setAreaDimension] = useState({
     length: '',
     breadth: '',
@@ -37,6 +37,15 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
   };
 
   const [formData, setFormData] = useState(initialFormData);
+  
+  // Reset form when offcanvas closes
+  const handleCloseAndReset = () => {
+    setFormData(initialFormData);
+    setImagePreview(null);
+    setErrors({});
+    setSubmitAttempted(false);
+    handleClose();
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
