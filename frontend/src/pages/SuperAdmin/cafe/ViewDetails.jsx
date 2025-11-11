@@ -2144,7 +2144,11 @@ const ViewDetails = () => {
       </Row>
       <EditCafeOffcanvas
         show={showCanvasEditCafe}
-        handleClose={() => setShowCanvasEditCafe(false)}
+        handleClose={() => {
+          setShowCanvasEditCafe(false);
+          // Refresh cafe data after edit
+          dispatch(fetchCafes());
+        }}
         cafeId={cafeId}
       />
 
