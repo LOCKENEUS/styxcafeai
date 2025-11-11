@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import PublicRoute from "./PublicRoute";
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
+import InventoryRoute from "./InventoryRoute";
 
 import Login from "../pages/SuperAdmin/authentication/Login";
 import Dashboard from "../pages/SuperAdmin/dashboard/Dashboard";
