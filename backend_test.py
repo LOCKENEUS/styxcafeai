@@ -84,112 +84,89 @@ class InvoicePaymentsTest:
             "description": "Test payment for invoice"
         }
     
-    def test_duplicate_invoice_numbers(self):
-        """Test 1: Create multiple invoices and verify unique invoice numbers"""
-        print("\n=== Testing Duplicate Invoice Number Fix ===")
+    def test_payment_list_api(self):
+        """Test 1: Call payment list API and verify response structure"""
+        print("\n=== Testing Payment List API ===")
         
         try:
-            # Create 3 invoices sequentially
-            for i in range(3):
-                invoice_data = self.create_test_invoice_data()
+            response = self.session.get(SUPERADMIN_ENDPOINTS["payment_list"])
+            
+            if response.status_code == 200:
+                data = response.json()
                 
-                response = self.session.post(
-                    ADMIN_ENDPOINTS["create_invoice"],
-                    json=invoice_data,
-                    headers={"Content-Type": "application/json"}
-                )
-                
-                if response.status_code == 201:
-                    invoice = response.json().get("data", {})
-                    invoice_id = invoice.get("_id")
-                    so_no = invoice.get("so_no")
+                # Check response structure
+                if data.get("status") and "data" in data:
+                    payments = data.get("data", [])
+                    self.log_result(
+                        "Payment List API Response",
+                        True,
+                        f"Payment list fetched successfully with {len(payments)} payments",
+                        {"payment_count": len(payments), "status": data.get("status")}
+                    )
                     
-                    if invoice_id:
-                        self.created_invoices.append(invoice_id)
-                    
-                    if so_no and so_no.startswith("SI-"):
-                        self.log_result(
-                            f"Invoice Creation {i+1}",
-                            True,
-                            f"Invoice created with number: {so_no}",
-                            {"invoice_id": invoice_id, "so_no": so_no}
-                        )
+                    # Check if payments have bill_id populated
+                    if payments:
+                        payment_with_bill_id = None
+                        for payment in payments:
+                            if payment.get("bill_id") and isinstance(payment["bill_id"], dict):
+                                if payment["bill_id"].get("_id"):
+                                    payment_with_bill_id = payment
+                                    break
+                        
+                        if payment_with_bill_id:
+                            self.log_result(
+                                "Payment Bill ID Population",
+                                True,
+                                "Found payment with populated bill_id containing _id field",
+                                {
+                                    "payment_id": payment_with_bill_id.get("_id"),
+                                    "bill_id": payment_with_bill_id["bill_id"].get("_id"),
+                                    "bill_po_no": payment_with_bill_id["bill_id"].get("po_no")
+                                }
+                            )
+                            return payment_with_bill_id
+                        else:
+                            self.log_result(
+                                "Payment Bill ID Population",
+                                False,
+                                "No payments found with populated bill_id._id field",
+                                {"payments_checked": len(payments)}
+                            )
+                            return None
                     else:
                         self.log_result(
-                            f"Invoice Creation {i+1}",
+                            "Payment List Content",
                             False,
-                            f"Invalid invoice number format: {so_no}",
-                            {"response": response.json()}
+                            "No payments found in the system",
+                            {"payment_count": 0}
                         )
-                        return False
+                        return None
                 else:
-                    error_msg = response.json().get("message", "Unknown error")
                     self.log_result(
-                        f"Invoice Creation {i+1}",
+                        "Payment List API Response",
                         False,
-                        f"Failed to create invoice: {error_msg}",
-                        {"status_code": response.status_code, "response": response.json()}
+                        "Invalid response structure from payment list API",
+                        {"response": data}
                     )
-                    
-                    # Check if it's a duplicate key error
-                    if "E11000" in error_msg or "duplicate" in error_msg.lower():
-                        self.log_result(
-                            "Duplicate Key Error Check",
-                            False,
-                            "E11000 duplicate key error still occurring",
-                            {"error": error_msg}
-                        )
-                        return False
-                
-                # Small delay between requests
-                time.sleep(0.5)
-            
-            # Verify all invoices have unique numbers
-            if len(self.created_invoices) >= 2:
-                # Get invoice numbers for comparison
-                invoice_numbers = []
-                for invoice_id in self.created_invoices:
-                    response = self.session.get(f"{ADMIN_ENDPOINTS['get_invoice']}/{invoice_id}")
-                    if response.status_code == 200:
-                        so_no = response.json().get("data", {}).get("so_no")
-                        if so_no:
-                            invoice_numbers.append(so_no)
-                
-                # Check for uniqueness
-                if len(invoice_numbers) == len(set(invoice_numbers)):
-                    self.log_result(
-                        "Invoice Number Uniqueness",
-                        True,
-                        f"All {len(invoice_numbers)} invoices have unique numbers",
-                        {"numbers": invoice_numbers}
-                    )
-                    return True
-                else:
-                    duplicates = [num for num in invoice_numbers if invoice_numbers.count(num) > 1]
-                    self.log_result(
-                        "Invoice Number Uniqueness",
-                        False,
-                        f"Duplicate invoice numbers found: {duplicates}",
-                        {"all_numbers": invoice_numbers}
-                    )
-                    return False
+                    return None
             else:
+                error_msg = response.json().get("message", "Unknown error") if response.content else "No response content"
                 self.log_result(
-                    "Invoice Creation Summary",
+                    "Payment List API Call",
                     False,
-                    f"Only {len(self.created_invoices)} invoices created, expected at least 2",
-                    {"created_count": len(self.created_invoices)}
+                    f"Failed to fetch payment list: {error_msg}",
+                    {"status_code": response.status_code}
                 )
-                return False
+                return None
                 
         except Exception as e:
             self.log_result(
-                "Duplicate Invoice Test",
+                "Payment List API Test",
                 False,
                 f"Exception occurred: {str(e)}",
                 {"exception_type": type(e).__name__}
             )
-            return False
+            return None
     
     def test_payment_preview_functionality(self):
         """Test 2: Create invoice, add payment, verify payment appears in invoice details"""
