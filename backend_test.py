@@ -293,7 +293,7 @@ class RazorpayPaymentTest:
             )
             return None
     
-    def test_customer_creation_without_password(self):
+    def test_payment_verification_endpoint(self):
         """Test 1: Create customer WITHOUT password (booking flow scenario)"""
         print("\n=== Testing Customer Creation WITHOUT Password ===")
         
