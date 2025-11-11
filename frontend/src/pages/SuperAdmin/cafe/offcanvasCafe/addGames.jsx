@@ -302,16 +302,48 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
   );
 
   return (
-    <Offcanvas show={show} onHide={handleCloseAndReset} placement="end" style={{ width: "650px" }}>
-      <Offcanvas.Header closeButton className="border-bottom">
+    <Offcanvas 
+      show={show} 
+      onHide={handleCloseAndReset} 
+      placement="end" 
+      style={{ width: "650px" }}
+    >
+      <Offcanvas.Header 
+        closeButton 
+        className="border-bottom bg-light"
+        style={{ padding: "1.25rem 1.5rem" }}
+      >
         <Offcanvas.Title>
-          <h2 className="text-primary fw-bold mb-0">
-            <FiUpload className="me-2" />
+          <h2 className="text-primary fw-bold mb-0 d-flex align-items-center" style={{ fontSize: "1.5rem" }}>
+            <FiUpload className="me-2" size={24} />
             Add New Game Slot
           </h2>
+          <p className="text-muted small mb-0 mt-1">Fill in the details to create a new game booking slot</p>
         </Offcanvas.Title>
       </Offcanvas.Header>
-      <Offcanvas.Body style={{ padding: "1.5rem", overflowY: "auto" }}>
+      <Offcanvas.Body style={{ padding: "1.5rem", overflowY: "auto", backgroundColor: "#fafafa" }}>
+        <style>
+          {`
+            .form-control:focus, .form-select:focus {
+              border-color: #0d6efd;
+              box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+            }
+            .border-dashed {
+              border-style: dashed !important;
+              border-width: 2px !important;
+            }
+            input[type="number"]::-webkit-inner-spin-button,
+            input[type="number"]::-webkit-outer-spin-button {
+              opacity: 1;
+            }
+            .form-control, .form-select {
+              transition: all 0.2s ease;
+            }
+            .form-control:hover, .form-select:hover {
+              border-color: #86b7fe;
+            }
+          `}
+        </style>
         {submitAttempted && Object.keys(errors).length > 0 && (
           <Alert variant="danger" dismissible onClose={() => setSubmitAttempted(false)}>
             <strong>Please fix the following errors:</strong>
