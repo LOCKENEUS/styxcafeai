@@ -24,8 +24,8 @@ class CustomerCreationTest:
     def __init__(self):
         self.session = requests.Session()
         self.test_results = []
-        self.created_invoices = []
-        self.created_payments = []
+        self.created_customers = []
+        self.test_cafe_id = None
         
     def log_result(self, test_name, success, message, details=None):
         """Log test results"""
