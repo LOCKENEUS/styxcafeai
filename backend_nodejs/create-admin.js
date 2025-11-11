@@ -110,7 +110,7 @@ async function createAdmins() {
 
     console.log('\n🌐 Login URLs:');
     console.log('  Local: http://localhost:3000/admin/login');
-    console.log('  Live: https://cafe-admin-panel.preview.emergentagent.com/admin/login');
+    console.log('  Live: https://styx-inventory.preview.emergentagent.com/admin/login');
 
     mongoose.connection.close();
     process.exit(0);

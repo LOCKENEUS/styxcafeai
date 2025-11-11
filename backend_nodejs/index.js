@@ -29,8 +29,8 @@ const allowedOrigins = [
   process.env.CLIENT_URL,   // Production frontend URL
   process.env.ADMIN_URL,    // Production admin URL
   // Preview and production domains
-  'https://cafeadmin.preview.emergentagent.com',
-  'https://cafe-admin-panel.preview.emergentagent.com',
+  'https://styx-inventory.preview.emergentagent.com',
+  'https://styx-inventory.preview.emergentagent.com',
   'https://styxuser.lockene.co'
 ].filter(Boolean); // Remove undefined values
 

@@ -95,7 +95,7 @@ Emergent will automatically:
 2. Build the project (`yarn build`)
 3. Deploy to preview URL
 
-You'll get a URL like: `https://admin-xyz.preview.emergentagent.com`
+You'll get a URL like: `https://styx-inventory.preview.emergentagent.com`
 
 ### Step 6: Test Preview URL
 

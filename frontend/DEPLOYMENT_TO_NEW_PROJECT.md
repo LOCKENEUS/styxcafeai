@@ -79,7 +79,7 @@ The Emergent platform will automatically:
 - Build the project (`yarn build`)
 - Deploy to a preview URL
 
-You'll get a URL like: `https://admin-panel-xyz.preview.emergentagent.com`
+You'll get a URL like: `https://styx-inventory.preview.emergentagent.com`
 
 ### Step 6: Configure Custom Domain
 

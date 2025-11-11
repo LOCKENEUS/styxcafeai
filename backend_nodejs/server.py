@@ -55,7 +55,7 @@ allowed_origins = [
     "http://localhost:8001",  # Backend
     os.getenv("CLIENT_URL"),  # Production frontend
     os.getenv("ADMIN_URL"),   # Production admin
-    "https://cafeadmin.preview.emergentagent.com",
+    "https://styx-inventory.preview.emergentagent.com",
     "https://styxuser.lockene.co",
 ]
 
