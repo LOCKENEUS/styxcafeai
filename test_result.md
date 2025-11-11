@@ -101,3 +101,73 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: |
+  Fix two issues with Sales Invoice functionality:
+  1. E11000 duplicate key error when creating sales invoices (po_no: "SINV-002")
+  2. Payment preview functionality not working for sales invoices
+
+backend:
+  - task: "Fix duplicate invoice number generation"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/component/admin/inventory/salesOrder/controller.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Fixed createSalesInvoice function to:
+          1. Query only SI type invoices instead of all types
+          2. Added uniqueness check before insertion
+          3. Implemented retry mechanism to find next available number if collision occurs
+  
+  - task: "Add payments to invoice details API"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/component/admin/inventory/salesOrder/controller.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Modified getSalesInvoiceDetails function to:
+          1. Fetch all payments associated with the invoice
+          2. Attach payments array to the invoice response
+          3. This enables frontend to display payment history and preview
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 0
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Fix duplicate invoice number generation"
+    - "Add payments to invoice details API"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: |
+      Fixed both reported issues:
+      
+      Issue 1: Duplicate invoice number error
+      - Root cause: Number generation was querying ALL documents (both SO and SI types)
+      - Fix: Now queries only SI type documents and includes uniqueness validation with retry logic
+      
+      Issue 2: Payment preview not working
+      - Root cause: getSalesInvoiceDetails API wasn't fetching/including payment data
+      - Fix: Added payment fetching logic similar to superadmin controller
+      
+      Backend changes completed. Ready for testing with the following scenarios:
+      1. Create multiple sales invoices sequentially to verify unique number generation
+      2. Create a sales invoice, add a payment, and verify it appears in the details view
+      3. Test partial and full payment scenarios
