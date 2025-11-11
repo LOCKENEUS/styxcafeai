@@ -43,15 +43,7 @@ class RazorpayPaymentTest:
         if details:
             print(f"   Details: {details}")
     
-    def generate_random_contact(self):
-        """Generate a random 10-digit contact number"""
-        return "9" + "".join(random.choices(string.digits, k=9))
-    
-    def generate_random_name(self):
-        """Generate a random customer name"""
-        first_names = ["Arjun", "Priya", "Rahul", "Sneha", "Vikram", "Anita", "Karan", "Meera"]
-        last_names = ["Sharma", "Patel", "Kumar", "Singh", "Gupta", "Reddy", "Nair", "Joshi"]
-        return f"{random.choice(first_names)} {random.choice(last_names)}"
+    # Removed helper methods - not needed for payment testing
     
     def authenticate_admin(self):
         """Authenticate as admin and get token"""
