@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing for Sales Invoice Functionality
-Tests for duplicate invoice number bug fix and payment preview functionality
+Backend API Testing for Invoice Payments Functionality
+Tests for invoice payment list and navigation to invoice details
 """
 
 import requests
@@ -10,13 +10,13 @@ import time
 from datetime import datetime
 import sys
 
-# Configuration
-BASE_URL = "http://localhost:8001/api"  # Backend running on port 8001
-ADMIN_ENDPOINTS = {
-    "create_invoice": f"{BASE_URL}/admin/inventory/so/invoice",
-    "get_invoice": f"{BASE_URL}/admin/inventory/so/invoice",
-    "create_payment": f"{BASE_URL}/admin/inventory/so/invoice/payment",
-    "get_payments": f"{BASE_URL}/admin/inventory/so/invoice/payment/invoice-payments"
+# Configuration - Using VITE_API_URL from frontend .env
+BASE_URL = "/api"  # Backend API base URL
+SUPERADMIN_ENDPOINTS = {
+    "payment_list": f"{BASE_URL}/superadmin/inventory/so/invoice/payment/list",
+    "invoice_details": f"{BASE_URL}/superadmin/inventory/so/invoice",
+    "create_invoice": f"{BASE_URL}/superadmin/inventory/so/invoice",
+    "create_payment": f"{BASE_URL}/superadmin/inventory/so/invoice/payment"
 }
 
 class SalesInvoiceTest:
