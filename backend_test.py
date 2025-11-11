@@ -21,7 +21,7 @@ ADMIN_ENDPOINTS = {
     "verify_payment": f"{BASE_URL}/admin/booking/verify-payment"
 }
 
-class CustomerCreationTest:
+class RazorpayPaymentTest:
     def __init__(self):
         self.session = requests.Session()
         self.test_results = []
