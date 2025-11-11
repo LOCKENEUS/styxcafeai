@@ -186,8 +186,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Fix duplicate invoice number generation"
-    - "Add payments to invoice details API"
+    - "Test invoice payment navigation functionality"
+    - "Fix invoice payment detail navigation"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
