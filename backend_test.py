@@ -68,9 +68,9 @@ class CustomerCreationTest:
             if response.status_code == 200:
                 data = response.json()
                 
-                if data.get("status") and "token" in data:
-                    self.auth_token = data["token"]
-                    self.test_cafe_id = data.get("data", {}).get("_id")  # Get actual cafe ID
+                if data.get("status") and "data" in data and "token" in data["data"]:
+                    self.auth_token = data["data"]["token"]
+                    self.test_cafe_id = data["data"]["cafe"]["_id"]  # Get actual cafe ID
                     
                     # Set authorization header for all future requests
                     self.session.headers.update({
