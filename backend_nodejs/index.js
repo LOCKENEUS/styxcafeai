@@ -13,6 +13,9 @@ const path = require("path");
 const db = require("./db/connection");
 const PORT = process.env.PORT || 8001;
 
+// Trust proxy for rate limiting in production
+app.set('trust proxy', 1);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
