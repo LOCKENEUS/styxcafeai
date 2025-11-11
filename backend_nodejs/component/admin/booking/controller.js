@@ -620,11 +620,12 @@ const payment = async (req, res) => {
     res.json({ 
       success: true, 
       message: "Order created successfully",
-      data: order 
+      order: order  // Changed from 'data' to 'order' to match frontend expectation
     });
   } catch (error) {
+    console.error("Razorpay order creation error:", error);
     res.status(500).json({ 
-      status: false, 
+      success: false, 
       message: "Failed to create order", 
       error: error.message 
     });
