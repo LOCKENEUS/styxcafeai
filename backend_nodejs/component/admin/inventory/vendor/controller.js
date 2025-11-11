@@ -41,8 +41,12 @@ const getVendors = async (req, res) => {
   try {
     const { id } = req.params;
 
+    // Fetch both super admin vendors (cafe: null) and cafe-specific vendors
     const vendors = await Vendor.find({
-      cafe: id,
+      $or: [
+        { cafe: id },
+        { cafe: null, userType: 'superadmin' }
+      ],
       is_active: true,
       is_deleted: false,
     });
