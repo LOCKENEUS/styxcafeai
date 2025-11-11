@@ -574,33 +574,56 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
             </Col>
           </Row>
 
-          <Row className="mb-2 g-4">
+          {/* Cancellation and Payment Options */}
+          <Row className="mb-4 g-3">
             <Col md={6}>
-              <Form.Label htmlFor="gameCancellation" className="fw-bold text-secondary">Cancellation Option</Form.Label>
+              <Form.Label htmlFor="gameCancellation" className="fw-semibold text-dark d-flex align-items-center">
+                Refundable Booking <span className="text-danger ms-1">*</span>
+                <OverlayTrigger
+                  placement="right"
+                  overlay={renderTooltip("Allow customers to cancel and get refunds")}
+                >
+                  <span className="ms-2 text-muted" style={{ cursor: "help" }}>
+                    <FiInfo size={16} />
+                  </span>
+                </OverlayTrigger>
+              </Form.Label>
               <Form.Select
                 id="gameCancellation"
                 name="cancellation"
                 value={formData.cancellation}
                 onChange={handleInputChange}
                 required
-                className="form-select-lg border-2"
+                className="py-2"
+                style={{ fontSize: "15px" }}
               >
-                <option value={true}>Yes</option>
-                <option value={false}>No</option>
+                <option value={true}>✅ Yes - Allow Cancellation</option>
+                <option value={false}>❌ No - Non-Refundable</option>
               </Form.Select>
             </Col>
             <Col md={6}>
-              <Form.Label htmlFor="payLater" className="fw-bold text-secondary">Pay Later Option</Form.Label>
+              <Form.Label htmlFor="payLater" className="fw-semibold text-dark d-flex align-items-center">
+                Payment Option <span className="text-danger ms-1">*</span>
+                <OverlayTrigger
+                  placement="right"
+                  overlay={renderTooltip("Allow customers to pay at the venue")}
+                >
+                  <span className="ms-2 text-muted" style={{ cursor: "help" }}>
+                    <FiInfo size={16} />
+                  </span>
+                </OverlayTrigger>
+              </Form.Label>
               <Form.Select
                 id="payLater"
                 name="payLater"
                 value={formData.payLater}
                 onChange={handleInputChange}
                 required
-                className="form-select-lg border-2"
+                className="py-2"
+                style={{ fontSize: "15px" }}
               >
-                <option value={true}>Yes</option>
-                <option value={false}>No</option>
+                <option value={true}>💳 Pay Now or Later</option>
+                <option value={false}>💰 Pay Now Only</option>
               </Form.Select>
             </Col>
           </Row>
