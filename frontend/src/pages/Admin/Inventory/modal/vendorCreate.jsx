@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 
-export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, }) => {
+export const VendorCreateModal = ({ showCreateVendor, handleCloseCreateVendor, onCreated }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const user = JSON.parse(localStorage.getItem("user"));
