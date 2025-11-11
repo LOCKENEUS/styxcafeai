@@ -691,61 +691,93 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
             </Form.Text>
           </Form.Group>
 
-          <Row className="mb-2 g-4">
-            <Col md={6}>
-              <Form.Label className="fw-bold text-secondary d-block">Upload Image
-                <span className="text-danger">*</span>
-              </Form.Label>
-              <div className="border-2 align-items-center rounded-3 p-3 bg-light">
-                <Form.Control
-                  type="file"
-                  onChange={handleFileChange}
-                  accept="image/*"
-                  className="d-none"
-                  id="fileUploadLocation"
-                  // ref={fileInputRef}
-                  required
-                />
-                <div className="d-flex justify-content-b gap-6 align-content-center">
-                  <div className="d-flex justify-content-center align-items-center">
-                    <label
-                      style={{ width: "10rem", height: "3rem" }}
-                      htmlFor="fileUploadLocation"
-                      className="btn btn-outline-primary d-flex justify-content-center align-items-center py-2"
-                    >
-                      Choose File
-                    </label>
-                  </div>
-                </div>
+          {/* Image Upload Section with Drag & Drop */}
+          <Form.Group className="mb-4">
+            <Form.Label className="fw-semibold text-dark d-flex align-items-center">
+              Game Image <span className="text-danger ms-1">*</span>
+              <OverlayTrigger
+                placement="right"
+                overlay={renderTooltip("Upload a clear image of the game (Max 5MB, JPG/PNG)")}
+              >
+                <span className="ms-2 text-muted" style={{ cursor: "help" }}>
+                  <FiInfo size={16} />
+                </span>
+              </OverlayTrigger>
+            </Form.Label>
+            
+            <Form.Control
+              type="file"
+              onChange={handleFileChange}
+              accept="image/*"
+              className="d-none"
+              id="fileUploadLocation"
+              ref={fileInputRef}
+            />
+            
+            {!imagePreview ? (
+              <div
+                className={`border-2 rounded-3 p-4 text-center ${isDragging ? 'border-primary bg-primary bg-opacity-10' : 'border-dashed bg-light'} ${submitAttempted && errors.gameImage ? 'border-danger' : ''}`}
+                style={{ 
+                  borderStyle: 'dashed',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onDragEnter={handleDragEnter}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <FiUpload size={40} className={`mb-3 ${isDragging ? 'text-primary' : 'text-muted'}`} />
+                <p className="mb-2 fw-semibold">
+                  {isDragging ? 'Drop image here' : 'Drag & drop image here'}
+                </p>
+                <p className="text-muted mb-3">or</p>
+                <Button variant="outline-primary" size="sm">
+                  Browse Files
+                </Button>
+                <p className="text-muted small mt-3 mb-0">
+                  Supported: JPG, PNG, JPEG (Max 5MB)
+                </p>
               </div>
-            </Col>
-            <Col md={6}>
-              {/* gameImage */}
-              <div className="d-flex flex-wrap gap-2">
-                {imagePreview && (
-                  <div className="position-relative">
+            ) : (
+              <div className="position-relative border rounded-3 p-3 bg-light">
+                <div className="d-flex align-items-center justify-content-between">
+                  <div className="d-flex align-items-center">
                     <img
                       src={imagePreview}
                       alt="Preview"
-                      className="img-thumbnail"
+                      className="rounded"
                       style={{
-                        width: "100px",
-                        height: "100px",
+                        width: "120px",
+                        height: "120px",
                         objectFit: "cover",
                       }}
                     />
-                    <div
-                      onClick={handleRemoveImage}
-                      className="position-absolute top-0 end-0 cursor-pointer"
-                      style={{ transform: "translate(25%, -25%)" }}
-                    >
-                      <TiDeleteOutline color="red" size={25} />
+                    <div className="ms-3">
+                      <p className="mb-1 fw-semibold text-success">✓ Image uploaded</p>
+                      <p className="mb-0 text-muted small">Click remove to change</p>
                     </div>
                   </div>
-                )}
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={handleRemoveImage}
+                    className="d-flex align-items-center"
+                  >
+                    <FiX size={18} className="me-1" />
+                    Remove
+                  </Button>
+                </div>
               </div>
-            </Col>
-          </Row>
+            )}
+            
+            {submitAttempted && errors.gameImage && (
+              <Form.Control.Feedback type="invalid" className="d-block">
+                {errors.gameImage}
+              </Form.Control.Feedback>
+            )}
+          </Form.Group>
 
           <Form.Group className="mb-2">
             <Form.Label htmlFor="gameDetails" className="fw-bold text-secondary">Game Details
