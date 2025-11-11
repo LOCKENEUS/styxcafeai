@@ -143,11 +143,11 @@ backend:
   
   - task: "Add payments to invoice details API"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/component/admin/inventory/salesOrder/controller.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
@@ -156,6 +156,27 @@ backend:
           1. Fetch all payments associated with the invoice
           2. Attach payments array to the invoice response
           3. This enables frontend to display payment history and preview
+      - working: true
+        agent: "testing"
+        comment: |
+          ✅ COMPREHENSIVE TESTING COMPLETED - ALL TESTS PASSED
+          
+          Test Results:
+          1. Payment Creation: Successfully created payments via POST /api/admin/inventory/so/invoice/payment
+          2. Payment Preview: Payments correctly appear in invoice details response
+          3. Payment Data Integrity: All payment fields (amount, mode, date, transaction_id) correctly stored and retrieved
+          4. Multiple Payments: Tested multiple payments per invoice - all properly aggregated
+          5. Payment Array: Invoice details API now includes 'payments' array with complete payment history
+          
+          Tested Scenarios:
+          - Single payment: 100.00 (Credit Card) - ✅ Verified in invoice details
+          - Multiple payments: 100.00 (Credit Card) + 50.00 (Cash) = 150.00 total - ✅ Verified
+          
+          API Endpoints Tested:
+          - POST /api/admin/inventory/so/invoice/payment (payment creation)
+          - GET /api/admin/inventory/so/invoice/:id (invoice details with payments)
+          
+          Payment preview functionality is now fully working.
 
 metadata:
   created_by: "main_agent"
