@@ -1,105 +1,118 @@
 #!/usr/bin/env python3
 """
-Server Wrapper - Starts and maintains Node.js backend
-This wrapper ensures the Node.js backend runs instead of Python backend
+Backend Proxy - Runs Node.js backend and provides passthrough
+This ensures the Node.js backend is used instead of Python
 """
+from fastapi import FastAPI, Request, Response
+from fastapi.responses import StreamingResponse
 import subprocess
-import sys
+import httpx
 import os
-import time
 import signal
 import atexit
+import asyncio
 
-# Path to Node.js backend
+# Configuration
 NODEJS_BACKEND_DIR = "/app/backend"
-NODEJS_INDEX = "index.js"
-PORT = 8001
+NODEJS_PORT = 8002  # Run Node.js on different port
+PROXY_PORT = 8001   # This Python app listens on 8001
 
-# Process handle
+# Global process handle
 nodejs_process = None
 
-def start_nodejs_backend():
-    """Start the Node.js backend"""
+def start_nodejs():
+    """Start Node.js backend"""
     global nodejs_process
     
-    print(f"[Wrapper] Starting Node.js backend in {NODEJS_BACKEND_DIR}")
-    print(f"[Wrapper] Port: {PORT}")
+    print(f"🚀 Starting Node.js backend on port {NODEJS_PORT}")
     
     env = os.environ.copy()
-    env['PORT'] = str(PORT)
+    env['PORT'] = str(NODEJS_PORT)
     
     try:
         nodejs_process = subprocess.Popen(
-            ['node', NODEJS_INDEX],
+            ['node', 'index.js'],
             cwd=NODEJS_BACKEND_DIR,
             env=env,
-            stdout=sys.stdout,
-            stderr=sys.stderr,
-            preexec_fn=os.setsid  # Create new process group
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            preexec_fn=os.setsid
         )
-        print(f"[Wrapper] Node.js backend started with PID: {nodejs_process.pid}")
-        return nodejs_process
+        print(f"✓ Node.js backend started (PID: {nodejs_process.pid})")
     except Exception as e:
-        print(f"[Wrapper] Failed to start Node.js backend: {e}")
-        sys.exit(1)
+        print(f"✗ Failed to start Node.js: {e}")
 
-def stop_nodejs_backend():
-    """Stop the Node.js backend gracefully"""
+def stop_nodejs():
+    """Stop Node.js backend"""
     global nodejs_process
-    
     if nodejs_process:
-        print("[Wrapper] Stopping Node.js backend...")
+        print("Stopping Node.js backend...")
         try:
-            # Send SIGTERM to process group
             os.killpg(os.getpgid(nodejs_process.pid), signal.SIGTERM)
-            nodejs_process.wait(timeout=10)
-            print("[Wrapper] Node.js backend stopped")
-        except subprocess.TimeoutExpired:
-            print("[Wrapper] Force killing Node.js backend")
-            os.killpg(os.getpgid(nodejs_process.pid), signal.SIGKILL)
-        except Exception as e:
-            print(f"[Wrapper] Error stopping Node.js backend: {e}")
+            nodejs_process.wait(timeout=5)
+        except:
+            try:
+                os.killpg(os.getpgid(nodejs_process.pid), signal.SIGKILL)
+            except:
+                pass
 
-def signal_handler(signum, frame):
-    """Handle termination signals"""
-    print(f"[Wrapper] Received signal {signum}, shutting down...")
-    stop_nodejs_backend()
-    sys.exit(0)
+# Register cleanup
+atexit.register(stop_nodejs)
 
-def main():
-    """Main function"""
-    print("=" * 60)
-    print("Node.js Backend Wrapper")
-    print("=" * 60)
+# Start Node.js on module load
+start_nodejs()
+
+# Create FastAPI proxy app
+app = FastAPI(title="Backend Proxy")
+
+# HTTP client
+client = httpx.AsyncClient(timeout=30.0)
+
+@app.on_event("shutdown")
+async def shutdown():
+    await client.aclose()
+    stop_nodejs()
+
+@app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
+async def proxy(request: Request, path: str):
+    """Proxy all requests to Node.js backend"""
+    url = f"http://localhost:{NODEJS_PORT}/{path}"
     
-    # Register signal handlers
-    signal.signal(signal.SIGTERM, signal_handler)
-    signal.signal(signal.SIGINT, signal_handler)
+    # Forward query parameters
+    if request.url.query:
+        url = f"{url}?{request.url.query}"
     
-    # Register cleanup on exit
-    atexit.register(stop_nodejs_backend)
+    # Prepare headers
+    headers = dict(request.headers)
+    headers.pop("host", None)
     
-    # Start Node.js backend
-    process = start_nodejs_backend()
+    # Get request body
+    body = await request.body()
     
-    # Monitor the process
     try:
-        while True:
-            # Check if process is still running
-            if process.poll() is not None:
-                print(f"[Wrapper] Node.js backend exited with code {process.returncode}")
-                print("[Wrapper] Restarting Node.js backend...")
-                time.sleep(2)
-                process = start_nodejs_backend()
-            
-            time.sleep(5)  # Check every 5 seconds
-    except KeyboardInterrupt:
-        print("[Wrapper] Received keyboard interrupt")
-        stop_nodejs_backend()
+        # Forward request to Node.js
+        response = await client.request(
+            method=request.method,
+            url=url,
+            headers=headers,
+            content=body,
+        )
+        
+        # Return response
+        return Response(
+            content=response.content,
+            status_code=response.status_code,
+            headers=dict(response.headers),
+        )
+    except httpx.ConnectError:
+        return Response(
+            content='{"error": "Node.js backend not available"}',
+            status_code=503,
+            media_type="application/json"
+        )
     except Exception as e:
-        print(f"[Wrapper] Error in main loop: {e}")
-        stop_nodejs_backend()
-        sys.exit(1)
-
-if __name__ == "__main__":
-    main()
+        return Response(
+            content=f'{{"error": "{str(e)}"}}',
+            status_code=500,
+            media_type="application/json"
+        )
