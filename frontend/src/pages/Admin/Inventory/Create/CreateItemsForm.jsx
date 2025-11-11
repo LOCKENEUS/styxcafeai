@@ -238,6 +238,16 @@ const CreateItemsForm = () => {
         }
     }, [vendors, latestCreatedVendor]);
 
+    // Debug useEffect to monitor vendors
+    useEffect(() => {
+        console.log('📊 Vendors state updated:', {
+            count: vendors?.length || 0,
+            vendors: vendors,
+            loading: vendorState?.loading,
+            error: vendorState?.error
+        });
+    }, [vendors, vendorState]);
+
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
