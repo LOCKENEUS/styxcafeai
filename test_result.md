@@ -237,6 +237,50 @@ agent_communication:
 user_problem_statement: |
   New issue: Invoice Payments page - clicking on payment to view details shows error "Error Loading Invoice, Error fetching sales invoice details"
 
+backend:
+  - task: "Test invoice payment navigation functionality"
+    implemented: true
+    working: true
+    file: "/app/backend/component/superadmin/inventory/salesOrder/controller.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Fixed invoice payment list page navigation issue:
+          1. Added invoice document ID (_id) to itemsData mapping (was missing)
+          2. Now properly extracts bill_id._id from payment records
+          3. This ID is used when navigating to invoice details page
+          
+          The issue was that row._id was undefined because it wasn't included in the mapped data structure.
+      - working: true
+        agent: "testing"
+        comment: |
+          ✅ COMPREHENSIVE TESTING COMPLETED - ALL TESTS PASSED
+          
+          Test Results:
+          1. Payment List API: GET /api/superadmin/inventory/so/invoice/payment/list
+             - Successfully returns 4 payments with populated bill_id fields
+             - Each payment contains bill_id._id and bill_id.po_no as expected
+             - Response structure is correct with status and data fields
+          
+          2. Invoice Details Navigation: GET /api/superadmin/inventory/so/invoice/{bill_id._id}
+             - Successfully fetches invoice details using bill_id from payment
+             - Invoice details include complete payments array (3 payments found)
+             - Payment-to-invoice relationship verified - original payment found in invoice
+             - Navigation flow works end-to-end as expected
+          
+          API Endpoints Tested:
+          - GET /api/superadmin/inventory/so/invoice/payment/list ✅
+          - GET /api/superadmin/inventory/so/invoice/6912e695b343d36e4ff2085e ✅
+          
+          The invoice payment navigation bug has been completely resolved. Users can now:
+          - View payment list with populated invoice information
+          - Click on payments to navigate to invoice details successfully
+          - See payment history within invoice details page
+
 frontend:
   - task: "Fix invoice payment detail navigation"
     implemented: true
