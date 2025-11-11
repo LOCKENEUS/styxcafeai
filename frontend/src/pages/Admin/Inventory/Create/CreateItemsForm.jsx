@@ -58,7 +58,8 @@ const CreateItemsForm = () => {
     const customFields = useSelector(state => state.customFields.customFields);
     const taxFields = useSelector(state => state.taxFieldSlice.taxFields);
     const cafeId = JSON.parse(localStorage.getItem("user"))?._id;
-    const vendors = useSelector(state => state.vendors.vendors);
+    const vendorState = useSelector(state => state.vendors);
+    const vendors = vendorState?.vendors || [];
     const [loading, setLoading] = useState(false);
     const [latestCreatedUnit, setLatestCreatedUnit] = useState(null);
     const [latestCreatedManufacturer, setLatestCreatedManufacturer] = useState(null);
