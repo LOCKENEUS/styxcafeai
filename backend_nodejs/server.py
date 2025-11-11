@@ -1,118 +1,125 @@
-#!/usr/bin/env python3
-"""
-Backend Proxy - Runs Node.js backend and provides passthrough
-This ensures the Node.js backend is used instead of Python
-"""
-from fastapi import FastAPI, Request, Response
-from fastapi.responses import StreamingResponse
-import subprocess
-import httpx
+from fastapi import FastAPI, HTTPException, Depends, status, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
+from motor.motor_asyncio import AsyncIOMotorClient
+from contextlib import asynccontextmanager
 import os
-import signal
-import atexit
-import asyncio
+from dotenv import load_dotenv
+import uvicorn
 
-# Configuration
-NODEJS_BACKEND_DIR = "/app/backend"
-NODEJS_PORT = 8002  # Run Node.js on different port
-PROXY_PORT = 8001   # This Python app listens on 8001
+# Load environment variables
+load_dotenv()
 
-# Global process handle
-nodejs_process = None
+# Import routers
+from routes import auth_router, user_router, admin_router, superadmin_router
 
-def start_nodejs():
-    """Start Node.js backend"""
-    global nodejs_process
+# MongoDB connection
+mongo_client = None
+database = None
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    global mongo_client, database
+    DB_URL = os.getenv("DB_URL")
+    if not DB_URL:
+        raise ValueError("DB_URL environment variable is required")
     
-    print(f"🚀 Starting Node.js backend on port {NODEJS_PORT}")
+    mongo_client = AsyncIOMotorClient(DB_URL)
+    database = mongo_client.get_database()
+    app.state.db = database
+    print(f"✓ Connected to MongoDB")
     
-    env = os.environ.copy()
-    env['PORT'] = str(NODEJS_PORT)
+    yield
     
-    try:
-        nodejs_process = subprocess.Popen(
-            ['node', 'index.js'],
-            cwd=NODEJS_BACKEND_DIR,
-            env=env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            preexec_fn=os.setsid
-        )
-        print(f"✓ Node.js backend started (PID: {nodejs_process.pid})")
-    except Exception as e:
-        print(f"✗ Failed to start Node.js: {e}")
+    # Shutdown
+    mongo_client.close()
+    print("✓ Closed MongoDB connection")
 
-def stop_nodejs():
-    """Stop Node.js backend"""
-    global nodejs_process
-    if nodejs_process:
-        print("Stopping Node.js backend...")
-        try:
-            os.killpg(os.getpgid(nodejs_process.pid), signal.SIGTERM)
-            nodejs_process.wait(timeout=5)
-        except:
-            try:
-                os.killpg(os.getpgid(nodejs_process.pid), signal.SIGKILL)
-            except:
-                pass
+# Create FastAPI app
+app = FastAPI(
+    title="Styx Cafe API",
+    description="FastAPI backend for Styx Cafe booking platform",
+    version="1.0.0",
+    lifespan=lifespan
+)
 
-# Register cleanup
-atexit.register(stop_nodejs)
+# CORS configuration
+allowed_origins = [
+    # Local development URLs
+    "http://localhost:3000",  # Customer Website
+    "http://localhost:3001",  # Admin Panel
+    "http://localhost:3002",  # Additional frontend
+    "http://localhost:5173",  # Vite dev server
+    "http://localhost:8001",  # Backend
+    os.getenv("CLIENT_URL"),  # Production frontend
+    os.getenv("ADMIN_URL"),   # Production admin
+    "https://styx-inventory.preview.emergentagent.com",
+    "https://styxuser.lockene.co",
+]
 
-# Start Node.js on module load
-start_nodejs()
+# Remove None values
+allowed_origins = [origin for origin in allowed_origins if origin]
 
-# Create FastAPI proxy app
-app = FastAPI(title="Backend Proxy")
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"]
+)
 
-# HTTP client
-client = httpx.AsyncClient(timeout=30.0)
-
-@app.on_event("shutdown")
-async def shutdown():
-    await client.aclose()
-    stop_nodejs()
-
-@app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
-async def proxy(request: Request, path: str):
-    """Proxy all requests to Node.js backend"""
-    url = f"http://localhost:{NODEJS_PORT}/{path}"
+# Custom CORS handler for Emergent domains
+@app.middleware("http")
+async def custom_cors_middleware(request: Request, call_next):
+    origin = request.headers.get("origin")
     
-    # Forward query parameters
-    if request.url.query:
-        url = f"{url}?{request.url.query}"
+    # Allow all Emergent domains
+    if origin and ".emergentagent.com" in origin:
+        response = await call_next(request)
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response
     
-    # Prepare headers
-    headers = dict(request.headers)
-    headers.pop("host", None)
-    
-    # Get request body
-    body = await request.body()
-    
-    try:
-        # Forward request to Node.js
-        response = await client.request(
-            method=request.method,
-            url=url,
-            headers=headers,
-            content=body,
-        )
-        
-        # Return response
-        return Response(
-            content=response.content,
-            status_code=response.status_code,
-            headers=dict(response.headers),
-        )
-    except httpx.ConnectError:
-        return Response(
-            content='{"error": "Node.js backend not available"}',
-            status_code=503,
-            media_type="application/json"
-        )
-    except Exception as e:
-        return Response(
-            content=f'{{"error": "{str(e)}"}}',
-            status_code=500,
-            media_type="application/json"
-        )
+    return await call_next(request)
+
+# Mount static files
+os.makedirs("uploads", exist_ok=True)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+# Root endpoint
+@app.get("/")
+async def root():
+    return {"message": "Welcome to the Styx Cafe API!"}
+
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "database": "connected"}
+
+# Include routers
+app.include_router(auth_router.router, prefix="/api/auth", tags=["Authentication"])
+app.include_router(user_router.router, prefix="/api/user", tags=["User"])
+app.include_router(admin_router.router, prefix="/api/admin", tags=["Admin"])
+app.include_router(superadmin_router.router, prefix="/api/superadmin", tags=["SuperAdmin"])
+
+# Global exception handler
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={"message": str(exc) or "Something went wrong!"}
+    )
+
+# Run the application
+if __name__ == "__main__":
+    PORT = int(os.getenv("PORT", 8001))
+    uvicorn.run(
+        "server:app",
+        host="0.0.0.0",
+        port=PORT,
+        reload=True if os.getenv("NODE_ENV") == "development" else False
+    )
