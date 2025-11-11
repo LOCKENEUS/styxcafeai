@@ -178,28 +178,120 @@ class RazorpayPaymentTest:
             )
             return False
     
-    def create_test_customer_data(self, include_password=False, contact_no=None):
-        """Create test data for customer creation"""
-        if not contact_no:
-            contact_no = self.generate_random_contact()
-            
-        data = {
-            "cafe": self.test_cafe_id,
-            "name": self.generate_random_name(),
-            "contact_no": contact_no,
-            "email": f"test{int(time.time())}@example.com",
-            "age": "25",
-            "address": "123 Test Street, Test City",
-            "gender": "Male",
-            "country": "India",
-            "state": "Maharashtra",
-            "city": "Mumbai"
-        }
+    def test_payment_order_creation(self):
+        """Test 2: Create Razorpay payment order with correct response structure"""
+        print("\n=== Testing Payment Order Creation ===")
         
-        if include_password:
-            data["password"] = "testpass123"
+        try:
+            # Test data as specified in the review request
+            payment_data = {
+                "amount": 500,
+                "currency": "INR",
+                "receipt": "test_receipt_001"
+            }
             
-        return data
+            print(f"Creating payment order with amount: ₹{payment_data['amount']}")
+            print(f"Expected amount in paise: {payment_data['amount'] * 100}")
+            
+            response = self.session.post(ADMIN_ENDPOINTS["payment"], json=payment_data)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Check if response has correct structure: { success: true, order: {...} }
+                if data.get("success") and "order" in data:
+                    order = data["order"]
+                    
+                    # Verify amount conversion to paise
+                    expected_amount_paise = payment_data["amount"] * 100
+                    actual_amount = order.get("amount")
+                    
+                    if actual_amount == expected_amount_paise:
+                        self.log_result(
+                            "Payment Order Creation",
+                            True,
+                            f"Payment order created successfully with correct structure",
+                            {
+                                "order_id": order.get("id"),
+                                "amount_rupees": payment_data["amount"],
+                                "amount_paise": actual_amount,
+                                "currency": order.get("currency"),
+                                "receipt": order.get("receipt"),
+                                "response_structure": "{ success: true, order: {...} }"
+                            }
+                        )
+                        
+                        # Additional validation of order fields
+                        required_fields = ["id", "amount", "currency", "receipt"]
+                        order_validation = all(field in order for field in required_fields)
+                        
+                        if order_validation:
+                            self.log_result(
+                                "Payment Order Field Validation",
+                                True,
+                                "All required order fields are present",
+                                {
+                                    "fields_present": required_fields,
+                                    "order_id_format": order.get("id", "").startswith("order_")
+                                }
+                            )
+                        else:
+                            missing_fields = [field for field in required_fields if field not in order]
+                            self.log_result(
+                                "Payment Order Field Validation",
+                                False,
+                                f"Missing required fields: {missing_fields}",
+                                {"order": order}
+                            )
+                        
+                        return order.get("id")
+                    else:
+                        self.log_result(
+                            "Payment Order Creation",
+                            False,
+                            f"Amount conversion incorrect. Expected: {expected_amount_paise}, Got: {actual_amount}",
+                            {
+                                "expected_paise": expected_amount_paise,
+                                "actual_paise": actual_amount,
+                                "order": order
+                            }
+                        )
+                        return None
+                else:
+                    # Check if it's the old structure { success: true, data: {...} }
+                    if data.get("success") and "data" in data:
+                        self.log_result(
+                            "Payment Order Creation",
+                            False,
+                            "Response uses old structure { success: true, data: {...} } instead of { success: true, order: {...} }",
+                            {"response": data}
+                        )
+                    else:
+                        self.log_result(
+                            "Payment Order Creation",
+                            False,
+                            "Invalid response structure",
+                            {"response": data}
+                        )
+                    return None
+            else:
+                error_msg = response.json().get("message", "Unknown error") if response.content else "No response content"
+                self.log_result(
+                    "Payment Order Creation",
+                    False,
+                    f"Failed to create payment order: {error_msg}",
+                    {"status_code": response.status_code, "response": response.text}
+                )
+                return None
+                
+        except Exception as e:
+            self.log_result(
+                "Payment Order Creation Test",
+                False,
+                f"Exception occurred: {str(e)}",
+                {"exception_type": type(e).__name__}
+            )
+            return None
     
     def test_customer_creation_without_password(self):
         """Test 1: Create customer WITHOUT password (booking flow scenario)"""
