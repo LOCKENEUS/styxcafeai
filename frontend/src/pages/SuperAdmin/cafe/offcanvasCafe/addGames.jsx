@@ -515,24 +515,38 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
             )}
           </Form.Group>
 
-          <Row className="mb-2 g-4">
+          {/* Zone and Commission Row */}
+          <Row className="mb-4 g-3">
             <Col md={6}>
-              <Form.Label htmlFor="gameZone" className="fw-bold text-secondary">Zone of Game</Form.Label>
+              <Form.Label htmlFor="gameZone" className="fw-semibold text-dark">
+                Game Zone <span className="text-danger">*</span>
+              </Form.Label>
               <Form.Select
                 id="gameZone"
                 name="zone"
                 value={formData.zone}
                 onChange={handleInputChange}
                 required
-                className="form-select-lg border-2"
+                className="py-2"
+                style={{ fontSize: "15px" }}
               >
-                <option>Indoor</option>
-                <option>Outdoor</option>
+                <option value="Indoor">🏠 Indoor</option>
+                <option value="Outdoor">🌳 Outdoor</option>
               </Form.Select>
             </Col>
             <Col md={6}>
-              <Form.Group className="mb-2">
-                <Form.Label htmlFor="gameCommission" className="fw-bold text-secondary">Commission (%)</Form.Label>
+              <Form.Label htmlFor="gameCommission" className="fw-semibold text-dark d-flex align-items-center">
+                Commission (%) <span className="text-danger ms-1">*</span>
+                <OverlayTrigger
+                  placement="right"
+                  overlay={renderTooltip("Platform commission percentage on each booking")}
+                >
+                  <span className="ms-2 text-muted" style={{ cursor: "help" }}>
+                    <FiInfo size={16} />
+                  </span>
+                </OverlayTrigger>
+              </Form.Label>
+              <div className="input-group">
                 <Form.Control
                   id="gameCommission"
                   type="number"
@@ -541,15 +555,22 @@ const AddGamesOffcanvas = ({ show, handleClose, cafeId, selectedGameDetails }) =
                   onChange={handleInputChange}
                   onWheel={(e) => e.target.blur()}
                   required
-                  className="py-2 border-2"
-                  placeholder="Enter commission percentage"
+                  className="py-2"
+                  placeholder="0"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  style={{ fontSize: "15px" }}
                 />
-                {formData.price !== '' && formData.commission !== '' && !isNaN(formData.price) && !isNaN(formData.commission) && (
-                  <div className="mt-2 text-secondary">
-                    Calculated Commission: ${((Number(formData.price) * (Number(formData.commission) / 100)).toFixed(2))}
-                  </div>
-                )}
-              </Form.Group>
+                <span className="input-group-text">%</span>
+              </div>
+              {formData.price !== '' && formData.commission !== '' && !isNaN(formData.price) && !isNaN(formData.commission) && (
+                <div className="mt-2 p-2 bg-light rounded border">
+                  <small className="text-success fw-semibold">
+                    💰 Commission Amount: ₹{((Number(formData.price) * (Number(formData.commission) / 100)).toFixed(2))}
+                  </small>
+                </div>
+              )}
             </Col>
           </Row>
 
