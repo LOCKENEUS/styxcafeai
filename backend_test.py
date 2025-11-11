@@ -42,245 +42,396 @@ class CustomerCreationTest:
         if details:
             print(f"   Details: {details}")
     
-    def create_test_invoice_data(self, invoice_number=None):
-        """Create test data for sales invoice"""
-        return {
-            "cafe": "507f1f77bcf86cd799439011",  # Test cafe ID
-            "customer_id": "507f1f77bcf86cd799439012",  # Test customer ID
-            "date": datetime.now().isoformat(),
-            "payment_terms": "Net 30",
-            "reference": f"TEST-REF-{int(time.time())}",
-            "sales_person": "John Doe",
-            "description": "Test sales invoice for duplicate number testing",
-            "items": [
-                {
-                    "id": "507f1f77bcf86cd799439013",  # Test item ID
-                    "qty": 2,
-                    "price": 100.00,
-                    "hsn": "1234",
-                    "tax": "507f1f77bcf86cd799439014",  # Test tax ID
-                    "tax_amt": 18.00,
-                    "total": 236.00
-                }
-            ],
-            "subtotal": 200.00,
-            "discount_value": 0,
-            "discount_type": "flat",
-            "tax": ["507f1f77bcf86cd799439014"],
-            "total": 236.00,
-            "adjustment_note": "Test adjustment",
-            "adjustment_amount": 0,
-            "internal_team_notes": "Test notes"
-        }
+    def generate_random_contact(self):
+        """Generate a random 10-digit contact number"""
+        return "9" + "".join(random.choices(string.digits, k=9))
     
-    def create_test_payment_data(self, invoice_id):
-        """Create test data for payment"""
-        return {
-            "cafe": "507f1f77bcf86cd799439011",
-            "invoice_id": invoice_id,
-            "deposit_amount": 100.00,
-            "mode": "Credit Card",
-            "deposit_date": datetime.now().isoformat(),
-            "transaction_id": f"TXN-{int(time.time())}",
-            "description": "Test payment for invoice"
-        }
+    def generate_random_name(self):
+        """Generate a random customer name"""
+        first_names = ["Arjun", "Priya", "Rahul", "Sneha", "Vikram", "Anita", "Karan", "Meera"]
+        last_names = ["Sharma", "Patel", "Kumar", "Singh", "Gupta", "Reddy", "Nair", "Joshi"]
+        return f"{random.choice(first_names)} {random.choice(last_names)}"
     
-    def test_payment_list_api(self):
-        """Test 1: Call payment list API and verify response structure"""
-        print("\n=== Testing Payment List API ===")
+    def setup_test_data(self):
+        """Setup test data - find or create a cafe ID"""
+        print("\n=== Setting up test data ===")
+        
+        # For testing, we'll use a mock cafe ID (MongoDB ObjectId format)
+        # In a real scenario, this would be fetched from the database
+        self.test_cafe_id = "507f1f77bcf86cd799439011"  # Valid ObjectId format
+        
+        self.log_result(
+            "Test Data Setup",
+            True,
+            f"Using test cafe ID: {self.test_cafe_id}",
+            {"cafe_id": self.test_cafe_id}
+        )
+        
+        return True
+    
+    def create_test_customer_data(self, include_password=False, contact_no=None):
+        """Create test data for customer creation"""
+        if not contact_no:
+            contact_no = self.generate_random_contact()
+            
+        data = {
+            "cafe": self.test_cafe_id,
+            "name": self.generate_random_name(),
+            "contact_no": contact_no,
+            "email": f"test{int(time.time())}@example.com",
+            "age": "25",
+            "address": "123 Test Street, Test City",
+            "gender": "Male",
+            "country": "India",
+            "state": "Maharashtra",
+            "city": "Mumbai"
+        }
+        
+        if include_password:
+            data["password"] = "testpass123"
+            
+        return data
+    
+    def test_customer_creation_without_password(self):
+        """Test 1: Create customer WITHOUT password (booking flow scenario)"""
+        print("\n=== Testing Customer Creation WITHOUT Password ===")
         
         try:
-            response = self.session.get(SUPERADMIN_ENDPOINTS["payment_list"])
+            # Generate test data without password
+            contact_no = self.generate_random_contact()
+            customer_data = self.create_test_customer_data(include_password=False, contact_no=contact_no)
             
-            if response.status_code == 200:
+            # Expected auto-generated password (last 4 digits of contact)
+            expected_password = contact_no[-4:]
+            
+            print(f"Creating customer with contact: {contact_no}")
+            print(f"Expected auto-generated password: {expected_password}")
+            
+            # Make API call
+            response = self.session.post(ADMIN_ENDPOINTS["customer_create"], json=customer_data)
+            
+            if response.status_code == 201:
                 data = response.json()
                 
-                # Check response structure
                 if data.get("status") and "data" in data:
-                    payments = data.get("data", [])
+                    customer = data.get("data", {})
+                    customer_id = customer.get("_id")
+                    
+                    self.created_customers.append(customer_id)
+                    
                     self.log_result(
-                        "Payment List API Response",
+                        "Customer Creation Without Password",
                         True,
-                        f"Payment list fetched successfully with {len(payments)} payments",
-                        {"payment_count": len(payments), "status": data.get("status")}
+                        f"Customer created successfully without providing password",
+                        {
+                            "customer_id": customer_id,
+                            "name": customer.get("name"),
+                            "contact_no": customer.get("contact_no"),
+                            "expected_password": expected_password,
+                            "password_auto_generated": True
+                        }
                     )
                     
-                    # Check if payments have bill_id populated
-                    if payments:
-                        payment_with_bill_id = None
-                        for payment in payments:
-                            if payment.get("bill_id") and isinstance(payment["bill_id"], dict):
-                                if payment["bill_id"].get("_id"):
-                                    payment_with_bill_id = payment
-                                    break
+                    # Verify the customer was created with correct data
+                    if (customer.get("name") == customer_data["name"] and 
+                        customer.get("contact_no") == customer_data["contact_no"]):
                         
-                        if payment_with_bill_id:
-                            self.log_result(
-                                "Payment Bill ID Population",
-                                True,
-                                "Found payment with populated bill_id containing _id field",
-                                {
-                                    "payment_id": payment_with_bill_id.get("_id"),
-                                    "bill_id": payment_with_bill_id["bill_id"].get("_id"),
-                                    "bill_po_no": payment_with_bill_id["bill_id"].get("po_no")
-                                }
-                            )
-                            return payment_with_bill_id
-                        else:
-                            self.log_result(
-                                "Payment Bill ID Population",
-                                False,
-                                "No payments found with populated bill_id._id field",
-                                {"payments_checked": len(payments)}
-                            )
-                            return None
+                        self.log_result(
+                            "Customer Data Validation",
+                            True,
+                            "Customer data matches input data",
+                            {
+                                "name_match": customer.get("name") == customer_data["name"],
+                                "contact_match": customer.get("contact_no") == customer_data["contact_no"]
+                            }
+                        )
+                        return customer_id
                     else:
                         self.log_result(
-                            "Payment List Content",
+                            "Customer Data Validation",
                             False,
-                            "No payments found in the system",
-                            {"payment_count": 0}
+                            "Customer data does not match input data",
+                            {
+                                "expected_name": customer_data["name"],
+                                "actual_name": customer.get("name"),
+                                "expected_contact": customer_data["contact_no"],
+                                "actual_contact": customer.get("contact_no")
+                            }
                         )
                         return None
                 else:
                     self.log_result(
-                        "Payment List API Response",
+                        "Customer Creation Without Password",
                         False,
-                        "Invalid response structure from payment list API",
+                        "Invalid response structure from customer creation API",
                         {"response": data}
                     )
                     return None
             else:
                 error_msg = response.json().get("message", "Unknown error") if response.content else "No response content"
                 self.log_result(
-                    "Payment List API Call",
+                    "Customer Creation Without Password",
                     False,
-                    f"Failed to fetch payment list: {error_msg}",
-                    {"status_code": response.status_code}
+                    f"Failed to create customer: {error_msg}",
+                    {"status_code": response.status_code, "response": response.text}
                 )
                 return None
                 
         except Exception as e:
             self.log_result(
-                "Payment List API Test",
+                "Customer Creation Without Password Test",
                 False,
                 f"Exception occurred: {str(e)}",
                 {"exception_type": type(e).__name__}
             )
             return None
     
-    def test_invoice_details_navigation(self, payment_with_bill_id):
-        """Test 2: Use bill_id from payment to fetch invoice details"""
-        print("\n=== Testing Invoice Details Navigation ===")
+    def test_customer_creation_with_password(self):
+        """Test 2: Create customer WITH explicit password (normal flow)"""
+        print("\n=== Testing Customer Creation WITH Password ===")
         
-        if not payment_with_bill_id:
+        try:
+            # Generate test data with password
+            contact_no = self.generate_random_contact()
+            customer_data = self.create_test_customer_data(include_password=True, contact_no=contact_no)
+            
+            print(f"Creating customer with contact: {contact_no}")
+            print(f"Provided password: {customer_data['password']}")
+            
+            # Make API call
+            response = self.session.post(ADMIN_ENDPOINTS["customer_create"], json=customer_data)
+            
+            if response.status_code == 201:
+                data = response.json()
+                
+                if data.get("status") and "data" in data:
+                    customer = data.get("data", {})
+                    customer_id = customer.get("_id")
+                    
+                    self.created_customers.append(customer_id)
+                    
+                    self.log_result(
+                        "Customer Creation With Password",
+                        True,
+                        f"Customer created successfully with provided password",
+                        {
+                            "customer_id": customer_id,
+                            "name": customer.get("name"),
+                            "contact_no": customer.get("contact_no"),
+                            "password_provided": True
+                        }
+                    )
+                    
+                    # Verify the customer was created with correct data
+                    if (customer.get("name") == customer_data["name"] and 
+                        customer.get("contact_no") == customer_data["contact_no"]):
+                        
+                        self.log_result(
+                            "Customer Data Validation With Password",
+                            True,
+                            "Customer data matches input data",
+                            {
+                                "name_match": customer.get("name") == customer_data["name"],
+                                "contact_match": customer.get("contact_no") == customer_data["contact_no"]
+                            }
+                        )
+                        return customer_id
+                    else:
+                        self.log_result(
+                            "Customer Data Validation With Password",
+                            False,
+                            "Customer data does not match input data",
+                            {
+                                "expected_name": customer_data["name"],
+                                "actual_name": customer.get("name"),
+                                "expected_contact": customer_data["contact_no"],
+                                "actual_contact": customer.get("contact_no")
+                            }
+                        )
+                        return None
+                else:
+                    self.log_result(
+                        "Customer Creation With Password",
+                        False,
+                        "Invalid response structure from customer creation API",
+                        {"response": data}
+                    )
+                    return None
+            else:
+                error_msg = response.json().get("message", "Unknown error") if response.content else "No response content"
+                self.log_result(
+                    "Customer Creation With Password",
+                    False,
+                    f"Failed to create customer: {error_msg}",
+                    {"status_code": response.status_code, "response": response.text}
+                )
+                return None
+                
+        except Exception as e:
             self.log_result(
-                "Invoice Details Navigation",
+                "Customer Creation With Password Test",
                 False,
-                "No payment with bill_id available for testing",
+                f"Exception occurred: {str(e)}",
+                {"exception_type": type(e).__name__}
+            )
+            return None
+    
+    def test_customer_list_verification(self, customer_id):
+        """Test 3: Verify created customer appears in customer list"""
+        print("\n=== Testing Customer List Verification ===")
+        
+        if not customer_id:
+            self.log_result(
+                "Customer List Verification",
+                False,
+                "No customer ID provided for verification",
                 {}
             )
             return False
         
         try:
-            bill_id = payment_with_bill_id["bill_id"]["_id"]
-            
-            # Call invoice details API with the bill_id from payment
-            response = self.session.get(f"{SUPERADMIN_ENDPOINTS['invoice_details']}/{bill_id}")
+            # Call customer list API
+            response = self.session.get(f"{ADMIN_ENDPOINTS['customer_list']}/{self.test_cafe_id}")
             
             if response.status_code == 200:
                 data = response.json()
                 
-                # Check response structure
                 if data.get("status") and "data" in data:
-                    invoice = data.get("data", {})
+                    customers = data.get("data", [])
                     
-                    # Verify invoice details
-                    invoice_id = invoice.get("_id")
-                    invoice_po_no = invoice.get("po_no")
-                    invoice_payments = invoice.get("payments", [])
+                    # Look for our created customer
+                    customer_found = False
+                    for customer in customers:
+                        if customer.get("_id") == customer_id:
+                            customer_found = True
+                            break
                     
-                    if invoice_id == bill_id:
+                    if customer_found:
                         self.log_result(
-                            "Invoice Details Fetch",
+                            "Customer List Verification",
                             True,
-                            f"Invoice details fetched successfully for ID: {bill_id}",
+                            f"Created customer found in customer list",
                             {
-                                "invoice_id": invoice_id,
-                                "po_no": invoice_po_no,
-                                "payments_count": len(invoice_payments)
+                                "customer_id": customer_id,
+                                "total_customers": len(customers)
                             }
                         )
-                        
-                        # Verify payments array is included
-                        if "payments" in invoice:
-                            self.log_result(
-                                "Invoice Payments Array",
-                                True,
-                                f"Invoice includes payments array with {len(invoice_payments)} payments",
-                                {"payments_count": len(invoice_payments)}
-                            )
-                            
-                            # Check if the original payment is in the invoice payments
-                            original_payment_found = False
-                            for payment in invoice_payments:
-                                if payment.get("_id") == payment_with_bill_id.get("_id"):
-                                    original_payment_found = True
-                                    break
-                            
-                            if original_payment_found:
-                                self.log_result(
-                                    "Payment-Invoice Relationship",
-                                    True,
-                                    "Original payment found in invoice payments array",
-                                    {"payment_id": payment_with_bill_id.get("_id")}
-                                )
-                                return True
-                            else:
-                                self.log_result(
-                                    "Payment-Invoice Relationship",
-                                    True,  # Still success as navigation works
-                                    "Invoice details fetched but original payment not found in payments array (may be expected)",
-                                    {"payment_id": payment_with_bill_id.get("_id")}
-                                )
-                                return True
-                        else:
-                            self.log_result(
-                                "Invoice Payments Array",
-                                False,
-                                "Invoice details response does not include payments array",
-                                {"invoice_keys": list(invoice.keys())}
-                            )
-                            return False
+                        return True
                     else:
                         self.log_result(
-                            "Invoice ID Mismatch",
+                            "Customer List Verification",
                             False,
-                            f"Fetched invoice ID {invoice_id} does not match requested bill_id {bill_id}",
-                            {"requested": bill_id, "received": invoice_id}
+                            f"Created customer not found in customer list",
+                            {
+                                "customer_id": customer_id,
+                                "total_customers": len(customers),
+                                "customer_ids": [c.get("_id") for c in customers[:5]]  # First 5 IDs
+                            }
                         )
                         return False
                 else:
                     self.log_result(
-                        "Invoice Details API Response",
+                        "Customer List Verification",
                         False,
-                        "Invalid response structure from invoice details API",
+                        "Invalid response structure from customer list API",
                         {"response": data}
                     )
                     return False
             else:
                 error_msg = response.json().get("message", "Unknown error") if response.content else "No response content"
                 self.log_result(
-                    "Invoice Details API Call",
+                    "Customer List Verification",
                     False,
-                    f"Failed to fetch invoice details: {error_msg}",
-                    {"status_code": response.status_code, "bill_id": bill_id}
+                    f"Failed to fetch customer list: {error_msg}",
+                    {"status_code": response.status_code}
                 )
                 return False
                 
         except Exception as e:
             self.log_result(
-                "Invoice Details Navigation Test",
+                "Customer List Verification Test",
+                False,
+                f"Exception occurred: {str(e)}",
+                {"exception_type": type(e).__name__}
+            )
+            return False
+    
+    def test_duplicate_customer_prevention(self):
+        """Test 4: Verify duplicate customer prevention works"""
+        print("\n=== Testing Duplicate Customer Prevention ===")
+        
+        try:
+            # Create first customer
+            contact_no = self.generate_random_contact()
+            customer_data = self.create_test_customer_data(include_password=False, contact_no=contact_no)
+            
+            # First creation should succeed
+            response1 = self.session.post(ADMIN_ENDPOINTS["customer_create"], json=customer_data)
+            
+            if response1.status_code == 201:
+                data1 = response1.json()
+                if data1.get("status") and "data" in data1:
+                    customer_id = data1["data"].get("_id")
+                    self.created_customers.append(customer_id)
+                    
+                    # Try to create duplicate customer with same contact number
+                    customer_data["name"] = "Different Name"  # Change name but keep same contact
+                    response2 = self.session.post(ADMIN_ENDPOINTS["customer_create"], json=customer_data)
+                    
+                    if response2.status_code == 409:  # Conflict status code
+                        data2 = response2.json()
+                        if not data2.get("status"):  # Should be false for error
+                            self.log_result(
+                                "Duplicate Customer Prevention",
+                                True,
+                                "Duplicate customer creation properly prevented",
+                                {
+                                    "first_customer_id": customer_id,
+                                    "duplicate_status_code": response2.status_code,
+                                    "error_message": data2.get("message")
+                                }
+                            )
+                            return True
+                        else:
+                            self.log_result(
+                                "Duplicate Customer Prevention",
+                                False,
+                                "Duplicate customer creation returned success status",
+                                {"response": data2}
+                            )
+                            return False
+                    else:
+                        self.log_result(
+                            "Duplicate Customer Prevention",
+                            False,
+                            f"Duplicate customer creation did not return expected 409 status code",
+                            {
+                                "expected_status": 409,
+                                "actual_status": response2.status_code,
+                                "response": response2.text
+                            }
+                        )
+                        return False
+                else:
+                    self.log_result(
+                        "Duplicate Customer Prevention Setup",
+                        False,
+                        "Failed to create first customer for duplicate test",
+                        {"response": data1}
+                    )
+                    return False
+            else:
+                self.log_result(
+                    "Duplicate Customer Prevention Setup",
+                    False,
+                    f"Failed to create first customer: {response1.status_code}",
+                    {"response": response1.text}
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "Duplicate Customer Prevention Test",
                 False,
                 f"Exception occurred: {str(e)}",
                 {"exception_type": type(e).__name__}
@@ -289,19 +440,30 @@ class CustomerCreationTest:
     
     def run_all_tests(self):
         """Run all tests and return summary"""
-        print("🚀 Starting Invoice Payments Backend Tests")
-        print("=" * 50)
+        print("🚀 Starting Customer Creation Backend Tests")
+        print("=" * 60)
         
-        # Test 1: Payment list API
-        payment_with_bill_id = self.test_payment_list_api()
+        # Setup test data
+        if not self.setup_test_data():
+            print("❌ Failed to setup test data. Exiting.")
+            return {"overall_success": False}
         
-        # Test 2: Invoice details navigation
-        test2_result = self.test_invoice_details_navigation(payment_with_bill_id)
+        # Test 1: Customer creation without password (booking flow)
+        customer_id_1 = self.test_customer_creation_without_password()
+        
+        # Test 2: Customer creation with password (normal flow)
+        customer_id_2 = self.test_customer_creation_with_password()
+        
+        # Test 3: Verify customer appears in list (using first customer)
+        test3_result = self.test_customer_list_verification(customer_id_1)
+        
+        # Test 4: Duplicate customer prevention
+        test4_result = self.test_duplicate_customer_prevention()
         
         # Summary
-        print("\n" + "=" * 50)
+        print("\n" + "=" * 60)
         print("📊 TEST SUMMARY")
-        print("=" * 50)
+        print("=" * 60)
         
         passed_tests = sum(1 for result in self.test_results if result["success"])
         total_tests = len(self.test_results)
@@ -326,23 +488,35 @@ class CustomerCreationTest:
                     print(f"  Details: {issue['details']}")
         
         # Overall result
-        test1_result = payment_with_bill_id is not None
-        overall_success = test1_result and test2_result
+        test1_result = customer_id_1 is not None
+        test2_result = customer_id_2 is not None
+        overall_success = test1_result and test2_result and test3_result and test4_result
+        
         print(f"\n🎯 Overall Result: {'✅ ALL TESTS PASSED' if overall_success else '❌ SOME TESTS FAILED'}")
+        
+        # Test-specific results
+        print(f"\n📝 Test Results Summary:")
+        print(f"✅ Customer Creation Without Password: {'PASS' if test1_result else 'FAIL'}")
+        print(f"✅ Customer Creation With Password: {'PASS' if test2_result else 'FAIL'}")
+        print(f"✅ Customer List Verification: {'PASS' if test3_result else 'FAIL'}")
+        print(f"✅ Duplicate Prevention: {'PASS' if test4_result else 'FAIL'}")
         
         return {
             "overall_success": overall_success,
-            "test1_payment_list": test1_result,
-            "test2_invoice_navigation": test2_result,
+            "test1_without_password": test1_result,
+            "test2_with_password": test2_result,
+            "test3_list_verification": test3_result,
+            "test4_duplicate_prevention": test4_result,
             "total_tests": total_tests,
             "passed_tests": passed_tests,
             "failed_tests": total_tests - passed_tests,
             "detailed_results": self.test_results,
-            "critical_issues": critical_issues
+            "critical_issues": critical_issues,
+            "created_customers": self.created_customers
         }
 
 if __name__ == "__main__":
-    tester = InvoicePaymentsTest()
+    tester = CustomerCreationTest()
     results = tester.run_all_tests()
     
     # Exit with appropriate code
