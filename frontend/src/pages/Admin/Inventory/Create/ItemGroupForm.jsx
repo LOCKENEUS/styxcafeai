@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Form, Button, Row, Col, Card, InputGroup, Modal, Container, BreadcrumbItem, Breadcrumb } from "react-bootstrap";
+import { Form, Button, Row, Col, Card, InputGroup, Modal, Container, BreadcrumbItem, Breadcrumb, Alert } from "react-bootstrap";
 import { BiPlus, BiTrash } from "react-icons/bi";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import Units from "../modal/Units";
@@ -12,6 +12,7 @@ import { getCustomFields, deleteCustomField } from '../../../../store/AdminSlice
 import { getTaxFields } from '../../../../store/AdminSlice/TextFieldSlice';
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
+import { toast } from "react-toastify";
 
 const ItemGroupForm = () => {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ const ItemGroupForm = () => {
 
   // Add loading state
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const customFields = useSelector((state) => state.customFields.customFields);
   const taxFields = useSelector(state => state.taxFieldSlice.taxFields);
@@ -178,6 +180,14 @@ const ItemGroupForm = () => {
     const newAttributes = [...attributes];
     newAttributes[index][field] = value;
     setAttributes(newAttributes);
+    
+    // Clear validation error for this field
+    if (errors[`attribute_${index}_${field}`]) {
+      setErrors(prev => ({
+        ...prev,
+        [`attribute_${index}_${field}`]: null
+      }));
+    }
   };
 
   const removeAttribute = (index) => {
@@ -191,6 +201,11 @@ const ItemGroupForm = () => {
       ...prev,
       [name]: name === 'taxPreference' ? value === 'Taxable' : value
     }));
+    
+    // Clear validation error for this field
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: null }));
+    }
   };
 
   const handleItemChange = (index, field, value) => {
@@ -207,6 +222,14 @@ const ItemGroupForm = () => {
       ...prev,
       items: updatedItems
     }));
+    
+    // Clear validation error for this field
+    if (errors[`item_${index}_${field}`]) {
+      setErrors(prev => ({
+        ...prev,
+        [`item_${index}_${field}`]: null
+      }));
+    }
   };
 
   const handleCopyToAll = (field, sourceIndex = 0) => {
@@ -289,8 +312,66 @@ const ItemGroupForm = () => {
     }));
   };
 
+  // Validation function
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Validate group name
+    if (!formData.group_name || formData.group_name.trim() === '') {
+      newErrors.group_name = 'Item group name is required';
+    }
+
+    // Validate unit
+    if (!formData.unit) {
+      newErrors.unit = 'Please select a unit';
+    }
+
+    // Validate attributes
+    attributes.forEach((attr, index) => {
+      if (!attr.color || attr.color.trim() === '') {
+        newErrors[`attribute_${index}_color`] = 'Attribute name is required';
+      }
+      if (!attr.options || attr.options.trim() === '') {
+        newErrors[`attribute_${index}_options`] = 'Options are required';
+      }
+    });
+
+    // Validate items (cost price and selling price)
+    formData.items.forEach((item, index) => {
+      if (!item.costPrice || item.costPrice <= 0) {
+        newErrors[`item_${index}_costPrice`] = 'Cost price is required and must be greater than 0';
+      }
+      if (!item.sellingPrice || item.sellingPrice <= 0) {
+        newErrors[`item_${index}_sellingPrice`] = 'Selling price is required and must be greater than 0';
+      }
+    });
+
+    return newErrors;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate form
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      
+      // Show user-friendly error message
+      const errorMessages = Object.values(validationErrors);
+      const firstError = errorMessages[0];
+      toast.error(firstError || 'Please fill all required fields correctly');
+      
+      // Scroll to first error
+      const firstErrorKey = Object.keys(validationErrors)[0];
+      const errorElement = document.querySelector(`[name="${firstErrorKey}"]`);
+      if (errorElement) {
+        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      
+      return;
+    }
+    
     let items = generateItems();
 
     if (isEditMode && selectedItemGroup) {
@@ -306,17 +387,23 @@ const ItemGroupForm = () => {
     };
 
     try {
-      setLoading(true); // Set loading to true before submission
+      setLoading(true);
       if (isEditMode) {
         await dispatch(updateItemGroup({ id, itemGroupData: submitData })).unwrap();
+        toast.success('Item group updated successfully!');
       } else {
         await dispatch(addItemGroup(submitData)).unwrap();
+        toast.success('Item group created successfully!');
       }
+      // Redirect to Item Group List
       navigate('/admin/inventory/item-group-list');
     } catch (error) {
       console.error('Failed to save item group:', error);
+      const errorMessage = error?.message || error?.toString() || 'Failed to save item group';
+      toast.error(errorMessage);
+      setErrors({ submit: errorMessage });
     } finally {
-      setLoading(false); // Set loading to false after submission (success or error)
+      setLoading(false);
     }
   };
 
@@ -326,13 +413,20 @@ const ItemGroupForm = () => {
         items={[
           { label: "Home", path: "/admin/dashboard" },
           { label: "Item Group List", path: "/admin/inventory/item-group-list" },
-          { label: "Create", active: true }
+          { label: isEditMode ? "Edit" : "Create", active: true }
         ]}
       />
       <Card className="shadow p-4">
         <div className="d-flex justify-content-start align-items-start">
           <h1>{isEditMode ? 'Edit Item Group' : 'Create New Item Group'}</h1>
         </div>
+        
+        {errors.submit && (
+          <Alert variant="danger" dismissible onClose={() => setErrors(prev => ({ ...prev, submit: null }))}>
+            {errors.submit}
+          </Alert>
+        )}
+        
         <Form onSubmit={handleSubmit}>
           <div className="row">
             <div className="my-4 col-sm-6">
@@ -345,33 +439,46 @@ const ItemGroupForm = () => {
                   placeholder="Enter item group name"
                   value={formData.group_name}
                   onChange={handleInputChange}
+                  isInvalid={!!errors.group_name}
                 />
+                {errors.group_name && (
+                  <Form.Control.Feedback type="invalid">
+                    {errors.group_name}
+                  </Form.Control.Feedback>
+                )}
               </Form.Group>
             </div>
             <div className="my-4 col-sm-6">
               <Form.Label className="fw-bold my-2">Unit<span className="text-danger ms-1">*</span></Form.Label>
-              <Form.Group className="d-flex justify-content-between gap-3 align-items-center">
-                <Form.Select
-                  name="unit"
-                  value={formData.unit}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="">Select Unit</option>
-                  {units.map((unit) => (
-                    <option key={unit._id} value={unit.name}>
-                      {unit.name}
-                      <FaTrash
-                        className="text-danger ms-2"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleDeleteUnit(unit._id);
-                        }}
-                      />
-                    </option>
-                  ))}
-                </Form.Select>
-
+              <Form.Group className="d-flex justify-content-between gap-3 align-items-start">
+                <div className="flex-grow-1">
+                  <Form.Select
+                    name="unit"
+                    value={formData.unit}
+                    onChange={handleInputChange}
+                    required
+                    isInvalid={!!errors.unit}
+                  >
+                    <option value="">Select Unit</option>
+                    {units.map((unit) => (
+                      <option key={unit._id} value={unit.name}>
+                        {unit.name}
+                        <FaTrash
+                          className="text-danger ms-2"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleDeleteUnit(unit._id);
+                          }}
+                        />
+                      </option>
+                    ))}
+                  </Form.Select>
+                  {errors.unit && (
+                    <div className="text-danger small mt-1">
+                      {errors.unit}
+                    </div>
+                  )}
+                </div>
                 <Button className="d-flex justify-content-end align-items-center" style={{ width: "40px", padding: '12px', border: "1px solid blue", height: "40px", borderStyle: "dashed" }} variant="outline-secondary" onClick={() => setShowUnitModal(true)}>
                   <FaPlus className="text-primary" size={30} />
                 </Button>
@@ -524,7 +631,13 @@ const ItemGroupForm = () => {
                         onChange={(e) => handleAttributeChange(index, "color", e.target.value)}
                         disabled={isEditMode}
                         required
+                        isInvalid={!!errors[`attribute_${index}_color`]}
                       />
+                      {errors[`attribute_${index}_color`] && (
+                        <div className="text-danger small mt-1">
+                          {errors[`attribute_${index}_color`]}
+                        </div>
+                      )}
                     </div>
                     <div className="col-md-4">
                       <Form.Control
@@ -534,7 +647,13 @@ const ItemGroupForm = () => {
                         onChange={(e) => handleAttributeChange(index, "options", e.target.value)}
                         disabled={isEditMode}
                         required
+                        isInvalid={!!errors[`attribute_${index}_options`]}
                       />
+                      {errors[`attribute_${index}_options`] && (
+                        <div className="text-danger small mt-1">
+                          {errors[`attribute_${index}_options`]}
+                        </div>
+                      )}
                     </div>
                     <div className="col-sm-4">
                       {!isEditMode && (
@@ -579,7 +698,7 @@ const ItemGroupForm = () => {
                         >(Generate SKU)</span>
                       </th>
                       <th nowrap="" className="px-1">
-                        Cost Price<br />
+                        Cost Price<span className="text-danger">*</span><br />
                         <span
                           type="button"
                           className="text-primary"
@@ -589,7 +708,7 @@ const ItemGroupForm = () => {
                         </span>
                       </th>
                       <th nowrap="" className="px-1">
-                        Selling Price<br />
+                        Selling Price<span className="text-danger">*</span><br />
                         <span
                           type="button"
                           className="text-primary"
@@ -656,19 +775,39 @@ const ItemGroupForm = () => {
                             <td
                               className="px-1"><input
                                 value={formData?.items?.[itemIndex]?.costPrice}
-                                type="number" name="item_cost[]" className="form-control cost-price" required placeholder="Cost Price" style={{ width: '120px' }}
+                                type="number" 
+                                name="item_cost[]" 
+                                className={`form-control cost-price ${errors[`item_${itemIndex}_costPrice`] ? 'is-invalid' : ''}`}
+                                required 
+                                placeholder="Cost Price" 
+                                style={{ width: '120px' }}
                                 onChange={(e) => handleItemChange(itemIndex, 'costPrice', e.target.value)}
                                 onWheel={(e) => e.target.blur()}
-                              /></td>
+                              />
+                              {errors[`item_${itemIndex}_costPrice`] && (
+                                <div className="invalid-feedback d-block">
+                                  {errors[`item_${itemIndex}_costPrice`]}
+                                </div>
+                              )}
+                            </td>
                             <td
                               className="px-1"><input
                                 required
                                 type="number"
                                 value={formData?.items?.[itemIndex]?.sellingPrice}
-                                name="item_price[]" className="form-control selling-price" placeholder="Selling Price" style={{ width: '120px' }}
+                                name="item_price[]" 
+                                className={`form-control selling-price ${errors[`item_${itemIndex}_sellingPrice`] ? 'is-invalid' : ''}`}
+                                placeholder="Selling Price" 
+                                style={{ width: '120px' }}
                                 onChange={(e) => handleItemChange(itemIndex, 'sellingPrice', e.target.value)}
                                 onWheel={(e) => e.target.blur()}
-                              /></td>
+                              />
+                              {errors[`item_${itemIndex}_sellingPrice`] && (
+                                <div className="invalid-feedback d-block">
+                                  {errors[`item_${itemIndex}_sellingPrice`]}
+                                </div>
+                              )}
+                            </td>
                             <td
                               className="px-1"><input
 
@@ -712,7 +851,7 @@ const ItemGroupForm = () => {
 
             <div className="col-md-12">
               <Button type="submit" className="mt-4 btn btn-primary" disabled={loading}>
-                {loading ? 'Submitting...' : 'Save'}
+                {loading ? 'Submitting...' : (isEditMode ? 'Update' : 'Save')}
               </Button>
             </div>
           </div>
