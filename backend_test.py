@@ -19,7 +19,7 @@ SUPERADMIN_ENDPOINTS = {
     "create_payment": f"{BASE_URL}/superadmin/inventory/so/invoice/payment"
 }
 
-class SalesInvoiceTest:
+class InvoicePaymentsTest:
     def __init__(self):
         self.session = requests.Session()
         self.test_results = []
