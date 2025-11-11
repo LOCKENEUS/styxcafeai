@@ -288,14 +288,14 @@ class InvoicePaymentsTest:
     
     def run_all_tests(self):
         """Run all tests and return summary"""
-        print("🚀 Starting Sales Invoice Backend Tests")
+        print("🚀 Starting Invoice Payments Backend Tests")
         print("=" * 50)
         
-        # Test 1: Duplicate invoice numbers
-        test1_result = self.test_duplicate_invoice_numbers()
+        # Test 1: Payment list API
+        payment_with_bill_id = self.test_payment_list_api()
         
-        # Test 2: Payment preview functionality  
-        test2_result = self.test_payment_preview_functionality()
+        # Test 2: Invoice details navigation
+        test2_result = self.test_invoice_details_navigation(payment_with_bill_id)
         
         # Summary
         print("\n" + "=" * 50)
@@ -325,13 +325,14 @@ class InvoicePaymentsTest:
                     print(f"  Details: {issue['details']}")
         
         # Overall result
+        test1_result = payment_with_bill_id is not None
         overall_success = test1_result and test2_result
         print(f"\n🎯 Overall Result: {'✅ ALL TESTS PASSED' if overall_success else '❌ SOME TESTS FAILED'}")
         
         return {
             "overall_success": overall_success,
-            "test1_duplicate_numbers": test1_result,
-            "test2_payment_preview": test2_result,
+            "test1_payment_list": test1_result,
+            "test2_invoice_navigation": test2_result,
             "total_tests": total_tests,
             "passed_tests": passed_tests,
             "failed_tests": total_tests - passed_tests,
