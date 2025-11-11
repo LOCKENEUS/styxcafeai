@@ -611,10 +611,22 @@ export const CreateSo = () => {
                               : null
                           }
                           onChange={(selectedOption) => {
+                            const itemId = selectedOption ? selectedOption.value : "";
+                            
+                            // Check if item is already selected
+                            if (itemId && isItemAlreadySelected(itemId, product.id)) {
+                              setValidationErrors(prev => ({
+                                ...prev,
+                                [`product-${product.id}`]: 'This item is already selected. Please choose a different item.'
+                              }));
+                              toast.error('This item is already selected in another row. Please choose a different item.');
+                              return;
+                            }
+                            
                             updateProduct(
                               product.id,
                               "item",
-                              selectedOption ? selectedOption.value : ""
+                              itemId
                             );
                             if (selectedOption) {
                               setValidationErrors(prev => ({
