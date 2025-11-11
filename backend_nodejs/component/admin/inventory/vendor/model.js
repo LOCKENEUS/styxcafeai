@@ -14,9 +14,8 @@ const vendorSchema = new mongoose.Schema(
     },
     emailID: {
       type: String,
-      required: [true, "Email is required"],
+      required: false, // Email is optional for vendors
       trim: true,
-      // unique: true,
       lowercase: true,
     },
     company: {
