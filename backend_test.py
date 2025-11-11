@@ -10,8 +10,8 @@ import time
 from datetime import datetime
 import sys
 
-# Configuration - Using VITE_API_URL from frontend .env
-BASE_URL = "/api"  # Backend API base URL
+# Configuration - Backend running on localhost:8001
+BASE_URL = "http://localhost:8001/api"  # Backend API base URL
 SUPERADMIN_ENDPOINTS = {
     "payment_list": f"{BASE_URL}/superadmin/inventory/so/invoice/payment/list",
     "invoice_details": f"{BASE_URL}/superadmin/inventory/so/invoice",
