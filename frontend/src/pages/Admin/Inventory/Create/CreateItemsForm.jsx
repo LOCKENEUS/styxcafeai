@@ -219,6 +219,15 @@ const CreateItemsForm = () => {
         }
     }, [taxFields, latestCreatedTax]);
 
+    useEffect(() => {
+        if (vendors.length > 0 && latestCreatedVendor) {
+            const latestVendor = vendors.find(vendor => vendor._id === latestCreatedVendor._id);
+            if (latestVendor) {
+                setFormData(prev => ({ ...prev, preferredVendor: latestVendor._id }));
+            }
+        }
+    }, [vendors, latestCreatedVendor]);
+
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
