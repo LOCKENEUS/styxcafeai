@@ -793,24 +793,35 @@ const CreateItemsForm = () => {
                                 <FormGroup>
                                     <label className="fw-bold my-2">
                                         Preferred Vendor
+                                        {vendorState?.loading && <span className="text-muted ms-2">(Loading...)</span>}
+                                        {vendors?.length > 0 && <span className="text-success ms-2">({vendors.length} available)</span>}
                                     </label>
                                     <InputGroup>
                                         <FormSelect
                                             name="preferredVendor"
                                             aria-label="Select Vendor"
-                                            value={formData.preferredVendor}
+                                            value={formData.preferredVendor || ''}
                                             onChange={handleSelectChange}
+                                            disabled={vendorState?.loading}
                                         >
-                                            <option value="">Select Vendor</option>
-                                            {vendors && vendors.length > 0 ? (
-                                                vendors.map(vendor => (
-                                                    <option key={vendor._id} value={vendor._id}>
-                                                        {vendor.name}
-                                                    </option>
-                                                ))
-                                            ) : (
-                                                <option value="" disabled>No vendors available</option>
-                                            )}
+                                            <option value="">
+                                                {vendorState?.loading ? 'Loading vendors...' : 'Select Vendor'}
+                                            </option>
+                                            {Array.isArray(vendors) && vendors.length > 0 ? (
+                                                vendors.map((vendor, index) => {
+                                                    // Handle different possible vendor name fields
+                                                    const vendorName = vendor.name || vendor.vendorName || vendor.vendorname || `Vendor ${index + 1}`;
+                                                    return (
+                                                        <option key={vendor._id || index} value={vendor._id}>
+                                                            {vendorName}
+                                                        </option>
+                                                    );
+                                                })
+                                            ) : !vendorState?.loading ? (
+                                                <option value="" disabled>
+                                                    {vendorState?.error ? `Error: ${vendorState.error}` : 'No vendors available - Click + to add'}
+                                                </option>
+                                            ) : null}
                                         </FormSelect>
                                     </InputGroup>
                                     <div id="addVendorFieldContainer" />
@@ -819,6 +830,7 @@ const CreateItemsForm = () => {
                                         style={{ width: "40px", padding: '12px', border: "1px solid blue", height: "40px", borderStyle: "dashed" }} 
                                         variant="outline-secondary" 
                                         onClick={() => setShowVendorModal(true)}
+                                        title="Add New Vendor"
                                     >
                                         <FaPlus className="text-primary" size={30} />
                                     </Button>
@@ -828,9 +840,13 @@ const CreateItemsForm = () => {
                                     handleCloseCreateVendor={() => {
                                         setShowVendorModal(false);
                                         // Refresh vendors list after creating new vendor
-                                        dispatch(getVendors(cafeId));
+                                        dispatch(getVendors(cafeId))
+                                            .unwrap()
+                                            .then(() => console.log('✅ Vendors refreshed after creation'))
+                                            .catch((err) => console.error('❌ Error refreshing vendors:', err));
                                     }}
                                     onCreated={(vendorData) => {
+                                        console.log('🎉 New vendor created:', vendorData);
                                         setLatestCreatedVendor(vendorData);
                                     }}
                                 />
