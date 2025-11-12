@@ -29,7 +29,7 @@ ADMIN_ENDPOINTS = {
 
 # SuperAdmin endpoints  
 SUPERADMIN_ENDPOINTS = {
-    "login": f"{BASE_URL}/auth/superadmin/login",
+    "login": f"{BASE_URL}/auth/login",
     "po_list": f"{BASE_URL}/superadmin/inventory/po/list",
     "po_create": f"{BASE_URL}/superadmin/inventory/po",
     "po_by_id": f"{BASE_URL}/superadmin/inventory/po",
