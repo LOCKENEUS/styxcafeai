@@ -1207,12 +1207,60 @@ ${
   }
 };
 
+// Delete Purchase Order
+const deletePurchaseOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid purchase order ID format",
+      });
+    }
+
+    // Check if purchase order exists
+    const purchaseOrder = await InvPo.findById(id);
+    if (!purchaseOrder) {
+      return res.status(404).json({
+        status: false,
+        message: "Purchase order not found",
+      });
+    }
+
+    // Check if purchase order can be deleted (e.g., not if it has been partially received)
+    if (purchaseOrder.pending_qty < purchaseOrder.items.reduce((sum, item) => sum + parseInt(item.qty), 0)) {
+      return res.status(400).json({
+        status: false,
+        message: "Cannot delete purchase order with received items. Please cancel instead.",
+      });
+    }
+
+    // Delete the purchase order
+    await InvPo.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      status: true,
+      message: "Purchase order deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting purchase order:", error);
+    return res.status(500).json({
+      status: false,
+      message: "Error deleting purchase order",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createPurchaseOrder,
   getAllPurchaseOrders,
   getPurchaseOrdersByVendor,
   getPurchaseOrderById,
   updatePurchaseOrder,
+  deletePurchaseOrder,
   createPurchaseReceive,
   getAllPurchaseReceives,
   getPurchaseReceiveById,
