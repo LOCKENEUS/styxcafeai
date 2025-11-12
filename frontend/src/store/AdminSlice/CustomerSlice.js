@@ -208,16 +208,17 @@ export const collectAmountOnline = createAsyncThunk(
         }
       );
 
-      const data = response.data.data;
+      // Backend now returns { success: true, order: {...} }
+      const orderData = response.data.order;
 
-      if (data) {
+      if (orderData) {
         const options = {
           key: import.meta.env.VITE_RAZOR_LIVE_KEY,
-          amount: data.amount * 100,
-          currency: data.currency,
+          amount: orderData.amount,
+          currency: orderData.currency,
           name: "Lockene Inc",
           description: "Credit Collection",
-          order_id: data.id,
+          order_id: orderData.id,
           handler: async function (response) {
             try {
               const verifyResponse = await axios.patch(
@@ -227,7 +228,7 @@ export const collectAmountOnline = createAsyncThunk(
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature,
                   bookingIds: updateData.bookingIds,
-                  amount: data.amount,
+                  amount: orderData.amount / 100,
                   customerId: id,
                 },
                 {
