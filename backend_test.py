@@ -174,71 +174,68 @@ class PurchaseOrderTest:
             return False
     
     def test_admin_po_list(self):
-        """Test 1: Verify Razorpay credentials are properly configured"""
-        print("\n=== Testing Razorpay Credentials Configuration ===")
+        """Test 1: Purchase Order List - Admin"""
+        print("\n=== Testing Admin PO List ===")
+        
+        if not self.admin_token or not self.test_cafe_id:
+            self.log_result(
+                "Admin PO List",
+                False,
+                "Admin authentication required",
+                {}
+            )
+            return False
         
         try:
-            # Check if Razorpay SDK is working by making a test payment order
-            test_data = {
-                "amount": 1,  # Minimum amount for testing
-                "currency": "INR",
-                "receipt": "test_config_check"
-            }
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            url = f"{ADMIN_ENDPOINTS['po_list']}/{self.test_cafe_id}"
             
-            response = self.session.post(ADMIN_ENDPOINTS["payment"], json=test_data)
+            response = self.session.get(url, headers=headers)
             
             if response.status_code == 200:
                 data = response.json()
                 
-                if data.get("success") and "order" in data:
-                    order = data["order"]
+                if data.get("status") and "data" in data:
+                    po_list = data.get("data", [])
                     
-                    # Check if order has required Razorpay fields
-                    required_fields = ["id", "amount", "currency", "receipt"]
-                    missing_fields = [field for field in required_fields if field not in order]
+                    self.log_result(
+                        "Admin PO List",
+                        True,
+                        f"Successfully fetched {len(po_list)} purchase orders for admin's cafe",
+                        {
+                            "endpoint": url,
+                            "po_count": len(po_list),
+                            "response_structure": "{ status: true, data: [...] }",
+                            "sample_fields": list(po_list[0].keys()) if po_list else []
+                        }
+                    )
                     
-                    if not missing_fields:
-                        self.log_result(
-                            "Razorpay Credentials Configuration",
-                            True,
-                            "Razorpay credentials are properly configured and SDK is working",
-                            {
-                                "order_id": order.get("id"),
-                                "amount": order.get("amount"),
-                                "currency": order.get("currency"),
-                                "receipt": order.get("receipt")
-                            }
-                        )
-                        return True
-                    else:
-                        self.log_result(
-                            "Razorpay Credentials Configuration",
-                            False,
-                            f"Order missing required fields: {missing_fields}",
-                            {"order": order}
-                        )
-                        return False
+                    # Store vendor ID for later tests
+                    if po_list and po_list[0].get("vendor_id"):
+                        self.test_vendor_id = po_list[0]["vendor_id"]["_id"] if isinstance(po_list[0]["vendor_id"], dict) else po_list[0]["vendor_id"]
+                    
+                    return True
                 else:
                     self.log_result(
-                        "Razorpay Credentials Configuration",
+                        "Admin PO List",
                         False,
-                        "Invalid response structure - missing 'order' field",
+                        "Invalid response structure",
                         {"response": data}
                     )
                     return False
             else:
                 error_msg = response.json().get("message", "Unknown error") if response.content else "No response content"
                 self.log_result(
-                    "Razorpay Credentials Configuration",
+                    "Admin PO List",
                     False,
-                    f"Failed to create test order: {error_msg}",
-                    {"status_code": response.status_code, "response": response.text}
+                    f"Failed to fetch admin PO list: {error_msg}",
+                    {"status_code": response.status_code, "url": url}
                 )
                 return False
                 
         except Exception as e:
             self.log_result(
-                "Razorpay Credentials Configuration Test",
+                "Admin PO List",
                 False,
                 f"Exception occurred: {str(e)}",
                 {"exception_type": type(e).__name__}
