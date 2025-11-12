@@ -863,6 +863,109 @@ agent_communication:
       - End Time: [Selected] → "11:00 AM" (green badge)
       
       Much better user experience across all areas!
+
+user_problem_statement: |
+  1. AM and PM abbreviations are not correct while creating new slot in the slot list - once web refreshed it shows correct but meantime it's wrong freshly - fix this issue
+  2. Fix attached UI make it small - only the written things "No Booking Available with icon" (image showing large "No Booking" graphic)
+
+frontend:
+  - task: "Fix slot time format display and reduce 'No Booking Available' image size"
+    implemented: true
+    working: "NA"
+    files:
+      - "/app/frontend/src/store/slices/slotsSlice.js"
+      - "/app/frontend/src/pages/Admin/Games/GameInfo.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Fixed both slot time display and no booking image issues:
+          
+          Issue 1: AM/PM Format Wrong Until Refresh
+          - When creating new slot, time showed in wrong format initially
+          - Correct format appeared only after page refresh
+          - Backend returns time in 24-hour format (HH:mm)
+          - Frontend needs to display in 12-hour format (HH:MM AM/PM)
+          
+          Root Cause:
+          - slotsSlice.js used toLocaleTimeString() which has inconsistent format
+          - Different browsers format time differently
+          - No consistent AM/PM format guarantee
+          
+          Solution:
+          - Created custom formatTo12Hour() function in slotsSlice.js
+          - Converts 24-hour format to consistent 12-hour format
+          - Format: "HH:MM AM/PM" (e.g., "09:30 AM", "02:45 PM")
+          - Applied to both addslot.fulfilled and updateslot.fulfilled
+          
+          Logic:
+          1. Parse hour from 24-hour format
+          2. Determine AM/PM (hour >= 12 ? PM : AM)
+          3. Convert hour: 0 → 12, 13-23 → 1-11
+          4. Pad hour with leading zero if single digit
+          5. Return formatted string "HH:MM AM/PM"
+          
+          Now Works:
+          - Slot creation: Immediately shows correct AM/PM format
+          - Slot update: Immediately shows correct AM/PM format
+          - No refresh needed
+          - Consistent across all browsers
+          
+          Issue 2: "No Booking Available" Image Too Large
+          - Image was showing at 50% width (w-50 class)
+          - Taking too much space
+          - Not professional looking
+          
+          Solution:
+          - Changed from w-50 class to fixed dimensions
+          - Set image to 120px x 120px with object-fit: contain
+          - Added proper text hierarchy
+          - Added descriptive subtitle
+          - Better spacing with py-5
+          - Wrapped in flex column for better alignment
+          
+          Before:
+          - Large image (50% width)
+          - No text description
+          - Poor spacing
+          
+          After:
+          - Small, fixed size image (120px x 120px)
+          - Clear heading "No Bookings Available"
+          - Descriptive subtitle "There are no bookings for this game yet"
+          - Professional centered layout
+          - Proper spacing and alignment
+          
+          Files Modified:
+          1. slotsSlice.js - Custom time formatting function
+          2. GameInfo.jsx - Reduced image size and improved layout
+
+agent_communication:
+  - agent: "main"
+    message: |
+      Both issues resolved:
+      
+      ✅ Slot Time Format: Fixed AM/PM display
+      - Custom formatTo12Hour() function
+      - Consistent format across browsers
+      - Immediate display without refresh
+      - Format: "09:30 AM" not "9:30 a.m." or other variants
+      
+      ✅ No Booking Image: Reduced size significantly
+      - From 50% width to 120px x 120px
+      - Added proper text: "No Bookings Available"
+      - Added subtitle for context
+      - Professional, compact design
+      
+      Time format examples:
+      - 00:30 → 12:30 AM
+      - 09:45 → 09:45 AM
+      - 12:00 → 12:00 PM
+      - 15:30 → 03:30 PM
+      - 23:59 → 11:59 PM
   - agent: "testing"
     message: |
       🎯 RAZORPAY PAYMENT INTEGRATION TESTING COMPLETED - ALL TESTS PASSED
