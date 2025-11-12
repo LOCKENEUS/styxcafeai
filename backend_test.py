@@ -409,282 +409,141 @@ class PurchaseOrderTest:
             return False
     
     def test_superadmin_po_by_id(self):
-        """Test 2: Create customer WITH explicit password (normal flow)"""
-        print("\n=== Testing Customer Creation WITH Password ===")
+        """Test 4: Purchase Order by ID - SuperAdmin"""
+        print("\n=== Testing SuperAdmin PO by ID ===")
         
-        try:
-            # Generate test data with password
-            contact_no = self.generate_random_contact()
-            customer_data = self.create_test_customer_data(include_password=True, contact_no=contact_no)
-            
-            print(f"Creating customer with contact: {contact_no}")
-            print(f"Provided password: {customer_data['password']}")
-            
-            # Make API call
-            response = self.session.post(ADMIN_ENDPOINTS["customer_create"], json=customer_data)
-            
-            if response.status_code == 201:
-                data = response.json()
-                
-                if data.get("status") and "data" in data:
-                    customer = data.get("data", {})
-                    customer_id = customer.get("_id")
-                    
-                    self.created_customers.append(customer_id)
-                    
-                    self.log_result(
-                        "Customer Creation With Password",
-                        True,
-                        f"Customer created successfully with provided password",
-                        {
-                            "customer_id": customer_id,
-                            "name": customer.get("name"),
-                            "contact_no": customer.get("contact_no"),
-                            "password_provided": True
-                        }
-                    )
-                    
-                    # Verify the customer was created with correct data
-                    if (customer.get("name") == customer_data["name"] and 
-                        customer.get("contact_no") == customer_data["contact_no"]):
-                        
-                        self.log_result(
-                            "Customer Data Validation With Password",
-                            True,
-                            "Customer data matches input data",
-                            {
-                                "name_match": customer.get("name") == customer_data["name"],
-                                "contact_match": customer.get("contact_no") == customer_data["contact_no"]
-                            }
-                        )
-                        return customer_id
-                    else:
-                        self.log_result(
-                            "Customer Data Validation With Password",
-                            False,
-                            "Customer data does not match input data",
-                            {
-                                "expected_name": customer_data["name"],
-                                "actual_name": customer.get("name"),
-                                "expected_contact": customer_data["contact_no"],
-                                "actual_contact": customer.get("contact_no")
-                            }
-                        )
-                        return None
-                else:
-                    self.log_result(
-                        "Customer Creation With Password",
-                        False,
-                        "Invalid response structure from customer creation API",
-                        {"response": data}
-                    )
-                    return None
-            else:
-                error_msg = response.json().get("message", "Unknown error") if response.content else "No response content"
-                self.log_result(
-                    "Customer Creation With Password",
-                    False,
-                    f"Failed to create customer: {error_msg}",
-                    {"status_code": response.status_code, "response": response.text}
-                )
-                return None
-                
-        except Exception as e:
+        if not self.superadmin_token:
             self.log_result(
-                "Customer Creation With Password Test",
+                "SuperAdmin PO by ID",
                 False,
-                f"Exception occurred: {str(e)}",
-                {"exception_type": type(e).__name__}
-            )
-            return None
-    
-    def test_customer_list_verification(self, customer_id):
-        """Test 3: Verify created customer appears in customer list"""
-        print("\n=== Testing Customer List Verification ===")
-        
-        if not customer_id:
-            self.log_result(
-                "Customer List Verification",
-                False,
-                "No customer ID provided for verification",
+                "SuperAdmin authentication required",
                 {}
             )
             return False
         
+        # First get a PO ID from the list
         try:
-            # Call customer list API
-            response = self.session.get(f"{ADMIN_ENDPOINTS['customer_list']}/{self.test_cafe_id}")
+            headers = {"Authorization": f"Bearer {self.superadmin_token}"}
+            list_url = SUPERADMIN_ENDPOINTS["po_list"]
             
-            if response.status_code == 200:
-                data = response.json()
+            list_response = self.session.get(list_url, headers=headers)
+            
+            if list_response.status_code == 200:
+                list_data = list_response.json()
+                po_list = list_data.get("data", [])
                 
-                if data.get("status") and "data" in data:
-                    customers = data.get("data", [])
-                    
-                    # Look for our created customer
-                    customer_found = False
-                    for customer in customers:
-                        if customer.get("_id") == customer_id:
-                            customer_found = True
-                            break
-                    
-                    if customer_found:
-                        self.log_result(
-                            "Customer List Verification",
-                            True,
-                            f"Created customer found in customer list",
-                            {
-                                "customer_id": customer_id,
-                                "total_customers": len(customers)
-                            }
-                        )
-                        return True
-                    else:
-                        self.log_result(
-                            "Customer List Verification",
-                            False,
-                            f"Created customer not found in customer list",
-                            {
-                                "customer_id": customer_id,
-                                "total_customers": len(customers),
-                                "customer_ids": [c.get("_id") for c in customers[:5]]  # First 5 IDs
-                            }
-                        )
-                        return False
-                else:
+                if not po_list:
                     self.log_result(
-                        "Customer List Verification",
+                        "SuperAdmin PO by ID",
                         False,
-                        "Invalid response structure from customer list API",
-                        {"response": data}
+                        "No purchase orders found to test with",
+                        {}
                     )
                     return False
-            else:
-                error_msg = response.json().get("message", "Unknown error") if response.content else "No response content"
-                self.log_result(
-                    "Customer List Verification",
-                    False,
-                    f"Failed to fetch customer list: {error_msg}",
-                    {"status_code": response.status_code}
-                )
-                return False
                 
-        except Exception as e:
-            self.log_result(
-                "Customer List Verification Test",
-                False,
-                f"Exception occurred: {str(e)}",
-                {"exception_type": type(e).__name__}
-            )
-            return False
-    
-    def test_duplicate_customer_prevention(self):
-        """Test 4: Verify duplicate customer prevention works"""
-        print("\n=== Testing Duplicate Customer Prevention ===")
-        
-        try:
-            # Create first customer
-            contact_no = self.generate_random_contact()
-            customer_data = self.create_test_customer_data(include_password=False, contact_no=contact_no)
-            
-            # First creation should succeed
-            response1 = self.session.post(ADMIN_ENDPOINTS["customer_create"], json=customer_data)
-            
-            if response1.status_code == 201:
-                data1 = response1.json()
-                if data1.get("status") and "data" in data1:
-                    customer_id = data1["data"].get("_id")
-                    self.created_customers.append(customer_id)
+                # Test with first PO
+                test_po_id = po_list[0]["_id"]
+                detail_url = f"{SUPERADMIN_ENDPOINTS['po_by_id']}/{test_po_id}"
+                
+                detail_response = self.session.get(detail_url, headers=headers)
+                
+                if detail_response.status_code == 200:
+                    detail_data = detail_response.json()
                     
-                    # Try to create duplicate customer with same contact number
-                    customer_data["name"] = "Different Name"  # Change name but keep same contact
-                    response2 = self.session.post(ADMIN_ENDPOINTS["customer_create"], json=customer_data)
-                    
-                    if response2.status_code == 409:  # Conflict status code
-                        data2 = response2.json()
-                        if not data2.get("status"):  # Should be false for error
+                    if detail_data.get("status") and "data" in detail_data:
+                        po_detail = detail_data["data"]
+                        
+                        # Check data completeness
+                        required_fields = ["_id", "po_no", "total", "items"]
+                        missing_fields = [field for field in required_fields if field not in po_detail]
+                        
+                        if not missing_fields:
                             self.log_result(
-                                "Duplicate Customer Prevention",
+                                "SuperAdmin PO by ID",
                                 True,
-                                "Duplicate customer creation properly prevented",
+                                f"Successfully fetched complete PO details",
                                 {
-                                    "first_customer_id": customer_id,
-                                    "duplicate_status_code": response2.status_code,
-                                    "error_message": data2.get("message")
+                                    "endpoint": detail_url,
+                                    "po_id": test_po_id,
+                                    "po_number": po_detail.get("po_no"),
+                                    "total_amount": po_detail.get("total"),
+                                    "items_count": len(po_detail.get("items", [])),
+                                    "all_required_fields_present": True
                                 }
                             )
                             return True
                         else:
                             self.log_result(
-                                "Duplicate Customer Prevention",
+                                "SuperAdmin PO by ID",
                                 False,
-                                "Duplicate customer creation returned success status",
-                                {"response": data2}
+                                f"Missing required fields: {missing_fields}",
+                                {"po_detail": po_detail}
                             )
                             return False
                     else:
                         self.log_result(
-                            "Duplicate Customer Prevention",
+                            "SuperAdmin PO by ID",
                             False,
-                            f"Duplicate customer creation did not return expected 409 status code",
-                            {
-                                "expected_status": 409,
-                                "actual_status": response2.status_code,
-                                "response": response2.text
-                            }
+                            "Invalid response structure for PO details",
+                            {"response": detail_data}
                         )
                         return False
                 else:
+                    error_msg = detail_response.json().get("message", "Unknown error") if detail_response.content else "No response content"
                     self.log_result(
-                        "Duplicate Customer Prevention Setup",
+                        "SuperAdmin PO by ID",
                         False,
-                        "Failed to create first customer for duplicate test",
-                        {"response": data1}
+                        f"Failed to fetch PO details: {error_msg}",
+                        {"status_code": detail_response.status_code, "url": detail_url}
                     )
                     return False
             else:
                 self.log_result(
-                    "Duplicate Customer Prevention Setup",
+                    "SuperAdmin PO by ID",
                     False,
-                    f"Failed to create first customer: {response1.status_code}",
-                    {"response": response1.text}
+                    "Failed to get PO list for testing",
+                    {"status_code": list_response.status_code}
                 )
                 return False
                 
         except Exception as e:
             self.log_result(
-                "Duplicate Customer Prevention Test",
+                "SuperAdmin PO by ID",
                 False,
                 f"Exception occurred: {str(e)}",
                 {"exception_type": type(e).__name__}
             )
             return False
-    
+
     def run_all_tests(self):
-        """Run all tests and return summary"""
-        print("🚀 Starting Customer Creation Backend Tests")
+        """Run all Purchase Order tests and return summary"""
+        print("🚀 Starting Purchase Order Backend Tests")
         print("=" * 60)
         
-        # Setup test data
-        if not self.setup_test_data():
-            print("❌ Failed to setup test data. Exiting.")
+        # Authentication
+        admin_auth = self.authenticate_admin()
+        superadmin_auth = self.authenticate_superadmin()
+        
+        if not admin_auth and not superadmin_auth:
+            print("❌ Failed to authenticate. Exiting.")
             return {"overall_success": False}
         
-        # Test 1: Customer creation without password (booking flow)
-        customer_id_1 = self.test_customer_creation_without_password()
+        # Test results tracking
+        test_results = {}
         
-        # Test 2: Customer creation with password (normal flow)
-        customer_id_2 = self.test_customer_creation_with_password()
+        # Admin Tests
+        if admin_auth:
+            test_results["admin_po_list"] = self.test_admin_po_list()
+            test_results["admin_po_by_id"] = self.test_admin_po_by_id()
         
-        # Test 3: Verify customer appears in list (using first customer)
-        test3_result = self.test_customer_list_verification(customer_id_1)
-        
-        # Test 4: Duplicate customer prevention
-        test4_result = self.test_duplicate_customer_prevention()
+        # SuperAdmin Tests
+        if superadmin_auth:
+            test_results["superadmin_po_list"] = self.test_superadmin_po_list()
+            test_results["superadmin_po_by_id"] = self.test_superadmin_po_by_id()
         
         # Summary
         print("\n" + "=" * 60)
-        print("📊 TEST SUMMARY")
+        print("📊 PURCHASE ORDER TEST SUMMARY")
         print("=" * 60)
         
         passed_tests = sum(1 for result in self.test_results if result["success"])
@@ -710,35 +569,22 @@ class PurchaseOrderTest:
                     print(f"  Details: {issue['details']}")
         
         # Overall result
-        test1_result = customer_id_1 is not None
-        test2_result = customer_id_2 is not None
-        overall_success = test1_result and test2_result and test3_result and test4_result
+        overall_success = passed_tests == total_tests
         
         print(f"\n🎯 Overall Result: {'✅ ALL TESTS PASSED' if overall_success else '❌ SOME TESTS FAILED'}")
         
-        # Test-specific results
-        print(f"\n📝 Test Results Summary:")
-        print(f"✅ Customer Creation Without Password: {'PASS' if test1_result else 'FAIL'}")
-        print(f"✅ Customer Creation With Password: {'PASS' if test2_result else 'FAIL'}")
-        print(f"✅ Customer List Verification: {'PASS' if test3_result else 'FAIL'}")
-        print(f"✅ Duplicate Prevention: {'PASS' if test4_result else 'FAIL'}")
-        
         return {
             "overall_success": overall_success,
-            "test1_without_password": test1_result,
-            "test2_with_password": test2_result,
-            "test3_list_verification": test3_result,
-            "test4_duplicate_prevention": test4_result,
             "total_tests": total_tests,
             "passed_tests": passed_tests,
             "failed_tests": total_tests - passed_tests,
             "detailed_results": self.test_results,
             "critical_issues": critical_issues,
-            "created_customers": self.created_customers
+            "test_results": test_results
         }
 
 if __name__ == "__main__":
-    tester = CustomerCreationTest()
+    tester = PurchaseOrderTest()
     results = tester.run_all_tests()
     
     # Exit with appropriate code
