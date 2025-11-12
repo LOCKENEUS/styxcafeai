@@ -251,11 +251,37 @@ const slotslice = createSlice({
       .addCase(updateslot.fulfilled, (state, action) => {
         state.loading = false;
         const updatedslot = action.payload.data; // Get updated slot from response
+        
+        // Helper function to convert "HH:mm" (24-hour) to "HH:MM AM/PM" format
+        const formatTo12Hour = (timeStr) => {
+          const [hourStr, minute] = timeStr.split(':');
+          let hour = parseInt(hourStr, 10);
+          const period = hour >= 12 ? 'PM' : 'AM';
+          
+          // Convert to 12-hour format
+          if (hour === 0) {
+            hour = 12;
+          } else if (hour > 12) {
+            hour = hour - 12;
+          }
+          
+          // Pad with leading zero if needed
+          const formattedHour = hour.toString().padStart(2, '0');
+          return `${formattedHour}:${minute} ${period}`;
+        };
+        
+        // Format the updated slot times
+        const formattedSlot = {
+          ...updatedslot,
+          start_time: formatTo12Hour(updatedslot.start_time),
+          end_time: formatTo12Hour(updatedslot.end_time),
+        };
+        
         const index = state.slots.findIndex(
           (loc) => loc._id === updatedslot._id
         ); // Use _id instead of id
         if (index !== -1) {
-          state.slots[index] = updatedslot; // Update state
+          state.slots[index] = formattedSlot; // Update state with formatted slot
         }
       })
       .addCase(updateslot.rejected, (state, action) => {
