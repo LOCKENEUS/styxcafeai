@@ -125,8 +125,8 @@ class PurchaseOrderTest:
         
         try:
             login_data = {
-                "email": "superadmin@example.com",
-                "password": "superadmin123"
+                "email": "styxcafe@gmail.com",
+                "password": "10101984#rR"
             }
             
             response = self.session.post(SUPERADMIN_ENDPOINTS["login"], json=login_data)
