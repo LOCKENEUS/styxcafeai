@@ -173,7 +173,7 @@ class PurchaseOrderTest:
             )
             return False
     
-    def test_razorpay_credentials_configuration(self):
+    def test_admin_po_list(self):
         """Test 1: Verify Razorpay credentials are properly configured"""
         print("\n=== Testing Razorpay Credentials Configuration ===")
         
