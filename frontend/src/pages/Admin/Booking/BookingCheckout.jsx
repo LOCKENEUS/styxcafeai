@@ -2566,7 +2566,7 @@ const BookingCheckout = () => {
                             </div>
 
                             <div style={{ flex: 2, display: "flex", justifyContent: "center" }}>
-                              {booking?.status === "Pending" ? <div className="d-flex align-items-center gap-1">
+                              {(booking?.status === "Pending" || booking?.status === "In Progress") ? <div className="d-flex align-items-center gap-1">
                                 <Button
                                   variant="light"
                                   disabled={product.quantity <= 1}
@@ -2578,6 +2578,12 @@ const BookingCheckout = () => {
                                       Math.max(0, Number(product.quantity) - 1)
                                     )
                                   }
+                                  style={{ 
+                                    minWidth: "30px",
+                                    height: "28px",
+                                    padding: "2px 6px",
+                                    fontSize: "14px"
+                                  }}
                                 >
                                   −
                                 </Button>
@@ -2610,6 +2616,12 @@ const BookingCheckout = () => {
                                       Number(product.quantity) + 1
                                     )
                                   }
+                                  style={{ 
+                                    minWidth: "30px",
+                                    height: "28px",
+                                    padding: "2px 6px",
+                                    fontSize: "14px"
+                                  }}
                                 >
                                   +
                                 </Button>
