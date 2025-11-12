@@ -2566,9 +2566,9 @@ const BookingCheckout = () => {
                             </div>
 
                             <div style={{ flex: 2, display: "flex", justifyContent: "center" }}>
-                              {(booking?.status === "Pending" || booking?.status === "In Progress") ? <div className="d-flex align-items-center gap-1">
+                              {(booking?.status === "Pending" || booking?.status === "In Progress") ? <div className="d-flex align-items-center gap-2">
                                 <Button
-                                  variant="light"
+                                  variant="outline-primary"
                                   disabled={product.quantity <= 1}
                                   size="sm"
                                   onClick={() =>
@@ -2579,10 +2579,12 @@ const BookingCheckout = () => {
                                     )
                                   }
                                   style={{ 
-                                    minWidth: "30px",
-                                    height: "28px",
-                                    padding: "2px 6px",
-                                    fontSize: "14px"
+                                    minWidth: "35px",
+                                    height: "32px",
+                                    padding: "4px 8px",
+                                    fontSize: "16px",
+                                    fontWeight: "bold",
+                                    borderWidth: "2px"
                                   }}
                                 >
                                   −
