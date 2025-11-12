@@ -95,6 +95,46 @@ class POErrorHandlingTest:
             )
             return False
     
+    def create_test_item(self):
+        """Create a test item for testing valid item scenarios"""
+        print("=== Creating Test Item ===")
+        
+        if not self.admin_token or not self.test_cafe_id:
+            return False
+        
+        try:
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            
+            item_data = {
+                "cafe": self.test_cafe_id,
+                "name": "Test Item for PO",
+                "sku": "TEST-SKU-001",
+                "unit": "pcs",
+                "hsn": "1234",
+                "taxable": True,
+                "sellingPrice": 100,
+                "costPrice": 80,
+                "description": "Test item for Purchase Order testing",
+                "is_active": True,
+                "is_deleted": False
+            }
+            
+            response = self.session.post(f"{BASE_URL}/admin/inventory/item", json=item_data, headers=headers)
+            
+            if response.status_code == 201:
+                data = response.json()
+                if data.get("status") and "data" in data:
+                    self.test_item_id = data["data"]["_id"]
+                    print(f"   ✅ Test item created: {self.test_item_id}")
+                    return True
+            
+            print(f"   ⚠️ Failed to create test item: {response.status_code} - {response.text}")
+            return False
+                
+        except Exception as e:
+            print(f"   ⚠️ Exception creating test item: {str(e)}")
+            return False
+    
     def test_invalid_objectid_format(self):
         """Test 1: Invalid ObjectId Format"""
         print("=== Test 1: Invalid ObjectId Format ===")
