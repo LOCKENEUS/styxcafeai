@@ -79,13 +79,8 @@ class PurchaseOrderTest:
                 data = response.json()
                 
                 if data.get("status") and "data" in data and "token" in data["data"]:
-                    self.auth_token = data["data"]["token"]
-                    self.test_cafe_id = data["data"]["cafe"]["_id"]  # Get actual cafe ID
-                    
-                    # Set authorization header for all future requests
-                    self.session.headers.update({
-                        "Authorization": f"Bearer {self.auth_token}"
-                    })
+                    self.admin_token = data["data"]["token"]
+                    self.test_cafe_id = data["data"]["cafe"]["_id"]
                     
                     self.log_result(
                         "Admin Authentication",
@@ -93,7 +88,7 @@ class PurchaseOrderTest:
                         f"Successfully authenticated as admin",
                         {
                             "cafe_id": self.test_cafe_id,
-                            "token_length": len(self.auth_token) if self.auth_token else 0
+                            "token_length": len(self.admin_token) if self.admin_token else 0
                         }
                     )
                     return True
@@ -118,6 +113,60 @@ class PurchaseOrderTest:
         except Exception as e:
             self.log_result(
                 "Admin Authentication",
+                False,
+                f"Exception occurred: {str(e)}",
+                {"exception_type": type(e).__name__}
+            )
+            return False
+    
+    def authenticate_superadmin(self):
+        """Authenticate as superadmin and get token"""
+        print("\n=== Authenticating as SuperAdmin ===")
+        
+        try:
+            login_data = {
+                "email": "superadmin@example.com",
+                "password": "superadmin123"
+            }
+            
+            response = self.session.post(SUPERADMIN_ENDPOINTS["login"], json=login_data)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                if data.get("status") and "data" in data and "token" in data["data"]:
+                    self.superadmin_token = data["data"]["token"]
+                    
+                    self.log_result(
+                        "SuperAdmin Authentication",
+                        True,
+                        f"Successfully authenticated as superadmin",
+                        {
+                            "token_length": len(self.superadmin_token) if self.superadmin_token else 0
+                        }
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "SuperAdmin Authentication",
+                        False,
+                        "Invalid response structure from superadmin login API",
+                        {"response": data}
+                    )
+                    return False
+            else:
+                error_msg = response.json().get("message", "Unknown error") if response.content else "No response content"
+                self.log_result(
+                    "SuperAdmin Authentication",
+                    False,
+                    f"Failed to authenticate superadmin: {error_msg}",
+                    {"status_code": response.status_code}
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "SuperAdmin Authentication",
                 False,
                 f"Exception occurred: {str(e)}",
                 {"exception_type": type(e).__name__}
