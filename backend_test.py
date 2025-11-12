@@ -38,12 +38,15 @@ SUPERADMIN_ENDPOINTS = {
     "po_by_vendor": f"{BASE_URL}/superadmin/inventory/po/list"
 }
 
-class RazorpayPaymentTest:
+class PurchaseOrderTest:
     def __init__(self):
         self.session = requests.Session()
         self.test_results = []
-        self.auth_token = None
+        self.admin_token = None
+        self.superadmin_token = None
         self.test_cafe_id = None
+        self.test_vendor_id = None
+        self.created_po_ids = []
         
     def log_result(self, test_name, success, message, details=None):
         """Log test results"""
