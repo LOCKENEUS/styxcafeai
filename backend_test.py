@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing for Razorpay Payment Integration
-Tests for Razorpay payment order creation and verification endpoints
+Backend API Testing for Purchase Order Endpoints
+Tests all Purchase Order endpoints comprehensively to identify and fix errors
 """
 
 import requests
@@ -13,12 +13,29 @@ import random
 import string
 import os
 
-# Configuration - Backend running on localhost:8001 (Node.js backend)
-BASE_URL = "http://localhost:8001/api"
+# Configuration - Use external URL from frontend env
+BASE_URL = "https://styx-inventory.preview.emergentagent.com/api"
+
+# Admin endpoints
 ADMIN_ENDPOINTS = {
     "login": f"{BASE_URL}/auth/admin/login",
-    "payment": f"{BASE_URL}/admin/booking/payment",
-    "verify_payment": f"{BASE_URL}/admin/booking/verify-payment"
+    "po_list": f"{BASE_URL}/admin/inventory/po/list",
+    "po_create": f"{BASE_URL}/admin/inventory/po",
+    "po_by_id": f"{BASE_URL}/admin/inventory/po",
+    "po_update": f"{BASE_URL}/admin/inventory/po",
+    "po_delete": f"{BASE_URL}/admin/inventory/po",
+    "po_by_vendor": f"{BASE_URL}/admin/inventory/po/list"
+}
+
+# SuperAdmin endpoints  
+SUPERADMIN_ENDPOINTS = {
+    "login": f"{BASE_URL}/auth/superadmin/login",
+    "po_list": f"{BASE_URL}/superadmin/inventory/po/list",
+    "po_create": f"{BASE_URL}/superadmin/inventory/po",
+    "po_by_id": f"{BASE_URL}/superadmin/inventory/po",
+    "po_update": f"{BASE_URL}/superadmin/inventory/po",
+    "po_delete": f"{BASE_URL}/superadmin/inventory/po",
+    "po_by_vendor": f"{BASE_URL}/superadmin/inventory/po/list"
 }
 
 class RazorpayPaymentTest:
