@@ -8,6 +8,7 @@ const {
   getAllPurchaseOrders,
   getPurchaseOrderById,
   updatePurchaseOrder,
+  deletePurchaseOrder,
   getPurchaseOrdersByVendor,
   createPurchaseReceive,
   getAllPurchaseReceives,
