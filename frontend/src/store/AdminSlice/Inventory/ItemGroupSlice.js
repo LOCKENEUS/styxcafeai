@@ -64,10 +64,10 @@ export const addItemGroup = createAsyncThunk(
           },
         }
       );
-      toast.success("Item group added successfully!");
+      // Removed toast notification - handled in component
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      // Removed toast notification - handled in component
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Something went wrong"
       );
