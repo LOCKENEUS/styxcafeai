@@ -515,6 +515,311 @@ class PurchaseOrderTest:
             )
             return False
 
+    def test_admin_create_po_valid(self):
+        """Test 5: Create Purchase Order - Admin (Valid Data)"""
+        print("\n=== Testing Admin Create PO (Valid Data) ===")
+        
+        if not self.admin_token or not self.test_cafe_id:
+            self.log_result(
+                "Admin Create PO (Valid)",
+                False,
+                "Admin authentication required",
+                {}
+            )
+            return False
+        
+        try:
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            
+            # Create test PO data
+            po_data = {
+                "cafe": self.test_cafe_id,
+                "vendor_id": None,  # StyxCafe internal order
+                "user_type": "Admin",
+                "delivery_type": "Organization",
+                "delivery_date": "2024-12-31",
+                "payment_terms": "Net 30",
+                "reference": "TEST-REF-001",
+                "description": "Test Purchase Order",
+                "items": [
+                    {
+                        "id": "test_item_id_1",
+                        "qty": 10,
+                        "price": 100,
+                        "hsn": "1234",
+                        "tax": None,
+                        "tax_amt": 0,
+                        "total": 1000
+                    }
+                ],
+                "subtotal": 1000,
+                "discount_value": 0,
+                "discount_type": "flat",
+                "tax": [],
+                "total": 1000,
+                "adjustment_amount": 0,
+                "internal_team_notes": "Test notes"
+            }
+            
+            response = self.session.post(ADMIN_ENDPOINTS["po_create"], json=po_data, headers=headers)
+            
+            if response.status_code == 201:
+                data = response.json()
+                
+                if data.get("status") and "data" in data:
+                    created_po = data["data"]
+                    po_id = created_po.get("_id")
+                    
+                    if po_id:
+                        self.created_po_ids.append(po_id)
+                    
+                    self.log_result(
+                        "Admin Create PO (Valid)",
+                        True,
+                        f"Successfully created purchase order",
+                        {
+                            "po_id": po_id,
+                            "po_number": created_po.get("po_no"),
+                            "total": created_po.get("total"),
+                            "cafe": created_po.get("cafe"),
+                            "status_code": response.status_code
+                        }
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Admin Create PO (Valid)",
+                        False,
+                        "Invalid response structure",
+                        {"response": data}
+                    )
+                    return False
+            else:
+                error_msg = response.json().get("message", "Unknown error") if response.content else "No response content"
+                self.log_result(
+                    "Admin Create PO (Valid)",
+                    False,
+                    f"Failed to create PO: {error_msg}",
+                    {"status_code": response.status_code, "response": response.text}
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "Admin Create PO (Valid)",
+                False,
+                f"Exception occurred: {str(e)}",
+                {"exception_type": type(e).__name__}
+            )
+            return False
+
+    def test_admin_create_po_invalid(self):
+        """Test 6: Create Purchase Order - Admin (Missing Required Fields)"""
+        print("\n=== Testing Admin Create PO (Invalid Data) ===")
+        
+        if not self.admin_token:
+            self.log_result(
+                "Admin Create PO (Invalid)",
+                False,
+                "Admin authentication required",
+                {}
+            )
+            return False
+        
+        try:
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            
+            # Create invalid PO data (missing required items field)
+            invalid_po_data = {
+                "cafe": self.test_cafe_id,
+                "delivery_type": "Organization",
+                "total": 1000
+                # Missing required "items" field
+            }
+            
+            response = self.session.post(ADMIN_ENDPOINTS["po_create"], json=invalid_po_data, headers=headers)
+            
+            if response.status_code == 400:
+                data = response.json()
+                
+                if not data.get("status") and "message" in data:
+                    self.log_result(
+                        "Admin Create PO (Invalid)",
+                        True,
+                        f"Correctly rejected invalid PO data with validation error",
+                        {
+                            "status_code": response.status_code,
+                            "error_message": data.get("message"),
+                            "validation_working": True
+                        }
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Admin Create PO (Invalid)",
+                        False,
+                        "Invalid error response structure",
+                        {"response": data}
+                    )
+                    return False
+            else:
+                self.log_result(
+                    "Admin Create PO (Invalid)",
+                    False,
+                    f"Expected 400 status code for invalid data, got {response.status_code}",
+                    {"status_code": response.status_code, "response": response.text}
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "Admin Create PO (Invalid)",
+                False,
+                f"Exception occurred: {str(e)}",
+                {"exception_type": type(e).__name__}
+            )
+            return False
+
+    def test_admin_delete_po(self):
+        """Test 7: Delete Purchase Order - Admin (Check if endpoint exists)"""
+        print("\n=== Testing Admin Delete PO ===")
+        
+        if not self.admin_token:
+            self.log_result(
+                "Admin Delete PO",
+                False,
+                "Admin authentication required",
+                {}
+            )
+            return False
+        
+        try:
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            
+            # Check if DELETE endpoint exists by testing with a dummy ID
+            dummy_id = "507f1f77bcf86cd799439011"  # Valid ObjectId format
+            url = f"{ADMIN_ENDPOINTS['po_delete']}/{dummy_id}"
+            
+            response = self.session.delete(url, headers=headers)
+            
+            if response.status_code == 404:
+                # Check if it's a "not found" for the PO or "not found" for the endpoint
+                try:
+                    data = response.json()
+                    if "not found" in data.get("message", "").lower():
+                        self.log_result(
+                            "Admin Delete PO",
+                            True,
+                            "DELETE endpoint exists but PO not found (expected)",
+                            {"status_code": response.status_code, "url": url}
+                        )
+                        return True
+                except:
+                    pass
+                
+                # If we get HTML response, endpoint doesn't exist
+                if "html" in response.headers.get("content-type", "").lower():
+                    self.log_result(
+                        "Admin Delete PO",
+                        False,
+                        "DELETE endpoint not implemented - returns HTML error page",
+                        {"status_code": response.status_code, "url": url}
+                    )
+                    return False
+            elif response.status_code == 405:
+                self.log_result(
+                    "Admin Delete PO",
+                    False,
+                    "DELETE method not allowed - endpoint missing",
+                    {"status_code": response.status_code, "url": url}
+                )
+                return False
+            else:
+                # Any other response means the endpoint exists
+                self.log_result(
+                    "Admin Delete PO",
+                    True,
+                    f"DELETE endpoint exists (got status {response.status_code})",
+                    {"status_code": response.status_code, "url": url}
+                )
+                return True
+                
+        except Exception as e:
+            self.log_result(
+                "Admin Delete PO",
+                False,
+                f"Exception occurred: {str(e)}",
+                {"exception_type": type(e).__name__}
+            )
+            return False
+
+    def test_admin_po_by_vendor(self):
+        """Test 8: PO List by Vendor - Admin"""
+        print("\n=== Testing Admin PO by Vendor ===")
+        
+        if not self.admin_token or not self.test_cafe_id:
+            self.log_result(
+                "Admin PO by Vendor",
+                False,
+                "Admin authentication required",
+                {}
+            )
+            return False
+        
+        try:
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            
+            # Use test vendor ID or create a dummy one
+            vendor_id = self.test_vendor_id or "507f1f77bcf86cd799439011"
+            url = f"{ADMIN_ENDPOINTS['po_by_vendor']}/{self.test_cafe_id}/{vendor_id}"
+            
+            response = self.session.get(url, headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                if data.get("status") and "data" in data:
+                    po_list = data.get("data", [])
+                    
+                    self.log_result(
+                        "Admin PO by Vendor",
+                        True,
+                        f"Successfully fetched {len(po_list)} POs for vendor",
+                        {
+                            "endpoint": url,
+                            "vendor_id": vendor_id,
+                            "po_count": len(po_list),
+                            "vendor_filtering_working": True
+                        }
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Admin PO by Vendor",
+                        False,
+                        "Invalid response structure",
+                        {"response": data}
+                    )
+                    return False
+            else:
+                error_msg = response.json().get("message", "Unknown error") if response.content else "No response content"
+                self.log_result(
+                    "Admin PO by Vendor",
+                    False,
+                    f"Failed to fetch POs by vendor: {error_msg}",
+                    {"status_code": response.status_code, "url": url}
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "Admin PO by Vendor",
+                False,
+                f"Exception occurred: {str(e)}",
+                {"exception_type": type(e).__name__}
+            )
+            return False
+
     def run_all_tests(self):
         """Run all Purchase Order tests and return summary"""
         print("🚀 Starting Purchase Order Backend Tests")
