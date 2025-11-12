@@ -572,8 +572,12 @@ const BookingList = () => {
                                 </tr>
                             )) :
                             <tr>
-                                <td colSpan={8} className="text-center " style={{ height: "40vh", border: "none" }}>
-                                    <h1>  <span>  <MdOutlineDoNotDisturb /> </span> No booking Available</h1>
+                                <td colSpan={8} className="text-center py-5" style={{ border: "none" }}>
+                                    <div className="d-flex flex-column align-items-center justify-content-center">
+                                        <MdOutlineDoNotDisturb size={48} className="text-muted mb-2" />
+                                        <h5 className="text-muted mb-0">No Bookings Available</h5>
+                                        <p className="text-muted small mb-0">There are no bookings to display at this moment</p>
+                                    </div>
                                 </td>
                             </tr>}
                     </tbody>
