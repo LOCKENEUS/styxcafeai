@@ -545,80 +545,79 @@ const ItemGroupForm = () => {
               <Form.Group>
                 <Form.Label className="fw-bold">Manufacturer</Form.Label>
                 <div className="d-flex gap-2">
-                <Form.Select
-                  name="manufacturer"
-                  value={formData.manufacturer}
-                  onChange={handleInputChange}
-                >
-                  <option value="">Select Manufacturer</option>
-                  {manufacturers.map((manufacturer) => (
-                    <option key={manufacturer._id} value={manufacturer._id}>
-                      {manufacturer.name}
-                      <FaTrash
-                        className="text-danger ms-2"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleDeleteManufacturer(manufacturer._id);
-                        }}
-                      />
-                    </option>
-                  ))}
-                </Form.Select>
-                <Button className="d-flex justify-content-end align-items-center" style={{ width: "40px", padding: '12px', border: "1px solid blue", height: "40px", borderStyle: "dashed" }} variant="outline-secondary" onClick={() => setShowManufacturerModal(true)}>
-                  <FaPlus className="text-primary" size={30} />
-                </Button>
+                    <Form.Select
+                      name="manufacturer"
+                      value={formData.manufacturer}
+                      onChange={handleInputChange}
+                      className="flex-grow-1"
+                    >
+                      <option value="">Select Manufacturer</option>
+                      {manufacturers.map((manufacturer) => (
+                        <option key={manufacturer._id} value={manufacturer._id}>
+                          {manufacturer.name}
+                        </option>
+                      ))}
+                    </Form.Select>
+                    <Button 
+                      style={{ width: "40px", height: "38px", padding: '0', border: "1px solid blue", borderStyle: "dashed" }} 
+                      variant="outline-secondary" 
+                      onClick={() => setShowManufacturerModal(true)}
+                    >
+                      <FaPlus className="text-primary" size={20} />
+                    </Button>
+                  </div>
               </Form.Group>
               <Manufacturer
                 show={showManufacturerModal}
                 handleClose={() => setShowManufacturerModal(false)}
                 onCreated={(manufacturerData) => setLatestCreatedManufacturer({ ...manufacturerData, type: 'Manufacturer' })}
               />
-            </div>
-            <div className="my-2 col-md-6">
-              <Form.Label className="fw-bold my-2">Brand</Form.Label>
-              <Form.Group className="d-flex justify-content-between gap-3 align-items-center">
-                <Form.Select
-                  name="brand"
-                  value={formData.brand}
-                  onChange={handleInputChange}
-                >
-                  <option value="">Select Brand</option>
-                  {brands.map((brand) => (
-                    <option key={brand._id} value={brand._id}>
-                      {brand.name}
-                      <FaTrash
-                        className="text-danger ms-2"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleDeleteBrand(brand._id);
-                        }}
-                      />
-                    </option>
-                  ))}
-                </Form.Select>
-
-
-                <Button className="d-flex justify-content-end align-items-center" style={{ width: "40px", padding: '12px', border: "1px solid blue", height: "40px", borderStyle: "dashed" }} variant="outline-secondary" onClick={() => setShowBrandModal(true)}>
-                  <FaPlus className="text-primary" size={30} />
-                </Button>
+            </Col>
+            <Col md={6} className="mb-3">
+              <Form.Group>
+                <Form.Label className="fw-bold">Brand</Form.Label>
+                <div className="d-flex gap-2">
+                  <Form.Select
+                    name="brand"
+                    value={formData.brand}
+                    onChange={handleInputChange}
+                    className="flex-grow-1"
+                  >
+                    <option value="">Select Brand</option>
+                    {brands.map((brand) => (
+                      <option key={brand._id} value={brand._id}>
+                        {brand.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                  <Button 
+                    style={{ width: "40px", height: "38px", padding: '0', border: "1px solid blue", borderStyle: "dashed" }} 
+                    variant="outline-secondary" 
+                    onClick={() => setShowBrandModal(true)}
+                  >
+                    <FaPlus className="text-primary" size={20} />
+                  </Button>
+                </div>
               </Form.Group>
-
               <Brand
                 show={showBrandModal}
                 handleClose={() => setShowBrandModal(false)}
                 onCreated={(brandData) => setLatestCreatedBrand({ ...brandData, type: 'Brand' })}
               />
-            </div>
-            <div className="my-2 col-md-6">
+            </Col>
+            <Col md={6} className="mb-3">
               <Form.Group>
-                <Form.Label className="fw-bold my-2">Description</Form.Label>
+                <Form.Label className="fw-bold">Description</Form.Label>
                 <Form.Control
-
                   value={formData.description}
                   onChange={handleInputChange}
-                  as="textarea" placeholder="Description" name="description" rows={3} />
+                  as="textarea" 
+                  placeholder="Enter description" 
+                  name="description" 
+                  rows={3} 
+                />
               </Form.Group>
-            </div>
+            </Col>
             <div className="my-4 col-sm-12">
               <div>
                 <label className="fw-bold mb-2">Multiple Items? Create Attributes and Options <span className="text-danger ms-1">*</span></label>
