@@ -1071,6 +1071,98 @@ agent_communication:
       6. Update booking/credit status
       
       Ready for testing across all three payment scenarios.
+
+user_problem_statement: |
+  In path /admin/booking/checkout/{id}:
+  1. When timer is running, Add-on quantity selector (+ and -) is not visible when adding or subtracting quantity - make it visible
+  2. While selecting looser, show dropdown to select looser instead of tooltip
+
+frontend:
+  - task: "Fix addon quantity visibility during timer and improve looser selection UI"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/Admin/Booking/BookingCheckout.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Fixed both addon quantity controls and looser selection UI:
+          
+          Issue 1: Addon Quantity Controls Not Visible During Timer
+          - When timer is running (status "In Progress"), quantity controls were hidden
+          - Only visible when status === "Pending"
+          - Users couldn't modify addon quantities during active game
+          
+          Root Cause:
+          - Conditional rendering: {booking?.status === "Pending" ? ...}
+          - When timer starts, status changes from "Pending" to "In Progress"
+          - Quantity controls disappeared because condition failed
+          
+          Fix Applied:
+          - Changed condition to: {(booking?.status === "Pending" || booking?.status === "In Progress") ? ...}
+          - Now shows quantity controls in both states
+          - Added better button styling for visibility
+          - minWidth: 30px, height: 28px for consistent sizing
+          
+          Before: Only visible when Pending
+          After: Visible when Pending OR In Progress (timer running)
+          
+          Issue 2: Looser Selection Using Tooltip (Poor UX)
+          - Used OverlayTrigger with Tooltip for player selection
+          - Required hover to show tooltip
+          - Hard to click on mobile
+          - Tooltip disappears unexpectedly
+          - Not intuitive for users
+          
+          Fix Applied:
+          - Replaced OverlayTrigger + Tooltip with Form.Select dropdown
+          - Professional dropdown interface
+          - Shows "-- Select Looser Player --" placeholder
+          - Lists Customer and all Players as options
+          - Shows selected player name below dropdown
+          - Better accessibility and mobile-friendly
+          
+          New UI Features:
+          - Label: "Select Looser" with fw-semibold
+          - Dropdown with all available players
+          - Customer option: "{name} (Customer)"
+          - Player options: "{name}"
+          - Selected indicator: "Selected: {name}" in text-primary
+          - Keeps player avatars visible for reference
+          - Responsive sizing (minWidth: 200px)
+          
+          Better User Experience:
+          - Clear dropdown selection instead of hover tooltip
+          - Works perfectly on mobile/touch devices
+          - Always visible, no hover required
+          - Shows current selection clearly
+          - Standard form control interaction
+          
+          Files Modified:
+          - BookingCheckout.jsx (line ~2568 for quantity, ~2922 for looser)
+
+agent_communication:
+  - agent: "main"
+    message: |
+      Both checkout page issues resolved:
+      
+      ✅ Addon Quantity Controls: Now visible during timer
+      - Condition: Pending OR In Progress
+      - Better button styling
+      - Consistent sizing
+      
+      ✅ Looser Selection: Dropdown instead of tooltip
+      - Professional Form.Select dropdown
+      - Shows all players + customer
+      - Selected player indicator
+      - Mobile-friendly
+      - Better UX
+      
+      Old UX: Hover tooltip (hard to use)
+      New UX: Standard dropdown (easy to use)
   - agent: "testing"
     message: |
       🎯 RAZORPAY PAYMENT INTEGRATION TESTING COMPLETED - ALL TESTS PASSED
