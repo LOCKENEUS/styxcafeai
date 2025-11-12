@@ -1288,6 +1288,9 @@ agent_communication:
 user_problem_statement: |
   Test all Purchase Order endpoints comprehensively to identify and fix all errors:
   User reports "Failed to fetch Styx data" error when opening Purchase Order section.
+  
+  NEW: Verify Purchase Order creation error handling fix:
+  Fixed the PO creation endpoint to handle invalid item IDs properly. Need to verify the fix is working.
 
 backend:
   - task: "Admin Purchase Order List Endpoint"
