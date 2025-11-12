@@ -2931,73 +2931,52 @@ const BookingCheckout = () => {
                             </div>
                           )}
 
-                          <div className="px-2 my-auto">
-                            <small>Select looser</small>
+                          <div className="px-2 my-auto d-flex flex-column" style={{ minWidth: "200px" }}>
+                            <small className="mb-2 fw-semibold">Select Looser</small>
+                            <Form.Select
+                              size="sm"
+                              value={looserPlayer?._id || ""}
+                              onChange={(e) => {
+                                const playerId = e.target.value;
+                                if (playerId === selectedCustomer?._id) {
+                                  setLooserPlayer(selectedCustomer);
+                                } else {
+                                  const player = players.find(p => p._id === playerId);
+                                  if (player) {
+                                    handleSelectLooserPlayer(player);
+                                  }
+                                }
+                              }}
+                              style={{ 
+                                fontSize: "13px",
+                                padding: "4px 8px",
+                                cursor: "pointer"
+                              }}
+                            >
+                              <option value="">-- Select Looser Player --</option>
+                              {selectedCustomer && (
+                                <option value={selectedCustomer._id}>
+                                  {selectedCustomer.name} (Customer)
+                                </option>
+                              )}
+                              {players?.length > 0 && players.map((player, index) => (
+                                <option key={index} value={player._id}>
+                                  {player.name}
+                                </option>
+                              ))}
+                            </Form.Select>
+                            {looserPlayer && (
+                              <small className="text-muted mt-1">
+                                Selected: <span className="text-primary fw-semibold">{looserPlayer.name}</span>
+                              </small>
+                            )}
                           </div>
 
-                          <OverlayTrigger
-                            placement="left"
-                            show={showTooltip}
-                            onToggle={(isVisible) => setShowTooltip(isVisible)}
-                            overlay={
-                              <Tooltip
-                                id="player-list-tooltip"
-                                onMouseEnter={() => setShowTooltip(true)}
-                                onMouseLeave={() => setShowTooltip(false)}
-                              >
-                                <h6 className="m-2 p-2 text-light border-bottom">Select Looser Player</h6>
-                                <ul className="m-2 p-2 list-unstyled">
-                                  {selectedCustomer && (
-                                    <li
-                                      className="fw-bold p-1"
-                                      onClick={() => {
-                                        setLooserPlayer(selectedCustomer);
-                                        setShowTooltip(false);
-                                      }}
-                                      // style={{ cursor: "pointer" }}
-                                      style={{
-                                        cursor: "pointer",
-                                        transition: "all 0.2s ease-in-out",
-                                        backgroundColor: "transparent",
-                                        color: "white",
-                                      }}
-                                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f8f9fa", e.currentTarget.style.color = "black")}
-                                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent", e.currentTarget.style.color = "white")}
-                                    >
-                                      {selectedCustomer?.name} (Customer)
-                                    </li>
-                                  )}
-                                  {players?.length > 0 ? (
-                                    players.map((player, index) => (
-                                      <li
-                                        key={index}
-                                        className="p-1"
-                                        onClick={() => handleSelectLooserPlayer(player)}
-                                        style={{
-                                          cursor: "pointer",
-                                          transition: "all 0.2s ease-in-out",
-                                          backgroundColor: "transparent",
-                                          color: "white",
-                                        }}
-                                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f8f9fa", e.currentTarget.style.color = "black")}
-                                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent", e.currentTarget.style.color = "white")}
-                                      >
-                                        {player.name}
-                                      </li>
-                                    ))
-                                  ) : (
-                                    <li className="muted-text">No Players</li>
-                                  )}
-                                </ul>
-                              </Tooltip>
-                            }
-                          >
+                          <div className="d-flex align-items-center ms-3">
                             <Stack
                               direction="horizontal"
                               gap={2}
-                              className="align-items-center mt-2 float-end px-6"
-                              onMouseEnter={() => setShowTooltip(true)}
-                              onMouseLeave={() => setShowTooltip(false)}
+                              className="align-items-center"
                             >
                               <div className="d-flex">
                                 <Image src={userProfile} roundedCircle width={35} height={35} className="border" />
@@ -3017,7 +2996,7 @@ const BookingCheckout = () => {
                                 )}
                               </div>
                             </Stack>
-                          </OverlayTrigger>
+                          </div>
                         </div>
                       </Col>
                     </Row>
