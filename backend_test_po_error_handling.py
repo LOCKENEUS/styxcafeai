@@ -20,6 +20,7 @@ class POErrorHandlingTest:
         self.test_results = []
         self.admin_token = None
         self.test_cafe_id = None
+        self.test_item_id = None
         
     def log_result(self, test_name, success, message, details=None):
         """Log test results"""
