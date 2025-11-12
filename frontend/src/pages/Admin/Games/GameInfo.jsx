@@ -649,8 +649,12 @@ const GameInfo = () => {
                     </tr>
                   )) : (
                     <tr>
-                      <td colSpan="9" className="text-center p-0 p-md-2">
-                        <img src={nobookings} className="w-50" />
+                      <td colSpan="9" className="text-center py-5">
+                        <div className="d-flex flex-column align-items-center justify-content-center">
+                          <img src={nobookings} style={{ width: "120px", height: "120px", objectFit: "contain" }} className="mb-3" />
+                          <h6 className="text-muted mb-1">No Bookings Available</h6>
+                          <p className="text-muted small mb-0">There are no bookings for this game yet</p>
+                        </div>
                       </td>
                     </tr>
                   )}
