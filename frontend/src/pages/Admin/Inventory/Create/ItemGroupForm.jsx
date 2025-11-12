@@ -618,7 +618,7 @@ const ItemGroupForm = () => {
                 />
               </Form.Group>
             </Col>
-            <div className="my-4 col-sm-12">
+            <Col xs={12} className="my-4">
               <div>
                 <label className="fw-bold mb-2">Multiple Items? Create Attributes and Options <span className="text-danger ms-1">*</span></label>
                 {attributes.map((attribute, index) => (
