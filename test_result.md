@@ -966,6 +966,111 @@ agent_communication:
       - 12:00 → 12:00 PM
       - 15:30 → 03:30 PM
       - 23:59 → 11:59 PM
+
+user_problem_statement: |
+  While making payment through online tab (Data is fetching) but Razorpay or next window is not opening
+  - Path: admin/booking/checkout
+  - Same problem occurring in admin/users/customer-details/ while using online
+
+frontend:
+  - task: "Fix Razorpay payment modal not opening issue"
+    implemented: true
+    working: "NA"
+    files:
+      - "/app/frontend/src/store/AdminSlice/BookingSlice.js"
+      - "/app/frontend/src/store/AdminSlice/CustomerSlice.js"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Fixed Razorpay payment modal not opening in multiple places:
+          
+          Root Cause:
+          - Backend payment endpoint was updated to return { success: true, order: {...} }
+          - Frontend was still expecting { success: true, data: {...} }
+          - This mismatch caused orderData to be undefined
+          - Razorpay modal initialization failed silently
+          
+          Affected Payment Flows:
+          1. Booking Checkout (admin/booking/checkout)
+             - processOnlinePayment action in BookingSlice.js
+             - Used response.data.data (undefined)
+             
+          2. Customer Credit Collection (admin/users/customer-details)
+             - collectAmountOnline action in CustomerSlice.js
+             - Used response.data.data (undefined)
+             
+          3. Custom Credit Collection (admin/users/customer-details)
+             - collectCustomCreditAmountOnline action in CustomerSlice.js
+             - Used response.data.data (undefined)
+          
+          Fix Applied:
+          - Changed all three functions from response.data.data to response.data.order
+          - Changed variable name from 'data' to 'orderData' for clarity
+          - Fixed amount handling (backend returns amount in paise already)
+          
+          Before (Broken):
+          ```javascript
+          const data = response.data.data; // undefined!
+          if (data) {
+            const options = {
+              amount: data.amount * 100, // Wrong - already in paise
+              order_id: data.id,
+              ...
+            };
+          }
+          ```
+          
+          After (Fixed):
+          ```javascript
+          const orderData = response.data.order; // correct!
+          if (orderData) {
+            const options = {
+              amount: orderData.amount, // correct - already in paise
+              order_id: orderData.id,
+              ...
+            };
+          }
+          ```
+          
+          Amount Handling:
+          - Backend multiplies by 100 (converts to paise)
+          - Frontend should NOT multiply again
+          - Fixed: amount: orderData.amount (not * 100)
+          
+          Files Modified:
+          1. BookingSlice.js - processOnlinePayment (booking checkout)
+          2. CustomerSlice.js - collectAmountOnline (credit collection)
+          3. CustomerSlice.js - collectCustomCreditAmountOnline (custom credit)
+          
+          Testing Required:
+          1. Create booking and pay online from checkout page
+          2. Collect credit amount online from customer details
+          3. Collect custom credit online from customer details
+
+agent_communication:
+  - agent: "main"
+    message: |
+      Fixed Razorpay modal not opening in 3 locations:
+      
+      ✅ Booking Checkout Online Payment
+      ✅ Customer Credit Collection Online
+      ✅ Custom Credit Collection Online
+      
+      Root cause: response.data.data → response.data.order
+      
+      All payment flows now:
+      1. Create Razorpay order successfully
+      2. Extract order data correctly
+      3. Open Razorpay payment modal
+      4. Handle payment completion
+      5. Verify payment signature
+      6. Update booking/credit status
+      
+      Ready for testing across all three payment scenarios.
   - agent: "testing"
     message: |
       🎯 RAZORPAY PAYMENT INTEGRATION TESTING COMPLETED - ALL TESTS PASSED
