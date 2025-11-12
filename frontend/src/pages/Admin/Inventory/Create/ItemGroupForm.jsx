@@ -428,10 +428,10 @@ const ItemGroupForm = () => {
         )}
         
         <Form onSubmit={handleSubmit}>
-          <div className="row">
-            <div className="my-4 col-sm-6">
+          <Row>
+            <Col md={6} className="mb-3">
               <Form.Group>
-                <Form.Label className="fw-bold my-2">Item Group Name<span className="text-danger ms-1">*</span></Form.Label>
+                <Form.Label className="fw-bold">Item Group Name<span className="text-danger ms-1">*</span></Form.Label>
                 <Form.Control
                   required
                   type="text"
@@ -447,51 +447,49 @@ const ItemGroupForm = () => {
                   </Form.Control.Feedback>
                 )}
               </Form.Group>
-            </div>
-            <div className="my-4 col-sm-6">
-              <Form.Label className="fw-bold my-2">Unit<span className="text-danger ms-1">*</span></Form.Label>
-              <Form.Group className="d-flex justify-content-between gap-3 align-items-start">
-                <div className="flex-grow-1">
+            </Col>
+            <Col md={6} className="mb-3">
+              <Form.Group>
+                <Form.Label className="fw-bold">Unit<span className="text-danger ms-1">*</span></Form.Label>
+                <div className="d-flex gap-2">
                   <Form.Select
                     name="unit"
                     value={formData.unit}
                     onChange={handleInputChange}
                     required
                     isInvalid={!!errors.unit}
+                    className="flex-grow-1"
                   >
                     <option value="">Select Unit</option>
                     {units.map((unit) => (
                       <option key={unit._id} value={unit.name}>
                         {unit.name}
-                        <FaTrash
-                          className="text-danger ms-2"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleDeleteUnit(unit._id);
-                          }}
-                        />
                       </option>
                     ))}
                   </Form.Select>
-                  {errors.unit && (
-                    <div className="text-danger small mt-1">
-                      {errors.unit}
-                    </div>
-                  )}
+                  <Button 
+                    style={{ width: "40px", height: "38px", padding: '0', border: "1px solid blue", borderStyle: "dashed" }} 
+                    variant="outline-secondary" 
+                    onClick={() => setShowUnitModal(true)}
+                  >
+                    <FaPlus className="text-primary" size={20} />
+                  </Button>
                 </div>
-                <Button className="d-flex justify-content-end align-items-center" style={{ width: "40px", padding: '12px', border: "1px solid blue", height: "40px", borderStyle: "dashed" }} variant="outline-secondary" onClick={() => setShowUnitModal(true)}>
-                  <FaPlus className="text-primary" size={30} />
-                </Button>
+                {errors.unit && (
+                  <div className="text-danger small mt-1">
+                    {errors.unit}
+                  </div>
+                )}
               </Form.Group>
               <Units
                 show={showUnitModal}
                 handleClose={() => setShowUnitModal(false)}
                 onCreated={(unitData) => setLatestCreatedUnit({ ...unitData, type: 'Unit' })}
               />
-            </div>
-            <div className="my-4 col-md-6">
+            </Col>
+            <Col md={6} className="mb-3">
               <Form.Group>
-                <Form.Label className="fw-bold my-2">Tax Preference </Form.Label>
+                <Form.Label className="fw-bold">Tax Preference</Form.Label>
                 <Form.Select
                   name="taxPreference"
                   value={taxPreference}
@@ -507,43 +505,46 @@ const ItemGroupForm = () => {
                   <option value="Non-Taxable">Non-Taxable</option>
                 </Form.Select>
               </Form.Group>
-            </div>
+            </Col>
             {formData.taxable && (
-              <div className="my-2 col-md-6">
-                <Form.Label className="fw-bold my-2">Tax</Form.Label>
-                <Form.Group className="d-flex justify-content-between gap-3 align-items-center">
-                  <Form.Select
-                    aria-label="Select Tax"
-                    name="tax"
-                    value={formData.tax || ''}
-                    onChange={handleInputChange}
-                  >
-                    <option value="">Select Tax</option>
-                    {taxFields.map(tax => (
-                      <option key={tax._id} value={tax._id}>
-                        {tax.tax_name} ({tax.tax_rate}%)
-                      </option>
-                    ))}
-                  </Form.Select>
-                  <Button
-                    className="d-flex justify-content-end align-items-center"
-                    style={{ width: "40px", padding: '12px', border: "1px solid blue", height: "40px", borderStyle: "dashed" }}
-                    variant="outline-secondary"
-                    onClick={() => setShowTaxModal(true)}
-                  >
-                    <FaPlus className="text-primary" size={30} />
-                  </Button>
+              <Col md={6} className="mb-3">
+                <Form.Group>
+                  <Form.Label className="fw-bold">Tax</Form.Label>
+                  <div className="d-flex gap-2">
+                    <Form.Select
+                      aria-label="Select Tax"
+                      name="tax"
+                      value={formData.tax || ''}
+                      onChange={handleInputChange}
+                      className="flex-grow-1"
+                    >
+                      <option value="">Select Tax</option>
+                      {taxFields.map(tax => (
+                        <option key={tax._id} value={tax._id}>
+                          {tax.tax_name} ({tax.tax_rate}%)
+                        </option>
+                      ))}
+                    </Form.Select>
+                    <Button
+                      style={{ width: "40px", height: "38px", padding: '0', border: "1px solid blue", borderStyle: "dashed" }}
+                      variant="outline-secondary"
+                      onClick={() => setShowTaxModal(true)}
+                    >
+                      <FaPlus className="text-primary" size={20} />
+                    </Button>
+                  </div>
                 </Form.Group>
                 <Tax
                   show={showTaxModal}
                   handleClose={() => setShowTaxModal(false)}
                   onCreated={(taxData) => setLatestCreatedTax(taxData)}
                 />
-              </div>
+              </Col>
             )}
-            <div className="my-2 col-md-6">
-              <Form.Label className="fw-bold my-2">Manufacturer</Form.Label>
-              <Form.Group className="d-flex justify-content-between gap-3 align-items-center">
+            <Col md={6} className="mb-3">
+              <Form.Group>
+                <Form.Label className="fw-bold">Manufacturer</Form.Label>
+                <div className="d-flex gap-2">
                 <Form.Select
                   name="manufacturer"
                   value={formData.manufacturer}
