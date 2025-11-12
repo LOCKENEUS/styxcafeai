@@ -134,22 +134,41 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
     return `${hour.padStart(2, '0')}:${minute.padStart(2, '0')} ${period}`;
   };
 
-  const labelStyle = { fontWeight: "500", color: "#5A5A5A", fontSize: "1rem" };
-  const inputStyle = { border: "2px solid rgb(163, 164, 164)", borderRadius: "6px" };
+  const labelStyle = { fontWeight: "600", color: "#333", fontSize: "0.95rem" };
+  const inputStyle = { border: "1px solid #ced4da", borderRadius: "6px", fontSize: "0.95rem" };
+
+  // Calculate display time in real-time
+  const getDisplayTime = (parts) => {
+    const { hour, minute, period } = parts;
+    if (hour && minute && period) {
+      return `${hour}:${minute} ${period}`;
+    }
+    return '';
+  };
 
   return (
-    <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Create Slot</Modal.Title>
+    <Modal show={show} onHide={handleClose} centered size="lg">
+      <Modal.Header closeButton className="border-bottom bg-light">
+        <Modal.Title className="d-flex align-items-center">
+          <span className="me-2">📅</span>
+          {slot?._id ? 'Edit Slot' : 'Create New Slot'}
+        </Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body className="p-4">
         <Form onSubmit={handleSubmit}>
           <Row>
-            <Col xs={12} className="mb-3">
-              <Form.Group className="mb-3">
-                <Form.Label style={labelStyle}>Day</Form.Label>
-                <Form.Select name="day" value={formData.day} onChange={handleChange} style={inputStyle} required>
-                  <option value="">Pick Day</option>
+            <Col xs={12} className="mb-4">
+              <Form.Group>
+                <Form.Label style={labelStyle}>Select Day <span className="text-danger">*</span></Form.Label>
+                <Form.Select 
+                  name="day" 
+                  value={formData.day} 
+                  onChange={handleChange} 
+                  style={inputStyle} 
+                  className="py-2"
+                  required
+                >
+                  <option value="">Choose a day</option>
                   <option value="Monday">Monday</option>
                   <option value="Tuesday">Tuesday</option>
                   <option value="Wednesday">Wednesday</option>
@@ -161,14 +180,23 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
               </Form.Group>
             </Col>
 
-            <Col xs={6} className="mb-3">
+            <Col md={6} className="mb-4">
               <Form.Group>
-                <Form.Label style={labelStyle}>Start Time<span className="text-danger">*</span></Form.Label>
-                <Row className="mb-2">
-                  <Col className="">
-                    <Form.Select className="p-2" value={startTimeParts.hour} onChange={(e) =>
-                      setStartTimeParts({ ...startTimeParts, hour: e.target.value })
-                    }>
+                <Form.Label style={labelStyle}>
+                  Start Time <span className="text-danger">*</span>
+                  {getDisplayTime(startTimeParts) && (
+                    <span className="ms-2 badge bg-primary">{getDisplayTime(startTimeParts)}</span>
+                  )}
+                </Form.Label>
+                <Row className="g-2">
+                  <Col xs={4}>
+                    <Form.Select 
+                      className="py-2" 
+                      style={inputStyle}
+                      value={startTimeParts.hour} 
+                      onChange={(e) => setStartTimeParts({ ...startTimeParts, hour: e.target.value })}
+                      required
+                    >
                       <option value="">HH</option>
                       {[...Array(12)].map((_, i) => {
                         const val = (i + 1).toString().padStart(2, '0');
@@ -176,10 +204,14 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
                       })}
                     </Form.Select>
                   </Col>
-                  <Col className="px-0">
-                    <Form.Select className="p-2" value={startTimeParts.minute} onChange={(e) =>
-                      setStartTimeParts({ ...startTimeParts, minute: e.target.value })
-                    }>
+                  <Col xs={4}>
+                    <Form.Select 
+                      className="py-2" 
+                      style={inputStyle}
+                      value={startTimeParts.minute} 
+                      onChange={(e) => setStartTimeParts({ ...startTimeParts, minute: e.target.value })}
+                      required
+                    >
                       <option value="">MM</option>
                       {[...Array(60)].map((_, i) => {
                         const val = i.toString().padStart(2, '0');
@@ -187,11 +219,14 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
                       })}
                     </Form.Select>
                   </Col>
-                  <Col className="px-0">
-                    <Form.Select className="p-2" value={startTimeParts.period} onChange={(e) =>
-                      setStartTimeParts({ ...startTimeParts, period: e.target.value })
-                    }>
-
+                  <Col xs={4}>
+                    <Form.Select 
+                      className="py-2" 
+                      style={inputStyle}
+                      value={startTimeParts.period} 
+                      onChange={(e) => setStartTimeParts({ ...startTimeParts, period: e.target.value })}
+                      required
+                    >
                       <option value="AM">AM</option>
                       <option value="PM">PM</option>
                     </Form.Select>
@@ -200,15 +235,23 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
               </Form.Group>
             </Col>
 
-            <Col xs={6} className="mb-3">
+            <Col md={6} className="mb-4">
               <Form.Group>
-                <Form.Label style={labelStyle}>End Time<span className="text-danger">*</span></Form.Label>
-                <Row className="mb-2">
-                  <Col className="px-0">
-                    <Form.Select className="p-2" value={endTimeParts.hour} onChange={(e) =>
-                      setEndTimeParts({ ...endTimeParts, hour: e.target.value })
-                    }>
-
+                <Form.Label style={labelStyle}>
+                  End Time <span className="text-danger">*</span>
+                  {getDisplayTime(endTimeParts) && (
+                    <span className="ms-2 badge bg-success">{getDisplayTime(endTimeParts)}</span>
+                  )}
+                </Form.Label>
+                <Row className="g-2">
+                  <Col xs={4}>
+                    <Form.Select 
+                      className="py-2" 
+                      style={inputStyle}
+                      value={endTimeParts.hour} 
+                      onChange={(e) => setEndTimeParts({ ...endTimeParts, hour: e.target.value })}
+                      required
+                    >
                       <option value="">HH</option>
                       {[...Array(12)].map((_, i) => {
                         const val = (i + 1).toString().padStart(2, '0');
@@ -216,11 +259,14 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
                       })}
                     </Form.Select>
                   </Col>
-                  <Col className="px-0">
-                    <Form.Select className="p-2" value={endTimeParts.minute} onChange={(e) =>
-                      setEndTimeParts({ ...endTimeParts, minute: e.target.value })
-                    }>
-
+                  <Col xs={4}>
+                    <Form.Select 
+                      className="py-2" 
+                      style={inputStyle}
+                      value={endTimeParts.minute} 
+                      onChange={(e) => setEndTimeParts({ ...endTimeParts, minute: e.target.value })}
+                      required
+                    >
                       <option value="">MM</option>
                       {[...Array(60)].map((_, i) => {
                         const val = i.toString().padStart(2, '0');
@@ -228,11 +274,14 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
                       })}
                     </Form.Select>
                   </Col>
-                  <Col className="px-0">
-                    <Form.Select className="p-2" value={endTimeParts.period} onChange={(e) =>
-                      setEndTimeParts({ ...endTimeParts, period: e.target.value })
-                    }>
-
+                  <Col xs={4}>
+                    <Form.Select 
+                      className="py-2" 
+                      style={inputStyle}
+                      value={endTimeParts.period} 
+                      onChange={(e) => setEndTimeParts({ ...endTimeParts, period: e.target.value })}
+                      required
+                    >
                       <option value="AM">AM</option>
                       <option value="PM">PM</option>
                     </Form.Select>
@@ -241,17 +290,46 @@ const CreateSlotModal = ({ show, handleClose, selectedGame, slot, day }) => {
               </Form.Group>
             </Col>
 
-            <Col xs={12}>
-              <Form.Group className="mb-3">
-                <Form.Label style={labelStyle}>Slot Price</Form.Label>
-                <Form.Control type="number" name="slot_price" value={formData.slot_price} onChange={handleChange} onWheel={(e) => e.target.blur()} style={inputStyle} placeholder="Enter Slot Price" required />
+            <Col xs={12} className="mb-4">
+              <Form.Group>
+                <Form.Label style={labelStyle}>
+                  Slot Price <span className="text-danger">*</span>
+                </Form.Label>
+                <div className="input-group">
+                  <span className="input-group-text">₹</span>
+                  <Form.Control 
+                    type="number" 
+                    name="slot_price" 
+                    value={formData.slot_price} 
+                    onChange={handleChange} 
+                    onWheel={(e) => e.target.blur()} 
+                    style={inputStyle} 
+                    placeholder="Enter slot price" 
+                    className="py-2"
+                    required 
+                  />
+                </div>
               </Form.Group>
             </Col>
 
-            <div className="d-flex justify-content-end">
-              <Button variant="secondary" className="me-2" onClick={handleClose}>Cancel</Button>
-              <Button variant="primary" type="submit">{slot?._id ? "Update Slot" : "Create Slot"}</Button>
-            </div>
+            <Col xs={12} className="border-top pt-3">
+              <div className="d-flex justify-content-between align-items-center">
+                <Button 
+                  variant="outline-secondary" 
+                  onClick={handleClose}
+                  className="px-4"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  variant="primary" 
+                  type="submit"
+                  className="px-4"
+                >
+                  {slot?._id ? "Update Slot" : "Create Slot"}
+                </Button>
+              </div>
+            </Col>
           </Row>
         </Form>
       </Modal.Body>
