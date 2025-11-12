@@ -191,20 +191,25 @@ const slotslice = createSlice({
       
         const slot = action.payload.data;
       
-        // Helper function to convert "HH:mm" to 12-hour format
+        // Helper function to convert "HH:mm" (24-hour) to "HH:MM AM/PM" format
         const formatTo12Hour = (timeStr) => {
-          const [hour, minute] = timeStr.split(':');
-          const date = new Date();
-          date.setHours(hour);
-          date.setMinutes(minute);
-          return date.toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true,
-          });
+          const [hourStr, minute] = timeStr.split(':');
+          let hour = parseInt(hourStr, 10);
+          const period = hour >= 12 ? 'PM' : 'AM';
+          
+          // Convert to 12-hour format
+          if (hour === 0) {
+            hour = 12;
+          } else if (hour > 12) {
+            hour = hour - 12;
+          }
+          
+          // Pad with leading zero if needed
+          const formattedHour = hour.toString().padStart(2, '0');
+          return `${formattedHour}:${minute} ${period}`;
         };
       
-        // Modify start and end time
+        // Modify start and end time to match the display format
         const formattedSlot = {
           ...slot,
           start_time: formatTo12Hour(slot.start_time),
