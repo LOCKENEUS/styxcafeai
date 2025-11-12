@@ -179,7 +179,9 @@ const gameSlice = createSlice({
       .addCase(addGame.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
-        toast.error(action.payload);
+        // Display user-friendly error message
+        const errorMsg = typeof action.payload === 'string' ? action.payload : 'Failed to add game';
+        toast.error(errorMsg);
       })
 
       .addCase(updateGame.fulfilled, (state, action) => {
