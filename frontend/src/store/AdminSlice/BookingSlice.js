@@ -234,7 +234,7 @@ export const processOnlinePayment = createAsyncThunk(
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature,
                   booking_id: bookingId,
-                  amount: data.amount,
+                  amount: orderData.amount,
                   paid_amount,
                   total,
                   looser,
