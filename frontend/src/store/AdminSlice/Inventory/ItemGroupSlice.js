@@ -89,10 +89,10 @@ export const updateItemGroup = createAsyncThunk(
           },
         }
       );
-      toast.success("Item group updated successfully!");
+      // Removed toast notification - handled in component
       return response.data.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      // Removed toast notification - handled in component
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Something went wrong"
       );
