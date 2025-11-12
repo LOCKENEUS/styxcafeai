@@ -675,7 +675,7 @@ const ItemGroupForm = () => {
 
             {/* Conditionally render the table if there are attributes */}
             {attributes.some(attr => attr.color || attr.options) && (
-              <div className="col-sm-12 mb-3" id="tableDiv" style={{ zoom: 0.9, overflowX: 'auto' }}>
+              <Col xs={12} className="mb-3" id="tableDiv" style={{ zoom: 0.9, overflowX: 'auto' }}>
                 <table className="table table-sm table-border table-border-vertical table-hover">
                   <thead className="bg-light">
                     <tr>
