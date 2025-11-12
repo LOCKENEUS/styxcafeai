@@ -114,7 +114,7 @@ class POErrorHandlingTest:
             po_data = {
                 "cafe": self.test_cafe_id,
                 "vendor_id": None,
-                "user_type": "Admin",
+                "user_type": "Superadmin",
                 "delivery_type": "Organization",
                 "delivery_date": "2024-12-31",
                 "payment_terms": "Net 30",
@@ -206,7 +206,7 @@ class POErrorHandlingTest:
             po_data = {
                 "cafe": self.test_cafe_id,
                 "vendor_id": None,
-                "user_type": "Admin",
+                "user_type": "Superadmin",
                 "delivery_type": "Organization",
                 "delivery_date": "2024-12-31",
                 "payment_terms": "Net 30",
@@ -298,7 +298,7 @@ class POErrorHandlingTest:
             po_data_empty_items = {
                 "cafe": self.test_cafe_id,
                 "vendor_id": None,
-                "user_type": "Admin",
+                "user_type": "Superadmin",
                 "delivery_type": "Organization",
                 "delivery_date": "2024-12-31",
                 "payment_terms": "Net 30",
@@ -320,7 +320,7 @@ class POErrorHandlingTest:
             po_data_missing_items = {
                 "cafe": self.test_cafe_id,
                 "vendor_id": None,
-                "user_type": "Admin",
+                "user_type": "Superadmin",
                 "delivery_type": "Organization",
                 "delivery_date": "2024-12-31",
                 "payment_terms": "Net 30",
@@ -428,7 +428,7 @@ class POErrorHandlingTest:
                     po_data = {
                         "cafe": self.test_cafe_id,
                         "vendor_id": None,
-                        "user_type": "Admin",
+                        "user_type": "Superadmin",
                         "delivery_type": "Organization",
                         "delivery_date": "2024-12-31",
                         "payment_terms": "Net 30",
