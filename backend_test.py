@@ -839,7 +839,11 @@ class PurchaseOrderTest:
         # Admin Tests
         if admin_auth:
             test_results["admin_po_list"] = self.test_admin_po_list()
+            test_results["admin_create_po_valid"] = self.test_admin_create_po_valid()
+            test_results["admin_create_po_invalid"] = self.test_admin_create_po_invalid()
             test_results["admin_po_by_id"] = self.test_admin_po_by_id()
+            test_results["admin_delete_po"] = self.test_admin_delete_po()
+            test_results["admin_po_by_vendor"] = self.test_admin_po_by_vendor()
         
         # SuperAdmin Tests
         if superadmin_auth:
