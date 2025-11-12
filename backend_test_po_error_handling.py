@@ -564,6 +564,9 @@ class POErrorHandlingTest:
             print("❌ Failed to authenticate. Exiting.")
             return {"overall_success": False}
         
+        # Create test item for valid item tests
+        self.create_test_item()
+        
         # Run all tests
         test_results = {
             "invalid_objectid_format": self.test_invalid_objectid_format(),
