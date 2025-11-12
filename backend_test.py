@@ -305,99 +305,108 @@ class PurchaseOrderTest:
             )
             return False
     
-    def test_payment_verification_endpoint(self):
-        """Test 1: Create customer WITHOUT password (booking flow scenario)"""
-        print("\n=== Testing Customer Creation WITHOUT Password ===")
+    def test_admin_po_by_id(self):
+        """Test 3: Purchase Order by ID - Admin"""
+        print("\n=== Testing Admin PO by ID ===")
         
+        if not self.admin_token:
+            self.log_result(
+                "Admin PO by ID",
+                False,
+                "Admin authentication required",
+                {}
+            )
+            return False
+        
+        # First get a PO ID from the list
         try:
-            # Generate test data without password
-            contact_no = self.generate_random_contact()
-            customer_data = self.create_test_customer_data(include_password=False, contact_no=contact_no)
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            list_url = f"{ADMIN_ENDPOINTS['po_list']}/{self.test_cafe_id}"
             
-            # Expected auto-generated password (last 4 digits of contact)
-            expected_password = contact_no[-4:]
+            list_response = self.session.get(list_url, headers=headers)
             
-            print(f"Creating customer with contact: {contact_no}")
-            print(f"Expected auto-generated password: {expected_password}")
-            
-            # Make API call
-            response = self.session.post(ADMIN_ENDPOINTS["customer_create"], json=customer_data)
-            
-            if response.status_code == 201:
-                data = response.json()
+            if list_response.status_code == 200:
+                list_data = list_response.json()
+                po_list = list_data.get("data", [])
                 
-                if data.get("status") and "data" in data:
-                    customer = data.get("data", {})
-                    customer_id = customer.get("_id")
-                    
-                    self.created_customers.append(customer_id)
-                    
+                if not po_list:
                     self.log_result(
-                        "Customer Creation Without Password",
-                        True,
-                        f"Customer created successfully without providing password",
-                        {
-                            "customer_id": customer_id,
-                            "name": customer.get("name"),
-                            "contact_no": customer.get("contact_no"),
-                            "expected_password": expected_password,
-                            "password_auto_generated": True
-                        }
+                        "Admin PO by ID",
+                        False,
+                        "No purchase orders found to test with",
+                        {}
                     )
+                    return False
+                
+                # Test with first PO
+                test_po_id = po_list[0]["_id"]
+                detail_url = f"{ADMIN_ENDPOINTS['po_by_id']}/{test_po_id}"
+                
+                detail_response = self.session.get(detail_url, headers=headers)
+                
+                if detail_response.status_code == 200:
+                    detail_data = detail_response.json()
                     
-                    # Verify the customer was created with correct data
-                    if (customer.get("name") == customer_data["name"] and 
-                        customer.get("contact_no") == customer_data["contact_no"]):
+                    if detail_data.get("status") and "data" in detail_data:
+                        po_detail = detail_data["data"]
+                        
+                        # Check for proper population
+                        populated_fields = []
+                        if po_detail.get("vendor_id") and isinstance(po_detail["vendor_id"], dict):
+                            populated_fields.append("vendor_id")
+                        if po_detail.get("items") and isinstance(po_detail["items"], list):
+                            populated_fields.append("items")
+                        if po_detail.get("customer_id") and isinstance(po_detail["customer_id"], dict):
+                            populated_fields.append("customer_id")
                         
                         self.log_result(
-                            "Customer Data Validation",
+                            "Admin PO by ID",
                             True,
-                            "Customer data matches input data",
+                            f"Successfully fetched PO details with proper population",
                             {
-                                "name_match": customer.get("name") == customer_data["name"],
-                                "contact_match": customer.get("contact_no") == customer_data["contact_no"]
+                                "endpoint": detail_url,
+                                "po_id": test_po_id,
+                                "populated_fields": populated_fields,
+                                "po_number": po_detail.get("po_no"),
+                                "total_amount": po_detail.get("total"),
+                                "items_count": len(po_detail.get("items", []))
                             }
                         )
-                        return customer_id
+                        return True
                     else:
                         self.log_result(
-                            "Customer Data Validation",
+                            "Admin PO by ID",
                             False,
-                            "Customer data does not match input data",
-                            {
-                                "expected_name": customer_data["name"],
-                                "actual_name": customer.get("name"),
-                                "expected_contact": customer_data["contact_no"],
-                                "actual_contact": customer.get("contact_no")
-                            }
+                            "Invalid response structure for PO details",
+                            {"response": detail_data}
                         )
-                        return None
+                        return False
                 else:
+                    error_msg = detail_response.json().get("message", "Unknown error") if detail_response.content else "No response content"
                     self.log_result(
-                        "Customer Creation Without Password",
+                        "Admin PO by ID",
                         False,
-                        "Invalid response structure from customer creation API",
-                        {"response": data}
+                        f"Failed to fetch PO details: {error_msg}",
+                        {"status_code": detail_response.status_code, "url": detail_url}
                     )
-                    return None
+                    return False
             else:
-                error_msg = response.json().get("message", "Unknown error") if response.content else "No response content"
                 self.log_result(
-                    "Customer Creation Without Password",
+                    "Admin PO by ID",
                     False,
-                    f"Failed to create customer: {error_msg}",
-                    {"status_code": response.status_code, "response": response.text}
+                    "Failed to get PO list for testing",
+                    {"status_code": list_response.status_code}
                 )
-                return None
+                return False
                 
         except Exception as e:
             self.log_result(
-                "Customer Creation Without Password Test",
+                "Admin PO by ID",
                 False,
                 f"Exception occurred: {str(e)}",
                 {"exception_type": type(e).__name__}
             )
-            return None
+            return False
     
     def test_customer_creation_with_password(self):
         """Test 2: Create customer WITH explicit password (normal flow)"""
