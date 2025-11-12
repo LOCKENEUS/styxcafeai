@@ -31,7 +31,8 @@ Router.route("/").post(
 );
 Router.route("/:id")
   .get(auth, getPurchaseOrderById)
-  .put(auth, upload.array("internal_team_file", 5), updatePurchaseOrder);
+  .put(auth, upload.array("internal_team_file", 5), updatePurchaseOrder)
+  .delete(auth, deletePurchaseOrder);
 
 Router.route("/receive-qty/:id").get(auth, getItemQuantities);
 
