@@ -63,8 +63,6 @@ class PurchaseOrderTest:
         if details:
             print(f"   Details: {details}")
     
-    # Removed helper methods - not needed for payment testing
-    
     def authenticate_admin(self):
         """Authenticate as admin and get token"""
         print("\n=== Authenticating as Admin ===")
