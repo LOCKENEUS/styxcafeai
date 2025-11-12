@@ -51,9 +51,12 @@ export const addGame = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data || "Something went wrong"
-      );
+      // Extract user-friendly error message
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          "Failed to add game. Please try again.";
+      return thunkAPI.rejectWithValue(errorMessage);
     }
   }
 );
