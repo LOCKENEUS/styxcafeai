@@ -847,7 +847,7 @@ const ItemGroupForm = () => {
                     })}
                   </tbody>
                 </table>
-              </div>
+              </Col>
             )}
 
             <Col xs={12}>
