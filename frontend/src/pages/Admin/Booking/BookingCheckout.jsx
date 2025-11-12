@@ -2611,7 +2611,7 @@ const BookingCheckout = () => {
                                 </div>
 
                                 <Button
-                                  variant="light"
+                                  variant="outline-primary"
                                   size="sm"
                                   onClick={() =>
                                     updateProduct(
@@ -2621,15 +2621,17 @@ const BookingCheckout = () => {
                                     )
                                   }
                                   style={{ 
-                                    minWidth: "30px",
-                                    height: "28px",
-                                    padding: "2px 6px",
-                                    fontSize: "14px"
+                                    minWidth: "35px",
+                                    height: "32px",
+                                    padding: "4px 8px",
+                                    fontSize: "16px",
+                                    fontWeight: "bold",
+                                    borderWidth: "2px"
                                   }}
                                 >
                                   +
                                 </Button>
-                              </div> : <div className="text-color">Qty: {product.quantity}</div>}
+                              </div> : <div className="text-color fw-bold">Qty: {product.quantity}</div>}
                             </div>
 
                             <div className="text-end ms-3" style={{ minWidth: "120px" }}>
