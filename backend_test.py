@@ -241,121 +241,69 @@ class PurchaseOrderTest:
                 {"exception_type": type(e).__name__}
             )
             return False
-    
-    def test_payment_order_creation(self):
-        """Test 2: Create Razorpay payment order with correct response structure"""
-        print("\n=== Testing Payment Order Creation ===")
+    def test_superadmin_po_list(self):
+        """Test 2: Purchase Order List - SuperAdmin"""
+        print("\n=== Testing SuperAdmin PO List ===")
+        
+        if not self.superadmin_token:
+            self.log_result(
+                "SuperAdmin PO List",
+                False,
+                "SuperAdmin authentication required",
+                {}
+            )
+            return False
         
         try:
-            # Test data as specified in the review request
-            payment_data = {
-                "amount": 500,
-                "currency": "INR",
-                "receipt": "test_receipt_001"
-            }
+            headers = {"Authorization": f"Bearer {self.superadmin_token}"}
+            url = SUPERADMIN_ENDPOINTS["po_list"]
             
-            print(f"Creating payment order with amount: ₹{payment_data['amount']}")
-            print(f"Expected amount in paise: {payment_data['amount'] * 100}")
-            
-            response = self.session.post(ADMIN_ENDPOINTS["payment"], json=payment_data)
+            response = self.session.get(url, headers=headers)
             
             if response.status_code == 200:
                 data = response.json()
                 
-                # Check if response has correct structure: { success: true, order: {...} }
-                if data.get("success") and "order" in data:
-                    order = data["order"]
+                if data.get("status") and "data" in data:
+                    po_list = data.get("data", [])
                     
-                    # Verify amount conversion to paise
-                    expected_amount_paise = payment_data["amount"] * 100
-                    actual_amount = order.get("amount")
-                    
-                    if actual_amount == expected_amount_paise:
-                        self.log_result(
-                            "Payment Order Creation",
-                            True,
-                            f"Payment order created successfully with correct structure",
-                            {
-                                "order_id": order.get("id"),
-                                "amount_rupees": payment_data["amount"],
-                                "amount_paise": actual_amount,
-                                "currency": order.get("currency"),
-                                "receipt": order.get("receipt"),
-                                "response_structure": "{ success: true, order: {...} }"
-                            }
-                        )
-                        
-                        # Additional validation of order fields
-                        required_fields = ["id", "amount", "currency", "receipt"]
-                        order_validation = all(field in order for field in required_fields)
-                        
-                        if order_validation:
-                            self.log_result(
-                                "Payment Order Field Validation",
-                                True,
-                                "All required order fields are present",
-                                {
-                                    "fields_present": required_fields,
-                                    "order_id_format": order.get("id", "").startswith("order_")
-                                }
-                            )
-                        else:
-                            missing_fields = [field for field in required_fields if field not in order]
-                            self.log_result(
-                                "Payment Order Field Validation",
-                                False,
-                                f"Missing required fields: {missing_fields}",
-                                {"order": order}
-                            )
-                        
-                        return order.get("id")
-                    else:
-                        self.log_result(
-                            "Payment Order Creation",
-                            False,
-                            f"Amount conversion incorrect. Expected: {expected_amount_paise}, Got: {actual_amount}",
-                            {
-                                "expected_paise": expected_amount_paise,
-                                "actual_paise": actual_amount,
-                                "order": order
-                            }
-                        )
-                        return None
+                    self.log_result(
+                        "SuperAdmin PO List",
+                        True,
+                        f"Successfully fetched {len(po_list)} purchase orders for superadmin",
+                        {
+                            "endpoint": url,
+                            "po_count": len(po_list),
+                            "response_structure": "{ status: true, data: [...] }",
+                            "sample_fields": list(po_list[0].keys()) if po_list else []
+                        }
+                    )
+                    return True
                 else:
-                    # Check if it's the old structure { success: true, data: {...} }
-                    if data.get("success") and "data" in data:
-                        self.log_result(
-                            "Payment Order Creation",
-                            False,
-                            "Response uses old structure { success: true, data: {...} } instead of { success: true, order: {...} }",
-                            {"response": data}
-                        )
-                    else:
-                        self.log_result(
-                            "Payment Order Creation",
-                            False,
-                            "Invalid response structure",
-                            {"response": data}
-                        )
-                    return None
+                    self.log_result(
+                        "SuperAdmin PO List",
+                        False,
+                        "Invalid response structure",
+                        {"response": data}
+                    )
+                    return False
             else:
                 error_msg = response.json().get("message", "Unknown error") if response.content else "No response content"
                 self.log_result(
-                    "Payment Order Creation",
+                    "SuperAdmin PO List",
                     False,
-                    f"Failed to create payment order: {error_msg}",
-                    {"status_code": response.status_code, "response": response.text}
+                    f"Failed to fetch superadmin PO list: {error_msg}",
+                    {"status_code": response.status_code, "url": url}
                 )
-                return None
+                return False
                 
         except Exception as e:
             self.log_result(
-                "Payment Order Creation Test",
+                "SuperAdmin PO List",
                 False,
                 f"Exception occurred: {str(e)}",
                 {"exception_type": type(e).__name__}
             )
-            return None
+            return False
     
     def test_payment_verification_endpoint(self):
         """Test 1: Create customer WITHOUT password (booking flow scenario)"""
