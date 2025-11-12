@@ -657,6 +657,90 @@ agent_communication:
       4. Click proceed - Razorpay modal should open
       5. Complete test payment
       6. Verify booking is created with "Paid" status
+
+user_problem_statement: |
+  1. In the path "/admin/inventory/item-group-form", fix the UI alignment issue of the input fields
+  2. In the same path, after submitting the form, it shows two toast notifications; show only one toast message
+  3. Same toast issue with edit item group, also fix that
+
+frontend:
+  - task: "Fix Item Group Form UI alignment and duplicate toast notifications"
+    implemented: true
+    working: "NA"
+    files:
+      - "/app/frontend/src/pages/Admin/Inventory/Create/ItemGroupForm.jsx"
+      - "/app/frontend/src/store/AdminSlice/Inventory/ItemGroupSlice.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Fixed both UI alignment and duplicate toast notification issues:
+          
+          Issue 1: UI Alignment Problems
+          - Mixed usage of col-sm-6, col-md-6 causing inconsistent widths
+          - Inconsistent spacing (my-4, my-2) between form fields
+          - Add buttons were too large and misaligned
+          - Some fields lacked proper Bootstrap grid structure
+          
+          Solution:
+          - Converted all to consistent Bootstrap Row/Col structure
+          - Changed all divs to Col md={6} for uniform 2-column layout
+          - Standardized spacing to mb-3 (margin-bottom 3) for all fields
+          - Made all Add buttons uniform: 40px x 38px with icon size 20px
+          - Removed inline styling inconsistencies
+          - Added flex-grow-1 to select elements for better width control
+          - Fixed gap-2 for consistent spacing between selects and buttons
+          
+          Issue 2: Duplicate Toast Notifications
+          - Toast shown once in Redux slice (ItemGroupSlice.js)
+          - Toast shown again in component (ItemGroupForm.jsx)
+          - This happened for both create (addItemGroup) and edit (updateItemGroup)
+          
+          Solution:
+          - Removed toast.success() from Redux addItemGroup action (line 67)
+          - Removed toast.error() from Redux addItemGroup action (line 70)
+          - Removed toast.success() from Redux updateItemGroup action (line 92)
+          - Removed toast.error() from Redux updateItemGroup action (line 95)
+          - Kept toast notifications ONLY in the component for better control
+          - Component already handles success/error toasts properly
+          
+          UI Improvements:
+          - Consistent col-md-6 for all input fields (2-column grid)
+          - Uniform mb-3 spacing between all rows
+          - All Add buttons: 40px width x 38px height
+          - All plus icons: size 20px (was 30px)
+          - Clean, aligned form layout
+          - Better visual hierarchy
+          - Removed redundant FaTrash icons from select options
+          
+          Files Modified:
+          1. ItemGroupForm.jsx - Fixed UI alignment and structure
+          2. ItemGroupSlice.js - Removed duplicate toast notifications
+
+agent_communication:
+  - agent: "main"
+    message: |
+      Item Group Form fixes completed:
+      
+      ✅ UI Alignment Fixed:
+      - Consistent Bootstrap grid layout (Row/Col)
+      - All fields use col-md-6 for 2-column layout
+      - Uniform mb-3 spacing
+      - Standardized button sizes (40x38px)
+      - Clean, professional appearance
+      
+      ✅ Duplicate Toast Notifications Fixed:
+      - Removed toast from Redux slice
+      - Single toast now shown from component
+      - Applies to both Create and Edit operations
+      
+      The form now has:
+      - Professional, aligned layout
+      - Consistent spacing and sizing
+      - Single, clear toast notification per action
   - agent: "testing"
     message: |
       🎯 RAZORPAY PAYMENT INTEGRATION TESTING COMPLETED - ALL TESTS PASSED
