@@ -849,12 +849,12 @@ const ItemGroupForm = () => {
               </div>
             )}
 
-            <div className="col-md-12">
+            <Col xs={12}>
               <Button type="submit" className="mt-4 btn btn-primary" disabled={loading}>
                 {loading ? 'Submitting...' : (isEditMode ? 'Update' : 'Save')}
               </Button>
-            </div>
-          </div>
+            </Col>
+          </Row>
         </Form>
       </Card>
     </Container>
