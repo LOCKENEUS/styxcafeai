@@ -408,7 +408,7 @@ class PurchaseOrderTest:
             )
             return False
     
-    def test_customer_creation_with_password(self):
+    def test_superadmin_po_by_id(self):
         """Test 2: Create customer WITH explicit password (normal flow)"""
         print("\n=== Testing Customer Creation WITH Password ===")
         
