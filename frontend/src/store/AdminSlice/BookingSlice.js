@@ -214,16 +214,17 @@ export const processOnlinePayment = createAsyncThunk(
         }
       );
 
-      const data = response.data.data;
+      // Backend now returns { success: true, order: {...} }
+      const orderData = response.data.order;
 
-      if (data) {
+      if (orderData) {
         const options = {
           key: import.meta.env.VITE_RAZOR_LIVE_KEY,
-          amount: data.amount,
-          currency: data.currency,
+          amount: orderData.amount,
+          currency: orderData.currency,
           name: "Lockene Inc",
           description: "Game Booking",
-          order_id: data.id,
+          order_id: orderData.id,
           handler: async function (response) {
             try {
               const verifyResponse = await axios.post(
