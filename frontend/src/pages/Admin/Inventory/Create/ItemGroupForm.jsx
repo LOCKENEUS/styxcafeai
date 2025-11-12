@@ -670,7 +670,8 @@ const ItemGroupForm = () => {
                     <BiPlus /> Add Attribute
                   </Button>
                 )}
-              </div>        </div>
+              </div>
+            </Col>
 
             {/* Conditionally render the table if there are attributes */}
             {attributes.some(attr => attr.color || attr.options) && (
