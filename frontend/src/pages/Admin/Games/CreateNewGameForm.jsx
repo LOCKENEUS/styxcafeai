@@ -119,6 +119,21 @@ const CreateNewGameForm = () => {
       navigate('/admin/games/recommended');
     } catch (error) {
       console.error('Failed to save game:', error);
+      
+      // Extract and display user-friendly error message
+      let errorMessage = 'Failed to save game. Please try again.';
+      
+      if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.error) {
+        errorMessage = error.error;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+      
+      // Show toast notification with the error
+      const { toast } = await import('react-toastify');
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
