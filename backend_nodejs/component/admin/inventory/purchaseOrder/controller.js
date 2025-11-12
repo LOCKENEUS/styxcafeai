@@ -55,9 +55,20 @@ const createPurchaseOrder = async (req, res) => {
     const savedItems = [];
     if (req.body.items) {
       for (const item of req.body.items) {
+        // Validate ObjectId format first
+        if (!mongoose.Types.ObjectId.isValid(item.id)) {
+          return res.status(400).json({
+            status: false,
+            message: `Invalid item ID format: ${item.id}. Please select valid items.`,
+          });
+        }
+        
         const existingCafeItem = await Item.findById(item.id);
         if (!existingCafeItem) {
-          throw new Error(`Item with ID ${item.id} not found`);
+          return res.status(400).json({
+            status: false,
+            message: `Item with ID ${item.id} not found. Please select valid items from inventory.`,
+          });
         }
         const existingPoItem = await Item.findOne({
           cafe: existingCafeItem.cafe,
