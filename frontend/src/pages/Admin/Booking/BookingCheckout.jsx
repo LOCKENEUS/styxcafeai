@@ -2588,23 +2588,25 @@ const BookingCheckout = () => {
                                   −
                                 </Button>
 
-                                <input
-                                  type="number"
-                                  min="0"
-                                  value={product.quantity}
+                                <div
                                   style={{
-                                    width: "50px",
-                                    height: "28px",
-                                    fontSize: "12px",
+                                    minWidth: "60px",
+                                    height: "32px",
+                                    fontSize: "16px",
+                                    fontWeight: "600",
                                     textAlign: "center",
-                                    padding: "2px 4px",
-                                    border: "1px solid #ccc",
+                                    padding: "4px 8px",
+                                    border: "2px solid #0d6efd",
+                                    borderRadius: "4px",
+                                    backgroundColor: "#f8f9fa",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    color: "#0d6efd",
                                   }}
-                                  onChange={(e) =>
-                                    updateProduct(product.id, "quantity", Number(e.target.value))
-                                  }
-                                  onWheel={(e) => e.target.blur()}
-                                />
+                                >
+                                  {product.quantity}
+                                </div>
 
                                 <Button
                                   variant="light"
