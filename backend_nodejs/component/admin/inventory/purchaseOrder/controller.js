@@ -430,7 +430,7 @@ const updatePurchaseOrder = async (req, res) => {
         const savedBookItem = await bookItem.save();
         return savedBookItem._id;
       })
-    );
+    ) : [];
 
     updatedPurchaseOrder.items = bookItemIds;
     await updatedPurchaseOrder.save();
