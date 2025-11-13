@@ -8,10 +8,10 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import { GetPurchaseOrder, GetVendorsList, UpdatePurchaseOrder, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { getItems } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { getTaxFields } from "../../../../store/slices/tax";
-import Customers from "../modal/customersModal";
+import Customers from "../modal/AddClint";
 import VendorsList from "../modal/vendoreListModal";
 import PaymentTermsModal from "../modal/PaymentTermsModal";
-import Tax from "../modal/tax";
+import Tax from "../modal/Tax";
 import OffcanvesItemsNewCreate from "../modal/itemCreateModal";
 
 export const PurchaseOrderUpdate = () => {
