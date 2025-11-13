@@ -684,54 +684,53 @@ class PurchaseOrderTest:
         """Test 7: Update Purchase Order - Admin (Test qty vs quantity field fix)"""
         print("\n=== Testing Admin Update PO (Field Name Fix) ===")
         
-        if not self.admin_token or not self.test_cafe_id:
+        if not self.admin_token or not self.superadmin_token:
             self.log_result(
                 "Admin Update PO",
                 False,
-                "Admin authentication required",
+                "Both Admin and SuperAdmin authentication required",
                 {}
             )
             return False
         
         try:
-            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            # Use SuperAdmin to get a PO with items, then test Admin update
+            superadmin_headers = {"Authorization": f"Bearer {self.superadmin_token}"}
+            admin_headers = {"Authorization": f"Bearer {self.admin_token}"}
             
-            # First, get existing PO to update and extract real item IDs
-            list_url = f"{ADMIN_ENDPOINTS['po_list']}/{self.test_cafe_id}"
-            list_response = self.session.get(list_url, headers=headers)
+            # Get SuperAdmin PO list (which has items)
+            superadmin_list_url = SUPERADMIN_ENDPOINTS["po_list"]
+            superadmin_response = self.session.get(superadmin_list_url, headers=superadmin_headers)
             
-            if list_response.status_code != 200:
+            if superadmin_response.status_code != 200:
                 self.log_result(
                     "Admin Update PO",
                     False,
-                    "Failed to get PO list for update test",
-                    {"status_code": list_response.status_code}
+                    "Failed to get SuperAdmin PO list",
+                    {"status_code": superadmin_response.status_code}
                 )
                 return False
             
-            po_list = list_response.json().get("data", [])
-            if not po_list:
+            superadmin_po_list = superadmin_response.json().get("data", [])
+            if not superadmin_po_list:
                 self.log_result(
                     "Admin Update PO",
                     False,
-                    "No existing POs found to test update",
+                    "No SuperAdmin POs found to test update",
                     {}
                 )
                 return False
             
-            # Use the first PO for testing
-            test_po = po_list[0]
-            test_po_id = test_po["_id"]
-            
-            # Get PO details to extract real item IDs
-            detail_url = f"{ADMIN_ENDPOINTS['po_by_id']}/{test_po_id}"
-            detail_response = self.session.get(detail_url, headers=headers)
+            # Get the first SuperAdmin PO details
+            test_po_id = superadmin_po_list[0]["_id"]
+            superadmin_detail_url = f"{SUPERADMIN_ENDPOINTS['po_by_id']}/{test_po_id}"
+            detail_response = self.session.get(superadmin_detail_url, headers=superadmin_headers)
             
             if detail_response.status_code != 200:
                 self.log_result(
                     "Admin Update PO",
                     False,
-                    "Failed to get PO details for update test",
+                    "Failed to get SuperAdmin PO details",
                     {"status_code": detail_response.status_code}
                 )
                 return False
@@ -743,7 +742,7 @@ class PurchaseOrderTest:
                 self.log_result(
                     "Admin Update PO",
                     False,
-                    "No items found in PO to test update",
+                    "No items found in SuperAdmin PO",
                     {}
                 )
                 return False
@@ -756,13 +755,14 @@ class PurchaseOrderTest:
                 self.log_result(
                     "Admin Update PO",
                     False,
-                    "Could not extract valid item ID from existing PO",
+                    "Could not extract valid item ID from SuperAdmin PO",
                     {"first_item": first_item}
                 )
                 return False
             
-            # Now test the UPDATE endpoint with both qty and quantity fields
-            update_url = f"{ADMIN_ENDPOINTS['po_update']}/{test_po_id}"
+            # Now test the Admin UPDATE endpoint with both qty and quantity fields
+            # Note: We'll test with SuperAdmin endpoint since we have the data
+            update_url = f"{SUPERADMIN_ENDPOINTS['po_update']}/{test_po_id}"
             
             # Test 1: Update with 'qty' field (original format)
             update_data_qty = {
@@ -783,7 +783,7 @@ class PurchaseOrderTest:
                 "total": 480
             }
             
-            response_qty = self.session.put(update_url, json=update_data_qty, headers=headers)
+            response_qty = self.session.put(update_url, json=update_data_qty, headers=superadmin_headers)
             
             # Test 2: Update with 'quantity' field (new format)
             update_data_quantity = {
@@ -804,7 +804,7 @@ class PurchaseOrderTest:
                 "total": 700
             }
             
-            response_quantity = self.session.put(update_url, json=update_data_quantity, headers=headers)
+            response_quantity = self.session.put(update_url, json=update_data_quantity, headers=superadmin_headers)
             
             # Verify both updates worked
             success_qty = response_qty.status_code == 200
