@@ -1904,3 +1904,42 @@ agent_communication:
       
       The Purchase Order creation error handling fix has been completely verified and is working perfectly.
       All test scenarios from the review request are now passing with proper error handling.
+  - agent: "testing"
+    message: |
+      🎯 PURCHASE ORDER UPDATE ENDPOINT TESTING COMPLETED - FIELD NAME MISMATCH ISSUE CONFIRMED
+      
+      **CRITICAL FINDING: UPDATE ENDPOINT PARTIALLY WORKING**
+      
+      Test Results Summary:
+      ✅ UPDATE with 'qty' field: WORKING (Status 200)
+      ❌ UPDATE with 'quantity' field: FAILING (Status 500)
+      
+      **Detailed Test Results:**
+      1. **Field Name Compatibility Test**:
+         - PO ID: 6912e316b343d36e4ff20575 (SuperAdmin PO with real items)
+         - Real Item ID: Valid ObjectId extracted from existing PO
+         - Test 1 (qty field): ✅ SUCCESS - Updated reference to "UPDATED-REF-QTY"
+         - Test 2 (quantity field): ❌ FAILURE - Error: "Cast to Number failed for value 'NaN'"
+      
+      2. **Root Cause Identified**:
+         - Line 382 in updatePurchaseOrder function
+         - Code: `parseInt(item.qty || item.quantity || 0)`
+         - When qty=undefined and quantity=10, parseInt still produces NaN
+         - NaN value causes MongoDB cast error for pending_qty field
+      
+      3. **Impact Assessment**:
+         - Users can update POs if frontend sends 'qty' field ✅
+         - Users cannot update POs if frontend sends 'quantity' field ❌
+         - Inconsistent behavior creates unpredictable user experience
+         - May cause intermittent failures depending on frontend implementation
+      
+      **RECOMMENDATION FOR MAIN AGENT:**
+      The field name mismatch fix is incomplete. The logical OR operator in the quantity calculation
+      is not working as expected. Need to investigate why `parseInt(item.qty || item.quantity || 0)`
+      produces NaN when item.qty is undefined and item.quantity has a valid number.
+      
+      **NEXT STEPS:**
+      1. Debug the quantity calculation logic more thoroughly
+      2. Consider using a more explicit approach to handle both field names
+      3. Add proper validation to prevent NaN values
+      4. Test with both field name scenarios after fix
