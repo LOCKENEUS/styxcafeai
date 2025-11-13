@@ -40,10 +40,9 @@ class CMSTest:
         self.session = requests.Session()
         self.test_results = []
         self.admin_token = None
-        self.superadmin_token = None
         self.test_cafe_id = None
-        self.test_vendor_id = None
-        self.created_po_ids = []
+        self.created_hero_ids = []
+        self.created_service_ids = []
         
     def log_result(self, test_name, success, message, details=None):
         """Log test results"""
