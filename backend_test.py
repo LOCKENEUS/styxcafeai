@@ -851,7 +851,7 @@ class PurchaseOrderTest:
             return False
 
     def test_admin_delete_po(self):
-        """Test 7: Delete Purchase Order - Admin (Check if endpoint exists)"""
+        """Test 8: Delete Purchase Order - Admin (Check if endpoint exists)"""
         print("\n=== Testing Admin Delete PO ===")
         
         if not self.admin_token:
