@@ -28,7 +28,7 @@ export const loginUser = createAsyncThunk(
       }
       toast.success("Login successful");
       localStorage.setItem("authToken", data.data.token);
-      localStorage.setItem("userRole", JSON.stringify(data.data.user.role));
+      localStorage.setItem("userRole", data.data.user.role);
       localStorage.setItem("user", JSON.stringify(data.data.user));
 
       return data.data;
