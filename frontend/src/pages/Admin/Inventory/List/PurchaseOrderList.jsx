@@ -39,7 +39,7 @@ const PurchaseOrderList = () => {
     if (user?._id) {
       dispatch(GetPOList(user._id));
     }
-    dispatch(getStyxData());
+    // Removed getStyxData() call - not needed and causes "Failed to fetch Styx data" error
   }, [dispatch]);
 
   const formattedPOList = Array.isArray(listOfPO)
