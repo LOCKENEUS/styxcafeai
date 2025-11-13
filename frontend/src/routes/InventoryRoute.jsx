@@ -2,7 +2,7 @@ import { Navigate, Outlet } from "react-router-dom";
 
 const InventoryRoute = () => {
   const isAuthenticated = localStorage.getItem("authToken");
-  const userRole = JSON.parse(localStorage.getItem("userRole"));
+  const userRole = localStorage.getItem("userRole");
 
   // Allow both admin and superadmin to access inventory routes
   if (!isAuthenticated) {
