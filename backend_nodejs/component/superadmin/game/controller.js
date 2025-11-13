@@ -61,6 +61,14 @@ const createGame = async (req, res) => {
       amenities: parsedAmenities,
     });
 
+    // Emit Socket.io event for real-time update
+    try {
+      const { emitToCustomers, EVENTS } = require("../../../socket/socketManager");
+      emitToCustomers(EVENTS.GAME_CREATED, newGame);
+    } catch (socketError) {
+      console.log("Socket.io emit error:", socketError.message);
+    }
+
     res.status(201).json({
       status: true,
       message: "Game created successfully",
