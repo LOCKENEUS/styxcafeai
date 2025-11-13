@@ -7,14 +7,20 @@ const initializeSocket = (server) => {
     cors: {
       origin: [
         "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002",
+        "http://localhost:5173",
         "https://cafe-admin-panel.preview.emergentagent.com",
         "https://styxcafe-revamp.preview.emergentagent.com",
+        "https://cafe-backend.preview.emergentagent.com",
         "https://cc1406e7-8328-4a1b-a2a0-928d2f749a14.preview.emergentagent.com"
       ],
-      methods: ["GET", "POST", "PUT", "DELETE"],
-      credentials: true
+      methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+      credentials: true,
+      allowedHeaders: ["Content-Type", "Authorization"]
     },
-    transports: ['websocket', 'polling']
+    transports: ['websocket', 'polling'],
+    allowEIO3: true // Support older clients
   });
 
   io.on("connection", (socket) => {
