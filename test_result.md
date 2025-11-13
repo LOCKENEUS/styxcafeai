@@ -1665,15 +1665,22 @@ agent_communication:
       5. Admin PO by Vendor - GET /api/admin/inventory/po/list/{cafeId}/{vendorId} ✅
       6. Authentication - Both Admin and SuperAdmin JWT auth working ✅
       
-      ❌ CRITICAL ISSUES FOUND (2):
+      ❌ CRITICAL ISSUES FOUND (3):
       
-      1. **PURCHASE ORDER CREATION FAILING** 🚨
+      1. **PURCHASE ORDER UPDATE FAILING** 🚨 [MAIN REPORTED ISSUE]
+         - PUT /api/admin/inventory/po/{id} returns 500 error
+         - Root cause: Field name mismatch (qty vs quantity) + missing validation
+         - Impact: Users cannot update Purchase Orders - exactly matches user report
+         - Route /admin/inventory/PurchaseOrderUpdate/{id} not working
+         - Purchase orders not reflecting/loading when trying to edit
+      
+      2. **PURCHASE ORDER CREATION FAILING** 🚨
          - POST /api/admin/inventory/po returns 500 error
          - Root cause: Invalid item ObjectIds cause database errors
          - Impact: Users cannot create new Purchase Orders
          - This is likely the source of "Failed to fetch Styx data" error
       
-      2. **DELETE ENDPOINT MISSING** 🚨
+      3. **DELETE ENDPOINT MISSING** 🚨
          - DELETE /api/admin/inventory/po/{id} not implemented
          - Returns HTML 404 instead of JSON response
          - Impact: Users cannot delete Purchase Orders (incomplete CRUD)
