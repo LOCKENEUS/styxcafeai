@@ -1610,44 +1610,48 @@ backend:
       - working: false
         agent: "testing"
         comment: |
-          ❌ CRITICAL ISSUE - PURCHASE ORDER UPDATE FAILING
+          ❌ CRITICAL ISSUE - PURCHASE ORDER UPDATE PARTIALLY WORKING
+          
+          **LATEST TEST RESULTS (Field Name Mismatch Fix Verification):**
+          ✅ UPDATE with 'qty' field: WORKING (Status 200)
+          ❌ UPDATE with 'quantity' field: FAILING (Status 500)
           
           Error Details:
-          - PUT /api/admin/inventory/po/{id} - FAILING ❌
+          - PUT /api/superadmin/inventory/po/{id} with 'quantity' field - FAILING ❌
           - Status Code: 500 Internal Server Error
-          - Error 1: "Cast to Number failed for value 'NaN' at path 'pending_qty'"
-          - Error 2: "Cannot read properties of undefined (reading 'map')"
+          - Error: "Cast to Number failed for value 'NaN' (type number) at path 'pending_qty'"
           
           Root Cause Analysis:
-          1. **Field Name Mismatch**: Controller expects `item.qty` but database stores `item.quantity`
-             - Line 382: `req.body.items.reduce((sum, item) => sum + parseInt(item.qty), 0)`
-             - Database items have `quantity` field, not `qty` field
-             - This causes parseInt(undefined) = NaN, leading to Mongoose cast error
+          1. **Field Name Mismatch Still Exists**: Line 382 in controller.js
+             - Current code: `parseInt(item.qty || item.quantity || 0)`
+             - When 'qty' is undefined and 'quantity' is 10, parseInt produces NaN
+             - The logical OR operator is not handling the case properly
+             - NaN gets passed to pending_qty field causing MongoDB cast error
           
-          2. **Missing Items Validation**: When `req.body.items` is undefined:
+          2. **Previous Issues Identified**:
+             - Missing Items Validation: When `req.body.items` is undefined
              - Line 418: `req.body.items.map(async (product) => {...})`
-             - Code crashes trying to call .map() on undefined
-             - No validation to check if items array exists
+             - Data Structure Issues between frontend and backend
           
-          3. **Data Structure Issues**:
-             - Frontend sends items with `quantity` field
-             - Backend expects items with `qty` field
-             - Inconsistent field naming between GET and PUT operations
-          
-          Test Results:
-          - Update with corrected structure (qty field): ✅ SUCCESS
-          - Update with empty items array: ✅ SUCCESS  
-          - Update without items field: ❌ FAILS (500 error)
+          **Comprehensive Test Results:**
+          - PO ID tested: 6912e316b343d36e4ff20575
+          - Real Item ID used: Valid ObjectId from existing PO
+          - Update with 'qty' field: ✅ SUCCESS (Status 200)
+          - Update with 'quantity' field: ❌ FAILURE (Status 500 - NaN error)
           
           Impact:
-          - Users cannot update Purchase Orders (main reported issue)
-          - Route /admin/inventory/PurchaseOrderUpdate/{id} not working
-          - Purchase orders not reflecting/loading when trying to edit
+          - Users cannot update Purchase Orders when using 'quantity' field
+          - Frontend may send either 'qty' or 'quantity' depending on context
+          - Inconsistent behavior between field names
+          - Blocks PO update workflow partially
           
           Required Fixes:
-          1. Change line 382: `parseInt(item.qty)` → `parseInt(item.qty || item.quantity)`
-          2. Add validation: Check if `req.body.items` exists before calling .map()
-          3. Standardize field names between GET and PUT operations
+          1. **Fix quantity calculation logic**: Ensure proper handling of both field names
+          2. **Add proper validation**: Prevent NaN values in pending_qty calculation
+          3. **Test both scenarios**: Verify 'qty' and 'quantity' fields work correctly
+          4. **Standardize field names**: Consistent naming between operations
+          
+          **The field name mismatch fix is incomplete and needs further work.**
           4. Add proper error handling for missing/invalid data
 
 agent_communication:
