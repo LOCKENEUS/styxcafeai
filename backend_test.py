@@ -69,7 +69,7 @@ class CMSTest:
                 "password": "admin123"
             }
             
-            response = self.session.post(ADMIN_ENDPOINTS["login"], json=login_data)
+            response = self.session.post(ADMIN_CMS_ENDPOINTS["login"], json=login_data)
             
             if response.status_code == 200:
                 data = response.json()
