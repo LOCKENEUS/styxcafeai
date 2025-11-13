@@ -115,54 +115,64 @@ class CMSTest:
             )
             return False
     
-    def authenticate_superadmin(self):
-        """Authenticate as superadmin and get token"""
-        print("\n=== Authenticating as SuperAdmin ===")
+    def test_admin_get_hero_content(self):
+        """Test 1: GET /api/admin/cms/hero - Get all hero content"""
+        print("\n=== Testing Admin Get Hero Content ===")
+        
+        if not self.admin_token:
+            self.log_result(
+                "Admin Get Hero Content",
+                False,
+                "Admin authentication required",
+                {}
+            )
+            return False
         
         try:
-            login_data = {
-                "email": "styxcafe@gmail.com",
-                "password": "10101984#rR"
-            }
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            url = ADMIN_CMS_ENDPOINTS["hero_list"]
             
-            response = self.session.post(SUPERADMIN_ENDPOINTS["login"], json=login_data)
+            response = self.session.get(url, headers=headers)
             
             if response.status_code == 200:
                 data = response.json()
                 
-                if data.get("status") and "data" in data and "token" in data["data"]:
-                    self.superadmin_token = data["data"]["token"]
+                if data.get("status") and "data" in data:
+                    hero_list = data.get("data", [])
                     
                     self.log_result(
-                        "SuperAdmin Authentication",
+                        "Admin Get Hero Content",
                         True,
-                        f"Successfully authenticated as superadmin",
+                        f"Successfully fetched {len(hero_list)} hero content items",
                         {
-                            "token_length": len(self.superadmin_token) if self.superadmin_token else 0
+                            "endpoint": url,
+                            "hero_count": len(hero_list),
+                            "response_structure": "{ status: true, data: [...] }",
+                            "sample_fields": list(hero_list[0].keys()) if hero_list else []
                         }
                     )
                     return True
                 else:
                     self.log_result(
-                        "SuperAdmin Authentication",
+                        "Admin Get Hero Content",
                         False,
-                        "Invalid response structure from superadmin login API",
+                        "Invalid response structure",
                         {"response": data}
                     )
                     return False
             else:
                 error_msg = response.json().get("message", "Unknown error") if response.content else "No response content"
                 self.log_result(
-                    "SuperAdmin Authentication",
+                    "Admin Get Hero Content",
                     False,
-                    f"Failed to authenticate superadmin: {error_msg}",
-                    {"status_code": response.status_code}
+                    f"Failed to fetch hero content: {error_msg}",
+                    {"status_code": response.status_code, "url": url}
                 )
                 return False
                 
         except Exception as e:
             self.log_result(
-                "SuperAdmin Authentication",
+                "Admin Get Hero Content",
                 False,
                 f"Exception occurred: {str(e)}",
                 {"exception_type": type(e).__name__}
