@@ -20,7 +20,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { getPurchaseReceiveList } from "../../../../store/AdminSlice/Inventory/purchaseReceive";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../../../components/common/Loader/Loader";
-import { getStyxData } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+// Removed getStyxData import - not needed and causes "Failed to fetch Styx data" error
 import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
 
 export const PurchaseReceivedAdmin = () => {
