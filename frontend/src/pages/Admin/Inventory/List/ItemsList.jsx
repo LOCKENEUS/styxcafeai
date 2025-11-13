@@ -76,22 +76,24 @@ const ItemsList = () => {
     const headers = [
       "SN",
       "Item Name",
-      "Price",
+      "Selling Price",
+      "Cost Price",
       "Stock",
       "SKU",
       "HSN",
       "Unit",
       "Dimension",
     ];
-    const rows = items.map((item) => [
-      item.sn,
-      item.name,
-      item.price,
-      item.stock,
-      item.sku,
-      item.hsn,
-      item.unit,
-      item.dimension,
+    const rows = items.map((item, index) => [
+      index + 1,
+      item.name || "-",
+      item.sellingPrice || item.price || 0,
+      item.costPrice || 0,
+      item.stock || 0,
+      item.sku || "-",
+      item.hsn || "-",
+      item.unit || "-",
+      item.dimension || "-",
     ]);
 
     const csvContent = [headers, ...rows].map((e) => e.join(",")).join("\n");
