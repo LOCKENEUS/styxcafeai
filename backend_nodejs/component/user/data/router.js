@@ -16,4 +16,9 @@ Router.route("/cafe/items/:id").get(getCafeItems);
 Router.route("/recent-cafe").get(getRecentCafes);
 Router.route("/recent-cafe").post(getRecentCafes);
 
+// CMS Content Routes (Public)
+const { getActiveHeroContent, getActiveServiceContent } = require("../../admin/cms/controller");
+Router.route("/content/hero").get(getActiveHeroContent);
+Router.route("/content/services").get(getActiveServiceContent);
+
 module.exports = Router;
