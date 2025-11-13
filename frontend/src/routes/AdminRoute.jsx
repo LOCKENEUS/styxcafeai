@@ -2,7 +2,7 @@ import { Navigate, Outlet } from "react-router-dom";
 
 const AdminRoute = () => {
   const isAuthenticated = localStorage.getItem("authToken");
-  const userRole = JSON.parse(localStorage.getItem("userRole"));
+  const userRole = localStorage.getItem("userRole");
 
   // Only allow admin users (NOT superadmin)
   if (!isAuthenticated) {
