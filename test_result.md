@@ -1416,9 +1416,9 @@ user_problem_statement: |
 backend:
   - task: "Purchase Order UPDATE endpoint field name handling fix"
     implemented: true
-    working: false
+    working: true
     file: "/app/backend_nodejs/component/superadmin/inventory/purchaseOrder/controller.js"
-    stuck_count: 1
+    stuck_count: 0
     priority: "critical"
     needs_retesting: false
     status_history:
@@ -1450,6 +1450,31 @@ backend:
           
           Fix Required:
           Update SuperAdmin controller line 314 to match Admin controller logic for field name handling.
+      - working: true
+        agent: "testing"
+        comment: |
+          ✅ COMPREHENSIVE TESTING COMPLETED - ALL 4 SCENARIOS NOW PASS
+          
+          Test Results Summary:
+          ✅ Test 1: Admin UPDATE with 'qty' field - PASS (200 OK)
+          ✅ Test 2: Admin UPDATE with 'quantity' field - PASS (200 OK)
+          ✅ Test 3: SuperAdmin UPDATE with 'qty' field - PASS (200 OK)
+          ✅ Test 4: SuperAdmin UPDATE with 'quantity' field - PASS (200 OK)
+          
+          Technical Verification:
+          - Both Admin and SuperAdmin controllers now have proper fallback logic
+          - Admin Controller (lines 381-386): ✅ WORKING
+          - SuperAdmin Controller (lines 314-317): ✅ NOW FIXED
+          - Both use: `const qty = item.qty !== undefined ? item.qty : (item.quantity !== undefined ? item.quantity : 0);`
+          
+          API Endpoints Tested:
+          - PUT /api/admin/inventory/po/{id} with 'qty' field ✅
+          - PUT /api/admin/inventory/po/{id} with 'quantity' field ✅
+          - PUT /api/superadmin/inventory/po/{id} with 'qty' field ✅
+          - PUT /api/superadmin/inventory/po/{id} with 'quantity' field ✅
+          
+          Field Name Handling Fix Status: COMPLETELY RESOLVED
+          Both controllers now handle the field name mismatch properly and return status 200 for all scenarios.
 
 backend:
   - task: "Admin Purchase Order List Endpoint"
