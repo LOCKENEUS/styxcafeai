@@ -924,7 +924,7 @@ class PurchaseOrderTest:
             return False
 
     def test_admin_po_by_vendor(self):
-        """Test 8: PO List by Vendor - Admin"""
+        """Test 9: PO List by Vendor - Admin"""
         print("\n=== Testing Admin PO by Vendor ===")
         
         if not self.admin_token or not self.test_cafe_id:
