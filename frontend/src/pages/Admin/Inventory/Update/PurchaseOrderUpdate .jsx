@@ -89,12 +89,8 @@ export const PurchaseOrderUpdate = () => {
   }, [id]);
 
   useEffect(() => {
-    if (userType === "Superadmin") {
-      dispatch(getSuperItems());
-    } else {
-      dispatch(getItems(cafeId));
-    }
-  }, [userType])
+    dispatch(getItems(cafeId));
+  }, [userType, cafeId])
 
   useEffect(() => {
     if (selectedPo) {
