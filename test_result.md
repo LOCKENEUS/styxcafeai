@@ -1380,6 +1380,44 @@ user_problem_statement: |
   Verify both scenarios return status 200 and update successfully.
 
 backend:
+  - task: "Purchase Order UPDATE endpoint field name handling fix"
+    implemented: true
+    working: false
+    file: "/app/backend_nodejs/component/superadmin/inventory/purchaseOrder/controller.js"
+    stuck_count: 1
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: |
+          ❌ CRITICAL ISSUE - SUPERADMIN UPDATE ENDPOINT NOT HANDLING 'quantity' FIELD
+          
+          Test Results:
+          ✅ Admin Update with 'qty': PASS (200 OK)
+          ✅ Admin Update with 'quantity': PASS (200 OK) - FIXED CORRECTLY
+          ✅ SuperAdmin Update with 'qty': PASS (200 OK)
+          ❌ SuperAdmin Update with 'quantity': FAIL (500 Error)
+          
+          Error Details:
+          - SuperAdmin endpoint: PUT /api/superadmin/inventory/po/{id}
+          - Error: "Cast to Number failed for value "NaN" (type number) at path "pending_qty""
+          - Root Cause: SuperAdmin controller only handles 'qty' field, not 'quantity' field
+          
+          Code Analysis:
+          - Admin controller (FIXED): Uses fallback logic `item.qty !== undefined ? item.qty : (item.quantity !== undefined ? item.quantity : 0)`
+          - SuperAdmin controller (NOT FIXED): Still only uses `parseInt(item.qty)` without fallback
+          
+          When 'quantity' field is used:
+          - item.qty is undefined
+          - parseInt(undefined) returns NaN
+          - pending_qty becomes NaN
+          - MongoDB rejects NaN value for Number field
+          
+          Fix Required:
+          Update SuperAdmin controller line 314 to match Admin controller logic for field name handling.
+
+backend:
   - task: "Admin Purchase Order List Endpoint"
     implemented: true
     working: true
