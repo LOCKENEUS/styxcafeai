@@ -22,7 +22,7 @@ export const PurchaseReceivedDetails = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(getStyxData());
+        // Removed getStyxData() call - not needed and causes "Failed to fetch Styx data" error
         dispatch(getPurchaseReceive(purchaseReceive));
     }, [dispatch, cafeId]);
 
