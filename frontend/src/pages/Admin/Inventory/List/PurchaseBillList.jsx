@@ -37,7 +37,7 @@ const PurchaseBillList = () => {
   const cafeId = user?._id;
   useEffect(() => {
     dispatch(getPBills(cafeId)).unwrap()
-    dispatch(getStyxData());
+    // Removed getStyxData() call - not needed and causes "Failed to fetch Styx data" error
   }, [dispatch]);
 
   // Function to handle modal (replace with actual logic)
