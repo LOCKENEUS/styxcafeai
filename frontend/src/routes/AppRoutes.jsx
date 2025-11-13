@@ -248,6 +248,9 @@ const AppRoutes = ({ setIsAuthenticated, isAuthenticated }) => {
           <Route path="/admin/games/edit-game/:id" element={<CreateNewGameForm />} />
           <Route path="/admin/games/game-details/:id" element={<GameDetails />} />
 
+          {/* CMS Routes */}
+          <Route path="/admin/cms/hero-content" element={<HeroContentManager />} />
+
           <Route path="/admin/bookings/create-slots" element={<CreateSlotsForm />} />
           <Route path="/admin/bookings/booking-details/:gameId/:slotId/:date" element={<BookingDetails />} />
           <Route path="/admin/bookings" element={<BookingList />} />
