@@ -44,7 +44,6 @@ export const PurchaseOrderUpdate = () => {
   const selectedPo = useSelector((state) => state.purchaseOrder?.selectedPurchaseOrder);
   const taxFields = useSelector((state) => state.tax?.taxes);
   const itemListForItems = useSelector((state) => state.items?.items);
-  const itemListForSuperItems = useSelector((state) => state.items?.super_items);
   const [userType, setUserType] = useState("Vendor");
 
   const [totals, setTotals] = useState({
