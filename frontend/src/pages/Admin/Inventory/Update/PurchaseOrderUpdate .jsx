@@ -6,7 +6,7 @@ import { GiCancel } from "react-icons/gi";
 import { FaPlus } from "react-icons/fa";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { GetPurchaseOrder, GetVendorsList, UpdatePurchaseOrder, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
-import { getItems, getSuperItems } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
+import { getItems } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
 import { getTaxFields } from "../../../../store/AdminSlice/Inventory/taxSlice";
 import Customers from "../modal/customersModal";
 import VendorsList from "../modal/vendoreListModal";
