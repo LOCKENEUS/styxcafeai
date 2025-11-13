@@ -5,7 +5,7 @@ import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems"
 import Tax from "../modal/Tax";
 import PaymentTermsModal from "../modal/PaymentTermsModal";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { CreatePurchaseOrder, getStyxData, GetVendorsList, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { CreatePurchaseOrder, GetVendorsList, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch, useSelector } from "react-redux";
 import AddClint from "../modal/AddClint";
 import VendorsList from "../modal/vendoreListModal";
