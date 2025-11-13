@@ -12,7 +12,7 @@ import Customers from "../modal/AddClint";
 import VendorsList from "../modal/vendoreListModal";
 import PaymentTermsModal from "../modal/PaymentTermsModal";
 import Tax from "../modal/Tax";
-import OffcanvesItemsNewCreate from "../modal/itemCreateModal";
+import OffcanvesItemsNewCreate from "../Offcanvas/OffcanvesItems";
 
 export const PurchaseOrderUpdate = () => {
   const navigate = useNavigate();
