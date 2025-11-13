@@ -330,6 +330,40 @@ agent_communication:
       - Frontend Fix: The _id mapping fix enables proper navigation
       
       The invoice payments navigation issue has been completely resolved. Users can now successfully click on payments in the list to view the corresponding invoice details.
+  - agent: "testing"
+    message: |
+      🎯 PURCHASE ORDER UPDATE FIELD NAME HANDLING TEST COMPLETED - PARTIAL FIX VERIFIED
+      
+      COMPREHENSIVE TEST RESULTS:
+      ✅ Admin Endpoints - FULLY WORKING
+      - PUT /api/admin/inventory/po/{id} with 'qty' field: PASS (200 OK)
+      - PUT /api/admin/inventory/po/{id} with 'quantity' field: PASS (200 OK)
+      
+      ❌ SuperAdmin Endpoints - PARTIALLY WORKING
+      - PUT /api/superadmin/inventory/po/{id} with 'qty' field: PASS (200 OK)
+      - PUT /api/superadmin/inventory/po/{id} with 'quantity' field: FAIL (500 Error)
+      
+      CRITICAL FINDING:
+      The field name handling fix was only applied to the Admin controller but NOT to the SuperAdmin controller.
+      
+      TECHNICAL ANALYSIS:
+      - Admin Controller (/app/backend_nodejs/component/admin/inventory/purchaseOrder/controller.js):
+        Lines 381-386: ✅ FIXED with proper fallback logic
+        `const qty = item.qty !== undefined ? item.qty : (item.quantity !== undefined ? item.quantity : 0);`
+      
+      - SuperAdmin Controller (/app/backend_nodejs/component/superadmin/inventory/purchaseOrder/controller.js):
+        Lines 313-315: ❌ NOT FIXED, still only uses `parseInt(item.qty)`
+      
+      ERROR DETAILS:
+      When 'quantity' field is used in SuperAdmin endpoint:
+      1. item.qty is undefined
+      2. parseInt(undefined) returns NaN
+      3. pending_qty becomes NaN
+      4. MongoDB rejects NaN for Number field
+      5. Results in 500 error: "Cast to Number failed for value "NaN" (type number) at path "pending_qty""
+      
+      IMMEDIATE ACTION REQUIRED:
+      Update SuperAdmin controller updatePurchaseOrder function (line 314) to match Admin controller logic.
 
 user_problem_statement: |
   Improve UI/UX of Add Game Slot Form (offcanvas) in superadmin/Games/cafeGames path
