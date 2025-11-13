@@ -26,7 +26,8 @@ const getLocations = async (req, res) => {
 
 const getRecentCafes = async (req, res) => {
   try {
-    const { game, location } = req.body;
+    // Support both GET (query params) and POST (body) requests
+    const { game, location } = req.method === 'GET' ? req.query : req.body;
 
     const matchStage = {
       is_active: true,
