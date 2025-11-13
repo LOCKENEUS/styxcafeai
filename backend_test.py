@@ -16,26 +16,23 @@ import os
 # Configuration - Use external URL from frontend env
 BASE_URL = "https://cafe-backend.preview.emergentagent.com/api"
 
-# Admin endpoints
-ADMIN_ENDPOINTS = {
+# Admin CMS endpoints
+ADMIN_CMS_ENDPOINTS = {
     "login": f"{BASE_URL}/auth/admin/login",
-    "po_list": f"{BASE_URL}/admin/inventory/po/list",
-    "po_create": f"{BASE_URL}/admin/inventory/po",
-    "po_by_id": f"{BASE_URL}/admin/inventory/po",
-    "po_update": f"{BASE_URL}/admin/inventory/po",
-    "po_delete": f"{BASE_URL}/admin/inventory/po",
-    "po_by_vendor": f"{BASE_URL}/admin/inventory/po/list"
+    "hero_list": f"{BASE_URL}/admin/cms/hero",
+    "hero_create": f"{BASE_URL}/admin/cms/hero",
+    "hero_update": f"{BASE_URL}/admin/cms/hero",
+    "hero_delete": f"{BASE_URL}/admin/cms/hero",
+    "service_list": f"{BASE_URL}/admin/cms/service",
+    "service_create": f"{BASE_URL}/admin/cms/service",
+    "service_update": f"{BASE_URL}/admin/cms/service",
+    "service_delete": f"{BASE_URL}/admin/cms/service"
 }
 
-# SuperAdmin endpoints  
-SUPERADMIN_ENDPOINTS = {
-    "login": f"{BASE_URL}/auth/login",
-    "po_list": f"{BASE_URL}/superadmin/inventory/po/list",
-    "po_create": f"{BASE_URL}/superadmin/inventory/po",
-    "po_by_id": f"{BASE_URL}/superadmin/inventory/po",
-    "po_update": f"{BASE_URL}/superadmin/inventory/po",
-    "po_delete": f"{BASE_URL}/superadmin/inventory/po",
-    "po_by_vendor": f"{BASE_URL}/superadmin/inventory/po/list"
+# User (Public) CMS endpoints  
+USER_CMS_ENDPOINTS = {
+    "hero_active": f"{BASE_URL}/user/content/hero",
+    "services_active": f"{BASE_URL}/user/content/services"
 }
 
 class PurchaseOrderTest:
