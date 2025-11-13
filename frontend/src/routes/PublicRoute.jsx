@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 
 const PublicRoute = ({ isAuthenticated }) => {
-  const userRole = JSON.parse(localStorage.getItem("userRole") || '""');
+  const userRole = localStorage.getItem("userRole");
   const authToken = localStorage.getItem("authToken");
 
   // If user is already authenticated, redirect to their appropriate dashboard
