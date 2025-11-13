@@ -17,7 +17,7 @@ import gm1 from "/assets/inventory/mynaui_search.svg";
 import solar_export from "/assets/inventory/solar_export-linear.png";
 import add from "/assets/inventory/material-symbols_add-rounded.png";
 import { Link, useNavigate } from "react-router-dom";
-import { CreateVendor, GetPOList, getStyxData } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
+import { CreateVendor, GetPOList } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../../../components/common/Loader/Loader";
 import { Breadcrumbs } from "../../../../components/common/Breadcrumbs/Breadcrumbs";
