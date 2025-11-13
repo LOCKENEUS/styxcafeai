@@ -379,7 +379,10 @@ const updatePurchaseOrder = async (req, res) => {
 
     // Calculate pending quantity
     let pending_qty = req.body.items
-      ? req.body.items.reduce((sum, item) => sum + parseInt(item.qty || item.quantity || 0), 0)
+      ? req.body.items.reduce((sum, item) => {
+          const qty = item.qty !== undefined ? item.qty : (item.quantity !== undefined ? item.quantity : 0);
+          return sum + parseInt(qty);
+        }, 0)
       : purchaseOrder.pending_qty;
 
     // Update purchase order fields
