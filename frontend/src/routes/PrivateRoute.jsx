@@ -2,7 +2,7 @@ import { Outlet, Navigate } from "react-router-dom";
 
 const PrivateRoute = () => {
   const isAuthenticated = localStorage.getItem("authToken");
-  const userRole = JSON.parse(localStorage.getItem("userRole") || '""');
+  const userRole = localStorage.getItem("userRole");
 
   // Only allow superadmin users (NOT admin)
   if (!isAuthenticated) {
