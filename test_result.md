@@ -1701,10 +1701,43 @@ agent_communication:
       Most likely caused by the PO creation endpoint returning 500 errors when frontend
       tries to create or fetch Purchase Orders with invalid data.
       
+      PURCHASE ORDER UPDATE DETAILED ANALYSIS:
+      
+      🔍 **Specific Testing Results for User's Reported Issue:**
+      
+      **Test 1: GET /api/admin/inventory/po/list/{cafeId}** ✅ WORKING
+      - Successfully returns 2 purchase orders for admin's cafe
+      - All required fields present for editing (po_no, total, items, status)
+      - Response structure correct: { status: true, data: [...] }
+      
+      **Test 2: GET /api/admin/inventory/po/{id}** ✅ WORKING  
+      - Successfully fetches single PO details for editing
+      - All critical fields present: _id, po_no, items, total, status
+      - Items properly populated with item_id details
+      - 31 fields available including all editing requirements
+      
+      **Test 3: PUT /api/admin/inventory/po/{id}** ❌ FAILING (Main Issue)
+      - Returns 500 Internal Server Error
+      - Backend logs show exact errors:
+        * "Cast to Number failed for value 'NaN' at path 'pending_qty'"
+        * "Cannot read properties of undefined (reading 'map')"
+      
+      **Root Cause Identified:**
+      - Database items use `quantity` field, controller expects `qty` field
+      - When corrected to use `qty` field: ✅ UPDATE WORKS PERFECTLY
+      - Missing validation for undefined items array causes .map() crash
+      
+      **Proof of Fix:**
+      - Test with corrected structure: Status 200, update successful
+      - Test with empty items: Status 200, works fine
+      - Test without items field: Status 500, crashes (needs validation)
+      
       IMMEDIATE ACTION REQUIRED:
-      1. Fix PO creation endpoint error handling (return 400 instead of 500 for invalid items)
-      2. Implement missing DELETE endpoint
-      3. Create test items in system to enable proper PO creation testing
+      1. **FIX PO UPDATE ENDPOINT** (lines 382 & 418 in controller.js)
+         - Change `item.qty` to `item.qty || item.quantity`
+         - Add validation before `req.body.items.map()`
+      2. Fix PO creation endpoint error handling
+      3. Implement missing DELETE endpoint
       YOU MUST ASK USER BEFORE DOING FRONTEND TESTING
 
 user_problem_statement: |
