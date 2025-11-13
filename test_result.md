@@ -1599,6 +1599,57 @@ backend:
           
           Endpoint is working as expected.
 
+  - task: "Admin Purchase Order Update Endpoint"
+    implemented: true
+    working: false
+    file: "/app/backend_nodejs/component/admin/inventory/purchaseOrder/controller.js"
+    stuck_count: 1
+    priority: "critical"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: |
+          ❌ CRITICAL ISSUE - PURCHASE ORDER UPDATE FAILING
+          
+          Error Details:
+          - PUT /api/admin/inventory/po/{id} - FAILING ❌
+          - Status Code: 500 Internal Server Error
+          - Error 1: "Cast to Number failed for value 'NaN' at path 'pending_qty'"
+          - Error 2: "Cannot read properties of undefined (reading 'map')"
+          
+          Root Cause Analysis:
+          1. **Field Name Mismatch**: Controller expects `item.qty` but database stores `item.quantity`
+             - Line 382: `req.body.items.reduce((sum, item) => sum + parseInt(item.qty), 0)`
+             - Database items have `quantity` field, not `qty` field
+             - This causes parseInt(undefined) = NaN, leading to Mongoose cast error
+          
+          2. **Missing Items Validation**: When `req.body.items` is undefined:
+             - Line 418: `req.body.items.map(async (product) => {...})`
+             - Code crashes trying to call .map() on undefined
+             - No validation to check if items array exists
+          
+          3. **Data Structure Issues**:
+             - Frontend sends items with `quantity` field
+             - Backend expects items with `qty` field
+             - Inconsistent field naming between GET and PUT operations
+          
+          Test Results:
+          - Update with corrected structure (qty field): ✅ SUCCESS
+          - Update with empty items array: ✅ SUCCESS  
+          - Update without items field: ❌ FAILS (500 error)
+          
+          Impact:
+          - Users cannot update Purchase Orders (main reported issue)
+          - Route /admin/inventory/PurchaseOrderUpdate/{id} not working
+          - Purchase orders not reflecting/loading when trying to edit
+          
+          Required Fixes:
+          1. Change line 382: `parseInt(item.qty)` → `parseInt(item.qty || item.quantity)`
+          2. Add validation: Check if `req.body.items` exists before calling .map()
+          3. Standardize field names between GET and PUT operations
+          4. Add proper error handling for missing/invalid data
+
 agent_communication:
   - agent: "testing"
     message: |
