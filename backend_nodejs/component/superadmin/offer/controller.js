@@ -62,6 +62,14 @@ const createOffer = async (req, res) => {
       .populate("game", "name") // Only fetch the name field from the Game collection
       .exec();
 
+    // Emit Socket.io event for real-time update
+    try {
+      const { emitToCustomers, EVENTS } = require("../../../socket/socketManager");
+      emitToCustomers(EVENTS.OFFER_CREATED, populatedOffer);
+    } catch (socketError) {
+      console.log("Socket.io emit error:", socketError.message);
+    }
+
     res.status(201).json({
       status: true,
       message: "Offer created successfully",
