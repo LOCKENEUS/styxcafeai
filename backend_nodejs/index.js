@@ -90,6 +90,11 @@ const server = app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
 
+// Initialize Socket.io
+const { initializeSocket } = require("./socket/socketManager");
+initializeSocket(server);
+console.log("✅ Socket.io initialized successfully");
+
 // Place graceful shutdown signals below
 process.on("SIGTERM", gracefulShutdown);
 process.on("SIGINT", gracefulShutdown);
