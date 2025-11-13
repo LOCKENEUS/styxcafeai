@@ -680,6 +680,176 @@ class PurchaseOrderTest:
             )
             return False
 
+    def test_admin_update_po(self):
+        """Test 7: Update Purchase Order - Admin (Test qty vs quantity field fix)"""
+        print("\n=== Testing Admin Update PO (Field Name Fix) ===")
+        
+        if not self.admin_token or not self.test_cafe_id:
+            self.log_result(
+                "Admin Update PO",
+                False,
+                "Admin authentication required",
+                {}
+            )
+            return False
+        
+        try:
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            
+            # First, get existing PO to update
+            list_url = f"{ADMIN_ENDPOINTS['po_list']}/{self.test_cafe_id}"
+            list_response = self.session.get(list_url, headers=headers)
+            
+            if list_response.status_code != 200:
+                self.log_result(
+                    "Admin Update PO",
+                    False,
+                    "Failed to get PO list for update test",
+                    {"status_code": list_response.status_code}
+                )
+                return False
+            
+            po_list = list_response.json().get("data", [])
+            if not po_list:
+                # Create a PO first for testing
+                po_data = {
+                    "cafe": self.test_cafe_id,
+                    "vendor_id": None,
+                    "user_type": "Admin",
+                    "delivery_type": "Organization",
+                    "delivery_date": "2024-12-31",
+                    "payment_terms": "Net 30",
+                    "reference": "TEST-UPDATE-REF",
+                    "description": "Test PO for Update",
+                    "items": [
+                        {
+                            "id": "test_item_id_1",
+                            "qty": 5,
+                            "price": 50,
+                            "hsn": "1234",
+                            "tax": None,
+                            "tax_amt": 0,
+                            "total": 250
+                        }
+                    ],
+                    "subtotal": 250,
+                    "discount_value": 0,
+                    "discount_type": "flat",
+                    "tax": [],
+                    "total": 250,
+                    "adjustment_amount": 0,
+                    "internal_team_notes": "Test notes for update"
+                }
+                
+                create_response = self.session.post(ADMIN_ENDPOINTS["po_create"], json=po_data, headers=headers)
+                if create_response.status_code != 201:
+                    self.log_result(
+                        "Admin Update PO",
+                        False,
+                        "Failed to create test PO for update",
+                        {"status_code": create_response.status_code, "response": create_response.text}
+                    )
+                    return False
+                
+                created_po = create_response.json().get("data", {})
+                test_po_id = created_po.get("_id")
+            else:
+                test_po_id = po_list[0]["_id"]
+            
+            # Now test the UPDATE endpoint with both qty and quantity fields
+            update_url = f"{ADMIN_ENDPOINTS['po_update']}/{test_po_id}"
+            
+            # Test 1: Update with 'qty' field (original format)
+            update_data_qty = {
+                "reference": "UPDATED-REF-QTY",
+                "description": "Updated description with qty field",
+                "items": [
+                    {
+                        "id": "test_item_id_1",
+                        "qty": 8,  # Using 'qty' field
+                        "price": 60,
+                        "hsn": "1234",
+                        "tax": None,
+                        "tax_amt": 0,
+                        "total": 480
+                    }
+                ],
+                "subtotal": 480,
+                "total": 480
+            }
+            
+            response_qty = self.session.put(update_url, json=update_data_qty, headers=headers)
+            
+            # Test 2: Update with 'quantity' field (new format)
+            update_data_quantity = {
+                "reference": "UPDATED-REF-QUANTITY",
+                "description": "Updated description with quantity field",
+                "items": [
+                    {
+                        "id": "test_item_id_1",
+                        "quantity": 10,  # Using 'quantity' field
+                        "price": 70,
+                        "hsn": "1234",
+                        "tax": None,
+                        "tax_amt": 0,
+                        "total": 700
+                    }
+                ],
+                "subtotal": 700,
+                "total": 700
+            }
+            
+            response_quantity = self.session.put(update_url, json=update_data_quantity, headers=headers)
+            
+            # Verify both updates worked
+            success_qty = response_qty.status_code == 200
+            success_quantity = response_quantity.status_code == 200
+            
+            if success_qty and success_quantity:
+                self.log_result(
+                    "Admin Update PO",
+                    True,
+                    "Successfully updated PO with both 'qty' and 'quantity' fields - field name mismatch fix working",
+                    {
+                        "po_id": test_po_id,
+                        "qty_update_status": response_qty.status_code,
+                        "quantity_update_status": response_quantity.status_code,
+                        "qty_response": response_qty.json() if response_qty.content else "No content",
+                        "quantity_response": response_quantity.json() if response_quantity.content else "No content",
+                        "fix_verified": True
+                    }
+                )
+                return True
+            else:
+                error_details = {}
+                if not success_qty:
+                    error_details["qty_error"] = {
+                        "status_code": response_qty.status_code,
+                        "response": response_qty.text
+                    }
+                if not success_quantity:
+                    error_details["quantity_error"] = {
+                        "status_code": response_quantity.status_code,
+                        "response": response_quantity.text
+                    }
+                
+                self.log_result(
+                    "Admin Update PO",
+                    False,
+                    f"Update failed - qty success: {success_qty}, quantity success: {success_quantity}",
+                    error_details
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result(
+                "Admin Update PO",
+                False,
+                f"Exception occurred: {str(e)}",
+                {"exception_type": type(e).__name__}
+            )
+            return False
+
     def test_admin_delete_po(self):
         """Test 7: Delete Purchase Order - Admin (Check if endpoint exists)"""
         print("\n=== Testing Admin Delete PO ===")
