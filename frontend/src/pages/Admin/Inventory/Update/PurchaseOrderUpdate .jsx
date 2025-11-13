@@ -7,7 +7,7 @@ import { FaPlus } from "react-icons/fa";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { GetPurchaseOrder, GetVendorsList, UpdatePurchaseOrder, } from "../../../../store/AdminSlice/Inventory/purchaseOrder";
 import { getItems } from "../../../../store/AdminSlice/Inventory/ItemsSlice";
-import { getTaxFields } from "../../../../store/slices/tax";
+import { getTaxFields } from "../../../../store/AdminSlice/TextFieldSlice";
 import Customers from "../modal/AddClint";
 import VendorsList from "../modal/vendoreListModal";
 import PaymentTermsModal from "../modal/PaymentTermsModal";
