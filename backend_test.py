@@ -680,13 +680,13 @@ class PurchaseOrderTest:
             )
             return False
 
-    def test_admin_update_po(self):
-        """Test 7: Update Purchase Order - Admin (Test qty vs quantity field fix)"""
-        print("\n=== Testing Admin Update PO (Field Name Fix) ===")
+    def test_po_update_field_name_handling(self):
+        """Test 7: Purchase Order UPDATE Field Name Handling - Both Admin and SuperAdmin"""
+        print("\n=== Testing PO UPDATE Field Name Handling (qty vs quantity) ===")
         
         if not self.admin_token or not self.superadmin_token:
             self.log_result(
-                "Admin Update PO",
+                "PO UPDATE Field Name Handling",
                 False,
                 "Both Admin and SuperAdmin authentication required",
                 {}
@@ -694,17 +694,16 @@ class PurchaseOrderTest:
             return False
         
         try:
-            # Use SuperAdmin to get a PO with items, then test Admin update
             superadmin_headers = {"Authorization": f"Bearer {self.superadmin_token}"}
             admin_headers = {"Authorization": f"Bearer {self.admin_token}"}
             
-            # Get SuperAdmin PO list (which has items)
+            # Get SuperAdmin PO list to find a test PO
             superadmin_list_url = SUPERADMIN_ENDPOINTS["po_list"]
             superadmin_response = self.session.get(superadmin_list_url, headers=superadmin_headers)
             
             if superadmin_response.status_code != 200:
                 self.log_result(
-                    "Admin Update PO",
+                    "PO UPDATE Field Name Handling",
                     False,
                     "Failed to get SuperAdmin PO list",
                     {"status_code": superadmin_response.status_code}
@@ -714,7 +713,7 @@ class PurchaseOrderTest:
             superadmin_po_list = superadmin_response.json().get("data", [])
             if not superadmin_po_list:
                 self.log_result(
-                    "Admin Update PO",
+                    "PO UPDATE Field Name Handling",
                     False,
                     "No SuperAdmin POs found to test update",
                     {}
@@ -728,7 +727,7 @@ class PurchaseOrderTest:
             
             if detail_response.status_code != 200:
                 self.log_result(
-                    "Admin Update PO",
+                    "PO UPDATE Field Name Handling",
                     False,
                     "Failed to get SuperAdmin PO details",
                     {"status_code": detail_response.status_code}
@@ -740,7 +739,7 @@ class PurchaseOrderTest:
             
             if not items:
                 self.log_result(
-                    "Admin Update PO",
+                    "PO UPDATE Field Name Handling",
                     False,
                     "No items found in SuperAdmin PO",
                     {}
@@ -753,103 +752,166 @@ class PurchaseOrderTest:
             
             if not real_item_id:
                 self.log_result(
-                    "Admin Update PO",
+                    "PO UPDATE Field Name Handling",
                     False,
                     "Could not extract valid item ID from SuperAdmin PO",
                     {"first_item": first_item}
                 )
                 return False
             
-            # Now test the Admin UPDATE endpoint with both qty and quantity fields
-            # Note: We'll test with SuperAdmin endpoint since we have the data
-            update_url = f"{SUPERADMIN_ENDPOINTS['po_update']}/{test_po_id}"
+            # Test all 4 scenarios as requested
+            test_results = {}
             
-            # Test 1: Update with 'qty' field (original format)
-            update_data_qty = {
-                "reference": "UPDATED-REF-QTY",
-                "description": "Updated description with qty field",
+            # Test 1: Admin UPDATE with 'qty' field
+            admin_update_url = f"{ADMIN_ENDPOINTS['po_update']}/{test_po_id}"
+            update_data_admin_qty = {
+                "reference": "ADMIN-QTY-TEST",
+                "description": "Admin update with qty field",
                 "items": [
                     {
                         "id": real_item_id,
-                        "qty": 8,  # Using 'qty' field
+                        "qty": 5,  # Using 'qty' field
+                        "price": 50,
+                        "hsn": "1234",
+                        "tax": None,
+                        "tax_amt": 0,
+                        "total": 250
+                    }
+                ],
+                "subtotal": 250,
+                "total": 250
+            }
+            
+            response_admin_qty = self.session.put(admin_update_url, json=update_data_admin_qty, headers=admin_headers)
+            test_results["admin_qty"] = {
+                "status_code": response_admin_qty.status_code,
+                "success": response_admin_qty.status_code == 200,
+                "response": response_admin_qty.text if response_admin_qty.status_code != 200 else "OK"
+            }
+            
+            # Test 2: Admin UPDATE with 'quantity' field
+            update_data_admin_quantity = {
+                "reference": "ADMIN-QUANTITY-TEST",
+                "description": "Admin update with quantity field",
+                "items": [
+                    {
+                        "id": real_item_id,
+                        "quantity": 6,  # Using 'quantity' field
                         "price": 60,
                         "hsn": "1234",
                         "tax": None,
                         "tax_amt": 0,
-                        "total": 480
+                        "total": 360
                     }
                 ],
-                "subtotal": 480,
-                "total": 480
+                "subtotal": 360,
+                "total": 360
             }
             
-            response_qty = self.session.put(update_url, json=update_data_qty, headers=superadmin_headers)
+            response_admin_quantity = self.session.put(admin_update_url, json=update_data_admin_quantity, headers=admin_headers)
+            test_results["admin_quantity"] = {
+                "status_code": response_admin_quantity.status_code,
+                "success": response_admin_quantity.status_code == 200,
+                "response": response_admin_quantity.text if response_admin_quantity.status_code != 200 else "OK"
+            }
             
-            # Test 2: Update with 'quantity' field (new format)
-            update_data_quantity = {
-                "reference": "UPDATED-REF-QUANTITY",
-                "description": "Updated description with quantity field",
+            # Test 3: SuperAdmin UPDATE with 'qty' field
+            superadmin_update_url = f"{SUPERADMIN_ENDPOINTS['po_update']}/{test_po_id}"
+            update_data_superadmin_qty = {
+                "reference": "SUPERADMIN-QTY-TEST",
+                "description": "SuperAdmin update with qty field",
                 "items": [
                     {
                         "id": real_item_id,
-                        "quantity": 10,  # Using 'quantity' field
+                        "qty": 7,  # Using 'qty' field
                         "price": 70,
                         "hsn": "1234",
                         "tax": None,
                         "tax_amt": 0,
-                        "total": 700
+                        "total": 490
                     }
                 ],
-                "subtotal": 700,
-                "total": 700
+                "subtotal": 490,
+                "total": 490
             }
             
-            response_quantity = self.session.put(update_url, json=update_data_quantity, headers=superadmin_headers)
+            response_superadmin_qty = self.session.put(superadmin_update_url, json=update_data_superadmin_qty, headers=superadmin_headers)
+            test_results["superadmin_qty"] = {
+                "status_code": response_superadmin_qty.status_code,
+                "success": response_superadmin_qty.status_code == 200,
+                "response": response_superadmin_qty.text if response_superadmin_qty.status_code != 200 else "OK"
+            }
             
-            # Verify both updates worked
-            success_qty = response_qty.status_code == 200
-            success_quantity = response_quantity.status_code == 200
+            # Test 4: SuperAdmin UPDATE with 'quantity' field (this was failing before)
+            update_data_superadmin_quantity = {
+                "reference": "SUPERADMIN-QUANTITY-TEST",
+                "description": "SuperAdmin update with quantity field",
+                "items": [
+                    {
+                        "id": real_item_id,
+                        "quantity": 8,  # Using 'quantity' field
+                        "price": 80,
+                        "hsn": "1234",
+                        "tax": None,
+                        "tax_amt": 0,
+                        "total": 640
+                    }
+                ],
+                "subtotal": 640,
+                "total": 640
+            }
             
-            if success_qty and success_quantity:
+            response_superadmin_quantity = self.session.put(superadmin_update_url, json=update_data_superadmin_quantity, headers=superadmin_headers)
+            test_results["superadmin_quantity"] = {
+                "status_code": response_superadmin_quantity.status_code,
+                "success": response_superadmin_quantity.status_code == 200,
+                "response": response_superadmin_quantity.text if response_superadmin_quantity.status_code != 200 else "OK"
+            }
+            
+            # Evaluate results
+            all_passed = all(result["success"] for result in test_results.values())
+            
+            if all_passed:
                 self.log_result(
-                    "Admin Update PO",
+                    "PO UPDATE Field Name Handling",
                     True,
-                    "Successfully updated PO with both 'qty' and 'quantity' fields - field name mismatch fix working",
+                    "✅ ALL 4 SCENARIOS PASSED - Field name mismatch fix working correctly",
                     {
                         "po_id": test_po_id,
                         "real_item_id": real_item_id,
-                        "qty_update_status": response_qty.status_code,
-                        "quantity_update_status": response_quantity.status_code,
-                        "qty_response": response_qty.json() if response_qty.content else "No content",
-                        "quantity_response": response_quantity.json() if response_quantity.content else "No content",
-                        "fix_verified": True
+                        "test_results": {
+                            "1_admin_qty": f"✅ {test_results['admin_qty']['status_code']}",
+                            "2_admin_quantity": f"✅ {test_results['admin_quantity']['status_code']}",
+                            "3_superadmin_qty": f"✅ {test_results['superadmin_qty']['status_code']}",
+                            "4_superadmin_quantity": f"✅ {test_results['superadmin_quantity']['status_code']}"
+                        },
+                        "fix_status": "BOTH Admin and SuperAdmin controllers handle qty/quantity fields correctly"
                     }
                 )
                 return True
             else:
-                error_details = {}
-                if not success_qty:
-                    error_details["qty_error"] = {
-                        "status_code": response_qty.status_code,
-                        "response": response_qty.text
-                    }
-                if not success_quantity:
-                    error_details["quantity_error"] = {
-                        "status_code": response_quantity.status_code,
-                        "response": response_quantity.text
-                    }
-                
+                failed_tests = [name for name, result in test_results.items() if not result["success"]]
                 self.log_result(
-                    "Admin Update PO",
+                    "PO UPDATE Field Name Handling",
                     False,
-                    f"Update failed - qty success: {success_qty}, quantity success: {success_quantity}",
-                    error_details
+                    f"❌ SOME TESTS FAILED - Failed: {failed_tests}",
+                    {
+                        "po_id": test_po_id,
+                        "test_results": {
+                            "1_admin_qty": f"{'✅' if test_results['admin_qty']['success'] else '❌'} {test_results['admin_qty']['status_code']}",
+                            "2_admin_quantity": f"{'✅' if test_results['admin_quantity']['success'] else '❌'} {test_results['admin_quantity']['status_code']}",
+                            "3_superadmin_qty": f"{'✅' if test_results['superadmin_qty']['success'] else '❌'} {test_results['superadmin_qty']['status_code']}",
+                            "4_superadmin_quantity": f"{'✅' if test_results['superadmin_quantity']['success'] else '❌'} {test_results['superadmin_quantity']['status_code']}"
+                        },
+                        "failed_tests": failed_tests,
+                        "error_responses": {name: result["response"] for name, result in test_results.items() if not result["success"]}
+                    }
                 )
                 return False
                 
         except Exception as e:
             self.log_result(
-                "Admin Update PO",
+                "PO UPDATE Field Name Handling",
                 False,
                 f"Exception occurred: {str(e)}",
                 {"exception_type": type(e).__name__}
