@@ -31,7 +31,7 @@ export const PurchaseReceivedAdmin = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getPurchaseReceiveList(cafeId));
-    dispatch(getStyxData());
+    // Removed getStyxData() call - not needed and causes "Failed to fetch Styx data" error
   }, [dispatch, cafeId])
 
   const POIdGetList = useSelector(state => state.purchaseReceiveSlice);
