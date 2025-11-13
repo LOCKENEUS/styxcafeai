@@ -12,7 +12,7 @@ import sys
 import os
 
 # Configuration - Use external URL from environment
-BASE_URL = "https://styx-inventory.preview.emergentagent.com/api"
+BASE_URL = "https://cafe-backend.preview.emergentagent.com/api"
 
 class POErrorHandlingTest:
     def __init__(self):

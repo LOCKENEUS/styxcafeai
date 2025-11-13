@@ -14,7 +14,7 @@ import string
 import os
 
 # Configuration - Use external URL from frontend env
-BASE_URL = "https://styx-inventory.preview.emergentagent.com/api"
+BASE_URL = "https://cafe-backend.preview.emergentagent.com/api"
 
 # Admin endpoints
 ADMIN_ENDPOINTS = {
