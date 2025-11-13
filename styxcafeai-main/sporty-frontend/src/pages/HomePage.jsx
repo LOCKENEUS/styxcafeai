@@ -6,6 +6,8 @@ import MotionBackground from '../components/MotionBackground';
 import SportCard from '../components/SportCard';
 import GlassBookingPanel from '../components/GlassBookingPanel';
 import Sport3DIcon from '../components/Sport3DIcon';
+import { apiEndpoints } from '../services/api';
+import socketService, { SOCKET_EVENTS } from '../services/socket';
 
 const HomePage = () => {
   const [sports, setSports] = useState([
@@ -15,6 +17,79 @@ const HomePage = () => {
     { id: 4, name: 'Cricket', icon: '🏏', color: '#00ff88' },
     { id: 5, name: 'Badminton', icon: '🏸', color: '#ffaa00' },
   ]);
+  const [heroContent, setHeroContent] = useState(null);
+  const [services, setServices] = useState([]);
+  const [cafes, setCafes] = useState([]);
+
+  // Fetch initial data
+  useEffect(() => {
+    fetchHeroContent();
+    fetchServices();
+    fetchRecentCafes();
+    
+    // Connect to Socket.io for real-time updates
+    socketService.connect();
+    
+    // Listen for real-time updates
+    socketService.on(SOCKET_EVENTS.HERO_UPDATED, (data) => {
+      console.log('Hero content updated:', data);
+      fetchHeroContent();
+    });
+
+    socketService.on(SOCKET_EVENTS.CONTENT_UPDATED, (data) => {
+      console.log('Content updated:', data);
+      if (data.type === 'service') {
+        fetchServices();
+      }
+    });
+
+    socketService.on(SOCKET_EVENTS.GAME_CREATED, (data) => {
+      console.log('New game created:', data);
+      // Optionally update sports list
+    });
+
+    socketService.on(SOCKET_EVENTS.GAME_UPDATED, (data) => {
+      console.log('Game updated:', data);
+    });
+
+    // Cleanup on unmount
+    return () => {
+      socketService.disconnect();
+    };
+  }, []);
+
+  const fetchHeroContent = async () => {
+    try {
+      const response = await apiEndpoints.getHeroContent();
+      if (response.data?.status && response.data?.data?.length > 0) {
+        setHeroContent(response.data.data[0]);
+      }
+    } catch (error) {
+      console.error('Error fetching hero content:', error);
+    }
+  };
+
+  const fetchServices = async () => {
+    try {
+      const response = await apiEndpoints.getServiceContent();
+      if (response.data?.status) {
+        setServices(response.data.data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching services:', error);
+    }
+  };
+
+  const fetchRecentCafes = async () => {
+    try {
+      const response = await apiEndpoints.getRecentCafes();
+      if (response.data?.status) {
+        setCafes(response.data.data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching cafes:', error);
+    }
+  };
 
   return (
     <div className="relative min-h-screen overflow-hidden">
