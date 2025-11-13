@@ -1250,6 +1250,93 @@ agent_communication:
       ✅ Better spacing and contrast
       
       The quantity number is now impossible to miss!
+
+user_problem_statement: |
+  4 issues to fix:
+  1. Path "/admin/inventory/purchase-order-list" - Purchase order list fetch error toast message "Failed to fetch styx data"
+  2. Path "/admin/inventory/items-list" - export data issue does not include price of item in sheet
+  3. Path "/admin/inventory/item-group-list" - export data shows "[object Object]" instead of manufacturer and brand names
+  4. Path "/admin/inventory/item-details/{id}" - display item name in details page in "Checkout Details" tab
+
+frontend:
+  - task: "Fix Purchase Order list, Items export, Item Group export, and Item Details display issues"
+    implemented: true
+    working: "NA"
+    files:
+      - "/app/frontend/src/pages/Admin/Inventory/List/PurchaseOrderList.jsx"
+      - "/app/frontend/src/pages/Admin/Inventory/List/ItemsList.jsx"
+      - "/app/frontend/src/pages/Admin/Inventory/List/ItemGroupList.jsx"
+      - "/app/frontend/src/pages/Admin/Inventory/Details/ItemDetails.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: |
+          Fixed all 4 reported issues:
+          
+          Issue 1: Purchase Order List "Failed to fetch Styx data"
+          - Root Cause: Unnecessary getStyxData() call to /user endpoint
+          - The endpoint was not needed for PO list functionality
+          - Causing authentication or 404 errors
+          
+          Fix:
+          - Removed getStyxData() call from useEffect
+          - Removed import of getStyxData
+          - PO list now loads without extra API call
+          
+          Issue 2: Items Export Missing Price
+          - Root Cause: Export used item.price which doesn't exist
+          - Items have sellingPrice and costPrice fields
+          
+          Fix:
+          - Added "Selling Price" column header
+          - Added "Cost Price" column header
+          - Map to item.sellingPrice || item.price || 0
+          - Map to item.costPrice || 0
+          - Added fallback values for missing data
+          - Improved row mapping with proper defaults
+          
+          Issue 3: Item Group Export Shows "[object Object]"
+          - Root Cause: manufacturer and brand are objects, not strings
+          - Export was trying to convert objects to strings
+          
+          Fix:
+          - Changed item.manufacturer to item.manufacturer?.name || "-"
+          - Changed item.brand to item.brand?.name || "-"
+          - Added fallback "-" for missing data
+          - Proper object property access
+          
+          Issue 4: Item Name Not Displayed in Checkout Details Tab
+          - Item details page Checkout tab didn't prominently show item name
+          - Only showed in table rows, not as header
+          
+          Fix:
+          - Added prominent header section with item name
+          - Large h3 title with item name in primary color
+          - Subtitle: "Item Details and Specifications"
+          - Border-bottom separator for visual hierarchy
+          - Also added "Item Name" row in details table
+          - Better visual presentation
+          
+          All exports now include correct data without "[object Object]" errors.
+
+agent_communication:
+  - agent: "main"
+    message: |
+      All 4 inventory issues fixed:
+      
+      ✅ Purchase Order List: Removed unnecessary getStyxData() call
+      ✅ Items Export: Added Selling Price and Cost Price columns
+      ✅ Item Group Export: Shows manufacturer/brand names (not objects)
+      ✅ Item Details: Item name prominently displayed in Checkout tab
+      
+      Export fixes:
+      - Items: Now includes sellingPrice and costPrice
+      - Item Groups: Shows "Manufacturer Name" not "[object Object]"
+      
+      All ready for testing.
   - agent: "testing"
     message: |
       🎯 RAZORPAY PAYMENT INTEGRATION TESTING COMPLETED - ALL TESTS PASSED
