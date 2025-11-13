@@ -35,8 +35,10 @@ const allowedOrigins = [
   'https://cafe-backend.preview.emergentagent.com',
   'https://cafe-admin-panel.preview.emergentagent.com',
   'https://styxcafe-revamp.preview.emergentagent.com',
+  'http://styxcafe-revamp.preview.emergentagent.com',  // HTTP version
   'https://styxuser.lockene.co',
-  'https://cc1406e7-8328-4a1b-a2a0-928d2f749a14.preview.emergentagent.com'
+  'https://cc1406e7-8328-4a1b-a2a0-928d2f749a14.preview.emergentagent.com',
+  'http://cc1406e7-8328-4a1b-a2a0-928d2f749a14.preview.emergentagent.com'
 ].filter(Boolean); // Remove undefined values
 
 const corsOptions = {
