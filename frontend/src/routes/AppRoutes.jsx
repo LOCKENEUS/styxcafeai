@@ -88,6 +88,7 @@ import { InvoicePaymentInventory } from "../pages/Admin/Inventory/List/saleRetur
 import { InventorySettingAdmin } from "../pages/Admin/Inventory/List/inventorySetting";
 import { SODetails } from "../pages/Admin/Inventory/Details/SODetails";
 import { SIDetails } from "../pages/Admin/Inventory/Details/SIDetails";
+import HeroContentManager from "../pages/Admin/CMS/HeroContentManager";
 import { IPDetails } from "../pages/Admin/Inventory/Details/IPDetails";
 import SOCreate from "../pages/Admin/Inventory/Create/SOCreate";
 import { InvoiceCreate } from "../pages/Admin/Inventory/Create/invoiceCreate";
