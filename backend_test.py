@@ -35,7 +35,7 @@ USER_CMS_ENDPOINTS = {
     "services_active": f"{BASE_URL}/user/content/services"
 }
 
-class PurchaseOrderTest:
+class CMSTest:
     def __init__(self):
         self.session = requests.Session()
         self.test_results = []
