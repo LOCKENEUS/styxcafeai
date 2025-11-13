@@ -414,14 +414,14 @@ const updatePurchaseOrder = async (req, res) => {
     );
 
     await BookItem.deleteMany({ refer_id: id, type: "PB" });
-    const bookItemIds = await Promise.all(
+    const bookItemIds = req.body.items ? await Promise.all(
       req.body.items.map(async (product) => {
         const bookItem = new BookItem({
-          item_id: product.id,
+          item_id: product.id || product.item_id,
           type: "SO",
           refer_id: updatedPurchaseOrder._id,
           hsn: product.hsn || 0,
-          quantity: product.qty,
+          quantity: product.qty || product.quantity || 0,
           price: product.price,
           tax: product.tax || null,
           tax_amt: product.tax_amt || 0,
