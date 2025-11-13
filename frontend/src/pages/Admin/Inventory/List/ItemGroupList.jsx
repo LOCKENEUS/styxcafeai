@@ -63,13 +63,13 @@ const ItemGroupList = () => {
 
   const generateCSV = () => {
     const headers = ["SN", "NAME", "UNIT", "MANUFACTURER", "BRAND", "ITEMS"];
-    const rows = itemGroups.map((item) => [
-      item.sn,
-      item.group_name,
-      item.unit,
-      item.manufacturer,
-      item.brand,
-      item.items.length,
+    const rows = itemGroups.map((item, index) => [
+      index + 1,
+      item.group_name || "-",
+      item.unit || "-",
+      item.manufacturer?.name || "-",
+      item.brand?.name || "-",
+      item.items?.length || 0,
     ]);
 
     const csvContent = [headers, ...rows].map((e) => e.join(",")).join("\n");
