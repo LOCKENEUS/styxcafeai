@@ -14,5 +14,6 @@ Router.route("/profile").get(userAuth, getProfileDetails);
 Router.route("/profile").put(userAuth, upload.single("customerProfile"), updateProfileDetails);
 Router.route("/cafe/items/:id").get(getCafeItems);
 Router.route("/recent-cafe").get(getRecentCafes);
+Router.route("/recent-cafe").post(getRecentCafes);
 
 module.exports = Router;
