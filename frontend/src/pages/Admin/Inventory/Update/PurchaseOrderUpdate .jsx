@@ -157,12 +157,8 @@ export const PurchaseOrderUpdate = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (userType === "Superadmin") {
-      setProductsList(itemListForSuperItems);
-    } else {
-      setProductsList(itemListForItems);
-    }
-  }, [userType, itemListForItems, itemListForSuperItems]);
+    setProductsList(itemListForItems);
+  }, [itemListForItems]);
 
   const addProductRow = () => {
     setProducts([
