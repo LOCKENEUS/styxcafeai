@@ -424,7 +424,7 @@ const updatePurchaseOrder = async (req, res) => {
           type: "SO",
           refer_id: updatedPurchaseOrder._id,
           hsn: product.hsn || 0,
-          quantity: product.qty || product.quantity || 0,
+          quantity: product.qty !== undefined ? product.qty : (product.quantity !== undefined ? product.quantity : 0),
           price: product.price,
           tax: product.tax || null,
           tax_amt: product.tax_amt || 0,
