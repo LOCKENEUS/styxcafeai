@@ -696,7 +696,7 @@ class PurchaseOrderTest:
         try:
             headers = {"Authorization": f"Bearer {self.admin_token}"}
             
-            # First, get existing PO to update
+            # First, get existing PO to update and extract real item IDs
             list_url = f"{ADMIN_ENDPOINTS['po_list']}/{self.test_cafe_id}"
             list_response = self.session.get(list_url, headers=headers)
             
@@ -711,50 +711,55 @@ class PurchaseOrderTest:
             
             po_list = list_response.json().get("data", [])
             if not po_list:
-                # Create a PO first for testing
-                po_data = {
-                    "cafe": self.test_cafe_id,
-                    "vendor_id": None,
-                    "user_type": "Admin",
-                    "delivery_type": "Organization",
-                    "delivery_date": "2024-12-31",
-                    "payment_terms": "Net 30",
-                    "reference": "TEST-UPDATE-REF",
-                    "description": "Test PO for Update",
-                    "items": [
-                        {
-                            "id": "test_item_id_1",
-                            "qty": 5,
-                            "price": 50,
-                            "hsn": "1234",
-                            "tax": None,
-                            "tax_amt": 0,
-                            "total": 250
-                        }
-                    ],
-                    "subtotal": 250,
-                    "discount_value": 0,
-                    "discount_type": "flat",
-                    "tax": [],
-                    "total": 250,
-                    "adjustment_amount": 0,
-                    "internal_team_notes": "Test notes for update"
-                }
-                
-                create_response = self.session.post(ADMIN_ENDPOINTS["po_create"], json=po_data, headers=headers)
-                if create_response.status_code != 201:
-                    self.log_result(
-                        "Admin Update PO",
-                        False,
-                        "Failed to create test PO for update",
-                        {"status_code": create_response.status_code, "response": create_response.text}
-                    )
-                    return False
-                
-                created_po = create_response.json().get("data", {})
-                test_po_id = created_po.get("_id")
-            else:
-                test_po_id = po_list[0]["_id"]
+                self.log_result(
+                    "Admin Update PO",
+                    False,
+                    "No existing POs found to test update",
+                    {}
+                )
+                return False
+            
+            # Use the first PO for testing
+            test_po = po_list[0]
+            test_po_id = test_po["_id"]
+            
+            # Get PO details to extract real item IDs
+            detail_url = f"{ADMIN_ENDPOINTS['po_by_id']}/{test_po_id}"
+            detail_response = self.session.get(detail_url, headers=headers)
+            
+            if detail_response.status_code != 200:
+                self.log_result(
+                    "Admin Update PO",
+                    False,
+                    "Failed to get PO details for update test",
+                    {"status_code": detail_response.status_code}
+                )
+                return False
+            
+            po_details = detail_response.json().get("data", {})
+            items = po_details.get("items", [])
+            
+            if not items:
+                self.log_result(
+                    "Admin Update PO",
+                    False,
+                    "No items found in PO to test update",
+                    {}
+                )
+                return False
+            
+            # Extract real item ID from the first item
+            first_item = items[0]
+            real_item_id = first_item.get("item_id", {}).get("_id") if isinstance(first_item.get("item_id"), dict) else first_item.get("item_id")
+            
+            if not real_item_id:
+                self.log_result(
+                    "Admin Update PO",
+                    False,
+                    "Could not extract valid item ID from existing PO",
+                    {"first_item": first_item}
+                )
+                return False
             
             # Now test the UPDATE endpoint with both qty and quantity fields
             update_url = f"{ADMIN_ENDPOINTS['po_update']}/{test_po_id}"
@@ -765,7 +770,7 @@ class PurchaseOrderTest:
                 "description": "Updated description with qty field",
                 "items": [
                     {
-                        "id": "test_item_id_1",
+                        "id": real_item_id,
                         "qty": 8,  # Using 'qty' field
                         "price": 60,
                         "hsn": "1234",
@@ -786,7 +791,7 @@ class PurchaseOrderTest:
                 "description": "Updated description with quantity field",
                 "items": [
                     {
-                        "id": "test_item_id_1",
+                        "id": real_item_id,
                         "quantity": 10,  # Using 'quantity' field
                         "price": 70,
                         "hsn": "1234",
@@ -812,6 +817,7 @@ class PurchaseOrderTest:
                     "Successfully updated PO with both 'qty' and 'quantity' fields - field name mismatch fix working",
                     {
                         "po_id": test_po_id,
+                        "real_item_id": real_item_id,
                         "qty_update_status": response_qty.status_code,
                         "quantity_update_status": response_quantity.status_code,
                         "qty_response": response_qty.json() if response_qty.content else "No content",
