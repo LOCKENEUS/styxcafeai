@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing for Purchase Order Endpoints
-Tests all Purchase Order endpoints comprehensively to identify and fix errors
+Backend API Testing for CMS Endpoints
+Tests all CMS endpoints comprehensively to identify and fix errors
 """
 
 import requests
