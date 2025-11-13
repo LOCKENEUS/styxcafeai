@@ -1373,11 +1373,11 @@ agent_communication:
       successfully create payment orders and proceed with online payments.
 
 user_problem_statement: |
-  Test all Purchase Order endpoints comprehensively to identify and fix all errors:
-  User reports "Failed to fetch Styx data" error when opening Purchase Order section.
-  
-  NEW: Verify Purchase Order creation error handling fix:
-  Fixed the PO creation endpoint to handle invalid item IDs properly. Need to verify the fix is working.
+  Test Purchase Order UPDATE endpoint after the proper fix for field name handling:
+  Test PUT /api/admin/inventory/po/{id} and /api/superadmin/inventory/po/{id} with BOTH:
+  1. Update with items using 'qty' field - should work
+  2. Update with items using 'quantity' field - should now also work (this was failing before)
+  Verify both scenarios return status 200 and update successfully.
 
 backend:
   - task: "Admin Purchase Order List Endpoint"
