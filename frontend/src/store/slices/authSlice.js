@@ -60,7 +60,7 @@ export const Adminlogin = createAsyncThunk(
       }
       toast.success("Login successful");
       localStorage.setItem("authToken", data.data.token);
-      localStorage.setItem("userRole", JSON.stringify(data.data.cafe.role));
+      localStorage.setItem("userRole", data.data.cafe.role);
       localStorage.setItem("user", JSON.stringify(data.data.cafe));
 
       return data.data;
