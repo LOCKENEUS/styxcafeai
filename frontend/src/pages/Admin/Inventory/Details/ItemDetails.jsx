@@ -157,10 +157,18 @@ const ItemDetails = () => {
             <Tab.Content data-aos="fade-up" data-aos-duration="500">
               <Tab.Pane eventKey="checkout" className="h-100">
                 <Card className="p-3 h-100">
+                  <div className="mb-3 pb-3 border-bottom">
+                    <h3 className="text-primary mb-2">{selectedItem.name}</h3>
+                    <p className="text-muted mb-0">Item Details and Specifications</p>
+                  </div>
                   <h4>Details</h4>
                   <div className="table-responsive">
                     <Table borderless>
                       <tbody>
+                        <tr>
+                          <td className="fw-bold">Item Name</td>
+                          <td className="fw-semibold text-dark">{selectedItem.name}</td>
+                        </tr>
                         <tr>
                           <td className="fw-bold">SKU</td>
                           <td>{selectedItem.sku}</td>
